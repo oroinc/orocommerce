@@ -1,0 +1,124 @@
+{% block _featured_categories_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-categories'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_categories_widget %}
+    <div class="embedded-list">
+        {% if use_slider %}
+            {% set attr = layout_attr_defaults(attr, {
+                'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+                '~data-page-component-options': slider_options,
+                '~class': ' embedded-list__slider'
+            }) %}
+
+            {% set item_attr = layout_attr_defaults(item_attr|default({}), {
+                '~class': ' embedded-list__item ' ~ item_extra_class,
+                'data-name': 'embedded-list-item'
+            }) %}
+        {% else %}
+            {% set attr = layout_attr_defaults(attr, {
+                'data-page-component-module': 'orofrontend/js/app/components/embedded-list-component',
+                '~class': ' tiles embedded-list__tiles '
+            }) %}
+
+            {% set item_attr = layout_attr_defaults(item_attr|default({}), {
+                '~class': ' tiles-item ' ~ item_extra_class,
+                'data-name': 'embedded-list-item'
+            }) %}
+        {% endif %}
+
+        {% if label is defined %}
+            <h2 class="embedded-list__label">
+                <span class="embedded-list__label-inner">{{ label|trans }}</span>
+            </h2>
+        {% endif %}
+
+        <div {{ block('block_attributes') }}>
+            {% set attr = item_attr %}
+            {% for item in items|slice(0, 8) %}
+                <div {{ block('block_attributes') }}>
+                    {% set context = {
+                        (item_key): item
+                    } %}
+                    {% for dataKey, dataValue in items_data %}
+                        {% set context = context|merge({
+                            (dataKey): dataValue[item.id]|default(null)
+                        }) %}
+                    {% endfor %}
+                    {% do block|merge_context(context) %}
+                    {{ block('container_widget') }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _featured_category_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__item'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_category_link_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category'
+    }) %}
+    <a {{ block('block_attributes') }}
+        href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+        {{ block_widget(block) }}
+    </a>
+{% endblock %}
+
+{% block _featured_category_image_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__image',
+        alt: category.title,
+        loading: 'lazy',
+        width: 315,
+        height: 260
+    }) %}
+
+    {% include '@OroAttachment/Twig/picture.html.twig' with {
+        sources: category_filtered_picture_sources(category.small_image, 'category_medium'),
+        filter: 'category_medium',
+        img_attrs: attr
+    } %}
+{% endblock %}
+
+{% block _featured_category_desc_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__desc'
+    }) %}
+    <dl {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </dl>
+{% endblock %}
+
+{% block _featured_category_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__name'
+    }) %}
+    <dt {{ block('block_attributes') }}>{{ category.title }}</dt>
+{% endblock %}
+
+{% block _featured_category_products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__qty'
+    }) %}
+    <dd {{ block('block_attributes') }}>{{ 'oro.catalog.featured_categories.view.items.label'|trans({'%count%': categoryProductsCount}) }}</dd>
+{% endblock %}
+
+{% block _featured_category_short_text_widget %}
+    {% if category.short|length %}
+        <div class="featured-category__description cms-typography">{{ category.short|oro_html_sanitize }}</div>
+    {% endif %}
+{% endblock %}

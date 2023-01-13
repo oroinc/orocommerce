@@ -47,9 +47,9 @@ class OrmEngineTest extends AbstractEngineTest
     }
 
     /**
-     * @return AbstractEngine
+     * {@inheritDoc}
      */
-    protected function getSearchEngine()
+    protected function getSearchEngine(): AbstractEngine
     {
         $driver = $this->getEngineDriver();
         $engine = $this->getContainer()->get('oro_website_search.engine');
@@ -58,10 +58,7 @@ class OrmEngineTest extends AbstractEngineTest
         return $engine;
     }
 
-    /**
-     * @return DriverInterface
-     */
-    protected function getEngineDriver()
+    private function getEngineDriver(): DriverInterface
     {
         return $this->getContainer()->get('oro_website_search.engine.orm.driver');
     }

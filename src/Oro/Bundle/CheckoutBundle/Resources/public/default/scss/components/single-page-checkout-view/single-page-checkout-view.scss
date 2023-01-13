@@ -93,7 +93,8 @@
     }
 
     &__shipping-methods,
-    &__payment-methods {
+    &__payment-methods,
+    &__shipping_date {
         margin: $checkout-view-shipping-methods-margin;
     }
 
@@ -158,6 +159,10 @@
         }
     }
 
+    .checkout {
+        padding: $checkout-padding-narrow;
+    }
+
     .checkout-form__payment-methods {
         max-width: 300px;
         padding: 0 0 0 ($offset-x-m + 2);
@@ -177,14 +182,14 @@
     }
 
     .datagrid-toolbar {
-        .datagrid-toolbar__side,
-        .datagrid-toolbar__rightside {
+        .datagrid-toolbar__start,
+        .datagrid-toolbar__end {
             flex-basis: auto;
         }
     }
 }
 
-@include breakpoint('tablet') {
+@include breakpoint('single-page-checkout-overflow') {
     .single-page-checkout-view {
         &__column {
             position: relative;

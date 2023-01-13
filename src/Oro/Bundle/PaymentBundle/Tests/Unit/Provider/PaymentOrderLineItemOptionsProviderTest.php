@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
@@ -20,15 +20,9 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 {
     private const LANGUAGE = 'de_DE';
 
-    /**
-     * @var PaymentOrderLineItemOptionsProvider
-     */
-    private $provider;
+    private PaymentOrderLineItemOptionsProvider $provider;
 
-    /**
-     * @var HtmlTagHelper|MockObject
-     */
-    private $htmlTagHelper;
+    private HtmlTagHelper|MockObject $htmlTagHelper;
 
     /**
      * {@inheritdoc}
@@ -39,7 +33,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
         $this->provider = new PaymentOrderLineItemOptionsProvider(
             $this->htmlTagHelper,
-            $this->getUserLocalizationManager()
+            $this->getLocalizationProvider()
         );
     }
 
@@ -144,7 +138,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
         $this->assertEmpty($models);
     }
 
-    public function testGetLineItemOptionsWithoutProductAndFreeFormItem()
+    public function testGetLineItemOptionsWithoutProductAndFreeFormItem(): void
     {
         $entity = new Order();
         $entity->addLineItem(new OrderLineItem());
@@ -155,22 +149,19 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
         $this->assertEmpty($models);
     }
 
-    /**
-     * @return UserLocalizationManager|MockObject
-     */
-    private function getUserLocalizationManager()
+    private function getLocalizationProvider(): LocalizationProviderInterface|MockObject
     {
         $language = (new Language())
             ->setCode(self::LANGUAGE);
         $localization = (new Localization())
             ->setLanguage($language);
-        $userLocalizationManager = $this->createMock(UserLocalizationManager::class);
-        $userLocalizationManager
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider
             ->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
-        return $userLocalizationManager;
+        return $localizationProvider;
     }
 
     private function createOrderLineItem(

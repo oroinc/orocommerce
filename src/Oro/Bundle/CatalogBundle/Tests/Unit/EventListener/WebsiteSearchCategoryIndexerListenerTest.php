@@ -15,15 +15,19 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCase
+class WebsiteSearchCategoryIndexerListenerTest extends TestCase
 {
     use EntityTrait;
+
     const NAME_DEFAULT_LOCALE = 'name default';
     const NAME_CUSTOM_LOCALE = 'name custom';
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
@@ -31,48 +35,43 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
     const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
     const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
 
+    const FIRST_PARENT_NAME_DEFAULT_LOCALE = 'first parent name default';
+    const FIRST_PARENT_NAME_CUSTOM_LOCALE = 'first parent name custom';
+
+    const SECOND_PARENT_NAME_DEFAULT_LOCALE = 'second parent name default';
+    const SECOND_PARENT_NAME_CUSTOM_LOCALE = 'second parent name custom';
+
     /**
      * @var WebsiteSearchCategoryIndexerListener
      */
     private $listener;
 
     /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var DoctrineHelper|MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var AbstractWebsiteLocalizationProvider|MockObject
      */
     private $websiteLocalizationProvider;
 
     /**
-     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var WebsiteContextManager|MockObject
      */
     private $websiteContextManager;
 
     /**
-     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
+     * @var CategoryRepository|MockObject
      */
     private $repository;
 
     protected function setUp(): void
     {
-        $this->repository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->websiteLocalizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(CategoryRepository::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->websiteLocalizationProvider = $this->createMock(AbstractWebsiteLocalizationProvider::class);
+        $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
 
         $this->listener = new WebsiteSearchCategoryIndexerListener(
             $this->doctrineHelper,
@@ -86,14 +85,14 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
      * @param string|null $string
      * @param string|null $text
      * @param string $className
-     * @return LocalizedFallbackValue
+     * @return LocalizedFallbackValue|CategoryTitle|CategoryLongDescription|CategoryShortDescription
      */
     private function prepareLocalizedValue(
         ?Localization $localization = null,
         ?string $string = null,
         ?string $text = null,
         string $className = LocalizedFallbackValue::class
-    ) {
+    ): object {
         $value = new $className();
         $value->setString($string)
             ->setText($text)
@@ -102,19 +101,17 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
         return $value;
     }
 
-    /**
-     * @param Localization $defaultLocale
-     * @param Localization $customLocale
-     * @param Product $product
-     * @return array
-     */
-    private function prepareCategory($defaultLocale, $customLocale, Product $product)
-    {
+    private function prepareCategory(
+        ?Localization $defaultLocale,
+        ?Localization $customLocale,
+        Product $product,
+        Category $parentCategory
+    ): Category {
         $category = $this->getEntity(
             Category::class,
             [
                 'id' => 555,
-                'materializedPath' => '1_555'
+                'materializedPath' => '1_33_555'
             ]
         );
 
@@ -157,12 +154,86 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
                     CategoryShortDescription::class
                 )
             )
-            ->addProduct($product);
+            ->addProduct($product)
+            ->setParentCategory($parentCategory);
 
         return $category;
     }
 
-    public function testOnWebsiteSearchIndexProductClass()
+    private function prepareFirstParentCategory(
+        ?Localization $defaultLocale,
+        ?Localization $customLocale,
+        Category $parentCategory
+    ): Category {
+        $category = $this->getEntity(
+            Category::class,
+            [
+                'id' => 33,
+                'materializedPath' => '1_33'
+            ]
+        );
+
+        $category
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $defaultLocale,
+                    self::FIRST_PARENT_NAME_DEFAULT_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            )
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $customLocale,
+                    self::FIRST_PARENT_NAME_CUSTOM_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            )
+            ->setParentCategory($parentCategory);
+
+        return $category;
+    }
+
+    private function prepareSecondParentCategory(
+        ?Localization $defaultLocale,
+        ?Localization $customLocale
+    ): Category {
+        $category = $this->getEntity(
+            Category::class,
+            [
+                'id' => 1,
+                'materializedPath' => '1'
+            ]
+        );
+
+        $category
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $defaultLocale,
+                    self::SECOND_PARENT_NAME_DEFAULT_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            )
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $customLocale,
+                    self::SECOND_PARENT_NAME_CUSTOM_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            );
+
+        return $category;
+    }
+
+    /**
+     * @dataProvider fieldsGroupDataProvider
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testOnWebsiteSearchIndexProductClass(?array $fieldsGroup)
     {
         $defaultValueLocale = null;
 
@@ -180,19 +251,28 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
             ->willReturn($this->repository);
 
         /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 1]);
-        $category = $this->prepareCategory($defaultValueLocale, $customLocale, $product);
+        $product = $this->getEntity(Product::class, ['id' => 1, 'category_sort_order' => 1]);
+        $secondParentCategory = $this->prepareSecondParentCategory($defaultValueLocale, $customLocale);
+        $firstParentCategory =
+            $this->prepareFirstParentCategory($defaultValueLocale, $customLocale, $secondParentCategory);
+        $category = $this->prepareCategory($defaultValueLocale, $customLocale, $product, $firstParentCategory);
         $this->repository
             ->expects($this->once())
             ->method('getCategoryMapByProducts')
             ->willReturn([$product->getId() => $category]);
+        $this->repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1 => '33', 2 => '555']])
+            ->willReturn([$category, $firstParentCategory]);
 
-        $event = new IndexEntityEvent(Product::class, [$product], ['some_context']);
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldsGroup];
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
 
         $this->websiteContextManager
             ->expects($this->once())
             ->method('getWebsiteId')
-            ->with(['some_context'])
+            ->with($context)
             ->willReturn(1);
 
         $this->listener->onWebsiteSearchIndex($event);
@@ -200,17 +280,21 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
         $expected[$product->getId()] = [
             'category_id' => [
                 ['value' => 555, 'all_text' => false],
-             ],
+            ],
             'category_path' => [
-                ['value' => '1_555', 'all_text' => false],
-             ],
+                ['value' => '1_33_555', 'all_text' => false],
+            ],
             'category_paths.' . CategoryPathPlaceholder::NAME => [
                 [
                     'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1']),
                     'all_text' => false,
                 ],
                 [
-                    'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1_555']),
+                    'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1_33']),
+                    'all_text' => false,
+                ],
+                [
+                    'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1_33_555']),
                     'all_text' => false,
                 ],
             ],
@@ -239,8 +323,74 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
                     'all_text' => true,
                 ]
             ],
+            'category_id_with_parent_categories_LOCALIZATION_ID'  => [
+                [
+                    'value' => new PlaceholderValue(
+                        sprintf('555|%s|%s', self::FIRST_PARENT_NAME_CUSTOM_LOCALE, self::NAME_CUSTOM_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                    'all_text' => false,
+                ]
+            ],
+        ];
+        if (is_null($context[AbstractIndexer::CONTEXT_FIELD_GROUPS])) {
+            $expected[$product->getId()]['category_sort_order'] = [
+                [
+                    'value' => 1, 'all_text' => false
+                ]
+            ];
+        }
+
+        $this->assertEquals($expected, $event->getEntitiesData());
+    }
+
+    public function fieldsGroupDataProvider(): \Generator
+    {
+        yield [null];
+        yield [['main']];
+    }
+
+    public function testOnWebsiteSearchCategorySortOrderFieldGroup()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1, 'category_sort_order' => 1]);
+
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['category_sort_order']];
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
+
+        $this->websiteContextManager
+            ->expects($this->once())
+            ->method('getWebsiteId')
+            ->with($context)
+            ->willReturn(1);
+
+        $this->listener->onWebsiteSearchIndex($event);
+
+        $expected[$product->getId()]['category_sort_order'] = [
+            [
+                'value' => 1, 'all_text' => false
+            ]
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());
+    }
+
+    public function testOnWebsiteSearchIndexUnsupportedFieldsGroup()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']];
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
+
+        $this->websiteLocalizationProvider->expects($this->never())
+            ->method($this->anything());
+
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->websiteContextManager->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onWebsiteSearchIndex($event);
     }
 }

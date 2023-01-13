@@ -11,115 +11,68 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
  */
 class ResolvedContentNode implements ContentNodeInterface
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
+    protected string $identifier;
+    protected Collection $titles;
+    protected ResolvedContentVariant $resolvedContentVariant;
+    protected Collection $childNodes;
+    protected bool $rewriteVariantTitle = true;
+    protected int $priority = 0;
 
-    /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var Collection
-     */
-    protected $titles;
-
-    /**
-     * @var ResolvedContentVariant
-     */
-    protected $resolvedContentVariant;
-
-    /**
-     * @var Collection
-     */
-    protected $childNodes;
-
-    /**
-     * @var bool
-     */
-    protected $rewriteVariantTitle = true;
-
-    /**
-     * @param int $id
-     * @param string $identifier
-     * @param Collection $titles
-     * @param ResolvedContentVariant $resolvedContentVariant
-     * @param bool $rewriteVariantTitle
-     */
     public function __construct(
         $id,
         $identifier,
+        $priority,
         Collection $titles,
         ResolvedContentVariant $resolvedContentVariant,
         $rewriteVariantTitle = true
     ) {
         $this->id = $id;
         $this->identifier = $identifier;
+        $this->priority = $priority;
         $this->titles = $titles;
         $this->resolvedContentVariant = $resolvedContentVariant;
         $this->childNodes = new ArrayCollection();
         $this->rewriteVariantTitle = $rewriteVariantTitle;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTitles()
+    public function getTitles(): Collection
     {
         return $this->titles;
     }
 
-    /**
-     * @return ResolvedContentVariant
-     */
-    public function getResolvedContentVariant()
+    public function getResolvedContentVariant(): ResolvedContentVariant
     {
         return $this->resolvedContentVariant;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getContentVariants()
+    public function getContentVariants(): ArrayCollection
     {
         return new ArrayCollection([$this->getResolvedContentVariant()]);
     }
 
-    public function addChildNode(ResolvedContentNode $childNode)
+    public function addChildNode(ResolvedContentNode $childNode): self
     {
         $this->childNodes->add($childNode);
+
+        return $this;
     }
 
-    /**
-     * @return Collection
-     */
-    public function getChildNodes()
+    public function getChildNodes(): Collection
     {
         return $this->childNodes;
     }
 
-    /**
-     * @param ArrayCollection $childNodes
-     * @return ResolvedContentNode
-     */
     public function setChildNodes(ArrayCollection $childNodes): self
     {
         $this->childNodes = $childNodes;
@@ -127,10 +80,19 @@ class ResolvedContentNode implements ContentNodeInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isRewriteVariantTitle()
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): self
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function isRewriteVariantTitle(): bool
     {
         return $this->rewriteVariantTitle;
     }

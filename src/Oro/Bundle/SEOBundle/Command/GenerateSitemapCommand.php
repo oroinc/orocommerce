@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Oro\Bundle\SEOBundle\Command;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler;
 use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
 use Symfony\Component\Console\Command\Command;
@@ -14,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Schedules generation of sitemap files.
  */
-class GenerateSitemapCommand extends Command implements CronCommandInterface
+class GenerateSitemapCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
     /** @var string */
     protected static $defaultName = 'oro:cron:sitemap:generate';
@@ -58,13 +59,11 @@ HELP
         return 0;
     }
 
-    public function getDefaultDefinition()
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultDefinition(): string
     {
         return $this->configManager->get(UpdateCronDefinitionConfigListener::CONFIG_FIELD);
-    }
-
-    public function isActive()
-    {
-        return true;
     }
 }

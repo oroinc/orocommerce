@@ -2,33 +2,35 @@
 
 namespace Oro\Bundle\CheckoutBundle\Async;
 
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+/**
+ * Processor for recalculate checkout subtotals
+ */
+class RecalculateCheckoutSubtotalsProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
-    /** @var CheckoutSubtotalUpdater */
-    protected $checkoutSubtotalUpdater;
+    use LoggerAwareTrait;
 
-    /** @var LoggerInterface */
-    protected $logger;
+    protected CheckoutSubtotalUpdater $checkoutSubtotalUpdater;
 
-    public function __construct(
-        CheckoutSubtotalUpdater $checkoutSubtotalUpdater,
-        LoggerInterface $logger
-    ) {
+    public function __construct(CheckoutSubtotalUpdater $checkoutSubtotalUpdater)
+    {
         $this->checkoutSubtotalUpdater = $checkoutSubtotalUpdater;
-        $this->logger = $logger;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
         try {
             $this->checkoutSubtotalUpdater->recalculateInvalidSubtotals();
@@ -37,7 +39,7 @@ class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => Topics::RECALCULATE_CHECKOUT_SUBTOTALS,
+                    'topic' => RecalculateCheckoutSubtotalsTopic::getName(),
                 ]
             );
 
@@ -47,11 +49,8 @@ class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface
         return self::ACK;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::RECALCULATE_CHECKOUT_SUBTOTALS];
+        return [RecalculateCheckoutSubtotalsTopic::getName()];
     }
 }

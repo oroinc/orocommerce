@@ -1,0 +1,45 @@
+{% block _category_picture_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-picture__image',
+        'alt': category.defaultTitle,
+        'itemprop': 'image'
+    }) %}
+
+    {% if category.largeImage %}
+        <div class="category-picture" itemprop="hasOfferCatalog" itemscope itemtype="http://schema.org/OfferCatalog">
+            <div itemprop="name" content="{{ category.defaultTitle }}">
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    file: category.largeImage,
+                    filter: 'product_original',
+                    img_attrs: attr|default({})
+                } %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _breadcrumbs_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-module': ' oroproduct/js/app/components/breadcrumbs-navigation-block'
+    }) %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block _breadcrumbs_filters_widget %}
+    <span class="filters-info"></span>
+{% endblock %}
+
+{% block _category_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </h1>
+{% endblock %}
+
+{% block _category_long_descriptions_widget %}
+    {%- import '@OroCMS/macros.html.twig' as CMS -%}
+    <div class="category-long-description cms-typography">{{ CMS.renderWysiwygContent(long_descriptions.wysiwyg, long_descriptions.wysiwygStyle) }}</div>
+{% endblock %}

@@ -5,46 +5,57 @@ const ShoppingListRow = Row.extend({
         ShoppingListRow.__super__.constructor.call(this, options);
     },
 
-    filterer(item) {
-        if (!this.model.get('notificationCell')) {
-            return true;
+    initialize(options) {
+        // let descendants override itemView
+        if (!this.itemView) {
+            // itemView function is called as new this.itemView
+            // it is placed here to pass THIS within closure
+            const rowView = this;
+            this.itemView = function(options) {
+                const renderColumnName = rowView.model.get('renderColumnName');
+                const definitionColumnName = rowView.model.get('definitionColumnName');
+                const definitionColumn =
+                    renderColumnName && options.model.get('name') === renderColumnName &&
+                    definitionColumnName && rowView.columns.find(column => column.get('name') === definitionColumnName);
+                // substitute current column with definition column if it's available
+                const column = definitionColumn || options.model;
+                const cellOptions = rowView.getConfiguredCellOptions(column);
+                cellOptions.model = rowView.model;
+                const Cell = column.get('cell');
+                return new Cell(cellOptions);
+            };
         }
 
-        return this.model.get('notificationCell') === item.get('name');
+        ShoppingListRow.__super__.initialize.call(this, options);
     },
 
-    filterCallback(view, included) {
-        const {$el} = view;
-
-        if (view.model.get('isMessage')) {
-            if (included) {
+    renderItem(column) {
+        const cellView = Row.__super__.renderItem.call(this, column);
+        const renderColumnName = this.model.get('renderColumnName');
+        if (renderColumnName) {
+            if (column.get('name') === renderColumnName) {
                 const visibleColumns = this.columns.filter(column => column.get('renderable'));
-                const start = visibleColumns.findIndex(
-                    column => column.get('name') === view.model.get('notificationCell')
-                );
-
-                $el.attr('colspan', visibleColumns.length - start);
+                const start = visibleColumns.findIndex(column => column.get('name') === renderColumnName);
+                cellView.$el.attr('colspan', visibleColumns.length - start);
             } else {
-                $el.empty();
+                cellView.$el.empty();
             }
         }
 
-        return $el;
+        return cellView;
     },
 
-    insertView(...args) {
-        const subviews = [...this.subviews];
-        subviews.pop();
-
-        const messageCell = subviews.find(
-            subview => subview.column.get('name') === this.model.get('notificationCell')
-        );
-
-        if (messageCell) {
+    insertView(column, ...rest) {
+        const columns = this.columns;
+        const columnName = this.model.get('renderColumnName');
+        if (
+            columnName &&
+            columns.indexOf(column) > columns.findIndex(column => column.get('name') === columnName)
+        ) {
             return;
         }
 
-        return ShoppingListRow.__super__.insertView.call(this, ...args);
+        return ShoppingListRow.__super__.insertView.call(this, column, ...rest);
     }
 });
 

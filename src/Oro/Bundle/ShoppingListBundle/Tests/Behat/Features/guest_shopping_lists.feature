@@ -143,7 +143,7 @@ Feature: Guest Shopping Lists
     When I click "View Details" for "SKU003" product
     Then I should see "Add to Shopping List"
     When I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I hover on "Shopping List Widget"
     And I should see "1 ea | $3.00" in the "Shopping List Widget" element
@@ -154,7 +154,7 @@ Feature: Guest Shopping Lists
       | Quantity | 10   |
       | Unit     | each |
     And I click "Update Shopping List"
-    Then I should see "Record has been successfully updated" flash message
+    Then I should see 'Product has been updated in "Shopping List"' flash message
     Then type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "In shopping list"
@@ -168,7 +168,7 @@ Feature: Guest Shopping Lists
     And I click "Search Button"
     And I should see "Control Product"
     When I click "Add to Shopping List" for "CONTROL1" product
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
 
   Scenario: Check added products available in Guest Shopping List
     Given I click "Shopping List"

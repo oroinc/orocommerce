@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpessCheckout\Optio
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class PayerTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new ECOption\Payer(), new ECOption\Action()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -22,9 +27,8 @@ class PayerTest extends AbstractOptionTest
                 ['PAYERID' => 12345, ECOption\Action::ACTION => ECOption\Action::DO_EC],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "PAYERID" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "PAYERID" with value 12345 is expected to be of type "string", but is of type "int".',
                 ],
             ],
             'not applicable dependency SET_EC' => [

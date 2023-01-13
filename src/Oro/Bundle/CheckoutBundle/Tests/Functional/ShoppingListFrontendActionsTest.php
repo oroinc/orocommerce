@@ -63,21 +63,12 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertNotEquals($firstData['workflowItem']['id'], $startData['workflowItem']['id']);
     }
 
-    /**
-     * @param string $username
-     * @param string $password
-     */
-    protected function authUser($username, $password)
+    private function authUser(string $username, string $password): void
     {
         $this->initClient([], $this->generateBasicAuthHeader($username, $password));
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return array
-     */
-    protected function startCheckout(ShoppingList $shoppingList)
+    private function startCheckout(ShoppingList $shoppingList): array
     {
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
@@ -95,7 +86,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        $content = \json_decode($response->getContent(), true);
+        $content = self::jsonToArray($response->getContent());
         $crawler = new Crawler($content['combined_button_wrapper']);
 
         $link = $crawler->selectLink('Create Order');
@@ -106,7 +97,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        $data = \json_decode($response->getContent(), true);
+        $data = self::jsonToArray($response->getContent());
 
         $this->assertArrayHasKey('workflowItem', $data);
         $this->assertArrayHasKey('result', $data['workflowItem']);

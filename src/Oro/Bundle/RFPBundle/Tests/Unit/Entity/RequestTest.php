@@ -130,6 +130,5 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('first', $request->getFirstName());
         $this->assertEquals('last', $request->getLastName());
         $this->assertEquals(['email'], $request->getEmailFields());
-        $this->assertEquals(Request::class, $request->getClass());
     }
 }

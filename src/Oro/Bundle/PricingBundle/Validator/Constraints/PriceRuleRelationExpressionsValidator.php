@@ -12,7 +12,6 @@ use Oro\Component\Expression\Node;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -116,9 +115,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
      */
     protected function addError($path, $message, array $params = [])
     {
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
-        $context->buildViolation($message, $params)
+        $this->context->buildViolation($message, $params)
             ->atPath($path)
             ->addViolation();
     }

@@ -2,8 +2,8 @@ import _ from 'underscore';
 import BaseView from 'oroui/js/app/views/base/view';
 import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
-import InputWidgetManager from 'oroui/js/input-widget-manager';
 import __ from 'orotranslation/js/translator';
+import errorMessageTemplate from 'tpl-loader!oroform/templates/error-template.html';
 
 const QuickAddRowView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
@@ -18,34 +18,39 @@ const QuickAddRowView = BaseView.extend({
     },
 
     attrElem: {
-        display_name: '[data-name="field__product-display-name"]',
-        sku: '[data-name="field__product-sku"]',
-        quantity: '[data-name="field__product-quantity"]',
-        unit: '[data-name="field__product-unit"]'
+        product: '[data-name="field__product"]',
+        sku: '[data-name="field__sku"]',
+        unit: '[data-name="field__unit"]',
+        quantity: '[data-name="field__quantity"]'
     },
 
     listen() {
         return {
-            'change:product_name model': () => this.updateControlValue('display_name'),
-            'change:sku model': () => this.updateControlValue('sku', 'display_name'),
+            'change:product_name model': () => this.updateControlValue('product'),
+            'change:sku model': () => this.updateControlValue('sku', 'product'),
             'change:quantity model': () => this.updateControlValue('quantity'),
-            'change:product_units model': 'updateUnitsSelector',
+            'change:product_units model': () => this.updateUnitsSelector(),
             'removed model': 'onModelRemoved',
-            'change model': 'updateUI'
+            'change model': 'updateUI',
+            'change:errors model': 'onErrorsChange'
         };
     },
 
     events() {
         return {
+            'keyup': 'updateRemoveRowButton',
+            'change': 'updateRemoveRowButton',
             [`keyup ${this.attrElem.quantity}`]: 'onQuantityChange',
             [`change ${this.attrElem.unit}`]: 'onUnitChange',
-            [`change ${this.attrElem.display_name}`]: 'onDisplayNameChange',
-            [`productFound.autocomplete ${this.attrElem.display_name}`]: 'onProductChange',
-            [`productNotFound.autocomplete ${this.attrElem.display_name}`]: 'onProductNotFound'
+            [`change ${this.attrElem.product}`]: 'onProductChange',
+            [`productFound.autocomplete ${this.attrElem.product}`]: 'onProductFound',
+            [`productNotFound.autocomplete ${this.attrElem.product}`]: 'onProductNotFound',
+            'validate-element': 'onAttrElementValidate'
         };
     },
 
     constructor: function QuickAddRowView(options) {
+        this.attrElem = Object.assign({}, this.attrElem, options.selectors || {});
         QuickAddRowView.__super__.constructor.call(this, options);
     },
 
@@ -56,7 +61,6 @@ const QuickAddRowView = BaseView.extend({
         }
 
         this.initModel(productsCollection, options);
-        this.initUnitValidator();
         this.$(this.attrElem.unit).removeClass('disabled');
         QuickAddRowView.__super__.initialize.call(this, options);
     },
@@ -72,7 +76,6 @@ const QuickAddRowView = BaseView.extend({
             this.model.collection.remove(this.model);
         }
         this.model.dispose();
-        this.$(this.attrElem.unit).removeData('unitValidator');
         return QuickAddRowView.__super__.dispose.call(this);
     },
 
@@ -85,32 +88,20 @@ const QuickAddRowView = BaseView.extend({
      * @param options
      */
     initModel(productsCollection, options) {
-        const attrs = this._readDOMValues();
-
-        if (attrs.sku) {
-            // there are data in a form's row
-            this.model = productsCollection.add({...attrs});
+        // row views are initialized in reverse order (all components in a layout initialized in such way)
+        const index = productsCollection.findLastIndex(model => !model.has('index'));
+        if (index !== -1) {
+            // there is vacant model in collection
+            this.model = productsCollection.models[index];
+            this.model.set({index: this.getRowNumber()});
         } else {
-            // (rows are initialized in reverse order, all components in a layout initialized in such way)
-            const index = productsCollection.findLastIndex(model => !model.has('_order'));
-            // there is vacant model in collection or new model
-            this.model = index !== -1 && productsCollection.models[index] || productsCollection.push({});
-            this.updateUnitsSelector();
-            this._writeDOMValues();
+            // or new model
+            this.model = productsCollection.add({index: this.getRowNumber()});
         }
-
-        // define row # in model
-        this.model.set({_order: this.getRowNumber()});
-    },
-
-    initUnitValidator() {
-        this.$(this.attrElem.unit).data('unitValidator', {
-            isValid: () => this.model.isValidUnit(),
-            getMessage: () => {
-                const unitName = this.model.get('unit') || this.model.previous('unit_label');
-                return __(this.unitErrorText, {unit: _.escape(unitName)});
-            }
-        });
+        this.updateUnitsSelector(true);
+        this._writeDOMValues(true);
+        this.updateRemoveRowButton();
+        this.showErrors();
     },
 
     getRowNumber() {
@@ -133,24 +124,25 @@ const QuickAddRowView = BaseView.extend({
         return Object.fromEntries(entries);
     },
 
-    _writeDOMValue(attr, value) {
+    _writeDOMValue(attr, value, silent) {
         const $input = this.$(this.attrElem[attr]);
+        const inputValue = this._readDOMValue(attr);
         switch (attr) {
             case 'quantity':
                 value = QuantityHelper.formatQuantity(value, $input.data('precision'), true);
                 break;
         }
-        if (value !== $input.val()) {
-            $input.val(value).change();
-            if (InputWidgetManager.hasWidget($input)) {
-                $input.inputWidget('refresh');
+        if (value !== inputValue) {
+            $input.val(value);
+            if (!silent) {
+                $input.change();
             }
         }
     },
 
-    _writeDOMValues() {
+    _writeDOMValues(silent = false) {
         Object.keys(this.attrElem)
-            .forEach(attr => this._writeDOMValue(attr, this.model.get(attr)));
+            .forEach(attr => this._writeDOMValue(attr, this.model.get(attr), silent));
     },
 
     updateControlValue(...attrs) {
@@ -163,6 +155,7 @@ const QuickAddRowView = BaseView.extend({
             quantity,
             quantity_changed_manually: true
         });
+        this.removeErrorForAttribute('quantity');
     },
 
     onUnitChange() {
@@ -174,27 +167,41 @@ const QuickAddRowView = BaseView.extend({
                 unit_label: UnitsUtil.getUnitsLabel(this.model)[unit]
             });
         }
+        if (this.model.previous('unit') !== this.model.get('unit')) {
+            if (this.model.isValidUnit()) {
+                this.removeErrorForAttribute('unit');
+            } else {
+                const errors = [...this.model.get('errors')];
+                const unitName = this.model.get('unit') || this.model.get('unit_label');
+                errors.push({
+                    propertyPath: 'unit',
+                    message: __(this.unitErrorText, {unit: _.escape(unitName), sku: _.escape(this.model.get('sku'))})
+                });
+                this.model.set('errors', errors);
+            }
+        }
     },
 
-    updateQuantityPrecision(unit) {
+    updateQuantityPrecision(unit, silent = false) {
         const precision = this.model.get('product_units')[unit];
         const $quantity = this.$(this.attrElem.quantity);
         if ($quantity.data('precision') !== precision) {
             $quantity
                 .data('precision', precision)
                 .inputWidget('refresh');
-            this.updateControlValue('quantity'); // in case it was not written due to incompatible precision
+            // in case quantity was not written due to incompatible precision, do it again
+            this._writeDOMValue('quantity', this.model.get('quantity'), silent);
         }
     },
 
-    onDisplayNameChange() {
-        const value = this._readDOMValue('display_name');
+    onProductChange() {
+        const value = this._readDOMValue('product');
         if (value === '' && this.model.get('sku') !== '') {
             this.model.clear();
         }
     },
 
-    onProductChange(event) {
+    onProductFound(event) {
         const {id, sku, units, quantity, 'defaultName.string': productName, ...extraAttrs} = event.item;
         const attrs = {
             sku,
@@ -205,6 +212,7 @@ const QuickAddRowView = BaseView.extend({
             ...extraAttrs
         };
         this.model.set(attrs);
+        this.removeErrorForAttribute('product');
     },
 
     onProductNotFound(event) {
@@ -217,18 +225,77 @@ const QuickAddRowView = BaseView.extend({
             ...extraAttrs
         };
 
+        this.model.clear();
         this.model.set(attrs);
     },
 
-    updateUnitsSelector() {
-        UnitsUtil.updateSelect(this.model, this.$(this.attrElem.unit));
+    updateUnitsSelector(silent = false) {
+        UnitsUtil.updateSelect(this.model, this.$(this.attrElem.unit), silent);
+        if (silent) {
+            // in case it's silent unit selector update, we need to update precision manually
+            this.updateQuantityPrecision(this.model.get('unit'), silent);
+        }
     },
 
     updateUI() {
-        if (!this.model.isValidUnit()) {
-            this.$el.closest('form').validate().element(this.$(this.attrElem.unit)[0]);
+        this.updateRemoveRowButton();
+    },
+
+    updateRemoveRowButton() {
+        const {index, ...restAttrs} = this.model.toBackendJSON();
+        const enabled = Object.values(restAttrs).some(value => Boolean(value));
+        this.$(this.elem.remove).toggleClass('hidden', !enabled);
+    },
+
+    showErrors() {
+        const errors = this.model.get('errors');
+        if (!errors || !errors.length) {
+            return;
         }
-        this.$(this.elem.remove).toggle(Boolean(this.model.get('sku')));
+        const $rowErrorsContainer = this.$el.parent().find('.fields-row-error');
+        errors.map(({propertyPath, message}) => {
+            const $input = this.$(this.attrElem[propertyPath]);
+            $input.addClass(`${$input[0].tagName.toLowerCase()}--error`);
+            const id = $input.attr('id');
+            $rowErrorsContainer
+                .append(`<span id="${id}-error" class="validation-failed">${errorMessageTemplate({message})}</span>`);
+        });
+    },
+
+    onErrorsChange() {
+        const previousErrors = this.model.previous('errors');
+        previousErrors.map(({propertyPath}) => {
+            const $input = this.$(this.attrElem[propertyPath]);
+            $input.removeClass(`${$input[0].tagName.toLowerCase()}--error`);
+            const id = $input.attr('id');
+            this.$el.parent().find(`#${id}-error`).remove();
+        });
+        this.showErrors();
+    },
+
+    /**
+     * Handle validation event and remove errors related to the attribute from the model
+     * @param event
+     */
+    onAttrElementValidate(event) {
+        if (event.invalid) {
+            return;
+        }
+
+        // valid attribute name
+        const [attr] = Object.entries(this.attrElem)
+            .find(([, selector]) => this.$(event.target).is(selector));
+
+        if (attr) {
+            // remove error for valid attribute
+            this.removeErrorForAttribute(attr);
+        }
+    },
+
+    removeErrorForAttribute(attr) {
+        const errors = this.model.get('errors')
+            .filter(error => error.propertyPath !== attr);
+        this.model.set('errors', errors);
     },
 
     onModelRemoved() {

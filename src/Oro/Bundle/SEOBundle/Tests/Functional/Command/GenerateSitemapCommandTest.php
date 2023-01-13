@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Command;
 
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\CronBundle\Entity\Repository\ScheduleRepository;
 use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\SEOBundle\Async\Topics;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapTopic;
 use Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand;
 use Oro\Bundle\SEOBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
@@ -22,30 +22,28 @@ class GenerateSitemapCommandTest extends WebTestCase
         $this->initClient();
     }
 
-    public function testCommand()
+    public function testCommand(): void
     {
-        self::runCommand(GenerateSitemapCommand::getDefaultName(), []);
+        self::runCommand(GenerateSitemapCommand::getDefaultName());
 
-        $traces = self::getMessageCollector()->getTopicSentMessages(Topics::GENERATE_SITEMAP);
-        $this->assertCount(1, $traces);
-        $this->assertEquals(['topic' => Topics::GENERATE_SITEMAP, 'message' => ''], $traces[0]);
+        self::assertMessageSent(GenerateSitemapTopic::getName(), []);
     }
 
-    public function testGetDefaultDefinitions()
+    public function testGetDefaultDefinitions(): void
     {
-        /** @var ScheduleRepository $repo */
-        $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Schedule::class);
+        /** @var EntityRepository $repo */
+        $repo = self::getContainer()->get('doctrine')->getRepository(Schedule::class);
         /** @var Schedule $commandSchedule */
         $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::getDefaultName()]);
-        $this->assertNotEmpty($commandSchedule);
-        $this->assertSame(Configuration::DEFAULT_CRON_DEFINITION, $commandSchedule->getDefinition());
+        self::assertNotEmpty($commandSchedule);
+        self::assertSame(Configuration::DEFAULT_CRON_DEFINITION, $commandSchedule->getDefinition());
 
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set(UpdateCronDefinitionConfigListener::CONFIG_FIELD, '0 0 0 0 *');
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);
 
         $commandSchedule = $repo->findOneBy(['command' => GenerateSitemapCommand::getDefaultName()]);
-        $this->assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
+        self::assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 }

@@ -27,7 +27,7 @@ class ProductVariantsChangedListener
     public function prePersist(ProductVariantLink $productVariantLink, LifecycleEventArgs $event)
     {
         if ($productVariantLink->getProduct()) {
-            $this->productReindexManager->reindexProduct($productVariantLink->getProduct());
+            $this->productReindexManager->reindexProduct($productVariantLink->getProduct(), null, true, ['main']);
         }
     }
 
@@ -37,7 +37,7 @@ class ProductVariantsChangedListener
     public function preRemove(ProductVariantLink $productVariantLink)
     {
         if ($productVariantLink->getProduct()) {
-            $this->productReindexManager->reindexProduct($productVariantLink->getProduct());
+            $this->productReindexManager->reindexProduct($productVariantLink->getProduct(), null, true, ['main']);
         }
     }
 }

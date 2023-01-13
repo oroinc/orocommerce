@@ -1,3 +1,4 @@
+@container-incompatible
 @feature-BB-17656
 @ticket-BB-18771
 @ticket-BB-18284
@@ -71,7 +72,7 @@ Feature: Landing Page content purify
       | Titles | Page with multiline content |
     And I fill in WYSIWYG "CMS Page Content" with "<div data-title=\"home-page-slider\" data-type=\"image_slider\" class=\"content-widget content-placeholder\">{{ widget(\"home-page-slider\") }}\r\n  </div>\r\n  <div id=\"i7nk\">\r\n  <iframe allowfullscreen=\"allowfullscreen\" id=\"ikah\" src=\"https://www.youtube.com/embed/D733JoYu92k?&loop=1&playlist=D7Q3JoYu92k&modestbranding=1\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" width=\"1920\" height=\"837\" frameborder=\"0\"></iframe>\r\n  <div id=\"irn2\">\r\n  <iframe src=\"https://www.w3schools.com\"></iframe>\r\n  <div>\r\n  <br/>\r\n  </div>\r\n  <a href=\"javascript:alert(1)\" class=\"link\">test</a>\r\n  </div>\r\n  </div>"
     When I save and close form
-    Then I should see "Please remove not permitted HTML-tags in the content field: - \"src\" attribute on \"<iframe>\" should be removed (near <iframe src=\"https://www....); - \"href\" attribute on \"<a>\" should be removed (near <a href=\"javascript:alert...)."
+    Then I should see "Please remove not permitted HTML-tags in the content field: - \"src\" attribute on \"<iframe>\" should be removed (near <iframe frameborder=\"0\" s...); - \"href\" attribute on \"<a>\" should be removed (near <a href=\"javascript:alert...)."
 
   Scenario: Create a new Landing Page with invalid twig
     Given I go to Marketing / Landing Pages

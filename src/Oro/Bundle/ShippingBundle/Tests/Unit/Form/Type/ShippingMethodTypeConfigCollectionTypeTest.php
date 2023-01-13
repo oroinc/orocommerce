@@ -9,17 +9,16 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ShippingMethodTypeConfigCollectionTypeTest extends FormIntegrationTestCase
 {
-    /** @var ShippingMethodTypeConfigCollectionType */
-    protected $formType;
+    /** @var MethodTypeConfigCollectionSubscriber|\PHPUnit\Framework\MockObject\MockObject */
+    private $subscriber;
 
-    /** @var MethodTypeConfigCollectionSubscriber */
-    protected $subscriber;
+    /** @var ShippingMethodTypeConfigCollectionType */
+    private $formType;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->subscriber = $this->getMockBuilder(MethodTypeConfigCollectionSubscriber::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->subscriber = $this->createMock(MethodTypeConfigCollectionSubscriber::class);
         $this->formType = new ShippingMethodTypeConfigCollectionType($this->subscriber);
     }
 

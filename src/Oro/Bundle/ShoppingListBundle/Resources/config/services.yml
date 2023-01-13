@@ -320,11 +320,6 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.global'
 
-    oro_shopping_list.provider.shopping_list_entity_name:
-        class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
-        tags:
-            - { name: oro_entity.name_provider, priority: 100 }
-
     oro_shopping_list.provider.shopping_list_url:
         class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider
         public: true
@@ -384,14 +379,15 @@ services:
         tags:
             - { name: oro_action.action, alias: add_string_suffix }
 
-    oro_shopping_list.event_listener.system_config:
-        parent: oro_user.event_listener.default_user_system_config
-        calls:
-            - [setAlias, ['oro_shopping_list']]
-            - [setConfigKey, ['default_guest_shopping_list_owner']]
+    oro_shopping_list.event_listener.system_config.default_guest_shopping_list_owner:
+        class: Oro\Bundle\UserBundle\EventListener\DefaultUserSystemConfigListener
+        arguments:
+            - '@oro_user.provider.default_user'
+            - '@doctrine'
+            - 'oro_shopping_list.default_guest_shopping_list_owner'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_shopping_list.default_guest_shopping_list_owner, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_shopping_list.entity_listener.shopping_list:
         class: 'Oro\Bundle\ShoppingListBundle\Entity\EntityListener\ShoppingListEntityListener'
@@ -548,9 +544,11 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_shopping_list.async.message_factory'
-            - '@logger'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
+            - { name: monolog.logger, channel: oro_shopping_list }
 
     oro_shopping_list.async.invalidate_totals_by_inventory_status_per_website_processor:
         class: Oro\Bundle\ShoppingListBundle\Async\InvalidateTotalsByInventoryStatusPerWebsiteProcessor
@@ -559,9 +557,11 @@ services:
             - '@oro_website.website.provider'
             - '@doctrine'
             - '@oro_shopping_list.async.message_factory'
-            - '@logger'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
+            - { name: monolog.logger, channel: oro_shopping_list }
 
     oro_shopping_list.async.message_factory:
         class: Oro\Bundle\ShoppingListBundle\Async\MessageFactory
@@ -720,7 +720,7 @@ services:
         arguments:
             - '@translator'
             - '@security.authorization_checker'
-            - "@security.acl.voter.basic_permissions"
+            - '@security.acl.voter.basic_permissions'
             - '@oro_security.token_accessor'
 
     oro_shopping_list.datagrid.mass_action.handler.delete:
@@ -729,3 +729,19 @@ services:
         public: true
         calls:
             - [setShoppingListTotalManager, ['@oro_shopping_list.manager.shopping_list_total']]
+
+    oro_shopping_list.event_listener.flush_default_shopping_list_cache:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\FlushDefaultShoppingListCache
+        arguments:
+            - '@oro_shopping_list.current_shopping_list_storage'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, event: postRemove }
+
+    oro_shopping_list.datagrid.extension.frontend_customer_user_shopping_list_grid_visibility:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendLineItemsGridVisibilityExtension'
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
+        tags:
+            - { name: oro_datagrid.extension }

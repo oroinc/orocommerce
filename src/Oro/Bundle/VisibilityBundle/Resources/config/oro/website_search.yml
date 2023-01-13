@@ -3,12 +3,16 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: is_visible_by_default
             type: integer
+            group: visibility
         -
             name: visibility_anonymous
             type: integer
+            group: visibility
         -
             name: visibility_new
             type: integer
+            group: visibility
         -
             name: visibility_customer.CUSTOMER_ID
             type: integer
+            group: visibility

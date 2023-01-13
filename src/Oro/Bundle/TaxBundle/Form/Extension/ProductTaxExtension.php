@@ -10,20 +10,22 @@ use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * Stands for handling tax code for Product.
+ * Handles tax code for Product.
  */
 class ProductTaxExtension extends AbstractTaxExtension
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];
     }
 
-    /** {@inheritdoc} */
-    protected function addTaxCodeField(FormBuilderInterface $builder)
+    /**
+     * {@inheritDoc}
+     */
+    protected function addTaxCodeField(FormBuilderInterface $builder): void
     {
         $builder
             ->add(
@@ -40,21 +42,21 @@ class ProductTaxExtension extends AbstractTaxExtension
     }
 
     /**
-     * @param Product $product
-     * @param ProductTaxCode|AbstractTaxCode $taxCode
-     * @param ProductTaxCode|AbstractTaxCode $taxCodeNew
+     * {@inheritDoc}
      */
-    protected function handleTaxCode($product, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
+    protected function handleTaxCode(object $entity, ?AbstractTaxCode $taxCode, ?AbstractTaxCode $taxCodeNew): void
     {
-        $product->setTaxCode($taxCodeNew);
+        /** @var Product $entity */
+        /** @var ProductTaxCode|null $taxCodeNew */
+        $entity->setTaxCode($taxCodeNew);
     }
 
     /**
-     * @param Product $product
-     * @return ProductTaxCode|null
+     * {@inheritDoc}
      */
-    protected function getTaxCode($product)
+    protected function getTaxCode(object $entity): ?AbstractTaxCode
     {
-        return $product->getTaxCode();
+        /** @var Product $entity */
+        return $entity->getTaxCode();
     }
 }

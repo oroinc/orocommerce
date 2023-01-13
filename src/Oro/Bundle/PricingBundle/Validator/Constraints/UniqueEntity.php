@@ -4,25 +4,14 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * This constraint is used to check whether a product does not have duplication of product prices.
+ */
 class UniqueEntity extends Constraint
 {
-    /**
-     * @var string
-     */
-    public $message = 'oro.pricing.validators.product_price.unique_entity.message';
+    public string $message = 'oro.pricing.validators.product_price.unique_entity.message';
 
-    /**
-     * @var array
-     */
-    public $fields;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validatedBy()
-    {
-        return 'oro_pricing_unique_entity_validator';
-    }
+    public array $fields;
 
     /**
      * {@inheritdoc}

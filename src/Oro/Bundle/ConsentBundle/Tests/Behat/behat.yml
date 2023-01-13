@@ -51,7 +51,7 @@ oro_behat_extension:
     Unaccepted Consent:
       selector: '.consent-list__item.unaccepted'
     Required Consent Checkbox:
-      selector: '.consent-item.required .custom-checkbox__input'
+      selector: '.consent-item.required input[type=checkbox]'
     Required Consent:
       selector: '.consent-item.required'
     Optional Consent:

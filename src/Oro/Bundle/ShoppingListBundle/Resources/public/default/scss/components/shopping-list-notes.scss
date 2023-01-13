@@ -1,0 +1,35 @@
+/* @theme: default; */
+
+.shopping-list-notes {
+    position: relative;
+
+    margin: $shopping-lists-notes-offset;
+
+    &--no-offset {
+        margin: 0;
+    }
+
+    &__title {
+        font-weight: $shopping-lists-notes-title-font-w;
+        margin-bottom: $shopping-lists-notes-title-offset;
+    }
+
+    &__content {
+        font-size: $shopping-lists-notes-font-size;
+        font-style: $shopping-lists-notes-font-s;
+
+        &--limited {
+            position: relative;
+
+            max-height: ($shopping-lists-notes-font-size * $shopping-lists-notes-line-height) * 3;
+
+            overflow: hidden;
+        }
+    }
+
+    .shopping-lists-modify {
+        margin-top: $offset-y-m;
+
+        text-align: right;
+    }
+}

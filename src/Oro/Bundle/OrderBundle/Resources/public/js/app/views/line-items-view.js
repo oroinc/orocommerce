@@ -51,7 +51,9 @@ define(function(require) {
                 prices: this.options.tierPrices
             }).done(this.handleLayoutInit.bind(this));
 
-            mediator.on('totals:update', this.updateValidators, this);
+            this.listenTo(mediator, {
+                'totals:update': this.updateValidators
+            });
         },
 
         /**
@@ -92,18 +94,6 @@ define(function(require) {
                 validator.element($subtotal);
                 validator.element($total);
             }
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('totals:update', this.updateValidators, this);
-            LineItemsView.__super__.dispose.call(this);
         }
     });
 

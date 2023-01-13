@@ -17,49 +17,32 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxationSettingsProvider;
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxationSettingsProvider;
 
-    /**
-     * @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxProvider;
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxProvider;
 
-    /**
-     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $totalProvider;
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $totalProvider;
 
-    /**
-     * @var OrderLineItemTypeExtension
-     */
-    protected $extension;
+    /** @var OrderLineItemTypeExtension */
+    private $extension;
 
     /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $sectionProvider;
+    private $sectionProvider;
 
     protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
+        $this->totalProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->sectionProvider = $this->createMock(SectionProvider::class);
+
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
         $taxProviderRegistry->expects($this->any())
             ->method('getEnabledProvider')
             ->willReturn($this->taxProvider);
-
-        $this->taxationSettingsProvider = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->totalProvider = $this->getMockBuilder(
-            'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->sectionProvider = $this->createMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
 
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
@@ -67,11 +50,6 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
             $this->totalProvider,
             $this->sectionProvider
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->doctrineHelper);
     }
 
     public function testGetExtendedTypes()
@@ -85,9 +63,10 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('isEnabled')
             ->willReturn(false);
 
-        $this->taxProvider->expects($this->never())->method('getTax');
+        $this->taxProvider->expects($this->never())
+            ->method('getTax');
 
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $this->extension->finishView($view, $form, []);
     }
@@ -98,10 +77,13 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('isEnabled')
             ->willReturn(true);
 
-        $this->taxProvider->expects($this->never())->method('getTax');
+        $this->taxProvider->expects($this->never())
+            ->method('getTax');
 
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('getData')->willReturn(null);
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('getData')
+            ->willReturn(null);
         $view = new FormView();
         $this->extension->finishView($view, $form, []);
     }
@@ -119,8 +101,10 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getTax')
             ->willReturn($result);
 
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('getData')->willReturn(new \stdClass());
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('getData')
+            ->willReturn(new \stdClass());
         $view = new FormView();
         $this->extension->finishView($view, $form, []);
 
@@ -130,35 +114,33 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildView()
     {
-        $this->sectionProvider->expects($this->once())->method('addSections')
+        $this->sectionProvider->expects($this->once())
+            ->method('addSections')
             ->with(
-                $this->logicalAnd(
-                    $this->isType('string'),
-                    $this->equalTo(OrderLineItemType::class)
-                ),
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->arrayHasKey('taxes')
-                )
+                $this->logicalAnd($this->isType('string'), $this->equalTo(OrderLineItemType::class)),
+                $this->logicalAnd($this->isType('array'), $this->arrayHasKey('taxes'))
             );
 
-        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $this->extension->buildView($view, $form, []);
     }
 
     public function testBuildViewTaxDisabled()
     {
-        $this->sectionProvider->expects($this->never())->method($this->anything());
+        $this->sectionProvider->expects($this->never())
+            ->method($this->anything());
 
-        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(false);
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(false);
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $this->extension->buildView($view, $form, []);
     }
 }

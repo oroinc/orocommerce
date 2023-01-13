@@ -71,12 +71,6 @@
     }
 
     &pn-devices-c {
-        opacity: 0;
-
-        &.init {
-            opacity: 1;
-        }
-
         .gjs-pn-btn {
             font-family: $fa-font-family;
 

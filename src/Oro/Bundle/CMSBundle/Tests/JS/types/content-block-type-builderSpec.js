@@ -1,24 +1,29 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import ContentBlockTypeBuilder from 'orocms/js/app/grapesjs/type-builders/content-block-type-builder';
+import ContentBlockTypeBuilder from 'orocms/js/app/grapesjs/types/content-block-type';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/content-block-type', () => {
     let editor;
     let contentBlockTypeBuilder;
     let mockElement;
 
-    beforeEach(() => {
+    beforeEach(done => {
         mockElement = document.createElement('DIV');
         mockElement.classList.add('content-block');
 
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
@@ -54,9 +59,7 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
 
         it('check base model extend', () => {
             expect(contentBlockTypeBuilder.Model.isComponent).toBeDefined();
-            expect(contentBlockTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: contentBlockTypeBuilder.componentType
-            });
+            expect(contentBlockTypeBuilder.Model.isComponent(mockElement)).toBe(true);
             expect(contentBlockTypeBuilder.Model.componentType).toEqual(contentBlockTypeBuilder.componentType);
 
             expect(contentBlockTypeBuilder.Model.prototype.defaults.tagName).toEqual('div');
@@ -64,17 +67,13 @@ describe('orocms/js/app/grapesjs/type-builders/content-block-type-builder', () =
                 ['content-block', 'content-placeholder']
             );
             expect(contentBlockTypeBuilder.Model.prototype.defaults.contentBlock).toBeNull();
-            expect(contentBlockTypeBuilder.Model.prototype.defaults.droppable).toBeFalsy();
+            expect(contentBlockTypeBuilder.Model.prototype.defaults.droppable).toBe(false);
 
             expect(contentBlockTypeBuilder.Model.prototype.editor).toEqual(editor);
         });
 
         it('check editor commands defined', () => {
             expect(contentBlockTypeBuilder.editor.Commands.get('content-block-settings')).toBeDefined();
-        });
-
-        it('check editor events defined', () => {
-            expect(contentBlockTypeBuilder.editor.editor._events['canvas:drop']).toBeDefined();
         });
 
         describe('test type in editor scope', () => {

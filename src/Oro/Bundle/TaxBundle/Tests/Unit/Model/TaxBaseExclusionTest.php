@@ -14,26 +14,23 @@ class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
     {
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
-        $result = $this->createModel($data);
+        $exclusion = new TaxBaseExclusion($data);
 
         foreach ($data as $key => $value) {
-            $this->assertEquals($value, $result->offsetGet($key));
-            $this->assertEquals($value, $propertyAccessor->getValue($result, $key));
+            $this->assertEquals($value, $exclusion->offsetGet($key));
+            $this->assertEquals($value, $propertyAccessor->getValue($exclusion, $key));
         }
 
         foreach ($replaceWith as $key => $value) {
-            $propertyAccessor->setValue($result, $key, $value);
-            $this->assertEquals($value, $result->offsetGet($key));
-            $this->assertEquals($value, $propertyAccessor->getValue($result, $key));
+            $propertyAccessor->setValue($exclusion, $key, $value);
+            $this->assertEquals($value, $exclusion->offsetGet($key));
+            $this->assertEquals($value, $propertyAccessor->getValue($exclusion, $key));
         }
 
-        $this->assertNull($result->getRegionText());
+        $this->assertNull($exclusion->getRegionText());
     }
 
-    /**
-     * @return array
-     */
-    public function propertiesDataProvider()
+    public function propertiesDataProvider(): array
     {
         return [
             [['country' => 'US'], ['country' => 'CA']],
@@ -47,15 +44,7 @@ class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Option values is "val", one of "destination,shipping_origin" allowed');
 
-        $this->createModel()->setOption('val');
-    }
-
-    /**
-     * @param array $data
-     * @return TaxBaseExclusion
-     */
-    protected function createModel(array $data = [])
-    {
-        return new TaxBaseExclusion($data);
+        $exclusion = new TaxBaseExclusion();
+        $exclusion->setOption('val');
     }
 }

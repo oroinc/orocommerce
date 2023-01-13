@@ -23,47 +23,40 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    private ContainerInterface $container;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            __NAMESPACE__ . '\LoadChannelData'
-        ];
+        return [LoadChannelData::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $entityBase = new ShippingMethodsConfigsRule();
-        $ruleBase = new Rule();
-
         foreach ($this->getShippingMethodsConfigsRuleData() as $reference => $data) {
-            $rule = clone $ruleBase;
-            $rule->setName($reference)
-                ->setEnabled($data['rule']['enabled'])
-                ->setSortOrder($data['rule']['sortOrder'])
-                ->setExpression($data['rule']['expression']);
+            $rule = new Rule();
+            $rule->setName($reference);
+            $rule->setEnabled($data['rule']['enabled']);
+            $rule->setSortOrder($data['rule']['sortOrder']);
+            $rule->setExpression($data['rule']['expression']);
 
-            $entity = clone $entityBase;
-            $entity->setRule($rule)
-                ->setCurrency($data['currency']);
+            $entity = new ShippingMethodsConfigsRule();
+            $entity->setRule($rule);
+            $entity->setCurrency($data['currency']);
+            $manager->persist($entity);
 
             $this->setDestinations($entity, $manager, $data);
 
@@ -71,60 +64,44 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
             $shippingMethods = $this->container->get('oro_shipping.shipping_method_provider')->getShippingMethods();
             $this->setShippingMethods($entity, $manager, $shippingMethods);
 
-            $manager->persist($entity);
-
             $this->setReference($reference, $entity);
         }
 
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
-    protected function getShippingMethodsConfigsRuleData()
+    private function getShippingMethodsConfigsRuleData(): array
     {
         return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules.yml'));
     }
 
-    /**
-     * @param ShippingMethodsConfigsRule $entity
-     * @param ObjectManager $manager
-     * @param array $data
-     */
-    protected function setDestinations(ShippingMethodsConfigsRule $entity, ObjectManager $manager, $data)
+    private function setDestinations(ShippingMethodsConfigsRule $entity, ObjectManager $manager, array $data): void
     {
-        $shippingMethodsConfigsRuleDestinationBase = new ShippingMethodsConfigsRuleDestination();
-        $destinationPostalCodeBase = new ShippingMethodsConfigsRuleDestinationPostalCode();
-
-        if (!array_key_exists('destinations', $data)) {
+        if (!\array_key_exists('destinations', $data)) {
             $data['destinations'] = [];
         }
         foreach ($data['destinations'] as $destination) {
             /** @var Country $country */
-            $country = $manager
-                ->getRepository('OroAddressBundle:Country')
+            $country = $manager->getRepository(Country::class)
                 ->findOneBy(['iso2Code' => $destination['country']]);
 
-            $shippingMethodsConfigsRuleDestination = clone $shippingMethodsConfigsRuleDestinationBase;
-            $shippingMethodsConfigsRuleDestination
-                ->setMethodConfigsRule($entity)
-                ->setCountry($country);
+            $shippingMethodsConfigsRuleDestination = new ShippingMethodsConfigsRuleDestination();
+            $shippingMethodsConfigsRuleDestination->setMethodConfigsRule($entity);
+            $shippingMethodsConfigsRuleDestination->setCountry($country);
 
-            if (array_key_exists('region', $destination)) {
+            if (\array_key_exists('region', $destination)) {
                 /** @var Region $region */
-                $region = $manager
-                    ->getRepository('OroAddressBundle:Region')
+                $region = $manager->getRepository(Region::class)
                     ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
                 $shippingMethodsConfigsRuleDestination->setRegion($region);
             }
 
-            if (array_key_exists('postalCodes', $destination)) {
+            if (\array_key_exists('postalCodes', $destination)) {
                 /** @var array $postalCode */
                 foreach ($destination['postalCodes'] as $postalCode) {
-                    $destinationPostalCode = clone $destinationPostalCodeBase;
-                    $destinationPostalCode->setName($postalCode['name'])
-                        ->setDestination($shippingMethodsConfigsRuleDestination);
+                    $destinationPostalCode = new ShippingMethodsConfigsRuleDestinationPostalCode();
+                    $destinationPostalCode->setName($postalCode['name']);
+                    $destinationPostalCode->setDestination($shippingMethodsConfigsRuleDestination);
 
                     $shippingMethodsConfigsRuleDestination->addPostalCode($destinationPostalCode);
                 }
@@ -135,24 +112,20 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param ShippingMethodsConfigsRule $entity
-     * @param ObjectManager $manager
-     * @param array $shippingMethods
-     */
-    protected function setShippingMethods(ShippingMethodsConfigsRule $entity, ObjectManager $manager, $shippingMethods)
-    {
+    private function setShippingMethods(
+        ShippingMethodsConfigsRule $entity,
+        ObjectManager $manager,
+        array $shippingMethods
+    ): void {
         foreach ($shippingMethods as $shippingMethod) {
             if ($shippingMethod instanceof UPSShippingMethod) {
                 $methodConfig = new ShippingMethodConfig();
-                $methodConfig
-                    ->setMethodConfigsRule($entity)
-                    ->setMethod($shippingMethod->getIdentifier());
+                $methodConfig->setMethodConfigsRule($entity);
+                $methodConfig->setMethod($shippingMethod->getIdentifier());
 
-                $typeConfigBase = new ShippingMethodTypeConfig();
                 /** @var UPSShippingMethodType $shippingMethodType */
                 foreach ($shippingMethod->getTypes() as $shippingMethodType) {
-                    $typeConfig = clone $typeConfigBase;
+                    $typeConfig = new ShippingMethodTypeConfig();
                     $typeConfig->setType($shippingMethodType->getIdentifier());
                     $typeConfig->setEnabled(true);
                     $methodConfig->addTypeConfig($typeConfig);

@@ -6,6 +6,7 @@ import {
     escapeWrapper,
     separateContent
 } from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
+import {unescapeTwigExpression} from '../../utils';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import $ from 'jquery';
@@ -13,7 +14,6 @@ import ApiAccessor from 'oroui/js/tools/api-accessor';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 
 const REGEXP_TWIG_TAGS = /\{\{([\w\s\"\'\_\-\,\&\#\;\(\)]+)\}\}/gi;
-const REGEXP_TWIG_TAGS_ESC = /([\{|\%|\#]{2})([\w\W]+)([\%|\}|\#]{2})/gi;
 
 function messageCheck(str) {
     const REGEXP_LINK_DOC = /<a\b[^>]* href=\"[\w\d\/\:\#\.]+\" target=\"_blank+\">(.*?)<\/a>/gi;
@@ -44,7 +44,8 @@ const ImportDialogView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
         'editor', 'importViewerOptions',
         'modalImportLabel', 'modalImportTitle', 'modalImportButton',
-        'validateApiProps', 'entityClass', 'fieldName', 'commandId'
+        'validateApiProps', 'entityClass', 'fieldName', 'commandId',
+        'importCallback', 'modalExportButton'
     ]),
 
     /**
@@ -90,6 +91,11 @@ const ImportDialogView = BaseView.extend({
      * @property {String}
      */
     modalImportButton: __('oro.cms.wysiwyg.import.button'),
+
+    /**
+     * @property {String}
+     */
+    modalExportButton: __('oro.cms.wysiwyg.import.export_button'),
 
     /**
      * @property {Object}
@@ -147,6 +153,8 @@ const ImportDialogView = BaseView.extend({
 
     VALIDATE_TIMEOUT: 1000,
 
+    renderProps: {},
+
     /**
      * @constructor
      * @param options
@@ -177,62 +185,59 @@ const ImportDialogView = BaseView.extend({
      */
     getTemplateData() {
         return {
-            modalImportButton: this.modalImportButton
+            modalImportButton: this.modalImportButton,
+            modalExportButton: this.modalExportButton
         };
     },
 
     /**
      * @inheritdoc
      */
-    render({content} = {}) {
+    render({content, dialogOptions = {}, renderProps = {}} = {}) {
+        this.renderProps = renderProps;
         ImportDialogView.__super__.render.call(this);
 
-        this.content = (content ? content : this.getImportContent())
-            .replace(REGEXP_TWIG_TAGS_ESC, match => {
-                return _.unescape(match).replace(/&#039;/gi, `'`);
-            });
-
-        this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
-        this.viewerEditor = this.codeViewer.editor;
-
-        this.codeViewer.setContent(stripRestrictedAttrs(this.content));
+        this.content = unescapeTwigExpression(content ?? this.getImportContent());
 
         this.importButton = this.$el.find('[data-role="import"]');
+        this.exportButton = this.$el.find('[data-role="export"]');
 
         this.dialog = new DialogWidget({
-            autoRender: true,
+            autoRender: false,
             el: this.el,
             title: this.modalImportTitle,
-            loadingElement: this.editor.getEl(),
+            incrementalPosition: false,
             dialogOptions: {
                 allowMaximize: true,
                 autoResize: false,
                 resizable: false,
                 modal: true,
-                height: 400,
-                minHeight: 435,
+                height: 495,
                 minWidth: 856,
-                appendTo: this.editor.getEl(),
                 dialogClass: 'ui-dialog--import-template',
                 close: () => {
                     this.editor.Commands.stop(this.commandId);
                 }
-            }
+            },
+            ...dialogOptions
         });
-
-        this.viewerEditor.refresh();
-        this.dialog.widget.on('resize', () => {
-            this.adjustHeight();
-        });
-
-        this.viewerEditor.refresh();
-        this.adjustHeight();
-        this.checkContent(this.viewerEditor);
 
         this.subview('loadingMask', new LoadingMaskView({
             container: this.dialog.loadingElement
         }));
 
+        this.dialog.once('renderComplete', this.initCodeEditor.bind(this));
+        this.dialog.render();
+    },
+
+    initCodeEditor() {
+        this.codeViewer.init(this.$el.find('[data-role="code"]')[0]);
+        this.viewerEditor = this.codeViewer.editor;
+
+        this.codeViewer.setContent(stripRestrictedAttrs(this.content));
+        this.viewerEditor.refresh();
+        this.adjustHeight();
+        this.checkContent(this.viewerEditor);
         this.bindEvents();
     },
 
@@ -244,12 +249,14 @@ const ImportDialogView = BaseView.extend({
         this.viewerEditor.on('blur', this.checkContentWithDelay);
         this.importButton.on('mouseover', this.checkContent.bind(this, this.viewerEditor));
         this.importButton.on('click', this.onImportCode.bind(this));
+        this.exportButton.on('click', this.onExportCode.bind(this));
+        this.dialog.widget.on('resize', this.adjustHeight.bind(this));
     },
 
     /**
      * Unbinding event listeners
      */
-    unbindEvents: function() {
+    unbindEvents() {
         this.viewerEditor.off();
         this.importButton.off();
     },
@@ -257,7 +264,7 @@ const ImportDialogView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    dispose: function() {
+    dispose() {
         if (this.disposed) {
             return;
         }
@@ -375,9 +382,12 @@ const ImportDialogView = BaseView.extend({
         this.disabled = true;
         this.prevContent = content;
         this.importButton.attr('disabled', this.disabled);
-        const errors = this.editor.CodeValidator.validate(content, {
-            allowLock: false
-        });
+        const errors = this.editor.CodeValidator.validate(
+            content,
+            this.renderProps.codeValidationOptions ?? {
+                allowLock: false
+            }
+        );
 
         if (errors.length) {
             return {
@@ -394,10 +404,13 @@ const ImportDialogView = BaseView.extend({
         }
 
         return this.validateApiAccessor.send({}, {
-            content: content.replace(/<style>(.|\n)*?<\/style>/g, ''),
+            content: this.renderProps.noEscapeStyleTag ? content : content.replace(/<style>(.|\n)*?<\/style>/g, ''),
             className: this.entityClass,
             fieldName: this.fieldName
         }).then(({success, errors}) => {
+            if (success) {
+                this.editor.CodeValidator.restrictFaild = false;
+            }
             return {success, errors: _.sortBy(errors, 'line')};
         });
     },
@@ -439,6 +452,13 @@ const ImportDialogView = BaseView.extend({
         this.adjustHeight();
     },
 
+    onExportCode() {
+        const {Commands} = this.editor;
+        if (Commands.has('gjs-export-zip')) {
+            Commands.run('gjs-export-zip');
+        }
+    },
+
     /**
      * Handle import content
      */
@@ -453,17 +473,26 @@ const ImportDialogView = BaseView.extend({
 
         if (!this.disabled) {
             const {html, css} = separateContent(content);
-
-            editor.CssComposer.clear();
-            editor.selectRemove(editor.getSelectedAll());
-            editor.setComponents(escapeWrapper(html), {
-                fromImport: true
+            const callback = this.renderProps.importCallback ?? this.importCallback;
+            callback.call(this, {
+                editor,
+                html,
+                css,
+                content
             });
-            editor.setStyle(editor.getPureStyleString(css));
-
-            this.closeDialog();
-            this.trigger('import:after', escapeWrapper(content));
         }
+    },
+
+    importCallback({editor, html, css, content}) {
+        editor.CssComposer.clear();
+        editor.selectRemove(editor.getSelectedAll());
+        editor.setComponents(escapeWrapper(html), {
+            fromImport: true
+        });
+        editor.setStyle(editor.getPureStyleString(css));
+
+        this.closeDialog();
+        this.trigger('import:after', escapeWrapper(content));
     },
 
     /**

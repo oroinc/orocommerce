@@ -1,4 +1,5 @@
 @ticket-BAP-18091
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroApplicationBundle:DisplayInGridEntities.yml
 @regression
 

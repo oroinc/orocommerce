@@ -140,6 +140,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->tagHelper->expects($this->any())
             ->method('stripTags')
             ->willReturnCallback(function ($value) {
+                self::assertNotSame('', $value, 'The value for stripTags() must not be empty string.');
                 return trim(strip_tags($value));
             });
         $this->tagHelper->expects($this->any())
@@ -200,26 +201,32 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 'indexData' => [
                     [1, 'sku', 'SKU-01', false],
                 ],
-                'expected' => [1 => ['text' => ['sku' => 'SKU-01']]],
+                'expected' => [1 => ['text' => ['sku' => 'SKU-01'], 'integer' => ['system_entity_id' => 1]]],
             ],
             'simple field with duplicates' => [
                 'entityConfig' => ['fields' => [['name' => 'description', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
                     [1, 'description', 'Handheld Flashlight Handheld', false],
                 ],
-                'expected' => [1 => ['text' => ['description' => 'Handheld Flashlight Handheld']]],
+                'expected' => [1 => [
+                    'text' => ['description' => 'Handheld Flashlight Handheld'],
+                    'integer' => ['system_entity_id' => 1],
+                ]],
             ],
             'simple field with html' => [
                 'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
                     [1, 'title', '<p>SKU-01</p>', true],
                 ],
-                'expected' => [1 => ['text' => ['title' => '<p>SKU-01</p>']]],
+                'expected' => [1 => [
+                    'text' => ['title' => '<p>SKU-01</p>'],
+                    'integer' => ['system_entity_id' => 1],
+                ]],
             ],
             'simple field with integer' => [
                 'entityConfig' => ['fields' => [['name' => 'qty', 'type' => Query::TYPE_INTEGER]]],
                 'indexData' => [[1, 'qty', 0, true]],
-                'expected' => [1 => ['integer' => ['qty' => 0]]],
+                'expected' => [1 => ['integer' => ['qty' => 0, 'system_entity_id' => 1]]],
             ],
             'placeholder field' => [
                 'entityConfig' => [
@@ -245,6 +252,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                             'all_text_5' => 'SKU-01',
                         ],
                         'integer' => [
+                            'system_entity_id' => 1,
                             'custom_42' => 42,
                         ]
                     ],
@@ -278,6 +286,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                             'descr_5' => '<p>en_US</p>',
                             'descr_6' => '<p>en_GB</p>',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -293,7 +304,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 'indexData' => [[1, 'qty', 1, true]],
                 'expected' => [
                     1 => [
-                        'integer' => ['qty' => 1],
+                        'integer' => ['qty' => 1, 'system_entity_id' => 1],
                     ],
                 ],
             ],
@@ -331,6 +342,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                             'descr_5' => '<p>en_US</p>',
                             'descr_6' => '<p>en_GB</p>',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -359,6 +373,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     1 => [
                         'integer' => [
+                            'system_entity_id' => 1,
                             'integer_1' => 1
                         ],
                         'datetime' => [
@@ -394,6 +409,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                             'description' => 'The quick brown fox jumps over the lazy dog',
                             'all_text_5' => 'The fox quick brown jumps over the lazy dog',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -440,6 +458,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                                 'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                             'all_text_5' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -467,6 +488,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                             'color' => ['red', 'green', 'blue'],
                             'all_text_5' => 'The fox',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -495,6 +519,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                             'color' => ['Red', 'Green', 'Blue', 'White', 'Black'],
                             'all_text_5' => 'The fox Red Green Blue White Black',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],

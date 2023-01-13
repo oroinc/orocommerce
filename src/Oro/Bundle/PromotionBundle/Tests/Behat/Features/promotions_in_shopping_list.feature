@@ -44,7 +44,6 @@ Feature: Promotions in Shopping List
     And I click Edit product_attribute_family_code in grid
     And set Attribute Groups with:
       | Label         | Visible | Attributes |
-      | system  group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices] |
       | Size group    | true    | [Size]     |
     And I save form
     Then I should see "Successfully updated" flash message

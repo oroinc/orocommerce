@@ -176,7 +176,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         }
 
         // Add marker `autocomplete_record_id` to be able to determine query context in listeners
-        $searchQuery->addSelect('integer.product_id as autocomplete_record_id');
+        $searchQuery->addSelect('integer.system_entity_id as autocomplete_record_id');
         $result = $searchQuery->getResult();
 
         return $result->getElements();

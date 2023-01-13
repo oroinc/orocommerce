@@ -6,7 +6,7 @@
 
 {% block order_body_column_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " grid__column grid__column--6 grid__column--no-gutters-l"
+        '~class': " grid-col-6 grid-col-mobile-landscape-12"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -79,7 +79,7 @@
 {% endblock %}
 
 {% block order_body_block_container_widget %}
-    <div class="grid__row">
+    <div class="grid">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -120,6 +120,21 @@
     {% else %}
         {% set text = 'oro.ui.empty'|trans %}
     {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _order_sub_orders_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% set text %}
+        {% if text is not empty %}
+            {% for suborder in text %}
+                {{ UI.entityViewLink(suborder, suborder.identifier, 'oro_order_frontend_view') }}{%- if not loop.last -%},{%- endif -%}
+            {% endfor %}
+        {% else %}
+            {{ 'oro.ui.empty'|trans }}
+        {% endif %}
+    {% endset %}
 
     {{ parent_block_widget(block) }}
 {% endblock %}

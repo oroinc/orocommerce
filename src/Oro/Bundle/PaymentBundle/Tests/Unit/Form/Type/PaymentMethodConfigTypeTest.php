@@ -11,25 +11,20 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var PaymentMethodConfigType
-     */
-    protected $formType;
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodProvider;
 
-    /**
-     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentMethodProvider;
+    /** @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodViewProvider;
 
-    /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentMethodViewProvider;
+    /** @var PaymentMethodConfigType */
+    private $formType;
 
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->paymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
+
         $this->formType = new PaymentMethodConfigType(
             $this->paymentMethodProvider,
             $this->paymentMethodViewProvider
@@ -45,10 +40,8 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $data
      */
-    public function testSubmit($data)
+    public function testSubmit(PaymentMethodConfig $data)
     {
         $form = $this->factory->create(PaymentMethodConfigType::class, $data);
 
@@ -68,23 +61,18 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
         $this->assertEquals($paymentMethodConfig, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [new PaymentMethodConfig()],
-            [
-                (new PaymentMethodConfig())->setType('PP')->setOptions(['client_id' => 3])
-            ],
+            [(new PaymentMethodConfig())->setType('PP')->setOptions(['client_id' => 3])],
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->formType], [])

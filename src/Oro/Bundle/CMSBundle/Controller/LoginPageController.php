@@ -4,7 +4,7 @@ namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -22,10 +22,8 @@ class LoginPageController extends AbstractController
      * @Route("/", name="oro_cms_loginpage_index")
      * @Template("@OroCMS/LoginPage/index.html.twig")
      * @AclAncestor("oro_cms_loginpage_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => LoginPage::class
@@ -41,11 +39,8 @@ class LoginPageController extends AbstractController
      *      class="OroCMSBundle:LoginPage",
      *      permission="VIEW"
      * )
-     *
-     * @param LoginPage $loginPage
-     * @return array
      */
-    public function viewAction(LoginPage $loginPage)
+    public function viewAction(LoginPage $loginPage): array
     {
         return [
             'entity' => $loginPage,
@@ -62,10 +57,8 @@ class LoginPageController extends AbstractController
      *      class="OroCMSBundle:LoginPage",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new LoginPage());
     }
@@ -79,42 +72,23 @@ class LoginPageController extends AbstractController
      *      class="OroCMSBundle:LoginPage",
      *      permission="EDIT"
      * )
-     *
-     * @param LoginPage $loginPage
-     * @return array
      */
-    public function updateAction(LoginPage $loginPage)
+    public function updateAction(LoginPage $loginPage): array|RedirectResponse
     {
         return $this->update($loginPage);
     }
 
-    /**
-     * @param LoginPage $loginPage
-     * @return array|RedirectResponse
-     */
-    protected function update(LoginPage $loginPage)
+    protected function update(LoginPage $loginPage): array|RedirectResponse
     {
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $loginPage,
             $this->createForm(LoginPageType::class, $loginPage),
-            function (LoginPage $loginPage) {
-                return [
-                    'route' => 'oro_cms_loginpage_update',
-                    'parameters' => ['id' => $loginPage->getId()]
-                ];
-            },
-            function (LoginPage $loginPage) {
-                return [
-                    'route' => 'oro_cms_loginpage_view',
-                    'parameters' => ['id' => $loginPage->getId()]
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.cms.loginpage.save.message')
         );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
@@ -122,7 +96,7 @@ class LoginPageController extends AbstractController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                UpdateHandler::class,
+                UpdateHandlerFacade::class
             ]
         );
     }

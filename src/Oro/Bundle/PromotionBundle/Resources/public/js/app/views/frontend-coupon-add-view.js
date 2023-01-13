@@ -26,7 +26,6 @@ define(function(require) {
                 couponCodeSelector: null,
                 couponApplySelector: null,
                 couponRemoveSelector: null,
-                couponTriggerSelector: null,
                 messagesContainer: null
             }
         },
@@ -70,7 +69,7 @@ define(function(require) {
             events['keydown ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
             events['change ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
             events['click ' + this.options.selectors.couponRemoveSelector] = 'removeCoupon';
-            events['click ' + this.options.selectors.couponTriggerSelector] = 'focusCouponField';
+            events['shown.bs.collapse'] = 'focusCouponField';
 
             return events;
         },

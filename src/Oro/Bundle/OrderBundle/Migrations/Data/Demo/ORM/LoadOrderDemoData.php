@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
@@ -17,9 +18,11 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
 use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
@@ -28,8 +31,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loading order demo data.
+ */
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
+    use OrderLineItemsDemoDataTrait;
+
     /** @var array */
     protected $countries = [];
 
@@ -65,6 +73,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             LoadPriceListDemoData::class,
             LoadShoppingListDemoData::class,
             LoadTaxConfigurationDemoData::class,
+            LoadProductDemoData::class,
         ];
     }
 
@@ -148,6 +157,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
                 ->setTotalObject($total)
+                ->addLineItem($this->getOrderLineItem($manager))
                 ->setSubtotalObject($subtotal)
                 ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager));
 
@@ -161,7 +171,6 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             if (!empty($row['customerNotes'])) {
                 $order->setCustomerNotes($row['customerNotes']);
             }
-
             $manager->persist($order);
         }
 
@@ -170,12 +179,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $manager->flush();
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param array $address
-     * @return OrderAddress
-     */
-    protected function createOrderAddress(EntityManager $manager, array $address)
+    protected function createOrderAddress(EntityManagerInterface $manager, array $address): OrderAddress
     {
         $orderAddress = new OrderAddress();
         $orderAddress
@@ -216,12 +220,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => $isGuest]);
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $iso2Code
-     * @return Country|null
-     */
-    protected function getCountryByIso2Code(EntityManager $manager, $iso2Code)
+    protected function getCountryByIso2Code(EntityManagerInterface $manager, string $iso2Code): ?Country
     {
         if (!array_key_exists($iso2Code, $this->countries)) {
             $this->countries[$iso2Code] = $manager->getReference('OroAddressBundle:Country', $iso2Code);
@@ -230,12 +229,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->countries[$iso2Code];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return Region|null
-     */
-    protected function getRegionByIso2Code(EntityManager $manager, $code)
+    protected function getRegionByIso2Code(EntityManagerInterface $manager, string $code): ?Region
     {
         if (!array_key_exists($code, $this->regions)) {
             $this->regions[$code] = $manager->getReference('OroAddressBundle:Region', $code);
@@ -244,12 +238,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->regions[$code];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $label
-     * @return PaymentTerm
-     */
-    protected function getPaymentTerm(EntityManager $manager, $label)
+    protected function getPaymentTerm(EntityManagerInterface $manager, string $label): PaymentTerm
     {
         if (!array_key_exists($label, $this->paymentTerms)) {
             $this->paymentTerms[$label] = $manager->getRepository('OroPaymentTermBundle:PaymentTerm')
@@ -259,12 +248,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->paymentTerms[$label];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return Website
-     */
-    protected function getWebsite(EntityManager $manager, $name)
+    protected function getWebsite(EntityManagerInterface $manager, string $name): Website
     {
         if (!array_key_exists($name, $this->websites)) {
             $this->websites[$name] = $manager->getRepository('OroWebsiteBundle:Website')

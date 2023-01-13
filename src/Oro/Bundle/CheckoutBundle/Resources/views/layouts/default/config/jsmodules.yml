@@ -1,0 +1,21 @@
+dynamic-imports:
+    orocheckout:
+        - orocheckout/js/app/components/payment-additional-data-component
+        - orocheckout/js/app/components/payment-save-for-later-component
+        - orocheckout/js/app/components/payment-transition-button-component
+        - orocheckout/js/app/components/payment-validate-component
+        - orocheckout/js/app/components/shipping-transition-button-component
+        - orocheckout/js/app/components/multi-shipping-transition-button-component
+        - orocheckout/js/app/components/single-page-checkout-component
+        - orocheckout/js/app/components/transition-button-component
+        - orocheckout/js/app/views/address-view
+        - orocheckout/js/app/views/checkout-content-view
+        - orocheckout/js/app/views/checkout-inner-content-view
+        - orocheckout/js/app/views/late-checkout-registration-view
+        - tpl-loader!orocheckout/templates/datagrid/cell/inventory_status.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/item-message.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/item.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/price.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/quantity.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/subtotal.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/unit.html

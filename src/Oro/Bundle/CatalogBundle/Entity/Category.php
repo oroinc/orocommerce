@@ -107,6 +107,7 @@ class Category extends ExtendCategory implements
 
     const MATERIALIZED_PATH_DELIMITER = '_';
     const CATEGORY_PATH_DELIMITER = ' / ';
+    const INDEX_DATA_DELIMITER = '|';
     const FIELD_PARENT_CATEGORY = 'parentCategory';
 
     /**

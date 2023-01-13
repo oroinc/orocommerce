@@ -16,14 +16,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
     /** @var PaymentMethodsConfigsRuleDestinationType */
-    protected $formType;
+    private $formType;
 
     /** @var AddressCountryAndRegionSubscriber */
-    protected $subscriber;
+    private $subscriber;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
@@ -38,16 +35,15 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
 
     public function testBuildFormSubscriber()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
-        $builder = $this->getMockBuilder(FormBuilderInterface::class)->getMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventSubscriber')
             ->with($this->subscriber)
             ->willReturn($builder);
-        $builder->expects(static::any())
+        $builder->expects(self::any())
             ->method('add')
             ->willReturn($builder);
-        $builder->expects(static::once())
+        $builder->expects(self::once())
             ->method('get')
             ->willReturn($builder);
         $this->formType->buildForm($builder, []);
@@ -57,17 +53,15 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
     {
         $form = $this->factory->create(PaymentMethodsConfigsRuleDestinationType::class);
         $options = $form->getConfig()->getOptions();
-        static::assertContainsEquals('data_class', $options);
-        static::assertContainsEquals('region_route', $options);
-        static::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
+        self::assertContainsEquals('data_class', $options);
+        self::assertContainsEquals('region_route', $options);
+        self::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
     }
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param null|PaymentMethodsConfigsRuleDestination $data
      */
-    public function testSubmit($data)
+    public function testSubmit(?PaymentMethodsConfigsRuleDestination $data)
     {
         $form = $this->factory->create(PaymentMethodsConfigsRuleDestinationType::class, $data);
 
@@ -102,10 +96,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
         );
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty default form data' => [
@@ -117,14 +108,11 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
         ];
     }
 
-    /**
-     * @param string $countryCode
-     * @param string $regionCode
-     * @param array $postalCodes
-     * @return PaymentMethodsConfigsRuleDestination
-     */
-    protected function getDestination($countryCode, $regionCode, array $postalCodes)
-    {
+    private function getDestination(
+        string $countryCode,
+        string $regionCode,
+        array $postalCodes
+    ): PaymentMethodsConfigsRuleDestination {
         $country = new Country($countryCode);
 
         $region = new Region($regionCode);
@@ -145,9 +133,9 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         return array_merge(
             parent::getExtensions(),

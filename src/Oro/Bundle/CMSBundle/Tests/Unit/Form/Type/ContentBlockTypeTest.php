@@ -10,11 +10,9 @@ use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
-use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -32,24 +30,12 @@ use Twig\TemplateWrapper;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
-    /** @var DefaultContentVariantScopesResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private $defaultVariantScopesResolver;
+    use WysiwygAwareTestTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    private DefaultContentVariantScopesResolver|\PHPUnit\Framework\MockObject\MockObject $defaultVariantScopesResolver;
+
     protected function getExtensions(): array
     {
-        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
-        $purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
-        $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToUrls')
-            ->willReturnArgument(0);
-        $digitalAssetTwigTagsConverter->expects(self::any())
-            ->method('convertToTwigTags')
-            ->willReturnArgument(0);
-
         return [
             new PreloadedExtension(
                 [
@@ -58,11 +44,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    WYSIWYGType::class => new WYSIWYGType(
-                        $htmlTagProvider,
-                        $purifierScopeProvider,
-                        $digitalAssetTwigTagsConverter
-                    )
+                    WYSIWYGType::class => $this->createWysiwygType()
                 ],
                 []
             ),
@@ -81,12 +63,12 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         $logger = $this->createMock(LoggerInterface::class);
 
         $template = $this->createMock(Template::class);
-        $template->expects($this->any())
+        $template->expects(self::any())
             ->method('render')
             ->willReturn('template');
 
         $twig = $this->createMock(Environment::class);
-        $twig->expects($this->any())
+        $twig->expects(self::any())
             ->method('createTemplate')
             ->willReturn(new TemplateWrapper($twig, $template));
 
@@ -112,15 +94,15 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         return [new ContentBlockType($this->defaultVariantScopesResolver)];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(ContentBlockType::class);
 
-        $this->assertTrue($form->has('alias'));
-        $this->assertTrue($form->has('titles'));
-        $this->assertTrue($form->has('scopes'));
-        $this->assertTrue($form->has('enabled'));
-        $this->assertTrue($form->has('contentVariants'));
+        self::assertTrue($form->has('alias'));
+        self::assertTrue($form->has('titles'));
+        self::assertTrue($form->has('scopes'));
+        self::assertTrue($form->has('enabled'));
+        self::assertTrue($form->has('contentVariants'));
     }
 
     /**
@@ -131,20 +113,20 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         ContentBlock $existingData,
         array $submittedData,
         ?ContentBlock $expectedData
-    ) {
+    ): void {
         $form = $this->factory->create(ContentBlockType::class, $existingData);
 
-        $this->defaultVariantScopesResolver->expects($this->once())
+        $this->defaultVariantScopesResolver->expects(self::once())
             ->method('resolve');
-        $this->assertEquals($existingData, $form->getData());
+        self::assertEquals($existingData, $form->getData());
 
         $form->submit($submittedData);
 
-        $this->assertEquals($isValid, $form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertEquals($isValid, $form->isValid());
+        self::assertTrue($form->isSynchronized());
 
         if ($isValid) {
-            $this->assertEquals($expectedData, $form->getData());
+            self::assertEquals($expectedData, $form->getData());
         }
     }
 

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * If human readable URL is not present in cache, read it from DB and save in cache

@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -21,12 +19,12 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class MenuDataProvider
 {
+    private const PRIORITY = 'priority';
     private const IDENTIFIER = 'identifier';
     private const LABEL = 'label';
     private const URL = 'url';
     private const CHILDREN = 'children';
 
-    private ManagerRegistry $doctrine;
     private LocalizationHelper $localizationHelper;
     private RequestWebContentScopeProvider $requestWebContentScopeProvider;
     private WebCatalogProvider $webCatalogProvider;
@@ -37,14 +35,12 @@ class MenuDataProvider
     private ?ContentNode $rootNode = null;
 
     public function __construct(
-        ManagerRegistry $doctrine,
         WebCatalogProvider $webCatalogProvider,
         ContentNodeTreeResolverInterface $contentNodeTreeResolver,
         LocalizationHelper $localizationHelper,
         RequestWebContentScopeProvider $requestWebContentScopeProvider,
         WebsiteManager $websiteManager
     ) {
-        $this->doctrine = $doctrine;
         $this->webCatalogProvider = $webCatalogProvider;
         $this->contentNodeTreeResolver = $contentNodeTreeResolver;
         $this->localizationHelper = $localizationHelper;
@@ -60,35 +56,66 @@ class MenuDataProvider
 
     public function getItems(int $maxNodesNestedLevel = null) : array
     {
-        $scope = $this->requestWebContentScopeProvider->getScope();
-        if (null !== $scope) {
-            $cacheKey = $this->getCacheKey($scope, $maxNodesNestedLevel);
-            $rootItem = $this->cache->get($cacheKey, function (ItemInterface $item) use ($scope, $maxNodesNestedLevel) {
-                if ($this->cacheLifeTime > 0) {
-                    $item->expiresAfter($this->cacheLifeTime);
+        $scopes = $this->requestWebContentScopeProvider->getScopes();
+        if ($scopes) {
+            $cacheKey = $this->getCacheKey($scopes, $maxNodesNestedLevel);
+            $rootItem = $this->cache->get(
+                $cacheKey,
+                function (ItemInterface $item) use ($scopes, $maxNodesNestedLevel) {
+                    if ($this->cacheLifeTime > 0) {
+                        $item->expiresAfter($this->cacheLifeTime);
+                    }
+                    return $this->getResolvedItems($scopes, $maxNodesNestedLevel);
                 }
-                return $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
-            });
+            );
 
-            if (array_key_exists(self::CHILDREN, $rootItem)) {
-                return $rootItem[self::CHILDREN];
-            }
+            return $rootItem[self::CHILDREN] ?? [];
         }
 
         return [];
     }
 
-    private function getResolvedRootItem(Scope $scope, int $maxNodesNestedLevel = null) : array
+    private function getResolvedItems(array $scopes, int $maxNodesNestedLevel = null): array
+    {
+        $resolvedItems = [];
+        foreach ($scopes as $scope) {
+            $resolvedItems[] = $this->getResolvedRootItem($scope, $maxNodesNestedLevel);
+        }
+
+        $rootItem = $this->mergeItems(array_filter($resolvedItems));
+        if ($rootItem) {
+            $rootItem = reset($rootItem);
+        }
+
+        return $rootItem;
+    }
+
+    private function mergeItems(array $resolvedItems): array
+    {
+        if (!$resolvedItems) {
+            return [];
+        }
+
+        return array_reduce($resolvedItems, function ($accum, $item) {
+            $identifier = $item[self::PRIORITY];
+            if (array_key_exists($identifier, $accum)) {
+                $children = array_merge($accum[$identifier][self::CHILDREN], $item[self::CHILDREN]);
+                $accum[$identifier][self::CHILDREN] = $children;
+            } else {
+                $accum[$identifier] = $item;
+            }
+
+            $accum[$identifier][self::CHILDREN] = $this->mergeItems($accum[$identifier][self::CHILDREN]);
+            ksort($accum);
+
+            return $accum;
+        }, []);
+    }
+
+    private function getResolvedRootItem(Scope $scope, int $maxNodesNestedLevel = null): array
     {
         $rootItem = [];
         $rootNode = $this->getRootNode();
-        if (!$rootNode) {
-            $webCatalog = $this->webCatalogProvider->getWebCatalog();
-            if ($webCatalog) {
-                $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
-            }
-        }
-
         if ($rootNode) {
             $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
             if ($resolvedNode) {
@@ -105,6 +132,7 @@ class MenuDataProvider
 
         $result[self::IDENTIFIER] = $node->getIdentifier();
         $result[self::LABEL] = (string)$this->localizationHelper->getLocalizedValue($node->getTitles());
+        $result[self::PRIORITY] = $node->getPriority();
         $result[self::URL] = (string)$this->localizationHelper
             ->getLocalizedValue($node->getResolvedContentVariant()->getLocalizedUrls());
 
@@ -126,26 +154,24 @@ class MenuDataProvider
     {
         if ($this->rootNode === null) {
             $website = $this->websiteManager->getCurrentWebsite();
-            $this->rootNode = $this->webCatalogProvider->getNavigationRoot($website);
+            $this->rootNode = $this->webCatalogProvider->getNavigationRootWithCatalogRootFallback($website);
         }
 
         return $this->rootNode;
     }
 
-    private function getContentNodeRepository() : ContentNodeRepository
+    private function getCacheKey(array $scopes, ?int $maxNodesNestedLevel): string
     {
-        return $this->doctrine->getRepository(ContentNode::class);
-    }
-
-    private function getCacheKey(Scope $scope, ?int $maxNodesNestedLevel): string
-    {
+        $scopes = array_map(static fn (Scope $scope) => $scope->getId(), $scopes);
+        sort($scopes);
         $rootNode = $this->getRootNode();
         $localization = $this->localizationHelper->getCurrentLocalization();
+        $scopesKey = implode("_", array_fill(0, count($scopes), "%s"));
 
         return sprintf(
             'menu_items_%s_%s_%s_%s',
             (string)$maxNodesNestedLevel,
-            $scope ? $scope->getId() : 0,
+            vsprintf($scopesKey, $scopes) ?: 0,
             $rootNode ? $rootNode->getId() : 0,
             $localization ? $localization->getId() : 0
         );

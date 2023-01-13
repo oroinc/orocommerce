@@ -1,6 +1,8 @@
 parameters:
     oro_shipping.rule_grid_route_name: 'oro_shipping_methods_configs_rule_index'
     oro_shipping.rule_grid_name: 'shipping-methods-configs-rule-grid'
+    oro_shipping.multi_shipping.integration.channel.type: 'multi_shipping'
+    oro_shipping.multi_shipping.integration.transport.type: 'multi_shipping'
 
 services:
     oro_shipping.shipping_rule.manager.api:
@@ -287,7 +289,6 @@ services:
     oro_shipping.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
         arguments:
-            - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider'
         tags:
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
@@ -373,6 +374,9 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: postRemove }
 
     oro_shipping.method.view_factory:
         class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory'
@@ -400,25 +404,16 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper'
         public: true
         arguments:
-                - '%oro_shipping.rule_grid_route_name%'
-                - '%oro_shipping.rule_grid_name%'
-                - '@oro_datagrid.helper.route'
+            - '%oro_shipping.rule_grid_route_name%'
+            - '%oro_shipping.rule_grid_name%'
+            - '@oro_datagrid.helper.route'
 
-    oro_shipping.provider.basic_shipping_methods_choices:
-        class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
+    oro_shipping.provider.shipping_methods_choices:
+        class: Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider
         public: true
         arguments:
-        - '@oro_shipping.shipping_method_provider'
-        - '@translator'
-
-    oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator:
-         class: 'Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator'
-         public: false
-         decorates: oro_shipping.provider.basic_shipping_methods_choices
-         decoration_priority: 255
-         arguments:
-             - '@oro_shipping.shipping_method_provider'
-             - '@.inner'
+            - '@oro_shipping.shipping_method_provider'
+            - '@translator'
 
     oro_shipping.checker.shipping_method_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
@@ -546,3 +541,69 @@ services:
     oro_shipping.factory.shipping_package_options:
         class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'
         public: false
+
+    oro_shipping.multi_shipping.method.identifier_generator.method:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
+        arguments:
+            - '%oro_shipping.multi_shipping.integration.channel.type%'
+
+    oro_shipping.multi_shipping.factory.method:
+        class: Oro\Bundle\ShippingBundle\Factory\MultiShippingMethodFromChannelFactory
+        public: false
+        arguments:
+            - '@oro_shipping.multi_shipping.method.identifier_generator.method'
+            - '@translator'
+            - '@oro_currency.rounding.price_rounding_service'
+            - '@oro_shipping.multi_shipping.cost.provider'
+
+    oro_shipping.multi_shipping.method.provider:
+        class: Oro\Bundle\ShippingBundle\Method\MultiShippingMethodProvider
+        arguments:
+            - '%oro_shipping.multi_shipping.integration.channel.type%'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shipping.multi_shipping.factory.method'
+        tags:
+            - { name: oro_shipping_method_provider }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postLoad }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postPersist }
+
+    oro_shipping.multi_shipping.integration.transport:
+        class: Oro\Bundle\ShippingBundle\Integration\MultiShippingTransport
+        public: false
+        tags:
+            - { name: oro_integration.transport, type: '%oro_shipping.multi_shipping.integration.channel.type%', channel_type: '%oro_shipping.multi_shipping.integration.channel.type%' }
+
+    oro_shipping.multi_shipping.integration.channel:
+        class: Oro\Bundle\ShippingBundle\Integration\MultiShippingChannelType
+        public: false
+        tags:
+            - { name: oro_integration.channel, type: '%oro_shipping.multi_shipping.integration.channel.type%' }
+
+    oro_shipping.multi_shipping.cost.provider:
+        class: Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider
+        public: false
+        lazy: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.single_line_item_shipping_price'
+
+    oro_shipping.manager.multi_shipping_integration:
+        alias: Oro\Bundle\ShippingBundle\Manager\MultiShippingIntegrationManager
+
+    Oro\Bundle\ShippingBundle\Manager\MultiShippingIntegrationManager:
+        arguments:
+            - '@doctrine'
+            - '@oro_security.token_accessor'
+            - '@security.authorization_checker'
+
+    oro_shipping.form.type.create_multishipping_integration_button:
+        class: Oro\Bundle\ShippingBundle\Form\Type\CreateMultiShippingIntegrationButtonType
+        tags:
+            - { name: form.type, alias: oro_checkout_create_multishipping_integration_button }
+
+    oro_shipping.twig.multi_shipping_extension:
+        class: Oro\Bundle\ShippingBundle\Twig\MultiShippingExtension
+        arguments:
+            - '@oro_shipping.manager.multi_shipping_integration'
+        tags:
+            - { name: twig.extension }

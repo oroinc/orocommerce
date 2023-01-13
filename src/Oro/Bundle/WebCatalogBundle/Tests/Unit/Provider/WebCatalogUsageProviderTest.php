@@ -42,11 +42,8 @@ class WebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider inUseDataProvider
-     * @param WebCatalogInterface $webCatalog
-     * @param int|null $configuredCatalogId
-     * @param bool $isInUse
      */
-    public function testIsInUse(WebCatalogInterface $webCatalog, $configuredCatalogId, $isInUse)
+    public function testIsInUse(WebCatalogInterface $webCatalog, ?int $configuredCatalogId, bool $isInUse)
     {
         $this->configManager->expects(self::once())
             ->method('get')
@@ -63,9 +60,8 @@ class WebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getAssignedWebCatalogsDataProvider
-     * @param int|null $configuredCatalogId
      */
-    public function testGetAssignedWebCatalogs($configuredCatalogId)
+    public function testGetAssignedWebCatalogs(?int $configuredCatalogId)
     {
         $website = $this->createMock(Website::class);
         $website->expects(self::any())
@@ -84,10 +80,7 @@ class WebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([123 => $configuredCatalogId], $this->provider->getAssignedWebCatalogs());
     }
 
-    /**
-     * @return array
-     */
-    public function inUseDataProvider()
+    public function inUseDataProvider(): array
     {
         return [
             'used value returned' => [
@@ -108,20 +101,14 @@ class WebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getAssignedWebCatalogsDataProvider()
+    public function getAssignedWebCatalogsDataProvider(): array
     {
         return [
             [2], [1]
         ];
     }
 
-    /**
-     * @return WebCatalogInterface
-     */
-    private function getWebCatalog($id)
+    private function getWebCatalog(int $id): WebCatalogInterface
     {
         $webCatalog = $this->createMock(WebCatalogInterface::class);
         $webCatalog->expects(self::any())

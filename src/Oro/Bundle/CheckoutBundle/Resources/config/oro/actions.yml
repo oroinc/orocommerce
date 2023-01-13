@@ -476,7 +476,65 @@ action_groups:
                 service: oro_website.manager
                 method: getCurrentWebsite
 
-            - '@assign_value': [$.checkoutActualizationRequired, true]
+            - '@tree':
+                  conditions:
+                      '@not_empty': $.checkout.id
+                  actions:
+                      - '@run_action_group':
+                            action_group: actualize_checkout
+                            parameters_mapping:
+                                checkout: $.checkout
+                                updateData: $.updateData
+                                currentUser: $.currentUser
+                                currentWebsite: $.currentWebsite
+                                checkoutData: $.checkoutData
+                                sourceCriteria: $.sourceCriteria
+                      - '@call_service_method':
+                            attribute: $.workflowItem
+                            service: oro_workflow.manager
+                            method: getWorkflowItem
+                            method_parameters: [$.checkout, $.currentWorkflow.name]
+
+            - '@tree':
+                  conditions:
+                      '@and':
+                          - '@equal': [false, $.forceStartCheckout]
+                          - '@not_empty': $.checkout.id
+                  actions:
+                      - '@create_object':
+                            attribute: $.rawSource
+                            class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
+                            data: $.sourceCriteria
+                      - '@create_object':
+                            attribute: $.rawCheckout
+                            class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                            data:
+                                source: $.rawSource
+                      - '@assign_value': [$.rawCheckout.currency, $.currentCurrency]
+                      - '@call_service_method':
+                            attribute: $.rawCheckout.lineItems
+                            service: oro_checkout.line_items.factory
+                            method: create
+                            method_parameters: [$.rawCheckout.source.entity]
+                      - '@call_service_method':
+                            attribute: $.checkout
+                            service: 'oro_checkout.helper.check_compare'
+                            method: resetCheckoutIfSourceLineItemsChanged
+                            method_parameters:
+                                - $.checkout
+                                - $.rawCheckout
+
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_empty': $.checkout.id
+                        - '@not_blank': $.workflowItem.data.state_token
+                actions:
+                      - '@delete_checkout_state':
+                            parameters:
+                                entity: $.checkout
+                                token: $.workflowItem.data.state_token
+                      - '@flush_entity': $.checkout
 
             - '@tree':
                 conditions:
@@ -519,7 +577,6 @@ action_groups:
                             checkoutData: $.checkoutData
                             sourceCriteria: $.sourceCriteria
 
-                    - '@assign_value': [$.checkoutActualizationRequired, false]
                     - '@flush_entity': $.checkout
 
                     - '@start_workflow':
@@ -527,32 +584,6 @@ action_groups:
                         name: $.currentWorkflow.name
                         entity: $.checkout
                         transition: $.startTransition
-
-            - '@tree':
-                conditions:
-                    '@equal': [$.checkoutActualizationRequired, true]
-                actions:
-                    - '@run_action_group':
-                        action_group: actualize_checkout
-                        parameters_mapping:
-                            checkout: $.checkout
-                            updateData: $.updateData
-                            currentUser: $.currentUser
-                            currentWebsite: $.currentWebsite
-                            checkoutData: $.checkoutData
-                            sourceCriteria: $.sourceCriteria
-                    - '@call_service_method':
-                        attribute: $.workflowItem
-                        service: oro_workflow.manager
-                        method: getWorkflowItem
-                        method_parameters: [$.checkout, $.currentWorkflow.name]
-                    - '@delete_checkout_state':
-                        conditions:
-                            '@not_blank': $.workflowItem.data.state_token
-                        parameters:
-                            entity: $.checkout
-                            token: $.workflowItem.data.state_token
-                    - '@flush_entity': $.checkout
 
     actualize_checkout:
         parameters:

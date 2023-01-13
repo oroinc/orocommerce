@@ -16,8 +16,6 @@ Feature: Delete line item from shopping list for configurable products
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
-    And I click "Update Cache"
-    And I should see "Translation Cache has been updated" flash message
 
   Scenario: Prepare product attribute
     Given I go to Products / Product Attributes
@@ -33,10 +31,10 @@ Feature: Delete line item from shopping list for configurable products
     When I go to Products / Product Attributes
     And I confirm schema update
     Then I go to Products / Product Families
-    When I click Edit Attribute Family in grid
+    When I click Edit Default in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes                                                                                                                                                                            |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, BooleanAttribute] |
+      | Attribute group | true    | [BooleanAttribute] |
     And I save form
     Then I should see "Successfully updated" flash message
 

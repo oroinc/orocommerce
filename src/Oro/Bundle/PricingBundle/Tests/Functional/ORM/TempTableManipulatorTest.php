@@ -6,6 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
@@ -16,41 +17,30 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceList
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class TempTableManipulatorTest extends WebTestCase
 {
-    /**
-     * @var TempTableManipulator
-     */
+    /** @var TempTableManipulator */
     private $tempTableManipulator;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     private $connection;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
-    /**
-     * @var ShardManager
-     */
+    /** @var ShardManager */
     private $shardManager;
 
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadCombinedPriceLists::class,
-                LoadProductPrices::class,
-                LoadCombinedProductPrices::class,
-            ]
-        );
-        $this->registry = $this->getContainer()->get('doctrine');
+        $this->loadFixtures([
+            LoadCombinedPriceLists::class,
+            LoadProductPrices::class,
+            LoadCombinedProductPrices::class,
+        ]);
+        $this->doctrine = $this->getContainer()->get('doctrine');
         $this->connection = $this->getContainer()->get('doctrine')->getConnection();
         $this->tempTableManipulator = $this->getContainer()->get('oro_pricing.orm.temp_table_manipulator');
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
@@ -127,7 +117,7 @@ class TempTableManipulatorTest extends WebTestCase
         $this->insertPricesFromCplToTemp($tempTableName2);
 
         /** @var CombinedProductPriceRepository $repo */
-        $repo = $this->registry->getRepository(CombinedProductPrice::class);
+        $repo = $this->doctrine->getRepository(CombinedProductPrice::class);
         $qb = $repo->createQueryBuilder('cpp');
         $qb->where(
             $qb->expr()->eq('cpp.priceList', ':cpl')
@@ -201,7 +191,7 @@ class TempTableManipulatorTest extends WebTestCase
         $this->assertTableRecordsCount(2, $tempTableName);
 
         /** @var CombinedProductPriceRepository $repo */
-        $repo = $this->registry->getRepository(CombinedProductPrice::class);
+        $repo = $this->doctrine->getRepository(CombinedProductPrice::class);
         $repo->deleteCombinedPrices($cpl);
 
         $prices = $repo->findByPriceList($this->shardManager, $cpl, []);
@@ -245,20 +235,13 @@ class TempTableManipulatorTest extends WebTestCase
         $this->assertTableRecordsCount(0, $tempTableName);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
     private function assertTableRecordsCount(int $count, string $tableName): void
     {
         $records = $this->connection->fetchColumn('SELECT COUNT(*) FROM ' . $tableName);
         $this->assertEquals($count, $records);
     }
 
-    /**
-     * @param string $tempTableName
-     * @return string
-     */
-    private function insertPricesFromCplToTemp(?string $tempTableName = null): string
+    private function insertPricesFromCplToTemp(?string $tempTableName = null): void
     {
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('2t_3t');
@@ -270,7 +253,7 @@ class TempTableManipulatorTest extends WebTestCase
         }
 
         /** @var CombinedProductPriceRepository $repo */
-        $repo = $this->registry->getRepository(CombinedProductPrice::class);
+        $repo = $this->doctrine->getRepository(CombinedProductPrice::class);
         $qb = $repo->createQueryBuilder('pp');
         $qb
             ->select(
@@ -307,7 +290,5 @@ class TempTableManipulatorTest extends WebTestCase
             $qb,
             false
         );
-
-        return $tempTableName;
     }
 }

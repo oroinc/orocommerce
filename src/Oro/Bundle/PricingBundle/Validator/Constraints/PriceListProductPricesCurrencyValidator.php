@@ -2,59 +2,53 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validates that a price list does not have invalid currencies.
+ */
 class PriceListProductPricesCurrencyValidator extends ConstraintValidator
 {
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
+    private ShardManager $shardManager;
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @var Registry
-     */
-    protected $registry;
-
-    public function __construct(Registry $registry, ShardManager $shardManager)
+    public function __construct(ManagerRegistry $doctrine, ShardManager $shardManager)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->shardManager = $shardManager;
     }
 
     /**
-     * @param ProductPrice|object $value
-     * @param ProductPriceCurrency $constraint
-     *
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof PriceListProductPricesCurrency) {
+            throw new UnexpectedTypeException($constraint, PriceListProductPricesCurrency::class);
+        }
+
         if (!$value instanceof BasePriceList) {
             throw new UnexpectedTypeException($value, BasePriceList::class);
         }
 
-        $class = ClassUtils::getClass($value);
-        /** @var BasePriceListRepository $repository */
-        $repository = $this->registry->getManagerForClass($class)
-            ->getRepository($class);
-        $invalidCurrencies = $repository->getInvalidCurrenciesByPriceList($this->shardManager, $value);
-
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
+        $invalidCurrencies = $this->getPriceListRepository(ClassUtils::getClass($value))
+            ->getInvalidCurrenciesByPriceList($this->shardManager, $value);
         foreach ($invalidCurrencies as $currency) {
-            $context->buildViolation($constraint->message, ['%invalidCurrency%' => $currency])
+            $this->context->buildViolation($constraint->message, ['%invalidCurrency%' => $currency])
                 ->atPath('currencies')
                 ->addViolation();
         }
+    }
+
+    private function getPriceListRepository(string $priceListEntityClass): BasePriceListRepository
+    {
+        return $this->doctrine->getRepository($priceListEntityClass);
     }
 }

@@ -8,60 +8,34 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductDBQueryRestrictionEventListener
-     */
-    protected $listener;
-
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /**
-     * @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject */
     protected $modifier;
 
-    /**
-     * @var ProductDBQueryRestrictionEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductDBQueryRestrictionEvent|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
-    /**
-     * @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     protected $queryBuilder;
 
-    /**
-     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $frontendHelper;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var ProductDBQueryRestrictionEventListener */
+    protected $listener;
+
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()->getMock();
-
-        $this->modifier = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier');
-
-        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent')
-            ->disableOriginalConstructor()->getMock();
-
-        $this->queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()
-            ->getMock();
-
-        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->modifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
+        $this->event = $this->createMock(ProductDBQueryRestrictionEvent::class);
+        $this->queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
 
         $this->listener = $this->createListener();
     }
@@ -71,23 +45,17 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\Test
      */
     protected function createListener()
     {
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request());
         return new ProductDBQueryRestrictionEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper,
-            $requestStack
+            $this->frontendHelper
         );
     }
 
     /**
      * @dataProvider onQueryDataProvider
-     * @param bool $isFrontend
-     * @param string|null $frontendPath
-     * @param string|null $backendPath
      */
-    public function testOnQuery($isFrontend, $frontendPath, $backendPath)
+    public function testOnQuery(bool $isFrontend, ?string $frontendPath, ?string $backendPath)
     {
         $statuses = [
             'status1',
@@ -132,10 +100,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\Test
         $this->listener->onDBQuery($this->event);
     }
 
-    /**
-     * @return array
-     */
-    public function onQueryDataProvider()
+    public function onQueryDataProvider(): array
     {
         return [
             [

@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BB-13978
 @ticket-BB-16275
 @feature-BAP-19790

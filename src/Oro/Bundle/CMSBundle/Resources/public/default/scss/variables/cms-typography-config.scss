@@ -1,0 +1,104 @@
+/* @theme: default; */
+
+// Offsets
+$offset-default: 8px !default;
+$offset-twice: $offset-default * 2 !default;
+$offset-triple: $offset-default * 3 !default;
+$offset-half: 4px !default;
+
+$cms-typography-paragraph-offset: 0 0 $offset-twice 0 !default;
+
+// Blockquote
+$cms-typography-blockquote-offset: 0 0 $offset-triple 0 !default;
+$cms-typography-blockquote-font-size: $base-font-size--large + 2px !default;
+$cms-typography-blockquote-font-weight: font-weight('semi-bold') !default;
+$cms-typography-blockquote-line-height: 1.5 !default;
+$cms-typography-blockquote-font-style: normal !default;
+$cms-typography-blockquote-background-color: get-color('additional', 'base') !default;
+$cms-typography-blockquote-inner-offset: $offset-twice 52px !default;
+$cms-typography-blockquote-color: get-color('additional', 'dark') !default;
+$cms-typography-blockquote-fa-icon: $fa-var-quote-left !default;
+$cms-typography-blockquote-fa-end-icon: $fa-var-quote-right !default;
+$cms-typography-blockquote-fa-icon-font-size: $base-font-size--large !default;
+$cms-typography-blockquote-fa-icon-color: get-color('additional', 'middle') !default;
+$cms-typography-blockquote-fa-icon-top: 18px !default;
+$cms-typography-blockquote-fa-icon-left: 20px !default;
+
+$cms-typography-blockquote-fa-icon-right: 20px !default;
+$cms-typography-blockquote-fa-icon-bottom: 18px !default;
+
+// List
+$cms-typography-list-offset: 0 0 $offset-triple 0 !default;
+$cms-typography-list-inner-offset: 0 0 0 35px !default;
+
+// Images
+$cms-typography-img-max-width: 100% !default;
+$cms-typography-img-offset: 0 !default;
+$cms-typography-img-border: 1px solid get-color('additional', 'light') !default;
+
+$cms-typography-figure-display: grid !default;
+$cms-typography-figure-offset: 0 auto $offset-default !default;
+
+$cms-typography-figure-picture-grid-column: 1 !default;
+$cms-typography-figure-picture-grid-row: 1 !default;
+
+$cms-typography-figure-img-width: 100% !default;
+$cms-typography-figure-img-height: 100% !default;
+$cms-typography-figure-img-object-fit: cover !default;
+
+$cms-typography-figcaption-font-size: 55px !default;
+$cms-typography-figcaption-text-align: center !default;
+$cms-typography-figcaption-text-transform: uppercase !default;
+$cms-typography-figcaption-align-items: center !default;
+$cms-typography-figcaption-justify-content: center !default;
+$cms-typography-figcaption-color: get-color('additional', 'ultra') !default;
+$cms-typography-figcaption-grid-column: 1 !default;
+$cms-typography-figcaption-grid-row: 1 !default;
+$cms-typography-figcaption-display: flex !default;
+$cms-typography-figcaption-offset: auto !default;
+$cms-typography-figcaption-offset-left: 20px !default;
+$cms-typography-figcaption-offset-right: 18px !default;
+$cms-typography-figcaption-padding: $offset-y $offset-x !default;
+
+// Heading
+$cms-typography-heading-offset: $headline-bottom-offset !default;
+
+// Divider
+$cms-typography-hr-offset: 0 0 20px !default;
+$cms-typography-border-top: 1px solid get-color('additional', 'light') !default;
+
+// Code
+$cms-typography-code-border: 3px solid get-color('additional', 'base') !default;
+$cms-typography-code-inner-offset: $offset-twice 22px !default;
+$cms-typography-code-offset: 0 0 $offset-twice !default;
+$cms-typography-code-font-family: 'Courier', 'Courier New', monospace !default;
+$cms-typography-code-line-height: 1.43 !default;
+
+// Sub
+$cms-typography-sub-vertical-align: sub !default;
+$cms-typography-sub-font-size: smaller !default;
+
+// Sup
+$cms-typography-sup-vertical-align: super !default;
+$cms-typography-sup-font-size: smaller !default;
+
+// Small
+$cms-typography-small-font-size: $base-font-size--s - 1px !default;
+
+// Address
+$cms-typography-address-font-style: italic !default;
+
+// Time
+
+$cms-typography-time-color: get-color('additional', 'middle') !default;
+
+// NavTabs
+$cms-typography-nav-tabs-inner-offset: 0 !default;
+$cms-typography-nav-tabs-offset: 0 !default;
+
+// Tabs
+$cms-typography-tabbed-content-bottom-offset: $offset-triple !default;
+
+// Extra
+$cms-typography-extra-text-color: get-color('additional', 'middle') !default;
+$cms-typography-extra-block-bg-color: get-color('additional', 'base') !default;

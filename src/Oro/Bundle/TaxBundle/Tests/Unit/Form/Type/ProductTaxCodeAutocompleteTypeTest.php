@@ -9,33 +9,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode';
-
-    /**
-     * @var ProductTaxCodeAutocompleteType
-     */
-    protected $formType;
+    /** @var ProductTaxCodeAutocompleteType */
+    private $formType;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->formType = $this->createTaxCodeAutocompleteType();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->formType);
-
-        parent::tearDown();
-    }
-
-    /**
-     * @return ProductTaxCodeAutocompleteType
-     */
-    protected function createTaxCodeAutocompleteType()
-    {
-        return new ProductTaxCodeAutocompleteType();
+        $this->formType = new ProductTaxCodeAutocompleteType();
     }
 
     public function testGetParent()
@@ -53,13 +34,5 @@ class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
         $this->assertEquals('oro_product_tax_code', $options['autocomplete_alias']);
         $this->assertArrayHasKey('grid_name', $options);
         $this->assertEquals('products-tax-code-select-grid', $options['grid_name']);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getDataClass()
-    {
-        return self::DATA_CLASS;
     }
 }

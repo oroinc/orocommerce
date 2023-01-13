@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -11,6 +10,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
@@ -37,7 +37,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('partial cpl.{id, priceList, mergeAllowed}')
-            ->from('OroPricingBundle:CombinedPriceListToPriceList', 'cpl')
+            ->from(CombinedPriceListToPriceList::class, 'cpl')
             ->where($qb->expr()->eq('cpl.combinedPriceList', ':combinedPriceList'))
             ->setParameter('combinedPriceList', $combinedPriceList)
             ->orderBy('cpl.sortOrder');
@@ -57,7 +57,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToCustomer',
+                CombinedPriceListToCustomer::class,
                 'priceListToCustomer',
                 Join::WITH,
                 'priceListToCustomer.priceList = priceList'
@@ -85,7 +85,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToCustomerGroup',
+                CombinedPriceListToCustomerGroup::class,
                 'priceListToCustomerGroup',
                 Join::WITH,
                 'priceListToCustomerGroup.priceList = priceList'
@@ -112,7 +112,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToWebsite',
+                CombinedPriceListToWebsite::class,
                 'priceListToWebsite',
                 Join::WITH,
                 'priceListToWebsite.priceList = priceList'
@@ -129,7 +129,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     /**
      * @param array|CombinedPriceList[] $priceLists
      */
-    public function deletePriceLists(array $priceLists)
+    public function deletePriceLists(array $priceLists): void
     {
         $deleteQb = $this->getEntityManager()->createQueryBuilder()
             ->delete($this->getEntityName(), 'cplDelete');
@@ -142,38 +142,6 @@ class CombinedPriceListRepository extends BasePriceListRepository
         }
     }
 
-    public function removeDuplicatePrices()
-    {
-        $connection = $this->_em->getConnection();
-        if ($connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
-            $sql = 'DELETE 
-                    FROM oro_price_product_combined p1
-                    USING oro_price_product_combined p2
-                    WHERE 
-                        p1.id < p2.id
-                        AND p1.combined_price_list_id = p2.combined_price_list_id
-                        AND p1.product_id = p2.product_id
-                        AND p1.value = p2.value
-                        AND p1.currency = p2.currency
-                        AND p1.quantity = p2.quantity
-                        AND p1.unit_code = p2.unit_code';
-        } else {
-            $sql = 'DELETE p1.*
-                FROM oro_price_product_combined p1 
-                INNER JOIN oro_price_product_combined p2
-                WHERE
-                    p1.id < p2.id
-                    AND p1.combined_price_list_id = p2.combined_price_list_id
-                    AND p1.product_id = p2.product_id
-                    AND p1.value = p2.value
-                    AND p1.currency = p2.currency
-                    AND p1.quantity = p2.quantity
-                    AND p1.unit_code = p2.unit_code';
-        }
-
-        $connection->executeQuery($sql);
-    }
-
     /**
      * @return int
      */
@@ -182,120 +150,116 @@ class CombinedPriceListRepository extends BasePriceListRepository
         return BufferedIdentityQueryResultIterator::DEFAULT_BUFFER_SIZE;
     }
 
-    /**
-     * @param array $exceptPriceLists
-     * @param bool|null $priceListsEnabled
-     * @return array
-     */
-    public function getUnusedPriceListsIds(array $exceptPriceLists = [], $priceListsEnabled = true)
-    {
-        $selectQb = $this->createQueryBuilder('priceList')
-            ->select('priceList.id');
-        foreach (CombinedPriceListRelationHelper::RELATIONS as $alias => $entityName) {
-            $selectQb->leftJoin(
-                $entityName,
-                $alias,
-                Join::WITH,
-                $selectQb->expr()->eq($alias . '.priceList', 'priceList.id')
-            );
-            $selectQb->andWhere($selectQb->expr()->isNull($alias . '.priceList'));
+    public function scheduleUnusedPriceListsRemoval(
+        NativeQueryExecutorHelper $helper,
+        array $exceptPriceLists = []
+    ): void {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $selectQb = $this->getUnusedCombinedPriceListsQueryBuilder($exceptPriceLists);
+        $selectQb->addSelect((string)$selectQb->expr()->literal($now->format('Y-m-d H:i:s')));
 
-            $fcAlias = $alias . 'fc';
-            $selectQb->leftJoin(
-                $entityName,
-                $fcAlias,
-                Join::WITH,
-                $selectQb->expr()->eq($fcAlias . '.fullChainPriceList', 'priceList.id')
-            );
-            $selectQb->andWhere($selectQb->expr()->isNull($fcAlias . '.fullChainPriceList'));
-        }
-        $selectQb->leftJoin(
-            CombinedPriceListActivationRule::class,
-            'rule',
-            Join::WITH,
-            $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id')
+        $selectQuery = $selectQb->getQuery();
+
+        [$params, $types] = $helper->processParameterMappings($selectQuery);
+
+        $sql = sprintf(
+            'INSERT INTO oro_price_list_combined_gc %s ON CONFLICT (combined_price_list_id) DO NOTHING',
+            $selectQuery->getSQL()
         );
-        $selectQb->andWhere($selectQb->expr()->isNull('rule.combinedPriceList'));
-
-        $selectQb->leftJoin(
-            CombinedPriceListActivationRule::class,
-            'rulefc',
-            Join::WITH,
-            $selectQb->expr()->eq('rulefc.fullChainPriceList', 'priceList.id')
-        );
-        $selectQb->andWhere($selectQb->expr()->isNull('rulefc.fullChainPriceList'));
-
-        if ($exceptPriceLists) {
-            $selectQb->andWhere($selectQb->expr()->notIn('priceList', ':exceptPriceLists'))
-                ->setParameter('exceptPriceLists', $exceptPriceLists);
-        }
-        if ($priceListsEnabled !== null) {
-            $selectQb->andWhere($selectQb->expr()->eq('priceList.enabled', ':isEnabled'))
-                ->setParameter('isEnabled', $priceListsEnabled);
-        }
-
-        return array_column($selectQb->getQuery()->getScalarResult(), 'id');
+        $this->_em->getConnection()->executeStatement($sql, $params, $types);
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param CombinedPriceList $activeCpl
-     * @param Website $website
-     * @param Customer|CustomerGroup $targetEntity
-     * @return BaseCombinedPriceListRelation
-     */
+    public function getPriceListsScheduledForRemoval(
+        NativeQueryExecutorHelper $helper,
+        \DateTimeInterface $requestedAt,
+        array $exceptPriceLists = []
+    ): array {
+        $selectQb = $this->getUnusedCombinedPriceListsQueryBuilder($exceptPriceLists);
+        $selectQuery = $selectQb->getQuery();
+
+        [$params, $types] = $helper->processParameterMappings($selectQuery);
+
+        $sql = sprintf(
+            'SELECT combined_price_list_id FROM oro_price_list_combined_gc
+            WHERE combined_price_list_id IN(%s) AND requested_at <= ?',
+            $this->getUnusedCombinedPriceListsQueryBuilder($exceptPriceLists)->getQuery()->getSQL()
+        );
+
+        $params[] = $requestedAt;
+        $types[] = Types::DATETIME_MUTABLE;
+
+        $stmt = $this->_em->getConnection()->executeQuery($sql, $params, $types);
+
+        return $stmt->fetchFirstColumn();
+    }
+
+    public function hasPriceListsScheduledForRemoval(): bool
+    {
+        return (bool)$this->_em->getConnection()
+            ->executeQuery('SELECT combined_price_list_id FROM oro_price_list_combined_gc LIMIT 1')
+            ->fetchOne();
+    }
+
+    public function clearUnusedPriceListRemovalSchedule(\DateTimeInterface $requestedAt): void
+    {
+        $this->_em->getConnection()->executeStatement(
+            'DELETE FROM oro_price_list_combined_gc WHERE requested_at <= ?',
+            [$requestedAt],
+            [Types::DATETIME_MUTABLE]
+        );
+    }
+
     public function updateCombinedPriceListConnection(
         CombinedPriceList $combinedPriceList,
         CombinedPriceList $activeCpl,
         Website $website,
+        ?int $version,
         $targetEntity = null
-    ) {
+    ): BaseCombinedPriceListRelation {
         $em = $this->getEntityManager();
-        $relation = null;
         if ($targetEntity instanceof Customer) {
-            $relation = $em->getRepository(CombinedPriceListToCustomer::class)
+            $relation = $em
+                ->getRepository(CombinedPriceListToCustomer::class)
                 ->findOneBy(['customer' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToCustomer();
                 $relation->setCustomer($targetEntity);
-                $relation->setWebsite($website);
-                $relation->setPriceList($combinedPriceList);
-                $relation->setFullChainPriceList($combinedPriceList);
-                $em->persist($relation);
             }
         } elseif ($targetEntity instanceof CustomerGroup) {
-            $relation = $em->getRepository(CombinedPriceListToCustomerGroup::class)
+            $relation = $em
+                ->getRepository(CombinedPriceListToCustomerGroup::class)
                 ->findOneBy(['customerGroup' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToCustomerGroup();
                 $relation->setCustomerGroup($targetEntity);
-                $relation->setWebsite($website);
-                $relation->setPriceList($combinedPriceList);
-                $relation->setFullChainPriceList($combinedPriceList);
-                $em->persist($relation);
             }
         } elseif (!$targetEntity) {
-            $relation = $em->getRepository(CombinedPriceListToWebsite::class)
+            $relation = $em
+                ->getRepository(CombinedPriceListToWebsite::class)
                 ->findOneBy(['website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToWebsite();
-                $relation->setWebsite($website);
-                $relation->setPriceList($combinedPriceList);
-                $relation->setFullChainPriceList($combinedPriceList);
-                $em->persist($relation);
             }
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown target "%s"', get_class($targetEntity)));
         }
+
+        if ($version && $relation->getVersion() > $version) {
+            return $relation;
+        }
+
         $relation->setFullChainPriceList($combinedPriceList);
+        $relation->setWebsite($website);
         $relation->setPriceList($activeCpl);
+        $relation->setVersion($version);
+        $em->persist($relation);
         $em->flush($relation);
 
         return $relation;
     }
 
     /**
-     * @param $exceptRelation
+     * @param BaseCombinedPriceListRelation $exceptRelation
      * @return bool
      */
     public function hasOtherRelations(BaseCombinedPriceListRelation $exceptRelation)
@@ -336,7 +300,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $qb->select('DISTINCT cpl')
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToPriceList',
+                CombinedPriceListToPriceList::class,
                 'priceListRelations',
                 Join::WITH,
                 $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')
@@ -431,5 +395,57 @@ class CombinedPriceListRepository extends BasePriceListRepository
             ->setParameter('active', false);
 
         return $qb;
+    }
+
+    protected function getUnusedCombinedPriceListsQueryBuilder(
+        array $exceptPriceLists,
+        bool $priceListsEnabled = true
+    ): QueryBuilder {
+        $selectQb = $this->createQueryBuilder('priceList')
+            ->select('priceList.id');
+        foreach (CombinedPriceListRelationHelper::RELATIONS as $alias => $entityName) {
+            $selectQb->leftJoin(
+                $entityName,
+                $alias,
+                Join::WITH,
+                $selectQb->expr()->eq($alias . '.priceList', 'priceList.id')
+            );
+            $selectQb->andWhere($selectQb->expr()->isNull($alias . '.priceList'));
+
+            $fcAlias = $alias . 'fc';
+            $selectQb->leftJoin(
+                $entityName,
+                $fcAlias,
+                Join::WITH,
+                $selectQb->expr()->eq($fcAlias . '.fullChainPriceList', 'priceList.id')
+            );
+            $selectQb->andWhere($selectQb->expr()->isNull($fcAlias . '.fullChainPriceList'));
+        }
+        $selectQb->leftJoin(
+            CombinedPriceListActivationRule::class,
+            'rule',
+            Join::WITH,
+            $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id')
+        );
+        $selectQb->andWhere($selectQb->expr()->isNull('rule.combinedPriceList'));
+
+        $selectQb->leftJoin(
+            CombinedPriceListActivationRule::class,
+            'rulefc',
+            Join::WITH,
+            $selectQb->expr()->eq('rulefc.fullChainPriceList', 'priceList.id')
+        );
+        $selectQb->andWhere($selectQb->expr()->isNull('rulefc.fullChainPriceList'));
+
+        if ($exceptPriceLists) {
+            $selectQb->andWhere($selectQb->expr()->notIn('priceList', ':exceptPriceLists'))
+                ->setParameter('exceptPriceLists', $exceptPriceLists);
+        }
+        if ($priceListsEnabled !== null) {
+            $selectQb->andWhere($selectQb->expr()->eq('priceList.enabled', ':isEnabled'))
+                ->setParameter('isEnabled', $priceListsEnabled);
+        }
+
+        return $selectQb;
     }
 }

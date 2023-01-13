@@ -67,8 +67,8 @@ class BrandTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($brand->getDefaultTitle());
         $brand->addName((new LocalizedFallbackValue())->setString('Default Title'));
         $brand->prePersist();
-        $this->assertInstanceOf('\DateTime', $brand->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $brand->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $brand->getCreatedAt());
+        $this->assertInstanceOf(\DateTime::class, $brand->getUpdatedAt());
         $this->assertSame('Default Title', $brand->getDefaultTitle());
     }
 
@@ -77,7 +77,7 @@ class BrandTest extends \PHPUnit\Framework\TestCase
         $brand = new Brand();
         $brand->addName((new LocalizedFallbackValue())->setString('Default Title'));
         $brand->preUpdate();
-        $this->assertInstanceOf('\DateTime', $brand->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $brand->getUpdatedAt());
         $this->assertSame('Default Title', $brand->getDefaultTitle());
     }
 
@@ -160,10 +160,7 @@ class BrandTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($defaultShortDescription, $brand->getDefaultShortDescription());
     }
 
-    /**
-     * @return array
-     */
-    public function getDefaultDescriptionExceptionDataProvider()
+    public function getDefaultDescriptionExceptionDataProvider(): array
     {
         return [
             'several default descriptions' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],

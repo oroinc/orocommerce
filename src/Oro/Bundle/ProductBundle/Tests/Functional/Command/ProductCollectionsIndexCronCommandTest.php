@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\CronBundle\Entity\Repository\ScheduleRepository;
 use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
@@ -19,7 +19,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadSegmentsWithRelat
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWebCatalogsData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
@@ -54,7 +53,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
      */
     public function testCommandWhenWebCatalogIsUsed(bool $isPartialConfig)
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set(
             'oro_web_catalog.web_catalog',
             $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId()
@@ -76,49 +75,46 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $expectedMessage = [
             [
                 'topic' => ReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => !$isPartialConfig,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => ReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 1,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => !$isPartialConfig,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => ReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 2,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => !$isPartialConfig,
                     'additional_products' => [],
-                ])
+                ]
             ],
         ];
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedMessage,
-            self::getMessageCollector()->getTopicSentMessages(ReindexProductCollectionBySegmentTopic::NAME)
+            self::getTopicSentMessages(ReindexProductCollectionBySegmentTopic::NAME)
         );
     }
 
-    /**
-     * @return array
-     */
-    public function partialConfigDataProvider()
+    public function partialConfigDataProvider(): array
     {
         return [
             'partial' => [true],
@@ -128,7 +124,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     public function testCommandWhenWebCatalogIsUsedPartialOptionPassed()
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set(
             'oro_web_catalog.web_catalog',
             $this->getReference(LoadWebCatalogsData::FIRST_WEB_CATALOG)->getId()
@@ -149,41 +145,40 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $expectedMessage = [
             [
                 'topic' => ReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => ReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 1,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
+                ]
             ],
             [
                 'topic' => ReindexProductCollectionBySegmentTopic::NAME,
-                'message' => new Message([
+                'message' => [
                     'job_id' => $firstChildJobId + 2,
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => false,
                     'additional_products' => [],
-                ])
+                ]
             ],
         ];
 
-        $messages = self::getMessageCollector()->getTopicSentMessages(ReindexProductCollectionBySegmentTopic::NAME);
-        $this->assertEquals($expectedMessage, $messages);
+        self::assertEquals($expectedMessage, self::getTopicSentMessages(ReindexProductCollectionBySegmentTopic::NAME));
     }
 
     /**
@@ -197,17 +192,10 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
         $response = self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
         self::assertEquals($expectedResponse, $response);
-        self::assertEmpty(
-            self::getMessageCollector()->getTopicSentMessages(
-                ReindexProductCollectionBySegmentTopic::NAME
-            )
-        );
+        self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
 
-    /**
-     * @return array
-     */
-    public function partialConfigDataWithCommandResponseDataProvider()
+    public function partialConfigDataWithCommandResponseDataProvider(): array
     {
         return [
             'partial' => [
@@ -227,36 +215,35 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
     {
         self::runCommand(ProductCollectionsIndexCronCommand::getDefaultName(), []);
 
-        $traces = self::getMessageCollector()->getTopicSentMessages(ReindexProductCollectionBySegmentTopic::NAME);
-
-        $this->assertCount(0, $traces);
+        self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
 
     public function testGetDefaultDefinitions()
     {
-        /** @var ScheduleRepository $repo */
-        $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Schedule::class);
+        /** @var EntityRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(Schedule::class);
         /** @var Schedule $commandSchedule */
         $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
-        $this->assertNotEmpty($commandSchedule);
-        $this->assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
+        self::assertNotEmpty($commandSchedule);
+        self::assertSame(Configuration::DEFAULT_CRON_SCHEDULE, $commandSchedule->getDefinition());
 
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD, '0 0 0 0 *');
         $configManager->flush();
         self::runCommand('oro:cron:definitions:load', []);
 
         $commandSchedule = $repo->findOneBy(['command' => ProductCollectionsIndexCronCommand::getDefaultName()]);
-        $this->assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
+        self::assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 
-    protected function getContentVariantMetadata(): ClassMetadata
+    private function getContentVariantMetadata(): ClassMetadata
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(Segment::class);
-        return $em->getClassMetadata(ContentVariantInterface::class);
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass(Segment::class)
+            ->getClassMetadata(ContentVariantInterface::class);
     }
 
-    protected function getRootJob(bool $isFull): Job
+    private function getRootJob(bool $isFull): Job
     {
         $namePrefix = sprintf(
             '%s:%s:%s',
@@ -285,7 +272,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         return $rootJob;
     }
 
-    protected function assertRootJobContainsDependentJob(Job $rootJob): void
+    private function assertRootJobContainsDependentJob(Job $rootJob): void
     {
         $data = $rootJob->getData();
         self::assertArrayHasKey('dependentJobs', $data);
@@ -296,7 +283,8 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                 [
                     'topic' => 'oro_product.reindex_request_item_products_by_related_job',
                     'message' => [
-                        'relatedJobId' => $rootJob->getId()
+                        'relatedJobId' => $rootJob->getId(),
+                        'indexationFieldsGroups' => ['main', 'collection_sort_order']
                     ],
                     'priority' => null
                 ]
@@ -304,7 +292,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         );
     }
 
-    protected function getFirstChildJobId(Job $rootJob): int
+    private function getFirstChildJobId(Job $rootJob): int
     {
         $qb = self::getContainer()->get('doctrine')
             ->getRepository(Job::class)

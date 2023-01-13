@@ -140,6 +140,8 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     quoteProduct{1..20}:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOffer<current()>' ]
         product: '@product1'
         quote: '@quote<current()>'
         comment: 'Seller Notes<current()>'

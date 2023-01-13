@@ -40,7 +40,7 @@
 
     &-form {
         &-errors {
-            margin: 0 0 $offset-y;
+            margin: $offset-y-m 0;
         }
     }
 
@@ -67,6 +67,14 @@
                 display: none;
             }
         }
+    }
+
+    &__botton-container {
+        margin-top: $offset-y;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0 16px;
     }
 }
 

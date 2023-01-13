@@ -20,46 +20,36 @@ use Symfony\Component\Validator\Validation;
 
 class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision';
-
-    /**
-     * @var CategoryUnitPrecisionType
-     */
-    protected $formType;
-
-    /**
-     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $defaultProductOptionsVisibility;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var CategoryUnitPrecisionType */
+    private $formType;
+
     protected function setUp(): void
     {
         $this->defaultProductOptionsVisibility = $this
             ->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);
 
         $this->formType = new CategoryUnitPrecisionType($this->defaultProductOptionsVisibility);
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(CategoryUnitPrecision::class);
+
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
                     CategoryUnitPrecisionType::class => $this->formType,
-                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
-                        [
-                            'item' => (new ProductUnit())->setCode('item'),
-                            'kg' => (new ProductUnit())->setCode('kg'),
-                        ]
-                    ),
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub([
+                        'item' => (new ProductUnit())->setCode('item'),
+                        'kg' => (new ProductUnit())->setCode('kg'),
+                    ]),
                     EntityIdentifierType::class => new EntityType([
                         'kg' => (new ProductUnit())->setCode('kg'),
                     ]),
@@ -73,19 +63,15 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param CategoryUnitPrecision $defaultData
-     * @param array $expectedOptions
-     * @param array|CategoryUnitPrecision $submittedData
-     * @param CategoryUnitPrecision $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
         CategoryUnitPrecision $defaultData,
         array $expectedOptions,
-        $submittedData,
+        array $submittedData,
         CategoryUnitPrecision $expectedData
     ) {
-        $this->defaultProductOptionsVisibility->expects(static::any())
+        $this->defaultProductOptionsVisibility->expects(self::any())
             ->method('isDefaultUnitPrecisionSelectionAvailable')
             ->willReturn(true);
 
@@ -101,19 +87,15 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param CategoryUnitPrecision $defaultData
-     * @param array $expectedOptions
-     * @param array|CategoryUnitPrecision $submittedData
-     * @param CategoryUnitPrecision $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmitHidden(
         CategoryUnitPrecision $defaultData,
         array $expectedOptions,
-        $submittedData,
+        array $submittedData,
         CategoryUnitPrecision $expectedData
     ) {
-        $this->defaultProductOptionsVisibility->expects(static::any())
+        $this->defaultProductOptionsVisibility->expects(self::any())
             ->method('isDefaultUnitPrecisionSelectionAvailable')
             ->willReturn(false);
 
@@ -128,7 +110,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    protected function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
+    private function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
     {
         foreach ($expectedConfig as $key => $value) {
             $this->assertTrue($actualConfig->hasOption($key));
@@ -136,10 +118,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'unit precision without value' => [

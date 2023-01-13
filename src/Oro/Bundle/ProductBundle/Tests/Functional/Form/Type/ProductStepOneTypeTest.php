@@ -8,20 +8,16 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class ProductStepOneTypeTest extends WebTestCase
 {
-    const CATEGORY_ID = 1;
+    private const CATEGORY_ID = 1;
 
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
-    /** @var AttributeFamily */
-    protected $defaultFamily;
-
-    /** @var CsrfTokenManagerInterface */
-    protected $tokenManager;
+    private FormFactoryInterface $formFactory;
+    private AttributeFamily $defaultFamily;
+    private CsrfTokenManagerInterface $tokenManager;
 
     protected function setUp(): void
     {
@@ -36,20 +32,23 @@ class ProductStepOneTypeTest extends WebTestCase
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
+
+        $request = Request::createFromGlobals();
+        $this->loginUser(self::AUTH_USER);
+        $this->updateUserSecurityToken(self::AUTH_USER);
+
+        $this->getClientInstance()->getContainer()->get('request_stack')->push($request);
     }
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $submitData
-     * @param bool $isValid
      */
-    public function testSubmit(array $submitData, $isValid)
+    public function testSubmit(array $submitData, bool $isValid)
     {
         $submitData['_token'] = $this->tokenManager->getToken('product')->getValue();
         $submitData['attributeFamily'] = $this->defaultFamily->getId();
         // submit form
-        $form = $this->formFactory->create(ProductStepOneType::class, null);
+        $form = $this->formFactory->create(ProductStepOneType::class);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
         $this->assertTrue($form->isSynchronized());
@@ -60,10 +59,7 @@ class ProductStepOneTypeTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty category' => [

@@ -31,6 +31,7 @@
         .gjs-highlighter-sel {
             margin-left: -2px;
             margin-top: -2px;
+            outline-offset: 0;
         }
 
         ##{$app-prefix}tools,
@@ -42,6 +43,16 @@
             right: auto;
 
             /* rtl:end:ignore */
+        }
+    }
+
+    &clm-tags {
+        ##{$app-prefix}clm-up {
+            margin-top: 0;
+        }
+
+        ##{$app-prefix}clm-states {
+            height: 30px;
         }
     }
 
@@ -90,15 +101,39 @@
     &pn-commands,
     &pn-options,
     &pn-devices-c {
-        .#{$pn-prefix}btn {
+        .#{$pn-prefix}btn,
+        .btn {
             background-color: $button-bg-color;
             border-radius: 30px;
             margin-right: 7px;
 
-            &.#{$pn-prefix}active {
+            &.#{$pn-prefix}active,
+            &[aria-expanded="true"] {
                 background-color: $additional-extra-light;
                 box-shadow: $button-bg-shadow;
             }
+        }
+    }
+
+    &pn-settings {
+        position: relative;
+        padding: 0;
+        display: none;
+        min-width: 250px;
+
+        .#{$pn-prefix}views-container & {
+            display: block;
+        }
+
+        .#{$pn-prefix}buttons {
+            display: grid;
+            grid-template-columns: 1fr 32px;
+            grid-gap: 8px;
+            text-align: left;
+        }
+
+        .tooltip-icon {
+            margin-right: 8px;
         }
     }
 
@@ -144,7 +179,7 @@
     &sm-sectors,
     &sm-sector,
     &block-category {
-        margin-bottom: 8px;
+        margin-bottom: 12px;
         border-bottom: none;
 
         svg {
@@ -173,6 +208,8 @@
             width: 22px;
             height: 22px;
             min-width: 22px;
+            margin-left: -8px;
+            margin-right: -8px;
         }
 
         .#{$sm-prefix}field.#{$sm-prefix}composite {
@@ -195,6 +232,12 @@
                     top: 10px;
                 }
             }
+        }
+    }
+
+    &wide-blocks {
+        .#{$app-prefix}block {
+            width: 100%;
         }
     }
 
@@ -228,8 +271,11 @@
     &mdl-dialog {
         border-radius: 4px;
         box-shadow: $grapejs-shadow;
+        animation: none;
 
         .#{$app-prefix}btn-prim {
+            // Positions that button should be above CodeMirror container
+            position: relative;
             display: inline-flex;
             padding: 0 16px;
             font-size: .875rem;
@@ -237,6 +283,12 @@
             border-radius: 16px;
             margin-top: 10px;
         }
+    }
+
+    &sm-header {
+        padding: 0;
+
+        @extend .no-data;
     }
 
     &mdl-header {
@@ -284,14 +336,23 @@
             margin-right: 8px;
             min-width: 25px;
             width: auto;
+            height: 32px;
 
             &:last-child {
                 margin-right: 0;
             }
 
+            svg {
+                fill: $primary-100;
+            }
+
             &:hover,
             &.#{$rte-prefix}active {
                 color: $primary-inverse;
+
+                svg {
+                    fill: $primary-inverse;
+                }
             }
 
             select {
@@ -307,6 +368,16 @@
             .#{$rte-prefix}select2 {
                 text-align: left;
             }
+
+            &.#{$rte-prefix}disabled {
+                color: $primary-700;
+                cursor: default;
+
+                &:hover {
+                    background: none;
+                    color: $primary-700;
+                }
+            }
         }
 
         .unlink {
@@ -321,6 +392,24 @@
             top: -10px;
         }
     }
+
+    // Place some actions above some elements that overlap them, like CodeMirror container
+    &action {
+        position: relative;
+    }
+
+    &resizer-h-cl {
+        margin: auto -8px;
+    }
+}
+
+.table-edition-toolbar {
+    /* rtl:begin:ignore */
+    left: 50%;
+    transform: translate(-50%, 0);
+
+    /* rtl:end:ignore */
+    margin-bottom: 5px;
 }
 
 .sp-container {
@@ -410,6 +499,23 @@
     }
 }
 
+.settings-panel {
+    padding: 10px;
+
+    &:not(.show) {
+        display: none;
+    }
+
+    &__body {
+        padding: 12px;
+    }
+
+    &__tooltip-trigger {
+        position: absolute;
+        inset: 0;
+    }
+}
+
 .content-variant-item-content__body {
     &.editor-unavailable {
         .alert {
@@ -490,6 +596,25 @@
             // stylelint-disable-next-line declaration-no-important
             background-color: $codemirror-selected-background !important;
         }
+    }
+
+    &.fullscreen-mode {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $grapesjs-content-editor-fullscreen-z-index;
+        // stylelint-disable-next-line declaration-no-important
+        padding: $grapesjs-content-editor-fullscreen-offset !important;
+        // stylelint-disable-next-line declaration-no-important
+        width: auto !important;
+        // stylelint-disable-next-line declaration-no-important
+        height: auto !important;
+    }
+
+    &-loading-mask-fullscreen {
+        z-index: $grapesjs-content-editor-fullscreen-z-index + 1;
     }
 }
 

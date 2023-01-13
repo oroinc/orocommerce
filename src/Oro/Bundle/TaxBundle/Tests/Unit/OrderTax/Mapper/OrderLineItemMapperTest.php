@@ -16,55 +16,32 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const ITEM_ID = 123;
-    const ITEM_PRICE_VALUE = 12.34;
-    const ITEM_QUANTITY = 12;
+    private const ITEM_ID = 123;
+    private const ITEM_PRICE_VALUE = 12.34;
+    private const ITEM_QUANTITY = 12;
 
-    const CONTEXT_KEY = 'context_key';
-    const CONTEXT_VALUE = 'context_value';
+    private const CONTEXT_KEY = 'context_key';
+    private const CONTEXT_VALUE = 'context_value';
 
-    /**
-     * @var OrderLineItemMapper
-     */
-    protected $mapper;
+    /** @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $addressProvider;
 
-    /**
-     * @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $addressProvider;
-
-    /**
-     * @var ContextEventDispatcher
-     */
-    protected $eventDispatcher;
+    /** @var OrderLineItemMapper */
+    private $mapper;
 
     protected function setUp(): void
     {
-        $this->addressProvider = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressProvider = $this->createMock(TaxationAddressProvider::class);
 
-        $this->eventDispatcher = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Event\ContextEventDispatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->eventDispatcher
-            ->expects($this->any())
+        $eventDispatcher = $this->createMock(ContextEventDispatcher::class);
+        $eventDispatcher->expects($this->any())
             ->method('dispatch')
             ->willReturn(new \ArrayObject([self::CONTEXT_KEY => self::CONTEXT_VALUE]));
 
         $this->mapper = new OrderLineItemMapper(
-            $this->eventDispatcher,
-            $this->addressProvider,
-            'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+            $eventDispatcher,
+            $this->addressProvider
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->mapper);
     }
 
     public function testMap()
@@ -90,16 +67,9 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
         $this->assertTaxable($taxable, self::ITEM_ID, BigDecimal::of(self::ITEM_QUANTITY), BigDecimal::one());
     }
 
-    /**
-     * @param int $id
-     * @param int $quantity
-     * @param float $priceValue
-     * @return OrderLineItem
-     */
-    protected function createLineItem($id, $quantity, $priceValue = 1)
+    private function createLineItem(int $id, int $quantity, float $priceValue = 1): OrderLineItem
     {
-        /** @var OrderLineItem $lineItem */
-        $lineItem = $this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => $id]);
+        $lineItem = $this->getEntity(OrderLineItem::class, ['id' => $id]);
         $lineItem
             ->setQuantity($quantity)
             ->setOrder(new Order())
@@ -110,15 +80,9 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
         return $lineItem;
     }
 
-    /**
-     * @param Taxable $taxable
-     * @param int $id
-     * @param BigDecimal $quantity
-     * @param BigDecimal $priceValue
-     */
-    protected function assertTaxable($taxable, $id, BigDecimal $quantity, BigDecimal $priceValue)
+    private function assertTaxable(Taxable $taxable, int $id, BigDecimal $quantity, BigDecimal $priceValue): void
     {
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
+        $this->assertInstanceOf(Taxable::class, $taxable);
         $this->assertEquals($id, $taxable->getIdentifier());
         $this->assertEquals($quantity, $taxable->getQuantity());
         $this->assertEquals($priceValue, $taxable->getPrice());

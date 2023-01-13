@@ -53,11 +53,8 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider identifierDataProvider
-     * @param string $identifier
-     * @param int $expectedId
-     * @param array $exception
      */
-    public function testGetEntityByIdentifierFailed($identifier, $expectedId, array $exception = [])
+    public function testGetEntityByIdentifierFailed(string $identifier, int $expectedId, array $exception = [])
     {
         if ($exception) {
             [$exception, $message] = $exception;
@@ -78,10 +75,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->getEntityByIdentifier($identifier);
     }
 
-    /**
-     * @return array
-     */
-    public function identifierDataProvider()
+    public function identifierDataProvider(): array
     {
         return [
             'no delimiter' => ['a1', 0, [\InvalidArgumentException::class, 'Wrong identifier "a1"']],

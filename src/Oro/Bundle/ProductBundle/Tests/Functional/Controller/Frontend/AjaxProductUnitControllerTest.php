@@ -4,32 +4,24 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxProductUnitControllerTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-
-        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
+        $this->loadFixtures([LoadProductUnitPrecisions::class]);
     }
 
     /**
-     * @param string $productReference
-     * @param array $expectedData
-     * @param bool $isShort
-     *
      * @dataProvider productUnitsDataProvider
      */
-    public function testProductUnitsAction($productReference, array $expectedData, $isShort = false)
+    public function testProductUnitsAction(string $productReference, array $expectedData, bool $isShort = false)
     {
         $product = $this->getProduct($productReference);
 
@@ -42,18 +34,15 @@ class AjaxProductUnitControllerTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        static::assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
-        static::assertArrayHasKey('units', $data);
-        static::assertEquals($expectedData, $data['units']);
+        self::assertArrayHasKey('units', $data);
+        self::assertEquals($expectedData, $data['units']);
     }
 
-    /**
-     * @return array
-     */
-    public function productUnitsDataProvider()
+    public function productUnitsDataProvider(): array
     {
         return [
             'product-1 full' => [
@@ -97,20 +86,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $reference
-     * @return Product
-     */
-    protected function getProduct($reference)
-    {
-        return $this->getReference($reference);
-    }
-
-    /**
-     * @param string $reference
-     * @return ProductUnit
-     */
-    protected function getProductUnit($reference)
+    private function getProduct(string $reference): Product
     {
         return $this->getReference($reference);
     }

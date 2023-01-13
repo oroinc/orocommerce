@@ -1,17 +1,20 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import LinkTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-type-builder';
+import LinkTypeBuilder from 'orocms/js/app/grapesjs/types/link-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/link-type', () => {
     let linkTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
         editor.BlockManager.add('link', {
             label: 'Test Link',
@@ -19,6 +22,8 @@ describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
             category: 'Basic'
         });
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
@@ -53,7 +58,7 @@ describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
         it('check is component type button', () => {
             const button = linkTypeBuilder.editor.BlockManager.get(linkTypeBuilder.componentType);
             expect(button).toBeDefined();
-            expect(button.get('category').get('label')).toEqual('Basic');
+            expect(button.get('category')).toEqual('Basic');
         });
 
         it('check editor commands defined', () => {
@@ -64,9 +69,7 @@ describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
             const mockElement = document.createElement('A');
 
             expect(linkTypeBuilder.Model.isComponent).toBeDefined();
-            expect(linkTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: linkTypeBuilder.componentType
-            });
+            expect(linkTypeBuilder.Model.isComponent(mockElement)).toBe(true);
             expect(linkTypeBuilder.Model.componentType).toEqual(linkTypeBuilder.componentType);
 
             expect(linkTypeBuilder.Model.prototype.defaults.tagName).toEqual('a');
@@ -74,7 +77,7 @@ describe('orocms/js/app/grapesjs/type-builders/link-type-builder', () => {
                 ['link']
             );
             expect(linkTypeBuilder.Model.prototype.defaults.components.length).toEqual(1);
-            expect(linkTypeBuilder.Model.prototype.defaults.editable).toBeFalsy();
+            expect(linkTypeBuilder.Model.prototype.defaults.editable).toBe(false);
 
             expect(linkTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

@@ -108,11 +108,11 @@ Feature: Consent management via Management Console UI
     When I click "Delete"
     Then I should see "Are you sure you want to delete this consent?"
     And I click "Cancel"
+    And I set "Store and Process" as default web catalog
     When go to System/ Consent Management
     Then I should see following grid:
       | Name                     | Type      | Content Node           | Content Source  |
       | Presenting Personal Data | Mandatory | Store and Process Node | Consent Landing |
-    And I set "Store and Process" as default web catalog
     And click "Create Consent"
     And fill "Consent Form" with:
       | Name | Email Newsletters |
@@ -574,10 +574,10 @@ Feature: Consent management via Management Console UI
     When click "Yes, Decline"
     Then should see "Customer User profile updated" flash message
     And click "Quick Order Form"
-    And fill "QuickAddForm" with:
+    And fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
     And I wait for products to load
-    And fill "QuickAddForm" with:
+    And fill "Quick Order Form" with:
       | QTY1 | 10  |
     When click "Create Order"
     Then I should see "Agreements" in the "Checkout Step Title" element
@@ -691,10 +691,10 @@ Feature: Consent management via Management Console UI
     And I click "Yes, Decline"
     And I should see "Customer User profile updated" flash message
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
     And I wait for products to load
-    And fill "QuickAddForm" with:
+    And fill "Quick Order Form" with:
       | QTY1 | 10  |
     And I click "Create Order"
     Then I should see "Agreements" in the "Checkout Step Title" element
@@ -740,7 +740,7 @@ Feature: Consent management via Management Console UI
     And type "Lenovo_Vibe1_sku" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I open shopping list widget
     And I click "View List"
     And click on "Create Order"
@@ -790,7 +790,7 @@ Feature: Consent management via Management Console UI
     And type "Lenovo_Vibe1_sku" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I open shopping list widget
     And I click "View List"
     And click on "Create Order"

@@ -19,6 +19,8 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
+ * Form type for Checkout Address with selector.
+ *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
@@ -64,7 +66,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
             ->with([
                 'data' => null,
                 'data_class' => null,
-                'group_label_prefix' => 'oro.checkout.',
+                'group_label_prefix' => 'oro.checkout.'
             ])
             ->willReturnSelf();
         $resolver->expects($this->once())
@@ -87,10 +89,13 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(CheckoutAddressSelectType::class, null, [
             'object' => new Checkout(),
-            'address_type' => 'billing'
+            'address_type' => 'billing',
+            'disabled' => null,
         ]);
 
         $this->assertTrue($form->getConfig()->hasAttribute('choice_list'));
+        $this->assertTrue($form->getConfig()->hasOption('disabled'));
+        $this->assertFalse($form->getConfig()->getOption('disabled'));
     }
 
     public function testGetParent(): void

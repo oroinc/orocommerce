@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Repository class of ProductShippingOptions entity.
@@ -19,21 +18,8 @@ class ProductShippingOptionsRepository extends ServiceEntityRepository
             return $result;
         }
 
-        foreach ($unitsByProductIds as $productId => $unit) {
-            QueryBuilderUtil::checkIdentifier($productId);
-
-            $expressions = [];
-            $params = [];
-            foreach ($unit as $unitArr) {
-                $productParam = 'product_' . $productId;
-                $unitParam = QueryBuilderUtil::generateParameterName('unit_');
-
-                $expressions[] = sprintf('(o.product = :%s AND o.productUnit = :%s)', $productParam, $unitParam);
-                $params[] = [$productParam => $productId, $unitParam => $unitArr];
-            }
-
-            $query = sprintf(
-                <<<DQL
+        $query = sprintf(
+            <<<DQL
                 SELECT
                     o.dimensionsHeight,
                     o.dimensionsLength,
@@ -44,18 +30,21 @@ class ProductShippingOptionsRepository extends ServiceEntityRepository
                     u.code
                 FROM %s o
                 INNER JOIN o.productUnit u INDEX BY u.code
-                WHERE %s
+                WHERE o.product = :productId AND o.productUnit IN (:productUnits)
             DQL,
-                ProductShippingOptions::class,
-                implode(' OR ', $expressions)
+            ProductShippingOptions::class
+        );
+
+        $unitsByCodeQuery = $this->getEntityManager()->createQuery($query);
+
+        foreach ($unitsByProductIds as $productId => $unitCodes) {
+            $shippingOptionsByCode = $unitsByCodeQuery->execute(
+                ['productId' => $productId, 'productUnits' => $unitCodes],
+                AbstractQuery::HYDRATE_ARRAY
             );
 
-            $unitsByCode = $this->getEntityManager()
-                ->createQuery($query)
-                ->execute(array_merge(...$params), AbstractQuery::HYDRATE_ARRAY);
-
-            if ($unitsByCode) {
-                $result[$productId] = $unitsByCode;
+            if ($shippingOptionsByCode) {
+                $result[$productId] = $shippingOptionsByCode;
             }
         }
 

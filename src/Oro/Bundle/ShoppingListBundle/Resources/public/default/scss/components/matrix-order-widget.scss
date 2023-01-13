@@ -1,0 +1,677 @@
+/* @theme: default; */
+
+/* stylelint-disable no-descending-specificity */
+
+@mixin matrix-design-for-not-available () {
+    .matrix-order-widget__item-not-available {
+        width: 100%;
+
+        line-height: $matrix-order-widget-not-available-line-height;
+
+        background-color: $matrix-order-widget-not-available-background-color;
+        border-radius: $matrix-order-widget-not-available-border-radius;
+    }
+}
+
+.matrix-order-widget {
+    clear: $matrix-order-widget-clear;
+
+    width: $matrix-order-widget-width;
+    margin: $matrix-order-widget-offset;
+
+    @include clearfix();
+
+    &__one-line {
+        min-width: $matrix-order-widget-one-line-form-col-width;
+        display: flex;
+        align-items: center;
+        flex-shrink: $matrix-order-widget-one-line-flex-shrink;
+    }
+
+    &__one-line & {
+        &__form__col {
+            width: $matrix-order-widget-one-line-form-col-width;
+        }
+    }
+
+    &__grid {
+        overflow: $matrix-order-widget-grid-overflow;
+        position: $matrix-order-widget-grid-position;
+
+        width: $matrix-order-widget-grid-width;
+        margin-bottom: $matrix-order-widget-grid-offset-bottom;
+        padding-top: $matrix-order-widget-grid-offset-inner-top;
+
+        font-family: $matrix-order-widget-grid-font-family;
+
+        .fields-row-error {
+            background: $matrix-order-widget-fields-row-error-background;
+            max-width: $matrix-order-widget-fields-row-error-max-width;
+            padding: $matrix-order-widget-fields-row-error-offset-inner;
+            display: $matrix-order-widget-fields-row-error-display;
+            position: $matrix-order-widget-fields-row-error-position;
+            z-index: $matrix-order-widget-fields-row-error-z-index;
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        &.state-multiline {
+            .matrix-order-widget__grid-body {
+                overflow: inherit;
+            }
+
+            .matrix-order-widget__one-line {
+                padding: $offset-y-s $offset-x $offset-y-s 0;
+            }
+
+            .matrix-order-widget__form__row {
+                display: flex;
+                flex-wrap: wrap;
+                height: auto;
+
+                white-space: normal;
+            }
+
+            .matrix-order-widget__form__col {
+                padding: 0;
+
+                min-width: $matrix-order-widget-state-multiline-form-col-width;
+                max-width: $matrix-order-widget-state-multiline-form-col-width;
+            }
+
+            .matrix-order-widget__label-wrap {
+                display: inline-block;
+                min-width: $matrix-order-widget-state-multiline-label-wrap-width;
+                max-width: $matrix-order-widget-state-multiline-label-wrap-width;
+                padding-right: $offset-x;
+
+                word-break: break-word;
+            }
+
+            @include matrix-design-for-not-available();
+        }
+
+        &.state-labels-above {
+            .matrix-order-widget__grid-body {
+                overflow: inherit;
+            }
+
+            .matrix-order-widget__form__row {
+                height: auto;
+            }
+
+            .matrix-order-widget__form__col {
+                width: $matrix-order-widget-grid-multi-rows-grid-form-row-width;
+            }
+
+            .matrix-order-widget__one-line {
+                width: $matrix-order-widget-form-col-width;
+                flex-direction: column;
+            }
+
+            .matrix-order-widget__label-wrap {
+                margin-bottom: $offset-x-m;
+            }
+
+            @include matrix-design-for-not-available();
+        }
+    }
+
+    &__grid--multi-rows & {
+        border-bottom: $matrix-order-widget-grid-multi-rows-border-bottom;
+
+        &__form__row {
+            width: $matrix-order-widget-grid-multi-rows-grid-form-row-width;
+        }
+
+        &__grid-head {
+            display: $matrix-order-widget-grid-multi-rows-grid-head-display;
+
+            position: $matrix-order-widget-grid-multi-rows-grid-head-position;
+
+            z-index: $matrix-order-widget-grid-multi-rows-grid-head-z-index;
+        }
+
+        &__grid-footer {
+            position: $matrix-order-widget-grid-multi-rows-grid-footer-position;
+            background: $matrix-order-widget-grid-multi-rows-grid-footer-background;
+            clear: $matrix-order-widget-grid-multi-rows-grid-footer-clear;
+
+            z-index: $matrix-order-widget-grid-multi-rows-grid-footer-z-index;
+        }
+
+        &__grid-footer-label,
+        &__grid-head-label {
+            background: $matrix-order-widget-form-colored-background;
+            overflow: $matrix-order-widget-grid-multi-rows-grid-area-items-label-overflow;
+
+            border-bottom: $matrix-order-widget-grid-multi-rows-grid-footer-border-bottom;
+
+            &::before,
+            &::after {
+                position: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-position;
+
+                box-sizing: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-box-sizing;
+
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-bg;
+                width: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-width;
+                height: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-height;
+                top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-top;
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-left;
+
+                z-index: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-z-index;
+            }
+
+            &::after {
+                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-left;
+                right: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-right;
+                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-bg;
+            }
+        }
+
+        &__grid-head-label {
+            &::before,
+            &::after {
+                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-bottom;
+            }
+        }
+
+        &__grid-footer-label {
+            border-top: $matrix-order-widget-grid-multi-rows-grid-footer-border-top;
+
+            &::before,
+            &::after {
+                border-top: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-top;
+                border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-bottom;
+            }
+        }
+
+        &__grid-head-wrapper,
+        &__grid-footer-wrapper {
+            display: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-display;
+            position: $matrix-order-widget-grid-multi-rows-grid-area-items-wrapper-position;
+
+            .matrix-order-widget__form__col {
+                background: $matrix-order-widget-form-colored-background;
+
+                &::after {
+                    position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
+                    left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
+                    bottom: $matrix-order-widget-grid-multi-rows-grid-head-after-bottom;
+
+                    width: $matrix-order-widget-grid-multi-rows-grid-head-after-width;
+                    border-bottom: $matrix-order-widget-grid-multi-rows-grid-head-after-border-bottom;
+
+                    content: $matrix-order-widget-grid-multi-rows-grid-head-after-content;
+                    z-index: $matrix-order-widget-grid-multi-rows-grid-head-after-z-index;
+                }
+            }
+        }
+
+        &__grid-footer-wrapper {
+            .matrix-order-widget__form__col {
+                &::before {
+                    position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
+                    top: $matrix-order-widget-grid-multi-rows-grid-head-after-top;
+                    left: $matrix-order-widget-grid-multi-rows-grid-head-after-left;
+
+                    width: $matrix-order-widget-grid-multi-rows-grid-head-after-width;
+                    border-top: $matrix-order-widget-grid-multi-rows-grid-head-after-border-top;
+
+                    content: $matrix-order-widget-grid-multi-rows-grid-head-after-content;
+                    z-index: $matrix-order-widget-grid-multi-rows-grid-head-after-z-index;
+                }
+            }
+        }
+    }
+
+    &__grid-body {
+        display: $matrix-order-widget-grid-body-display;
+
+        overflow: $matrix-order-widget-grid-body-overflow;
+
+        .form-row {
+            min-width: $matrix-order-widget-grid-body-form-row-min-width;
+            max-width: $matrix-order-widget-grid-body-form-row-max-width;
+            margin: $matrix-order-widget-grid-body-form-offset;
+        }
+    }
+
+    &__grid-body & {
+        &__form__row {
+            align-items: $matrix-order-widget-grid-body-form-row-align-items;
+
+            &:not(:last-child) {
+                .matrix-order-widget__form__col::after {
+                    position: $matrix-order-widget-form-row-not-last-child-position;
+
+                    border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+                    width: $matrix-order-widget-form-row-not-last-child-width;
+                    left: $matrix-order-widget-form-row-not-last-child-left;
+                    bottom: $matrix-order-widget-form-row-not-last-child-bottom;
+
+                    content: $matrix-order-widget-form-row-not-last-child-content;
+                    z-index: $matrix-order-widget-form-row-not-last-child-z-index;
+                }
+            }
+        }
+    }
+
+    &__grid-head,
+    &__grid-footer {
+        &-wrapper {
+            overflow: $matrix-order-widget-grid-area-items-wrapper-overflow;
+
+            width: $matrix-order-widget-grid-area-items-wrapper-width;
+
+            white-space: $matrix-order-widget-grid-area-items-wrapper-white-space;
+            text-align: $matrix-order-widget-grid-area-items-wrapper-text-align;
+        }
+
+        &-label {
+            width: $matrix-order-widget-grid-area-items-label-width;
+            max-width: $matrix-order-widget-grid-area-items-label-max-width;
+            height: $matrix-order-widget-grid-footer-label-height;
+
+            line-height: $matrix-order-widget-grid-footer-label-line-height;
+            text-align: $matrix-order-widget-grid-area-items-label-text-align;
+
+            flex-shrink: $matrix-order-widget-grid-area-items-label-flex-shrink;
+        }
+    }
+
+    &__grid-footer {
+        display: $matrix-order-widget-grid-footer-display;
+        position: $matrix-order-widget-grid-footer-position;
+
+        background: $matrix-order-widget-grid-footer-background;
+
+        &-total {
+            padding: $matrix-order-widget-grid-footer-total-offset-inner;
+
+            color: $matrix-order-widget-grid-footer-total-color;
+
+            &.valid {
+                color: $matrix-order-widget-grid-footer-total-valid-color;
+            }
+        }
+    }
+
+    &__grid-side {
+        float: $matrix-order-widget-grid-side-float;
+
+        width: $matrix-order-widget-grid-side-width;
+
+        overflow: $matrix-order-widget-grid-side-overflow;
+
+        &-wrapper {
+            overflow: $matrix-order-widget-grid-side-wrapper-overflow;
+        }
+
+        &::before,
+        &::after {
+            position: $matrix-order-widget-grid-side-pseudo-classes-position;
+
+            background: $matrix-order-widget-grid-side-pseudo-classes-background;
+            width: $matrix-order-widget-grid-side-pseudo-classes-width;
+            height: $matrix-order-widget-grid-side-pseudo-classes-height;
+            top: $matrix-order-widget-grid-side-pseudo-classes-top;
+            left: $matrix-order-widget-grid-side-pseudo-classes-left;
+
+            z-index: $matrix-order-widget-grid-side-pseudo-classes-z-index;
+        }
+
+        &::after {
+            left: $matrix-order-widget-grid-side-pseudo-class-after-left;
+            right: $matrix-order-widget-grid-side-pseudo-class-after-right;
+            background: $matrix-order-widget-grid-side-pseudo-class-after-background;
+        }
+    }
+
+    &.has-x-scroll & {
+        &__grid--multi-rows {
+            .matrix-order-widget__grid-footer-label,
+            .matrix-order-widget__grid-head-label {
+                &::before,
+                &::after {
+                    content: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-content;
+                }
+            }
+        }
+
+        &__grid-side {
+            &::before {
+                content: $matrix-order-widget-grid-side-pseudo-classes-content;
+            }
+        }
+    }
+
+    &.has-x-scroll:not(.has-y-scroll) & {
+        &__grid-side {
+            &::after {
+                content: $matrix-order-widget-grid-side-pseudo-classes-content;
+            }
+        }
+    }
+
+    &__grid-side & {
+        &__form__row {
+            display: $matrix-order-widget-grid-side-form-row-display;
+            justify-content: $matrix-order-widget-grid-side-form-row-justify-content;
+            overflow: $matrix-order-widget-grid-side-form-row-overflow;
+
+            margin: $matrix-order-widget-grid-side-form-row-offset;
+            padding: $matrix-order-widget-grid-side-form-row-offset-inner;
+
+            text-align: $matrix-order-widget-grid-side-form-row-text-align;
+            white-space: $matrix-order-widget-grid-side-form-row-white-space;
+            word-break: $matrix-order-widget-grid-side-form-row-word-break;
+            line-height: $matrix-order-widget-grid-side-form-row-line-height;
+
+            &:not(:last-child) {
+                border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
+            }
+        }
+    }
+
+    &__grid-scrollable-area {
+        display: $matrix-order-widget-grid-scrollable-area-display;
+        min-height: $matrix-order-widget-grid-scrollable-area-min-height;
+        flex-grow: $matrix-order-widget-grid-scrollable-area-flex-grow;
+    }
+
+    &__form {
+        &--inline {
+            margin-bottom: $matrix-order-widget-form-inline-offset-bottom;
+        }
+    }
+
+    &__form__row {
+        display: $matrix-order-widget-form-row-display;
+        align-items: $matrix-order-widget-form-row-align-items;
+        position: $matrix-order-widget-form-row-position;
+
+        height: $matrix-order-widget-form-row-height;
+
+        white-space: $matrix-order-widget-form-row-white-space;
+    }
+
+    &__form__col {
+        display: $matrix-order-widget-form-col-display;
+        align-items: $matrix-order-widget-form-col-align-items;
+        justify-content: $matrix-order-widget-form-col-justify-content;
+        position: $matrix-order-widget-form-col-position;
+
+        margin: $matrix-order-widget-form-col-offset;
+        padding: $matrix-order-widget-form-col-offset-inner;
+        width: $matrix-order-widget-form-col-width;
+        min-width: $matrix-order-widget-form-col-min-width;
+        color: $matrix-order-widget-form-col-color;
+        border: $matrix-order-widget-form-col-border;
+
+        line-height: $matrix-order-widget-form-col-line-height;
+        text-align: $matrix-order-widget-form-col-text-align;
+        vertical-align: $matrix-order-widget-form-col-vertical-align;
+
+        &--size {
+            &-m {
+                min-width: $matrix-order-widget-form-col-width-m;
+                width: $matrix-order-widget-form-col-width-m;
+            }
+        }
+
+        &-wrapper {
+            display: $matrix-order-widget-form-col-wrapper-display;
+            align-items: $matrix-order-widget-form-col-wrapper-align-items;
+
+            margin: $matrix-order-widget-form-col-wrapper-offset;
+            color: $matrix-order-widget-form-col-wrapper-color;
+
+            white-space: $matrix-order-widget-form-col-wrapper-white-space;
+            word-break: $matrix-order-widget-form-col-wrapper-word-break;
+        }
+
+        .form-field-quantity {
+            font-family: $matrix-order-widget-form-col-form-field-quantity-font-family;
+            text-align: $matrix-order-widget-form-col-form-field-quantity-text-align;
+        }
+    }
+
+    &__item {
+        position: $matrix-order-widget-item-position;
+        overflow: $matrix-order-widget-item-overflow;
+
+        &:not(:first-child) {
+            border-top: $matrix-order-widget-item-not-first-child-border-top;
+        }
+
+        &-icon-wrapper {
+            position: $matrix-order-widget-item-icon-wrapper-position;
+            display: $matrix-order-widget-item-icon-wrapper-display;
+            align-items: $matrix-order-widget-item-icon-wrapper-align-items;
+
+            margin-top: $matrix-order-widget-item-item-icon-wrapper-offset-top;
+            right: $matrix-order-widget-item-icon-wrapper-right;
+            top: $matrix-order-widget-item-item-icon-wrapper-top;
+        }
+
+        &-label {
+            min-width: $matrix-order-widget-item-label-min-width;
+            margin: $matrix-order-widget-item-label-offset;
+
+            word-break: $matrix-order-widget-item-label-word-break;
+            line-height: $matrix-order-widget-item-label-line-height;
+            align-self: $matrix-order-widget-item-label-align-self;
+        }
+
+        &-value {
+            min-width: $matrix-order-widget-item-value-min-width;
+
+            input {
+                text-align: $matrix-order-widget-item-value-input-text-align;
+            }
+        }
+
+        &-separator {
+            margin: $matrix-order-widget-item-separator-offset;
+        }
+
+        &-info {
+            display: $matrix-order-widget-item-info-display;
+            position: $matrix-order-widget-item-info-position;
+            flex-direction: $matrix-order-widget-item-info-flex-direction;
+            justify-content: $matrix-order-widget-item-info-justify-content;
+
+            width: $matrix-order-widget-item-info-width;
+            padding: $matrix-order-widget-item-info-offset-inner;
+
+            &-wrapper {
+                display: $matrix-order-widget-item-info-wrapper-display;
+                align-items: $matrix-order-widget-item-info-wrapper-align-items;
+                word-break: $matrix-order-widget-item-info-wrapper-word-break;
+            }
+        }
+
+        &-content {
+            display: $matrix-order-widget-item-content-display;
+            align-items: $matrix-order-widget-item-content-align-items;
+            flex-basis: $matrix-order-widget-item-content-flex-basis;
+
+            padding: $matrix-order-widget-item-content-offset-inner;
+        }
+
+        &-content-wrapper {
+            display: $matrix-order-widget-item-content-wrapper-display;
+            flex-wrap: $matrix-order-widget-item-content-wrapper-flex-wrap;
+            overflow: $matrix-order-widget-item-content-wrapper-overflow;
+
+            padding: $matrix-order-widget-item-content-wrapper-offset-inner;
+            width: $matrix-order-widget-item-content-wrapper-width;
+        }
+    }
+
+    .pinned-dropdown {
+        max-width: $matrix-order-widget-pinned-dropdown-max-width;
+    }
+
+    //Should reset default dialog widget classes
+    &--dialog {
+        .ui-dialog-titlebar {
+            padding: $matrix-order-widget-dialog-ui-dialog-titlebar-offset-inner;
+        }
+
+        .ui-dialog-title {
+            display: $matrix-order-widget-dialog-ui-dialog-title-display;
+        }
+
+        .ui-widget-content {
+            padding: $matrix-order-widget-dialog-ui-widget-content-offset-inner;
+        }
+
+        .ui-widget-header {
+            padding: $matrix-order-widget-dialog-ui-widget-header-offset-inner;
+        }
+
+        .ui-dialog-buttonpane {
+            padding: $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner;
+        }
+    }
+
+    &--dialog & {
+        max-width: $matrix-order-widget-dialog-max-width;
+
+        &__grid {
+            &.state-labels-above {
+                .matrix-order-widget__one-line {
+                    flex-grow: $matrix-order-widget-dialog-state-labels-above-one-line-flex-grow;
+                }
+            }
+
+            .matrix-order-widget__grid-body {
+                overflow: $matrix-order-widget-dialog-grid-body-overflow;
+            }
+        }
+
+        &__grid-body {
+            max-height: $matrix-order-widget-dialog-grid-body-max-height;
+        }
+
+        &__grid-side {
+            max-height: $matrix-order-widget-dialog-grid-side-max-height;
+        }
+
+        &__form__col {
+            flex-grow: $matrix-order-widget-dialog-form-col-flex-grow;
+        }
+    }
+
+    &--dialog-fullscreen {
+        position: $matrix-order-widget-dialog-fullscreen-position;
+
+        .ui-dialog-titlebar,
+        .ui-dialog-buttonpane {
+            display: $matrix-order-widget-dialog-fullscreen-position-ui-dialog-hidden-item;
+        }
+
+        .ui-widget-content {
+            padding: $matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner;
+        }
+    }
+
+    .clear-button {
+        &--mobile {
+            width: $matrix-order-widget-clear-button-mobile-width;
+            border-color: $matrix-order-widget-clear-button-mobile-border-color;
+
+            @include element-state('hover') {
+                border-color: $matrix-order-widget-clear-button-mobile-border-color;
+            }
+
+            @include element-state('focus') {
+                border-color: $matrix-order-widget-clear-button-mobile-border-color;
+            }
+        }
+
+        &.disabled {
+            color: $matrix-order-widget-form-col-color;
+        }
+    }
+
+    &__actions-container {
+        margin: $matrix-order-widget-actions-container-offset;
+        padding: $matrix-order-widget-actions-container-inner-offset;
+    }
+}
+
+@include breakpoint('desktop') {
+    .matrix-order-widget {
+        &__form--inline & {
+            &__summary--inline {
+                margin-top: $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top;
+            }
+        }
+    }
+}
+
+@include breakpoint('strict-tablet') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis;
+                padding: $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .matrix-order-widget {
+        &--dialog {
+            padding-bottom: $matrix-order-widget-dialog-tablet-small-offset-bottom;
+
+            .ui-widget-content {
+                padding: $matrix-order-widget-dialog-ui-widget-content-tablet-small-offset;
+            }
+
+            .ui-dialog-buttonpane {
+                padding: $matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset;
+            }
+        }
+
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;
+            }
+        }
+
+        .validation-failed {
+            margin: $matrix-order-widget-validation-failed-tablet-small-offset;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis;
+            }
+        }
+
+        .pinned-dropdown {
+            max-width: $matrix-order-widget-pinned-dropdown-mobile-landscape-max-width;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .matrix-order-widget {
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-mobile-flex-basis;
+            }
+        }
+    }
+}

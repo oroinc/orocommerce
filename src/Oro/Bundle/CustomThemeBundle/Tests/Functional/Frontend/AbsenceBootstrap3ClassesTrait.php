@@ -24,7 +24,6 @@ trait AbsenceBootstrap3ClassesTrait
     public function themeProvider(): array
     {
         return  [
-            'blank theme' => ['blank'],
             'default theme' => ['default'],
             'custom theme' => ['custom'],
         ];

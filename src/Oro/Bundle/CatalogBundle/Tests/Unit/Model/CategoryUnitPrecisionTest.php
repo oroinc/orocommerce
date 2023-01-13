@@ -11,16 +11,11 @@ class CategoryUnitPrecisionTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var CategoryUnitPrecision */
-    protected $entity;
+    private $entity;
 
     protected function setUp(): void
     {
         $this->entity = new CategoryUnitPrecision();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->entity);
     }
 
     public function testProperties()

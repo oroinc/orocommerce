@@ -1,20 +1,25 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/type-builders/link-button-type-builder';
+import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/types/link-button-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
+describe('orocms/js/app/grapesjs/types/link-block', () => {
     let linkButtonTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
@@ -61,9 +66,7 @@ describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
             mockElement.classList.add('btn');
 
             expect(linkButtonTypeBuilder.Model.isComponent).toBeDefined();
-            expect(linkButtonTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: linkButtonTypeBuilder.componentType
-            });
+            expect(linkButtonTypeBuilder.Model.isComponent(mockElement)).toBe(true);
             expect(linkButtonTypeBuilder.Model.componentType).toEqual(linkButtonTypeBuilder.componentType);
 
             expect(linkButtonTypeBuilder.Model.prototype.defaults.tagName).toEqual('a');

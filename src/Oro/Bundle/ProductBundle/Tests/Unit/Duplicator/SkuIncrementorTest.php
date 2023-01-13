@@ -12,26 +12,17 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_CLASS = 'OroProductBundle:Product';
+    private const PRODUCT_CLASS = 'OroProductBundle:Product';
 
-    /**
-     * @var SkuIncrementor
-     */
-    protected $service;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|AclHelper
-     */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var SkuIncrementor */
+    private $service;
+
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -42,26 +33,20 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider skuDataProvider
-     * @param string[] $existingSku
-     * @param array $testCases
      */
     public function testIncrementSku(array $existingSku, array $testCases)
     {
-        $this->doctrineHelper
-            ->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->with(self::PRODUCT_CLASS)
-            ->willReturn($this->getProductRepositoryMock($existingSku));
+            ->willReturn($this->getProductRepository($existingSku));
 
         foreach ($testCases as $expected => $sku) {
             $this->assertEquals($expected, $this->service->increment($sku));
         }
     }
 
-    /**
-     * @return array
-     */
-    public function skuDataProvider()
+    public function skuDataProvider(): array
     {
         return [
             [
@@ -110,12 +95,7 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $existingSku
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getProductRepositoryMock($existingSku)
+    private function getProductRepository(array $existingSku): ProductRepository
     {
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->any())
@@ -141,8 +121,7 @@ class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
                 return $queryBuilder;
             });
 
-        $this->aclHelper
-            ->expects($this->any())
+        $this->aclHelper->expects($this->any())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);

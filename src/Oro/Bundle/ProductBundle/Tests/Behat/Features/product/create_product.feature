@@ -4,6 +4,7 @@
 @ticket-BB-17630
 @ticket-BB-19940
 @ticket-BB-20744
+@ticket-BB-10466
 @waf-skip
 @automatically-ticket-tagged
 @fixture-OroCatalogBundle:categories.yml
@@ -23,7 +24,11 @@ Feature: Create product
     Given I proceed as the Admin
     And I login as administrator
     And go to Products/ Products
-    And click "Create Product"
+    Then Page title equals to "Products - Products"
+    And I should see "Products / Products" in breadcrumbs
+    When click "Create Product"
+    Then Page title equals to "Create Product - Products - Products"
+    And I should see "Products / Products" in breadcrumbs
     When I focus on "Type" field and press Enter key
     Then I should see "Save and Close"
 
@@ -32,7 +37,9 @@ Feature: Create product
     And I click "Create Product"
     And I click "Retail Supplies"
     When I click "Continue"
-    Then I should see "Type: Simple Product Family: Default Category: All Products / Retail Supplies"
+    Then Page title equals to "Create Product - Products - Products"
+    And I should see "Products / Products" in breadcrumbs
+    And I should see "Type: Simple Product Family: Default Category: All Products / Retail Supplies"
 
   Scenario: Finalizing product creation
     Given fill "Create Product Form" with:
@@ -82,7 +89,9 @@ Feature: Create product
 
   Scenario: Check created product on view page
     When I click view "Test123" in grid
-    Then I should see product with:
+    Then Page title equals to "Test123 - Test Product - Products - Products"
+    And I should see "Products / Products" in breadcrumbs
+    And I should see product with:
       | SKU            | Test123      |
       | Name           | Test Product |
       | Type           | Simple       |
@@ -189,19 +198,18 @@ Feature: Create product
   And I should see product with:
       | SKU | Test1234 |
   When I click "link 1 in short"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
   When I click "link 2 in short"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
   When I click "link 1 in desc"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
   When I click "link 2 in desc"
-  Then I should see product with:
+  Then I should see "This click cannot be processed in the preview mode." flash message and I close it
+  And I should see product with:
     | SKU | Test1234 |
-  And I should see "This click cannot be processed in the preview mode." flash message and I close it
-

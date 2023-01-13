@@ -20,56 +20,35 @@ use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 
 class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const ORDER_LINE_ITEM_CLASS = 'Oro\Bundle\OrderBundle\Entity\OrderLineItem';
-    const PRODUCT_TAX_CODE = 'PTC';
-    const ACCOUNT_TAX_CODE = 'ATC';
-    const ACCOUNT_GROUP_TAX_CODE = 'AGTC';
-    const ORDER_ADDRESS_COUNTRY_CODE = 'US';
+    private const ORDER_LINE_ITEM_CLASS = OrderLineItem::class;
+    private const PRODUCT_TAX_CODE = 'PTC';
+    private const ACCOUNT_TAX_CODE = 'ATC';
+    private const ACCOUNT_GROUP_TAX_CODE = 'AGTC';
+    private const ORDER_ADDRESS_COUNTRY_CODE = 'US';
 
-    /**
-     * @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $addressProvider;
+    /** @var TaxCodeProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxCodeProvider;
 
-    /**
-     * @var TaxCodeProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxCodeProvider;
+    /** @var OrderLineItemHandler */
+    private $handler;
 
-    /**
-     * @var OrderLineItemHandler
-     */
-    protected $handler;
+    /** @var ProductTaxCode */
+    private $productTaxCode;
 
-    /**
-     * @var ProductTaxCode
-     */
-    protected $productTaxCode;
+    /** @var CustomerTaxCode */
+    private $customerTaxCode;
 
-    /**
-     * @var CustomerTaxCode
-     */
-    protected $customerTaxCode;
+    /** @var CustomerTaxCode */
+    private $customerGroupTaxCode;
 
-    /**
-     * @var CustomerTaxCode
-     */
-    protected $customerGroupTaxCode;
+    /** @var Order */
+    private $order;
 
-    /**
-     * @var Order
-     */
-    protected $order;
+    /** @var OrderAddress */
+    private $address;
 
-    /**
-     * @var OrderAddress
-     */
-    protected $address;
-
-    /**
-     * @var bool
-     */
-    protected $isProductTaxCodeDigital = false;
+    /** @var bool */
+    private $isProductTaxCodeDigital = false;
 
     protected function setUp(): void
     {
@@ -90,38 +69,24 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->order->setBillingAddress($billingAddress);
         $this->order->setShippingAddress($shippingAddress);
 
-        $this->addressProvider = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->addressProvider
-            ->expects($this->any())
+        $addressProvider = $this->createMock(TaxationAddressProvider::class);
+        $addressProvider->expects($this->any())
             ->method('getTaxationAddress')
             ->with($billingAddress, $shippingAddress)
-            ->willReturnCallback(
-                function () {
-                    return $this->address;
-                }
-            );
-
-        $this->addressProvider
-            ->expects($this->any())
+            ->willReturnCallback(function () {
+                return $this->address;
+            });
+        $addressProvider->expects($this->any())
             ->method('isDigitalProductTaxCode')
             ->with(self::ORDER_ADDRESS_COUNTRY_CODE, self::PRODUCT_TAX_CODE)
-            ->willReturnCallback(
-                function () {
-                    return $this->isProductTaxCodeDigital;
-                }
-            );
+            ->willReturnCallback(function () {
+                return $this->isProductTaxCodeDigital;
+            });
 
-        $this->taxCodeProvider = $this
-            ->getMockBuilder(TaxCodeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxCodeProvider = $this->createMock(TaxCodeProvider::class);
 
         $this->handler = new OrderLineItemHandler(
-            $this->addressProvider,
+            $addressProvider,
             $this->taxCodeProvider,
             self::ORDER_LINE_ITEM_CLASS
         );
@@ -129,29 +94,19 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onContextEventProvider
-     * @param bool $hasProduct
-     * @param bool $hasCustomer
-     * @param bool $hasProductTaxCode
-     * @param bool $hasCustomerTaxCode
-     * @param bool $isProductDigital
-     * @param OrderAddress|null $taxationAddress
-     * @param \ArrayObject $expectedContext
-     * @param bool $hasCustomerGroup
-     * @param bool $hasCustomerGroupTaxCode
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testOnContextEvent(
-        $hasProduct,
-        $hasCustomer,
-        $hasProductTaxCode,
-        $hasCustomerTaxCode,
-        $isProductDigital,
-        $taxationAddress,
-        $expectedContext,
-        $hasCustomerGroup = false,
-        $hasCustomerGroupTaxCode = false
+        bool $hasProduct,
+        bool $hasCustomer,
+        bool $hasProductTaxCode,
+        bool $hasCustomerTaxCode,
+        bool $isProductDigital,
+        ?OrderAddress $taxationAddress,
+        \ArrayObject $expectedContext,
+        bool $hasCustomerGroup = false,
+        bool $hasCustomerGroupTaxCode = false
     ) {
         $this->isProductTaxCodeDigital = $isProductDigital;
         $this->address = $taxationAddress;
@@ -184,8 +139,7 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             $this->customerGroupTaxCode = null;
         }
 
-        $this->taxCodeProvider
-            ->expects($this->atLeastOnce())
+        $this->taxCodeProvider->expects($this->atLeastOnce())
             ->method('getTaxCode')
             ->willReturnCallback(function ($type) {
                 switch ($type) {
@@ -214,9 +168,8 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function onContextEventProvider()
+    public function onContextEventProvider(): array
     {
         $taxationAddress = (new OrderAddress())
             ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));

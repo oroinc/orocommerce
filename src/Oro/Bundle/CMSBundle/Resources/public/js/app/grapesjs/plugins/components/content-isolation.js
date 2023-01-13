@@ -1,11 +1,10 @@
-import $ from 'jquery';
 import {uniqueId, each} from 'underscore';
 import CONSTANTS from 'orocms/js/app/grapesjs/constants';
+import {unescapeTwigExpression} from '../../utils';
 
 const ISOLATION_SCOPE = `${CONSTANTS.ISOLATION_PREFIX}-`;
 
 const componentHtmlIdRegexp = new RegExp(`(<div id="${ISOLATION_SCOPE}([\\w]*))`, 'g');
-// @deprecated
 const componentCssIdRegexp = new RegExp(`(\\[id="${ISOLATION_SCOPE}([\\w]*)"\\])`, 'g');
 const cssSelectorRegexp = /^(?![\@\}\{].*$).*(?:[\[\.\#\,\w\|\-\:\^\+\*\~\$\>\s]+)[\#\.\w\:\-\s\*\(\)\[\]\=\"]+\s?(?=\{)/gm;
 const cssChildrenScopeRegexp = new RegExp(`#${ISOLATION_SCOPE}[\\w]*\\s?`, 'g');
@@ -26,9 +25,13 @@ const hasIsolation = html => {
     return componentHtmlIdRegexp.test(html);
 };
 
-export const separateContent = html => {
+const convertHtmlStringToNodes = html => {
     const domParser = new DOMParser();
-    const body = domParser.parseFromString(html, 'text/html').body;
+    return domParser.parseFromString(html, 'text/html').body;
+};
+
+export const separateContent = html => {
+    const body = convertHtmlStringToNodes(html);
 
     const css = [...body.querySelectorAll('style')].reduce((acc, style) => {
         acc += style.innerHTML;
@@ -44,7 +47,8 @@ export const separateContent = html => {
 
 export const escapeWrapper = html => {
     if (hasIsolation(html)) {
-        html = $(html).html();
+        const body = convertHtmlStringToNodes(html);
+        html = body.firstChild.innerHTML;
         html = escapeWrapper(html);
     }
 
@@ -63,8 +67,8 @@ export const escapeCss = css => {
 export const getWrapperAttrs = html => {
     const attrs = {};
     if (hasIsolation(html)) {
-        const $wrapper = $(stripRestrictedAttrs(html));
-        each($wrapper[0].attributes, attr => attrs[attr.name] = $wrapper.attr(attr.name));
+        const body = convertHtmlStringToNodes(stripRestrictedAttrs(html));
+        each(body.firstChild.attributes, attr => attrs[attr.name] = body.firstChild.getAttribute(attr.name));
     }
     delete attrs.id;
     if (attrs.class) {
@@ -132,16 +136,8 @@ class ContentIsolation {
     }
 
     isolateHtml(html, wrapperClasses = '') {
-        const root = document.createElement('div');
-
-        root.id = this.scopeId;
-        root.innerHTML = html;
-
-        if (wrapperClasses) {
-            root.className = wrapperClasses;
-        }
-
-        return root.outerHTML;
+        const classes = wrapperClasses ? ` class="${wrapperClasses}"` : '';
+        return `<div id="${this.scopeId}"${classes}>${unescapeTwigExpression(html)}</div>`;
     }
 }
 

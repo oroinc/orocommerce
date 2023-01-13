@@ -24,26 +24,10 @@
         width: 40%;
 
         cursor: pointer;
-
-        &.expanded {
-            .fa-plus-square-o::before {
-                content: $fa-var-minus-square-o;
-            }
-        }
     }
 
     &__currency {
         margin: 5px 6px 5px 0;
-    }
-
-    [class*='fa-']:not(.tooltip-icon) {
-        display: inline-flex;
-        align-items: center;
-
-        margin-right: 5px;
-        color: $primary-500;
-
-        font-size: 14px;
     }
 
     .row-oro.oro-multiselect-holder {
@@ -64,15 +48,14 @@
             content: $fa-var-trash;
         }
     }
+
+    .collapse-icon {
+        margin-right: 4px;
+        font-size: 14px;
+    }
 }
 
 .shipping-method-config {
-    &.expanded {
-        .fa-plus-square-o::before {
-            content: $fa-var-minus-square-o;
-        }
-    }
-
     &__header {
         display: flex;
 
@@ -86,10 +69,6 @@
 
         &:hover {
             background: $primary-860;
-        }
-
-        .fa-plus-square-o {
-            margin-right: 9px;
         }
     }
 
@@ -345,9 +324,5 @@
 
     .oro-shipping-rule-add-method-select {
         min-width: 242px;
-    }
-
-    .controls .selector select {
-        max-width: 240px;
     }
 }

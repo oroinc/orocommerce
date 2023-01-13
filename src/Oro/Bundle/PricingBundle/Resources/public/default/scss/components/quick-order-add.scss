@@ -1,0 +1,43 @@
+/* @theme: default; */
+
+.quick-order-add {
+    &__unit {
+        .select {
+            color: $select-color;
+            height: 40px;
+            line-height: 1;
+        }
+    }
+
+    &__subtotal {
+        grid-area: subtotal;
+        position: relative;
+    }
+
+    &__subtotal-input {
+        text-align: center;
+    }
+
+    &__subtotal,
+    &__subtotal-input {
+        &.input {
+            opacity: 1;
+            padding-right: $quick-order-add-input-offset;
+        }
+    }
+
+    .product-tier-prices {
+        position: absolute;
+        left: auto;
+        bottom: 0;
+        right: 0;
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .quick-order-add {
+        &__subtotal-input {
+            text-align: left;
+        }
+    }
+}

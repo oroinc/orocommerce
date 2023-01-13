@@ -12,15 +12,14 @@ class SystemConfigurationTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /** @var ConfigManager */
-    protected $configManager;
+    private ConfigManager $configManager;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
     }
 
     public function testConfig()

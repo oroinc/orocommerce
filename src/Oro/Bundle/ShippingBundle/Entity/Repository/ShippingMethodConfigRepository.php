@@ -59,4 +59,15 @@ class ShippingMethodConfigRepository extends ServiceEntityRepository
             'method' => $method
         ]);
     }
+
+    public function configExistsByMethods(array $methods = []): bool
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb
+            ->select('COUNT(c.id)')
+            ->where('c.method IN (:methods)')
+            ->setParameter('methods', $methods);
+
+        return (bool) $qb->getQuery()->getSingleScalarResult();
+    }
 }

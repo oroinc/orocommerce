@@ -1,5 +1,8 @@
 oro:
     product:
+        search:
+            search_in_category:
+                tooltip: '{0} All Products in {{ category }}|[1,Inf] Search for "{{ text }}" in {{ category }}'
         grid:
             delete_entity_title: Delete Product
             delete_success: Product deleted
@@ -142,7 +145,7 @@ oro:
                 not_found: 'Item number cannot be found'
             unit:
                 required: Unit is required
-                invalid: 'Unit {{ unit }} is invalid for this product'
+                invalid: 'Unit ''{{ unit }}'' doesn''t exist for product {{ sku }}.'
             quantity:
                 required: Quantity is required
                 greaterThanZero: Quantity should be greater than 0

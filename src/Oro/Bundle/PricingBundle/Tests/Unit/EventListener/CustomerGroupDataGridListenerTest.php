@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupDataGridListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -13,32 +16,36 @@ class CustomerGroupDataGridListenerTest extends AbstractPriceListRelationDataGri
 {
     protected function setUp(): void
     {
-        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository';
-        $this->repository = $this->getMockBuilder($className)->disableOriginalConstructor()->getMock();
-
-        $this->manager = $this->createMock('Doctrine\Persistence\ObjectManager');
-        $this->manager->method('getRepository')->willReturnMap(
-            [
-                ['OroPricingBundle:PriceListToCustomerGroup', $this->repository],
-            ]
-        );
         parent::setUp();
-        $this->listener = new CustomerGroupDataGridListener($this->registry);
+
+        $this->repository = $this->createMock(PriceListToCustomerGroupRepository::class);
+
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                ['OroPricingBundle:PriceListToCustomerGroup', $this->repository],
+            ]);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $this->listener = new CustomerGroupDataGridListener($doctrine);
     }
 
     /**
-     * @return BasePriceListRelation
+     * {@inheritDoc}
      */
-    protected function createRelation()
+    protected function createRelation(): BasePriceListRelation
     {
         $relation = new PriceListToCustomerGroup();
-        /** @var CustomerGroup|\PHPUnit\Framework\MockObject\MockObject $customerGroup */
-        $customerGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
-        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList */
-        $priceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\PriceList');
-        /** @var Website|\PHPUnit\Framework\MockObject\MockObject $website */
-        $website = $this->createMock('Oro\Bundle\WebsiteBundle\Entity\Website');
-        $website->method('getId')->willReturn(1);
+        $customerGroup = $this->createMock(CustomerGroup::class);
+        $priceList = $this->createMock(PriceList::class);
+        $website = $this->createMock(Website::class);
+        $website->expects(self::any())
+            ->method('getId')
+            ->willReturn(1);
         $relation->setCustomerGroup($customerGroup);
         $relation->setWebsite($website);
         $relation->setPriceList($priceList);

@@ -34,15 +34,35 @@ const RteItemView = BaseView.extend({
         this.$el
             .addClass(model.getClass('button'))
             .attr(model.get('attributes'))
+            .attr('data-action-name', model.get('name'))
             .append(model.get('icon'));
+
+        this.$el.tooltip();
 
         return this;
     },
 
+    dispose() {
+        if (this.disposed) {
+            return;
+        }
+
+        this.$el.tooltip('dispose');
+
+        RteItemView.__super__.dispose.call(this);
+    },
+
     onRender() {
         const init = this.model.get('init');
+        const handlers = this.model.get('handlers');
         if (init && typeof init === 'function') {
             init(this.getRteParams());
+        }
+
+        if (handlers) {
+            for (const [name, callback] of Object.entries(handlers)) {
+                this.listenTo(this.collection, name, callback.bind(this, this.getRteParams()));
+            }
         }
     },
 
@@ -64,6 +84,7 @@ const RteItemView = BaseView.extend({
             el: this.editableEl,
             doc,
             actionbar: this.actionbar,
+            editor: this.editor,
             classes: this.model.get('classes'),
             selection() {
                 return this.doc.getSelection();
@@ -71,8 +92,13 @@ const RteItemView = BaseView.extend({
             exec(name, value = null) {
                 doc.execCommand(name, false, value);
             },
-            insertHTML: this.insertHTML.bind(this)
+            insertHTML: this.insertHTML.bind(this),
+            execute: this.executeHandler.bind(this)
         };
+    },
+
+    executeHandler(name, props) {
+        this.collection.trigger(name, props);
     },
 
     /**
@@ -80,19 +106,39 @@ const RteItemView = BaseView.extend({
      * doesn't work in the same way on all browsers
      * @param  {string} value HTML string
      */
-    insertHTML(value) {
+    insertHTML(value, {select} = {}) {
         const doc = this.getDoc();
         const selection = doc.getSelection();
 
         if (selection && selection.rangeCount) {
+            const model = this.editor.Utils.helpers.getModel(this.editableEl);
             const node = doc.createElement('div');
             const range = selection.getRangeAt(0);
             range.deleteContents();
             node.innerHTML = value;
-            [...node.childNodes].reverse().forEach(nd => range.insertNode(nd));
+            [...node.childNodes].reverse().forEach(nd => {
+                if (select) {
+                    nd.setAttribute('data-temp', 'add');
+                }
+                range.insertNode(nd);
+            });
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
+
+            if (select) {
+                model.once('rte:disable', () => {
+                    const added = model.find('[data-temp="add"]');
+                    if (added.length) {
+                        added.forEach(add => {
+                            add.set('selectable', true);
+                            add.removeAttributes('data-temp');
+                        });
+                        this.editor.select(added);
+                    }
+                });
+                model.trigger('disable');
+            }
         }
     },
 
@@ -100,19 +146,27 @@ const RteItemView = BaseView.extend({
      * Execute action when click on button
      */
     onAction() {
-        const doc = this.getDoc();
-        if (this.model.get('result')) {
-            this.model.get('result').call(this, this.getRteParams(), {
-                ...this.model.attributes,
-                btn: this.el
-            });
+        if (!this.$el.hasClass(this.model.getClass('disabled'))) {
+            const doc = this.getDoc();
+            if (this.model.get('result')) {
+                this.model.get('result').call(this, this.getRteParams(), {
+                    ...this.model.attributes,
+                    btn: this.el
+                });
+            } else if (this.model.get('command')) {
+                doc.execCommand(this.model.get('command'), false, null);
+            }
         }
 
-        if (this.model.get('command')) {
-            doc.execCommand(this.model.get('command'), false, null);
+        if (!this.disposed) {
+            this.updateActiveState();
         }
+    },
 
-        this.updateActiveState();
+    onKeyDown(event) {
+        if (this.model.get('onKeyDown')) {
+            this.model.get('onKeyDown').call(this, this.getRteParams(), event);
+        }
     },
 
     /**
@@ -128,7 +182,7 @@ const RteItemView = BaseView.extend({
         this.el.className = model.getClass('button');
 
         if (state) {
-            switch (state(this, doc)) {
+            switch (state(this, doc, this.getRteParams())) {
                 case btnState.ACTIVE:
                     this.$el.addClass(model.getClass('active'));
                     break;
@@ -148,7 +202,8 @@ const RteItemView = BaseView.extend({
         if (update && typeof update === 'function') {
             update(this.getRteParams(), {
                 ...this.model.attributes,
-                btn: this.el
+                btn: this.el,
+                $btn: this.$el
             });
         }
     }

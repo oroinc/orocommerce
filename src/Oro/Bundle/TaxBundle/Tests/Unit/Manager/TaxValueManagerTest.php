@@ -21,17 +21,17 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const TAX_VALUE_CLASS = TaxValue::class;
-    const TAX_CLASS = Tax::class;
-
-    /** @var TaxValueManager */
-    private $manager;
+    private const TAX_VALUE_CLASS = TaxValue::class;
+    private const TAX_CLASS = Tax::class;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     /** @var DoctrineFlushProgressListener|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineFlushProgressListener;
+
+    /** @var TaxValueManager */
+    private $manager;
 
     protected function setUp(): void
     {
@@ -53,17 +53,19 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects(static::once())
+        $repository->expects(self::once())
             ->method('findOneBy')
             ->with(
-                static::logicalAnd(
-                    static::isType('array'),
-                    static::containsEqual($class),
-                    static::containsEqual($id)
+                self::logicalAnd(
+                    self::isType('array'),
+                    self::containsEqual($class),
+                    self::containsEqual($id)
                 )
             )
             ->willReturn($taxValue);
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')->willReturn($repository);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($repository);
 
         $this->assertSame($taxValue, $this->manager->getTaxValue($class, $id));
 
@@ -77,19 +79,18 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $id = 1;
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects(static::exactly(2))
+        $repository->expects(self::exactly(2))
             ->method('findOneBy')
             ->with(
-                static::logicalAnd(
-                    static::isType('array'),
-                    static::containsEqual($class),
-                    static::containsEqual($id)
+                self::logicalAnd(
+                    self::isType('array'),
+                    self::containsEqual($class),
+                    self::containsEqual($id)
                 )
             )
             ->willReturn(null);
 
-        $this->doctrineHelper
-            ->expects(static::exactly(2))
+        $this->doctrineHelper->expects(self::exactly(2))
             ->method('getEntityRepositoryForClass')
             ->willReturn($repository);
 
@@ -143,10 +144,7 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->saveTaxValue($taxValue);
     }
 
-    /**
-     * @return array
-     */
-    public function saveTaxValueProvider()
+    public function saveTaxValueProvider(): array
     {
         return [
             'flush in progress' => [
@@ -164,7 +162,8 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
     public function testFlushTaxValueIfAllowed(bool $flushInProgress, bool $flushExpected)
     {
         $em = $this->createMock(EntityManager::class);
-        $em->expects($this->exactly((int)$flushExpected))->method('flush');
+        $em->expects($this->exactly((int)$flushExpected))
+            ->method('flush');
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManagerForClass')
@@ -179,10 +178,7 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->flushTaxValueIfAllowed();
     }
 
-    /**
-     * @return array
-     */
-    public function flushTaxValueIfAllowedDataProvider()
+    public function flushTaxValueIfAllowedDataProvider(): array
     {
         return [
             'flush not in progress' => [
@@ -201,10 +197,14 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $code = 'code';
 
         $repo = $this->createMock(EntityRepository::class);
-        $repo->expects($this->once())->method('findOneBy')->with(['code' => 'code']);
+        $repo->expects($this->once())
+            ->method('findOneBy')
+            ->with(['code' => 'code']);
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')
-            ->with(self::TAX_CLASS)->willReturn($repo);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(self::TAX_CLASS)
+            ->willReturn($repo);
 
         $this->manager->getTax($code);
     }
@@ -218,13 +218,13 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
 
         $repository = $this->createMock(ObjectRepository::class);
 
-        $repository->expects(static::exactly(2))
+        $repository->expects(self::exactly(2))
             ->method('findOneBy')
             ->with(
-                static::logicalAnd(
-                    static::isType('array'),
-                    static::containsEqual($class),
-                    static::containsEqual($id)
+                self::logicalAnd(
+                    self::isType('array'),
+                    self::containsEqual($class),
+                    self::containsEqual($id)
                 )
             )
             ->willReturnOnConsecutiveCalls($cachedTaxValue, $notCachedTaxValue);
@@ -241,25 +241,19 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider removeTaxValueProvider
-     * @param bool $flush
-     * @param bool $contains
-     * @param bool $expectedResult
      */
-    public function testRemoveTaxValue($flush, $contains, $expectedResult)
+    public function testRemoveTaxValue(bool $flush, bool $contains, bool $expectedResult)
     {
         $taxValue = new TaxValue();
 
         $taxValueEm = $this->createMock(EntityManager::class);
-
         $taxValueEm->expects($this->once())
             ->method('contains')
             ->with($taxValue)
             ->willReturn($contains);
-
         $taxValueEm->expects($contains ? $this->once() : $this->never())
             ->method('remove')
             ->with($taxValue);
-
         $taxValueEm->expects($contains && $flush ? $this->once() : $this->never())
             ->method('flush')
             ->with($taxValue);
@@ -272,10 +266,7 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $this->manager->removeTaxValue($taxValue, $flush));
     }
 
-    /**
-     * @return array
-     */
-    public function removeTaxValueProvider()
+    public function removeTaxValueProvider(): array
     {
         return [
             [
@@ -305,14 +296,12 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
         $taxValues = [$taxValue1, $taxValue2];
 
         $repository = $this->createMock(ObjectRepository::class);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('findBy')
             ->with(['entityClass' => $entityClass, 'entityId' => $entityIds])
             ->willReturn($taxValues);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
             ->with(self::TAX_VALUE_CLASS)
             ->willReturn($repository);

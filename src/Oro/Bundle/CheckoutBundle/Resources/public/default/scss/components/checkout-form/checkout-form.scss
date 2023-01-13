@@ -67,6 +67,8 @@
     &__payment-methods-list {
         @include list-normalize();
         @include clearfix();
+
+        margin: $checkout-form-payment-methods-list-form-margin;
     }
 
     &__payment-methods-item {
@@ -75,7 +77,9 @@
     }
 
     &__payment-methods-form {
-        margin: $checkout-form-payment-methods-form-margin;
+        .form-row:not(:last-child) {
+            margin-bottom: $offset-y;
+        }
     }
 
     &__asterix {
@@ -104,16 +108,6 @@
 
             .checkout-form__payment-container {
                 margin-bottom: 0;
-            }
-        }
-
-        .custom-radio {
-            &.checked {
-                + .checkout-form__payment-container {
-                    .checkout-form__payment-methods-form {
-                        display: block;
-                    }
-                }
             }
         }
     }

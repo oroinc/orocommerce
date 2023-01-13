@@ -54,7 +54,7 @@ Feature: Previously purchased products
     When I follow "Account"
     And I click "Previously Purchased"
     And I click "Add to Shopping List" for "PSKU2" product
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
 
   Scenario: Time restriction changes are applicable
     Given I operate as the Admin

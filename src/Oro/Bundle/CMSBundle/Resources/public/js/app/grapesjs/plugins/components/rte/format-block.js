@@ -3,112 +3,21 @@ import $ from 'jquery';
 import 'jquery.select2';
 import selectTemplate from 'tpl-loader!orocms/templates/grapesjs-select-action.html';
 import select2OptionTemplate from 'tpl-loader!orocms/templates/grapesjs-select2-option.html';
-
-const tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
-const formatting = ['b', 'i', 'u', 'strike', 'sup', 'sub'];
-const lists = ['ul', 'ol', 'li'];
-
-const isBlockFormatted = node => node.nodeType === 1 && tags.includes(node.tagName.toLowerCase());
-const isFormattedText = node => node.nodeType === 1 && formatting.includes(node.tagName.toLowerCase());
-const isContainLists = node => node.nodeType === 1 && lists.includes(node.tagName.toLowerCase());
-
-const surroundContent = (node, wrapper) => {
-    if (node.nodeType !== 1) {
-        return node;
-    }
-    wrapper.innerHTML = node.innerHTML;
-    node.innerHTML = '';
-    node.appendChild(wrapper);
-};
-
-const unwrap = node => {
-    const parent = node.parentNode;
-    while (node.firstChild) {
-        parent.insertBefore(node.firstChild, node);
-    }
-    parent.removeChild(node);
-};
-
-function makeSurroundNode(context) {
-    return (node, surround) => {
-        const parent = context.createElement(surround);
-        clearTextFormatting(node);
-        surroundContent(node, parent);
-    };
-};
-
-function clearTextFormatting(node) {
-    if (node.childNodes.length) {
-        node.childNodes.forEach(child => {
-            if (isBlockFormatted(child)) {
-                unwrap(child);
-                clearTextFormatting(child);
-            }
-        });
-    }
-};
-
-function findTextFormattingInRange(range, node = null) {
-    return [...(node ? node.childNodes : range.commonAncestorContainer.childNodes)].reduce((tags, child) => {
-        if (!range.intersectsNode(child)) {
-            return tags;
-        }
-
-        if (isBlockFormatted(child)) {
-            tags.push(child.tagName.toLowerCase());
-        }
-
-        return tags.concat(...findTextFormattingInRange(range, child));
-    }, []);
-};
-
-function setCaretPosition(element, caretPos) {
-    if (caretPos === 0) {
-        return;
-    }
-
-    if (element !== null) {
-        if (element.createTextRange) {
-            const range = element.createTextRange();
-            range.move('character', caretPos);
-            range.select();
-        } else {
-            if (element.selectionStart) {
-                element.focus();
-                element.setSelectionRange(caretPos, caretPos);
-            } else {
-                element.focus();
-            }
-        }
-    }
-};
-
-function findClosestFormattingBlock(node) {
-    if (isBlockFormatted(node)) {
-        return node;
-    }
-
-    return findClosestFormattingBlock(node.parentNode);
-};
-
-function getParentsUntil(node, until = document) {
-    const parents = [];
-
-    for (;node && node !== until; node = node.parentNode) {
-        parents.push(node);
-    }
-    return parents;
-};
-
-function findParentSpan(node) {
-    const found = getParentsUntil(node).reverse().find(item => item.nodeType === 1 && item.tagName === 'SPAN');
-
-    if (found) {
-        return found;
-    }
-
-    return node;
-};
+import {
+    tags,
+    formatting,
+    findClosestFormattingBlock,
+    findTextFormattingInRange,
+    getNodeSiblings,
+    isFormattedText,
+    isContainLists,
+    saveCursor,
+    makeSurroundNode,
+    findParentTag,
+    isBlockFormatted,
+    clearTextFormatting,
+    isTag
+} from './utils/utils';
 
 export default {
     name: 'formatBlock',
@@ -150,86 +59,106 @@ export default {
     },
 
     result(rte) {
+        const cursor = saveCursor(rte);
         const value = rte.actionbar.querySelector('[name="tag"]').value;
         const selection = rte.selection();
-
         if (selection.type === 'None') {
             return;
         }
 
-        const anchorOffset = selection.anchorOffset;
         const range = selection.getRangeAt(0);
         const surround = makeSurroundNode(rte.doc);
-        const isTag = range.commonAncestorContainer.nodeType === 1;
-        const isTextNode = range.commonAncestorContainer.nodeType === 3;
+        const container = range.commonAncestorContainer;
+        const containerIsTag = container.nodeType === Node.ELEMENT_NODE;
+        const containerIsTextNode = container.nodeType === Node.TEXT_NODE;
 
         const removeParent = parentNode => {
-            const text = parentNode.innerHTML;
+            const parent = parentNode.parentNode;
+            [...parentNode.childNodes].forEach(child => {
+                parent.insertBefore(child, parentNode);
+            });
             parentNode.remove();
-            rte.insertHTML(text);
+            this.editor.trigger('change:canvasOffset');
+        };
+
+        const addParentOrReplace = (node, tagName) => {
+            const oldParent = findClosestFormattingBlock(node);
+            const newParent = rte.doc.createElement(tagName);
+            node = findParentTag(container, ['span', ...formatting]);
+            const isFormatted = node =>
+                node.nodeType === Node.TEXT_NODE || isFormattedText(node) || isTag(node, 'span');
+
+            const prevSiblings = getNodeSiblings(node, {
+                callback: isFormatted,
+                direction: 'previous'
+            });
+
+            const nextSiblings = getNodeSiblings(node, {
+                callback: isFormatted
+            });
+
+            const toAppend = [...prevSiblings, node, ...nextSiblings];
+
+            if (oldParent) {
+                oldParent.after(newParent);
+                newParent.append(...toAppend);
+                oldParent.remove();
+            } else {
+                node.after(newParent);
+                newParent.append(...toAppend);
+            }
             this.editor.trigger('change:canvasOffset');
         };
 
         if (value === 'normal') {
-            if (isTag) {
-                range.commonAncestorContainer.childNodes.forEach(node => {
+            if (containerIsTag) {
+                container.childNodes.forEach(node => {
                     if (range.intersectsNode(node)) {
                         clearTextFormatting(node);
                     }
                 });
 
-                if (isBlockFormatted(range.commonAncestorContainer)) {
-                    removeParent(range.commonAncestorContainer);
+                if (isBlockFormatted(container)) {
+                    removeParent(container);
                 }
 
                 this.editor.trigger('change:canvasOffset');
-                setCaretPosition(rte.el, anchorOffset);
+                cursor();
                 return;
             }
 
-            if (isTextNode) {
-                removeParent(findClosestFormattingBlock(range.commonAncestorContainer));
-                setCaretPosition(rte.el, anchorOffset);
+            if (containerIsTextNode) {
+                removeParent(findClosestFormattingBlock(container));
+                cursor();
                 return;
             }
         }
 
-        if (!range.collapsed && isTag && isContainLists(range.commonAncestorContainer)) {
-            range.commonAncestorContainer.childNodes.forEach(node => {
+        if (!range.collapsed && containerIsTag && isContainLists(container)) {
+            container.childNodes.forEach(node => {
                 if (range.intersectsNode(node)) {
                     surround(node, value);
                 }
             });
-            range.setStartAfter(range.endContainer);
+
             selection.removeAllRanges();
             this.editor.trigger('change:canvasOffset');
 
-            setCaretPosition(rte.el, anchorOffset);
+            cursor();
             return;
         }
 
-        if (isTextNode &&
-            !isBlockFormatted(range.commonAncestorContainer.parentNode) &&
-            !isFormattedText(range.commonAncestorContainer.parentNode)
+        if (containerIsTextNode &&
+            !findClosestFormattingBlock(container) &&
+            !isBlockFormatted(container.parentNode)
         ) {
-            const newParent = rte.doc.createElement(value);
-            const docFragment = rte.doc.createDocumentFragment();
-            newParent.appendChild(findParentSpan(range.commonAncestorContainer));
-            docFragment.appendChild(newParent);
-            range.deleteContents();
-            range.insertNode(docFragment);
-            range.setStartAfter(newParent);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-            this.editor.trigger('change:canvasOffset');
-
-            setCaretPosition(rte.el, anchorOffset);
+            addParentOrReplace(container, value);
+            cursor();
             return;
         }
 
         this.editor.trigger('change:canvasOffset');
-        setCaretPosition(rte.el, anchorOffset);
+        cursor();
         return rte.exec('formatBlock', value);
     },
 
@@ -239,7 +168,7 @@ export default {
         const selection = rte.doc.getSelection();
         if (selection.anchorNode) {
             const range = selection.getRangeAt(0);
-            if (range.commonAncestorContainer.nodeType === 1) {
+            if (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE) {
                 const formatting = findTextFormattingInRange(range);
                 if (formatting.length) {
                     $(select).select2('val', formatting[0]);

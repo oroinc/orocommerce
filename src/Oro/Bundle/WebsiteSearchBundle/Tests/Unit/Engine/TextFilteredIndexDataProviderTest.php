@@ -36,7 +36,10 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                     'indexData' => [
                         [1, 'title', '<p>SKU-01</p>', ['LOCALIZATION_ID' => 5], true],
                     ],
-                    'expected' => [1 => ['text' => ['title' => 'SKU-01', 'all_text_5' => 'SKU-01']]],
+                    'expected' => [1 => [
+                        'text' => ['title' => 'SKU-01', 'all_text_5' => 'SKU-01'],
+                        'integer' => ['system_entity_id' => 1]
+                    ]],
                 ],
                 'placeholder field' => [
                     'entityConfig' => [
@@ -62,6 +65,7 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                                 'all_text_5' => 'SKU-01',
                             ],
                             'integer' => [
+                                'system_entity_id' => 1,
                                 'custom_42' => 42,
                             ]
                         ],
@@ -95,6 +99,9 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                                 'descr_5' => 'en_US',
                                 'descr_6' => 'en_GB',
                             ],
+                            'integer' => [
+                                'system_entity_id' => 1,
+                            ]
                         ],
                     ],
                 ],
@@ -132,6 +139,9 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                                 'descr_5' => 'en_US',
                                 'descr_6' => 'en_GB',
                             ],
+                            'integer' => [
+                                'system_entity_id' => 1,
+                            ]
                         ],
                     ],
                 ],
@@ -172,6 +182,9 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
                                     'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                                 'all_text_5' => 'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ The long entry',
                             ],
+                            'integer' => [
+                                'system_entity_id' => 1,
+                            ]
                         ],
                     ],
                 ]

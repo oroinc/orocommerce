@@ -3,29 +3,16 @@
 namespace Oro\Bundle\ShippingBundle\Method;
 
 /**
- * Collection of shipping method views.
+ * The collection of shipping method views.
  */
 class ShippingMethodViewCollection
 {
-    const TYPES_FIELD = 'types';
+    private const TYPES_FIELD = 'types';
 
-    /**
-     * @var array
-     */
-    private $methodViews = [];
+    private array $methodViews = [];
+    private array $methodTypesViews = [];
 
-    /**
-     * @var array
-     */
-    private $methodTypesViews = [];
-
-    /**
-     * @param string $methodId
-     * @param array $methodView
-     *
-     * @return $this
-     */
-    public function addMethodView($methodId, array $methodView)
+    public function addMethodView(string $methodId, array $methodView): self
     {
         if ($this->hasMethodView($methodId)) {
             return $this;
@@ -37,39 +24,23 @@ class ShippingMethodViewCollection
         return $this;
     }
 
-    /**
-     * @param string $methodId
-     *
-     * @return bool
-     */
-    public function hasMethodView($methodId)
+    public function hasMethodView(string $methodId): bool
     {
-        return array_key_exists($methodId, $this->methodViews);
+        return \array_key_exists($methodId, $this->methodViews);
     }
 
-    /**
-     * @param string $methodId
-     *
-     * @return $this
-     */
-    public function removeMethodView($methodId)
+    public function removeMethodView(string $methodId): self
     {
         if (false === $this->hasMethodView($methodId)) {
             return $this;
         }
 
-        unset($this->methodViews[$methodId]);
-        unset($this->methodTypesViews[$methodId]);
+        unset($this->methodViews[$methodId], $this->methodTypesViews[$methodId]);
 
         return $this;
     }
 
-    /**
-     * @param string $methodId
-     *
-     * @return array|null
-     */
-    public function getMethodView($methodId)
+    public function getMethodView(string $methodId): ?array
     {
         if (false === $this->hasMethodView($methodId)) {
             return null;
@@ -78,14 +49,7 @@ class ShippingMethodViewCollection
         return $this->methodViews[$methodId];
     }
 
-    /**
-     * @param string $methodId
-     * @param string $methodTypeId
-     * @param array $methodTypeView
-     *
-     * @return $this
-     */
-    public function addMethodTypeView($methodId, $methodTypeId, array $methodTypeView)
+    public function addMethodTypeView(string $methodId, string $methodTypeId, array $methodTypeView): self
     {
         if (false === $this->hasMethodView($methodId)) {
             return $this;
@@ -106,7 +70,7 @@ class ShippingMethodViewCollection
      *
      * @return $this
      */
-    public function addMethodTypesViews($methodId, array $methodTypesViews)
+    public function addMethodTypesViews(string $methodId, array $methodTypesViews): self
     {
         foreach ($methodTypesViews as $typeId => $typeView) {
             $this->addMethodTypeView($methodId, $typeId, $typeView);
@@ -115,28 +79,16 @@ class ShippingMethodViewCollection
         return $this;
     }
 
-    /**
-     * @param string $methodId
-     * @param string $methodTypeId
-     *
-     * @return bool
-     */
-    public function hasMethodTypeView($methodId, $methodTypeId)
+    public function hasMethodTypeView(string $methodId, string $methodTypeId): bool
     {
         if (false === $this->hasMethodView($methodId)) {
             return false;
         }
 
-        return array_key_exists($methodTypeId, $this->methodTypesViews[$methodId]);
+        return \array_key_exists($methodTypeId, $this->methodTypesViews[$methodId]);
     }
 
-    /**
-     * @param string $methodId
-     * @param string $methodTypeId
-     *
-     * @return array|null
-     */
-    public function getMethodTypeView($methodId, $methodTypeId)
+    public function getMethodTypeView(string $methodId, string $methodTypeId): ?array
     {
         if (false === $this->hasMethodTypeView($methodId, $methodTypeId)) {
             return null;
@@ -145,13 +97,7 @@ class ShippingMethodViewCollection
         return $this->methodTypesViews[$methodId][$methodTypeId];
     }
 
-    /**
-     * @param string $methodId
-     * @param string $methodTypeId
-     *
-     * @return $this
-     */
-    public function removeMethodTypeView($methodId, $methodTypeId)
+    public function removeMethodTypeView(string $methodId, string $methodTypeId): self
     {
         if (false === $this->hasMethodTypeView($methodId, $methodTypeId)) {
             return $this;
@@ -162,37 +108,26 @@ class ShippingMethodViewCollection
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllMethodsViews()
+    public function getAllMethodsViews(): array
     {
         return $this->methodViews;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllMethodsTypesViews()
+    public function getAllMethodsTypesViews(): array
     {
         return $this->methodTypesViews;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $resultingFullMethodViews = [];
 
         foreach ($this->methodViews as $methodId => $methodView) {
-            if (false === array_key_exists($methodId, $this->methodTypesViews)
-                || [] === $this->methodTypesViews[$methodId]
-            ) {
+            if (empty($this->methodTypesViews[$methodId])) {
                 continue;
             }
 
-            if (false === array_key_exists($methodId, $resultingFullMethodViews)) {
+            if (!\array_key_exists($methodId, $resultingFullMethodViews)) {
                 $resultingFullMethodViews[$methodId] = $methodView;
             }
 
@@ -202,10 +137,8 @@ class ShippingMethodViewCollection
         uasort(
             $resultingFullMethodViews,
             function ($methodData1, $methodData2) {
-                if (false === array_key_exists('sortOrder', $methodData1)
-                    || false === array_key_exists('sortOrder', $methodData2)
-                ) {
-                    throw new \Exception('Method View should contain sortOrder');
+                if (!\array_key_exists('sortOrder', $methodData1) || !\array_key_exists('sortOrder', $methodData2)) {
+                    throw new \RuntimeException('Method View should contain sortOrder');
                 }
 
                 return $methodData1['sortOrder'] - $methodData2['sortOrder'];
@@ -215,10 +148,7 @@ class ShippingMethodViewCollection
         return $resultingFullMethodViews;
     }
 
-    /**
-     * @return self
-     */
-    public function clear()
+    public function clear(): self
     {
         $this->methodViews = [];
         $this->methodTypesViews = [];
@@ -227,24 +157,18 @@ class ShippingMethodViewCollection
     }
 
     /**
-     * If at least one method has types - collection is not empty
-     *
-     * @return bool
+     * Checks whether the collection has at least one method with types.
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
-        if (count($this->methodViews) === 0) {
+        if (!$this->methodViews) {
             return true;
         }
 
         foreach ($this->methodViews as $methodId => $methodView) {
-            if (false === array_key_exists($methodId, $this->methodTypesViews)
-                || [] === $this->methodTypesViews[$methodId]
-            ) {
-                continue;
+            if (!empty($this->methodTypesViews[$methodId])) {
+                return false;
             }
-
-            return false;
         }
 
         return true;

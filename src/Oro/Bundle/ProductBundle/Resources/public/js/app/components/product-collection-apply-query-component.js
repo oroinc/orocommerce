@@ -21,6 +21,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            segmentId: null,
             segmentDefinitionSelectorTemplate: 'input[name="%s"]',
             controlsBlockAlias: null,
             gridName: null,
@@ -42,6 +43,7 @@ define(function(require) {
          */
         requiredOptions: [
             'segmentDefinitionFieldName',
+            'segmentId',
             'controlsBlockAlias',
             'gridName',
             'scope',
@@ -256,6 +258,7 @@ define(function(require) {
                 params: {}
             };
 
+            parameters.params['si_' + this.options.gridName] = this.options.segmentId;
             parameters.params['sd_' + this.options.gridName] = this.currentDefinitionState;
             parameters.params['sd_' + this.options.gridName + ':incl'] = this.$included.val();
             parameters.params['sd_' + this.options.gridName + ':excl'] = this.$excluded.val();

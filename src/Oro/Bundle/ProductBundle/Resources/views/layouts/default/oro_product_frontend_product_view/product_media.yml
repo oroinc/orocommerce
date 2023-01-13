@@ -1,0 +1,25 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/product_media.html.twig'
+        - '@addTree':
+            items:
+                product_view_media_container:
+                    blockType: container
+                product_view_media_wrapper:
+                    blockType: container
+                product_view_attribute_group_images:
+                    blockType: attribute_group
+                    options:
+                        entity: '=data["product"]'
+                        attribute_family: '=context["attribute_family"]'
+                        group: 'images'
+            tree:
+                product_view_aside_container:
+                    product_view_media_container:
+                        product_view_media_wrapper:
+                            product_view_attribute_group_images: ~
+        - '@setOption':
+            id: product_view_attribute_group_images_attribute_product_images_images
+            optionName: popup_gallery
+            optionValue: '=data["system_config_provider"].getValue("oro_product.popup_gallery_on_product_view")'

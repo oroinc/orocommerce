@@ -4,36 +4,32 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Action;
 
 use Oro\Bundle\CheckoutBundle\WorkflowState\Action\DeleteCheckoutStateAction;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
+use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    protected $contextAccessor;
+    private $contextAccessor;
 
     /** @var CheckoutDiffStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $diffStorage;
-
-    /** @var DeleteCheckoutStateAction */
-    protected $action;
+    private $diffStorage;
 
     /** @var EventDispatcherInterface */
-    protected $dispatcher;
+    private $dispatcher;
+
+    /** @var DeleteCheckoutStateAction */
+    private $action;
 
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->diffStorage = $this->createMock(CheckoutDiffStorageInterface::class);
-        $this->action = new DeleteCheckoutStateAction($this->contextAccessor, $this->diffStorage);
-
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->action->setDispatcher($this->dispatcher);
-    }
 
-    protected function tearDown(): void
-    {
-        unset($this->contextAccessor, $this->diffStorage, $this->dispatcher, $this->action);
+        $this->action = new DeleteCheckoutStateAction($this->contextAccessor, $this->diffStorage);
+        $this->action->setDispatcher($this->dispatcher);
     }
 
     public function testExecute()
@@ -43,13 +39,11 @@ class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
             'entity' => $entity,
         ];
 
-        $this->contextAccessor
-            ->expects($this->any())
+        $this->contextAccessor->expects($this->any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
-        $this->diffStorage
-            ->expects($this->once())
+        $this->diffStorage->expects($this->once())
             ->method('deleteStates')
             ->with($entity, null);
 
@@ -67,13 +61,11 @@ class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
             'token' => $token,
         ];
 
-        $this->contextAccessor
-            ->expects($this->any())
+        $this->contextAccessor->expects($this->any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
-        $this->diffStorage
-            ->expects($this->once())
+        $this->diffStorage->expects($this->once())
             ->method('deleteStates')
             ->with($entity, $token);
 
@@ -92,7 +84,7 @@ class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
 
     public function testInitializeWithoutRequiredField()
     {
-        $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
+        $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage('Parameter "entity" is required');
 
         $options = [];

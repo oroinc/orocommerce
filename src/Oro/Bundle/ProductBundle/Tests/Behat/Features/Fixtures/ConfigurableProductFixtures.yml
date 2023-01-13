@@ -8,6 +8,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     configurableUnitPrecision:
         unit: '@item'
         precision: '1'
+    simpleUnitPrecisionEach:
+        unit: '@each'
+        precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     simpleProductLoc1:
@@ -23,32 +26,15 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     clogsCategory:
+        organization: '@organization'
         __calls:
             - addTitle: ['@clogCategoryLoc']
             - setParentCategory: ['@root_category']
-
-Oro\Bundle\RedirectBundle\Entity\Slug:
-    simpleProduct1Slug:
-        url: '/black-slip-on-clog-l'
-        slugPrototype: 'black-slip-on-clog-l'
-        routeName: 'oro_product_frontend_product_view'
-        routeParameters: {'id': '@simpleProduct1->id'}
-    simpleProduct2Slug:
-        url: '/white-slip-on-clog-m'
-        slugPrototype: 'white-slip-on-clog-m'
-        routeName: 'oro_product_frontend_product_view'
-        routeParameters: {'id': '@simpleProduct2->id'}
-    configurableProductSlug:
-        url: '/slip-on-clog'
-        slugPrototype: 'slip-on-clog'
-        routeName: 'oro_product_frontend_product_view'
-        routeParameters: {'id': '@configurableProduct->id'}
 
 Oro\Bundle\ProductBundle\Entity\Product:
     simpleProduct1:
         type: 'simple'
         sku: '1GB81'
-        slugs: ['@simpleProduct1Slug']
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
@@ -59,11 +45,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         __calls:
             - addName: ['@simpleProductLoc1']
             - addUnitPrecision: ['@simpleUnitPrecision1']
+            - addUnitPrecision: ['@simpleUnitPrecisionEach']
             - setPrimaryUnitPrecision: ['@simpleUnitPrecision1']
     simpleProduct2:
         type: 'simple'
         sku: '1GB82'
-        slugs: ['@simpleProduct2Slug']
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
@@ -78,7 +64,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
     configurableProduct:
         type: 'configurable'
         sku: '1GB83'
-        slugs: ['@configurableProductSlug']
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'

@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
@@ -59,9 +61,9 @@ class PriceListEntityListener
         }
     }
 
-    public function preRemove(PriceList $priceList)
+    public function preRemove(PriceList $priceList, LifecycleEventArgs $args)
     {
-        // Remove caches
+        // Remove product assignment rule and price rule caches
         $this->clearAssignmentRuleCache($priceList);
         foreach ($priceList->getPriceRules() as $priceRule) {
             $this->clearPriceRuleCache($priceRule);
@@ -72,6 +74,13 @@ class PriceListEntityListener
 
         // Schedule dependent price lists recalculation
         $this->scheduleDependentPriceListsUpdate($priceList);
+
+        // Remove Combined Price Lists that lost PL from the chain
+        $em = $args->getEntityManager();
+        $cplRepo = $em->getRepository(CombinedPriceList::class);
+        foreach ($cplRepo->getCombinedPriceListsByPriceList($priceList) as $affectedCpl) {
+            $em->remove($affectedCpl);
+        }
     }
 
     public function postPersist(PriceList $priceList)

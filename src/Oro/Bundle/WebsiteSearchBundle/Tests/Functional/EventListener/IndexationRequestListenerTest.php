@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -10,8 +10,8 @@ use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class IndexationRequestListenerTest extends WebTestCase
 {
@@ -22,21 +22,27 @@ class IndexationRequestListenerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
     }
 
+    private function getEventDispatcher(): EventDispatcherInterface
+    {
+        return self::getContainer()->get('event_dispatcher');
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return self::getContainer()->get('doctrine')->getManager();
+    }
+
     public function testTriggersReindexationAfterProductCreation()
     {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
-        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
-
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent $triggeredEvent */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
-            $triggeredEvent = $event;
-        });
+        $this->getEventDispatcher()->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function ($event) use (&$triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
 
         $product = $this->createProduct();
 
@@ -47,29 +53,21 @@ class IndexationRequestListenerTest extends WebTestCase
 
     public function testTriggersReindexationAfterProductUpdate()
     {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
-        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
-
         $product = $this->createProduct();
 
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent $triggeredEvent */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
-            $triggeredEvent = $event;
-        });
-
-        /**
-         * @var EntityManager $em
-         */
-        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $this->getEventDispatcher()->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function ($event) use (&$triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
 
         $product->setName($product->getName() . '-changed');
 
+        $em = $this->getEntityManager();
         $em->persist($product);
         $em->flush();
 
@@ -80,34 +78,27 @@ class IndexationRequestListenerTest extends WebTestCase
 
     public function testTriggersReindexationAfterProductUpdateButNoDoublesEntities()
     {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
-        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
-
         $product = $this->createProduct();
 
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent $triggeredEvent */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
-            $triggeredEvent = $event;
-        });
-
-        /**
-         * @var EntityManager $em
-         */
-        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $this->getEventDispatcher()->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function ($event) use (&$triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
 
         $product->setName($product->getName() . '-changed');
 
         // trigger beforeEntityFlush with same entity to ensure that entity will be indexed only once
-        $eventDispatcher->dispatch(new AfterFormProcessEvent(
-            $this->getMockBuilder(FormInterface::class)->getMock(),
-            $product
-        ), Events::BEFORE_FLUSH);
+        $this->getEventDispatcher()->dispatch(
+            new AfterFormProcessEvent($this->createMock(FormInterface::class), $product),
+            Events::BEFORE_FLUSH
+        );
+
+        $em = $this->getEntityManager();
         $em->persist($product);
         $em->flush();
 
@@ -119,29 +110,21 @@ class IndexationRequestListenerTest extends WebTestCase
 
     public function testTriggersReindexationAfterProductDelete()
     {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
-        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
-
         $product = $this->createProduct();
 
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent $triggeredEvent */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
-            $triggeredEvent = $event;
-        });
-
-        /**
-         * @var EntityManager $em
-         */
-        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $this->getEventDispatcher()->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function ($event) use (&$triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
 
         $productId = $product->getId(); // retrieve now, cause after removing, it will be NULL
 
+        $em = $this->getEntityManager();
         $em->remove($product);
         $em->flush();
 
@@ -152,25 +135,19 @@ class IndexationRequestListenerTest extends WebTestCase
 
     public function testTriggersReindexationAfterOnClear()
     {
-        /** @var EventDispatcher $eventDispatcher */
-        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
-
         $product = $this->createProduct(false);
 
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent $triggeredEvent */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
-            $triggeredEvent = $event;
-        });
+        $this->getEventDispatcher()->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function ($event) use (&$triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
 
-        /**
-         * @var EntityManager $em
-         */
-        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-
+        $em = $this->getEntityManager();
         $em->clear(Product::class);
         $em->flush();
 
@@ -181,22 +158,14 @@ class IndexationRequestListenerTest extends WebTestCase
 
     /**
      * Helper method for creating a product which will be used for testing
-     *
-     * @param bool $flush
-     * @return TestProduct
      */
-    private function createProduct(bool $flush = true)
+    private function createProduct(bool $flush = true): TestProduct
     {
-        /**
-         * @var EntityManager $em
-         */
-        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-
         $product = new TestProduct();
         $product->setName('test');
 
+        $em = $this->getEntityManager();
         $em->persist($product);
-
         if ($flush) {
             $em->flush();
         }

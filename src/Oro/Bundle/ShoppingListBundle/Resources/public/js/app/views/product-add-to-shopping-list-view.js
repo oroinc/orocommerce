@@ -9,6 +9,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const $ = require('jquery');
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
     /** @var QuantityHelper QuantityHelper **/
     const QuantityHelper = require('oroproduct/js/app/quantity-helper');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
@@ -24,13 +25,14 @@ define(function(require) {
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
-                success: 'oro.form.inlineEditing.successMessage'
+                success: 'oro.frontend.shoppinglist.lineitem.updated.label'
             },
             save_api_accessor: {
                 http_method: 'PUT',
                 route: 'oro_api_shopping_list_frontend_put_line_item',
                 form_name: 'oro_product_frontend_line_item'
-            }
+            },
+            shoppingListRoute: 'oro_shopping_list_frontend_update'
         },
 
         dropdownWidget: null,
@@ -205,7 +207,7 @@ define(function(require) {
 
             if (hasLineItems) {
                 const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
-                $removeButton.find('a').attr('data-intention', 'remove');
+                $removeButton.find('a, button').attr('data-intention', 'remove');
                 buttons.push($removeButton);
             }
         },
@@ -216,8 +218,14 @@ define(function(require) {
         },
 
         initButtons: function() {
-            this.findAllButtons()
-                .attr('role', 'button')
+            const $buttons = this.findAllButtons();
+
+            $buttons.each((i, btn) => {
+                if (!$(btn).is('button')) {
+                    $(btn).attr('role', 'button');
+                }
+            });
+            $buttons
                 .off('click' + this.eventNamespace())
                 .on('click' + this.eventNamespace(), this.onClick.bind(this));
         },
@@ -302,6 +310,7 @@ define(function(require) {
         },
 
         onClick: function(e) {
+            e.preventDefault();
             const $button = $(e.currentTarget);
             if ($button.data('disabled')) {
                 return false;
@@ -358,15 +367,15 @@ define(function(require) {
                 intention = 'add';
             }
 
-            const $link = $button.find('a');
+            const $els = $button.find('a, button');
             const $icon = $button.find('.fa').clone();
 
-            $link
+            $els
                 .text(label)
                 .attr('data-intention', intention);
 
             if ($icon.length) {
-                $link.prepend($icon);
+                $els.prepend($icon);
             }
 
             return $button;
@@ -501,7 +510,12 @@ define(function(require) {
                     this.shoppingListCollection.trigger('change', {
                         refresh: true
                     });
-                    mediator.execute('showFlashMessage', 'success', _.__(this.options.messages.success));
+                    const messageOptions = {namespace: 'shopping_list'};
+                    const flashMsg = __(this.options.messages.success, {
+                        shoppinglistPath: routing.generate(this.options.shoppingListRoute, {id: shoppingList.id}),
+                        shoppinglistLabel: _.escape(shoppingList.label)
+                    });
+                    mediator.execute('showFlashMessage', 'success', flashMsg, messageOptions);
                 })
                 .always(() => {
                     mediator.execute('hideLoading');

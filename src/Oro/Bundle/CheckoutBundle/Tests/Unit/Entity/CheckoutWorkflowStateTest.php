@@ -10,16 +10,11 @@ class CheckoutWorkflowStateTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var CheckoutWorkflowState */
-    protected $entity;
+    private $entity;
 
     protected function setUp(): void
     {
         $this->entity = new CheckoutWorkflowState();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->entity);
     }
 
     public function testAccessors()

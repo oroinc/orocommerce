@@ -8,6 +8,7 @@ Feature: Product collection individual products with segment filter
     Given I login as administrator
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click on "Remove Variant Button"
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I click "Content Variants"
@@ -21,10 +22,10 @@ Feature: Product collection individual products with segment filter
     And I click on "Preview Results"
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
+      | PSKU12 | Product 12 |
 
   Scenario: Excluded Product disappears from All Added when filters applied
     When I click "Excluded"
@@ -38,9 +39,9 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
 
   Scenario: Already excluded products don't appear in Excluded popup
     When I click "Excluded"
@@ -70,14 +71,14 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
     And I click Exclude on PSKU10 in grid "Active Grid"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
       | PSKU1  | Product 1  |
+      | PSKU11 | Product 11 |
 
   Scenario: Save collection and check All Added products are valid
     When I save form
@@ -85,15 +86,15 @@ Feature: Product collection individual products with segment filter
     And I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
       | PSKU1  | Product 1  |
+      | PSKU11 | Product 11 |
 
   Scenario: Remove product from Excluded tab with help of Remove grid action
     When I click "Excluded"
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
       | PSKU10 | Product 10 |
+      | PSKU12 | Product 12 |
     And I click Remove on PSKU12 in grid "Active Grid"
     And I click Remove on PSKU10 in grid "Active Grid"
     Then I should see following "Active Grid" grid:
@@ -103,10 +104,10 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
+      | PSKU12 | Product 12 |
 
   Scenario: Adding product manually is possible when filter is not complete
     When I drag and drop "Field Condition" on "Drop condition here"
@@ -117,9 +118,9 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU12 | Product 12 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU12 | Product 12 |
 
   Scenario: No records found if grid filter is empty and no Manually added products exist
     When I click on "Remove Filter Button"

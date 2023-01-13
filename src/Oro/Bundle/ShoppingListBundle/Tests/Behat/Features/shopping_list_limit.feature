@@ -1,4 +1,5 @@
 @ticket-BB-10050-limit
+@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Shopping list limit
   As Administrator I have a possibility to restrict limit of shopping lists for customer in configuration
@@ -19,7 +20,7 @@ Feature: Shopping list limit
     And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I should see "1 Shopping List"
     When I open shopping list widget

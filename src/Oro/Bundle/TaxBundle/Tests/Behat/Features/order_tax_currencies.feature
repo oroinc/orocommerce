@@ -1,4 +1,5 @@
 @ticket-BB-15521
+@ticket-CRM-9323
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
@@ -16,6 +17,8 @@ Feature: Order tax currencies
     And I follow "System Configuration/General Setup/Currency" on configuration sidebar
     And I click "EuroAsDefaultValue"
     And I click "Yes"
+    And I click "CurrencyPopover"
+    And I should see "This currency can't be removed because it is used as base for all currency related operations."
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
     When I follow "Commerce/Catalog/Pricing" on configuration sidebar

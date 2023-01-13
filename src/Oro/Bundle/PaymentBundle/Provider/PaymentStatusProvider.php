@@ -7,19 +7,25 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Component\Math\BigDecimal;
+use Oro\Component\Math\RoundingMode;
 
 /**
  * Provides payment status of passed entity according to its transactions.
  */
 class PaymentStatusProvider implements PaymentStatusProviderInterface
 {
-    const FULL = 'full';
-    const PARTIALLY = 'partially';
-    const INVOICED = 'invoiced';
-    const AUTHORIZED = 'authorized';
-    const DECLINED = 'declined';
-    const PENDING = 'pending';
-    const CANCELED = 'canceled';
+    public const FULL = 'full';
+    public const PARTIALLY = 'partially';
+    public const INVOICED = 'invoiced';
+    public const AUTHORIZED = 'authorized';
+    public const AUTHORIZED_PARTIALLY = 'authorized_partially';
+    public const DECLINED = 'declined';
+    public const PENDING = 'pending';
+    public const CANCELED = 'canceled';
+    public const CANCELED_PARTIALLY = 'canceled_partially';
+    public const REFUNDED = 'refunded';
+    public const REFUNDED_PARTIALLY = 'refunded_partially';
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
@@ -46,32 +52,50 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     }
 
     /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param object $entity
      * @param ArrayCollection $paymentTransactions
      * @return string
      */
-    private function getStatusByEntityAndTransactions($entity, ArrayCollection $paymentTransactions)
+    protected function getStatusByEntityAndTransactions($entity, ArrayCollection $paymentTransactions)
     {
-        if ($this->hasCanceledTransactions($paymentTransactions)) {
-            return self::CANCELED;
+        $total = $this->totalProcessorProvider->getTotal($entity);
+
+        if ($this->isRefundedPartially($paymentTransactions, $total)) {
+            return self::REFUNDED_PARTIALLY;
         }
 
-        $total = $this->totalProcessorProvider->getTotal($entity);
+        if ($this->hasRefundedTransactions($paymentTransactions)) {
+            return self::REFUNDED;
+        }
 
         if ($this->hasSuccessfulTransactions($paymentTransactions, $total)) {
             return self::FULL;
-        }
-
-        if ($this->hasPartialTransactions($paymentTransactions, $total)) {
-            return self::PARTIALLY;
         }
 
         if ($this->hasInvoiceTransactions($paymentTransactions)) {
             return self::INVOICED;
         }
 
+        if ($this->hasPartialAuthorizationTransactions($paymentTransactions, $total)) {
+            return self::AUTHORIZED_PARTIALLY;
+        }
+
+        if ($this->isCanceledPartially($paymentTransactions)) {
+            return self::CANCELED_PARTIALLY;
+        }
+
+        if ($this->hasPartialTransactions($paymentTransactions, $total)) {
+            return self::PARTIALLY;
+        }
+
         if ($this->hasAuthorizeTransactions($paymentTransactions)) {
             return self::AUTHORIZED;
+        }
+
+        if ($this->hasCanceledTransactions($paymentTransactions)) {
+            return self::CANCELED;
         }
 
         if ($this->hasDeclinedTransactions($paymentTransactions)) {
@@ -91,15 +115,15 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
             ->filter(
                 function (PaymentTransaction $paymentTransaction) {
                     return $paymentTransaction->isSuccessful()
-                    && in_array(
-                        $paymentTransaction->getAction(),
-                        [
-                            PaymentMethodInterface::CAPTURE,
-                            PaymentMethodInterface::CHARGE,
-                            PaymentMethodInterface::PURCHASE,
-                        ],
-                        true
-                    );
+                        && in_array(
+                            $paymentTransaction->getAction(),
+                            [
+                                PaymentMethodInterface::CAPTURE,
+                                PaymentMethodInterface::CHARGE,
+                                PaymentMethodInterface::PURCHASE,
+                            ],
+                            true
+                        );
                 }
             );
     }
@@ -126,8 +150,10 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     {
         $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
         $transactionAmount = $this->getTransactionAmounts($successfulTransactions);
+        $totalAmount = BigDecimal::of($total->getAmount())->toScale(2, RoundingMode::HALF_UP);
 
-        return $successfulTransactions->count() && $transactionAmount >= $total->getAmount();
+        return $successfulTransactions->count()
+            && BigDecimal::of($transactionAmount)->isGreaterThanOrEqualTo($totalAmount);
     }
 
     /**
@@ -138,9 +164,13 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     protected function hasPartialTransactions(ArrayCollection $paymentTransactions, Subtotal $total)
     {
         $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
-        $transactionAmount = $this->getTransactionAmounts($successfulTransactions);
+        return $this->isPartial($successfulTransactions, $total);
+    }
 
-        return $successfulTransactions->count() && $transactionAmount < $total->getAmount();
+    protected function hasPartialAuthorizationTransactions(ArrayCollection $paymentTransactions, Subtotal $total): bool
+    {
+        $authorizeTransactions = $this->getAuthorizeTransactions($paymentTransactions);
+        return $this->isPartial($authorizeTransactions, $total);
     }
 
     /**
@@ -149,7 +179,12 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
      */
     protected function hasAuthorizeTransactions(ArrayCollection $paymentTransactions)
     {
-        return false === $paymentTransactions
+        return !$this->getAuthorizeTransactions($paymentTransactions)->isEmpty();
+    }
+
+    protected function getAuthorizeTransactions(ArrayCollection $paymentTransactions): ArrayCollection
+    {
+        return $paymentTransactions
             ->filter(
                 function (PaymentTransaction $paymentTransaction) {
                     if ($paymentTransaction->isClone()) {
@@ -157,11 +192,10 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
                     }
 
                     return $paymentTransaction->isActive()
-                    && $paymentTransaction->isSuccessful()
-                    && $paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE;
+                        && $paymentTransaction->isSuccessful()
+                        && $paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE;
                 }
-            )
-            ->isEmpty();
+            );
     }
 
     /**
@@ -171,11 +205,11 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     protected function hasDeclinedTransactions(ArrayCollection $paymentTransactions)
     {
         return $paymentTransactions->count() > 0 && $paymentTransactions
-            ->filter(
-                function (PaymentTransaction $paymentTransaction) {
-                    return !$paymentTransaction->isSuccessful() && !$paymentTransaction->isActive();
-                }
-            )->count() === $paymentTransactions->count();
+                ->filter(
+                    function (PaymentTransaction $paymentTransaction) {
+                        return !$paymentTransaction->isSuccessful() && !$paymentTransaction->isActive();
+                    }
+                )->count() === $paymentTransactions->count();
     }
 
     /**
@@ -206,17 +240,70 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
      */
     protected function hasCanceledTransactions(ArrayCollection $paymentTransactions)
     {
-        return false === $paymentTransactions
-                ->filter(
-                    function (PaymentTransaction $paymentTransaction) {
-                        if ($paymentTransaction->isClone()) {
-                            return false;
-                        }
+        $canceledTransactions = $this->getCanceledTransactions($paymentTransactions);
 
-                        return $paymentTransaction->isSuccessful()
-                            && $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL;
+        return $canceledTransactions->count() > 0;
+    }
+
+    protected function getCanceledTransactions(ArrayCollection $paymentTransactions)
+    {
+        return $paymentTransactions
+            ->filter(
+                function (PaymentTransaction $paymentTransaction) {
+                    if ($paymentTransaction->isClone()) {
+                        return false;
                     }
-                )
-                ->isEmpty();
+
+                    return $paymentTransaction->isSuccessful()
+                        && $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL;
+                }
+            );
+    }
+
+    protected function isCanceledPartially(ArrayCollection $paymentTransactions)
+    {
+        $canceledTransactions = $this->getCanceledTransactions($paymentTransactions);
+        $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
+
+        return $canceledTransactions->count()
+            && $successfulTransactions
+            && $this->getTransactionAmounts($successfulTransactions) >
+            $this->getTransactionAmounts($canceledTransactions);
+    }
+
+    protected function getRefundedTransactions(ArrayCollection $paymentTransactions): ArrayCollection
+    {
+        return $paymentTransactions
+            ->filter(
+                function (PaymentTransaction $paymentTransaction) {
+                    if ($paymentTransaction->isClone()) {
+                        return false;
+                    }
+
+                    return $paymentTransaction->isSuccessful()
+                        && $paymentTransaction->getAction() === PaymentMethodInterface::REFUND;
+                }
+            );
+    }
+
+    protected function hasRefundedTransactions(ArrayCollection $paymentTransactions): bool
+    {
+        $refundTransactions = $this->getRefundedTransactions($paymentTransactions);
+        return (bool) $refundTransactions->count();
+    }
+
+    protected function isRefundedPartially(ArrayCollection $paymentTransactions, Subtotal $total): bool
+    {
+        $refundTransactions = $this->getRefundedTransactions($paymentTransactions);
+        return $this->isPartial($refundTransactions, $total);
+    }
+
+    protected function isPartial(ArrayCollection $paymentTransactions, Subtotal $total): bool
+    {
+        $transactionsAmount = $this->getTransactionAmounts($paymentTransactions);
+        $totalAmount = BigDecimal::of($total->getAmount())->toScale(2, RoundingMode::HALF_UP);
+
+        return $paymentTransactions->count()
+            && BigDecimal::of($transactionsAmount)->isLessThan($totalAmount);
     }
 }

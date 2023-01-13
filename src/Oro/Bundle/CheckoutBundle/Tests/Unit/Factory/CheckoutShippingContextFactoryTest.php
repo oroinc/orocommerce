@@ -9,71 +9,57 @@ use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $factory;
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
-    /**
-     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutLineItemsManager;
+    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutSubtotalProvider;
 
-    /**
-     * @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutSubtotalProvider;
+    /** @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingLineItemConverter;
 
-    /**
-     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $totalProcessorProvider;
+    /** @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextBuilder;
 
-    /**
-     * @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingLineItemConverter;
+    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingOriginProvider;
 
-    /**
-     * @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $contextBuilderMock;
+    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingContextBuilderFactory;
 
-    /**
-     * @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingContextBuilderFactoryMock;
+    /** @var CheckoutShippingContextFactory */
+    private $factory;
 
     protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
         $this->checkoutSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
-        $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);
-        $this->contextBuilderMock = $this->createMock(ShippingContextBuilderInterface::class);
+        $this->contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
         $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
-        $this->shippingContextBuilderFactoryMock = $this->createMock(ShippingContextBuilderFactoryInterface::class);
+        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
+        $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);
 
         $this->factory = new CheckoutShippingContextFactory(
             $this->checkoutLineItemsManager,
             $this->checkoutSubtotalProvider,
-            $this->totalProcessorProvider,
             $this->shippingLineItemConverter,
-            $this->shippingContextBuilderFactoryMock
+            $this->shippingOriginProvider,
+            $this->shippingContextBuilderFactory
         );
     }
 
@@ -84,13 +70,11 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
             new ShippingLineItem([])
         ]);
 
-        $this->shippingLineItemConverter
-            ->expects($this->once())
+        $this->shippingLineItemConverter->expects(self::once())
             ->method('convertLineItems')
             ->willReturn($convertedLineItems);
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setLineItems')
             ->with($convertedLineItems);
 
@@ -101,24 +85,18 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $checkout = $this->prepareCheckout();
 
-        $this->shippingLineItemConverter
-            ->expects($this->once())
+        $this->shippingLineItemConverter->expects(self::once())
             ->method('convertLineItems')
             ->willReturn(null);
 
-        $this->contextBuilderMock
-            ->expects($this->never())
+        $this->contextBuilder->expects(self::never())
             ->method('setLineItems');
 
         $this->factory->create($checkout);
     }
 
-    /**
-     * @return Checkout
-     */
-    protected function prepareCheckout()
+    private function prepareCheckout(): Checkout
     {
-        /** @var AddressInterface $address */
         $address = $this->createMock(OrderAddress::class);
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
@@ -126,7 +104,8 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $customer = new Customer();
         $customerUser = new CustomerUser();
         $checkoutLineItems = new ArrayCollection([new OrderLineItem()]);
-        $websiteMock = $this->createMock(Website::class);
+        $website = $this->createMock(Website::class);
+        $shippingOrigin = $this->createMock(ShippingOrigin::class);
 
         $subtotal = (new Subtotal())
             ->setAmount($amount)
@@ -139,63 +118,65 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
             ->setPaymentMethod($paymentMethod)
             ->setCustomer($customer)
             ->setCustomerUser($customerUser)
-            ->setWebsite($websiteMock);
+            ->setWebsite($website);
 
-        $this->contextBuilderMock->expects($address ? $this->once() : $this->never())
+        $this->contextBuilder->expects(self::once())
             ->method('setShippingAddress')
             ->with($address);
 
-        $this->contextBuilderMock->expects($address ? $this->once() : $this->never())
+        $this->contextBuilder->expects(self::once())
             ->method('setBillingAddress')
             ->with($address);
 
-        $this->contextBuilderMock->expects($paymentMethod ? $this->once() : $this->never())
+        $this->contextBuilder->expects(self::once())
             ->method('setPaymentMethod')
             ->with($paymentMethod);
 
-        $this->contextBuilderMock->expects($customer ? $this->once() : $this->never())
+        $this->contextBuilder->expects(self::once())
             ->method('setCustomer')
             ->with($customer);
 
-        $this->contextBuilderMock->expects($customerUser ? $this->once() : $this->never())
+        $this->contextBuilder->expects(self::once())
             ->method('setCustomerUser')
             ->with($customerUser);
 
-        $this->contextBuilderMock->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('getResult');
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setSubTotal')
             ->with(Price::create($subtotal->getAmount(), $subtotal->getCurrency()))
             ->willReturnSelf();
 
-        $this->contextBuilderMock->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setCurrency')
             ->with($checkout->getCurrency());
 
-        $this->contextBuilderMock->expects($websiteMock ? $this->once() : $this->never())
+        $this->contextBuilder->expects(self::once())
             ->method('setWebsite')
-            ->with($websiteMock);
+            ->with($website);
 
-        $this->shippingContextBuilderFactoryMock->expects($this->once())
+        $this->contextBuilder->expects(self::once())
+            ->method('setShippingOrigin')
+            ->with(self::identicalTo($shippingOrigin));
+
+        $this->shippingContextBuilderFactory->expects(self::once())
             ->method('createShippingContextBuilder')
             ->with($checkout, (string)$checkout->getId())
-            ->willReturn($this->contextBuilderMock);
+            ->willReturn($this->contextBuilder);
 
-        $this->checkoutLineItemsManager->expects($this->once())
+        $this->checkoutLineItemsManager->expects(self::once())
             ->method('getData')
             ->willReturn($checkoutLineItems);
 
-        $this->checkoutSubtotalProvider
-            ->expects(static::once())
+        $this->checkoutSubtotalProvider->expects(self::once())
             ->method('getSubtotal')
             ->with($checkout)
             ->willReturn($subtotal);
 
-        $this->totalProcessorProvider
-            ->expects($this->never())
-            ->method($this->anything());
+        $this->shippingOriginProvider->expects(self::once())
+            ->method('getSystemShippingOrigin')
+            ->willReturn($shippingOrigin);
 
         return $checkout;
     }

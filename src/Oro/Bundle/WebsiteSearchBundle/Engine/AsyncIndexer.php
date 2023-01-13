@@ -3,8 +3,10 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Component\MessageQueue\Client\Message;
-use Oro\Component\MessageQueue\Client\MessagePriority;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchDeleteTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchResetIndexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchSaveTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -13,13 +15,6 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class AsyncIndexer implements IndexerInterface
 {
-    const TOPIC_SAVE = 'oro.website.search.indexer.save';
-    const TOPIC_DELETE = 'oro.website.search.indexer.delete';
-    const TOPIC_RESET_INDEX = 'oro.website.search.indexer.reset_index';
-    const TOPIC_REINDEX = 'oro.website.search.indexer.reindex';
-
-    const DEFAULT_PRIORITY_REINDEX = MessagePriority::LOW;
-
     /**
      * @var IndexerInterface
      */
@@ -51,10 +46,10 @@ class AsyncIndexer implements IndexerInterface
     public function save($entity, array $context = [])
     {
         $this->sendAsyncIndexerMessage(
-            self::TOPIC_SAVE,
+            WebsiteSearchSaveTopic::getName(),
             [
                 'entity' => $this->getEntityData($entity),
-                'context' => $context
+                'context' => $context,
             ]
         );
     }
@@ -65,10 +60,10 @@ class AsyncIndexer implements IndexerInterface
     public function delete($entity, array $context = [])
     {
         $this->sendAsyncIndexerMessage(
-            self::TOPIC_DELETE,
+            WebsiteSearchDeleteTopic::getName(),
             [
                 'entity' => $this->getEntityData($entity),
-                'context' => $context
+                'context' => $context,
             ]
         );
     }
@@ -89,10 +84,10 @@ class AsyncIndexer implements IndexerInterface
     public function resetIndex($class = null, array $context = [])
     {
         $this->sendAsyncIndexerMessage(
-            self::TOPIC_RESET_INDEX,
+            WebsiteSearchResetIndexTopic::getName(),
             [
                 'class' => $class,
-                'context' => $context
+                'context' => $context,
             ]
         );
     }
@@ -111,60 +106,48 @@ class AsyncIndexer implements IndexerInterface
         $parameters = $this->inputValidator->validateClassAndContext([
             'granulize' => true,
             'class' => $class,
-            'context' => $context
+            'context' => $context,
         ]);
 
         // granulization might take quite a lot of time, so it has to happen asynchronously inside a processor
-        $this->sendAsyncIndexerMessage(self::TOPIC_REINDEX, $parameters, self::DEFAULT_PRIORITY_REINDEX);
+        $this->sendAsyncIndexerMessage(WebsiteSearchReindexTopic::getName(), $parameters);
     }
 
     /**
      * Send a message to a queue using message producer
-     *
-     * @param $topic
-     * @param array $data
-     * @param string $priority
      */
-    private function sendAsyncIndexerMessage($topic, array $data, $priority = MessagePriority::NORMAL)
+    private function sendAsyncIndexerMessage(string $topicName, array $messageBody): void
     {
-        $this->messageProducer->send(
-            $topic,
-            new Message($data, $priority)
-        );
+        $this->messageProducer->send($topicName, $messageBody);
     }
 
     /**
-     * @param object|object[] $entity
-     * @return array
+     * @param object|array $entity
+     *
+     * @return array<array{class: string, id: int}>
      */
-    private function getEntityData($entity)
+    private function getEntityData(object|array $entity): array
     {
-        if (is_array($entity)) {
-            $result = [];
+        $entity = is_array($entity) ? $entity : [$entity];
 
-            foreach ($entity as $entityEntry) {
-                $result[] = $this->getEntityScalarRepresentation($entityEntry);
-            }
-
-            return $result;
-        }
-
-        return $this->getEntityScalarRepresentation($entity);
+        return array_map(fn (object $entity) => $this->getEntityScalarRepresentation($entity), $entity);
     }
 
     /**
      * Parse entity and get the Id and class name from it, to send in the que message.
      *
      * @param object $entity
-     * @return array
+     *
+     * @return array{class: string, id: int}
+     *
      * @throws \RuntimeException
      */
-    private function getEntityScalarRepresentation($entity)
+    private function getEntityScalarRepresentation(object $entity): array
     {
-        if (is_object($entity) && method_exists($entity, 'getId')) {
+        if (method_exists($entity, 'getId')) {
             return [
                 'class' => get_class($entity),
-                'id' => $entity->getId()
+                'id' => $entity->getId(),
             ];
         }
 

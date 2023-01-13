@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BB-17552
 
 Feature: Content Widget CRUD

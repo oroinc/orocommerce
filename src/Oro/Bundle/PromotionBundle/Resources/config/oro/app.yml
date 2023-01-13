@@ -1,0 +1,5 @@
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\PromotionBundle\Entity\Coupon:
+            full: [ code ]
+            short: [ code ]

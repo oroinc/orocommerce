@@ -4,13 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
-use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -21,16 +18,15 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
-use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -46,9 +42,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attachmentManager;
-
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
@@ -63,7 +56,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
         $this->websiteLocalizationProvider = $this->createMock(AbstractWebsiteLocalizationProvider::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->attributeManager = $this->createMock(AttributeManager::class);
         $this->dataProvider = $this->createMock(ProductIndexDataProviderInterface::class);
 
@@ -71,16 +63,38 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             $this->websiteLocalizationProvider,
             $this->websiteContextManager,
             $this->doctrine,
-            $this->attachmentManager,
             $this->attributeManager,
             $this->dataProvider
         );
     }
 
+    public function testOnWebsiteSearchUnsupportedFieldsGroup()
+    {
+        $attributeFamilyId = 42;
+        $productId = 1;
+        $attributeFamily = $this->getAttributeFamily($attributeFamilyId);
+        $product = $this->getProduct($productId, $attributeFamily);
+
+        $this->websiteLocalizationProvider->expects($this->never())
+            ->method($this->anything());
+        $this->websiteContextManager->expects($this->never())
+            ->method($this->anything());
+        $this->doctrine->expects($this->never())
+            ->method($this->anything());
+        $this->attributeManager->expects($this->never())
+            ->method($this->anything());
+        $this->dataProvider->expects($this->never())
+            ->method($this->anything());
+
+        $event = new IndexEntityEvent(Product::class, [$product], [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']]);
+        $this->listener->onWebsiteSearchIndex($event);
+    }
+
     /**
+     * @dataProvider validContextDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testOnWebsiteSearchIndexProductClass()
+    public function testOnWebsiteSearchIndexProductClass(array $context)
     {
         $organization = new Organization();
         $website = new Website();
@@ -94,37 +108,21 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ->willReturn([$firstLocale, $secondLocale]);
 
         $attributeFamilyId = 42;
+        $productId = 1;
         $attributeFamily = $this->getAttributeFamily($attributeFamilyId);
 
-        $productId = 777;
-        $product = new ProductWithInventoryStatus();
-        ReflectionUtil::setId($product, $productId);
-        $product->setSku('sku123Абв');
-        $product->setStatus(Product::STATUS_ENABLED);
-        $product->setType(Product::TYPE_CONFIGURABLE);
-        $product->setInventoryStatus(new InventoryStatus('in_stock', 'In Stock'));
-        $product->setNewArrival(true);
-        $product->setCreatedAt(new \DateTime('2017-09-09 00:00:00'));
-        $product->setAttributeFamily($attributeFamily);
-        $product->setVariantFields(['field1', 'field2']);
+        $product = $this->getProduct($productId, $attributeFamily);
 
-        $event = new IndexEntityEvent(Product::class, [$product], []);
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
 
         $this->websiteContextManager->expects($this->once())
             ->method('getWebsiteId')
-            ->with([])
+            ->with($context)
             ->willReturn(1);
 
         $productRepository = $this->createMock(ProductRepository::class);
         $unitRepository = $this->createMock(ProductUnitRepository::class);
         $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
-
-        $image = $this->getImage();
-
-        $productRepository->expects($this->once())
-            ->method('getListingImagesFilesByProductIds')
-            ->with([$productId])
-            ->willReturn([$productId => $image]);
 
         $unitRepository->expects($this->once())
             ->method('getProductsUnits')
@@ -172,14 +170,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                 [AttributeFamily::class, null, $attributeFamilyRepository]
             ]);
 
-        $this->attachmentManager->expects($this->exactly(3))
-            ->method('getFilteredImageUrl')
-            ->willReturnMap([
-                [$image, 'product_large', '', UrlGeneratorInterface::ABSOLUTE_PATH, '/large/image'],
-                [$image, 'product_medium', '', UrlGeneratorInterface::ABSOLUTE_PATH, '/medium/image'],
-                [$image, 'product_small', '', UrlGeneratorInterface::ABSOLUTE_PATH, '/small/image']
-            ]);
-
         $this->attributeManager->expects($this->once())
             ->method('getActiveAttributesByClassForOrganization')
             ->with(Product::class, $organization)
@@ -223,12 +213,10 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onWebsiteSearchIndex($event);
 
         $expected[$product->getId()] = [
-            'product_id' => [['value' => $product->getId(), 'all_text' => false]],
             'sku' => [['value' => 'sku123Абв', 'all_text' => true]],
-            'sku_uppercase' => [['value' => 'SKU123АБВ', 'all_text' => true]],
+            'sku_uppercase' => [['value' => 'SKU123АБВ', 'all_text' => false]],
             'status' => [['value' => Product::STATUS_ENABLED, 'all_text' => false]],
             'type' => [['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false]],
-            'inventory_status' => [['value' => 'in_stock', 'all_text' => false]],
             'is_variant' => [['value' => 0, 'all_text' => false]],
             'newArrival' => [['value' => 1, 'all_text' => false]],
             'all_text_LOCALIZATION_ID' => [
@@ -246,24 +234,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                     ),
                     'all_text' => true,
                 ],
-            ],
-            'image_product_small' => [
-                [
-                    'value' => '/small/image',
-                    'all_text' => false
-                ]
-            ],
-            'image_product_medium' => [
-                [
-                    'value' => '/medium/image',
-                    'all_text' => false
-                ]
-            ],
-            'image_product_large' => [
-                [
-                    'value' => '/large/image',
-                    'all_text' => false
-                ]
             ],
             'product_units' => [
                 [
@@ -315,6 +285,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->assertEquals($expected, $event->getEntitiesData());
     }
 
+    public function validContextDataProvider(): \Generator
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]];
+    }
+
     /**
      * Create string with not printable control symbols
      */
@@ -327,15 +303,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         }
 
         return $multicharText . 'ASDF456' . chr(127) . 'ASDF789';
-    }
-
-    private function getImage(): File
-    {
-        $file = new File();
-        ReflectionUtil::setId($file, 1);
-        $file->setFilename('/image/filename');
-
-        return $file;
     }
 
     private function getLocalization(int $id): Localization
@@ -374,5 +341,20 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $fieldConfigModel->setFieldName($fieldName);
 
         return $fieldConfigModel;
+    }
+
+    private function getProduct(int $productId, AttributeFamily $attributeFamily): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $productId);
+        $product->setSku('sku123Абв');
+        $product->setStatus(Product::STATUS_ENABLED);
+        $product->setType(Product::TYPE_CONFIGURABLE);
+        $product->setNewArrival(true);
+        $product->setCreatedAt(new \DateTime('2017-09-09 00:00:00'));
+        $product->setAttributeFamily($attributeFamily);
+        $product->setVariantFields(['field1', 'field2']);
+
+        return $product;
     }
 }

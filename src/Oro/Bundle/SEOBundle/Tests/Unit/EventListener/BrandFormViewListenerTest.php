@@ -11,20 +11,13 @@ use Symfony\Component\Form\FormView;
 class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
 {
     /** @var BrandFormViewListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new BrandFormViewListener($this->translator);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-
-        parent::tearDown();
     }
 
     public function testOnCategoryEdit()

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Search;
 
-use Oro\Bundle\EntityBundle\ORM\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -20,8 +20,8 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $originalProvider;
 
-    /** @var Registry|\PHPUnit\Framework\MockObject\MockObject  */
-    private $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    private $doctrine;
 
     /** @var ProductVariantIndexDataProviderDecorator */
     private $productVariantProvider;
@@ -29,10 +29,11 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     protected function setUp(): void
     {
         $this->originalProvider = $this->createMock(ProductIndexDataProviderInterface::class);
-        $this->registry = $this->createMock(Registry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+
         $this->productVariantProvider = new ProductVariantIndexDataProviderDecorator(
             $this->originalProvider,
-            $this->registry
+            $this->doctrine
         );
     }
 
@@ -62,12 +63,10 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
         };
 
         $repository = $this->createMock(ProductRepository::class);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getVariantsLinksProducts')
             ->willReturn($variantLinks());
-        $this->registry
-            ->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
@@ -85,10 +84,8 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function getIndexDataDataProvider()
+    public function getIndexDataDataProvider(): array
     {
         return [
             'all text not localized' => [

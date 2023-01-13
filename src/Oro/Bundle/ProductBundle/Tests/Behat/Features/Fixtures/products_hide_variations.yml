@@ -1,9 +1,6 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
-
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    attribute_family_label:
-        string: 'Attribute Family'
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     configurable_product_A_name:
@@ -24,14 +21,6 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product C 1'
     product_C_121_name:
         string: 'Product C 2'
-
-Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
-    attribute_family:
-        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-        code: 'family'
-        __calls:
-            - addLabel: ['@attribute_family_label']
-        owner: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit_precisionA:
@@ -70,8 +59,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'configurable'
         sku: 'CNF_A'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionA'
+        unitPrecisions: [ '@unit_precisionA' ]
         __calls:
             - addName: ['@configurable_product_A_name']
         status: 'enabled'
@@ -82,8 +72,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_A_1'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionA1'
+        unitPrecisions: [ '@unit_precisionA1' ]
         __calls:
             - addName: ['@product_A_1_name']
         status: 'enabled'
@@ -93,8 +84,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_A_2'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionA2'
+        unitPrecisions: [ '@unit_precisionA2' ]
         __calls:
             - addName: ['@product_A_2_name']
         status: 'enabled'
@@ -104,8 +96,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_A_3'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionA3'
+        unitPrecisions: [ '@unit_precisionA3' ]
         __calls:
             - addName: ['@product_A_3_name']
         status: 'enabled'
@@ -114,8 +107,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_B_11'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionB11'
+        unitPrecisions: [ '@unit_precisionB11' ]
         __calls:
             - addName: ['@product_B_11_name']
         status: 'enabled'
@@ -125,8 +119,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_B_12'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionB12'
+        unitPrecisions: [ '@unit_precisionB12' ]
         __calls:
             - addName: ['@product_B_12_name']
         status: 'enabled'
@@ -136,8 +131,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_B_13'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionB13'
+        unitPrecisions: [ '@unit_precisionB13' ]
         __calls:
             - addName: ['@product_B_13_name']
         status: 'enabled'
@@ -146,8 +142,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_C_1'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionC111'
+        unitPrecisions: [ '@unit_precisionC111' ]
         __calls:
             - addName: ['@product_C_111_name']
         status: 'enabled'
@@ -157,8 +154,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PROD_C_2'
         organization: '@organization'
-        attributeFamily: '@attribute_family'
+        attributeFamily: '@productAttributeFamily'
         primaryUnitPrecision: '@unit_precisionC121'
+        unitPrecisions: [ '@unit_precisionC121' ]
         __calls:
             - addName: ['@product_C_121_name']
         status: 'enabled'

@@ -12,26 +12,23 @@ use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResol
 
 class DigitalResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DigitalResolver */
-    protected $resolver;
-
     /** @var DigitalItemResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $itemResolver;
+    private $itemResolver;
 
-    /** {@inheritdoc} */
+    /** @var DigitalResolver */
+    private $resolver;
+
     protected function setUp(): void
     {
-        $this->itemResolver = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemResolver = $this->createMock(DigitalItemResolver::class);
 
         $this->resolver = new DigitalResolver($this->itemResolver);
     }
 
     public function testEmptyCollection()
     {
-        $this->itemResolver->expects($this->never())->method($this->anything());
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
 
         $this->resolver->resolve(new Taxable());
     }
@@ -46,7 +43,8 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $taxableItem = new Taxable();
         $taxable->addItem($taxableItem);
 
-        $this->itemResolver->expects($this->never())->method($this->anything());
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
 
         $this->resolver->resolve($taxable);
 
@@ -72,7 +70,7 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableAddresIsOrigin()
+    public function testTaxableAddressIsOrigin()
     {
         $address = new OrderAddress();
         $address

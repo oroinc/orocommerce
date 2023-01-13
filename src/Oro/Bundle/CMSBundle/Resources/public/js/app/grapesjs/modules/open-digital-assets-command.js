@@ -9,7 +9,8 @@ const openDigitalAssetsCommand = {
         routeParams: null,
         loadingElement: null,
         target: null,
-        onSelect: function() {}
+        onSelect: function() {},
+        onClose: function() {}
     },
 
     dialog: null,
@@ -24,8 +25,11 @@ const openDigitalAssetsCommand = {
      * @param {object} options
      * @returns {openDigitalAssetsCommand}
      */
-    run: function(editor, sender, options) {
-        this.options = options;
+    run(editor, sender, options) {
+        this.options = {
+            ...this.options,
+            ...options
+        };
 
         if (!options.routeName) {
             throw new TypeError('Missing required option: routeName');
@@ -33,41 +37,51 @@ const openDigitalAssetsCommand = {
 
         this.dialog = this._openChooseDialog(editor);
         this.dialog.on('grid-row-select', this._onGridRowSelect.bind(this, editor));
-        this.dialog.on('close', () => editor.stopCommand(this.id));
+        this.dialog.on('close', this._onCloseDialog.bind(this, editor));
         this.dialog.render();
 
         return this;
     },
 
-    stop: function(editor) {
+    stop(editor) {
         this.dialog.dispose();
 
         return this;
+    },
+
+    _onCloseDialog(editor) {
+        this.options.onClose(this);
+        editor.stopCommand(this.id);
     },
 
     /**
      * @param {object} data
      * @private
      */
-    _onGridRowSelect: function(editor, data) {
+    _onGridRowSelect(editor, data) {
         this.options.onSelect(data.model, this);
         editor.stopCommand(this.id);
     },
 
-    _openChooseDialog: function(editor) {
-        const container = editor.Commands.isActive('fullscreen') ? editor.getEl() : 'body';
-
-        return new DigitalAssetDialogWidget({
+    _openChooseDialog(editor) {
+        const options = {
             title: this.options.title,
             url: routing.generate(
                 this.options.routeName,
                 _.extend(editor.Config.requestParams, this.options.routeParams || {})
             ),
-            loadingElement: this.options.loadingElement || container,
             dialogOptions: {
-                appendTo: container
+                modal: true
             }
-        });
+        };
+
+        if (editor.Commands.isActive('fullscreen') ) {
+            options.loadingProperties = {
+                extraClassName: 'grapesjs-loading-mask-fullscreen'
+            };
+        }
+
+        return new DigitalAssetDialogWidget(options);
     }
 };
 

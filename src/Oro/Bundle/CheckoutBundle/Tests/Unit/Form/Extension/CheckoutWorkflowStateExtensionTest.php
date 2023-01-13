@@ -12,31 +12,22 @@ use Symfony\Component\Form\FormView;
 
 class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CheckoutWorkflowStateExtension
-     */
-    protected $checkoutWorkflowExtension;
-
     /** @var CheckoutErrorHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutErrorHandler;
+    private $checkoutErrorHandler;
+
+    /** @var CheckoutWorkflowStateExtension */
+    private $checkoutWorkflowExtension;
 
     protected function setUp(): void
     {
-        $this->checkoutErrorHandler = $this->getMockBuilder(CheckoutErrorHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutErrorHandler = $this->createMock(CheckoutErrorHandler::class);
 
         $this->checkoutWorkflowExtension = new CheckoutWorkflowStateExtension($this->checkoutErrorHandler);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->checkoutErrorHandler, $this->checkoutWorkflowExtension);
-    }
-
     public function testFinishView()
     {
-        $form = $this->createForm();
+        $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $view->vars['errors'] = new FormErrorIterator($form, [new FormError('')]);
         $expectedErrors = new FormErrorIterator($form, []);
@@ -53,7 +44,7 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testFinishViewWithEmptyErrors()
     {
-        $form = $this->createForm();
+        $form = $this->createMock(FormInterface::class);
 
         $this->checkoutErrorHandler->expects($this->once())
             ->method('filterWorkflowStateError')
@@ -75,18 +66,5 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
     public function testGetExtendedTypes()
     {
         $this->assertEquals([WorkflowTransitionType::class], CheckoutWorkflowStateExtension::getExtendedTypes());
-    }
-
-    /**
-     * @return FormInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createForm()
-    {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->getMockBuilder(FormInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $form;
     }
 }

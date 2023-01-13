@@ -56,10 +56,11 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
             $variant->addScope($scope);
 
             $slug = new Slug();
-            $slug->setUrl(self::CONTENT_NODE_SLUG);
+            $slug->setUrl(sprintf('%s-%s', self::CONTENT_NODE_SLUG, $entity->getId()));
             $slug->setRouteName($this->getRoute());
             $slug->setRouteParameters(['id' => $entity->getId()]);
             $slug->addScope($scope);
+            $slug->setOrganization($webCatalog->getOrganization());
 
             if (method_exists($variant, $entitySetterMethod)) {
                 $variant->$entitySetterMethod($entity);

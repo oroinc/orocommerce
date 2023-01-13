@@ -11,20 +11,13 @@ class RequestHelperTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData',
-            ]
-        );
+        $this->loadFixtures([LoadRequestData::class]);
     }
 
     /**
      * @dataProvider getRequestsWoQuoteDataProvider
-     *
-     * @param int $days
-     * @param array $expected
      */
-    public function testGetRequestsWoQuote($days, array $expected)
+    public function testGetRequestsWoQuote(int $days, array $expected)
     {
         $expectedRequests = [];
         foreach ($expected as $item) {
@@ -37,10 +30,7 @@ class RequestHelperTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getRequestsWoQuoteDataProvider()
+    public function getRequestsWoQuoteDataProvider(): array
     {
         return [
             'current date' => [
@@ -58,8 +48,7 @@ class RequestHelperTest extends WebTestCase
             ],
             '6 days' => [
                 'days' => 6,
-                'expected' => [
-                ],
+                'expected' => [],
             ],
         ];
     }

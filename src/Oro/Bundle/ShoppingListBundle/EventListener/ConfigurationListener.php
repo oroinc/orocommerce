@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ShoppingListBundle\Async\MessageFactory;
-use Oro\Bundle\ShoppingListBundle\Async\Topics;
+use Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerWebsiteTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -15,15 +15,9 @@ class ConfigurationListener
 {
     private const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
 
-    /**
-     * @var MessageProducerInterface
-     */
-    private $producer;
+    private MessageProducerInterface $producer;
 
-    /**
-     * @var MessageFactory
-     */
-    private $messageFactory;
+    private MessageFactory $messageFactory;
 
     public function __construct(
         MessageProducerInterface $producer,
@@ -44,7 +38,7 @@ class ConfigurationListener
             // Schedule totals invalidation only on decreasing of allowed list
             if ($diff) {
                 $this->producer->send(
-                    Topics::INVALIDATE_TOTALS_BY_INVENTORY_STATUS_PER_WEBSITE,
+                    InvalidateTotalsByInventoryStatusPerWebsiteTopic::getName(),
                     $this->messageFactory->createShoppingListTotalsInvalidateMessageForConfigScope(
                         $event->getScope(),
                         $event->getScopeId()

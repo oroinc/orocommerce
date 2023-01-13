@@ -15,25 +15,10 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
  */
 class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterface
 {
-    /**
-     * @var ShippingContextBuilderFactoryInterface
-     */
-    private $shippingContextBuilderFactory;
-
-    /**
-     * @var QuoteToShippingLineItemConverterInterface
-     */
-    private $quoteToShippingLineItemConverter;
-
-    /**
-     * @var TotalProcessorProvider
-     */
-    private $totalProcessorProvider;
-
-    /**
-     * @var CalculableQuoteFactoryInterface
-     */
-    private $calculableQuoteFactory;
+    private ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory;
+    private QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter;
+    private TotalProcessorProvider $totalProcessorProvider;
+    private CalculableQuoteFactoryInterface $calculableQuoteFactory;
 
     public function __construct(
         ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory,
@@ -48,12 +33,17 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
     }
 
     /**
-     * {@inheritdoc}
-     * @param Quote $quote
+     * {@inheritDoc}
      */
     public function create($quote)
     {
-        $this->ensureApplicable($quote);
+        if (!$quote instanceof Quote) {
+            throw new \InvalidArgumentException(sprintf(
+                '"%s" expected, "%s" given',
+                Quote::class,
+                get_debug_type($quote)
+            ));
+        }
 
         $this->totalProcessorProvider->enableRecalculation();
 
@@ -91,20 +81,5 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
         }
 
         return $shippingContextBuilder->getResult();
-    }
-
-    /**
-     * @param object $entity
-     * @throws \InvalidArgumentException
-     */
-    protected function ensureApplicable($entity)
-    {
-        if (!is_a($entity, Quote::class)) {
-            throw new \InvalidArgumentException(sprintf(
-                '"%s" expected, "%s" given',
-                Quote::class,
-                is_object($entity) ? get_class($entity) : gettype($entity)
-            ));
-        }
     }
 }

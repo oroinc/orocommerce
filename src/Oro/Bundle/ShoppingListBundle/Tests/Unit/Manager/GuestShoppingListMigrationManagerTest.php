@@ -19,40 +19,28 @@ use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\CustomerVisitorStub;
  */
 class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListLimitManager;
 
-    /**
-     * @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListManager;
 
-    /**
-     * @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currentShoppingListManager;
 
-    /**
-     * @var GuestShoppingListMigrationManager
-     */
+    /** @var GuestShoppingListMigrationManager */
     private $migrationManager;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
         $this->migrationManager = new GuestShoppingListMigrationManager(
             $this->doctrineHelper,
             $this->shoppingListLimitManager,
@@ -63,8 +51,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testMigrateGuestShoppingListWithCreateEnabled()
     {
-        $this->shoppingListLimitManager
-            ->expects($this->once())
+        $this->shoppingListLimitManager->expects($this->once())
             ->method('isCreateEnabled')
             ->willReturn(true);
 
@@ -83,13 +70,12 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('flush');
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityManagerForClass')
-            ->will($this->returnValueMap([
-                 [CustomerVisitor::class, true, $customerVisitorEntityManager],
-                 [ShoppingList::class, true, $shoppingListEntityManager]
-             ]));
+            ->willReturnMap([
+                [CustomerVisitor::class, true, $customerVisitorEntityManager],
+                [ShoppingList::class, true, $shoppingListEntityManager]
+            ]);
 
-        $this->currentShoppingListManager
-            ->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('setCurrent')
             ->with($customerUser, $shoppingList)
             ->willReturn(true);
@@ -99,8 +85,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testMigrateGuestShoppingListWithCreateDisabled()
     {
-        $this->shoppingListLimitManager
-            ->expects($this->once())
+        $this->shoppingListLimitManager->expects($this->once())
             ->method('isCreateEnabled')
             ->willReturn(false);
         $shoppingList = new ShoppingList();

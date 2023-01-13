@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 class LoadWebCatalogData extends AbstractFixture
@@ -19,7 +20,7 @@ class LoadWebCatalogData extends AbstractFixture
     {
         foreach ([self::CATALOG_1, self::CATALOG_2, self::CATALOG_3] as $catalogReference) {
             $catalog = $this->createCatalog($catalogReference);
-            $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
+            $organization = $manager->getRepository(Organization::class)->findOneBy([]);
             $catalog->setOrganization($organization);
             $manager->persist($catalog);
             $this->setReference($catalogReference, $catalog);

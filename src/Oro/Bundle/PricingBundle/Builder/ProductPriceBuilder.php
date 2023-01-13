@@ -163,7 +163,7 @@ class ProductPriceBuilder implements FeatureToggleableInterface
         } else {
             $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
                 $this->shardManager,
-                $priceList,
+                $priceList->getId(),
                 $this->version,
                 $this->batchSize
             );

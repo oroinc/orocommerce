@@ -15,7 +15,6 @@ use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -26,32 +25,26 @@ class CategoryControllerTest extends WebTestCase
 {
     use CatalogTrait;
 
-    const DEFAULT_CATEGORY_TITLE = 'Category Title';
-    const DEFAULT_SUBCATEGORY_TITLE = 'Subcategory Title';
-    const DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Category Short Description';
-    const DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Category Long Description';
-    const DEFAULT_CATEGORY_UNIT_CODE = 'set';
-    const DEFAULT_CATEGORY_UNIT_PRECISION = 5;
-    const UPDATED_DEFAULT_CATEGORY_TITLE = 'Updated Category Title';
-    const UPDATED_DEFAULT_SUBCATEGORY_TITLE = 'Updated Subcategory Title';
-    const UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Updated Category Short Description';
-    const UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Updated Category Long Description';
-    const UPDATED_DEFAULT_CATEGORY_UNIT_CODE = 'item';
-    const UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION = 3;
-    const LARGE_IMAGE_NAME = 'large_image.png';
-    const SMALL_IMAGE_NAME = 'small_image.png';
-    const LARGE_SVG_IMAGE_NAME = 'large_svg_image.svg';
-    const SMALL_SVG_IMAGE_NAME = 'small_svg_image.svg';
+    private const DEFAULT_CATEGORY_TITLE = 'Category Title';
+    private const DEFAULT_SUBCATEGORY_TITLE = 'Subcategory Title';
+    private const DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Category Short Description';
+    private const DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Category Long Description';
+    private const DEFAULT_CATEGORY_UNIT_CODE = 'set';
+    private const DEFAULT_CATEGORY_UNIT_PRECISION = 5;
+    private const UPDATED_DEFAULT_CATEGORY_TITLE = 'Updated Category Title';
+    private const UPDATED_DEFAULT_SUBCATEGORY_TITLE = 'Updated Subcategory Title';
+    private const UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Updated Category Short Description';
+    private const UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Updated Category Long Description';
+    private const UPDATED_DEFAULT_CATEGORY_UNIT_CODE = 'item';
+    private const UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION = 3;
+    private const LARGE_IMAGE_NAME = 'large_image.png';
+    private const SMALL_IMAGE_NAME = 'small_image.png';
+    private const LARGE_SVG_IMAGE_NAME = 'large_svg_image.svg';
+    private const SMALL_SVG_IMAGE_NAME = 'small_svg_image.svg';
 
-    /**
-     * @var Localization[]
-     */
-    protected $localizations;
-
-    /**
-     * @var Category
-     */
-    protected $masterCatalog;
+    /** @var Localization[] */
+    private array $localizations;
+    private Category $masterCatalog;
 
     protected function setUp(): void
     {
@@ -62,9 +55,9 @@ class CategoryControllerTest extends WebTestCase
             LoadProductData::class,
             LoadCategoryData::class
         ]);
-        $this->localizations = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroLocaleBundle:Localization')
+
+        $this->localizations = $this->getContainer()->get('doctrine')
+            ->getRepository(Localization::class)
             ->findAll();
 
         $this->masterCatalog = $this->getRootCategory();
@@ -123,7 +116,10 @@ class CategoryControllerTest extends WebTestCase
         ];
 
         $response = $this->client->getResponse();
-        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($expectedData, JSON_THROW_ON_ERROR),
+            $response->getContent()
+        );
     }
 
     public function testIndex()
@@ -132,16 +128,13 @@ class CategoryControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Categories', $crawler->filter('h1.oro-subtitle')->html());
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             'Please select a category on the left or create new one.',
             $crawler->filter('[data-role="content"] .tree-empty-content .no-data')->html()
         );
     }
 
-    /**
-     * @return int
-     */
-    public function testCreateCategory()
+    public function testCreateCategory(): int
     {
         $this->masterCatalog = $this->getRootCategory();
 
@@ -150,46 +143,34 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @depends testCreateCategory
-     *
-     * @param int $id
-     *
-     * @return int
      */
-    public function testCreateSubCategory($id)
+    public function testCreateSubCategory(int $id): int
     {
         return $this->assertCreate($id, self::DEFAULT_SUBCATEGORY_TITLE);
     }
 
     /**
      * @depends testCreateCategory
-     *
-     * @param int $id
      */
-    public function testLocalizedValuesCategory($id)
+    public function testLocalizedValuesCategory(int $id)
     {
         $this->assertUpdateWithLocalizedValues($id);
     }
 
     /**
      * @depends testCreateSubCategory
-     *
-     * @param int $id
      */
-    public function testLocalizedValuesSubCategory($id)
+    public function testLocalizedValuesSubCategory(int $id)
     {
         $this->assertUpdateWithLocalizedValues($id, self::DEFAULT_SUBCATEGORY_TITLE);
     }
 
     /**
      * @depends testCreateCategory
-     *
-     * @param int $id
-     *
-     * @return int
      */
-    public function testEditCategory($id)
+    public function testEditCategory(int $id): int
     {
-        list($title, $shortDescription, $longDescription, $unitPrecision) = [
+        [$title, $shortDescription, $longDescription, $unitPrecision] = [
             self::DEFAULT_CATEGORY_TITLE,
             self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
@@ -199,7 +180,7 @@ class CategoryControllerTest extends WebTestCase
             ]
         ];
 
-        list($newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision) = [
+        [$newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision] = [
             self::UPDATED_DEFAULT_CATEGORY_TITLE,
             self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION,
@@ -224,14 +205,10 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @depends testCreateSubCategory
-     *
-     * @param int $id
-     *
-     * @return int
      */
-    public function testEditSubCategory($id)
+    public function testEditSubCategory(int $id): int
     {
-        list($title, $shortDescription, $longDescription, $unitPrecision) = [
+        [$title, $shortDescription, $longDescription, $unitPrecision] = [
             self::DEFAULT_SUBCATEGORY_TITLE,
             self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
@@ -241,7 +218,7 @@ class CategoryControllerTest extends WebTestCase
             ]
         ];
 
-        list($newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision) = [
+        [$newTitle, $newShortDescription, $newLongDescription, $newUnitPrecision] = [
             self::UPDATED_DEFAULT_CATEGORY_TITLE,
             self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
             self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION,
@@ -343,15 +320,14 @@ class CategoryControllerTest extends WebTestCase
         $largeImage = new UploadedFile($largeImageFile, $largeImageName, 'image/svg+xml');
 
         $title = 'Category with SVG images';
-        /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_catalog_category[titles][values][default]'] = $title;
         $form['oro_catalog_category[smallImage][file]'] = $smallImage;
         $form['oro_catalog_category[largeImage][file]'] = $largeImage;
         $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = 0;
         $form['oro_catalog_category[lowInventoryThreshold][scalarValue]'] = 0;
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
 
-        $form->setValues(['input_action' => 'save_and_stay']);
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $result = $this->client->getResponse();
@@ -359,10 +335,10 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString('Category has been saved', $html);
-        static::assertStringContainsString($title, $html);
-        static::assertStringContainsString(self::SMALL_SVG_IMAGE_NAME, $html);
-        static::assertStringContainsString(self::LARGE_SVG_IMAGE_NAME, $html);
+        self::assertStringContainsString('Category has been saved', $html);
+        self::assertStringContainsString($title, $html);
+        self::assertStringContainsString(self::SMALL_SVG_IMAGE_NAME, $html);
+        self::assertStringContainsString(self::LARGE_SVG_IMAGE_NAME, $html);
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
@@ -411,25 +387,16 @@ class CategoryControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param int    $parentId
-     * @param string $title
-     * @param string $shortDescription
-     * @param string $longDescription
-     * @param array  $unitPrecision
-     *
-     * @return int
-     */
-    protected function assertCreate(
-        $parentId,
-        $title = self::DEFAULT_CATEGORY_TITLE,
-        $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
-        $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
-        $unitPrecision = [
+    private function assertCreate(
+        int $parentId,
+        string $title = self::DEFAULT_CATEGORY_TITLE,
+        string $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+        string $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION,
+        array $unitPrecision = [
             'code' => self::DEFAULT_CATEGORY_UNIT_CODE,
             'precision' => self::DEFAULT_CATEGORY_UNIT_PRECISION
         ]
-    ) {
+    ): int {
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_catalog_category_create', ['id' => $parentId])
@@ -449,7 +416,6 @@ class CategoryControllerTest extends WebTestCase
         $smallImage = new UploadedFile($smallImageFile, $smallImageName);
         $largeImage = new UploadedFile($largeImageFile, $largeImageName);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
         $form['oro_catalog_category[titles][values][default]'] = $title;
         $form['oro_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
@@ -460,16 +426,19 @@ class CategoryControllerTest extends WebTestCase
         $form['oro_catalog_category[lowInventoryThreshold][scalarValue]'] = 0;
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
 
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
                 . $this->getProductBySku(LoadProductData::PRODUCT_2)->getId();
+            $form['oro_catalog_category[sortOrder]'] = json_encode([
+                $this->getProductBySku(LoadProductData::PRODUCT_2)->getId() => ['categorySortOrder' => 0.2]
+            ]);
         } else {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_4)->getId();
         }
 
         $form['oro_catalog_category[appendProducts]'] = $appendProducts;
-        $form->setValues(['input_action' => 'save_and_stay']);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -477,12 +446,15 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        static::assertStringContainsString('Category has been saved', $html);
-        static::assertStringContainsString($title, $html);
-        static::assertStringContainsString($shortDescription, $html);
-        static::assertStringContainsString($longDescription, $html);
-        static::assertStringContainsString($smallImage->getFilename(), $html);
-        static::assertStringContainsString($largeImage->getFilename(), $html);
+        self::assertStringContainsString('Category has been saved', $html);
+        self::assertStringContainsString($title, $html);
+        self::assertStringContainsString($shortDescription, $html);
+        self::assertStringContainsString($longDescription, $html);
+        self::assertStringContainsString($smallImage->getFilename(), $html);
+        self::assertStringContainsString($largeImage->getFilename(), $html);
+        if ($parentId === $this->masterCatalog->getId()) {
+            self::assertStringContainsString('"categorySortOrder":"0.2"', $html);
+        }
         $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
@@ -490,38 +462,27 @@ class CategoryControllerTest extends WebTestCase
     }
 
     /**
-     * @param int    $id
-     * @param string $title
-     * @param string $shortDescription
-     * @param string $longDescription
-     * @param array  $unitPrecision
-     * @param string $newTitle
-     * @param string $newShortDescription
-     * @param string $newLongDescription
-     * @param array  $newUnitPrecision
-     *
-     * @return int
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function assertEdit(
-        $id,
-        $title,
-        $shortDescription,
-        $longDescription,
-        $unitPrecision,
-        $newTitle,
-        $newShortDescription,
-        $newLongDescription,
-        $newUnitPrecision
-    ) {
+    private function assertEdit(
+        int $id,
+        string $title,
+        string $shortDescription,
+        string $longDescription,
+        array $unitPrecision,
+        string $newTitle,
+        string $newShortDescription,
+        string $newLongDescription,
+        array $newUnitPrecision
+    ): int {
         $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
         $html = $crawler->html();
         //Verified that actual values correspond with the ones that were set during Category creation
-        static::assertStringContainsString('Add note', $html);
-        static::assertStringContainsString(self::SMALL_IMAGE_NAME, $html);
-        static::assertStringContainsString(self::LARGE_IMAGE_NAME, $html);
+        self::assertStringContainsString('Add note', $html);
+        self::assertStringContainsString(self::SMALL_IMAGE_NAME, $html);
+        self::assertStringContainsString(self::LARGE_IMAGE_NAME, $html);
         $this->assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription);
         $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
@@ -531,15 +492,18 @@ class CategoryControllerTest extends WebTestCase
         $testProductThree = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $testProductFour = $this->getProductBySku(LoadProductData::PRODUCT_4);
         $appendProduct = $testProductThree;
+        $sortOrder = [$testProductTwo->getId() => ['categorySortOrder' => 0.22]];
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $appendProduct = $testProductFour;
-        };
+            $sortOrder = [$appendProduct->getId() => ['categorySortOrder' => 0.4]];
+        }
         $crfToken = $this->getCsrfToken('category')->getValue();
         $params = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => [
                 '_token' => $crfToken,
+                'sortOrder' => json_encode($sortOrder),
                 'appendProducts' => $appendProduct->getId(),
                 'removeProducts' => $testProductOne->getId()
             ]
@@ -552,11 +516,9 @@ class CategoryControllerTest extends WebTestCase
         $params['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
         $params['oro_catalog_category'][LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION]['scalarValue'] = 0;
         $params['oro_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
-            $newUnitPrecision['code']
-        ;
+            $newUnitPrecision['code'];
         $params['oro_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
-            $newUnitPrecision['precision']
-        ;
+            $newUnitPrecision['precision'];
 
         foreach ($this->localizations as $localization) {
             $locId = $localization->getId();
@@ -573,7 +535,7 @@ class CategoryControllerTest extends WebTestCase
         $html = $crawler->html();
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Category has been saved', $html);
+        self::assertStringContainsString('Category has been saved', $html);
 
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
@@ -581,14 +543,22 @@ class CategoryControllerTest extends WebTestCase
         $this->assertFormDefaultLocalized($formValues, $newTitle, $newShortDescription, $newLongDescription);
         $this->assertLocalizedValues($formValues, $newTitle, $newShortDescription, $newLongDescription);
         $this->assertNull($this->getProductCategoryByProduct($testProductOne));
-        static::assertStringNotContainsString(self::LARGE_IMAGE_NAME, $html);
-        static::assertStringContainsString(self::SMALL_IMAGE_NAME, $html);
+        self::assertStringNotContainsString(self::LARGE_IMAGE_NAME, $html);
+        self::assertStringContainsString(self::SMALL_IMAGE_NAME, $html);
         $this->assertEquals($newUnitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($newUnitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
             $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
             $productThreeCategory = $this->getProductCategoryByProduct($testProductThree);
+            $this->assertEquals(
+                0.22,
+                $this->getProductBySku(LoadProductData::PRODUCT_2)->getCategorySortOrder()
+            );
+            $this->assertEquals(
+                null,
+                $this->getProductBySku(LoadProductData::PRODUCT_3)->getCategorySortOrder()
+            );
 
             $this->assertCategoryDefaultLocalized(
                 $productThreeCategory,
@@ -607,6 +577,10 @@ class CategoryControllerTest extends WebTestCase
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $productFourCategory = $this->getProductCategoryByProduct($testProductFour);
+            $this->assertEquals(
+                0.4,
+                $this->getProductBySku(LoadProductData::PRODUCT_4)->getCategorySortOrder()
+            );
 
             $this->assertCategoryDefaultLocalized(
                 $productFourCategory,
@@ -619,18 +593,12 @@ class CategoryControllerTest extends WebTestCase
         return $id;
     }
 
-    /**
-     * @param int    $id
-     * @param string $title
-     * @param string $shortDescription
-     * @param string $longDescription
-     */
-    protected function assertUpdateWithLocalizedValues(
-        $id,
-        $title = self::DEFAULT_CATEGORY_TITLE,
-        $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
-        $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
-    ) {
+    private function assertUpdateWithLocalizedValues(
+        int $id,
+        string $title = self::DEFAULT_CATEGORY_TITLE,
+        string $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+        string $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+    ): void {
         $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
@@ -649,9 +617,7 @@ class CategoryControllerTest extends WebTestCase
             $testProductOne = $this->getProductBySku(LoadProductData::PRODUCT_1);
             $testProductTwo = $this->getProductBySku(LoadProductData::PRODUCT_2);
 
-            /** @var Category $productOneCategory */
             $productOneCategory = $this->getProductCategoryByProduct($testProductOne);
-            /** @var Category $productTwoCategory */
             $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
 
             $this->assertCategoryDefaultLocalized($productOneCategory, $title, $shortDescription, $longDescription);
@@ -660,35 +626,28 @@ class CategoryControllerTest extends WebTestCase
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $testProductFour = $this->getProductBySku(LoadProductData::PRODUCT_4);
-
-            /** @var Category $productOneCategory */
             $productFourCategory = $this->getProductCategoryByProduct($testProductFour);
-
             $this->assertCategoryDefaultLocalized($productFourCategory, $title, $shortDescription, $longDescription);
-        };
+        }
     }
 
-    /**
-     * @param Category $category
-     * @param string $title
-     * @param string $shortDescription
-     * @param string $longDescription
-     */
-    protected function assertCategoryDefaultLocalized(Category $category, $title, $shortDescription, $longDescription)
-    {
+    private function assertCategoryDefaultLocalized(
+        Category $category,
+        string $title,
+        string $shortDescription,
+        string $longDescription
+    ): void {
         $this->assertEquals($title, $category->getDefaultTitle());
         $this->assertEquals($shortDescription, $category->getDefaultShortDescription());
         $this->assertEquals($longDescription, $category->getDefaultLongDescription());
     }
 
-    /**
-     * @param array  $formValues
-     * @param string $title
-     * @param string $shortDescription
-     * @param string $longDescription
-     */
-    protected function assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription)
-    {
+    private function assertFormDefaultLocalized(
+        array $formValues,
+        string $title,
+        string $shortDescription,
+        string $longDescription
+    ): void {
         $this->assertEquals($title, $formValues['oro_catalog_category[titles][values][default]']);
 
         $this->assertEquals(
@@ -702,14 +661,12 @@ class CategoryControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param array  $formValues
-     * @param string $title
-     * @param string $shortDescription
-     * @param string $longDescription
-     */
-    protected function assertLocalizedValues($formValues, $title, $shortDescription, $longDescription)
-    {
+    private function assertLocalizedValues(
+        array $formValues,
+        string $title,
+        string $shortDescription,
+        string $longDescription
+    ): void {
         foreach ($this->localizations as $localization) {
             $this->assertEquals(
                 $localization->getLanguageCode().$title,
@@ -730,12 +687,7 @@ class CategoryControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param string $uri
-     *
-     * @return int
-     */
-    protected function getCategoryIdByUri($uri)
+    private function getCategoryIdByUri(string $uri): int
     {
         $router = $this->getContainer()->get('router');
         $parameters = $router->match($uri);
@@ -745,27 +697,17 @@ class CategoryControllerTest extends WebTestCase
         return $parameters['id'];
     }
 
-    /**
-     * @param string $sku
-     *
-     * @return Product
-     */
-    protected function getProductBySku($sku)
+    private function getProductBySku(string $sku): Product
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroProductBundle:Product')
+            ->getRepository(Product::class)
             ->findOneBy(['sku' => $sku]);
     }
 
-    /**
-     * @param Product $product
-     *
-     * @return Category|null
-     */
-    protected function getProductCategoryByProduct(Product $product)
+    private function getProductCategoryByProduct(Product $product): ?Category
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->findOneByProduct($product);
     }
 }

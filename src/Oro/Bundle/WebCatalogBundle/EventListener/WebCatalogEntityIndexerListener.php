@@ -6,11 +6,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
@@ -24,6 +26,8 @@ use Oro\Component\WebCatalog\ContentVariantProviderInterface;
  */
 class WebCatalogEntityIndexerListener
 {
+    use ContextTrait;
+
     const ASSIGN_TYPE_CONTENT_VARIANT = 'variant';
 
     /**
@@ -56,13 +60,19 @@ class WebCatalogEntityIndexerListener
      */
     private $localizationHelper;
 
+    /**
+     * @var ValueFormatterInterface
+     */
+    private $decimalValueFormatter;
+
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
         WebsiteContextManager $websiteContextManager,
         ContentVariantProviderInterface $contentVariantProvider,
-        LocalizationHelper $localizationHelper
+        LocalizationHelper $localizationHelper,
+        ValueFormatterInterface $decimalValueFormatter
     ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
@@ -70,10 +80,16 @@ class WebCatalogEntityIndexerListener
         $this->websiteContextManager = $websiteContextManager;
         $this->contentVariantProvider = $contentVariantProvider;
         $this->localizationHelper = $localizationHelper;
+        $this->decimalValueFormatter = $decimalValueFormatter;
     }
 
-    public function onWebsiteSearchIndex(IndexEntityEvent $event)
+    public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')
+            && !$this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')) {
+            return;
+        }
+
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
@@ -116,16 +132,42 @@ class WebCatalogEntityIndexerListener
             return;
         }
 
+        $this->processInformationAndAddToIndex($event, $websiteId, $relations, $nodes);
+    }
+
+    /**
+     * Rules which information to add to index depending on context (partial indexation group)
+     *
+     * @param IndexEntityEvent $event
+     * @param int $websiteId
+     * @param array $relations
+     * @param array $nodes
+     * @return void
+     */
+    protected function processInformationAndAddToIndex(
+        IndexEntityEvent $event,
+        int $websiteId,
+        array $relations,
+        array $nodes
+    ): void {
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
-        $this->addInformationToIndex($event, $localizations, $relations, $nodes);
+        if ($this->hasContextFieldGroup($event->getContext(), 'main') &&
+            $this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')
+        ) {
+            $this->addInformationToIndex($event, $localizations, $relations, $nodes, true);
+        } elseif ($this->hasContextFieldGroup($event->getContext(), 'main')) {
+            $this->addInformationToIndex($event, $localizations, $relations, $nodes);
+        } elseif ($this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')) {
+            $this->addCollectionSortOrderInformationToIndex($event, $relations);
+        }
     }
 
     /**
      * @param array $relations
      * @return ContentNode[]
      */
-    protected function getRelatedNodes(array $relations)
+    protected function getRelatedNodes(array $relations): array
     {
         $nodeIds = [];
         foreach ($relations as $relation) {
@@ -155,13 +197,15 @@ class WebCatalogEntityIndexerListener
      * @param Localization[] $localizations
      * @param array $relations
      * @param ContentNode[] $nodes
+     * @param bool $addSortOrder
      */
     protected function addInformationToIndex(
         IndexEntityEvent $event,
         array $localizations,
         array $relations,
-        array $nodes
-    ) {
+        array $nodes,
+        bool $addSortOrder = false
+    ): void {
         foreach ($relations as $relation) {
             if (empty($relation['nodeId'])) {
                 continue;
@@ -188,6 +232,10 @@ class WebCatalogEntityIndexerListener
                     AssignIdPlaceholder::NAME => $variantId,
                 ]
             );
+
+            if ($addSortOrder && !is_null($relation['sortOrderValue'])) {
+                $this->addCollectionSortOrderInformation($event, $relation);
+            }
 
             foreach ($localizations as $localization) {
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
@@ -220,5 +268,48 @@ class WebCatalogEntityIndexerListener
                 }
             }
         }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param array $relations
+     */
+    protected function addCollectionSortOrderInformationToIndex(IndexEntityEvent $event, array $relations): void
+    {
+        foreach ($relations as $relation) {
+            if (empty($relation['nodeId'])) {
+                continue;
+            }
+
+            $this->addCollectionSortOrderInformation($event, $relation);
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param array $relation
+     * @return void
+     */
+    protected function addCollectionSortOrderInformation(IndexEntityEvent $event, array $relation): void
+    {
+        $recordId = $this->contentVariantProvider->getRecordId($relation);
+        if (!$recordId) {
+            return;
+        }
+
+        $recordSortOrderValue = $this->contentVariantProvider->getRecordSortOrder($relation);
+        if (is_null($recordSortOrderValue)) {
+            return;
+        }
+
+        $event->addPlaceholderField(
+            $recordId,
+            'assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID',
+            $this->decimalValueFormatter->format($recordSortOrderValue),
+            [
+                AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
+                AssignIdPlaceholder::NAME => $relation['variantId'],
+            ]
+        );
     }
 }

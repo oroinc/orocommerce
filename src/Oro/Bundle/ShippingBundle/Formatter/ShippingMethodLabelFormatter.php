@@ -2,74 +2,85 @@
 
 namespace Oro\Bundle\ShippingBundle\Formatter;
 
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
+/**
+ * Provides methods to format shipping method label.
+ */
 class ShippingMethodLabelFormatter
 {
-    /** @internal */
-    const DELIMITER = ', ';
+    private const DELIMITER = ', ';
+    private const EMPTY_STRING = '';
 
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    protected $shippingMethodProvider;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
 
     public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
-    /**
-     * @param string $shippingMethodName
-     * @return string
-     */
-    public function formatShippingMethodLabel($shippingMethodName)
+    public function formatShippingMethodLabel(?string $shippingMethodName): string
     {
-        $shippingMethod = $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
+        return $this->doFormatShippingMethodLabel($this->getShippingMethod($shippingMethodName));
+    }
 
-        if (!$shippingMethod || !$shippingMethod->isGrouped()) {
-            return '';
+    public function formatShippingMethodTypeLabel(?string $shippingMethodName, ?string $shippingTypeName): string
+    {
+        if (!$shippingTypeName) {
+            return self::EMPTY_STRING;
+        }
+
+        return $this->doFormatShippingMethodTypeLabel(
+            $this->getShippingMethod($shippingMethodName),
+            $shippingTypeName
+        );
+    }
+
+    public function formatShippingMethodWithTypeLabel(?string $shippingMethodName, ?string $shippingTypeName): string
+    {
+        $shippingMethod = $this->getShippingMethod($shippingMethodName);
+        $methodLabel = $this->doFormatShippingMethodLabel($shippingMethod);
+        $methodTypeLabel = $shippingTypeName
+            ? $this->doFormatShippingMethodTypeLabel($shippingMethod, $shippingTypeName)
+            : self::EMPTY_STRING;
+
+        return self::EMPTY_STRING === $methodLabel
+            ? $methodTypeLabel
+            : $methodLabel . self::DELIMITER . $methodTypeLabel;
+    }
+
+    private function getShippingMethod(?string $shippingMethodName): ?ShippingMethodInterface
+    {
+        if (!$shippingMethodName) {
+            return null;
+        }
+
+        return $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
+    }
+
+    private function doFormatShippingMethodLabel(?ShippingMethodInterface $shippingMethod): string
+    {
+        if (null === $shippingMethod || !$shippingMethod->isGrouped()) {
+            return self::EMPTY_STRING;
         }
 
         return $shippingMethod->getLabel();
     }
 
-    /**
-     * @param string $shippingMethodName
-     * @param string $shippingTypeName
-     * @return string
-     */
-    public function formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName)
-    {
-        $shippingMethod = $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
-
-        if (!$shippingMethod) {
-            return '';
+    private function doFormatShippingMethodTypeLabel(
+        ?ShippingMethodInterface $shippingMethod,
+        string $shippingTypeName
+    ): string {
+        if (null === $shippingMethod) {
+            return self::EMPTY_STRING;
         }
 
         $shippingMethodType = $shippingMethod->getType($shippingTypeName);
-
-        if (!$shippingMethodType) {
-            return '';
+        if (null === $shippingMethodType) {
+            return self::EMPTY_STRING;
         }
 
         return $shippingMethodType->getLabel();
-    }
-
-    /**
-     * @param string $shippingMethodName
-     * @param string $shippingTypeName
-     * @return string
-     */
-    public function formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName)
-    {
-        $methodLabel = $this->formatShippingMethodLabel($shippingMethodName);
-        $methodTypeLabel = $this->formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName);
-
-        if ($methodLabel === '') {
-            return $methodTypeLabel;
-        }
-
-        return $methodLabel . self::DELIMITER . $methodTypeLabel;
     }
 }

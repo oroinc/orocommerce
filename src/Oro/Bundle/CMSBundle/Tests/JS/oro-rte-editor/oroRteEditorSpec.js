@@ -7,14 +7,19 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
     let editor;
     let rteEditor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor'),
-            plugins: [GrapesjsRteEditor]
+            plugins: [GrapesjsRteEditor],
+            deviceManager: {
+                devices: []
+            }
         });
 
         rteEditor = editor.RteEditor;
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
@@ -23,11 +28,8 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
     });
 
     describe('feature "GrapesjsRteEditor"', () => {
-        it('initialize', () => {
-            expect(editor.RteEditor.collection.length).toEqual(10);
-        });
-
         it('check "addAction"', () => {
+            const oldLength = editor.RteEditor.collection.length;
             editor.RteEditor.addAction({
                 name: 'test',
                 order: 20,
@@ -36,15 +38,16 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
             });
             const added = editor.RteEditor.collection.find(model => model.get('name') === 'test');
 
-            expect(editor.RteEditor.collection.length).toEqual(11);
+            expect(editor.RteEditor.collection.length).toEqual(oldLength + 1);
             expect(added.get('event')).toEqual('click');
         });
 
         it('check "removeAction"', () => {
+            const oldLength = editor.RteEditor.collection.length;
             editor.RteEditor.removeAction('formatBlock');
             const added = editor.RteEditor.collection.find(model => model.get('name') === 'formatBlock');
 
-            expect(editor.RteEditor.collection.length).toEqual(9);
+            expect(editor.RteEditor.collection.length).toEqual(oldLength - 1);
             expect(added).toBeFalsy();
         });
     });

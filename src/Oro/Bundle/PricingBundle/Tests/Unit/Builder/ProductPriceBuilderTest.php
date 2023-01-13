@@ -20,9 +20,12 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
@@ -239,7 +242,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildByPriceListNoProductsProvided()
     {
-        $priceList = new PriceList();
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
 
         $rule = new PriceRule();
         $rule->setPriority(10);
@@ -259,7 +262,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
             ->with($this->shardManager, $priceList, []);
         $repo->expects($this->once())
             ->method('getProductsByPriceListAndVersion')
-            ->with($this->shardManager, $priceList, $this->isType('int'))
+            ->with($this->shardManager, $priceList->getId(), $this->isType('int'))
             ->willReturn([[1], [2]]);
 
         $qb = $this->assertInsertCall($fields, [$rule], []);

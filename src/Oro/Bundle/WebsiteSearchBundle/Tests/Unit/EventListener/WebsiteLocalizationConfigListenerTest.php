@@ -14,14 +14,13 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testListenerWillProcessOnlyLocalizationChanges(ConfigUpdateEvent $eventWithLocalizationChange)
     {
-        $eventDispatcher = $this->getEventDispatcherMock();
-        $eventDispatcher
-            ->expects($this->once())
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                $this->callback(function ($reindexationEvent) {
-                    /** @var ReindexationRequestEvent $reindexationEvent */
-                    return count($reindexationEvent->getWebsitesIds()) === 0;
+                $this->callback(function (ReindexationRequestEvent $reindexationEvent) {
+                    return count($reindexationEvent->getWebsitesIds()) === 0
+                        && $reindexationEvent->getFieldGroups() === ['main'];
                 }),
                 ReindexationRequestEvent::EVENT_NAME
             );
@@ -35,19 +34,15 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testListenerWillNotProcessOnOtherConfigChanges(ConfigUpdateEvent $eventWithConfigChange)
     {
-        $eventDispatcher = $this->getEventDispatcherMock();
-        $eventDispatcher
-            ->expects($this->never())
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher->expects($this->never())
             ->method('dispatch');
 
         $listener = new WebsiteLocalizationConfigListener($eventDispatcher);
         $listener->onLocalizationSettingsChange($eventWithConfigChange);
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderForListenerWillProcessOnlyLocalizationChanges()
+    public function dataProviderForListenerWillProcessOnlyLocalizationChanges(): array
     {
         return [
             [
@@ -63,10 +58,7 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderForListenerWillNotProcessOnOtherConfigChanges()
+    public function dataProviderForListenerWillNotProcessOnOtherConfigChanges(): array
     {
         return [
             [
@@ -78,13 +70,5 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
                 ])
             ],
         ];
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
-     */
-    private function getEventDispatcherMock()
-    {
-        return $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
     }
 }

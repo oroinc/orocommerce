@@ -17,19 +17,10 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
  */
 class QuickAddRowInputParser
 {
-    /** @var ManagerRegistry */
-    private $registry;
-
-    /** @var ProductUnitsProvider */
-    private $productUnitsProvider;
-
-    /** @var AclHelper */
-    private $aclHelper;
-
-    /**
-     * @var NumberFormatter
-     */
-    private $numberFormatter;
+    private ManagerRegistry $registry;
+    private ProductUnitsProvider $productUnitsProvider;
+    private AclHelper $aclHelper;
+    private NumberFormatter $numberFormatter;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -45,9 +36,12 @@ class QuickAddRowInputParser
 
     public function createFromFileLine(array $product, int $lineNumber): QuickAddRow
     {
-        $sku = isset($product[0]) ? trim($product[0]) : null;
+        $sku = isset($product[0]) ? trim($product[0], "\'\" \t\n\r\0\x0B") : null;
+        if (str_contains($sku, ',')) {
+            [$sku, $organization] = explode(',', $sku, 2);
+        }
         $quantity = isset($product[1]) ? trim($product[1]) : null;
-
+        $organization = isset($organization) ? trim($organization) : null;
         $parsedQty = $this->numberFormatter->parseFormattedDecimal($quantity);
         if ($parsedQty === false) {
             // Support nonformatted quantity
@@ -59,7 +53,16 @@ class QuickAddRowInputParser
 
         $unit = isset($product[2]) ? trim($product[2]) : null;
 
-        return new QuickAddRow($lineNumber, $sku, $parsedQty, $this->resolveUnit($sku, $unit));
+        return new QuickAddRow($lineNumber, $sku, $parsedQty, $this->resolveUnit($sku, $unit), $organization);
+    }
+
+    public function createFromArray(array $product, int $index): QuickAddRow
+    {
+        $sku = isset($product[QuickAddRow::SKU]) ? trim($product[QuickAddRow::SKU]) : '';
+        $quantity = isset($product[QuickAddRow::QUANTITY]) ? (float)$product[QuickAddRow::QUANTITY] : 0;
+        $unit = isset($product[QuickAddRow::UNIT]) ? trim($product[QuickAddRow::UNIT]) : null;
+
+        return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($sku, $unit));
     }
 
     public function createFromRequest(array $product, int $index): QuickAddRow
@@ -74,11 +77,7 @@ class QuickAddRowInputParser
 
     public function createFromCopyPasteTextLine(array $product, int $lineNumber): QuickAddRow
     {
-        $sku = trim($product[0]);
-        $quantity = isset($product[1]) ? (float)$product[1] : null;
-        $unit = isset($product[2]) ? trim($product[2]) : null;
-
-        return new QuickAddRow($lineNumber, $sku, $quantity, $this->resolveUnit($sku, $unit));
+        return $this->createFromFileLine($product, $lineNumber);
     }
 
     private function resolveUnit(string $sku, ?string $unitName = null): ?string
@@ -103,7 +102,7 @@ class QuickAddRowInputParser
             return $unit;
         }
 
-        return null;
+        return $unitName;
     }
 
     private function getAvailableProductUnitCodes(): array

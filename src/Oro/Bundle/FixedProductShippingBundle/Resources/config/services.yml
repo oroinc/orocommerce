@@ -23,7 +23,8 @@ services:
             - '@oro_fixed_product_shipping.factory.method'
         tags:
             - { name: oro_shipping_method_provider }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postLoad }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postPersist }
 
     oro_fixed_product_shipping.method.identifier_generator.method:
         parent: oro_integration.generator.prefixed_identifier_generator
@@ -43,3 +44,9 @@ services:
         arguments:
             - '@oro_pricing.providers.price_attribute_prices'
             - '@doctrine'
+
+    oro_fixed_product_shipping.handler.shipping_cost_attribute_delete_handler:
+        class: Oro\Bundle\FixedProductShippingBundle\Handler\ShippingCostAttributeDeleteHandler
+        arguments:
+            - '@doctrine'
+        public: true

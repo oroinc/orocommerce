@@ -21,23 +21,16 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 
 class CombinedPriceListScheduleResolverTest extends WebTestCase
 {
     use MessageQueueExtension;
     use ConfigManagerAwareTestTrait;
 
-    /** @var CombinedPriceListScheduleResolver */
-    private $resolver;
+    private CombinedPriceListScheduleResolver $resolver;
+    private ConfigManager $configManager;
 
-    /** @var ConfigManager */
-    private $configManager;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -54,7 +47,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
 
         $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_schedule_resolver');
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
     }
 
     /**
@@ -70,11 +63,10 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         /** @var CombinedPriceList $currentCPL */
         $currentCPL = $this->getReference($currentCPLName);
 
-        $collector = self::getMessageCollector();
-        $collector->clear();
+        self::clearMessageCollector();
         $this->resolver->updateRelations($now);
         //if price list is empty there is no need to send messages
-        $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
+        $messages = self::getTopicSentMessages(WebsiteSearchReindexTopic::getName());
         $this->assertNotEmpty($messages);
 
         $relations = $this->getInvalidRelations(
@@ -103,23 +95,18 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         }
         sort($expectedProducts);
 
-        $sentMessages = $this->getSentMessages();
+        $sentMessages = self::getSentMessages();
         $this->assertCount(1, $sentMessages);
         $messageData = reset($sentMessages);
         $this->assertEquals('oro.website.search.indexer.reindex', $messageData['topic']);
-        /** @var Message $message */
-        $message = $messageData['message'];
-        $messageBody = $message->getBody();
+        $messageBody = $messageData['message'];
         $this->assertEquals(Product::class, $messageBody['class'][0]);
         $actualProducts = $messageBody['context']['entityIds'];
         sort($actualProducts);
         $this->assertEquals($expectedProducts, $actualProducts, 'Re-indexed products does not match expected');
     }
 
-    /**
-     * @return array
-     */
-    public function cplSwitchingDataProvider()
+    public function cplSwitchingDataProvider(): array
     {
         return [
             [
@@ -176,11 +163,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $modifyStr
-     * @return \DateTime
-     */
-    private function createDateTime($modifyStr)
+    private function createDateTime(string $modifyStr): \DateTime
     {
         $date = new \DateTime('now', new \DateTimeZone('UTC'));
         $date->modify($modifyStr);
@@ -189,13 +172,17 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     }
 
     /**
-     * @param string $entityName
+     * @param string            $entityName
      * @param CombinedPriceList $fullCPL
      * @param CombinedPriceList $currentCPL
+     *
      * @return BaseCombinedPriceListRelation[]
      */
-    private function getInvalidRelations($entityName, CombinedPriceList $fullCPL, CombinedPriceList $currentCPL)
-    {
+    private function getInvalidRelations(
+        string $entityName,
+        CombinedPriceList $fullCPL,
+        CombinedPriceList $currentCPL
+    ): array {
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(CombinedPriceListActivationRule::class);
         $qb = $em->createQueryBuilder();

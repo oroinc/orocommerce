@@ -216,7 +216,7 @@ api:
                     data_type: integer
                     property_path: _
                     depends_on:
-                        - integer.product_id
+                        - integer.system_entity_id
                 sku:
                     data_type: string
                     property_path: text.sku
@@ -237,7 +237,7 @@ api:
                     property_path: integer.newArrival
                 inventoryStatus:
                     data_type: string
-                    property_path: text.inventory_status
+                    property_path: text.inv_status
                     target_class: Extend\Entity\EV_Prod_Inventory_Status
                     target_type: to-one
                 unitPrecisions:
@@ -254,7 +254,7 @@ api:
                         - text.image_product_large
                 product:
                     data_type: integer
-                    property_path: integer.product_id
+                    property_path: integer.system_entity_id
                     target_class: Oro\Bundle\ProductBundle\Entity\Product
                     target_type: to-one
                 productFamily:
@@ -271,16 +271,16 @@ api:
                             entity_class: Oro\Bundle\ProductBundle\Entity\Product
                             field_mappings:
                                 allText: all_text_LOCALIZATION_ID
-                                id: product_id
+                                id: system_entity_id
                                 skuUppercase: sku_uppercase
                                 name: names_LOCALIZATION_ID
                                 shortDescription: shortDescriptions_LOCALIZATION_ID
                                 productType: type
                                 isVariant: is_variant
                                 inventoryStatus: inventory_status
-                                minimalPrice: minimal_price_CPL_ID_CURRENCY
-                                minimalPrice_(?<UNIT>\w+): minimal_price_CPL_ID_CURRENCY_{UNIT}
-                                product: product_id
+                                minimalPrice: minimal_price.CPL_ID_CURRENCY
+                                minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
+                                product: system_entity_id
                                 productFamily: attribute_family_id
                                 category: category_id
                     aggregations:
@@ -289,23 +289,23 @@ api:
                         options:
                             entity_class: Oro\Bundle\ProductBundle\Entity\Product
                             field_mappings:
-                                id: product_id
+                                id: system_entity_id
                                 skuUppercase: sku_uppercase
                                 name: names_LOCALIZATION_ID
                                 shortDescription: shortDescriptions_LOCALIZATION_ID
                                 productType: type
                                 isVariant: is_variant
                                 inventoryStatus: inventory_status
-                                minimalPrice: minimal_price_CPL_ID_CURRENCY
-                                minimalPrice_(?<UNIT>\w+): minimal_price_CPL_ID_CURRENCY_{UNIT}
-                                product: product_id
+                                minimalPrice: minimal_price.CPL_ID_CURRENCY
+                                minimalPrice_(?<UNIT>\w+): minimal_price.CPL_ID_CURRENCY_{UNIT}
+                                product: system_entity_id
                                 productFamily: attribute_family_id
                                 category: category_id
             sorters:
                 fields:
                     relevance: ~ # see Oro\Bundle\ProductBundle\Api\Processor\BuildProductSearchQuery::resolveOrderings
                     id:
-                        property_path: integer.product_id
+                        property_path: integer.system_entity_id
                     sku:
                         property_path: text.sku
                     skuUppercase:
@@ -319,9 +319,9 @@ api:
                     newArrival:
                         property_path: integer.newArrival
                     inventoryStatus:
-                        property_path: text.inventory_status
+                        property_path: text.inv_status
                     minimalPrice:
-                        property_path: decimal.minimal_price_CPL_ID_CURRENCY
+                        property_path: decimal.minimal_price.CPL_ID_CURRENCY
             actions:
                 get: false
                 create: false

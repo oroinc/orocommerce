@@ -10,6 +10,8 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -17,24 +19,26 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
 {
     use EnabledPaymentMethodIdentifierTrait;
 
-    const CHECKOUT_1 = 'checkout.1';
-    const CHECKOUT_2 = 'checkout.2';
-    const CHECKOUT_3 = 'checkout.3';
-    const CHECKOUT_4 = 'checkout.4';
-    const CHECKOUT_7 = 'checkout.7';
-    const CHECKOUT_8 = 'checkout.8';
-    const CHECKOUT_9 = 'checkout.9';
-    const CHECKOUT_10 = 'checkout.10';
+    public const CHECKOUT_1 = 'checkout.1';
+    public const CHECKOUT_2 = 'checkout.2';
+    public const CHECKOUT_3 = 'checkout.3';
+    public const CHECKOUT_4 = 'checkout.4';
+    public const CHECKOUT_7 = 'checkout.7';
+    public const CHECKOUT_8 = 'checkout.8';
+    public const CHECKOUT_9 = 'checkout.9';
+    public const CHECKOUT_10 = 'checkout.10';
 
-    const PAYMENT_METHOD = 'payment_term';
+    public const PAYMENT_METHOD = 'payment_term';
 
     /**
      * {@inheritDoc}
      */
-    protected function getData()
+    protected function getData(): array
     {
         $paymentTermIdentifier = $this->getPaymentMethodIdentifier($this->container);
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_5);
+        /** @var ProductUnit $productUnit */
         $productUnit = $this->getReference('product_unit.bottle');
         $lineItem1 = (new CheckoutLineItem())
             ->setQuantity(10)
@@ -117,7 +121,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    protected function getWorkflowName()
+    protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
@@ -125,7 +129,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    protected function createCheckout()
+    protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
@@ -133,7 +137,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    protected function getCheckoutSourceName()
+    protected function getCheckoutSourceName(): string
     {
         return 'shoppingList';
     }
@@ -141,7 +145,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),

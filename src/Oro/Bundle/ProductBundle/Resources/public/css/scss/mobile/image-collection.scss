@@ -7,8 +7,11 @@
 
     th,
     td {
-        .checkbox-view {
-            margin-top: $content-padding-small + $content-padding-medium;
+        input {
+            &[type='checkbox'],
+            &[type='radio'] {
+                margin-top: $content-padding-small + $content-padding-medium;
+            }
         }
     }
 }

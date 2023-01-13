@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheMassTopic;
 use Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheWarmer;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
@@ -46,20 +46,20 @@ class SlugUrlCacheWarmerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIsOptional()
+    public function testIsOptional(): void
     {
-        $this->assertTrue($this->warmer->isOptional());
+        self::assertTrue($this->warmer->isOptional());
     }
 
-    public function testWarmUp()
+    public function testWarmUp(): void
     {
-        $this->routingInformationProvider->expects($this->once())
+        $this->routingInformationProvider->expects(self::once())
             ->method('getEntityClasses')
             ->willReturn([Product::class, Category::class]);
 
         $message1 = ['class' => Product::class, 'id' => [], 'createRedirect' => false];
         $message2 = ['class' => Category::class, 'id' => [], 'createRedirect' => false];
-        $this->messageFactory->expects($this->exactly(2))
+        $this->messageFactory->expects(self::exactly(2))
             ->method('createMassMessage')
             ->withConsecutive(
                 [Product::class, [], false],
@@ -69,11 +69,11 @@ class SlugUrlCacheWarmerTest extends \PHPUnit\Framework\TestCase
                 $message1,
                 $message2
             );
-        $this->messageProducer->expects($this->exactly(2))
+        $this->messageProducer->expects(self::exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::CALCULATE_URL_CACHE_MASS, $message1],
-                [Topics::CALCULATE_URL_CACHE_MASS, $message2]
+                [CalculateSlugCacheMassTopic::getName(), $message1],
+                [CalculateSlugCacheMassTopic::getName(), $message2]
             );
 
         $this->warmer->warmUp(__DIR__);

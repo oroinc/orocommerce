@@ -19,52 +19,38 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var OrderTaxesListener */
-    protected $listener;
-
     /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $taxProvider;
+    private $taxProvider;
 
     /** @var OrderEvent|\PHPUnit\Framework\MockObject\MockObject */
-    protected $event;
+    private $event;
 
     /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceMatcher;
+    private $priceMatcher;
 
     /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $taxationSettingsProvider;
+    private $taxationSettingsProvider;
+
+    /** @var OrderTaxesListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $this->event = $this->createMock(OrderEvent::class);
+        $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
+        $this->priceMatcher = $this->createMock(PriceMatcher::class);
+
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
         $taxProviderRegistry->expects($this->any())
             ->method('getEnabledProvider')
             ->willReturn($this->taxProvider);
-
-        $this->event = $this->getMockBuilder('Oro\Bundle\OrderBundle\Event\OrderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->taxationSettingsProvider = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceMatcher = $this->getMockBuilder('Oro\Bundle\OrderBundle\Pricing\PriceMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->listener = new OrderTaxesListener(
             $taxProviderRegistry,
             $this->taxationSettingsProvider,
             $this->priceMatcher
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->taxManager, $this->event, $this->numberFormatter);
     }
 
     /**
@@ -93,7 +79,8 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($data);
 
-        $this->priceMatcher->expects($this->once())->method('fillMatchingPrices');
+        $this->priceMatcher->expects($this->once())
+            ->method('fillMatchingPrices');
 
         $this->listener->onOrderEvent($this->event);
 
@@ -102,8 +89,10 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnOrderEventTaxationDisabled()
     {
-        $this->taxProvider->expects($this->never())->method($this->anything());
-        $this->event->expects($this->never())->method($this->anything());
+        $this->taxProvider->expects($this->never())
+            ->method($this->anything());
+        $this->event->expects($this->never())
+            ->method($this->anything());
 
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isEnabled')
@@ -112,10 +101,7 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onOrderEvent($this->event);
     }
 
-    /**
-     * @return array
-     */
-    public function onOrderEventDataProvider()
+    public function onOrderEventDataProvider(): array
     {
         $taxResult = TaxResultElement::create('TAX', 0.1, 50, 5);
         $taxResult->offsetSet(TaxResultElement::CURRENCY, 'USD');
@@ -186,7 +172,8 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($data);
 
-        $this->priceMatcher->expects($this->never())->method('fillMatchingPrices');
+        $this->priceMatcher->expects($this->never())
+            ->method('fillMatchingPrices');
 
         $this->listener->onOrderEvent($this->event);
     }
@@ -213,7 +200,8 @@ class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($data);
 
-        $this->priceMatcher->expects($this->never())->method('fillMatchingPrices');
+        $this->priceMatcher->expects($this->never())
+            ->method('fillMatchingPrices');
 
         $this->listener->onOrderEvent($this->event);
     }

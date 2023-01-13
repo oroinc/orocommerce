@@ -9,20 +9,19 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class FormViewListenerTest extends \PHPUnit\Framework\TestCase
+class FormViewListenerTest extends TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    private $env;
-
-    /** @var FormViewListener */
-    private $listener;
+    private DoctrineHelper|MockObject $doctrineHelper;
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
+    private Environment|MockObject $env;
+    private FormViewListener $listener;
 
     protected function setUp(): void
     {
@@ -35,8 +34,13 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->listener = new FormViewListener($translator, $this->doctrineHelper);
+        $this->listener = new FormViewListener(
+            $translator,
+            $this->doctrineHelper,
+            $this->authorizationChecker
+        );
     }
 
     public function testOnProductEdit()
@@ -47,6 +51,29 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('render')
             ->with('@OroCatalog/Product/category_update.html.twig', ['form' => $formView])
             ->willReturn('');
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product(), $formView);
+        $this->listener->onProductEdit($event);
+    }
+
+    public function testOnProductEditWhenCatalogViewDisabledByAcl()
+    {
+        $formView = new FormView();
+
+        $this->env->expects($this->never())
+            ->method('render');
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
 
         $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product(), $formView);
         $this->listener->onProductEdit($event);
@@ -78,8 +105,33 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new BeforeListRenderEvent($this->env, $scrollData, new Product());
 
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
         $this->listener->onProductView($event);
         $this->assertScrollData($scrollData);
+    }
+
+    public function testOnProductViewWhenCatalogViewDisabledByAcl()
+    {
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityRepository');
+
+        $this->env->expects($this->never())
+            ->method('render');
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product());
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
+
+        $this->listener->onProductView($event);
     }
 
     public function testOnProductViewWithoutCategory()
@@ -103,6 +155,12 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product());
 
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
         $this->listener->onProductView($event);
     }
 
@@ -112,6 +170,12 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $scrollData = new ScrollData();
 
         $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
 
         $this->listener->onProductView($event);
     }

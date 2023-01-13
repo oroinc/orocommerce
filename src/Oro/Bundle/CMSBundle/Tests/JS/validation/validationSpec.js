@@ -2,6 +2,7 @@ import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 import Validator from 'orocms/js/app/grapesjs/validation';
+import '../fixtures/load-plugin-modules';
 
 describe('orocms/js/app/grapesjs/validation', () => {
     let validator;

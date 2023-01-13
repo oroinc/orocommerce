@@ -10,10 +10,8 @@ use Symfony\Component\Form\FormView;
 
 class SelectSwitchInputTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var SelectSwitchInputType
-     */
-    protected $type;
+    /** @var SelectSwitchInputType */
+    private $type;
 
     protected function setUp(): void
     {
@@ -23,42 +21,35 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        static::assertSame(ChoiceType::class, $this->type->getParent());
+        self::assertSame(ChoiceType::class, $this->type->getParent());
     }
 
     public function testGetBlockPrefix()
     {
-        static::assertEquals(SelectSwitchInputType::NAME, $this->type->getBlockPrefix());
+        self::assertEquals(SelectSwitchInputType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
      * @dataProvider finishViewDataProvider
-     * @param array $options
-     * @param string $data
-     * @param array $expected
      */
-    public function testFinishView(array $options, $data, $expected)
+    public function testFinishView(array $options, string $data, array $expected)
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects(static::once())
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
             ->method('getData')
             ->willReturn($data);
 
         $formView = new FormView();
         $this->type->finishView($formView, $form, $options);
 
-        static::assertArrayHasKey('page_component', $formView->vars);
-        static::assertEquals($options['page_component'], $formView->vars['page_component']);
+        self::assertArrayHasKey('page_component', $formView->vars);
+        self::assertEquals($options['page_component'], $formView->vars['page_component']);
 
-        static::assertArrayHasKey('page_component_options', $formView->vars);
-        static::assertEquals($expected, $formView->vars['page_component_options']);
+        self::assertArrayHasKey('page_component_options', $formView->vars);
+        self::assertEquals($expected, $formView->vars['page_component_options']);
     }
 
-    /**
-     * @return array
-     */
-    public function finishViewDataProvider()
+    public function finishViewDataProvider(): array
     {
         return [
             'test1' => [

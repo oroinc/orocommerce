@@ -99,6 +99,8 @@ system_configuration:
             icon: 'fa-columns'
         schema_org:
             title: oro.product.system_configuration.groups.schema_org.title
+            description: oro.product.system_configuration.groups.schema_org.description
+            description_style: warning
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -245,7 +247,7 @@ system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.unit_rounding_type.label
-                tooltip: oro.product.form.tooltip.unit_rounding_type
+                tooltip: oro.product.system_configuration.fields.unit_rounding_type.tooltip
                 required: true
                 constraints:
                     - NotBlank: ~
@@ -661,6 +663,17 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.microdata_without_prices_disabled.tooltip
                 required: false
 
+        oro_product.schema_org_description_field:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            options:
+                label: oro.product.system_configuration.fields.schema_org_description_field.label
+                tooltip: oro.product.system_configuration.fields.schema_org_description_field.tooltip
+                choices:
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.meta.label: 'oro_product_seo_description'
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.long.label: 'oro_product_full_description'
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.short.label: 'oro_product_short_description'
+
     tree:
         system_configuration:
             platform:
@@ -829,6 +842,7 @@ system_configuration:
                                         priority: 100
                                         children:
                                             - oro_product.microdata_without_prices_disabled
+                                            - oro_product.schema_org_description_field
         organization_configuration:
             commerce:
                 children:

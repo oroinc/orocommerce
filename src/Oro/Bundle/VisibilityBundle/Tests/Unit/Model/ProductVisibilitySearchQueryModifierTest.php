@@ -21,31 +21,19 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $tokenStorage;
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenStorage;
 
-    /**
-     * @var PlaceholderProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $placeholderProvider;
+    /** @var PlaceholderProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $placeholderProvider;
 
-    /**
-     * @var ProductVisibilitySearchQueryModifier
-     */
-    protected $modifier;
+    /** @var ProductVisibilitySearchQueryModifier */
+    private $modifier;
 
     protected function setUp(): void
     {
-        $this->tokenStorage = $this
-            ->getMockBuilder(TokenStorageInterface::class)
-            ->getMock();
-
-        $this->placeholderProvider = $this
-            ->getMockBuilder(PlaceholderProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->placeholderProvider = $this->createMock(PlaceholderProvider::class);
 
         $this->modifier = new ProductVisibilitySearchQueryModifier(
             $this->tokenStorage,
@@ -55,8 +43,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
 
     public function testModify()
     {
-        $this->placeholderProvider
-            ->expects($this->once())
+        $this->placeholderProvider->expects($this->once())
             ->method('getPlaceholderFieldName')
             ->with(
                 Product::class,
@@ -115,10 +102,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expected, $query->getCriteria()->getWhereExpression());
     }
 
-    /**
-     * @return array
-     */
-    public function wrongCustomerUserProvider()
+    public function wrongCustomerUserProvider(): array
     {
         return [
             [null],
@@ -128,19 +112,13 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider wrongCustomerUserProvider
-     *
-     * @param mixed $customerUser
      */
-    public function testModifyForAnonymous($customerUser)
+    public function testModifyForAnonymous(mixed $customerUser)
     {
-        $this->placeholderProvider
-            ->expects($this->never())
+        $this->placeholderProvider->expects($this->never())
             ->method('getPlaceholderFieldName');
 
-        $token = $this
-            ->getMockBuilder(TokenInterface::class)
-            ->getMock();
-
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($customerUser);

@@ -9,14 +9,11 @@ class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepository
 {
     /**
      * @dataProvider getCustomerIdentityByGroupDataProvider
-     * @param string[] $customerGroupsReferences
-     * @param string $websiteReference
-     * @param string[] $expectedCustomers
      */
     public function testGetCustomerIdentityByGroup(
         array $customerGroupsReferences,
-        $websiteReference,
-        $expectedCustomers
+        string $websiteReference,
+        array $expectedCustomers
     ) {
         $customerGroups = [];
         foreach ($customerGroupsReferences as $customerGroupsReference) {
@@ -29,10 +26,7 @@ class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepository
         $this->checkExpectedCustomers($expectedCustomers, $iterator);
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomerIdentityByGroupDataProvider()
+    public function getCustomerIdentityByGroupDataProvider(): array
     {
         return [
             'case1' => [

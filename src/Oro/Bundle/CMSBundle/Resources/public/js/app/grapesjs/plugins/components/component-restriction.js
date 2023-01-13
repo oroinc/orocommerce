@@ -14,12 +14,17 @@ define(function(require) {
      */
     function getTags(element, mirror = false) {
         let _res = [];
+
+        if (element.nodeType === Node.TEXT_NODE) {
+            return _res;
+        }
+
         _res.push(computedTagData(element, mirror));
 
         for (let i = 0; i < element.childNodes.length; i++) {
             const child = element.childNodes[i];
 
-            if (child.nodeType === 1) {
+            if (child.nodeType === Node.ELEMENT_NODE) {
                 if (child.childNodes) {
                     _res = _res.concat(getTags(child, mirror));
                 }
@@ -76,16 +81,16 @@ define(function(require) {
         /**
          * Check existing component types
          */
-        resolveRestriction: function() {
-            const DomComponents = this.editor.DomComponents;
+        resolveRestriction() {
+            const Components = this.editor.Components;
             const BlockManager = this.editor.BlockManager;
-            const componentTypes = DomComponents.componentTypes;
+            const componentTypes = Components.componentTypes;
 
-            DomComponents.componentTypes = _.reject(componentTypes, function(type) {
+            Components.componentTypes = _.reject(componentTypes, function(type) {
                 return !this.isAllowedTag(type.model.prototype.defaults.tagName);
             }, this);
 
-            const types = _.pluck(DomComponents.componentTypes, 'id');
+            const types = _.pluck(Components.componentTypes, 'id');
             const _res = [];
 
             _.each(BlockManager.getAll().models, function(model) {
@@ -114,10 +119,16 @@ define(function(require) {
 
         /**
          * Get element tags
-         * @param element
+         * @param {Node|Node[]} element
          * @returns {Array}
          */
-        getTags: function(element, mirror = false) {
+        getTags(element, mirror = false) {
+            if (Array.isArray(element)) {
+                return element.reduce((res, child) => _.uniq([
+                    ...res,
+                    ...getTags(child, mirror)
+                ]), []);
+            }
             return _.uniq(getTags(element, mirror));
         },
 
@@ -126,7 +137,7 @@ define(function(require) {
          * @param {string} domain
          * @returns {boolean}
          */
-        isAllowedDomain: function(domain) {
+        isAllowedDomain(domain) {
             const allowedIframeDomains = this.editor.getAllowedIframeDomains();
             if (allowedIframeDomains === null) {
                 return true;
@@ -146,7 +157,7 @@ define(function(require) {
          * @param {string|array} type
          * @returns {boolean}
          */
-        isAllowedTag: function(type) {
+        isAllowedTag(type) {
             return this.allowTags === false || this.contains(type) || type === '';
         },
 
@@ -155,7 +166,7 @@ define(function(require) {
          * @param tags
          * @returns {*}
          */
-        isAllow: function(tags) {
+        isAllow(tags) {
             if (_.isString(tags)) {
                 return this.isAllowedTag(tags);
             }
@@ -192,8 +203,8 @@ define(function(require) {
          * Check HTML template
          * @param template
          */
-        checkTemplate: function(template) {
-            return _.every(this.getTags($('<div />').html(stripRestrictedAttrs(template)).get(0)), function(tag) {
+        checkTemplate(template) {
+            return _.every(this.getTags(this.stringToNodes(stripRestrictedAttrs(template))), function(tag) {
                 const isAllowed = this.isAllowedTag(tag);
                 if (!isAllowed) {
                     error.showErrorInConsole('Tag "' + tag + '" is not allowed');
@@ -208,13 +219,11 @@ define(function(require) {
          * @param {Boolean} nativeOut
          * @returns {[]}
          */
-        validate: function(template, nativeOut = false) {
+        validate(template, nativeOut = false) {
             const restricted = [];
 
             try {
-                _.each(this.getTags(
-                    $('<div />').html(stripRestrictedAttrs(template)).get(0), nativeOut
-                ), function(tag) {
+                _.each(this.getTags(this.stringToNodes(stripRestrictedAttrs(template)), nativeOut), function(tag) {
                     if (!this.isAllowedTag(tag)) {
                         restricted.push(_.isArray(tag)
                             ? this.normalize(!nativeOut ? tag : tag[2])
@@ -272,6 +281,17 @@ define(function(require) {
                 attrs = attrs.map(attr => attr[0] === '!' ? attr.substr(1) : attr);
                 return [tagName, attrs.concat(globalAttr)];
             });
+        },
+
+        /**
+         * Convert html string to nodes tree
+         * @param {string} html
+         * @returns {Node[]}
+         */
+        stringToNodes(html) {
+            const domParser = new DOMParser();
+            const document = domParser.parseFromString(html, 'text/html');
+            return document.body.childNodes.length > 1 ? [...document.body.childNodes] : document.body.firstChild;
         }
     };
 

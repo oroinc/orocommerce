@@ -253,7 +253,6 @@ datagrids:
                 owner:
                     type:      string
                     data_name: customerUserName
-                    renderable: false
                 createdAt:
                     type:      datetime
                     data_name: shopping_list.createdAt
@@ -352,6 +351,7 @@ datagrids:
                         - 100
                 placement:
                     bottom: true
+            hiddenLineItems: null
         source:
             type: orm
             query:
@@ -665,6 +665,8 @@ datagrids:
                     selected_message: oro.shoppinglist.mass_actions.delete_line_items.selected_message
                 messages:
                     success: oro.shoppinglist.mass_actions.delete_line_items.success_message
+                successMessageOptions:
+                    namespace: shopping_list
             move:
                 type: moveproducts
                 icon: level-up

@@ -12,8 +12,8 @@ Feature: Translatable product name is displayed in product blocks on store front
     And I go to Products / Products
     And I click Edit SKU1 in grid
     And I set Images with:
-      | Main  | Listing | Additional |
-      | 1     | 1       | 1          |
+      | Main | Listing | Additional |
+      | 1    | 1       | 1          |
     And I click on "Digital Asset Choose"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
@@ -27,26 +27,26 @@ Feature: Translatable product name is displayed in product blocks on store front
     And I click "Localization Switcher"
     When I select "Zulu" localization
     Then should see the following products in the "New Arrivals Block":
-      | SKU  | NAME        |
-      | SKU1 | Product1_ZU |
-      | SKU2 | Product2_ZU |
-      | SKU3 | Product3_ZU |
+      | SKU  | Product Name in Embedded Block |
+      | SKU1 | Product1_ZU                    |
+      | SKU2 | Product2_ZU                    |
+      | SKU3 | Product3_ZU                    |
     And should see the following products in the "Featured Products Block":
-      | SKU  | NAME        |
-      | SKU1 | Product1_ZU |
-      | SKU2 | Product2_ZU |
-      | SKU3 | Product3_ZU |
+      | SKU  | Product Name in Embedded Block |
+      | SKU1 | Product1_ZU                    |
+      | SKU2 | Product2_ZU                    |
+      | SKU3 | Product3_ZU                    |
     And should see the following products in the "Top Selling Items Block":
-      | SKU  | NAME        |
-      | SKU1 | Product1_ZU |
+      | SKU  | Product Name in Embedded Block |
+      | SKU1 | Product1_ZU                    |
     When I open product with sku "SKU1" on the store frontend
     Then should see the following products in the "Related Products Block":
-      | SKU  | NAME        |
-      | SKU1 | Product1_ZU |
-      | SKU2 | Product2_ZU |
-      | SKU3 | Product3_ZU |
+      | SKU  | Product Name in Embedded Block |
+      | SKU1 | Product1_ZU                    |
+      | SKU2 | Product2_ZU                    |
+      | SKU3 | Product3_ZU                    |
     And should see the following products in the "Upsell Products Block":
-      | SKU  | NAME        |
-      | SKU1 | Product1_ZU |
-      | SKU2 | Product2_ZU |
-      | SKU3 | Product3_ZU |
+      | SKU  | Product Name in Embedded Block |
+      | SKU1 | Product1_ZU                    |
+      | SKU2 | Product2_ZU                    |
+      | SKU3 | Product3_ZU                    |

@@ -2,40 +2,31 @@
 
 namespace Oro\Bundle\TaxBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 
+/**
+ * Adds taxCode field to a grid.
+ */
 class TaxCodeGridListener
 {
-    const DATA_NAME = 'taxCode';
-    const JOIN_ALIAS = 'taxCodes';
+    private string $taxCodeClass;
+    private FeatureChecker $featureChecker;
 
-    /** @var string */
-    protected $taxCodeClass;
-
-    /** @var string */
-    protected $relatedEntityClass;
-
-    /** @var Expr */
-    protected $expressionBuilder;
-
-    /**
-     * @param string $taxCodeClass
-     * @param string $relatedEntityClass
-     */
-    public function __construct($taxCodeClass, $relatedEntityClass)
+    public function __construct(string $taxCodeClass, FeatureChecker $featureChecker)
     {
         $this->taxCodeClass = $taxCodeClass;
-        $this->relatedEntityClass = $relatedEntityClass;
-
-        $this->expressionBuilder = new Expr();
+        $this->featureChecker = $featureChecker;
     }
 
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildBefore(BuildBefore $event): void
     {
-        $config = $event->getConfig();
+        if (!$this->featureChecker->isResourceEnabled($this->getTaxCodeClass(), 'entities')) {
+            return;
+        }
 
+        $config = $event->getConfig();
         $this->addSelect($config);
         $this->addJoin($config);
         $this->addColumn($config);
@@ -43,71 +34,68 @@ class TaxCodeGridListener
         $this->addFilter($config);
     }
 
-    /**
-     * @param DatagridConfiguration $configuration
-     * @return string
-     * @throws \InvalidArgumentException when a root entity not found in the grid
-     */
-    protected function getAlias(DatagridConfiguration $configuration)
+    protected function getAlias(DatagridConfiguration $configuration): string
     {
         $rootAlias = $configuration->getOrmQuery()->getRootAlias();
         if (!$rootAlias) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'A root entity is missing for grid "%s"',
-                    $configuration->getName()
-                )
-            );
+            throw new \InvalidArgumentException(sprintf(
+                'A root entity is missing for grid "%s"',
+                $configuration->getName()
+            ));
         }
 
         return $rootAlias;
     }
 
-    /**
-     * @return string
-     */
-    protected function getColumnLabel()
+    protected function getColumnLabel(): string
     {
         return 'oro.tax.taxcode.label';
     }
 
-    /**
-     * @return string
-     */
-    protected function getDataName()
+    protected function getDataName(): string
     {
-        return self::DATA_NAME;
+        return 'taxCode';
     }
 
-    /**
-     * @return string
-     */
-    protected function getJoinAlias()
+    protected function getJoinAlias(): string
     {
-        return self::JOIN_ALIAS;
+        return 'taxCodes';
     }
 
-    protected function addSelect(DatagridConfiguration $config)
+    protected function getTaxCodeClass(): string
+    {
+        return $this->taxCodeClass;
+    }
+
+    protected function getTaxCodeField(): string
+    {
+        return 'taxCode';
+    }
+
+    protected function addSelect(DatagridConfiguration $config): void
     {
         $config->getOrmQuery()->addSelect(
             sprintf('%s.code AS %s', $this->getJoinAlias(), $this->getDataName())
         );
     }
 
-    protected function addJoin(DatagridConfiguration $config)
+    protected function addJoin(DatagridConfiguration $config): void
     {
         $config->getOrmQuery()->addLeftJoin(
-            $this->getAlias($config).'.taxCode',
+            $this->getAlias($config) . '.' . $this->getTaxCodeField(),
             $this->getJoinAlias()
         );
     }
 
-    protected function addColumn(DatagridConfiguration $config)
+    protected function addColumn(DatagridConfiguration $config): void
     {
-        $config->offsetSetByPath(sprintf('[columns][%s]', $this->getDataName()), ['label' => $this->getColumnLabel()]);
+        $config->offsetSetByPath(
+            sprintf('[columns][%s]', $this->getDataName()),
+            ['label' => $this->getColumnLabel()]
+        );
     }
 
-    protected function addSorter(DatagridConfiguration $config)
+    protected function addSorter(DatagridConfiguration $config): void
     {
         $config->offsetSetByPath(
             sprintf('[sorters][columns][%s]', $this->getDataName()),
@@ -115,17 +103,17 @@ class TaxCodeGridListener
         );
     }
 
-    protected function addFilter(DatagridConfiguration $config)
+    protected function addFilter(DatagridConfiguration $config): void
     {
         $config->offsetSetByPath(
             sprintf('[filters][columns][%s]', $this->getDataName()),
             [
                 'type' => 'entity',
-                'data_name' => $this->getAlias($config) . '.taxCode',
+                'data_name' => $this->getAlias($config) . '.' . $this->getTaxCodeField(),
                 'options' => [
                     'field_options' => [
                         'multiple' => false,
-                        'class' => $this->taxCodeClass,
+                        'class' => $this->getTaxCodeClass(),
                         'choice_label' => 'code'
                     ]
                 ]

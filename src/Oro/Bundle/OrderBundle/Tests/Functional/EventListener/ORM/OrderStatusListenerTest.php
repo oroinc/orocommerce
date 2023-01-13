@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -18,7 +19,6 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @group CommunityEdition
@@ -28,17 +28,17 @@ class OrderStatusListenerTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
 
     /** @var ManagerRegistry */
-    protected $managerRegistry;
+    private $doctrine;
 
     /** @var ConfigManager */
-    protected $configManager;
+    private $configManager;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->managerRegistry = $this->getContainer()->get('doctrine');
-        $this->configManager = self::getConfigManager('global');
+        $this->doctrine = $this->getContainer()->get('doctrine');
+        $this->configManager = self::getConfigManager();
 
         $this->loadFixtures([
             LoadCustomers::class,
@@ -66,33 +66,27 @@ class OrderStatusListenerTest extends WebTestCase
         $this->assertOrderStatus(OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED);
     }
 
-    /**
-     * @param string $expectedStatus
-     */
-    protected function assertOrderStatus($expectedStatus)
+    private function assertOrderStatus(string $expectedStatus): void
     {
         $order = $this->prepareOrderObject();
-        $em = $this->managerRegistry->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($order);
         $em->flush();
         $order = $em->find(Order::class, $order->getId());
         self::assertEquals($expectedStatus, $order->getInternalStatus()->getId());
     }
 
-    /**
-     * @return Order
-     */
-    protected function prepareOrderObject()
+    private function prepareOrderObject(): Order
     {
         /** @var User $user */
         $user = $this->getReference(LoadOrderUsers::ORDER_USER_1);
         if (!$user->getOrganization()) {
-            $user->setOrganization($this->managerRegistry->getRepository(Organization::class)->findOneBy([]));
+            $user->setOrganization($this->doctrine->getRepository(Organization::class)->findOneBy([]));
         }
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->managerRegistry->getRepository(CustomerUser::class)->findOneBy([]);
+        $customerUser = $this->doctrine->getRepository(CustomerUser::class)->findOneBy([]);
         /** @var PaymentTerm $paymentTerm */
-        $paymentTerm = $this->managerRegistry->getRepository(PaymentTerm::class)->findOneBy([]);
+        $paymentTerm = $this->doctrine->getRepository(PaymentTerm::class)->findOneBy([]);
 
         $order = new Order();
         $order
@@ -112,11 +106,8 @@ class OrderStatusListenerTest extends WebTestCase
         return $order;
     }
 
-    /**
-     * @return Website
-     */
-    protected function getDefaultWebsite()
+    private function getDefaultWebsite(): Website
     {
-        return $this->managerRegistry->getRepository(Website::class)->findOneBy(['default' => true]);
+        return $this->doctrine->getRepository(Website::class)->findOneBy(['default' => true]);
     }
 }

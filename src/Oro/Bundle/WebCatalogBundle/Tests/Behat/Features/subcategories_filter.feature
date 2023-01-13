@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-12111
+@fixture-OroWebCatalogBundle:empty_web_catalog.yml
 @fixture-OroWebCatalogBundle:subcategories-filter.yml
 Feature: Sub-Categories filter
   In order to see products from multiple selected sub-categories at once
@@ -14,21 +15,16 @@ Feature: Sub-Categories filter
   Scenario: Prepare Web Catalog
     Given I proceed as the Admin
     And I login as administrator
-
-    And I go to System/ Configuration
-    And follow "Commerce/Catalog/Special Pages" on configuration sidebar
-    And uncheck "Use default" for "Enable all products page" field
-    And I check "Enable all products page"
-    And save form
-
-    And I go to Marketing/Web Catalogs
-    And I click "Create Web Catalog"
-    And I fill form with:
-      | Name | Default Web Catalog |
-    And I save and close form
     And I set "Default Web Catalog" as default web catalog
 
-    And I click "Edit Content Tree"
+    When I go to System/ Configuration
+    And follow "Commerce/Catalog/Special Pages" on configuration sidebar
+    And uncheck "Use default" for "Enable all products page" field
+    Then I check "Enable all products page"
+    And save form
+    And I go to Marketing/Web Catalogs
+
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
 
     And I click on "Show Variants Dropdown"
     And I click "Add System Page"
@@ -99,8 +95,7 @@ Feature: Sub-Categories filter
     When I click on "Frontend Grid Action Filter Button"
     Then I should see an "Subcategories Filter" element
     When I click on "Subcategories Filter"
-    And I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (1) |
       | Headlamps (2)                   |
 
@@ -121,8 +116,7 @@ Feature: Sub-Categories filter
 
   Scenario: Apply another filter
     Given I filter Text as does not contain "Product3"
-    Then I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (1) |
       | Headlamps (1)                   |
     And number of records in "Product Frontend Grid" should be 2
@@ -130,8 +124,7 @@ Feature: Sub-Categories filter
     And I should see "PSKU4" product
 
     When I filter Text as does not contain "Product2"
-    Then I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2
@@ -139,8 +132,7 @@ Feature: Sub-Categories filter
     And I should see "PSKU4" product
 
     When I filter Text as contains "Product1"
-    Then I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
@@ -148,8 +140,7 @@ Feature: Sub-Categories filter
       | Any Text: contains "Product1"                          |
       | Sub-Categories: Architectural Floodlighting, Headlamps |
     When I reload the page
-    Then I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
@@ -158,8 +149,7 @@ Feature: Sub-Categories filter
       | Sub-Categories: Architectural Floodlighting, Headlamps |
 
     When I filter Text as does not contain "Product2"
-    Then I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2

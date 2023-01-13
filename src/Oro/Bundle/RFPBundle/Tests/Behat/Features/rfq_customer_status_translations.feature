@@ -29,9 +29,6 @@ Feature: RFQ customer status translations
       | Option First | Submitted_DE |
     And I save form
     Then I should see "Field saved" flash message
-    When I go to System / Localization / Translations
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Create RFQ and check status field translations
     Given I proceed as the User

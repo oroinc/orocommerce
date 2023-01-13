@@ -1,0 +1,10 @@
+aliases:
+    oro/datagrid/cell/shipping-methods-cell$: oroshipping/js/datagrid/cell/shipping-methods-cell
+configs:
+    oroshipping/js/datagrid/cell/shipping-methods-cell:
+        titleClassName: 'heading-bottom-offset show-in-mobile'
+dynamic-imports:
+    orocheckout:
+        - oroshipping/js/app/views/shipping-methods-view
+    orodatagrid:
+        - oro/datagrid/cell/shipping-methods-cell

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -12,34 +13,22 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var AddressExtractor */
-    protected $extractor;
+    private $extractor;
 
     protected function setUp(): void
     {
         $this->extractor = new AddressExtractor(PropertyAccess::createPropertyAccessor());
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->extractor);
-    }
-
     /**
-     * @param mixed $object
-     * @param string $property
-     * @param mixed $expected
-     *
      * @dataProvider extractDataProvider
      */
-    public function testExtract($object, $property, $expected)
+    public function testExtract(object|array $object, string $property, AddressStub $expected)
     {
         $this->assertEquals($expected, $this->extractor->extractAddress($object, $property));
     }
 
-    /**
-     * @return array
-     */
-    public function extractDataProvider()
+    public function extractDataProvider(): array
     {
         $addressStub = new AddressStub();
 
@@ -55,12 +44,9 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param mixed $object
-     * @param string $property
-     *
      * @dataProvider extractFailedDataProvider
      */
-    public function testExtractFailed($object, $property)
+    public function testExtractFailed(object|array $object, string $property)
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Object does not contains billingAddress');
@@ -69,18 +55,15 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
         $this->extractor->extractAddress($object, $property);
     }
 
-    /**
-     * @return array
-     */
-    public function extractFailedDataProvider()
+    public function extractFailedDataProvider(): array
     {
         return [
             'extract from checkout default billing address property' => [
-                $this->getEntity('Oro\Bundle\CheckoutBundle\Entity\Checkout'),
+                $this->getEntity(Checkout::class),
                 'missingProperty',
             ],
             'extract from checkout returns null' => [
-                $this->getEntity('Oro\Bundle\CheckoutBundle\Entity\Checkout', ['billingAddress' => null]),
+                $this->getEntity(Checkout::class, ['billingAddress' => null]),
                 'billingAddress',
             ],
             'extract from array' => [

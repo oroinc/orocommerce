@@ -1,5 +1,5 @@
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision1:
+    precision1_1:
         unit: '@item'
         precision: '0'
     precision2_1:
@@ -27,16 +27,78 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
         entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'product_attribute_family_code'
+        attributeGroups: [ '@attrGroup1' ]
         __calls:
-            - addLabel: ['@locValueFamily']
+            -   addLabel: [ '@locValueFamily' ]
         owner: '@organization'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
+    attrGroup1:
+        code: 'general'
+        attributeFamily: '@productAttributeFamily'
+        __calls:
+            -   addAttributeRelation: [ '@attribute_group_1_relation_images' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_name' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_sku' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_description' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_short_description' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_brand' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_is_featured' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_new_arrival' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_inventory_status' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_meta_titles' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_meta_descriptions' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_meta_keywords' ]
+            -   addAttributeRelation: [ '@attribute_group_1_relation_product_prices' ]
+        isVisible: true
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
+    attribute_group_1_relation_sku:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_sku->id'
+    attribute_group_1_relation_name:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_names->id'
+    attribute_group_1_relation_description:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_descriptions->id'
+    attribute_group_1_relation_short_description:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_shortDescriptions->id'
+    attribute_group_1_relation_brand:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_brand->id'
+    attribute_group_1_relation_is_featured:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_featured->id'
+    attribute_group_1_relation_new_arrival:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_newArrival->id'
+    attribute_group_1_relation_images:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_images->id'
+    attribute_group_1_relation_inventory_status:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_inventory_status->id'
+    attribute_group_1_relation_meta_titles:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_metaTitles->id'
+    attribute_group_1_relation_meta_descriptions:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_metaDescriptions->id'
+    attribute_group_1_relation_meta_keywords:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_metaKeywords->id'
+    attribute_group_1_relation_product_prices:
+        attributeGroup: '@attrGroup1'
+        entityConfigFieldId: '@attribute_productPriceAttributesPrices->id'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'SKU1'
-        primaryUnitPrecision: '@precision1'
+        primaryUnitPrecision: '@precision1_1'
         __calls:
-            - addName: ['@locValue1']
+            -   addName: [ '@locValue1' ]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -44,20 +106,21 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product2:
         sku: 'SKU2'
         primaryUnitPrecision: '@precision2_1'
-        unitPrecisions: ['@precision2_2']
+        unitPrecisions: [ '@precision2_2', '@precision2_1' ]
         __calls:
-            - addName: ['@locValue2']
+            -   addName: [ '@locValue2' ]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
 
 Doctrine\Common\Collections\ArrayCollection:
-  products:
-    __construct: [['@product1', '@product2']]
+    products:
+        __construct: [ [ '@product1', '@product2' ] ]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
   categoryLightingProducts:
+    organization: '@organization'
     __calls:
       - addTitle: ['@localNewCategory']
       - setParentCategory: ['@root_category']

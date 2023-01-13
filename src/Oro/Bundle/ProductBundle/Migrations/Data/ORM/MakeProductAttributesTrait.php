@@ -7,6 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -65,6 +66,24 @@ trait MakeProductAttributesTrait
         }
 
         $entityManager->flush();
+    }
+
+    private function synchronizeProductAttributesIndexByScope(string $scope): void
+    {
+        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+
+        $fieldConfigRepository = $doctrineHelper->getEntityRepositoryForClass(FieldConfigModel::class);
+        $attributes = $fieldConfigRepository->getAttributesByClass(Product::class);
+
+        $configProvider = $configManager->getProvider($scope);
+        foreach ($attributes as $attribute) {
+            if ($configManager->hasConfig(Product::class, $attribute->getFieldName())) {
+                $config = $configProvider->getConfig(Product::class, $attribute->getFieldName());
+                $configManager->persist($config);
+            }
+        }
+        $configManager->flush();
     }
 
     /**

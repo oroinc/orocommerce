@@ -23,49 +23,38 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
     use MemoryCacheProviderAwareTestTrait;
 
-    /**
-     * @var CheckoutLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutLineItemsConverter;
+    /** @var CheckoutLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsConverter;
 
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $currencyManager;
+    /** @var UserCurrencyManager */
+    private $currencyManager;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     protected function setUp(): void
     {
         $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
-
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
-        $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
+        $this->configManager = $this->createMock(ConfigManager::class);
+
+        $this->currencyManager->expects($this->any())
+            ->method('getUserCurrency')
+            ->willReturn('USD');
 
         $this->checkoutLineItemsConverter->expects($this->any())
             ->method('convert')
-            ->willReturnCallback(
-                function ($data) {
-                    $result = new ArrayCollection();
-                    foreach ($data as $productData) {
-                        $result->add($this->getEntity(OrderLineItem::class, $productData));
-                    }
-
-                    return $result;
+            ->willReturnCallback(function ($data) {
+                $result = new ArrayCollection();
+                foreach ($data as $productData) {
+                    $result->add($this->getEntity(OrderLineItem::class, $productData));
                 }
-            );
-        $this->configManager = $this->createMock(ConfigManager::class);
+
+                return $result;
+            });
     }
 
-    /**
-     * @param CheckoutDataProviderInterface[] $providers
-     *
-     * @return CheckoutLineItemsManager
-     */
-    private function getCheckoutLineItemsManager(array $providers)
+    private function getCheckoutLineItemsManager(array $providers): CheckoutLineItemsManager
     {
         $checkoutLineItemsManager = new CheckoutLineItemsManager(
             $providers,
@@ -96,12 +85,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getDataDataProvider
-     *
-     * @param bool $withDataProvider
-     * @param bool $isEntitySupported
-     * @param bool $visible
      */
-    public function testGetDataEntitySupported($withDataProvider, $isEntitySupported, $visible)
+    public function testGetDataEntitySupported(array $withDataProvider, bool $isEntitySupported, bool $visible)
     {
         $this->mockMemoryCacheProvider();
 
@@ -110,7 +95,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $checkout = $this->getCheckout();
+        $checkout = new Checkout();
         $data = [];
 
         $providers = [];
@@ -128,13 +113,13 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getDataDataProvider
-     * @param array $providerData
-     * @param bool $disablePriceFilter
-     * @param bool $visible
-     * @param ArrayCollection|array $expectedData
      */
-    public function testGetData(array $providerData, $disablePriceFilter, $visible, array $expectedData)
-    {
+    public function testGetData(
+        array $providerData,
+        bool $disablePriceFilter,
+        bool $visible,
+        array|ArrayCollection $expectedData
+    ) {
         $this->mockMemoryCacheProvider();
 
         $this->configManager->expects($this->any())
@@ -142,7 +127,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $checkout = $this->getCheckout();
+        $checkout = new Checkout();
 
         $checkoutLineItemsManager = $this->getCheckoutLineItemsManager(
             [$this->getProvider($checkout, $providerData)]
@@ -154,14 +139,13 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getDataDataProvider()
+    public function getDataDataProvider(): array
     {
         $hasProduct = true;
         $productFree = false;
+
         return [
             [
                 'providerData' => [
@@ -241,27 +225,16 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param bool $hasProduct
-     * @param integer $productId
-     * @param string|null $productSku
-     * @param string|null $inventoryStatus
-     * @param float $qty
-     * @param string $unit
-     * @param Price|null $price
-     * @param string $status
-     * @return array
-     */
-    protected function getLineItemData(
-        $hasProduct,
-        $productId,
-        $productSku,
-        $inventoryStatus,
-        $qty,
-        $unit,
-        Price $price = null,
-        $status = Product::STATUS_ENABLED
-    ) {
+    private function getLineItemData(
+        bool $hasProduct,
+        int $productId,
+        ?string $productSku,
+        ?string $inventoryStatus,
+        float $qty,
+        string $unit,
+        ?Price $price,
+        string $status = Product::STATUS_ENABLED
+    ): array {
         $product = null;
         if ($hasProduct && $productSku) {
             $product = $this->getEntity(
@@ -292,16 +265,12 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param Checkout $entity
-     * @param array $returnData
-     * @param bool $isSupported
-     * @return CheckoutDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getProvider(Checkout $entity, array $returnData, $isSupported = true)
-    {
-        /** @var CheckoutDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
-        $provider = $this->createMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
+    private function getProvider(
+        Checkout $entity,
+        array $returnData,
+        bool $isSupported = true
+    ): CheckoutDataProviderInterface {
+        $provider = $this->createMock(CheckoutDataProviderInterface::class);
 
         $provider->expects($this->once())
             ->method('isEntitySupported')
@@ -318,20 +287,9 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return Checkout
-     */
-    protected function getCheckout()
-    {
-        return new Checkout();
-    }
-
-    /**
      * @dataProvider getLineItemsWithoutQuantityDataProvider
-     * @param array $providerData
-     * @param bool $visible
-     * @param ArrayCollection|array $expectedData
      */
-    public function testGetLineItemsWithoutQuantity(array $providerData, $visible, array $expectedData)
+    public function testGetLineItemsWithoutQuantity(array $providerData, array|ArrayCollection $expectedData)
     {
         $this->mockMemoryCacheProvider();
 
@@ -340,7 +298,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $checkout = $this->getCheckout();
+        $checkout = new Checkout();
 
         $checkoutLineItemsManager = $this->getCheckoutLineItemsManager(
             [$this->getProvider($checkout, $providerData)]
@@ -351,13 +309,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    /**
-     * @return array
-     */
-    public function getLineItemsWithoutQuantityDataProvider()
+    public function getLineItemsWithoutQuantityDataProvider(): array
     {
         $hasProduct = true;
         $productFree = false;
+
         return [
             [
                 'providerData' => [
@@ -378,7 +334,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
                         Price::create(10, 'USD')
                     ),
                 ],
-                'visible' => true,
                 'expectedData' => [
                     $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(0, 'USD')),
                     $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
@@ -414,7 +369,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
                         Product::STATUS_DISABLED
                     ),
                 ],
-                'visible' => true,
                 'expectedData' => [
                     $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 0, 'litre', null),
                     $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 0, 'litre', null),
@@ -437,7 +391,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
                         Price::create(10, 'USD')
                     ),
                 ],
-                'visible' => false,
                 'expectedData' => [
                     $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
                 ],

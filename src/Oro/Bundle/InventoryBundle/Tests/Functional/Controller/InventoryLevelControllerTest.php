@@ -26,7 +26,7 @@ class InventoryLevelControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_inventory_level_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('inventory-grid', $crawler->html());
+        self::assertStringContainsString('inventory-grid', $crawler->html());
     }
 
     public function testUpdateAction()
@@ -45,7 +45,7 @@ class InventoryLevelControllerTest extends WebTestCase
         $this->assertNotEmpty($updateUrl);
 
         // open dialog with levels edit form
-        list($route, $parameters) = $this->parseUrl($updateUrl);
+        [$route, $parameters] = $this->parseUrl($updateUrl);
         $parameters['_widgetContainer'] = 'dialog';
         $parameters['_wid'] = uniqid('abc', true);
 
@@ -56,7 +56,7 @@ class InventoryLevelControllerTest extends WebTestCase
         $levelsGrid = $crawler->filterXPath('//div[starts-with(@id,"grid-inventory-level-grid")]');
         $this->assertEquals(1, $levelsGrid->count());
 
-        $gridConfig = json_decode($levelsGrid->attr('data-page-component-options'), true);
+        $gridConfig = self::jsonToArray($levelsGrid->attr('data-page-component-options'));
         $gridData = $gridConfig['data']['data'];
         $this->assertLevelsGridData($product, $gridData);
 
@@ -72,7 +72,7 @@ class InventoryLevelControllerTest extends WebTestCase
         }
 
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_inventory_level_grid'] = json_encode($changeSet);
+        $form['oro_inventory_level_grid'] = json_encode($changeSet, JSON_THROW_ON_ERROR);
         $this->client->submit($form);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -80,12 +80,12 @@ class InventoryLevelControllerTest extends WebTestCase
         $this->assertLevelsData($changeSet);
     }
 
-    protected function assertLevelsData(array $data)
+    private function assertLevelsData(array $data): void
     {
-        $repository = $this->getRepository('OroInventoryBundle:InventoryLevel');
+        $repository = $this->getRepository(InventoryLevel::class);
 
         foreach ($data as $combinedId => $row) {
-            list($precisionId) = explode('_', $combinedId, 2);
+            [$precisionId] = explode('_', $combinedId, 2);
             $quantity = $row['levelQuantity'];
 
             /** @var InventoryLevel|null $level */
@@ -104,11 +104,7 @@ class InventoryLevelControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function getGridQuantities(array $data)
+    private function getGridQuantities(array $data): array
     {
         $quantities = [];
         foreach ($data as $row) {
@@ -119,7 +115,7 @@ class InventoryLevelControllerTest extends WebTestCase
         return $quantities;
     }
 
-    protected function assertLevelsGridData(Product $product, array $data)
+    private function assertLevelsGridData(Product $product, array $data): void
     {
         $expectedCombinedIds = [];
         foreach ($product->getUnitPrecisions() as $precision) {
@@ -133,11 +129,7 @@ class InventoryLevelControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param string $url
-     * @return array
-     */
-    protected function parseUrl($url)
+    private function parseUrl(string $url): array
     {
         /** @var RouterInterface $router */
         $router = $this->getContainer()->get('router');
@@ -149,12 +141,8 @@ class InventoryLevelControllerTest extends WebTestCase
         return [$route, $parameters];
     }
 
-    /**
-     * @param string $class
-     * @return EntityRepository
-     */
-    protected function getRepository($class)
+    private function getRepository(string $class): EntityRepository
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass($class)->getRepository($class);
+        return $this->getContainer()->get('doctrine')->getRepository($class);
     }
 }

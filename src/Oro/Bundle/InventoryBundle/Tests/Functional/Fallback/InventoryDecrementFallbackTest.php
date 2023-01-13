@@ -56,7 +56,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['input_action'] = 'save_and_close';
+        $form['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
 
         $this->updateFallbackField($form, $ownValue, $fallbackValue, 'oro_product', 'decrementQuantity');
 
@@ -80,7 +80,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $inventoryDecrementValue = $form->get('oro_catalog_category[decrementQuantity][scalarValue]')->getValue();
         $this->assertEmpty($inventoryDecrementValue);
 
-        $form['input_action'] = 'save';
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
         $form['oro_catalog_category[decrementQuantity][useFallback]'] = false;
         $form['oro_catalog_category[decrementQuantity][scalarValue]'] = $newCategoryFallbackValue;
         $this->client->followRedirects(true);

@@ -5,17 +5,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Gateway\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option\SecureTokenIdentifier;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class SecureTokenIdentifierTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new SecureTokenIdentifier()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         $token = UUIDGenerator::v4();
 
@@ -25,9 +30,9 @@ class SecureTokenIdentifierTest extends AbstractOptionTest
                 ['SECURETOKENID' => 12345],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SECURETOKENID" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "SECURETOKENID" with value 12345 is expected to be of type "string", but is of '
+                    . 'type "int".',
                 ],
             ],
             'valid' => [['SECURETOKENID' => $token], ['SECURETOKENID' => $token]],

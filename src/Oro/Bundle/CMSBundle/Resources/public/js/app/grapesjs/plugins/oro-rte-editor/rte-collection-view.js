@@ -21,6 +21,10 @@ const RteCollectionView = BaseCollectionView.extend({
 
     observer: null,
 
+    events: {
+        click: 'updateActiveActions'
+    },
+
     constructor: function RteCollectionView(options) {
         this.spansToRemove = [];
         this.spansToSave = [];
@@ -39,7 +43,7 @@ const RteCollectionView = BaseCollectionView.extend({
      * @param {DOM.Event} events
      * @returns {RteCollectionView}
      */
-    delegateEvents: function(events) {
+    delegateEvents(events) {
         RteCollectionView.__super__.delegateEvents.call(this, events);
 
         this.$editableEl.on(`mouseup${this.eventNamespace()} keyup${this.eventNamespace()}`,
@@ -58,7 +62,7 @@ const RteCollectionView = BaseCollectionView.extend({
      * @inheritdoc
      * @returns {RteCollectionView}
      */
-    undelegateEvents: function() {
+    undelegateEvents() {
         if (this.observer) {
             this.observer.disconnect();
         }
@@ -74,7 +78,10 @@ const RteCollectionView = BaseCollectionView.extend({
         for (const mutation of mutationsList) {
             const isSpanAdded = [...mutation.addedNodes].filter(node => {
                 const isNotSavedSpan = ![...this.spansToSave].find(span => span.isEqualNode(node));
-                return node.nodeType === 1 && node.tagName === 'SPAN' && isNotSavedSpan;
+                return node.nodeType === Node.ELEMENT_NODE &&
+                    node.tagName === 'SPAN' &&
+                    isNotSavedSpan &&
+                    node.getAttribute('data-gjs-type') !== 'text-style';
             });
 
             if (mutation.type === 'childList' && isSpanAdded.length) {
@@ -108,7 +115,8 @@ const RteCollectionView = BaseCollectionView.extend({
                 editableEl: this.editableEl,
                 $editableEl: this.$editableEl,
                 editor: this.editor,
-                model
+                model,
+                collection: this
             });
         } else {
             throw new Error(
@@ -157,7 +165,10 @@ const RteCollectionView = BaseCollectionView.extend({
         this.spansToRemove.forEach(span => span.replaceWith(...span.childNodes));
         this.spansToSave = [];
         this.spansToRemove = [];
+        this.editableEl.normalize();
         RteCollectionView.__super__.dispose.call(this);
+
+        this.editor.trigger('rte:disable');
     },
 
     /**
@@ -172,6 +183,12 @@ const RteCollectionView = BaseCollectionView.extend({
      */
     blur() {
         this.$el.blur();
+    },
+
+    emitEvent(event) {
+        if (event.type === 'keydown') {
+            invoke(this.subviews, 'onKeyDown', event);
+        }
     }
 });
 

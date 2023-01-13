@@ -1,0 +1,44 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - '@OroProduct/layouts/default/imports/oro_datagrid_server_render/server_render_datagrid.html.twig'
+                - '@OroProduct/layouts/default/imports/oro_datagrid_server_render/server_render_datagrid_toolbar.html.twig'
+
+        - '@removeOption':
+            id: __datagrid
+            optionName: grid_render_parameters.cssClass
+
+        - '@setOption':
+            id: __datagrid
+            optionName: split_to_cells
+            optionValue: true
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.defaultFiltersViewMode
+            optionValue: '=data["system_config_provider"].getValue("oro_product.filters_display_settings_state")'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.filtersStateStorageKey
+            optionValue: 'frontstore-product-filters-state'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.useFiltersStateAnimationOnInit
+            optionValue: true
+
+        - '@move':
+            id: __datagrid_toolbar
+            parentId: __datagrid
+
+        - '@add':
+            id: product_datagrid_category_product_list
+            parentId: __datagrid
+            blockType: block

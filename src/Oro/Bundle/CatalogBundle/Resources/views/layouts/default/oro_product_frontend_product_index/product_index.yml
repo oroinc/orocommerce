@@ -1,0 +1,40 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCatalog/layouts/default/oro_product_frontend_product_index/product_index.html.twig'
+        - '@setOption':
+              id: title
+              optionName: params
+              optionValue:
+                  '%title%': '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles())'
+        - '@addTree':
+            items:
+                breadcrumbs:
+                    blockType: breadcrumbs
+                    options:
+                        breadcrumbs: '=data["category_breadcrumbs"].getItems()'
+                breadcrumbs_filters:
+                    blockType: block
+                    options:
+                        visible: false
+                category_picture:
+                    blockType: category
+                    options:
+                        category: '=data["category"].getCurrentCategory()'
+                category_title:
+                    blockType: text
+                    options:
+                        text: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles())'
+                category_long_descriptions:
+                    blockType: block
+                    options:
+                        vars:
+                            long_descriptions: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getLongDescriptions())'
+                            visible: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getLongDescriptions()) != null'
+            tree:
+                page_main_header:
+                    category_picture: ~
+                    breadcrumbs:
+                        breadcrumbs_filters: ~
+                    category_title: ~
+                    category_long_descriptions: ~

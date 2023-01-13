@@ -199,9 +199,8 @@ define(function(require) {
 
             this.model.set('shopping_lists', shoppingLists, {silent: true});
             this.model.trigger('change:shopping_lists');
-            this.shoppingListCollection.trigger('change', {
-                refresh: true
-            });
+
+            this.shoppingListCollection.trigger('change');
         },
 
         onLineItemUpdate: function(updateData) {
@@ -344,8 +343,10 @@ define(function(require) {
                     if (response && response.message) {
                         const isSuccessful = response.hasOwnProperty('successful') && response.successful;
                         mediator.execute(
-                            'showFlashMessage', (isSuccessful ? 'success' : 'error'),
-                            response.message
+                            'showFlashMessage',
+                            isSuccessful ? 'success' : 'error',
+                            response.message,
+                            isSuccessful ? {namespace: 'shopping_list'} : {}
                         );
                     }
 

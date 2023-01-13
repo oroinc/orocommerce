@@ -3,33 +3,23 @@
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type to select a shipping method.
+ */
 class ShippingMethodSelectType extends AbstractType
 {
-    const NAME = 'oro_shipping_method_select';
-
-    /**
-     * @var AssetHelper
-     */
-    private $assetHelper;
-
-    /**
-     * @var ShippingMethodChoicesProviderInterface
-     */
-    private $provider;
-
-    /**
-     * @var ShippingMethodIconProviderInterface
-     */
-    private $iconProvider;
+    private AssetHelper $assetHelper;
+    private ShippingMethodChoicesProvider $provider;
+    private ShippingMethodIconProviderInterface $iconProvider;
 
     public function __construct(
-        ShippingMethodChoicesProviderInterface $provider,
+        ShippingMethodChoicesProvider $provider,
         ShippingMethodIconProviderInterface $iconProvider,
         AssetHelper $assetHelper
     ) {
@@ -41,13 +31,19 @@ class ShippingMethodSelectType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
-            'choices' => $this->getChoices(),
-            'choice_attr' => function ($choice) {
-                return $this->getChoiceAttributes($choice);
+            'choices' => $this->provider->getMethods(),
+            'choice_attr' => function (string $shippingMethodIdentifier) {
+                $attributes = [];
+                $iconUri = $this->iconProvider->getIcon($shippingMethodIdentifier);
+                if ($iconUri) {
+                    $attributes = ['data-icon' => $this->assetHelper->getUrl($iconUri)];
+                }
+
+                return $attributes;
             },
             'configs' => [
                 'showIcon' => true,
@@ -59,7 +55,7 @@ class ShippingMethodSelectType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return OroChoiceType::class;
     }
@@ -67,41 +63,8 @@ class ShippingMethodSelectType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * @param string $choice Shipping method identifier
-     *
-     * @return array
-     */
-    private function getChoiceAttributes($choice)
-    {
-        $attributes = [];
-        $iconUri = $this->iconProvider->getIcon($choice);
-
-        if ($iconUri) {
-            $attributes = ['data-icon' => $this->assetHelper->getUrl($iconUri)];
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * @return array
-     */
-    private function getChoices()
-    {
-        return $this->provider->getMethods();
+        return 'oro_shipping_method_select';
     }
 }

@@ -25,28 +25,13 @@ class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->entityRepository = $this->createMock(EntityRepository::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->listener = new ValidateBeforeRemoveFieldListener($this->doctrineHelper, $this->translator);
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->doctrineHelper,
-            $this->entityRepository,
-            $this->translator,
-            $this->listener
-        );
+        $this->listener = new ValidateBeforeRemoveFieldListener($this->doctrineHelper, $this->translator);
     }
 
     public function testOnBeforeRemoveFieldUnsupportedClass()
@@ -56,7 +41,8 @@ class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new ValidateBeforeRemoveFieldEvent($configField);
 
-        $this->entityRepository->expects($this->never())->method('findBy');
+        $this->entityRepository->expects($this->never())
+            ->method('findBy');
 
         $this->listener->onValidateBeforeRemoveField($event);
     }
@@ -75,20 +61,15 @@ class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->entityRepository->expects($this->once())
             ->method('findBy')
-            ->with([
-                'type' => Product::TYPE_CONFIGURABLE
-            ])
+            ->with(['type' => Product::TYPE_CONFIGURABLE])
             ->willReturn($this->getConfigurableProducts());
 
-        // @codingStandardsIgnoreStart
-        $message = 'Cannot remove field because it\'s used as a variant field in the following configurable products: CNFPRD1, CNFPRD3';
-        // @codingStandardsIgnoreEnd
+        $message = 'Cannot remove field because it\'s used as a variant field'
+            . ' in the following configurable products: CNFPRD1, CNFPRD3';
 
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('oro.product.field_is_used_as_variant_field.message', [
-                '%skuList%' => 'CNFPRD1, CNFPRD3',
-            ])
+            ->with('oro.product.field_is_used_as_variant_field.message', ['%skuList%' => 'CNFPRD1, CNFPRD3'])
             ->willReturn($message);
 
         $this->listener->onValidateBeforeRemoveField($event);
@@ -110,12 +91,12 @@ class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->entityRepository->expects($this->once())
             ->method('findBy')
-            ->with([
-                'type' => Product::TYPE_CONFIGURABLE
-            ])
+            ->with(['type' => Product::TYPE_CONFIGURABLE])
             ->willReturn($this->getConfigurableProducts());
 
-        $this->translator->expects($this->never())->method('trans');
+        $this->translator->expects($this->never())
+            ->method('trans');
+
         $this->listener->onValidateBeforeRemoveField($event);
 
         $this->assertEquals([], $event->getValidationMessages());
@@ -124,7 +105,7 @@ class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return Product[]
      */
-    private function getConfigurableProducts()
+    private function getConfigurableProducts(): array
     {
         $product1 = new Product();
         $product1->setSku('CNFPRD1');

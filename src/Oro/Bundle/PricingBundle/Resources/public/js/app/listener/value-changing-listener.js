@@ -4,6 +4,7 @@ define(function(require) {
     const $ = require('jquery');
     const _ = require('underscore');
     const mediator = require('oroui/js/mediator');
+    const Backbone = require('backbone');
 
     /**
      * @export oroorder/js/app/listener/value-changing-listener
@@ -18,20 +19,16 @@ define(function(require) {
             _.each($fields, function(field) {
                 field = $(field).on('value:changing', function() {
                     const promise = $.Deferred();
+                    const observer = Object.create(Backbone.Events);
 
                     const changed = function() {
                         promise.resolve();
 
                         field.off('value:changed', changed);
-                        mediator.off(promiseEvent, setPromise);
+                        observer.stopListening();
                     };
-
-                    const setPromise = function(promises) {
-                        promises.push(promise);
-                    };
-
                     field.on('value:changed', changed);
-                    mediator.on(promiseEvent, setPromise);
+                    observer.listenTo(mediator, promiseEvent, promises => promises.push(promise));
                 });
             });
         }

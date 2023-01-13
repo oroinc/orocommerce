@@ -47,7 +47,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements ContainerAwareI
     private function getOrganization()
     {
         return $this->container->get('doctrine')
-            ->getRepository('OroOrganizationBundle:Organization')
+            ->getRepository(Organization::class)
             ->getFirst();
     }
 }

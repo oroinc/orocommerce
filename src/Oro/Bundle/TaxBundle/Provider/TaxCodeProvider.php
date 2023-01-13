@@ -53,12 +53,12 @@ class TaxCodeProvider
 
     private function fetchSingleTaxCode(string $type, object $object): ?TaxCodeInterface
     {
-        return $this->getRepository($type)->findOneByEntity($type, $object);
+        return $this->getRepository($type)->findOneByEntity($object);
     }
 
     private function fetchMultipleTaxCodes(string $type, array $objects): array
     {
-        return $this->getRepository($type)->findManyByEntities($type, $objects);
+        return $this->getRepository($type)->findManyByEntities($objects);
     }
 
     private function getRepository(string $type): ?AbstractTaxCodeRepository

@@ -62,7 +62,7 @@ class MatrixColumnType extends AbstractType
         $column = $form->getData();
         if ($column instanceof MatrixCollectionColumn) {
             $view->vars['label'] = $column->label;
-            $view->vars['productId'] = $column->product ? $column->product->getId() : null;
+            $view->vars['productId'] = $column->product?->getId();
         }
     }
 

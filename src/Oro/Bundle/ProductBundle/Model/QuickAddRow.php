@@ -4,9 +4,18 @@ namespace Oro\Bundle\ProductBundle\Model;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class QuickAddRow
+/**
+ * A model that represents a row in {@see QuickAddRowCollection}.
+ */
+class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
 {
+    public const INDEX = 'index';
+    public const SKU = 'sku';
+    public const UNIT = 'unit';
+    public const QUANTITY = 'quantity';
+
     use QuickAddFieldTrait;
+
     /**
      * @var int
      */
@@ -28,14 +37,14 @@ class QuickAddRow
     protected $product;
 
     /**
-     * @var bool
+     * @var string
      */
-    protected $valid = false;
+    protected $unit;
 
     /**
      * @var string
      */
-    protected $unit;
+    protected $organization;
 
     /**
      * @var array
@@ -47,13 +56,15 @@ class QuickAddRow
      * @param string $sku
      * @param float $quantity
      * @param string $unit
+     * @param string $organization
      */
-    public function __construct($index, $sku, $quantity, $unit = null)
+    public function __construct($index, $sku, $quantity, $unit = null, $organization = null)
     {
         $this->index = $index;
         $this->sku = $sku;
         $this->quantity = $quantity;
         $this->unit = $unit;
+        $this->organization = $organization;
         $this->errors = [];
     }
 
@@ -61,6 +72,11 @@ class QuickAddRow
      * @return int
      */
     public function getIndex()
+    {
+        return $this->index;
+    }
+
+    public function getEntityIdentifier(): ?int
     {
         return $this->index;
     }
@@ -81,6 +97,21 @@ class QuickAddRow
         return $this->quantity;
     }
 
+    public function getProductSku(): ?string
+    {
+        return $this->product?->getSku();
+    }
+
+    public function getOrganization(): ?string
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(string $organization): void
+    {
+        $this->organization = $organization;
+    }
+
     /**
      * @return Product
      */
@@ -92,22 +123,6 @@ class QuickAddRow
     public function setProduct(Product $product)
     {
         $this->product = $product;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isValid()
-    {
-        return $this->valid;
-    }
-
-    /**
-     * @param bool $valid
-     */
-    public function setValid($valid)
-    {
-        $this->valid = $valid;
     }
 
     /**
@@ -126,17 +141,21 @@ class QuickAddRow
         $this->unit = $unit;
     }
 
-    /**
-     * @param string $errorMessage
-     * @param array $additionalParameters
-     */
-    public function addError($errorMessage, $additionalParameters = [])
+    public function addError(string $errorMessage, array $additionalParameters = [], string $propertyPath = ''): void
     {
+        if (count(func_get_args()) > 2) {
+            $propertyPath = (string) func_get_arg(2);
+        }
+
         $additionalParameters = array_merge($additionalParameters, [
             '{{ index }}' => $this->index,
             '{{ sku }}' => $this->sku
         ]);
-        $this->errors[] = ['message' => $errorMessage, 'parameters' => $additionalParameters];
+        $this->errors[] = [
+            'message' => $errorMessage,
+            'parameters' => $additionalParameters,
+            'propertyPath' => $propertyPath ?? '',
+        ];
         $this->valid = false;
     }
 

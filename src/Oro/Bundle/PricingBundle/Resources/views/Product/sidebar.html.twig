@@ -1,12 +1,14 @@
 {% set currencyTemplate %}
     <div class="oro-clearfix">
-        <input type="checkbox"
-               id="oro_currency_selection_<%- ftid %>-uid-<%- uid %>"
-               name="oro_currency_selection[]"
-               data-ftid="oro_currency_selection_<%- ftid %>"
-               value="<%- value %>"
-               <%- checked %> >
-        <label for="oro_currency_selection_<%- ftid %>-uid-<%- uid %>"><%- text %><em>&nbsp;</em></label>
+        <label for="oro_currency_selection_<%- ftid %>-uid-<%- uid %>" class="checkbox-label">
+            <input type="checkbox"
+                id="oro_currency_selection_<%- ftid %>-uid-<%- uid %>"
+                name="oro_currency_selection[]"
+                data-ftid="oro_currency_selection_<%- ftid %>"
+                value="<%- value %>"
+                <%- checked %> >
+            <%- text %><em>&nbsp;</em>
+        </label>
     </div>
 {% endset %}
 

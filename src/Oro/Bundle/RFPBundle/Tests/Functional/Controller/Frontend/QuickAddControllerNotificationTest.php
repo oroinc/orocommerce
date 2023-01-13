@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
@@ -16,13 +15,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
-
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var ConfigManager */
-    protected $globalConfigManager;
+    private const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
     protected function setUp(): void
     {
@@ -33,22 +26,19 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->loadFixtures([LoadFrontendProductData::class]);
-        $this->configManager = self::getConfigManager('global');
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
-        $this->configManager->flush();
+
+        $configManager = self::getConfigManager();
+        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
+        $configManager->flush();
     }
 
     /**
      * @dataProvider productProvider
-     *
-     * @param string $processorName
-     * @param array $products
-     * @param string $expectedMessage
      */
     public function testNotification(
-        $processorName,
+        string $processorName,
         array $products,
-        $expectedMessage
+        string $expectedMessage
     ) {
         $this->markTestSkipped(
             'Waiting for new quick order page to be finished'
@@ -78,16 +68,13 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             $this->getContainer()->get('translator')->trans($expectedMessage),
             $this->client->getResponse()->getContent()
         );
     }
 
-    /**
-     * @return array
-     */
-    public function productProvider()
+    public function productProvider(): array
     {
         return [
             'no_products_be_added_to_rfq' => [

@@ -13,24 +13,17 @@ use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
 class ConsentControllerTest extends WebTestCase
 {
     use ConsentFeatureTrait;
     use OperationAwareTestTrait;
 
-    const CONSENT_TEST_NAME = "Test Consent";
-    const CONSENT_UPDATED_TEST_NAME = "Test Updated Consent";
+    private const CONSENT_TEST_NAME = 'Test Consent';
+    private const CONSENT_UPDATED_TEST_NAME = 'Test Updated Consent';
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -41,13 +34,10 @@ class ConsentControllerTest extends WebTestCase
             LoadContentNodesData::class,
         ]);
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
         $this->enableConsentFeature();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         $this->disableConsentFeature();
@@ -59,13 +49,10 @@ class ConsentControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('consents-grid', $crawler->html());
+        self::assertStringContainsString('consents-grid', $crawler->html());
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
         $this->configManager->set(
@@ -78,12 +65,11 @@ class ConsentControllerTest extends WebTestCase
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
         $formValues['oro_consent']['names']['values']['default'] = self::CONSENT_TEST_NAME;
-        $formValues['oro_consent']['mandatory'] = (int) true;
+        $formValues['oro_consent']['mandatory'] = 1;
         $formValues['oro_consent']['content_node'] = $contentNode->getId();
         unset($formValues['oro_consent']['declinedNotification']);
         $formValues['input_action'] = '{"route":"oro_consent_update","params":{"id":"$id"}}';
@@ -99,39 +85,29 @@ class ConsentControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertConsentSaved(
-            $crawler,
-            self::CONSENT_TEST_NAME,
-            'Consent has been created'
-        );
+        $this->assertConsentSaved($crawler, self::CONSENT_TEST_NAME, 'Consent has been created');
 
-        $consent = $this->getConsentDataByName(self::CONSENT_TEST_NAME);
-
-        return $consent->getId();
+        return $this->getConsentDataByName(self::CONSENT_TEST_NAME)->getId();
     }
 
     /**
      * @depends testCreate
-     * @param int $id
-     *
-     * @return int
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_update', ['id' => $id]));
 
         $html = $crawler->html();
-        static::assertStringContainsString(self::CONSENT_TEST_NAME, $html);
+        self::assertStringContainsString(self::CONSENT_TEST_NAME, $html);
 
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
         $formValues['oro_consent']['names']['values']['default'] = self::CONSENT_UPDATED_TEST_NAME;
-        $formValues['oro_consent']['mandatory'] = (int) false;
+        $formValues['oro_consent']['mandatory'] = 0;
         $formValues['input_action'] = '{"route":"oro_consent_update","params":{"id":"$id"}}';
 
         // Submit form
@@ -139,11 +115,7 @@ class ConsentControllerTest extends WebTestCase
         $this->client->followRedirects(true);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertConsentSaved(
-            $crawler,
-            self::CONSENT_UPDATED_TEST_NAME,
-            'Consent has been saved'
-        );
+        $this->assertConsentSaved($crawler, self::CONSENT_UPDATED_TEST_NAME, 'Consent has been saved');
 
         $consent = $this->getConsentDataByName(self::CONSENT_UPDATED_TEST_NAME);
         $this->assertEquals($id, $consent->getId());
@@ -153,9 +125,8 @@ class ConsentControllerTest extends WebTestCase
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testDelete($id)
+    public function testDelete(int $id)
     {
         $entityClass = Consent::class;
         $operationName = 'DELETE';
@@ -183,7 +154,7 @@ class ConsentControllerTest extends WebTestCase
                 'redirectUrl' => $this->getUrl('oro_consent_index'),
                 'pageReload' => true
             ],
-            json_decode($this->client->getResponse()->getContent(), true)
+            self::jsonToArray($this->client->getResponse()->getContent())
         );
 
         $this->client->request('GET', $this->getUrl('oro_consent_view', ['id' => $id]));
@@ -193,32 +164,21 @@ class ConsentControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string $consentName
-     * @param string $assertText
-     */
-    protected function assertConsentSaved(Crawler $crawler, $consentName, $assertText = 'Consent has been saved')
+    private function assertConsentSaved(Crawler $crawler, string $consentName, string $assertText): void
     {
         $html = $crawler->html();
         $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2);
-        static::assertStringContainsString($assertText, $html);
-        static::assertStringContainsString($consentName, $html);
-        static::assertStringContainsString($contentNode->getDefaultTitle()->getString(), $html);
+        self::assertStringContainsString($assertText, $html);
+        self::assertStringContainsString($consentName, $html);
+        self::assertStringContainsString($contentNode->getDefaultTitle()->getString(), $html);
         $this->assertEquals($consentName, $crawler->filter('h1.page-title__entity-title')->html());
     }
 
-    /**
-     * @param string $name
-     *
-     * @return Consent
-     */
-    protected function getConsentDataByName($name)
+    private function getConsentDataByName(string $name): Consent
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroConsentBundle:Consent')
-            ->getRepository('OroConsentBundle:Consent');
+            ->getRepository(Consent::class);
         $qb = $repository->createQueryBuilder('consent');
         $joinExpr = $qb->expr()->isNull('name.localization');
         $consent = $qb

@@ -30,13 +30,10 @@ class LineItemRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures(
-            [
-                LoadShoppingListLineItems::class,
-                LoadShoppingListConfigurableLineItems::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadShoppingListLineItems::class,
+            LoadShoppingListConfigurableLineItems::class
+        ]);
     }
 
     public function testFindDuplicateInShoppingList(): void
@@ -102,7 +99,7 @@ class LineItemRepositoryTest extends WebTestCase
         }
 
         $this->assertTrue(count($shoppingListLabelList) > 1);
-        $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
+        $this->assertContains($shoppingList->getLabel(), $shoppingListLabelList);
     }
 
     public function testGetProductItemsWithShoppingListNames()
@@ -123,44 +120,29 @@ class LineItemRepositoryTest extends WebTestCase
 
         $shoppingListLabelList = [];
         $productSkuList = [];
-        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             $productSkuList[] = $lineItem->getProduct()->getSku();
             $shoppingListLabelList[] = $lineItem->getShoppingList()->getLabel();
         }
 
         $this->assertTrue(count($productSkuList) > 1);
-        $this->assertTrue(in_array($product->getSku(), $productSkuList));
+        $this->assertContains($product->getSku(), $productSkuList);
 
         $this->assertTrue(count($shoppingListLabelList) > 1);
-        $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
+        $this->assertContains($shoppingList->getLabel(), $shoppingListLabelList);
     }
 
     /**
      * @dataProvider productItemsWithShoppingListNamesDataProvider
-     * @param array $productReferences
-     * @param array $shoppingListReferences
-     * @param string $userEmail
-     * @param string $roleName
      */
     public function testGetProductItemsWithShoppingListNamesForProduct7(
         array $productReferences,
         array $shoppingListReferences,
-        $userEmail,
-        $roleName
+        string $userEmail,
+        string $roleName
     ) {
-        /** @var EntityRepository $userRepository */
-        $userRepository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(CustomerUser::class);
-
-        /** @var CustomerUser $customerUser */
-        $customerUser = $userRepository->findOneBy(['email' => $userEmail]);
-
-        $customerUserRoleRepository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(CustomerUserRole::class);
-        $role = $customerUserRoleRepository->findOneBy(['role' => $roleName]);
+        $customerUser = $this->getCustomerUserRepository()->findOneBy(['email' => $userEmail]);
+        $role = $this->getCustomerUserRoleRepository()->findOneBy(['role' => $roleName]);
         $token = new UsernamePasswordOrganizationToken(
             $customerUser,
             LoadCustomerUserData::LEVEL_1_PASSWORD,
@@ -182,13 +164,14 @@ class LineItemRepositoryTest extends WebTestCase
         foreach ($productReferences as $productReference) {
             /** @var Product $product */
             $product = $this->getReference($productReference);
-            $expectedProductSkuList[$product->getSku()] = $product->getSku();
+            $productSku = $product->getSku();
+            $expectedProductSkuList[$productSku] = $productSku;
         }
 
         $expectedShoppingListLabelList = [];
         foreach ($shoppingListReferences as $shoppingListReference) {
-            $expectedShoppingListLabelList[$this->getReference($shoppingListReference)->getLabel()] =
-                $this->getReference($shoppingListReference)->getLabel();
+            $shoppingListLabel = $this->getReference($shoppingListReference)->getLabel();
+            $expectedShoppingListLabelList[$shoppingListLabel] = $shoppingListLabel;
         }
 
         $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNames(
@@ -198,24 +181,22 @@ class LineItemRepositoryTest extends WebTestCase
 
         $shoppingListLabelList = [];
         $productSkuList = [];
-        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
-            $productSkuList[$lineItem->getProduct()->getSku()] = $lineItem->getProduct()->getSku();
-            $shoppingListLabelList[$lineItem->getShoppingList()->getLabel()] = $lineItem->getShoppingList()->getLabel();
+            $lineItemProductSku = $lineItem->getProduct()->getSku();
+            $productSkuList[$lineItemProductSku] = $lineItemProductSku;
+            $lineItemShoppingListLabel = $lineItem->getShoppingList()->getLabel();
+            $shoppingListLabelList[$lineItemShoppingListLabel] = $lineItemShoppingListLabel;
         }
 
         foreach ($expectedProductSkuList as $key => $value) {
-            static::assertEquals($productSkuList[$key], $value);
+            self::assertEquals($productSkuList[$key], $value);
         }
         foreach ($expectedShoppingListLabelList as $key => $value) {
-            static::assertEquals($shoppingListLabelList[$key], $value);
+            self::assertEquals($shoppingListLabelList[$key], $value);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function productItemsWithShoppingListNamesDataProvider()
+    public function productItemsWithShoppingListNamesDataProvider(): array
     {
         return [
             'as frontend administrator customer user has access to all shopping lists of his/her business unit' => [
@@ -359,19 +340,18 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertContains($lineItem5, $lineItems);
     }
 
-    /**
-     * @return LineItemRepository
-     */
-    protected function getLineItemRepository()
+    private function getLineItemRepository(): LineItemRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(LineItem::class);
     }
 
-    /**
-     * @return EntityRepository
-     */
-    protected function getCustomerUserRepository()
+    private function getCustomerUserRepository(): EntityRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(CustomerUser::class);
+    }
+
+    private function getCustomerUserRoleRepository(): EntityRepository
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(CustomerUserRole::class);
     }
 }

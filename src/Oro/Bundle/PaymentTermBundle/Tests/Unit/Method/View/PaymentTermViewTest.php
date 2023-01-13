@@ -14,58 +14,36 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentTermProvider;
+    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTermProvider;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    /** @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentConfig;
 
-    /**
-     * @var PaymentTermView
-     */
-    protected $methodView;
-
-    /**
-     * @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentConfig;
+    /** @var PaymentTermView */
+    private $methodView;
 
     protected function setUp(): void
     {
-        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                static function (string $key) {
-                    return sprintf('[trans]%s[/trans]', $key);
-                }
-            );
-
+        $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);
         $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
 
-        $this->methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->paymentConfig);
-    }
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function (string $key) {
+                return sprintf('[trans]%s[/trans]', $key);
+            });
 
-    protected function tearDown(): void
-    {
-        unset($this->methodView, $this->configManager, $this->translator, $this->paymentTermProvider);
+        $this->methodView = new PaymentTermView($this->paymentTermProvider, $translator, $this->paymentConfig);
     }
 
     public function testGetOptionsEmpty()
     {
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -84,9 +62,8 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
 
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -111,9 +88,8 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
         $sourceEntity->expects($this->once())
             ->method('getSourceEntity')
             ->willReturn($checkoutSourceEntity);
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getSourceEntity')
             ->willReturn($sourceEntity);
 
@@ -130,9 +106,8 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
 
     public function testGetOptionsNullCustomer()
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::once())
+        $context->expects(self::once())
             ->method('getCustomer')
             ->willReturn(null);
 

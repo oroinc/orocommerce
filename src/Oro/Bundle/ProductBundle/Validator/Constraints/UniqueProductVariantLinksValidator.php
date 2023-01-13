@@ -59,7 +59,9 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
         $simpleProducts = $this->getSimpleProducts($value);
 
         foreach ($simpleProducts as $product) {
-            $variantHashes[] = $this->getVariantFieldsHash($variantFields, $product);
+            if ($product) {
+                $variantHashes[] = $this->getVariantFieldsHash($variantFields, $product);
+            }
         }
 
         if (count($variantHashes) !== count(array_unique($variantHashes))) {

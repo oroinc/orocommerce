@@ -42,6 +42,7 @@ Feature: Landing page open on frontend
     And image "cat1 wysiwyg image" is loaded
     And I remember filename of the image "cat1 wysiwyg image"
     And I remember filename of the file "cat1 wysiwyg file"
+    And I click on "More Link"
     And I should see "File of cat1"
 
     When I go to System/Frontend Menus

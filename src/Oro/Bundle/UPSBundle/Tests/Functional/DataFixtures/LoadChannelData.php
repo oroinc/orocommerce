@@ -7,16 +7,12 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
-class LoadChannelData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadChannelData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * @var array Channels configuration
-     */
-    protected $channelData = [
+    private array $channelData = [
         [
             'name' => 'UPS1',
             'type' => 'ups',
@@ -34,50 +30,33 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     ];
 
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [LoadTransportData::class, LoadUser::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $userManager = $this->container->get('oro_user.manager');
-        $admin = $userManager->findUserByEmail(LoadAdminUserData::DEFAULT_ADMIN_EMAIL);
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
-
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         foreach ($this->channelData as $data) {
             $entity = new Channel();
             /** @var Transport $transport */
             $transport = $this->getReference($data['transport']);
             $entity->setName($data['name']);
             $entity->setType($data['type']);
-            $entity->setDefaultUserOwner($admin);
-            $entity->setOrganization($organization);
+            $entity->setDefaultUserOwner($user);
+            $entity->setOrganization($user->getOrganization());
             $entity->setTransport($transport);
             $this->setReference($data['reference'], $entity);
 
             $manager->persist($entity);
         }
         $manager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            __NAMESPACE__ . '\LoadTransportData'
-        ];
     }
 }

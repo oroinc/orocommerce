@@ -1,0 +1,216 @@
+/* @theme: default; */
+
+.shopping-list-dropdown {
+    min-width: 280px;
+
+    &__item {
+        display: flex;
+
+        font-size: $base-font-size - 1px;
+
+        @include safe-area-offset(padding, $shopping-list-dropdown-item-inner-offset);
+
+        border-bottom: $shopping-list-dropdown-item-border;
+
+        &--limit {
+            display: block;
+            padding: 0;
+        }
+    }
+
+    &__radio {
+        width: $shopping-list-dropdown-radio-width;
+    }
+
+    &__link {
+        display: block;
+        width: calc(100% - #{$shopping-list-dropdown-radio-width});
+        padding-left: $offset-x-s;
+    }
+
+    &__link,
+    &__link:hover {
+        text-decoration: none;
+
+        color: $shopping-list-dropdown-link-color;
+    }
+
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: $offset-x-s;
+    }
+
+    &__name {
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: $offset-x-m;
+
+        text-transform: uppercase;
+    }
+
+    &__name,
+    &__details {
+        word-break: break-all;
+    }
+
+    &__name-inner {
+        display: block;
+        max-width: 140px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__details {
+        text-align: right;
+        padding-left: $offset-x-s;
+    }
+
+    &__details-count {
+        display: inline-block;
+    }
+
+    &__details-subtotal {
+        display: inline-block;
+    }
+
+    &__products {
+        display: block;
+
+        color: $shopping-list-dropdown-products-color;
+
+        &__item {
+            display: block;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    &__info {
+        color: $shopping-list-dropdown-info-color;
+    }
+
+    &__info-container {
+        margin: 16px 0;
+        padding: 0 12px;
+        text-align: center;
+    }
+
+    &__info-container &__info {
+        display: inline-block;
+    }
+
+    &__link:hover &__info {
+        text-decoration: underline;
+    }
+
+    &__ellipsis {
+        display: inline-block;
+        width: 100%;
+
+        font-size: $base-font-size--large + 2px;
+
+        line-height: .4;
+        vertical-align: top;
+    }
+
+    &__empty-list {
+        text-align: center;
+        padding: 34px 12px;
+    }
+
+    &__footer {
+        border-top: $shopping-list-dropdown-footer-border;
+    }
+
+    &__total {
+        text-align: center;
+        margin: 16px 0 12px;
+        padding: 0 12px;
+    }
+
+    &__order-container {
+        margin: 12px 0 16px;
+        padding: 0 12px;
+    }
+
+    &__product-list {
+        max-height: 425px;
+        overflow-y: auto;
+    }
+
+    &__product-item {
+        height: 85px;
+        padding: 12px;
+        display: flex;
+
+        &:not(:first-child) {
+            border-top: $shopping-list-dropdown-product-item-border-top;
+        }
+    }
+
+    &__product-img {
+        width: 60px;
+        height: 60px;
+        border: $shopping-list-dropdown-product-img-border-top;
+
+        img {
+            width: 58px;
+            height: 58px;
+            display: block;
+        }
+    }
+
+    &__product-base {
+        width: calc(100% - 60px);
+        padding-left: 10px;
+    }
+
+    &__product-title {
+        height: 32px;
+        display: block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        &:hover {
+            color: $shopping-list-dropdown-item-title-hover-color;
+        }
+    }
+
+    &__product-total {
+        float: right;
+        padding-left: 10px;
+    }
+
+    &__product-sku {
+        width: 100%;
+        margin-top: 12px;
+        clear: both;
+    }
+
+    &__product-sku-value {
+        color: $shopping-list-product-sku-value-color;
+    }
+}
+
+@include breakpoint('tablet') {
+    .shopping-list-dropdown {
+        &__item {
+            &--limit {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        &__product-list {
+            max-height: none;
+        }
+    }
+}

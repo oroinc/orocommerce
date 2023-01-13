@@ -66,13 +66,19 @@ oro_behat_extension:
                         locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
                     Title English (United States) use fallback:
                         type: 'xpath'
-                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
                     URL Slugs English (United States) value:
                         type: 'xpath'
                         locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
                     URL Slugs English (United States) use fallback:
                         type: 'xpath'
-                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "checkbox-view__input")]'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+                    URL Slugs French value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slugs French use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
                     Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
                     Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
@@ -144,7 +150,7 @@ oro_behat_extension:
                 locator: '//div[contains(@class, "embedded-list")]//a//dt[contains(text(),"Headlamps")]'
 
         WebCatalogSystemConfigSelect:
-            selector: '.oro-select2:contains("Choose a Web Catalog") .select2-offscreen'
+            selector: '[name="routing[oro_web_catalog___web_catalog][value]"]'
             class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
         Clearance menu item:

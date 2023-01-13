@@ -1,20 +1,25 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import MapTypeBuilder from 'orocms/js/app/grapesjs/type-builders/map-type-builder';
+import MapTypeBuilder from 'orocms/js/app/grapesjs/types/map-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/grid-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/grid-type', () => {
     let mapTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {

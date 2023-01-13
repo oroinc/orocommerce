@@ -35,8 +35,9 @@ services:
     oro_catalog.event_listener.form_view:
         class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
         arguments:
-            - "@translator"
-            - "@oro_entity.doctrine_helper"
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -57,6 +58,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ExportDatagridListener'
         arguments:
             - '@doctrine'
+            - '@oro_catalog.datagrid.export.category_filter.registry'
         tags:
             - { name: kernel.event_listener, event: oro.import_export.before_get_ids, method: onBeforeExportGetIds }
 
@@ -132,7 +134,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler'
         public: false
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_product.search.product_reindex_manager'
 
     oro_catalog.event_listener.orm.category_listener:
@@ -201,7 +203,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_redirect.url_cache'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'category' }
 
@@ -322,7 +324,7 @@ services:
     oro_catalog.access_rule.frontend_organization_for_category:
         class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
         arguments:
-            - '@oro_security.token_accessor'
+            - '@oro_organization.organization_restriction_provider'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\CatalogBundle\Entity\Category, frontend: true }
 
@@ -354,3 +356,26 @@ services:
             - [addCacheToClear, ['@oro_catalog.layout.data_provider.category.cache']]
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_catalog.event_listener.datagrid.frontend_category_sort_order:
+        class: Oro\Bundle\CatalogBundle\EventListener\FrontendCategorySortOrderDatagridListener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
+
+    oro_catalog.datagrid.export.category_filter.registry:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Datagrid\CategoryFilterRegistry
+        calls:
+            - [add, ['@oro_catalog.datagrid.export.category_filter.default']]
+
+    oro_catalog.datagrid.export.category_filter.default:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Datagrid\DefaultCategoryFilter
+
+    oro_catalog.event_listener.search.add_category_to_product_autocomplete:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\Search\AddCategoryToProductAutocompleteListener'
+        arguments:
+            - '@router'
+            - '@oro_ui.twig.html_tag'
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteQueryEvent, method: onProcessAutocompleteQuery }
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }

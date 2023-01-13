@@ -5,6 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener;
 use Psr\Log\LoggerInterface;
@@ -12,33 +13,27 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PayflowExpressCheckoutListener */
-    protected $listener;
-
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
+    private $logger;
 
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentMethodProvider;
+    private $paymentMethodProvider;
+
+    /** @var PayflowExpressCheckoutListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->listener = new PayflowExpressCheckoutListener($this->paymentMethodProvider);
         $this->listener->setLogger($this->logger);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->logger);
-    }
-
     public function testOnError()
     {
-        $this->paymentMethodProvider
-            ->expects(static::once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
@@ -67,24 +62,18 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnErrorWithWrongTransaction()
     {
-        $this->paymentMethodProvider
-            ->expects(static::once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(false);
 
         $transaction = $this->createMock(PaymentTransaction::class);
-        $transaction
-            ->expects($this->once())
+        $transaction->expects($this->once())
             ->method('getPaymentMethod')
             ->willReturn('payment_method');
-
-        $transaction
-            ->expects($this->never())
+        $transaction->expects($this->never())
             ->method('setSuccessful');
-
-        $transaction
-            ->expects($this->never())
+        $transaction->expects($this->never())
             ->method('setActive');
 
         $event = new CallbackErrorEvent([]);
@@ -110,16 +99,16 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($transaction);
 
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with('complete', $transaction);
 
-        $this->paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider->expects(self::any())
             ->method('hasPaymentMethod')
             ->with('payment_method_id')
             ->willReturn(true);
-        $this->paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider->expects(self::any())
             ->method('getPaymentMethod')
             ->with('payment_method_id')
             ->willReturn($paymentMethod);
@@ -137,10 +126,8 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider testOnReturnWithoutTokenProvider
-     * @param array $data
-     * @param string $transactionReference
      */
-    public function testOnReturnWithoutToken(array $data, $transactionReference)
+    public function testOnReturnWithoutToken(array $data, string $transactionReference)
     {
         $transaction = new PaymentTransaction();
         $transaction
@@ -156,10 +143,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
     }
 
-    /**
-     * @return array
-     */
-    public function testOnReturnWithoutTokenProvider()
+    public function testOnReturnWithoutTokenProvider(): array
     {
         return [
             'without token' => [
@@ -189,16 +173,16 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
             ->setPaymentMethod('payment_method_id')
             ->setReference('token');
 
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
 
-        $this->paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider->expects(self::any())
             ->method('hasPaymentMethod')
             ->with('payment_method_id')
             ->willReturn(true);
-        $this->paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider->expects(self::any())
             ->method('getPaymentMethod')
             ->with('payment_method_id')
             ->willReturn($paymentMethod);
@@ -206,13 +190,9 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($transaction);
 
-        $this->logger->expects($this->once())->method('error')->with(
-            $this->isType('string'),
-            $this->logicalAnd(
-                $this->isType('array'),
-                $this->isEmpty()
-            )
-        );
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with($this->isType('string'), $this->logicalAnd($this->isType('array'), $this->isEmpty()));
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
         $this->listener->onReturn($event);

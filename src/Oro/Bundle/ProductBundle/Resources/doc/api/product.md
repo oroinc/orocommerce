@@ -423,12 +423,6 @@ Example:
           }
         ]
       },
-      "taxCode": {
-        "data": {
-          "type": "producttaxcodes",
-          "id": "2"
-        }
-      },
       "attributeFamily": {
         "data": {
           "type": "attributefamilies",
@@ -998,12 +992,6 @@ Example:
         "data": {
           "type": "organizations",
           "id": "1"
-        }
-      },
-      "taxCode": {
-        "data": {
-          "type": "producttaxcodes",
-          "id": "2"
         }
       },
       "attributeFamily": {
@@ -2289,33 +2277,6 @@ Example:
 {
   "data": {
     "type": "productunitprecisions",
-    "id": "1"
-  }
-}
-```
-{@/request}
-
-### taxCode
-
-#### get_subresource
-
-Retrieve the record for the taxCode of a specific product record.
-
-#### get_relationship
-
-Retrieve the ID of the taxCode of a specific product record.
-
-#### update_relationship
-
-Replace the taxCode for a specific product.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "producttaxcodes",
     "id": "1"
   }
 }

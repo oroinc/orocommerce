@@ -35,6 +35,7 @@ Doctrine\Common\Collections\ArrayCollection:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@category']
             - setParentCategory: ['@root_category']

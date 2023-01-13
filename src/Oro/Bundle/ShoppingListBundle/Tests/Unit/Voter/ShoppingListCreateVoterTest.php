@@ -5,26 +5,18 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Voter;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Voter\ShoppingListCreateVoter;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListCreateVoterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingListLimitManager;
 
     /** @var ShoppingListCreateVoter */
     private $shoppingListCreateVoter;
 
-    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListLimitManager;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->shoppingListLimitManager = $this->getMockBuilder(ShoppingListLimitManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
 
         $this->shoppingListCreateVoter = new ShoppingListCreateVoter($this->shoppingListLimitManager);
     }

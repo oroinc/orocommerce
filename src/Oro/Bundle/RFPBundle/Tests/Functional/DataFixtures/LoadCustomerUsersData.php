@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -95,12 +96,9 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
     {
         /* @var BaseUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        $organization = $manager->getRepository(Organization::class)->getFirst();
         /* @var CustomerUserRoleRepository $customerUserRoleRepository */
-        $customerUserRoleRepository =  $this->container
-            ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
-            ->getRepository('OroCustomerBundle:CustomerUserRole');
+        $customerUserRoleRepository =  $this->container->get('doctrine')->getRepository(CustomerUserRole::class);
 
         foreach ($this->users as $user) {
             if ($userManager->findUserByUsernameOrEmail($user['email'])) {

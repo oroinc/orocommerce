@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerGroupProductResolvedCacheBuilder;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 
 class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 {
     /**
      * {@inheritdoc}
      */
-    public function buildCacheDataProvider()
+    public function buildCacheDataProvider(): array
     {
         return [
             [
@@ -25,39 +22,20 @@ class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderT
     }
 
     /**
-     * @return CustomerGroupProductRepository|EntityRepository
+     * {@inheritdoc}
      */
-    protected function getRepository()
+    protected function getRepository(): CustomerGroupProductRepository
     {
-        return $this->getContainer()->get('oro_visibility.customer_group_product_repository');
+        return self::getContainer()->get('doctrine')->getRepository(CustomerGroupProductVisibilityResolved::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getCacheBuilder()
+    protected function getCacheBuilder(): CacheBuilderInterface
     {
-        $container = $this->getContainer();
-
-        $productReindexManager = new ProductReindexManager(
-            $container->get('event_dispatcher')
+        return self::getContainer()->get(
+            'oro_visibility.visibility.cache.product.customer_group_product_resolved_cache_builder'
         );
-
-        $indexScheduler = new ProductIndexScheduler(
-            $container->get('oro_entity.doctrine_helper'),
-            $productReindexManager
-        );
-
-        $builder = new CustomerGroupProductResolvedCacheBuilder(
-            $container->get('doctrine'),
-            $container->get('oro_scope.scope_manager'),
-            $indexScheduler,
-            $container->get('oro_entity.orm.insert_from_select_query_executor'),
-            $productReindexManager
-        );
-        $builder->setCacheClass(CustomerGroupProductVisibilityResolved::class);
-        $builder->setRepository($container->get('oro_visibility.customer_group_product_repository'));
-
-        return $builder;
     }
 }

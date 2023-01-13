@@ -4,23 +4,20 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\Extension;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator;
+use Oro\Component\Layout\Exception\LogicException;
 use Oro\Component\Layout\LayoutContext;
 
 class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var WebCatalogContextConfigurator */
-    protected $contextConfigurator;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var WebCatalogContextConfigurator */
+    private $contextConfigurator;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->contextConfigurator = new WebCatalogContextConfigurator($this->configManager);
     }
@@ -38,10 +35,9 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider allowedTypesDataProvider
      */
-    public function testConfigureContext($webCatalogId)
+    public function testConfigureContext(?string $webCatalogId)
     {
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_web_catalog.web_catalog')
             ->willReturn($webCatalogId);
@@ -54,10 +50,7 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($webCatalogId, $context[WebCatalogContextConfigurator::CONTEXT_VARIABLE]);
     }
 
-    /**
-     * @return array
-     */
-    public function allowedTypesDataProvider()
+    public function allowedTypesDataProvider(): array
     {
         return [
             'null' => [null],
@@ -68,11 +61,10 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider notAllowedTypesDataProvider
      */
-    public function testConfigureContextTypeNotAllowed($webCatalogId)
+    public function testConfigureContextTypeNotAllowed(mixed $webCatalogId)
     {
-        $this->expectException(\Oro\Component\Layout\Exception\LogicException::class);
-        $this->configManager
-            ->expects($this->once())
+        $this->expectException(LogicException::class);
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_web_catalog.web_catalog')
             ->willReturn($webCatalogId);
@@ -85,10 +77,7 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($webCatalogId, $context[WebCatalogContextConfigurator::CONTEXT_VARIABLE]);
     }
 
-    /**
-     * @return array
-     */
-    public function notAllowedTypesDataProvider()
+    public function notAllowedTypesDataProvider(): array
     {
         return [
             'array' => [[1]],

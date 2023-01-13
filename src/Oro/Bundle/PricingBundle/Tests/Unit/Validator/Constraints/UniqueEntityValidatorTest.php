@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -12,34 +12,32 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntityValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
 {
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
     /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
-    /** @var Registry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(Registry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->shardManager = $this->createMock(ShardManager::class);
         parent::setUp();
     }
 
     protected function createValidator(): UniqueEntityValidator
     {
-        return new UniqueEntityValidator($this->registry, $this->shardManager);
+        return new UniqueEntityValidator($this->doctrine, $this->shardManager);
     }
 
     public function testNotExpectedValueException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
-        );
+        $this->expectException(UnexpectedTypeException::class);
 
         $constraint = new UniqueEntity();
         $this->validator->validate(new \stdClass(), $constraint);
@@ -82,7 +80,7 @@ class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
             ->with(ProductPrice::class)
             ->willReturn($metadata);
 
-        $this->registry->expects(self::once())
+        $this->doctrine->expects(self::once())
             ->method('getManager')
             ->willReturn($em);
 

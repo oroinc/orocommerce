@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\SwitchableUrlItemsProvider;
 use Oro\Component\Website\WebsiteInterface;
 use PHPUnit\Framework\TestCase;
@@ -12,24 +13,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SwitchableUrlItemsProviderTest extends TestCase
 {
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
     protected function setUp(): void
@@ -42,18 +35,15 @@ class SwitchableUrlItemsProviderTest extends TestCase
 
     public function testExcludeProvider()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
+        $providerConfig = $this->createMock(CmsPageSitemapRestrictionProvider::class);
         $version = '1';
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('exclude_param')
+        $providerConfig->expects($this->once())
+            ->method('isUrlItemsExcluded')
             ->willReturn(true);
 
-        $this->eventDispatcher
-            ->expects($this->never())
+        $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
         $urlItemsProvider = new SwitchableUrlItemsProvider(
@@ -62,8 +52,7 @@ class SwitchableUrlItemsProviderTest extends TestCase
             $this->eventDispatcher,
             $this->registry
         );
-
-        $urlItemsProvider->setExcludeProviderKey('exclude_param');
+        $urlItemsProvider->setProvider($providerConfig);
 
         $res = $urlItemsProvider->getUrlItems($website, $version);
 
@@ -72,23 +61,20 @@ class SwitchableUrlItemsProviderTest extends TestCase
 
     public function testExcludeProviderWebsiteLevel()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
-        /** @var WebsiteInterface $website2 */
         $website2 = $this->createMock(WebsiteInterface::class);
         $version = '1';
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->will($this->returnValueMap([
-                ['exclude_param', false, false, null, false], //global false
-                ['exclude_param', false, false, $website2, false], //site2 false
-                ['exclude_param', false, false, $website, true] // site true
-            ]));
+        $provider = $this->createMock(CmsPageSitemapRestrictionProvider::class);
+        $provider->expects(self::any())
+            ->method('isUrlItemsExcluded')
+            ->willReturnMap([
+                [null, true],
+                [$website, true],
+                [$website2, true]
+            ]);
 
-        $this->eventDispatcher
-            ->expects($this->never())
+        $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
         $urlItemsProvider = new SwitchableUrlItemsProvider(
@@ -97,11 +83,12 @@ class SwitchableUrlItemsProviderTest extends TestCase
             $this->eventDispatcher,
             $this->registry
         );
-
-        $urlItemsProvider->setExcludeProviderKey('exclude_param');
+        $urlItemsProvider->setProvider($provider);
 
         $res = $urlItemsProvider->getUrlItems($website, $version);
+        $this->assertEquals([], $res);
 
+        $res = $urlItemsProvider->getUrlItems($website2, $version);
         $this->assertEquals([], $res);
     }
 }

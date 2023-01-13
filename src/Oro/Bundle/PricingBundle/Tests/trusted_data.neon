@@ -13,12 +13,14 @@ trusted_data:
                 priceToProductRelationClass: true
             insertByProductsRangeForBaseProductPriceToTempTable:
                 priceToProductRelationClass: true
+            executeDuplicatePricesQuery:
+                sql: true
         Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
             applyPriceListLimitations:
                 rootAlias: true
                 limitationQb: true
         Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository:
-            getUnusedPriceListsIds:
+            getUnusedCombinedPriceListsQueryBuilder:
                 entityName: true
                 alias: true
             hasOtherRelations:

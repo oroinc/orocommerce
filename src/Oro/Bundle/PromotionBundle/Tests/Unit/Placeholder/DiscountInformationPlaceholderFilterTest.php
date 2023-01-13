@@ -8,10 +8,7 @@ use Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter;
 
 class DiscountInformationPlaceholderFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DiscountInformationPlaceholderFilter
-     */
-    private $filter;
+    private DiscountInformationPlaceholderFilter $filter;
 
     protected function setUp(): void
     {
@@ -20,16 +17,13 @@ class DiscountInformationPlaceholderFilterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider isApplicableProvider
-     * @param Promotion $promotion
-     * @param string $type
-     * @param bool $expectedResult
      */
-    public function testIsApplicable(Promotion $promotion, $type, $expectedResult)
+    public function testIsApplicable(Promotion $promotion, string $type, bool $expectedResult)
     {
         $this->assertEquals($expectedResult, $this->filter->isApplicable($promotion, $type));
     }
 
-    public function isApplicableProvider()
+    public function isApplicableProvider(): array
     {
         return [
             'is applicable false' => [

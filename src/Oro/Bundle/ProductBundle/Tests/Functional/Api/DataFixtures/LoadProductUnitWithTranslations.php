@@ -16,21 +16,20 @@ class LoadProductUnitWithTranslations extends AbstractFixture implements Contain
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
+        $this->addTranslations();
+
         $productUnit = new ProductUnit();
         $productUnit->setCode('day');
         $productUnit->setDefaultPrecision(1);
-
         $manager->persist($productUnit);
         $manager->flush();
-
-        $this->addTranslations();
 
         $this->addReference('day', $productUnit);
     }
 
-    private function addTranslations()
+    private function addTranslations(): void
     {
         $translations = [
             'messages'   => [
@@ -60,18 +59,12 @@ class LoadProductUnitWithTranslations extends AbstractFixture implements Contain
 
         $translator = $this->container->get('translator');
         $translationManager = $this->container->get('oro_translation.manager.translation');
-
         $locale = $translator->getLocale();
-        $catalogue = $translator->getCatalogue($locale);
         foreach ($translations as $domain => $translates) {
             foreach ($translates as $key => $translate) {
                 $translationManager->saveTranslation($key, $translate, $locale, $domain, Translation::SCOPE_UI);
-                $catalogue->set($key, $translate, $domain);
             }
         }
-
-        // mark translation cache dirty
-        $translationManager->invalidateCache($locale);
         $translationManager->flush();
     }
 }

@@ -2,79 +2,31 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Layout\DataProvider;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
-use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryProviderTreeTest extends WebTestCase
 {
-    use OrganizationTrait, CatalogTrait;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var CategoryRepository
-     */
-    protected $repository;
-
-    /**
-     * @var CategoryProvider
-     */
-    protected $categoryProvider;
-
-    /**
-     * @var TokenAccessorInterface
-     */
-    private $tokenAccessor;
-
-    /**
-     * @var LocalizationHelper
-     */
-    private $localizationHelper;
+    use CatalogTrait;
 
     protected function setUp(): void
     {
         $this->initClient();
-
-        $this->loadFixtures(
-            [
-                LoadMasterCatalogLocalizedTitles::class,
-                LoadCategoryData::class,
-                LoadCategoryProductData::class,
-            ]
-        );
-
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
-        $this->tokenAccessor = $this->getContainer()->get('oro_security.token_accessor');
-        $this->localizationHelper = $this->getContainer()->get('oro_locale.helper.localization');
+        $this->loadFixtures([
+            LoadMasterCatalogLocalizedTitles::class,
+            LoadCategoryData::class,
+            LoadCategoryProductData::class,
+        ]);
     }
 
-    /**
-     * Returns categoryProvider for given category identifier
-     *
-     * @param int $nodeId
-     * @return CategoryProvider
-     */
-    private function getCategoryProviderForNode($nodeId)
+    private function getCategoryProviderForNode(int $nodeId): CategoryProvider
     {
-        /** @var MasterCatalogRootProviderInterface $masterCatalogRootProvider */
-        $masterCatalogRootProvider = $this->getContainer()->get('oro_catalog.provider.master_catalog_root');
-
         $requestProductHandler = $this->createMock(RequestProductHandler::class);
         $requestProductHandler->expects($this->once())
             ->method('getCategoryId')
@@ -82,11 +34,11 @@ class CategoryProviderTreeTest extends WebTestCase
 
         return new CategoryProvider(
             $requestProductHandler,
-            $this->registry,
+            self::getContainer()->get('doctrine'),
             $this->createMock(CategoryTreeProvider::class),
-            $this->tokenAccessor,
-            $this->localizationHelper,
-            $masterCatalogRootProvider
+            self::getContainer()->get('oro_security.token_accessor'),
+            self::getContainer()->get('oro_locale.helper.localization'),
+            self::getContainer()->get('oro_catalog.provider.master_catalog_root')
         );
     }
 
@@ -120,7 +72,7 @@ class CategoryProviderTreeTest extends WebTestCase
         $categoryProvider = $this->getCategoryProviderForNode($this->getRootCategory()->getId());
         $parents = $categoryProvider->getParentCategories();
 
-        $this->assertTrue(is_array($parents));
+        $this->assertIsArray($parents);
         $this->assertCount(0, $parents);
     }
 }

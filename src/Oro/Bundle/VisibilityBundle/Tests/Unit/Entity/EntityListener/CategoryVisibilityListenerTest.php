@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\EntityListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveCategoryVisibilityTopic;
 use Oro\Bundle\VisibilityBundle\Entity\EntityListener\CategoryVisibilityListener;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -15,11 +15,9 @@ class CategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $messageProducer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
-    /** @var CategoryVisibilityListener */
-    private $visibilityListener;
+    private CategoryVisibilityListener $visibilityListener;
 
     protected function setUp(): void
     {
@@ -28,39 +26,39 @@ class CategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
         $this->visibilityListener = new CategoryVisibilityListener($this->messageProducer);
     }
 
-    public function testPostPersist()
+    public function testPostPersist(): void
     {
         $entityId = 123;
         /** @var VisibilityInterface $entity */
         $entity = $this->getEntity(CategoryVisibility::class, ['id' => $entityId]);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
             ->with(
-                Topics::CHANGE_CATEGORY_VISIBILITY,
+                ResolveCategoryVisibilityTopic::getName(),
                 ['entity_class_name' => CategoryVisibility::class, 'id' => $entityId]
             );
 
         $this->visibilityListener->postPersist($entity);
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $entityId = 123;
         /** @var VisibilityInterface $entity */
         $entity = $this->getEntity(CategoryVisibility::class, ['id' => $entityId]);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
             ->with(
-                Topics::CHANGE_CATEGORY_VISIBILITY,
+                ResolveCategoryVisibilityTopic::getName(),
                 ['entity_class_name' => CategoryVisibility::class, 'id' => $entityId]
             );
 
         $this->visibilityListener->preUpdate($entity);
     }
 
-    public function testPreRemove()
+    public function testPreRemove(): void
     {
         $entityId = 123;
         $targetEntityId = 234;
@@ -74,46 +72,46 @@ class CategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
         $entity->setTargetEntity($targetEntity);
         $entity->setScope($scope);
 
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
             ->with(
-                Topics::CHANGE_CATEGORY_VISIBILITY,
+                ResolveCategoryVisibilityTopic::getName(),
                 [
                     'entity_class_name' => CategoryVisibility::class,
                     'target_class_name' => Category::class,
-                    'target_id'         => $targetEntityId,
-                    'scope_id'          => $scopeId
+                    'target_id' => $targetEntityId,
+                    'scope_id' => $scopeId,
                 ]
             );
 
         $this->visibilityListener->preRemove($entity);
     }
 
-    public function testPostPersistWhenDisabled()
+    public function testPostPersistWhenDisabled(): void
     {
         /** @var VisibilityInterface $entity */
         $entity = $this->getEntity(CategoryVisibility::class, ['id' => 123]);
 
-        $this->messageProducer->expects($this->never())
+        $this->messageProducer->expects(self::never())
             ->method('send');
 
         $this->visibilityListener->setEnabled(false);
         $this->visibilityListener->postPersist($entity);
     }
 
-    public function testPreUpdateWhenDisabled()
+    public function testPreUpdateWhenDisabled(): void
     {
         /** @var VisibilityInterface $entity */
         $entity = $this->getEntity(CategoryVisibility::class, ['id' => 123]);
 
-        $this->messageProducer->expects($this->never())
+        $this->messageProducer->expects(self::never())
             ->method('send');
 
         $this->visibilityListener->setEnabled(false);
         $this->visibilityListener->preUpdate($entity);
     }
 
-    public function testPreRemoveWhenDisabled()
+    public function testPreRemoveWhenDisabled(): void
     {
         /** @var Category $targetEntity */
         $targetEntity = $this->getEntity(Category::class, ['id' => 234]);
@@ -124,7 +122,7 @@ class CategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
         $entity->setTargetEntity($targetEntity);
         $entity->setScope($scope);
 
-        $this->messageProducer->expects($this->never())
+        $this->messageProducer->expects(self::never())
             ->method('send');
 
         $this->visibilityListener->setEnabled(false);

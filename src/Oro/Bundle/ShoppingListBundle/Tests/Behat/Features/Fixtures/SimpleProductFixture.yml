@@ -13,22 +13,15 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
   category:
+    organization: '@organization'
     __calls:
       - addTitle: ['@categoryName']
       - setParentCategory: ['@root_category']
-
-Oro\Bundle\RedirectBundle\Entity\Slug:
-  productSlug:
-    url: '/simple-product'
-    slugPrototype: 'simple-product'
-    routeName: 'oro_product_frontend_product_view'
-    routeParameters: {'id': '@product->id'}
 
 Oro\Bundle\ProductBundle\Entity\Product:
   product:
     type: 'simple'
     sku: 'simple-product'
-    slugs: ['@productSlug']
     organization: '@organization'
     owner: '@business_unit'
     attributeFamily: '@defaultProductFamily'

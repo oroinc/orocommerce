@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Behat;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
@@ -16,7 +16,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, Collection $referenceRepository): void
+    public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getRepository(FreightClass::class);
         $referenceRepository->set('parcel', $repository->findOneBy(['code' => 'parcel']));

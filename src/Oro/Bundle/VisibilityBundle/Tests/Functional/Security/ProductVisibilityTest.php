@@ -16,11 +16,8 @@ class ProductVisibilityTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient(
@@ -28,22 +25,17 @@ class ProductVisibilityTest extends FrontendWebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
         $this->setCurrentWebsite('default');
-        $this->loadFixtures(
-            [
-                LoadProductVisibilityData::class,
-                LoadCustomerUserData::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductVisibilityData::class,
+            LoadCustomerUserData::class
+        ]);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
      * @dataProvider visibilityDataProvider
-     *
-     * @param string $configValue
-     * @param array $expectedData
      */
-    public function testVisibility($configValue, $expectedData)
+    public function testVisibility(string $configValue, array $expectedData)
     {
         $configManager = self::getConfigManager('global');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
@@ -60,10 +52,7 @@ class ProductVisibilityTest extends FrontendWebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function visibilityDataProvider()
+    public function visibilityDataProvider(): array
     {
         return [
             'config visible' => [

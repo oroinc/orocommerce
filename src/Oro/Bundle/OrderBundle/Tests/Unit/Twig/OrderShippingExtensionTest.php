@@ -14,10 +14,8 @@ class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $testString = 'test';
 
-        $labelTranslator = $this ->getMockBuilder(ShippingMethodLabelTranslator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $labelTranslator->expects(static::once())
+        $labelTranslator = $this ->createMock(ShippingMethodLabelTranslator::class);
+        $labelTranslator->expects(self::once())
             ->method('getShippingMethodWithTypeLabel')
             ->willReturn($testString);
 
@@ -29,7 +27,7 @@ class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
             ->getContainer($this);
         $extension = new OrderShippingExtension($container);
 
-        static::assertSame(
+        self::assertSame(
             $testString,
             self::callTwigFunction($extension, 'oro_order_shipping_method_label', ['', ''])
         );
@@ -48,7 +46,7 @@ class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
             ->getContainer($this);
         $extension = new OrderShippingExtension($container);
 
-        static::assertSame(
+        self::assertSame(
             $methodName . ', ' . $typeName,
             self::callTwigFunction($extension, 'oro_order_shipping_method_label', [$methodName, $typeName])
         );

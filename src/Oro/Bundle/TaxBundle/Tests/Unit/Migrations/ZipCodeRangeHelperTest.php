@@ -6,20 +6,15 @@ use Oro\Bundle\TaxBundle\Migrations\ZipCodeRangeHelper;
 
 class ZipCodeRangeHelperTest extends \PHPUnit\Framework\TestCase
 {
-    const JURISDICTION_ID = 1;
-    const TIME = 'time';
+    private const JURISDICTION_ID = 1;
+    private const TIME = 'time';
 
     /** @var ZipCodeRangeHelper */
-    protected $helper;
+    private $helper;
 
     protected function setUp(): void
     {
         $this->helper = new ZipCodeRangeHelper();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->helper);
     }
 
     /**
@@ -34,10 +29,7 @@ class ZipCodeRangeHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function zipCodesDataProvider()
+    public function zipCodesDataProvider(): array
     {
         return [
             [

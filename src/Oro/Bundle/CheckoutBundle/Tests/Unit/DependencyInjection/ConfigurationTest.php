@@ -28,10 +28,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $processor->processConfiguration($configuration, $configs));
     }
 
-    /**
-     * @return array
-     */
-    public function processConfigurationDataProvider()
+    public function processConfigurationDataProvider(): array
     {
         return [
             'empty' => [
@@ -70,7 +67,31 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         'checkout_max_line_items_per_page' => [
                             'value' => 1000,
                             'scope' => 'app'
-                        ]
+                        ],
+                        'enable_line_item_grouping' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'group_line_items_by' => [
+                            'value' => 'product.owner',
+                            'scope' => 'app'
+                        ],
+                        'create_suborders_for_each_group' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'enable_shipping_method_selection_per_line_item' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'show_suborders_in_order_history' => [
+                            'value' => true,
+                            'scope' => 'app'
+                        ],
+                        'show_main_orders_in_order_history' => [
+                            'value' => true,
+                            'scope' => 'app'
+                        ],
                     ]
                 ]
             ]

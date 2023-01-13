@@ -15,9 +15,9 @@ use Symfony\Component\Validator\Validation;
 class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -52,18 +52,15 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefixReturnsCorrectString()
     {
         $formType = new MoneyOrderSettingsType();
-        static::assertSame('oro_money_order_settings', $formType->getBlockPrefix());
+        self::assertSame('oro_money_order_settings', $formType->getBlockPrefix());
     }
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects(static::once())
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects(self::once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => MoneyOrderSettings::class
-            ]);
+            ->with(['data_class' => MoneyOrderSettings::class]);
         $formType = new MoneyOrderSettingsType();
         $formType->configureOptions($resolver);
     }

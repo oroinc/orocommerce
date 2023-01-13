@@ -94,4 +94,19 @@ class ContentVariantProvider implements ContentVariantProviderInterface
 
         return null;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRecordSortOrder(array $item)
+    {
+        foreach ($this->providers as $provider) {
+            $recordSortOrder = $provider->getRecordSortOrder($item);
+            if (!is_null($recordSortOrder)) {
+                return $recordSortOrder;
+            }
+        }
+
+        return null;
+    }
 }

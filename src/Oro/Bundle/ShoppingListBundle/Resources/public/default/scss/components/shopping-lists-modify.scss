@@ -1,0 +1,65 @@
+/* @theme: default; */
+
+.shopping-lists-modify {
+    @include clearfix();
+
+    &__text,
+    &__select {
+        display: inline-block;
+
+        vertical-align: middle;
+    }
+
+    &__badges {
+        float: right;
+        margin-top: 3px;
+        margin-left: 4px;
+    }
+
+    &__text {
+        margin-right: 4px;
+    }
+
+    &__input {
+        width: 50px;
+    }
+
+    &__select {
+        min-width: 66px;
+    }
+
+    &__edit {
+        display: inline-block;
+        vertical-align: middle;
+
+        &:not(:first-child) {
+            margin-left: 4px;
+        }
+    }
+
+    &__icon {
+        margin-right: 0;
+    }
+
+    &--hidden {
+        display: none;
+    }
+}
+
+@include breakpoint('mobile') {
+    .shopping-lists-modify {
+        &__input {
+            width: 35px;
+            text-align: center;
+        }
+
+        &__select {
+            min-width: 59px;
+            width: 59px;
+        }
+
+        .select2-container .select2-choice {
+            margin-right: -2px;
+        }
+    }
+}

@@ -9,77 +9,46 @@ use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const CONFIG_KEY = 'oro_order.enable_purchase_history';
-
-    /** @var PreviouslyPurchasedFeatureToggleListener */
-    protected $listener;
+    private const CONFIG_KEY = 'oro_order.enable_purchase_history';
 
     /** @var ProductReindexManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $reindexManager;
+    private $reindexManager;
 
-    /**
-     * @inheritDoc
-     */
+    /** @var PreviouslyPurchasedFeatureToggleListener */
+    private $listener;
+
     protected function setUp(): void
     {
         $this->reindexManager = $this->createMock(ProductReindexManager::class);
+
         $this->listener = new PreviouslyPurchasedFeatureToggleListener($this->reindexManager);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function tearDown(): void
+    private function getConfigUpdateEvent(array $changeSet = [], ?string $scope = null): ConfigUpdateEvent
     {
-        unset($this->listener);
-        unset($this->reindexManager);
+        return new ConfigUpdateEvent(new ConfigChangeSet($changeSet), $scope);
     }
 
-    public function testConfigOptionNotChanged()
+    public function testConfigOptionNotChanged(): void
     {
-        $this->reindexManager
-            ->expects($this->never())
+        $this->reindexManager->expects($this->never())
             ->method('reindexAllProducts');
 
         $event = $this->getConfigUpdateEvent();
         $this->listener->reindexProducts($event);
     }
 
-    public function testConfigOptionChangedInSystemScope()
+    public function testConfigOptionChangedInSystemScope(): void
     {
         $event = $this->getConfigUpdateEvent(
-            [
-                self::CONFIG_KEY => [
-                    'new' => true,
-                    'old' => false
-                ]
-            ],
+            [self::CONFIG_KEY => ['new' => true, 'old' => false]],
             'system'
         );
 
-        $this->reindexManager
-            ->expects($this->once())
+        $this->reindexManager->expects($this->once())
             ->method('reindexAllProducts')
-            ->with(null);
+            ->with(null, true, ['order']);
 
         $this->listener->reindexProducts($event);
-    }
-
-    /**
-     * @param array       $changeSet
-     * @param string|null $scope
-     * @param int|null    $scopeId
-     *
-     * @return ConfigUpdateEvent
-     */
-    protected function getConfigUpdateEvent(array $changeSet = [], $scope = null, $scopeId = null)
-    {
-        return new ConfigUpdateEvent(
-            new ConfigChangeSet(
-                $changeSet
-            ),
-            $scope,
-            $scopeId
-        );
     }
 }

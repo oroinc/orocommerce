@@ -28,9 +28,6 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     /** @var RestrictProductVariationsEventListener */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -45,31 +42,21 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-    }
-
-    /**
      * @dataProvider dataProviderSearch
-     *
-     * @param string $configValue
-     * @param bool $isFrontendRequest
-     * @param bool $isRestrictionApplicable
-     * @param Query $query
      */
-    public function testOnSearchQuery($configValue, $isFrontendRequest, $isRestrictionApplicable, Query $query)
-    {
-        $this->configManager
-            ->expects($this->any())
+    public function testOnSearchQuery(
+        string $configValue,
+        bool $isFrontendRequest,
+        bool $isRestrictionApplicable,
+        Query $query
+    ) {
+        $this->configManager->expects($this->any())
             ->method('get')
             ->willReturnMap([
                 ['oro_product.display_simple_variations', false, false, null, $configValue]
             ]);
 
-        $this->frontendHelper
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn($isFrontendRequest);
         $event = new ProductSearchQueryRestrictionEvent($query);
@@ -82,15 +69,14 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
         } else {
             $this->assertEmpty(
                 $whereExpression,
-                "No expression must be applicable !"
+                'No expression must be applicable !'
             );
         }
     }
 
     public function testOnSearchQueryWithVariantCriteriaExist()
     {
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->willReturnMap([
                 [
@@ -102,7 +88,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
                 ]
             ]);
 
-        $this->frontendHelper
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -111,7 +97,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
         $criteria->andWhere($expression);
 
         $query = new Query();
-        $query->addSelect('integer.product_id');
+        $query->addSelect('integer.system_entity_id as product_id');
         $query->setCriteria($criteria);
 
         $event = new ProductSearchQueryRestrictionEvent($query);
@@ -126,28 +112,25 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     /**
      * @dataProvider dataProviderDb
      */
-    public function testOnDBQuery($configValue, $isFrontendRequest, $isRestrictionApplicable)
+    public function testOnDBQuery(string $configValue, bool $isFrontendRequest, bool $isRestrictionApplicable)
     {
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_product.display_simple_variations')
             ->willReturn($configValue);
 
-        $this->frontendHelper
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn($isFrontendRequest);
 
         $qb = $this->createMock(QueryBuilder::class);
 
         if ($isRestrictionApplicable) {
-            $this->dbQueryBuilderModifier
-                ->expects($this->once())
+            $this->dbQueryBuilderModifier->expects($this->once())
                 ->method('modify')
                 ->with($qb);
         } else {
-            $this->dbQueryBuilderModifier
-                ->expects($this->never())
+            $this->dbQueryBuilderModifier->expects($this->never())
                 ->method('modify');
         }
 
@@ -155,67 +138,61 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
         $this->listener->onDBQuery($event);
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderSearch()
+    public function dataProviderSearch(): array
     {
         return [
             'Restriction applicable not autocomplete' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => true,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Restriction applicable autocomplete' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => true,
-                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as autocomplete_record_id')
             ],
             'Restriction applicable not autocomplete hide catalog' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => true,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Restriction applicable autocomplete hide catalog' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as autocomplete_record_id')
             ],
             'Restriction applicable autocomplete hide catalog not frontend' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id as autocomplete_record_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as autocomplete_record_id')
             ],
             'Is not frontend request' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Config value is display everywhere' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
                 'isFrontendRequest' => true,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
             'Config value is display everywhere and is not frontend' => [
                 'configValue' => Configuration::DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE,
                 'isFrontendRequest' => false,
                 'isRestrictionApplicable' => false,
-                'query' => (new Query())->addSelect('integer.product_id')
+                'query' => (new Query())->addSelect('integer.system_entity_id as product_id')
             ],
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderDb()
+    public function dataProviderDb(): array
     {
         return [
             'Restriction applicable' => [

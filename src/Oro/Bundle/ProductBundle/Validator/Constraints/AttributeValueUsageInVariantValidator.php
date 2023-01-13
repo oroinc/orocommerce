@@ -20,22 +20,11 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
     public const ALIAS = 'oro_product_attribute_value_usage_in_variant_field';
     private const MAX_PRODUCT_SKU_IN_MESSAGE = 10;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var EnumSynchronizer
-     */
-    private $enumSynchronizer;
 
     public function __construct(
-        ManagerRegistry $registry,
-        EnumSynchronizer $enumSynchronizer
+        private ManagerRegistry $registry,
+        private EnumSynchronizer $enumSynchronizer
     ) {
-        $this->registry = $registry;
-        $this->enumSynchronizer = $enumSynchronizer;
     }
 
     /**
@@ -154,9 +143,9 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
             $existingIds[] = $persistedOption->getId();
         }
 
-        $passedIds = array_filter(array_map(static function ($option) {
-            return $option['id'];
-        }, $value));
+        $passedIds = array_filter(array_column($value, 'id'), static function ($value) {
+            return null !== $value && '' !== $value;
+        });
 
         return array_diff($existingIds, $passedIds);
     }

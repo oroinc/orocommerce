@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ShoppingListBundle\Async\MessageFactory;
-use Oro\Bundle\ShoppingListBundle\Async\Topics;
+use Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerWebsiteTopic;
 use Oro\Bundle\ShoppingListBundle\EventListener\ConfigurationListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -13,20 +13,11 @@ class ConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 {
     private const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $producer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
-    /**
-     * @var MessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    private MessageFactory|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
 
-    /**
-     * @var ConfigurationListener
-     */
-    private $listener;
+    private ConfigurationListener $listener;
 
     protected function setUp(): void
     {
@@ -39,64 +30,64 @@ class ConfigurationListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnUpdateAfterNotChangedConfig()
+    public function testOnUpdateAfterNotChangedConfig(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with(self::CONFIG_PATH)
             ->willReturn(false);
 
-        $this->producer->expects($this->never())
-            ->method($this->anything());
+        $this->producer->expects(self::never())
+            ->method(self::anything());
 
         $this->listener->onUpdateAfter($event);
     }
 
-    public function testOnUpdateAfterNoSignificantConfigChanges()
+    public function testOnUpdateAfterNoSignificantConfigChanges(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with(self::CONFIG_PATH)
             ->willReturn(true);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getOldValue')
             ->with(self::CONFIG_PATH)
             ->willReturn(['in_stock', 'out_of_stock']);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getNewValue')
             ->with(self::CONFIG_PATH)
             ->willReturn(['in_stock', 'out_of_stock', 'discontinued']);
 
-        $this->producer->expects($this->never())
-            ->method($this->anything());
+        $this->producer->expects(self::never())
+            ->method(self::anything());
 
         $this->listener->onUpdateAfter($event);
     }
 
-    public function testOnUpdateAfter()
+    public function testOnUpdateAfter(): void
     {
         /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('isChanged')
             ->with(self::CONFIG_PATH)
             ->willReturn(true);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getOldValue')
             ->with(self::CONFIG_PATH)
             ->willReturn(['in_stock', 'out_of_stock', 'discontinued']);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getNewValue')
             ->with(self::CONFIG_PATH)
             ->willReturn(['in_stock']);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getScope')
             ->willReturn('website');
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getScopeId')
             ->willReturn(1);
 
@@ -106,14 +97,14 @@ class ConfigurationListenerTest extends \PHPUnit\Framework\TestCase
                 'id' => 1
             ]
         ];
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('createShoppingListTotalsInvalidateMessageForConfigScope')
             ->with('website', 1)
             ->willReturn($data);
-        $this->producer->expects($this->once())
+        $this->producer->expects(self::once())
             ->method('send')
             ->with(
-                Topics::INVALIDATE_TOTALS_BY_INVENTORY_STATUS_PER_WEBSITE,
+                InvalidateTotalsByInventoryStatusPerWebsiteTopic::getName(),
                 $data
             );
 

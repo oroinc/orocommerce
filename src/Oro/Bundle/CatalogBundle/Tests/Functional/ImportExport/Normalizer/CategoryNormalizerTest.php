@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\ImportExport\Normalizer;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\ImportExport\Normalizer\CategoryNormalizer;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -10,40 +9,32 @@ use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class CategoryNormalizerTest extends WebTestCase
 {
-    use EntityTrait, CatalogTrait;
+    use CatalogTrait;
 
     private Context $context;
-
     private CategoryNormalizer $normalizer;
-
-    private ManagerRegistry $doctrine;
 
     protected function setUp(): void
     {
         $this->initClient();
-
-        $this->loadFixtures(
-            [
-                LoadCategoryData::class,
-                LoadOrganization::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadCategoryData::class,
+            LoadOrganization::class,
+        ]);
 
         $container = $this->getContainer();
 
         $container->get('oro_importexport.field.database_helper')->onClear();
-        $this->doctrine = $container->get('doctrine');
         $this->normalizer = new CategoryNormalizer($container->get('oro_entity.helper.field_helper'));
         $this->normalizer->setDispatcher($container->get('event_dispatcher'));
         $this->normalizer->setSerializer($container->get('oro_importexport.serializer'));
         $this->normalizer->setCategoryImportExportHelper(
             $container->get('oro_catalog.importexport.helper.category_import_export')
         );
-        $this->normalizer->setDoctrine($this->doctrine);
+        $this->normalizer->setDoctrine($container->get('doctrine'));
     }
 
     protected function tearDown(): void

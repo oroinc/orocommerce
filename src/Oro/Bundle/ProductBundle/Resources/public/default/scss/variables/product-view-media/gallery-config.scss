@@ -1,0 +1,36 @@
+/* @theme: default; */
+
+$product-view-media-gallery-border-width: 1px !default;
+$product-view-media-gallery-border: $product-view-media-gallery-border-width
+    solid get-color('additional', 'light') !default;
+$product-view-media-gallery-max-height: 380px !default;
+$product-view-media-gallery-image-max-height: $product-view-media-gallery-max-height -
+    ($product-view-media-gallery-border-width * 2) !default;
+$product-view-media-gallery-z-index: z('base') !default;
+
+$product-view-media-gallery-tab-content-max-width: 380px !default;
+$product-view-media-gallery-container-tab-content-max-width: $product-view-media-gallery-tab-content-max-width !default;
+$product-view-media-gallery-container-position: relative !default;
+
+$product-view-media-gallery-nav-arrow-width: 20px !default;
+$product-view-media-gallery-nav-max-height: 77px !default;
+$product-view-media-gallery-nav-offset-top: 20px !default;
+$product-view-media-gallery-nav-offset: $product-view-media-gallery-nav-offset-top
+    $product-view-media-gallery-nav-arrow-width 0 !default;
+$product-view-media-gallery-nav-item-offset-h: $offset-x-s !default;
+$product-view-media-gallery-nav-item-offset-inner: 0 $product-view-media-gallery-nav-item-offset-h !default;
+$product-view-media-gallery-nav-image-border-color: 1px solid get-color('additional', 'light') !default;
+$product-view-media-gallery-nav-image-current-border-color: get-color('secondary', 'base', 50%) !default;
+$product-view-media-gallery-nav-arrow-height: 100% !default;
+$product-view-media-gallery-nav-arrow-border: 0 !default;
+$product-view-media-gallery-nav-arrow-bg: get-color('additional', 'light') !default;
+$product-view-media-gallery-nav-arrow-icon-prev: var(--fa-var-angle-left) !default;
+$product-view-media-gallery-nav-arrow-icon-next: var(--fa-var-angle-right) !default;
+$product-view-media-gallery-nav-arrow-icon-size: $base-font-size !default;
+$product-view-media-gallery-nav-arrow-side-position: -$product-view-media-gallery-nav-arrow-width !default;
+
+$product-view-media-gallery-nav-loading-url: get-color('additional', 'ultra')
+    url('#{$global-url}/orofrontend/default/images/loader.gif') no-repeat center center !default;
+
+$product-view-media-gallery-nav-tab-content-max-width: $product-view-media-gallery-tab-content-max-width -
+    $product-view-media-gallery-nav-arrow-width * 2 !default;

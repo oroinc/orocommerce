@@ -11,17 +11,31 @@
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_product_index')) }}
-    {% set html = UI.saveAndCloseButton() %}
+
+    {% if updateRoute is not defined %}
+        {% set updateRoute = 'oro_product_update' %}
+    {% endif %}
+
+    {% set html = '' %}
+    {% if is_granted('oro_product_view') %}
+        {% set html = html ~ UI.saveAndCloseButton({
+            'route' : 'oro_product_view',
+            'params' : {'id': '$id'}
+        }) %}
+    {% endif %}
     {% if is_granted('oro_product_create') %}
-        {% set saveAndDuplicateButton = UI.saveActionButton({
+        {% set html = html ~ UI.saveActionButton({
             'label': 'oro.product.ui.save_and_duplicate'|trans,
             'action': 'save_and_duplicate'
         }) %}
-        {% set html = html ~ saveAndDuplicateButton %}
     {% endif %}
-    {% if entity.id or is_granted('oro_product_update') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
+    {% if is_granted(updateRoute) %}
+        {% set html = html ~ UI.saveAndStayButton({
+            'route' : updateRoute,
+            'params': {'id': '$id'}
+        }) %}
     {% endif %}
+
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
@@ -182,7 +196,10 @@
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
                     dataGrid.renderGrid('product-product-variants-edit', dataGridParameters, { cssClass: 'inner-grid' })
                 ]
-            }]
+            }],
+            'options': {
+                'initSectionInstantly': true
+            }
         }] ) %}
     {% endif %}
 

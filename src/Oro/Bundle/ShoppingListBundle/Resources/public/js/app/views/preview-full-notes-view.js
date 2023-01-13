@@ -19,7 +19,11 @@ const PreviewFullNotesView = BaseView.extend({
      * @inheritdoc
      */
     constructor: function PreviewFullNotesView(options) {
-        PreviewFullNotesView.__super__.constructor.call(this, options);
+        const {_initEvent: initEvent, ...restOptions} = options;
+        PreviewFullNotesView.__super__.constructor.call(this, restOptions);
+        if (initEvent) {
+            this.onMouseOver();
+        }
     },
 
     /**

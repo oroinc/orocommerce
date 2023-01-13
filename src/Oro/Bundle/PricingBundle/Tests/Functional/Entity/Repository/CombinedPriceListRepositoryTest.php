@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -19,17 +20,14 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @dbIsolationPerTest
  */
 class CombinedPriceListRepositoryTest extends WebTestCase
 {
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadCombinedPriceListsActivationRulesForRepository::class,
-            ]
-        );
+        $this->loadFixtures([LoadCombinedPriceListsActivationRulesForRepository::class]);
     }
 
     public function testGetPriceListRelations()
@@ -113,7 +111,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertNull($this->getRepository()->getPriceListByWebsite($websiteCa));
     }
 
-    public function testDeleteUnusedPriceListsWithIgnore()
+    public function testDeleteUnusedPriceLists()
     {
         $combinedPriceList = new CombinedPriceList();
         $combinedPriceList->setEnabled(true);
@@ -129,59 +127,45 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $combinedPriceListRepository = $this->getRepository();
 
-        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
-        $this->assertNotEmpty($priceLists);
+        $exceptPriceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
+        $this->assertNotEmpty($exceptPriceLists);
 
-        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds($priceLists, null);
+        $helper = $this->getContainer()->get('oro_entity.orm.native_query_executor_helper');
+
+        // Check that there are no CPLs planned for removal
+        $this->assertFalse($combinedPriceListRepository->hasPriceListsScheduledForRemoval());
+        $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper, $exceptPriceLists);
+        // Check that second call will same PLs will not fail insert
+        $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper, $exceptPriceLists);
+        // Check that there are CPLs planned for removal after scheduleUnusedPriceListsRemoval call
+        $this->assertTrue($combinedPriceListRepository->hasPriceListsScheduledForRemoval());
+
+        $requestedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        // Check that clearUnusedPriceListRemovalSchedule actually clears scheduled removals.
+        $combinedPriceListRepository->clearUnusedPriceListRemovalSchedule($requestedAt);
+        $this->assertFalse($combinedPriceListRepository->hasPriceListsScheduledForRemoval());
+
+        // Schedule price lists for removal again to check their actual deletion
+        $combinedPriceListRepository->scheduleUnusedPriceListsRemoval($helper, $exceptPriceLists);
+
+        $priceListsForDelete = $combinedPriceListRepository
+            ->getPriceListsScheduledForRemoval($helper, $requestedAt, $exceptPriceLists);
         $combinedPriceListRepository->deletePriceLists($priceListsForDelete);
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertNotEmpty($priceLists);
 
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
-        $this->assertEmpty($priceLists);
-    }
-
-    public function testDeleteUnusedPriceLists()
-    {
-        $combinedPriceList = new CombinedPriceList();
-        $combinedPriceList->setEnabled(false);
-        $combinedPriceList->setName('test_cpl2');
-        $this->getManager()->persist($combinedPriceList);
-        $this->getManager()->flush();
-
-        $combinedPriceListRepository = $this->getRepository();
-
-        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds([], false);
-        $combinedPriceListRepository->deletePriceLists($priceListsForDelete);
-
-        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
-        $this->assertNotEmpty($priceLists);
-
-        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
-        $this->assertEmpty($priceLists);
-    }
-
-    public function testDeleteUnusedDisabledPriceLists()
-    {
-        $combinedPriceListRepository = $this->getRepository();
-        $priceLists = $combinedPriceListRepository->getUnusedPriceListsIds();
-        $combinedPriceListRepository->deletePriceLists($priceLists);
-        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertEmpty($priceLists);
     }
 
     /**
      * @dataProvider updateCombinedPriceListConnectionDataProvider
-     * @param string $priceList
-     * @param string $website
-     * @param callable $getActual
-     * @param string|null $targetEntity
      */
     public function testUpdateCombinedPriceListConnection(
-        $priceList,
-        $website,
+        string $priceList,
+        string $website,
         callable $getActual,
-        $targetEntity = null
+        string $targetEntity = null
     ) {
         /** @var CombinedPriceList $priceList */
         $priceList = $this->getReference($priceList);
@@ -193,46 +177,39 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             $targetEntity = $this->getReference($targetEntity);
         }
 
-        $this->getRepository()->updateCombinedPriceListConnection($priceList, $priceList, $website, $targetEntity);
+        $this->getRepository()->updateCombinedPriceListConnection($priceList, $priceList, $website, 0, $targetEntity);
         /** @var BasePriceListRelation $actual */
-        $actual = call_user_func($getActual, $website, $targetEntity);
+        $actual = $getActual($website, $targetEntity);
         $this->assertEquals($priceList->getId(), $actual->getPriceList()->getId());
     }
 
-    /**
-     * @return array
-     */
-    public function updateCombinedPriceListConnectionDataProvider()
+    public function updateCombinedPriceListConnectionDataProvider(): array
     {
         $getConnection = function ($relationEntityClass, Website $website, array $additionalCriteria = []) {
             return $this->getContainer()->get('doctrine')
-                ->getManagerForClass($relationEntityClass)
                 ->getRepository($relationEntityClass)
                 ->findOneBy(array_merge(['website' => $website], $additionalCriteria));
         };
 
         $getCustomerConnection = function (Website $website, Customer $targetEntity) use ($getConnection) {
-            return call_user_func(
-                $getConnection,
-                'OroPricingBundle:CombinedPriceListToCustomer',
+            return $getConnection(
+                CombinedPriceListToCustomer::class,
                 $website,
                 ['customer' => $targetEntity]
             );
         };
 
         $getCustomerGroupConnection = function (Website $website, CustomerGroup $targetEntity) use ($getConnection) {
-            return call_user_func(
-                $getConnection,
-                'OroPricingBundle:CombinedPriceListToCustomerGroup',
+            return $getConnection(
+                CombinedPriceListToCustomerGroup::class,
                 $website,
                 ['customerGroup' => $targetEntity]
             );
         };
 
         $getWebsiteConnection = function (Website $website) use ($getConnection) {
-            return call_user_func(
-                $getConnection,
-                'OroPricingBundle:CombinedPriceListToWebsite',
+            return $getConnection(
+                CombinedPriceListToWebsite::class,
                 $website
             );
         };
@@ -294,11 +271,8 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider cplByPriceListProductDataProvider
-     * @param string $priceList
-     * @param int $result
-     * @param bool $calculatedPrices
      */
-    public function testGetCombinedPriceListsByPriceListProduct($priceList, $result, $calculatedPrices)
+    public function testGetCombinedPriceListsByPriceListProduct(string $priceList, int $result, ?bool $calculatedPrices)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference($priceList);
@@ -307,10 +281,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertCount($result, $cPriceLists);
     }
 
-    /**
-     * @return array
-     */
-    public function cplByPriceListProductDataProvider()
+    public function cplByPriceListProductDataProvider(): array
     {
         return [
             [
@@ -320,7 +291,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             ],
             [
                 'priceList' => 'price_list_3',
-                'result' => 3,
+                'result' => 4,
                 'calculatedPrices' => false,
             ],
             [
@@ -344,7 +315,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $priceLists[] = $this->getReference('price_list_4');
 
         $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceLists($priceLists);
-        $this->assertCount(7, $cPriceLists);
+        $this->assertCount(8, $cPriceLists);
     }
 
     public function testGetCPLsForPriceCollectByTimeOffsetCount()
@@ -382,10 +353,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertCount(1, $cPriceLists);
     }
 
-    /**
-     * @return array
-     */
-    public function getCPLsForPriceCollectByTimeOffsetDataProvider()
+    public function getCPLsForPriceCollectByTimeOffsetDataProvider(): array
     {
         return [
             [
@@ -414,18 +382,12 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertTrue($this->getRepository()->hasOtherRelations($relation3));
     }
 
-    /**
-     * @return CombinedPriceListRepository
-     */
-    protected function getRepository()
+    private function getRepository(): CombinedPriceListRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(CombinedPriceList::class);
     }
 
-    /**
-     * @return ObjectManager
-     */
-    protected function getManager()
+    private function getManager(): ObjectManager
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
     }

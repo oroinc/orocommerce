@@ -26,12 +26,10 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadPriceListRelations::class,
-                LoadPriceListFallbackSettings::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadPriceListRelations::class,
+            LoadPriceListFallbackSettings::class,
+        ]);
     }
 
     /**
@@ -58,10 +56,7 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function restrictByPriceListDataProvider()
+    public function restrictByPriceListDataProvider(): array
     {
         return [
             [
@@ -117,11 +112,8 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getPriceListDataProvider
-     * @param string $customer
-     * @param string $website
-     * @param array $expectedPriceLists
      */
-    public function testGetPriceLists($customer, $website, array $expectedPriceLists)
+    public function testGetPriceLists(string $customer, string $website, array $expectedPriceLists)
     {
         /** @var Customer $customer */
         $customer = $this->getReference($customer);
@@ -140,10 +132,7 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         $this->assertEquals($expectedPriceLists, $actualPriceLists);
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceListDataProvider()
+    public function getPriceListDataProvider(): array
     {
         return [
             [
@@ -179,12 +168,12 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getPriceListIteratorDataProvider
-     * @param string $customerGroup
-     * @param string $website
-     * @param array $expectedCustomers
      */
-    public function testGetCustomerIteratorWithDefaultFallback($customerGroup, $website, $expectedCustomers)
-    {
+    public function testGetCustomerIteratorWithDefaultFallback(
+        string $customerGroup,
+        string $website,
+        array $expectedCustomers
+    ) {
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->getReference($customerGroup);
         /** @var Website $website */
@@ -199,10 +188,7 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         $this->assertSame($expectedCustomers, $actualSiteMap);
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceListIteratorDataProvider()
+    public function getPriceListIteratorDataProvider(): array
     {
         return [
             'group1' => [
@@ -285,7 +271,7 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
             $actual[$item->getCustomer()->getId()][] = $item->getWebsite()->getId();
         }
 
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testDelete()
@@ -321,10 +307,7 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         $this->assertEquals($expectsResult, $relations);
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderRelationsByCustomer()
+    public function dataProviderRelationsByCustomer(): array
     {
         return [
             [
@@ -346,21 +329,15 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return PriceListToCustomerRepository
-     */
-    protected function getRepository()
+    private function getRepository(): PriceListToCustomerRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(PriceListToCustomer::class);
     }
 
     /**
      * @dataProvider assignedPriceListsDataProvider
-     * @param string $websiteReference
-     * @param string $customerReference
-     * @param bool $expected
      */
-    public function testHasAssignedPriceLists($websiteReference, $customerReference, $expected)
+    public function testHasAssignedPriceLists(string $websiteReference, string $customerReference, bool $expected)
     {
         /** @var Website $website */
         $website = $this->getReference($websiteReference);

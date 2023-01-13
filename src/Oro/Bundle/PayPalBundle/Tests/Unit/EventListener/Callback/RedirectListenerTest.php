@@ -15,14 +15,14 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RedirectListener */
-    protected $listener;
-
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    protected $session;
+    private $session;
 
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentMethodProvider;
+    private $paymentMethodProvider;
+
+    /** @var RedirectListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -30,11 +30,6 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
         $this->listener = new RedirectListener($this->session, $this->paymentMethodProvider);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->session);
     }
 
     public function testOnErrorWithoutPaymentTransaction()
@@ -67,18 +62,13 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onErrorProvider
-     * @param bool $errorAlreadyInFlashBag
-     * @param array $options
-     * @param array $receivedResponse
-     * @param Response $expectedResponse
-     * @param string $expectedFlashError
      */
     public function testOnError(
-        $errorAlreadyInFlashBag,
-        $options,
-        $receivedResponse,
-        $expectedResponse,
-        $expectedFlashError = null
+        bool $errorAlreadyInFlashBag,
+        array $options,
+        array $receivedResponse,
+        Response $expectedResponse,
+        ?string $expectedFlashError = null
     ) {
         $paymentTransaction = (new PaymentTransaction())
             ->setTransactionOptions($options)
@@ -112,10 +102,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function onErrorProvider()
+    public function onErrorProvider(): array
     {
         $message = 'Field format error: 10736-A match of the Shipping Address City, State, and Postal Code failed.';
 
@@ -167,7 +154,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
     }
 
-    private function assertResponses(Response $expectedResponse, Response $actualResponse)
+    private function assertResponses(Response $expectedResponse, Response $actualResponse): void
     {
         // Hack response datetime because of requests might have different datetime
         $expectedResponse->setDate($actualResponse->getDate());

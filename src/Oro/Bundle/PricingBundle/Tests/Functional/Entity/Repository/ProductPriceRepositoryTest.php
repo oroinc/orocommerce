@@ -30,33 +30,20 @@ class ProductPriceRepositoryTest extends WebTestCase
 {
     use ProductPriceReference;
 
-    /**
-     * @var ProductPriceRepository
-     */
-    protected $repository;
+    private ProductPriceRepository $repository;
+    private ShardManager $shardManager;
 
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
-
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $this->initClient();
 
-        $this->loadFixtures(
-            [
-                LoadProductPrices::class,
-                LoadPriceListRelations::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductPrices::class,
+            LoadPriceListRelations::class
+        ]);
 
         $this->repository = $this->getContainer()->get('doctrine')
             ->getRepository(ProductPrice::class);
-
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
@@ -131,10 +118,8 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'price_list_id' => $this->getReference('price_list_2')->getId(),
             ],
         ];
-        usort($expected, [$this, 'sort']);
-        usort($actual, [$this, 'sort']);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     public function testGetProductsByPriceListAndVersion()
@@ -155,20 +140,18 @@ class ProductPriceRepositoryTest extends WebTestCase
         $update->getQuery()->execute();
 
         $productIdBatches = iterator_to_array(
-            $this->repository->getProductsByPriceListAndVersion($this->shardManager, $priceList, 100, 2)
+            $this->repository->getProductsByPriceListAndVersion($this->shardManager, $priceList->getId(), 100, 2)
         );
         $this->assertCount(1, $productIdBatches);
         $productIds = reset($productIdBatches);
-        static::assertContainsEquals($product1->getId(), $productIds, \var_export($productIds, true));
-        static::assertContainsEquals($product3->getId(), $productIds, \var_export($productIds, true));
+        self::assertContainsEquals($product1->getId(), $productIds, \var_export($productIds, true));
+        self::assertContainsEquals($product3->getId(), $productIds, \var_export($productIds, true));
     }
 
     /**
-     * @param string $productReference
-     * @param array $priceReferences
      * @dataProvider getPricesByProductDataProvider
      */
-    public function testGetPricesByProduct($productReference, array $priceReferences)
+    public function testGetPricesByProduct(string $productReference, array $priceReferences)
     {
         /** @var Product $product */
         $product = $this->getReference($productReference);
@@ -177,18 +160,15 @@ class ProductPriceRepositoryTest extends WebTestCase
         foreach ($priceReferences as $priceReference) {
             $expectedPrices[] = $this->getReference($priceReference);
         }
-        $exppectedResult = $this->getPriceIds($expectedPrices);
+        $expectedResult = $this->getPriceIds($expectedPrices);
         $result = $this->getPriceIds($this->repository->getPricesByProduct($this->shardManager, $product));
         $this->assertEquals(
-            sort($exppectedResult),
+            sort($expectedResult),
             sort($result)
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getPricesByProductDataProvider()
+    public function getPricesByProductDataProvider(): array
     {
         return [
             'first product' => [
@@ -220,15 +200,9 @@ class ProductPriceRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getPricesBatchDataProvider
-     *
-     * @param string $priceList
-     * @param array $products
-     * @param array $productUnits
-     * @param array $expectedPrices
-     * @param array $currencies
      */
     public function testGetPricesBatch(
-        $priceList,
+        string $priceList,
         array $products,
         array $productUnits,
         array $expectedPrices,
@@ -285,10 +259,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->assertEquals($expectedPriceData, $actualPrices);
     }
 
-    /**
-     * @return array
-     */
-    public function getPricesBatchDataProvider()
+    public function getPricesBatchDataProvider(): array
     {
         return [
             'empty' => [
@@ -417,7 +388,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $newPriceList = new PriceList();
         $newPriceList->setName('test');
 
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:ProductPrice');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
         $em->persist($newPriceList);
         $em->flush();
 
@@ -466,7 +437,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         /** @var ProductPriceRepository $repository */
-        $repository = $manager->getRepository('OroPricingBundle:ProductPrice');
+        $repository = $manager->getRepository(ProductPrice::class);
         $manualPrices = $repository->findByPriceList(
             $this->shardManager,
             $priceList,
@@ -576,29 +547,22 @@ class ProductPriceRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $a
-     * @param array $b
-     * @return bool
-     */
-    protected function sort(array $a, array $b)
+    private function sort(array $a, array $b): int
     {
         if (!empty($a['unit']) && $a['price_list_id'] === $b['price_list_id'] && $a['currency'] === $b['currency']) {
             return $a['unit'] > $b['unit'] ? 1 : 0;
-        } elseif ($a['price_list_id'] === $b['price_list_id']) {
+        }
+        if ($a['price_list_id'] === $b['price_list_id']) {
             return $a['currency'] > $b['currency'] ? 1 : 0;
         }
 
         return $a['price_list_id'] > $b['price_list_id'] ? 1 : 0;
     }
 
-    /**
-     * @param ProductPrice[] $prices
-     * @return array
-     */
-    protected function getPriceIds(array $prices)
+    private function getPriceIds(array $prices): array
     {
         $priceIds = [];
+        /** @var ProductPrice $price */
         foreach ($prices as $price) {
             $priceIds[] = $price->getId();
         }
@@ -606,26 +570,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         return $priceIds;
     }
 
-    /**
-     * @return int
-     */
-    protected function getPricesCount()
-    {
-        $repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(ProductPrice::class);
-
-        return (int)$repository->createQueryBuilder('pp')
-            ->select('COUNT(pp.id)')
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @return PriceRule
-     */
-    protected function createPriceListRule(PriceList $priceList)
+    private function createPriceListRule(PriceList $priceList): PriceRule
     {
         $rule = new PriceRule();
         $rule->setRule('10')
@@ -637,13 +582,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         return $rule;
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param PriceRule $rule
-     * @param string $currency
-     * @return ProductPrice
-     */
-    protected function createProductPrice(PriceList $priceList, PriceRule $rule, $currency = 'USD')
+    private function createProductPrice(PriceList $priceList, PriceRule $rule, string $currency = 'USD'): ProductPrice
     {
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.box');
@@ -661,14 +600,12 @@ class ProductPriceRepositoryTest extends WebTestCase
         return $productPrice;
     }
 
-    /**
-     * @param PriceList $priceList
-     * @param Product $product
-     * @param string $unit
-     * @param Price $price
-     */
-    protected function prepareDetachedPrices(PriceList $priceList, Product $product, $unit, Price $price)
-    {
+    private function prepareDetachedPrices(
+        PriceList $priceList,
+        Product $product,
+        ProductUnit $unit,
+        Price $price
+    ): void {
         $objectRepository = $this->getContainer()->get('doctrine')
             ->getRepository(PriceListToProduct::class);
 

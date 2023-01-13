@@ -1,0 +1,48 @@
+aliases:
+    jquery-elevatezoom$: '@oroinc/elevatezoom/jquery.elevatezoom'
+configs:
+    oroproduct/js/app/datagrid/backend-grid: {}
+    oroproduct/js/app/datagrid/frontend-product-process-options-builder: {}
+    oroproduct/js/app/datagrid/header-cell/backend-action-header-cell: {}
+    oroproduct/js/app/views/sidebar-filters/filter-items-hint-view: {}
+    oroproduct/js/app/views/sidebar-filters/sidebar-toggle-filters-view: {}
+dynamic-imports:
+    commons:
+        - oroproduct/js/app/components/product-unit-select-component
+        - oroproduct/js/app/views/base-product-view
+        - oroproduct/js/app/views/search-autocomplete-view
+        - oroproduct/js/content-processor/product-add-to-dropdown-button
+    orodatagrid:
+        - oroproduct/js/app/components/catalog-switch-component
+        - oroproduct/js/app/datagrid/backend-datagrid-component
+        - oroproduct/js/app/datagrid/backend-grid
+        - oroproduct/js/app/datagrid/backend-pageable-collection
+        - oroproduct/js/app/datagrid/cell/backend-select-row-cell
+        - oroproduct/js/app/datagrid/datagrid-product-lazy-init-view
+        - oroproduct/js/app/datagrid/frontend-product-display-options-builder
+        - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+        - oroproduct/js/app/datagrid/frontend-product-process-options-builder
+        - oroproduct/js/app/datagrid/grid-sidebar-filters-builder
+    oroproduct:
+        - jquery-elevatezoom
+        - oroproduct/js/app/components/breadcrumbs-navigation-block
+        - oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component
+        - oroproduct/js/app/components/product-autocomplete-component
+        - oroproduct/js/app/components/product-unit-component
+        - oroproduct/js/app/components/product-variant-field-component
+        - oroproduct/js/app/components/quick-add-form-button-component
+        - oroproduct/js/app/components/quick-add-row-extension-view-component
+        - oroproduct/js/app/components/redirect-component
+        - oroproduct/js/app/views/base-product-variants-view
+        - oroproduct/js/app/views/product-quantity-editable-view
+        - oroproduct/js/app/views/quick-add-copy-paste-form-view
+        - oroproduct/js/app/views/quick-add-form-view
+        - oroproduct/js/app/views/quick-add-import-form-view
+        - oroproduct/js/app/views/quick-add-row-view
+        - oroproduct/js/app/views/quick-order-view
+        - oroproduct/js/app/widget/product-popup-gallery-widget
+        - oroproduct/js/widget/zoom-widget
+shim:
+    jquery-elevatezoom:
+        imports:
+            - single|jquery|jQuery

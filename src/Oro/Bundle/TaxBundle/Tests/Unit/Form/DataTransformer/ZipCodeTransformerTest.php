@@ -8,35 +8,23 @@ use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class ZipCodeTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ZipCodeTransformer
-     */
-    protected $transformer;
+    /** @var ZipCodeTransformer */
+    private $transformer;
 
     protected function setUp(): void
     {
         $this->transformer = new ZipCodeTransformer();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->transformer);
-    }
-
     /**
      * @dataProvider transformProvider
-     * @param ZipCode $zipCode
-     * @param string $expected
      */
-    public function testTransform($zipCode, $expected)
+    public function testTransform(?ZipCode $zipCode, ?ZipCode $expected)
     {
         $this->assertEquals($expected, $this->transformer->transform($zipCode));
     }
 
-    /**
-     * @return array
-     */
-    public function transformProvider()
+    public function transformProvider(): array
     {
         return [
             'nullable value' => [
@@ -56,18 +44,13 @@ class ZipCodeTransformerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider reverseTransformProvider
-     * @param ZipCode $value
-     * @param ZipCode $expected
      */
-    public function testReverseTransform($value, $expected)
+    public function testReverseTransform(?ZipCode $value, ?ZipCode $expected)
     {
         $this->assertEquals($expected, $this->transformer->reverseTransform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformProvider()
+    public function reverseTransformProvider(): array
     {
         return [
             'nullable value' => [

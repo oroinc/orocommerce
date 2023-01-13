@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Behat;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -15,9 +14,8 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, Collection $referenceRepository)
+    public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
-        /** @var EntityRepository $repository */
         $repository = $doctrine->getManager()->getRepository(PriceListCurrency::class);
         /** @var PriceListCurrency $eur */
         $eur = $repository->findOneBy(['currency' => 'EUR']);

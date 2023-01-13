@@ -75,6 +75,16 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         freeFormProduct:
             - Length:
                 max: 255
+        shippingMethod:
+            - Length:
+                max: 255
+                allowEmptyString: true
+        shippingMethodType:
+            - Length:
+                max: 255
+                allowEmptyString: true
+        shippingEstimateAmount:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     constraints:

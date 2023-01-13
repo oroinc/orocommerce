@@ -22,49 +22,30 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const BASE_SLUG = '/base-slug';
-    const EN_SLUG = '/en-slug';
-    const FR_SLUG = '/fr-slug';
+    private const BASE_SLUG = '/base-slug';
+    private const EN_SLUG = '/en-slug';
+    private const FR_SLUG = '/fr-slug';
 
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $urlGenerator;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $userLocalizationManager;
 
-    /**
-     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $validator;
 
-    /**
-     * @var LocalizedLinksDataProvider
-     */
+    /** @var LocalizedLinksDataProvider */
     private $dataProvider;
 
     protected function setUp(): void
     {
-        $this->urlGenerator = $this->getMockBuilder(CanonicalUrlGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->userLocalizationManager = $this->getMockBuilder(UserLocalizationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->urlGenerator = $this->createMock(CanonicalUrlGenerator::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
 
         $this->dataProvider = new LocalizedLinksDataProvider(
@@ -77,13 +58,11 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAlternatesWithOneEnabledLocalizationWithSlugAwareInterface()
     {
-        /** @var SluggableInterface $entity */
         $entity = $this->createMock(SlugAwareInterface::class);
 
         $this->configureUserLocalizationManagerWithLocalizations([$this->getEntity(Localization::class)]);
 
-        $this->urlGenerator
-            ->expects($this->never())
+        $this->urlGenerator->expects($this->never())
             ->method('getAbsoluteUrl');
 
         $this->assertEmpty($this->dataProvider->getAlternates($entity));
@@ -91,15 +70,13 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAlternatesWithOneEnabledLocalizationAndSluggableInterfaceAndDirectUrlSupported()
     {
-        /** @var SluggableInterface $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $this->configureUserLocalizationManagerWithLocalizations([$this->getEntity(Localization::class)]);
 
         $this->configureConfigManager(Configuration::DIRECT_URL, true);
 
-        $this->urlGenerator
-            ->expects($this->never())
+        $this->urlGenerator->expects($this->never())
             ->method('getAbsoluteUrl');
 
         $this->assertEmpty($this->dataProvider->getAlternates($entity));
@@ -120,8 +97,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->getEntity(Slug::class, ['url' => self::FR_SLUG, 'localization' => $frLocalization])
         ]);
 
-        $this->validator
-            ->expects($this->any())
+        $this->validator->expects($this->any())
             ->method('validate')
             ->willReturn($this->createMock(ConstraintViolationListInterface::class));
 
@@ -131,8 +107,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
         $enUrl = 'http://domain.com/en_slug';
         $frUrl = 'http://domain.com/fr_slug';
 
-        $this->urlGenerator
-            ->expects($this->exactly(3))
+        $this->urlGenerator->expects($this->exactly(3))
             ->method('getAbsoluteUrl')
             ->withConsecutive([self::BASE_SLUG], [self::EN_SLUG], [self::FR_SLUG])
             ->willReturnOnConsecutiveCalls($baseUrl, $enUrl, $frUrl);
@@ -148,12 +123,10 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider directUrlNotSupportedDataProvider
-     * @param string $canonicalUrlType
-     * @param bool $enableDirectUrl
      */
     public function testGetAlternatesWithSluggableInterfaceDataAndDirectUrlNotSupportedAndManyLocalizationsEnabled(
-        $canonicalUrlType,
-        $enableDirectUrl
+        string $canonicalUrlType,
+        bool $enableDirectUrl
     ) {
         $languageEn = $this->getEntity(Language::class, ['code' => 'en']);
         $languageFr = $this->getEntity(Language::class, ['code' => 'fr_FR']);
@@ -164,17 +137,14 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configureConfigManager($canonicalUrlType, $enableDirectUrl);
 
-        $this->validator
-            ->expects($this->any())
+        $this->validator->expects($this->any())
             ->method('validate')
             ->willReturn($this->createMock(ConstraintViolationListInterface::class));
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $systemUrl = 'http://domain.com/some/entity/3';
-        $this->urlGenerator
-            ->expects($this->once())
+        $this->urlGenerator->expects($this->once())
             ->method('getSystemUrl')
             ->with($entity)
             ->willReturn($systemUrl);
@@ -186,12 +156,10 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider directUrlNotSupportedDataProvider
-     * @param string $canonicalUrlType
-     * @param bool $enableDirectUrl
      */
     public function testGetAlternatesWithSluggableInterfaceDataAndDirectUrlNotSupportedAndOneLocalizationEnabled(
-        $canonicalUrlType,
-        $enableDirectUrl
+        string $canonicalUrlType,
+        bool $enableDirectUrl
     ) {
         $languageEn = $this->getEntity(Language::class, ['code' => 'en']);
         $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'language' => $languageEn]);
@@ -200,21 +168,16 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configureConfigManager($canonicalUrlType, $enableDirectUrl);
 
-        $this->validator
-            ->expects($this->any())
+        $this->validator->expects($this->any())
             ->method('validate')
             ->willReturn($this->createMock(ConstraintViolationListInterface::class));
 
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $this->assertEmpty($this->dataProvider->getAlternates($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function directUrlNotSupportedDataProvider()
+    public function directUrlNotSupportedDataProvider(): array
     {
         return [
             'direct url is not enabled' => [
@@ -249,8 +212,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->configureConfigManager(Configuration::DIRECT_URL, true);
 
-        $this->validator
-            ->expects($this->any())
+        $this->validator->expects($this->any())
             ->method('validate')
             ->willReturn($this->createMock(ConstraintViolationListInterface::class));
 
@@ -258,8 +220,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
         $enUrl = 'http://domain.com/en_slug';
         $frUrl = 'http://domain.com/fr_slug';
 
-        $this->urlGenerator
-            ->expects($this->exactly(3))
+        $this->urlGenerator->expects($this->exactly(3))
             ->method('getAbsoluteUrl')
             ->withConsecutive([self::BASE_SLUG], [self::EN_SLUG], [self::FR_SLUG])
             ->willReturnOnConsecutiveCalls($baseUrl, $enUrl, $frUrl);
@@ -304,8 +265,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
         $baseUrl = 'http://domain.com/base_slug';
         $enUrl = 'http://domain.com/en_slug';
 
-        $this->urlGenerator
-            ->expects($this->exactly(2))
+        $this->urlGenerator->expects($this->exactly(2))
             ->method('getAbsoluteUrl')
             ->withConsecutive([self::BASE_SLUG], [self::EN_SLUG])
             ->willReturnOnConsecutiveCalls($baseUrl, $enUrl);
@@ -348,8 +308,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
         $baseUrl = 'http://domain.com/base_slug';
         $enUrl = 'http://domain.com/en_slug';
 
-        $this->urlGenerator
-            ->expects($this->exactly(2))
+        $this->urlGenerator->expects($this->exactly(2))
             ->method('getAbsoluteUrl')
             ->withConsecutive([self::BASE_SLUG], [self::EN_SLUG])
             ->willReturnOnConsecutiveCalls($baseUrl, $enUrl);
@@ -362,30 +321,20 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $this->dataProvider->getAlternates($entity));
     }
 
-    /**
-     * @param string $validLanguageCode
-     * @param string $notValidLanguageCode
-     */
-    private function configureValidatorWithOneValidAndOneNotValidLanguageCode($validLanguageCode, $notValidLanguageCode)
-    {
+    private function configureValidatorWithOneValidAndOneNotValidLanguageCode(
+        string $validLanguageCode,
+        string $notValidLanguageCode
+    ): void {
         $notEmptyViolationList = $this->createMock(ConstraintViolationListInterface::class);
-        $notEmptyViolationList
-            ->expects($this->once())
+        $notEmptyViolationList->expects($this->once())
             ->method('count')
             ->willReturn(1);
 
-        $this->validator
-            ->expects($this->any())
+        $this->validator->expects($this->any())
             ->method('validate')
             ->withConsecutive(
-                [
-                    $validLanguageCode,
-                    $this->isInstanceOf(Locale::class)
-                ],
-                [
-                    $notValidLanguageCode,
-                    $this->isInstanceOf(Locale::class)
-                ]
+                [$validLanguageCode, $this->isInstanceOf(Locale::class)],
+                [$notValidLanguageCode, $this->isInstanceOf(Locale::class)]
             )
             ->willReturnOnConsecutiveCalls(
                 $this->createMock(ConstraintViolationListInterface::class),
@@ -393,57 +342,36 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
             );
     }
 
-    /**
-     * @param array|Slug[] $slugs
-     * @return SluggableInterface
-     */
-    private function configureSluggableInterfaceDataWithSlugs(array $slugs)
+    private function configureSluggableInterfaceDataWithSlugs(array $slugs): SluggableInterface
     {
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
-        $entity
-            ->expects($this->any())
+        $entity->expects($this->any())
             ->method('getSlugs')
             ->willReturn($slugs);
 
         return $entity;
     }
 
-    /**
-     * @param array|Slug[] $slugs
-     * @return SlugAwareInterface
-     */
-    private function configureSlugAwareDataWithSlugs(array $slugs)
+    private function configureSlugAwareDataWithSlugs(array $slugs): SlugAwareInterface
     {
-        /** @var SlugAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SlugAwareInterface::class);
-        $entity
-            ->expects($this->any())
+        $entity->expects($this->any())
             ->method('getSlugs')
             ->willReturn($slugs);
 
         return $entity;
     }
 
-    /**
-     * @param  array|Localization[] $localizations
-     */
-    private function configureUserLocalizationManagerWithLocalizations(array $localizations)
+    private function configureUserLocalizationManagerWithLocalizations(array $localizations): void
     {
-        $this->userLocalizationManager
-            ->expects($this->once())
+        $this->userLocalizationManager->expects($this->once())
             ->method('getEnabledLocalizations')
             ->willReturn($localizations);
     }
 
-    /**
-     * @param string $canonicalUrlType
-     * @param bool $enableDirectUrl
-     */
-    private function configureConfigManager($canonicalUrlType, $enableDirectUrl)
+    private function configureConfigManager(string $canonicalUrlType, bool $enableDirectUrl): void
     {
-        $this->configManager
-            ->expects($this->any())
+        $this->configManager->expects($this->any())
             ->method('get')
             ->willReturnMap([
                 ['oro_redirect.canonical_url_type', false, false, null, $canonicalUrlType],

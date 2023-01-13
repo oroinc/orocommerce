@@ -12,10 +12,10 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
 class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionProviderInterface */
-    protected $baseProvider;
+    private $baseProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|SinglePageTransitionProvider */
-    protected $provider;
+    /** @var SinglePageTransitionProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -28,8 +28,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
         $workflowItem = new WorkflowItem();
         $transitions = [$this->createMock(TransitionData::class)];
 
-        $this->baseProvider
-            ->expects($this->once())
+        $this->baseProvider->expects($this->once())
             ->method('getBackTransitions')
             ->with($workflowItem)
             ->willReturn($transitions);
@@ -49,8 +48,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
         $transitionData = new TransitionData($transition, $isAllowed, $errors);
         $transitionName = 'testName';
 
-        $this->baseProvider
-            ->expects($this->once())
+        $this->baseProvider->expects($this->once())
             ->method('getContinueTransition')
             ->with($workflowItem, $transitionName)
             ->willReturn($transitionData);
@@ -68,8 +66,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
         $workflowItem = new WorkflowItem();
         $transitionName = 'testName';
 
-        $this->baseProvider
-            ->expects($this->once())
+        $this->baseProvider->expects($this->once())
             ->method('getContinueTransition')
             ->with($workflowItem, $transitionName)
             ->willReturn(null);
@@ -77,10 +74,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->provider->getContinueTransition($workflowItem, $transitionName));
     }
 
-    /**
-     * @return array
-     */
-    public function continueTransitionDataProvider()
+    public function continueTransitionDataProvider(): array
     {
         return [
             'transition is allowed' => [
@@ -97,8 +91,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
         $transitionData = $this->createMock(TransitionData::class);
         $workflowItem = new WorkflowItem();
 
-        $this->baseProvider
-            ->expects($this->once())
+        $this->baseProvider->expects($this->once())
             ->method('getBackTransition')
             ->with($workflowItem)
             ->willReturn($transitionData);
@@ -108,8 +101,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testClearCache()
     {
-        $this->baseProvider
-            ->expects($this->once())
+        $this->baseProvider->expects($this->once())
             ->method('clearCache');
 
         $this->provider->clearCache();

@@ -21,51 +21,34 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
 {
     use EntityTrait;
 
-    /**
-     * @var FrontendProductPriceDatagridListener
-     */
-    private $listener;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaRequestHandler
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaRequestHandler */
     private $scopeCriteriaRequestHandler;
 
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currencyManager;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /**
-     * @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $combinedProductPriceProvider;
+
+    /** @var FrontendProductPriceDatagridListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->combinedProductPriceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->combinedProductPriceProvider = $this->getMockBuilder(ProductPriceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->method('trans')
+        $translator->expects(self::any())
+            ->method('trans')
             ->willReturnMap([
                 ['oro.pricing.productprice.price.label', [], null, null, 'Price'],
             ]);
-
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->listener = new FrontendProductPriceDatagridListener(
             $this->scopeCriteriaRequestHandler,
@@ -77,31 +60,26 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->addFeature('oro_pricing');
     }
 
-    protected function setUpPriceListRequestHandler(array $priceCurrencies = [])
+    private function setUpPriceListRequestHandler(array $priceCurrencies = []): void
     {
-        $this->scopeCriteriaRequestHandler
-            ->expects($this->any())
+        $this->scopeCriteriaRequestHandler->expects(self::any())
             ->method('getPriceScopeCriteria')
             ->willReturn(new ProductPriceScopeCriteria());
 
-        $this->currencyManager
-            ->expects($this->any())
+        $this->currencyManager->expects(self::any())
             ->method('getUserCurrency')
             ->willReturn(reset($priceCurrencies));
     }
 
     /**
-     * @param array $priceCurrencies
-     * @param array $expectedConfig
-     * @param bool $isFlatPricing
      * @dataProvider onBuildBeforeDataProvider
      */
     public function testOnBuildBeforeCombined(
         array $priceCurrencies = [],
         array $expectedConfig = [],
-        $isFlatPricing = false
+        bool $isFlatPricing = false
     ) {
-        $this->featureChecker->expects($this->any())
+        $this->featureChecker->expects(self::any())
             ->method('isFeatureEnabled')
             ->willReturnMap([
                 ['oro_pricing', null, true],
@@ -110,7 +88,6 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
 
         $this->setUpPriceListRequestHandler($priceCurrencies);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
 
@@ -120,10 +97,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expectedConfig, $config->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function onBuildBeforeDataProvider()
+    public function onBuildBeforeDataProvider(): array
     {
         return [
             'no currencies' => [
@@ -145,14 +119,14 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                         'columns' => [
                             'minimal_price' => [
                                 'type' => 'frontend-product-price',
-                                'data_name' => 'minimal_price_CPL_ID_CURRENCY_UNIT'
+                                'data_name' => 'minimal_price.CPL_ID_CURRENCY_UNIT'
                             ]
                         ]
                     ],
                     'sorters' => [
                         'columns' => [
                             'minimal_price_sort' => [
-                                'data_name' => 'minimal_price_CPL_ID_CURRENCY',
+                                'data_name' => 'decimal.minimal_price.CPL_ID_CURRENCY',
                                 'type' => 'decimal',
                             ]
                         ]
@@ -176,14 +150,14 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                         'columns' => [
                             'minimal_price' => [
                                 'type' => 'frontend-product-price',
-                                'data_name' => 'minimal_price_PRICE_LIST_ID_CURRENCY_UNIT'
+                                'data_name' => 'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT'
                             ]
                         ]
                     ],
                     'sorters' => [
                         'columns' => [
                             'minimal_price_sort' => [
-                                'data_name' => 'minimal_price_PRICE_LIST_ID_CURRENCY',
+                                'data_name' => 'decimal.minimal_price.PRICE_LIST_ID_CURRENCY',
                                 'type' => 'decimal',
                             ]
                         ]
@@ -196,12 +170,10 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
 
     public function testOnResultAfterNoRecords()
     {
-        $this->currencyManager->expects($this->never())
+        $this->currencyManager->expects(self::never())
             ->method($this->anything());
 
-        /** @var SearchQueryInterface $query */
-        $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
-        /** @var DatagridInterface $datagrid */
+        $query = $this->createMock(SearchQueryInterface::class);
         $datagrid = $this->createMock(DatagridInterface::class);
         $event = new SearchResultAfter($datagrid, $query, []);
         $this->listener->onResultAfter($event);
@@ -209,13 +181,13 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
 
     public function testOnResultAfterFeatureDisabled()
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('oro_pricing')
             ->willReturn(false);
 
         $event = $this->createMock(SearchResultAfter::class);
-        $event->expects($this->never())
+        $event->expects(self::never())
             ->method($this->anything());
 
         $this->listener->onResultAfter($event);
@@ -223,13 +195,13 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
 
     public function testOnBuildBeforeFeatureDisabled()
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('oro_pricing')
             ->willReturn(false);
 
         $event = $this->createMock(BuildBefore::class);
-        $event->expects($this->never())
+        $event->expects(self::never())
             ->method($this->anything());
 
         $this->listener->onBuildBefore($event);
@@ -237,13 +209,10 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider onResultWithCombinedPricesProvider
-     * @param array $products
-     * @param array $combinedProductPrices
-     * @param array $expected
      */
-    public function testOnResultWithCombinedPrices($products, $combinedProductPrices, $expected)
+    public function testOnResultWithCombinedPrices(array $products, array $combinedProductPrices, array $expected)
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('oro_pricing')
             ->willReturn(true);
@@ -253,18 +222,16 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         $records = [new ResultRecord($products)];
         $priceScopeCriteria = new ProductPriceScopeCriteria();
 
-        $this->scopeCriteriaRequestHandler->expects($this->once())
+        $this->scopeCriteriaRequestHandler->expects(self::once())
             ->method('getPriceScopeCriteria')
             ->willReturn($priceScopeCriteria);
 
-        $this->combinedProductPriceProvider->expects($this->once())
+        $this->combinedProductPriceProvider->expects(self::once())
             ->method('getPricesForProductsByPriceList')
             ->with($records, $priceScopeCriteria, 'USD')
-            ->will($this->returnValue($combinedProductPrices));
+            ->willReturn($combinedProductPrices);
 
-        /** @var SearchQueryInterface $query */
-        $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
-        /** @var DatagridInterface $datagrid */
+        $query = $this->createMock(SearchQueryInterface::class);
         $datagrid = $this->createMock(DatagridInterface::class);
         $event = new SearchResultAfter($datagrid, $query, $records);
         $this->listener->onResultAfter($event);
@@ -280,10 +247,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         }
     }
 
-    /**
-     * @return array
-     */
-    public function onResultWithCombinedPricesProvider()
+    public function onResultWithCombinedPricesProvider(): array
     {
         return [
             'valid data' => [

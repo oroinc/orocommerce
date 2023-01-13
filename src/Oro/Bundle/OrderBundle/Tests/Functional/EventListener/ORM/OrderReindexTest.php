@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -16,8 +17,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 
 /**
  * @dbIsolationPerTest
@@ -28,9 +28,8 @@ class OrderReindexTest extends FrontendWebTestCase
     use PreviouslyPurchasedFeatureTrait;
 
     /** @var ManagerRegistry */
-    protected $managerRegistry;
+    private $doctrine;
 
-    /** {@inheritdoc} */
     protected function setUp(): void
     {
         $this->initClient(
@@ -38,7 +37,7 @@ class OrderReindexTest extends FrontendWebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
 
-        $this->managerRegistry = $this->getContainer()->get('doctrine');
+        $this->doctrine = $this->getContainer()->get('doctrine');
 
         $this->loadFixtures([
             LoadOrders::class,
@@ -55,7 +54,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED);
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $expectedMessage = $this->getExpectedMessage($order);
 
@@ -68,7 +67,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference(LoadOrders::ORDER_5);
         $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED);
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $expectedMessage = $this->getExpectedMessage($order);
 
@@ -85,7 +84,7 @@ class OrderReindexTest extends FrontendWebTestCase
             LoadOrders::ORDER_5
         );
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $expectedMessage = $this->getExpectedMessageForLineItem($lineItem->getProduct());
 
@@ -99,11 +98,11 @@ class OrderReindexTest extends FrontendWebTestCase
 
         $expectedMessage = $this->getExpectedMessageForLineItem($product);
 
-        $em = $this->managerRegistry->getManagerForClass(OrderLineItem::class);
+        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
         $em->remove($lineItem);
         $em->flush();
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $this->assertContains($expectedMessage, $messages);
     }
@@ -121,11 +120,11 @@ class OrderReindexTest extends FrontendWebTestCase
 
         $lineItem->setProduct($product8);
 
-        $em = $this->managerRegistry->getManagerForClass(OrderLineItem::class);
+        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
 
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $this->assertContains($expectedMessage, $messages);
     }
@@ -136,21 +135,22 @@ class OrderReindexTest extends FrontendWebTestCase
         $lineItem = $this->getReference(LoadOrderLineItemData::ORDER_LINEITEM_6);
         $lineItem->setCurrency('EUR');
 
-        $em = $this->managerRegistry->getManagerForClass(OrderLineItem::class);
+        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
 
         $expectedMessage = $this->getExpectedMessageForLineItem($lineItem->getProduct());
-        $messages = self::getSentMessagesByTopic(AsyncIndexer::TOPIC_REINDEX, true);
+        $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
         $this->assertNotContains($expectedMessage, $messages);
     }
 
     /**
      * @param Product[]|string[] $products
+     *
      * @return array
      */
-    protected function getExpectedMessageForLineItem(...$products): array
+    private function getExpectedMessageForLineItem(...$products): array
     {
         $productsIds = array_map(function ($product) {
             return ($product instanceof Product) ? $product->getId() : $this->getReference($product)->getId();
@@ -161,17 +161,17 @@ class OrderReindexTest extends FrontendWebTestCase
             'granulize' => true,
             'context' => [
                 'websiteIds' => [$this->getDefaultWebsiteId()],
-                'entityIds' => $productsIds
+                'entityIds' => $productsIds,
+                'fieldGroups' => ['order']
             ],
         ];
     }
 
-    protected function getExpectedMessage(Order $order)
+    private function getExpectedMessage(Order $order): array
     {
         $productIds = [];
-
         foreach ($order->getProductsFromLineItems() as $product) {
-            array_push($productIds, $product->getId());
+            $productIds[] = $product->getId();
         }
 
         return [
@@ -180,51 +180,33 @@ class OrderReindexTest extends FrontendWebTestCase
             'context' => [
                 'websiteIds' => [$this->getDefaultWebsiteId()],
                 'entityIds' => $productIds,
+                'fieldGroups' => ['order']
             ],
         ];
     }
 
-    /**
-     * @param Order  $order
-     * @param string $statusId
-     */
-    protected function changeOrderStatus(Order $order, $statusId)
+    private function changeOrderStatus(Order $order, string $statusId): void
     {
         $order->setInternalStatus($this->getOrderInternalStatusById($statusId));
-        $em = $this->managerRegistry->getManagerForClass(Order::class);
+        $em = $this->doctrine->getManagerForClass(Order::class);
         $em->persist($order);
         $em->flush();
     }
 
-    /**
-     * @param string $id
-     *
-     * @return object|AbstractEnumValue
-     * @throws \InvalidArgumentException
-     */
-    protected function getOrderInternalStatusById($id = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
+    private function getOrderInternalStatusById(string $id): AbstractEnumValue
     {
         $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
 
-        return $this->managerRegistry->getManagerForClass($className)->getRepository($className)->find($id);
+        return $this->doctrine->getManagerForClass($className)->getRepository($className)->find($id);
     }
 
-    /**
-     * @param string    $product
-     * @param int|float $qty
-     * @param string    $productUnit
-     * @param array     $price
-     * @param string    $order
-     *
-     * @return OrderLineItem
-     */
-    protected function createOrderLineItem(
-        $product,
-        $qty,
-        $productUnit,
+    private function createOrderLineItem(
+        string $product,
+        int|float $qty,
+        string $productUnit,
         array $price,
-        $order
-    ) {
+        string $order
+    ): OrderLineItem {
         $lineItem = new OrderLineItem();
         $lineItem->setProduct($this->getReference($product))
             ->setQuantity($qty)
@@ -235,7 +217,7 @@ class OrderReindexTest extends FrontendWebTestCase
         $order = $this->getReference($order);
         $order->addLineItem($lineItem);
 
-        $em = $this->managerRegistry->getManagerForClass(OrderLineItem::class);
+        $em = $this->doctrine->getManagerForClass(OrderLineItem::class);
         $em->persist($lineItem);
         $em->flush();
 

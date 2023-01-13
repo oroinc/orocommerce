@@ -9,26 +9,21 @@ use Oro\Component\Expression\Node;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 /**
- * @SuppressWarnings(PHPMD)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ExpressionParserTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ExpressionParser
-     */
-    protected $expressionParser;
+    /** @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldsProvider;
 
-    /**
-     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fieldsProvider;
+    /** @var ExpressionParser */
+    private $expressionParser;
 
     protected function setUp(): void
     {
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
-        $this->expressionParser = new ExpressionParser(
-            new ExpressionLanguageConverter($this->fieldsProvider)
-        );
+
+        $this->expressionParser = new ExpressionParser(new ExpressionLanguageConverter($this->fieldsProvider));
         $this->expressionParser->addNameMapping('PriceList', 'pl');
         $this->expressionParser->addNameMapping('Product', 'p');
     }
@@ -52,10 +47,7 @@ class ExpressionParserTest extends \PHPUnit\Framework\TestCase
     {
         $expected = new Node\NameNode('p', 'id');
 
-        /** @var ExpressionLanguageConverter|\PHPUnit\Framework\MockObject\MockObject $converter */
-        $converter = $this->getMockBuilder(ExpressionLanguageConverter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $converter = $this->createMock(ExpressionLanguageConverter::class);
         $converter->expects($this->once())
             ->method('convert')
             ->willReturn($expected);
@@ -95,20 +87,15 @@ class ExpressionParserTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidExpressionDataProvider
-     * @param string $expression
-     * @param string $exceptionMessage
      */
-    public function testParseException($expression, $exceptionMessage)
+    public function testParseException(string $expression, string $exceptionMessage)
     {
         $this->expectException(SyntaxError::class);
         $this->expectExceptionMessage($exceptionMessage);
         $this->expressionParser->parse($expression);
     }
 
-    /**
-     * @return array
-     */
-    public function invalidExpressionDataProvider()
+    public function invalidExpressionDataProvider(): array
     {
         return [
             [
@@ -150,19 +137,14 @@ class ExpressionParserTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider expressionsDataProvider
-     * @param string $expression
-     * @param Node\NodeInterface $expected
      */
-    public function testParse($expression, Node\NodeInterface $expected)
+    public function testParse(string $expression, Node\NodeInterface $expected)
     {
         $this->prepareCategoryRelation();
         $this->assertEquals($expected, $this->expressionParser->parse($expression));
     }
 
-    /**
-     * @return array
-     */
-    public function expressionsDataProvider()
+    public function expressionsDataProvider(): array
     {
         return [
             [
@@ -245,20 +227,14 @@ class ExpressionParserTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider lexemeExpressionsDataProvider
-     * @param string $expression
-     * @param array $expected
-     * @param bool $withResolvedContainer
      */
-    public function testGetUsedLexemes($expression, array $expected, $withResolvedContainer = false)
+    public function testGetUsedLexemes(string $expression, array $expected, bool $withResolvedContainer = false)
     {
         $this->prepareCategoryRelation();
         $this->assertEquals($expected, $this->expressionParser->getUsedLexemes($expression, $withResolvedContainer));
     }
 
-    /**
-     * @return array
-     */
-    public function lexemeExpressionsDataProvider()
+    public function lexemeExpressionsDataProvider(): array
     {
         return [
             [
@@ -295,26 +271,22 @@ class ExpressionParserTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    protected function prepareCategoryRelation()
+    private function prepareCategoryRelation(): void
     {
         $this->fieldsProvider->expects($this->any())
             ->method('isRelation')
-            ->willReturnMap(
-                [
-                    ['p', 'category', true]
-                ]
-            );
+            ->willReturnMap([
+                ['p', 'category', true]
+            ]);
         $this->fieldsProvider->expects($this->any())
             ->method('getRealClassName')
             ->with('p', 'category')
             ->willReturn('Category');
         $this->fieldsProvider->expects($this->any())
             ->method('getIdentityFieldName')
-            ->willReturnMap(
-                [
-                    ['Category', 'categoryId'],
-                    ['p', 'productId']
-                ]
-            );
+            ->willReturnMap([
+                ['Category', 'categoryId'],
+                ['p', 'productId']
+            ]);
     }
 }

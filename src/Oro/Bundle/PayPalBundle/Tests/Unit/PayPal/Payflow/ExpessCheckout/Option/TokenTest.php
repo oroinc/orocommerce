@@ -5,17 +5,23 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpessCheckout\Optio
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option\Action;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option\Token;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class TokenTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new Token(), new Action()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -23,16 +29,15 @@ class TokenTest extends AbstractOptionTest
                 ['TOKEN' => 12345, Action::ACTION => Action::GET_EC_DETAILS],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "TOKEN" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "TOKEN" with value 12345 is expected to be of type "string", but is of type "int".',
                 ],
             ],
             'not passed token with GET_EC_DETAILS (required)' => [
                 [Action::ACTION => Action::GET_EC_DETAILS],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\MissingOptionsException',
+                    MissingOptionsException::class,
                     'The required option "TOKEN" is missing.',
                 ],
             ],
@@ -40,7 +45,7 @@ class TokenTest extends AbstractOptionTest
                 [Action::ACTION => Action::DO_EC],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\MissingOptionsException',
+                    MissingOptionsException::class,
                     'The required option "TOKEN" is missing.',
                 ],
             ],

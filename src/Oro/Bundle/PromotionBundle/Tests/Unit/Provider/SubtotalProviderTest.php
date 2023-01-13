@@ -19,39 +19,25 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currencyManager;
 
-    /**
-     * @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteCurrencyProvider;
 
-    /**
-     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rounding;
 
-    /**
-     * @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionExecutor;
 
-    /**
-     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $appliedDiscountsProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * @var SubtotalProvider
-     */
+    /** @var SubtotalProvider */
     private $provider;
 
     protected function setUp(): void
@@ -79,10 +65,10 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->promotionExecutor->expects($this->any())
             ->method('supports')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$order2, true],
                 [$entity, false],
-            ]));
+            ]);
 
         $this->assertFalse($this->provider->isSupported($entity));
         $this->assertTrue($this->provider->isSupported($order2));
@@ -109,11 +95,9 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($messageId) {
-                    return $messageId . ' TRANS';
-                }
-            );
+            ->willReturnCallback(function ($messageId) {
+                return $messageId . ' TRANS';
+            });
 
         $this->rounding->expects($this->exactly(2))
             ->method('round')
@@ -153,17 +137,14 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCachedSubtotal()
     {
-        /** @var Order $order */
         $order = $this->getEntity(Order::class, ['id' => 123]);
         $order->setCurrency('USD');
 
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($messageId) {
-                    return $messageId . ' TRANS';
-                }
-            );
+            ->willReturnCallback(function ($messageId) {
+                return $messageId . ' TRANS';
+            });
 
         $this->appliedDiscountsProvider->expects($this->once())
             ->method('getDiscountsAmountByOrder')
@@ -189,14 +170,7 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getCachedSubtotal($order));
     }
 
-    /**
-     * @param string $label
-     * @param float $amount
-     * @param string $currency
-     * @param int $order
-     * @return Subtotal
-     */
-    private function createSubtotal($label, $amount, $currency, $order): Subtotal
+    private function createSubtotal(string $label, float $amount, string $currency, int $order): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
@@ -206,6 +180,7 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $subtotal->setCurrency($currency);
         $subtotal->setSortOrder($order);
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
+        $subtotal->setRemovable(false);
 
         return $subtotal;
     }

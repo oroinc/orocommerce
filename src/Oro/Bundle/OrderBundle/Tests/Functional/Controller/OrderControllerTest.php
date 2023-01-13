@@ -3,12 +3,14 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DomCrawler\Crawler;
@@ -21,28 +23,10 @@ use Symfony\Component\DomCrawler\Form;
  */
 class OrderControllerTest extends WebTestCase
 {
-    const ORDER_PO_NUMBER = 'PO_NUMBER';
-    const ORDER_PO_NUMBER_UPDATED = 'NEW_PO_NUMBER';
-
-    /**
-     * @var NameFormatter
-     */
-    protected $formatter;
-
-    /**
-     * @var string
-     */
-    public static $overriddenShippingCostAmount = '999.9900';
-
-    /**
-     * @var string
-     */
-    public static $shippingCostCurrency = 'USD';
-
-    /**
-     * @var array
-     */
-    protected $disabledAddressInputs = [
+    private const ORDER_PO_NUMBER = 'PO_NUMBER';
+    private const ORDER_PO_NUMBER_UPDATED = 'NEW_PO_NUMBER';
+    private const OVERRIDDEN_SHIPPING_COST_AMOUNT = '999.9900';
+    private const DISABLED_ADDRESS_INPUTS = [
         'label',
         'firstName',
         'middleName',
@@ -54,16 +38,13 @@ class OrderControllerTest extends WebTestCase
         'postalCode'
     ];
 
-    /**
-     * @param Form $form
-     * @param Customer $orderCustomer
-     * @param $lineItems
-     * @param $discountItems
-     * @return array
-     */
-    public function getSubmittedData($form, $orderCustomer, $lineItems, $discountItems)
-    {
-        $submittedData = [
+    protected function getSubmittedData(
+        Form $form,
+        Customer $orderCustomer,
+        array $lineItems,
+        array $discountItems
+    ): array {
+        return [
             'input_action' => 'save_and_stay',
             'oro_order_type' => [
                 '_token' => $form['oro_order_type[_token]']->getValue(),
@@ -75,20 +56,15 @@ class OrderControllerTest extends WebTestCase
                 'discounts' => $discountItems,
             ]
         ];
-
-        return $submittedData;
     }
 
-    /**
-     * @param Form $form
-     * @param Customer $orderCustomer
-     * @param array $lineItems
-     * @param array $discountItems
-     * @return array
-     */
-    public function getUpdatedData($form, $orderCustomer, $lineItems, $discountItems)
-    {
-        $submittedData = [
+    protected function getUpdatedData(
+        Form $form,
+        Customer $orderCustomer,
+        array $lineItems,
+        array $discountItems
+    ): array {
+        return [
             'input_action' => 'save_and_stay',
             'oro_order_type' => [
                 '_token' => $form['oro_order_type[_token]']->getValue(),
@@ -100,8 +76,6 @@ class OrderControllerTest extends WebTestCase
                 'discounts' => $discountItems,
             ]
         ];
-
-        return $submittedData;
     }
 
     protected function setUp(): void
@@ -109,16 +83,12 @@ class OrderControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses',
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            ]
-        );
-
-        $this->formatter = $this->getContainer()->get('oro_locale.formatter.name');
+        $this->loadFixtures([
+            LoadOrders::class,
+            LoadCustomerUserData::class,
+            LoadCustomerAddresses::class,
+            LoadProductUnitPrecisions::class,
+        ]);
     }
 
     public function testIndex()
@@ -126,7 +96,7 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('orders-grid', $crawler->html());
+        self::assertStringContainsString('orders-grid', $crawler->html());
         $this->assertEquals('Orders', $crawler->filter('h1.oro-subtitle')->html());
     }
 
@@ -134,7 +104,7 @@ class OrderControllerTest extends WebTestCase
     {
         $response = $this->client->requestGrid('orders-grid');
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
         $myOrderData = [];
         foreach ($result['data'] as $row) {
@@ -150,16 +120,12 @@ class OrderControllerTest extends WebTestCase
         $this->assertEquals($order->getPoNumber(), $myOrderData['poNumber']);
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_create'));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
         /** @var Customer $orderCustomer */
@@ -184,6 +150,7 @@ class OrderControllerTest extends WebTestCase
         ];
         $discountItems = $this->getDiscountItems();
         $submittedData = $this->getSubmittedData($form, $orderCustomer, $lineItems, $discountItems);
+        $submittedData['input_action'] = '{"route":"oro_order_update","params":{"id":"$id"}}';
 
         $this->client->followRedirects(true);
 
@@ -230,29 +197,26 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Order $order */
         $order = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroOrderBundle:Order')
-            ->getRepository('OroOrderBundle:Order')
+            ->getRepository(Order::class)
             ->findOneBy(['poNumber' => self::ORDER_PO_NUMBER]);
         $this->assertNotEmpty($order);
 
         $lineItem = $order->getLineItems()[0];
-        static::assertSame($product->getDenormalizedDefaultName(), $lineItem->getProductName());
+        self::assertSame($product->getDenormalizedDefaultName(), $lineItem->getProductName());
 
         return $order->getId();
     }
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testUpdateDiscountAndLineItems($id)
+    public function testUpdateDiscountAndLineItems(int $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         /** @var Customer $orderCustomer */
@@ -277,6 +241,7 @@ class OrderControllerTest extends WebTestCase
         ];
 
         $submittedData = $this->getUpdatedData($form, $orderCustomer, $lineItems, $discountItems);
+        $submittedData['input_action'] = '{"route":"oro_order_update","params":{"id":"$id"}}';
 
         $this->client->followRedirects(true);
 
@@ -315,13 +280,11 @@ class OrderControllerTest extends WebTestCase
         $this->assertEquals($expectedDiscountItems, $actualDiscountItems);
 
         /** @var Order $order */
-        $order = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroOrderBundle:Order')
-            ->getRepository('OroOrderBundle:Order')
+        $order = $this->getContainer()->get('doctrine')
+            ->getRepository(Order::class)
             ->find($id);
 
-        static::assertSame(
+        self::assertSame(
             $order->getLineItems()[1]->getProduct()->getDenormalizedDefaultName(),
             $order->getLineItems()[1]->getProductName()
         );
@@ -329,27 +292,21 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testUpdateBillingAddress($id)
+    public function testUpdateBillingAddress(int $id)
     {
         $this->assertUpdateAddress($id, 'billingAddress');
     }
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testUpdateShippingAddress($id)
+    public function testUpdateShippingAddress(int $id)
     {
         $this->assertUpdateAddress($id, 'shippingAddress');
     }
 
-    /**
-     * @param int $id
-     * @param string $addressType
-     */
-    protected function assertUpdateAddress($id, $addressType)
+    private function assertUpdateAddress(int $id, string $addressType): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
@@ -365,6 +322,8 @@ class OrderControllerTest extends WebTestCase
                 'oro_order_type['. $addressType .'][customerAddress]' => 'a_'. $orderCustomerAddress->getId(),
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -373,53 +332,53 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString('Order has been saved', $html);
+        self::assertStringContainsString('Order has been saved', $html);
 
         $html = $crawler->html();
 
-        static::assertStringContainsString(self::ORDER_PO_NUMBER_UPDATED, $html);
-        static::assertStringContainsString($orderCustomerAddress->getPostalCode(), $html);
-        static::assertStringContainsString($orderCustomerAddress->getStreet(), $html);
-        static::assertStringContainsString(strtoupper($orderCustomerAddress->getCity()), $html);
+        self::assertStringContainsString(self::ORDER_PO_NUMBER_UPDATED, $html);
+        self::assertStringContainsString($orderCustomerAddress->getPostalCode(), $html);
+        self::assertStringContainsString($orderCustomerAddress->getStreet(), $html);
+        self::assertStringContainsString(strtoupper($orderCustomerAddress->getCity()), $html);
 
         // Check address on edit
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         // Check form values
         $formValues = $form->getValues();
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             $orderCustomerAddress->getPostalCode(),
             $formValues['oro_order_type['. $addressType .'][postalCode]']
         );
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             $orderCustomerAddress->getStreet(),
             $formValues['oro_order_type['. $addressType .'][street]']
         );
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             $orderCustomerAddress->getCity(),
             $formValues['oro_order_type['. $addressType .'][city]']
         );
 
         // Check address disabled
-        foreach ($this->disabledAddressInputs as $input) {
+        foreach (self::DISABLED_ADDRESS_INPUTS as $input) {
             $crawler->filter('input[name="oro_order_type['. $addressType .']['. $input .']"][readonly="readonly"]');
         }
     }
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testUpdateShippingCost($id)
+    public function testUpdateShippingCost(int $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
         $form['oro_order_type[overriddenShippingCostAmount]'] = [
-            'value' => self::$overriddenShippingCostAmount,
+            'value' => self::OVERRIDDEN_SHIPPING_COST_AMOUNT,
             'currency' => 'USD',
         ];
 
@@ -439,18 +398,19 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('$999.99', $value);
 
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testUpdateShippingCostEmpty($id)
+    public function testUpdateShippingCostEmpty(int $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = '';
 
         $this->client->followRedirects(true);
@@ -469,18 +429,19 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('N/A', $value);
 
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testUpdateShippingCostZero($id)
+    public function testUpdateShippingCostZero(int $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = 0;
 
         $this->client->followRedirects(true);
@@ -499,15 +460,13 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('$0.00', $value);
 
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**
      * @depends testCreate
-     *
-     * @param int $id
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -518,7 +477,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        static::assertStringContainsString(self::ORDER_PO_NUMBER_UPDATED, $html);
+        self::assertStringContainsString(self::ORDER_PO_NUMBER_UPDATED, $html);
     }
 
     public function testSaveOrderWithEmptyProductErrorMessage()
@@ -544,27 +503,20 @@ class OrderControllerTest extends WebTestCase
         $discountItems = $this->getDiscountItems();
 
         $submittedData = $this->getSubmittedData($form, $orderCustomer, $lineItems, $discountItems);
+        $submittedData['input_action'] = '{"route":"oro_order_update","params":{"id":"$id"}}';
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
-        static::assertStringContainsString('Please choose Product', $this->client->getResponse()->getContent());
+        self::assertStringContainsString('Please choose Product', $this->client->getResponse()->getContent());
     }
 
-    /**
-     * @return User
-     */
-    protected function getCurrentUser()
+    private function getCurrentUser(): User
     {
         return $this->getContainer()->get('oro_security.token_accessor')->getUser();
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param int $count
-     * @return array
-     */
-    protected function getActualLineItems(Crawler $crawler, $count)
+    private function getActualLineItems(Crawler $crawler, int $count): array
     {
         $result = [];
 
@@ -598,12 +550,7 @@ class OrderControllerTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param int $count
-     * @return array
-     */
-    protected function getActualDiscountItems(Crawler $crawler, $count)
+    private function getActualDiscountItems(Crawler $crawler, int $count): array
     {
         $result = [];
 
@@ -625,10 +572,7 @@ class OrderControllerTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * @return array
-     */
-    protected function getDiscountItems()
+    private function getDiscountItems(): array
     {
         return [
             [
@@ -646,10 +590,7 @@ class OrderControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getExpectedDiscountItems()
+    private function getExpectedDiscountItems(): array
     {
         return [
             [
@@ -667,11 +608,7 @@ class OrderControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param $date
-     * @return array
-     */
-    protected function getLineItemsToUpdate($date)
+    private function getLineItemsToUpdate(\DateTime|string $date): array
     {
         /** @var Product $product */
         $product = $this->getReference('product-1');
@@ -702,11 +639,7 @@ class OrderControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param $date
-     * @return array
-     */
-    protected function getExpectedLineItemsAfterUpdate($date)
+    private function getExpectedLineItemsAfterUpdate(\DateTime|string $date): array
     {
         /** @var Product $product */
         $product = $this->getReference('product-1');

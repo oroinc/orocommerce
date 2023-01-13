@@ -6,5 +6,6 @@ services:
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
+            - '@oro_website_search.provider.search_mapping'
         tags:
             - { name: console.command }

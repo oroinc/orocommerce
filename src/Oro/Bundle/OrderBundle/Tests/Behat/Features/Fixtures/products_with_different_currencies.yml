@@ -44,6 +44,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'SKU'
         primaryUnitPrecision: '@unitPrecision'
+        unitPrecisions: [ '@unitPrecision' ]
         __calls:
             - addName: ['@productName']
         inventoryStatus: '@enumInventoryStatuses'
@@ -52,17 +53,31 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         taxCode: '@product_tax_code'
 
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    multiCurrencyPriceList:
+        name: 'multiCurrencyPriceList'
+        __calls:
+            - addCurrencyByCode: ['USD']
+            - addCurrencyByCode: ['EUR']
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        pricelist: '@multiCurrencyPriceList'
+        customer: '@customer'
+        website: '@website1'
+        sortOrder: 100
+
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     priceUSD:
         product: '@product'
-        priceList: '@defaultPriceList'
+        priceList: '@multiCurrencyPriceList'
         currency: 'USD'
         quantity: 1
         unit: '@item'
         value: 12
     priceEUR:
         product: '@product'
-        priceList: '@defaultPriceList'
+        priceList: '@multiCurrencyPriceList'
         currency: 'EUR'
         quantity: 1
         unit: '@item'
@@ -71,17 +86,17 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation:
         product: '@product'
-        priceList: '@defaultPriceList'
+        priceList: '@multiCurrencyPriceList'
 
 Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
     customer_tax_code:
         owner: '@admin'
         organization: '@organization'
-        code: 'Customer tax code'
+        code: 'customer_tax_code'
 
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     product_tax_code:
-        code: 'Product tax code'
+        code: 'product_tax_code'
         organization: '@organization'
 
 Oro\Bundle\TaxBundle\Entity\Tax:
@@ -106,6 +121,7 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
         customerTaxCode: '@customer_tax_code'
         taxJurisdiction: '@tax_jurisdiction'
         tax: '@tax'
+        organization: '@organization'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     customerAddress:
@@ -121,7 +137,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
             - setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
         primary: true
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customerAddressShippingDefault:

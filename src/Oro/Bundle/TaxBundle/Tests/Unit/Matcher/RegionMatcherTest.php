@@ -2,70 +2,80 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
 use Oro\Bundle\TaxBundle\Matcher\RegionMatcher;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Component\Testing\ReflectionUtil;
 
-class RegionMatcherTest extends AbstractMatcherTest
+class RegionMatcherTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $countryMatcher;
+    /** @var TaxRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxRuleRepository;
+
+    /** @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject */
+    private $countryMatcher;
+
+    /** @var RegionMatcher */
+    private $matcher;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);
+        $this->countryMatcher = $this->createMock(CountryMatcher::class);
 
-        $this->matcher = new RegionMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(TaxRule::class)
+            ->willReturn($this->taxRuleRepository);
 
-        $this->countryMatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\CountryMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->matcher->setCountryMatcher($this->countryMatcher);
+        $this->matcher = new RegionMatcher($doctrine, $this->countryMatcher);
     }
 
-    protected function tearDown(): void
+    private function getTaxRule(int $id): TaxRule
     {
-        parent::tearDown();
-        unset($this->countryMatcher);
+        $taxRule = new TaxRule();
+        ReflectionUtil::setId($taxRule, $id);
+
+        return $taxRule;
     }
 
     /**
      * @dataProvider matchProvider
-     * @param string $productTaxCode
-     * @param string $customerTaxCode
-     * @param Country $country
-     * @param Region $region
-     * @param string $regionText
-     * @param TaxRule[] $countryMatcherTaxRules
-     * @param TaxRule[] $regionTaxRules
-     * @param TaxRule[] $expected
+     *
+     * @param string|null  $productTaxCode
+     * @param string|null  $customerTaxCode
+     * @param Country|null $country
+     * @param Region|null  $region
+     * @param string       $regionText
+     * @param TaxRule[]    $countryMatcherTaxRules
+     * @param TaxRule[]    $regionTaxRules
+     * @param TaxRule[]    $expected
      */
     public function testMatch(
-        $productTaxCode,
-        $customerTaxCode,
-        $country,
-        $region,
-        $regionText,
-        $countryMatcherTaxRules,
-        $regionTaxRules,
-        $expected
+        ?string $productTaxCode,
+        ?string $customerTaxCode,
+        ?Country $country,
+        ?Region $region,
+        string $regionText,
+        array $countryMatcherTaxRules,
+        array $regionTaxRules,
+        array $expected
     ) {
         $address = (new Address())
             ->setCountry($country)
             ->setRegion($region)
             ->setRegionText($regionText);
 
-        $this->countryMatcher
-            ->expects($this->atLeastOnce())
+        $this->countryMatcher->expects($this->atLeastOnce())
             ->method('match')
             ->with($address)
             ->willReturn($countryMatcherTaxRules);
@@ -81,8 +91,7 @@ class RegionMatcherTest extends AbstractMatcherTest
         $taxCodes = TaxCodes::create($taxCodes);
         $isCallFindByCountryAndTaxCode = $country && ($region || $regionText) && $taxCodes->isFullFilledTaxCode();
 
-        $this->taxRuleRepository
-            ->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
+        $this->taxRuleRepository->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
             ->method('findByRegionAndTaxCode')
             ->with($taxCodes, $country, $region, $regionText)
             ->willReturn($regionTaxRules);
@@ -93,10 +102,7 @@ class RegionMatcherTest extends AbstractMatcherTest
         $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
     }
 
-    /**
-     * @return array
-     */
-    public function matchProvider()
+    public function matchProvider(): array
     {
         $country = new Country('US');
         $region = new Region('US-AL');

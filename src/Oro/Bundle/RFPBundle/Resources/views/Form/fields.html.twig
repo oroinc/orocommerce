@@ -138,15 +138,14 @@
         <div class="request-form-editline__footer">
             <div class="request-form-editline__note">
                 <div class="request-form-editnote">
-                    <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox{% if hasNotes %} checked{% endif %}">
-                        <input type="checkbox"
-                               name="{{ 'lineItem'~id }}"
-                               data-role="field__comment-checkbox"
-                               id="{{ 'lineItem-'~prototype_name }}"{% if hasNotes %} checked="checked"{% endif %}
-                               class="custom-checkbox__input"
-                        >
-                        <span class="custom-checkbox__icon"></span>
-                        <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                    <input type="checkbox"
+                        name="{{ 'lineItem'~id }}"
+                        data-role="field__comment-checkbox"
+                        id="{{ 'lineItem-'~prototype_name }}"{% if hasNotes %} checked="checked"{% endif %}
+                        class="request-form-editnote__toggle"
+                    >
+                    <label for="{{ 'lineItem-'~prototype_name }}" class="request-form-editnote__label">
+                        {{- 'oro.frontend.shoppinglist.view.add_item_note.label'|trans -}}
                     </label>
                     <div class="request-form-editnote__body">
                         {{ form_widget(form.comment) }}
@@ -196,7 +195,7 @@
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
         <div {{ block('widget_container_attributes') }}>
-            <table class="grid table-hover table table-bordered table-condensed">
+            <table class="grid grid-main-container table-hover table table-bordered table-condensed">
                 <thead>
                 <tr>
                     <th><span>{{ 'oro.rfp.frontend.request.lineitem.product'|trans }}</span></th>
@@ -216,7 +215,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="#">{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
+        <button type="button" class="btn add-list-item" data-container=".oro-item-collection tbody">{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</button>
     </div>
 {% endblock %}
 
@@ -306,7 +305,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="#"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <button type="button" class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</button>
     </div>
 {% endblock %}
 
@@ -379,7 +378,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="#">{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <button type="button" class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody">{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</button>
     </div>
 {% endblock %}
 
@@ -465,6 +464,7 @@
     {% if offers is defined and offers|length %}
         {% set page_component_options = {
         offersSelector: '[name="%s"]'|format(full_name),
+        priceSelector: '#%s'|format(form.parent.price.value.vars.id),
         quantitySelector: '#%s'|format(form.parent.quantity.vars.id),
         unitSelector: '#%s'|format(form.parent.productUnit.vars.id),
         productSelector: '#%s'|format(form.parent.product.vars.id),
@@ -472,7 +472,7 @@
         offersDataSelector: '#%s'|format(form.parent.offers_data.vars.id),
         } %}
 
-        <table class="grid table table-hover table-bordered order-line-item-offers"
+        <table class="grid grid-main-container table table-hover table-bordered order-line-item-offers"
                data-page-component-module="ororfp/js/app/components/order-line-item-offers"
                data-page-component-options="{{ page_component_options|json_encode }}">
             <tbody>
@@ -492,11 +492,15 @@
         {% if quantity is not empty %}
             {% set quantity = quantity|oro_format_decimal %}
         {% endif %}
+        {% set price = offer.price %}
+        {% if price is not empty %}
+            {% set price = price|oro_format_decimal %}
+        {% endif %}
         {{ form_widget(form, {
             attr: {
                 'data-quantity': quantity|default,
                 'data-unit': offer.unit|default,
-                'data-price': offer.price|default,
+                'data-price': price|default,
                 'data-currency': offer.currency|default
             }
         }) }}

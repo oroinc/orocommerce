@@ -2,39 +2,36 @@
 
 namespace Oro\Bundle\CatalogBundle\Manager;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 /**
- * Receives categories that has been changed and schedule
- * reindex of products from this categories
+ * Receives categories that has been changed
+ * and schedule reindex of products from this categories.
  */
 class ProductIndexScheduler
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private ManagerRegistry $doctrine;
+    private ProductReindexManager $productReindexManager;
 
-    /** @var ProductReindexManager */
-    private $productReindexManager;
-
-    public function __construct(DoctrineHelper $doctrineHelper, ProductReindexManager $productReindexManager)
+    public function __construct(ManagerRegistry $doctrine, ProductReindexManager $productReindexManager)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
         $this->productReindexManager = $productReindexManager;
     }
 
-    /**
-     * @param Category[] $categories
-     * @param int|null $websiteId
-     * @param bool $isScheduled
-     */
-    public function scheduleProductsReindex(array $categories, $websiteId = null, $isScheduled = true)
-    {
-        /** @var CategoryRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository(Category::class);
-        $productIds = $repository->getProductIdsByCategories($categories);
-        $this->productReindexManager->reindexProducts($productIds, $websiteId, $isScheduled);
+    public function scheduleProductsReindex(
+        array $categories,
+        int $websiteId = null,
+        bool $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
+        $this->productReindexManager->reindexProducts(
+            $this->doctrine->getRepository(Category::class)->getProductIdsByCategories($categories),
+            $websiteId,
+            $isScheduled,
+            $fieldGroups
+        );
     }
 }

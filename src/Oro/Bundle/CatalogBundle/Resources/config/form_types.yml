@@ -35,14 +35,16 @@ services:
     oro_catalog.form.extension.product_type:
         class: 'Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension'
         arguments:
-            - "@doctrine"
+            - '@doctrine'
+            - '@security.authorization_checker'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_catalog.form.extension.product_step_one_type:
         class: 'Oro\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension'
         arguments:
-            - "@oro_catalog.provider.default_product_unit_provider.category"
+            - '@oro_catalog.provider.default_product_unit_provider.category'
+            - '@security.authorization_checker'
         public: true
         tags:
             - { name: form.type_extension, alias: oro_product_step_one, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType }

@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add_import_help/dialog/oro_product_frontend_quick_add_import_help.html.twig'
+        - '@setOption':
+            id: widget_content
+            optionName: 'attr.data-page-component-module'
+            optionValue: 'orofrontend/js/app/components/widget-form-component'
+        - '@setOption':
+            id: widget_content
+            optionName: class_prefix
+            optionValue: 'quick_add_import_help'
+        - '@addTree':
+            items:
+                quick_add_import_help:
+                    blockType: container
+            tree:
+                widget_content:
+                    quick_add_import_help: ~

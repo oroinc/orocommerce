@@ -11,29 +11,17 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CustomFieldProvider
-     */
-    protected $provider;
+    private const CLASS_NAME = \stdClass::class;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
-     */
-    protected $extendConfigProvider;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $extendConfigProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
-     */
-    protected $entityConfigProvider;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityConfigProvider;
 
-    /**
-     * @var string
-     */
-    protected $className = '\stdClass';
+    /** @var CustomFieldProvider */
+    private $provider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
@@ -62,7 +50,7 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
         $cache = $this->createMock(CacheInterface::class);
         $cache->expects($this->once())
             ->method('get')
-            ->with(UniversalCacheKeyGenerator::normalizeCacheKey($this->className))
+            ->with(UniversalCacheKeyGenerator::normalizeCacheKey(self::CLASS_NAME))
             ->willReturn($data);
 
         $this->provider->setCache($cache);
@@ -70,13 +58,10 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
         $this->extendConfigProvider->expects($this->never())
             ->method($this->anything());
 
-        $this->assertEquals($data, $this->provider->getEntityCustomFields($this->className));
+        $this->assertEquals($data, $this->provider->getEntityCustomFields(self::CLASS_NAME));
     }
 
-    /**
-     * @return array
-     */
-    public function getEntityCustomFieldsDataProvider()
+    public function getEntityCustomFieldsDataProvider(): array
     {
         return [
             'all_fields' => [
@@ -127,11 +112,9 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $fields
-     * @param array $expectedResult
      * @dataProvider getEntityCustomFieldsDataProvider
      */
-    public function testGetEntityCustomFields($fields, $expectedResult)
+    public function testGetEntityCustomFields(array $fields, array $expectedResult)
     {
         $extendsConfigs = [];
         foreach ($fields as $fieldName => $fieldData) {
@@ -143,31 +126,24 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
             $entityConfigs[$fieldName] =  $this->createConfigByScope('entity', $fieldName, $fieldData);
         }
 
-        $this->extendConfigProvider
-            ->expects(self::once())
+        $this->extendConfigProvider->expects(self::once())
             ->method('getConfigs')
-            ->with($this->className)
+            ->with(self::CLASS_NAME)
             ->willReturn($extendsConfigs);
 
-        $this->entityConfigProvider
-            ->expects($this->any())
+        $this->entityConfigProvider->expects($this->any())
             ->method('getConfigById')
-            ->willReturnCallback(
-                function (FieldConfigId $configId) use ($entityConfigs) {
-                    return $entityConfigs[$configId->getFieldName()];
-                }
-            );
+            ->willReturnCallback(function (FieldConfigId $configId) use ($entityConfigs) {
+                return $entityConfigs[$configId->getFieldName()];
+            });
 
-        $this->assertEquals($expectedResult, $this->provider->getEntityCustomFields($this->className));
+        $this->assertEquals($expectedResult, $this->provider->getEntityCustomFields(self::CLASS_NAME));
 
         //check array cache
-        $this->assertEquals($expectedResult, $this->provider->getEntityCustomFields($this->className));
+        $this->assertEquals($expectedResult, $this->provider->getEntityCustomFields(self::CLASS_NAME));
     }
 
-    /**
-     * @return array
-     */
-    public function getVariantFieldsDataProvider()
+    public function getVariantFieldsDataProvider(): array
     {
         return [
             'all_fields' => [
@@ -218,25 +194,12 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $scope
-     * @param string $fieldName
-     * @param string $fieldType
-     * @param array $values
-     * @return Config
-     */
-    private function createConfig($scope, $fieldName, $fieldType, array $values = [])
+    private function createConfig(string $scope, string $fieldName, string $fieldType, array $values = []): Config
     {
-        return new Config(new FieldConfigId($scope, $this->className, $fieldName, $fieldType), $values);
+        return new Config(new FieldConfigId($scope, self::CLASS_NAME, $fieldName, $fieldType), $values);
     }
 
-    /**
-     * @param string $fieldName
-     * @param array $fieldData
-     * @param string $scope
-     * @return Config
-     */
-    private function createConfigByScope($scope, $fieldName, $fieldData)
+    private function createConfigByScope(string $scope, string $fieldName, array $fieldData): Config
     {
         return $this->createConfig($scope, $fieldName, $fieldData['type'], $fieldData);
     }

@@ -52,7 +52,7 @@ Oro\Bundle\SegmentBundle\Entity\Segment:
     name: 'New Segment'
     type: '@segment_dynamic_type'
     entity: 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
-    definition: ''
+    definition: <('{"columns":[{"name":"contactInformation","label":"Contact Information","sorting":"","func":null}]}')>
     organization: '@organization'
     owner: '@business_unit'
 
@@ -67,6 +67,8 @@ Oro\Bundle\WebsiteBundle\Entity\Website:
     name: 'New Website'
     organization: '@organization'
     owner: '@business_unit'
+    guest_role: '@buyer'
+    default_role: '@buyer'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   customer_user_entity:
@@ -101,11 +103,6 @@ Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
       - addShortLabel: ['@payment_term_label']
     channel: '@payment_term_channel_entity'
 
-Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings:
-  flat_rate_settings_entity:
-    __calls:
-      - addLabel: ['@flat_rate_label']
-
 Oro\Bundle\IntegrationBundle\Entity\Channel:
   payment_term_channel_entity:
     type: 'payment_term'
@@ -113,12 +110,6 @@ Oro\Bundle\IntegrationBundle\Entity\Channel:
     enabled: true
     organization: '@organization'
     transport: '@payment_term_settings_entity'
-  flat_rate_channel_entity:
-    type: 'flat_rate'
-    name: 'New Flat Rate Channel'
-    enabled: true
-    organization: '@organization'
-    transport: '@flat_rate_settings_entity'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
   payment_method_config_entity:
@@ -151,6 +142,21 @@ Oro\Bundle\OrderBundle\Entity\Order:
     identifier: 'NewOrder'
     website: '@website_entity'
     currency: 'USD'
+    lineItems: [ '@simpleOrderLineItem' ]
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+  simpleOrderLineItem:
+    product: '@product_entity'
+    order: '@order_entity'
+    price: '@price1'
+    quantity: 10
+    productUnit: '@item'
+    productUnitCode: item
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+  price1:
+    value: 5
+    currency: USD
 
 Oro\Bundle\CMSBundle\Entity\Page:
   page_entity:
@@ -161,12 +167,14 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
   content_variant_entity:
     type: 'cms_page'
     cmsPage: '@page_entity'
+    scopes: [ '@default_scope' ]
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
   content_node_entity:
     __calls:
       - addTitle: ['@content_node_title']
       - addContentVariant: ['@content_variant_entity']
+      - addScope: ['@default_scope']
     webCatalog: '@web_catalog_entity'
 
 Oro\Bundle\ConsentBundle\Entity\Consent:
@@ -224,7 +232,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
   shipping_method_config_entity:
-    method: '<("flat_rate_".@flat_rate_channel_entity->getId())>'
+    method: '<("flat_rate_".@flatRateIntegration->getId())>'
     typeConfigs: ['@shipping_method_type_config_entity']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:

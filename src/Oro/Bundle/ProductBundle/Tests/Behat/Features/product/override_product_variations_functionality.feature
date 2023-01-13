@@ -50,7 +50,10 @@ Feature: Override product variations functionality
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
 
     When I click on "Show Variants Dropdown"
-    And I click "Add System Page"
+    And I click on "First Content Variant Expand Button"
+    And I fill "Content Node Form" with:
+      | Titles            | Home page                               |
+      | System Page Route | Oro Frontend Root (Welcome - Home page) |
     And I save form
     Then I should see "Content Node has been saved" flash message
     When I click "Create Content Node"
@@ -69,9 +72,9 @@ Feature: Override product variations functionality
     And I click on "Preview Results"
     Then I should see following grid:
       | SKU   | NAME                 |
-      | 1GB83 | Slip-On Clog         |
-      | 1GB82 | White Slip-On Clog M |
       | 1GB81 | Black Slip-On Clog L |
+      | 1GB82 | White Slip-On Clog M |
+      | 1GB83 | Slip-On Clog         |
     When I save form
     Then I should see "Content Node has been saved" flash message
 
@@ -159,12 +162,14 @@ Feature: Override product variations functionality
 
   Scenario: Check that changes of grid view does not affect on results
     When I filter SKU as contains "1GB"
-    And I click "NoImage View Button"
+    And I click "Catalog Switcher Toggle"
+    And I click "No Image View"
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
 
-    When I click "List View Button"
+    When I click "Catalog Switcher Toggle"
+    And I click "List View"
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
@@ -179,9 +184,9 @@ Feature: Override product variations functionality
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
       | SKU   | NAME                 |
-      | 1GB83 | Slip-On Clog         |
-      | 1GB82 | White Slip-On Clog M |
       | 1GB81 | Black Slip-On Clog L |
+      | 1GB82 | White Slip-On Clog M |
+      | 1GB83 | Slip-On Clog         |
     When I save form
     Then I should see "Content Node has been saved" flash message
 
@@ -233,8 +238,8 @@ Feature: Override product variations functionality
     And I click "All Added"
     Then I should see following grid:
       | SKU   | NAME                 |
-      | 1GB83 | Slip-On Clog         |
       | 1GB81 | Black Slip-On Clog L |
+      | 1GB83 | Slip-On Clog         |
     When I save form
     Then I should see "Content Node has been saved" flash message
 
@@ -369,9 +374,9 @@ Feature: Override product variations functionality
     And I click on "Preview Results"
     Then I should see following grid:
       | SKU   | NAME                 |
-      | 1GB83 | Slip-On Clog         |
-      | 1GB82 | White Slip-On Clog M |
       | 1GB81 | Black Slip-On Clog L |
+      | 1GB82 | White Slip-On Clog M |
+      | 1GB83 | Slip-On Clog         |
     When I fill "Content Node Form" with:
       | First Content Variant Restrictions Customer | first customer |
     And I save form

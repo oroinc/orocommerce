@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\MessageQueueBundle\Client\MessageBuffer;
 use Oro\Bundle\PricingBundle\Async\PriceListRelationMessageFilter;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
@@ -118,7 +119,7 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['force' => true]]
+                6 => [MassRebuildCombinedPriceListsTopic::getName(), ['assignments' => [['force' => true]]]]
             ],
             $buffer->getMessages()
         );
@@ -139,8 +140,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]]
+                3 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2]
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -161,8 +169,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 11]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 12]]
+                3 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1, 'customerGroup' => 11],
+                            ['website' => 1, 'customerGroup' => 12]
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -183,8 +198,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customer' => 101]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customer' => 102]]
+                3 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1, 'customer' => 101],
+                            ['website' => 1, 'customer' => 102],
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -213,8 +235,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]]
+                6 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -248,9 +277,16 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]],
-                4 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 12]]
+                6 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                            ['website' => 1, 'customerGroup' => 12]
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -279,8 +315,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]]
+                6 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -314,9 +357,16 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]],
-                4 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customer' => 102]]
+                6 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                            ['website' => 1, 'customer' => 102]
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -354,8 +404,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 11]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 12]]
+                6 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1, 'customerGroup' => 11],
+                            ['website' => 1, 'customerGroup' => 12],
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -398,11 +455,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 11]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 12]],
-                4 => [
-                    RebuildCombinedPriceListsTopic::getName(),
-                    ['website' => 1, 'customerGroup' => 12, 'customer' => 102]
+                6 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1, 'customerGroup' => 11],
+                            ['website' => 1, 'customerGroup' => 12],
+                            ['website' => 1, 'customerGroup' => 12, 'customer' => 102],
+                        ]
+                    ]
                 ]
             ],
             $buffer->getMessages()
@@ -458,8 +519,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]]
+                12 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -524,12 +592,16 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]],
-                4 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 12]],
-                8 => [
-                    RebuildCombinedPriceListsTopic::getName(),
-                    ['website' => 1, 'customerGroup' => 11, 'customer' => 102]
+                12 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                            ['website' => 1, 'customerGroup' => 12],
+                            ['website' => 1, 'customerGroup' => 11, 'customer' => 102]
+                        ]
+                    ]
                 ]
             ],
             $buffer->getMessages()
@@ -567,8 +639,15 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]]
+                9 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );
@@ -615,10 +694,17 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                0 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1]],
-                1 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 2]],
-                4 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customerGroup' => 12]],
-                7 => [RebuildCombinedPriceListsTopic::getName(), ['website' => 1, 'customer' => 102]]
+                9 => [
+                    MassRebuildCombinedPriceListsTopic::getName(),
+                    [
+                        'assignments' => [
+                            ['website' => 1],
+                            ['website' => 2],
+                            ['website' => 1, 'customerGroup' => 12],
+                            ['website' => 1, 'customer' => 102]
+                        ]
+                    ]
+                ]
             ],
             $buffer->getMessages()
         );

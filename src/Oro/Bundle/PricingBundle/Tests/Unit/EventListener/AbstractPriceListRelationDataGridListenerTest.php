@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -13,53 +11,22 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
-use Oro\Bundle\PricingBundle\EventListener\CustomerDataGridListener;
+use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListRelationDataGridListener;
 
 abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
-     */
-    protected $registry;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager
-     */
-    protected $manager;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|CustomerDataGridListener
-     */
+    /** @var AbstractPriceListRelationDataGridListener */
     protected $listener;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListToCustomerRepository
-     */
+    /** @var PriceListToCustomerRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $featureChecker;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     protected function setUp(): void
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->registry->method('getManagerForClass')->willReturn($this->manager);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-    }
-
-    protected function tearDown(): void
-    {
-        unset(
-            $this->manager,
-            $this->listener,
-            $this->registry,
-            $this->repository,
-            $this->featureChecker
-        );
     }
 
     public function testOnBuilderBeforeFeatureDisabled()
@@ -95,7 +62,9 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
     public function testOnResultAfter()
     {
         $relation = $this->createRelation();
-        $this->repository->method('getRelationsByHolders')->willReturn([$relation]);
+        $this->repository->expects(self::any())
+            ->method('getRelationsByHolders')
+            ->willReturn([$relation]);
         $config = DatagridConfiguration::create([]);
         $parameters = new ParameterBag();
 
@@ -137,8 +106,5 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
         );
     }
 
-    /**
-     * @return BasePriceListRelation
-     */
-    abstract protected function createRelation();
+    abstract protected function createRelation(): BasePriceListRelation;
 }

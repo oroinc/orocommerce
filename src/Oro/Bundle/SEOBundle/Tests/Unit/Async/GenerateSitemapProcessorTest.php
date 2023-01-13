@@ -5,7 +5,9 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor;
-use Oro\Bundle\SEOBundle\Async\Topics;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapIndexTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapTopic;
 use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
@@ -23,32 +25,23 @@ use Psr\Log\LoggerInterface;
 
 class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
-    private $jobRunner;
+    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
 
-    /** @var DependentJobService|\PHPUnit\Framework\MockObject\MockObject */
-    private $dependentJob;
+    private DependentJobService|\PHPUnit\Framework\MockObject\MockObject $dependentJob;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $producer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
-    /** @var WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteUrlProvidersService;
+    private WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject $websiteUrlProvidersService;
 
-    /** @var WebsiteForSitemapProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteProvider;
+    private WebsiteForSitemapProviderInterface|\PHPUnit\Framework\MockObject\MockObject $websiteProvider;
 
-    /** @var PublicSitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject */
-    private $fileSystemAdapter;
+    private PublicSitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject $fileSystemAdapter;
 
-    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $canonicalUrlGenerator;
+    private CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject $canonicalUrlGenerator;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /** @var GenerateSitemapProcessor */
-    private $processor;
+    private GenerateSitemapProcessor $processor;
 
     protected function setUp(): void
     {
@@ -106,7 +99,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->jobRunner->expects(self::once())
             ->method('runUnique')
-            ->with($messageId, Topics::GENERATE_SITEMAP)
+            ->with($messageId, GenerateSitemapTopic::getName())
             ->willReturnCallback(function ($jobId, $name, $callback) use ($job) {
                 return $callback($this->jobRunner, $job);
             });
@@ -117,7 +110,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
     public function testGetSubscribedTopics(): void
     {
         self::assertEquals(
-            [Topics::GENERATE_SITEMAP],
+            [GenerateSitemapTopic::getName()],
             GenerateSitemapProcessor::getSubscribedTopics()
         );
     }
@@ -178,7 +171,6 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $messageId = '1000';
         $message = $this->getMessage($messageId);
-        /** @var Website[] $websites */
         $websites = [
             $this->getWebsite(123),
             $this->getWebsite(234),
@@ -204,7 +196,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (DependentJobContext $context) use ($job) {
                 $dependentJobs = $context->getDependentJobs();
                 self::assertCount(1, $dependentJobs);
-                self::assertEquals(Topics::GENERATE_SITEMAP_INDEX, $dependentJobs[0]['topic']);
+                self::assertEquals(GenerateSitemapIndexTopic::getName(), $dependentJobs[0]['topic']);
                 self::assertEquals($job->getId(), $dependentJobs[0]['message']['jobId']);
                 self::assertGreaterThan(0, $dependentJobs[0]['message']['version']);
                 self::assertEquals([123, 234], $dependentJobs[0]['message']['websiteIds']);
@@ -213,15 +205,15 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $this->websiteUrlProvidersService->expects(self::exactly(2))
             ->method('getWebsiteProvidersIndexedByNames')
             ->willReturn([
-                'first_type'  => $this->createMock(UrlItemsProviderInterface::class),
-                'second_type' => $this->createMock(UrlItemsProviderInterface::class)
+                'first_type' => $this->createMock(UrlItemsProviderInterface::class),
+                'second_type' => $this->createMock(UrlItemsProviderInterface::class),
             ]);
         $providerNames = ['first_type', 'second_type'];
 
         $this->canonicalUrlGenerator->expects(self::exactly(count($websites)))
             ->method('clearCache')
             ->withConsecutive([$websites[0]], [$websites[0]]);
-        $jobNameTemplate = Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE . ':%s:%s';
+        $jobNameTemplate = GenerateSitemapByWebsiteAndTypeTopic::getName() . ':%s:%s';
         $this->jobRunner->expects(self::exactly(count($providerNames) * count($websites)))
             ->method('createDelayed')
             ->withConsecutive(
@@ -235,7 +227,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             });
         $this->producer->expects(self::exactly(count($providerNames) * count($websites)))
             ->method('send')
-            ->with(Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE);
+            ->with(GenerateSitemapByWebsiteAndTypeTopic::getName());
 
         $this->logger->expects(self::never())
             ->method(self::anything());

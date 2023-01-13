@@ -7,42 +7,30 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\Encoder;
 class EncoderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Encoder */
-    protected $encoder;
+    private $encoder;
 
     protected function setUp(): void
     {
         $this->encoder = new Encoder();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->encoder);
-    }
-
     /**
      * @dataProvider encodeProvider
-     * @param array $source
-     * @param string $expectedResult
      */
-    public function testEncode($source, $expectedResult)
+    public function testEncode(array $source, string $expectedResult)
     {
         $this->assertEquals($expectedResult, $this->encoder->encode($source));
     }
 
     /**
      * @dataProvider decodeProvider
-     * @param string $source
-     * @param array $expectedResult
      */
-    public function testDecode($source, $expectedResult)
+    public function testDecode(string $source, array $expectedResult)
     {
         $this->assertSame($expectedResult, $this->encoder->decode($source));
     }
 
-    /**
-     * @return array
-     */
-    public function encodeProvider()
+    public function encodeProvider(): array
     {
         return [
             [
@@ -65,10 +53,7 @@ class EncoderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function decodeProvider()
+    public function decodeProvider(): array
     {
         return [
             [

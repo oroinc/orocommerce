@@ -6,7 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesConstraint;
+use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServices;
 use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -20,7 +20,7 @@ class CountryShippingServicesValidatorTest extends ConstraintValidatorTestCase
 
     public function testGetTargets()
     {
-        $constraint = new CountryShippingServicesConstraint();
+        $constraint = new CountryShippingServices();
         self::assertSame(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
@@ -67,7 +67,7 @@ class CountryShippingServicesValidatorTest extends ConstraintValidatorTestCase
             ->method('getApplicableShippingServices')
             ->willReturn([$service1, $service2, $service3]);
 
-        $constraint = new CountryShippingServicesConstraint();
+        $constraint = new CountryShippingServices();
         $this->validator->validate($settings, $constraint);
 
         $this
@@ -92,7 +92,7 @@ class CountryShippingServicesValidatorTest extends ConstraintValidatorTestCase
     {
         $settings = $this->createMock(Transport::class);
 
-        $constraint = new CountryShippingServicesConstraint();
+        $constraint = new CountryShippingServices();
         $this->validator->validate($settings, $constraint);
 
         $this->assertNoViolation();
@@ -105,7 +105,7 @@ class CountryShippingServicesValidatorTest extends ConstraintValidatorTestCase
             ->method('getUpsCountry')
             ->willReturn(null);
 
-        $constraint = new CountryShippingServicesConstraint();
+        $constraint = new CountryShippingServices();
         $this->validator->validate($settings, $constraint);
 
         $this->assertNoViolation();

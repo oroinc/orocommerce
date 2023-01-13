@@ -41,7 +41,8 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
                     return;
                 }
 
-                const button = Panels.getButton('options', 'enable-code-mode');
+                const button = Panels.getButton('settings', 'enable-code-mode');
+
                 button.set('active', true, {
                     silent: true
                 });
@@ -54,11 +55,16 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
         }
     });
 
-    Panels.addButton('options', {
+    Panels.addButton('settings', {
         id: 'enable-code-mode',
-        className: 'fa fa-code',
+        className: 'gjs-pn-btn--switch',
         attributes: {
-            title: 'External Markup Mode'
+            id: 'enable-code-mode',
+            title: __('oro.cms.wysiwyg.external_markup_mode.label')
+        },
+        data: {
+            label: __('oro.cms.wysiwyg.external_markup_mode.label'),
+            info: __('oro.cms.wysiwyg.external_markup_mode.info')
         },
         context: 'enable-code-mode',
         active: state.get('codeMode'),
@@ -68,21 +74,21 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
     const originMethods = pick(editor, ['getIsolatedCss', 'getCss']);
 
     const originGetPureStyle = editor.getPureStyle;
-    const origingGetPureStyleString = editor.getPureStyleString;
+    const originGetPureStyleString = editor.getPureStyleString;
     const originSetComponents = editor.setComponents;
 
     editor.getPureStyle = css => {
         if (typeof css === 'string') {
             editor.storeProtectedCss = editor.getUnIsolatedCssFromString(css);
         }
-        return originGetPureStyle(css);
+        return originGetPureStyle.call(editor, css);
     };
 
     editor.getPureStyleString = css => {
         if (typeof css === 'string') {
             editor.storeProtectedCss = editor.getUnIsolatedCssFromString(css);
         }
-        return origingGetPureStyleString(css);
+        return originGetPureStyleString.call(editor, css);
     };
 
     editor.setComponents = (components, {fromImport, ...rest} = {}) => {
@@ -90,7 +96,7 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
             editor.storeProtectedCss = exposeStyles(components);
         }
 
-        return originSetComponents(components, rest);
+        return originSetComponents.call(editor, components, rest);
     };
 
     const onLoad = () => {
@@ -98,11 +104,40 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
 
         if (state.get('codeMode')) {
             enableCodeMode();
+            toggleMessage();
+        }
+    };
+
+    /**
+     * Toggling to show message while Style Manager is disabled
+     * Need for notice user, when External Markup Mode is enabled
+     *
+     * @param {boolean} show
+     */
+    const toggleMessage = (show = true) => {
+        const $panelEl = editor.Panels.getPanel('views-container').view.$el;
+
+        if (!$panelEl.length) {
+            return;
+        }
+
+        const message = $panelEl.find('[data-role="code-mode-sm-message"]');
+
+        if (show) {
+            !message.length && $panelEl.find(':scope > div:nth-child(2) > div:first-child').append(
+                `<div class="alert alert-danger" data-role="code-mode-sm-message">
+                        ${__('oro.cms.wysiwyg.external_markup_mode.message')}
+                    </div>`
+            );
+        } else {
+            message.length && $panelEl.find('[data-role="code-mode-sm-message"]').remove();
         }
     };
 
     const enableCodeMode = () => {
-        editor.StyleManager.getSectors().reset([]);
+        editor.storeProtectedCss = editor.getCss();
+
+        editor.StyleManager.getSectors().reset();
 
         editor.getIsolatedCss = () => {
             return editor.getIsolatedCssFromString(editor.storeProtectedCss);
@@ -111,23 +146,32 @@ export default GrapesJS.plugins.add('grapesjs-code-mode', (editor, {editorView} 
         editor.getCss = () => {
             return editor.storeProtectedCss;
         };
+
+        editor.trigger('code-mode:update', {
+            enabled: true
+        });
     };
 
     const disableCodeMode = () => {
-        const styleManager = editor.StyleManager.render();
         editor.StyleManager.getSectors().reset(styleManagerModule);
-        editor.Panels.getPanel('views-container').view
-            .$el.find(':scope > div:nth-child(2) > div:first-child').append(styleManager);
         Object.assign(editor, originMethods);
+
+        editor.trigger('code-mode:update', {
+            enabled: false
+        });
     };
 
     editor.once('load', onLoad);
     state.on('change:codeMode', (state, codeMode) => {
+        editor.getSelectedAll().forEach(selected => editor.selectRemove(selected));
+
         if (codeMode) {
             enableCodeMode();
         } else {
             disableCodeMode();
         }
+
+        toggleMessage(codeMode);
     });
 
     editor.on('destroy', () => {

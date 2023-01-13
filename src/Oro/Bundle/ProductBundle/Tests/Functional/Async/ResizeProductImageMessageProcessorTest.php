@@ -6,6 +6,7 @@ use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\Async\ResizeProductImageMessageProcessor;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -16,6 +17,9 @@ use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 
+/**
+ * @group CommunityEdition
+ */
 class ResizeProductImageMessageProcessorTest extends WebTestCase
 {
     private const EXAMPLE_IMAGE_PATH = '/../DataFixtures/files/example.gif';
@@ -154,8 +158,9 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
         $productImage = $this->createProductImage();
 
         $message = $this->getMessage([
-            'productImageId' => $productImage->getId(),
-            'force' => $force = true
+            ResizeProductImageTopic::PRODUCT_IMAGE_ID_OPTION => $productImage->getId(),
+            ResizeProductImageTopic::FORCE_OPTION => true,
+            ResizeProductImageTopic::DIMENSIONS_OPTION => [],
         ]);
 
         self::assertEquals(

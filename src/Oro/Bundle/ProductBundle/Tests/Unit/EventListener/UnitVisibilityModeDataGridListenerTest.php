@@ -10,24 +10,16 @@ use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
 class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SingleUnitModeService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SingleUnitModeService|\PHPUnit\Framework\MockObject\MockObject */
     private $singleModeProvider;
 
-    /**
-     * @var BuildBefore|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $eventMock;
+    /** @var BuildBefore|\PHPUnit\Framework\MockObject\MockObject */
+    private $event;
 
-    /**
-     * @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $dataGridMock;
+    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $datagrid;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $basicOnBuildBeforeTestData = [
         'unitColumnName' => 'unit',
         'quantityColumnName' => 'quantity',
@@ -39,19 +31,9 @@ class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->singleModeProvider = $this
-            ->getMockBuilder(SingleUnitModeService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->dataGridMock = $this
-            ->getMockBuilder(DatagridInterface::class)
-            ->getMock();
-
-        $this->eventMock = $this
-            ->getMockBuilder(BuildBefore::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->singleModeProvider = $this->createMock(SingleUnitModeService::class);
+        $this->datagrid = $this->createMock(DatagridInterface::class);
+        $this->event = $this->createMock(BuildBefore::class);
     }
 
     public function testSingleModeEnabled()
@@ -86,18 +68,15 @@ class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
         $config->offsetSetByPath($quantityColumnPath, $this->basicOnBuildBeforeTestData['initialQuantityColumnParams']);
         $config->offsetSetByPath($unitColumnPath, $this->basicOnBuildBeforeTestData['initialUnitColumnParams']);
 
-        $this->dataGridMock
-            ->expects($this->once())
+        $this->datagrid->expects($this->once())
             ->method('getConfig')
             ->willReturn($config);
 
-        $this->eventMock
-            ->expects($this->once())
+        $this->event->expects($this->once())
             ->method('getDatagrid')
-            ->willReturn($this->dataGridMock);
+            ->willReturn($this->datagrid);
 
-        $this->singleModeProvider
-            ->expects($this->once())
+        $this->singleModeProvider->expects($this->once())
             ->method('isSingleUnitMode')
             ->willReturn(true);
 
@@ -109,7 +88,7 @@ class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
             $this->singleModeProvider
         );
 
-        $listener->onBuildBefore($this->eventMock);
+        $listener->onBuildBefore($this->event);
 
         $this->assertEquals($expectedQuantityResult, $config->offsetGetByPath($quantityColumnPath));
         $this->assertEquals($expectedUnitResult, $config->offsetGetByPath($unitColumnPath));
@@ -134,21 +113,17 @@ class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
         $config->offsetSetByPath($quantityColumnPath, $this->basicOnBuildBeforeTestData['initialQuantityColumnParams']);
         $config->offsetSetByPath($unitColumnPath, $this->basicOnBuildBeforeTestData['initialUnitColumnParams']);
 
-        $this->dataGridMock
-            ->expects($this->never())
+        $this->datagrid->expects($this->never())
             ->method('getConfig');
 
-        $this->eventMock
-            ->expects($this->never())
+        $this->event->expects($this->never())
             ->method('getDatagrid');
 
-        $this->singleModeProvider
-            ->expects($this->once())
+        $this->singleModeProvider->expects($this->once())
             ->method('isSingleUnitMode')
             ->willReturn(false);
 
-        $this->singleModeProvider
-            ->expects($this->never())
+        $this->singleModeProvider->expects($this->never())
             ->method('isSingleUnitModeCodeVisible');
 
         $listener = new UnitVisibilityModeDataGridListener(
@@ -159,7 +134,7 @@ class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
             $this->singleModeProvider
         );
 
-        $listener->onBuildBefore($this->eventMock);
+        $listener->onBuildBefore($this->event);
 
         $this->assertEquals($expectedQuantityResult, $config->offsetGetByPath($quantityColumnPath));
         $this->assertEquals($expectedUnitResult, $config->offsetGetByPath($unitColumnPath));

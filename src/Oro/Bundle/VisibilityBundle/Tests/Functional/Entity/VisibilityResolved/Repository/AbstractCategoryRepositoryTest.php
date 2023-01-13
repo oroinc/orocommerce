@@ -7,74 +7,49 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 abstract class AbstractCategoryRepositoryTest extends WebTestCase
 {
-    use OrganizationTrait, CatalogTrait;
+    use CatalogTrait;
 
-    const ROOT_CATEGORY = 'root';
-
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
-
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
+    protected const ROOT_CATEGORY = 'root';
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'
-        ]);
-
-        $this->repository = $this->getRepository();
+        $this->loadFixtures([LoadCategoryVisibilityData::class]);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
-    /**
-     * @return EntityRepository
-     */
-    abstract protected function getRepository();
+    abstract protected function getRepository(): EntityRepository;
 
-    /**
-     * @return Category
-     */
-    protected function getMasterCatalog()
+    protected function getScopeManager(): ScopeManager
+    {
+        return $this->getContainer()->get('oro_scope.scope_manager');
+    }
+
+    protected function getMasterCatalog(): Category
     {
         return $this->getRootCategory();
     }
 
-    /**
-     * @return ManagerRegistry
-     */
-    protected function getManagerRegistry()
+    protected function getDoctrine(): ManagerRegistry
     {
-        return $this->getContainer()->get('doctrine');
+        return self::getContainer()->get('doctrine');
     }
 
-    /**
-     * @return InsertFromSelectQueryExecutor
-     */
-    protected function getInsertExecutor()
+    protected function getInsertExecutor(): InsertFromSelectQueryExecutor
     {
-        return $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
+        return self::getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
     }
 
-    /**
-     * @return int
-     */
-    protected function getEntitiesCount()
+    protected function getEntitiesCount(): int
     {
-        return (int)$this->repository->createQueryBuilder('entity')
+        return (int)$this->getRepository()->createQueryBuilder('entity')
             ->select('COUNT(entity.visibility)')
             ->getQuery()
             ->getSingleScalarResult();

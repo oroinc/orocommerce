@@ -3,140 +3,66 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
-class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureInterface
+class LoadTaxJurisdictions extends AbstractFixture
 {
-    const DESCRIPTION = 'Tax description';
+    public const REFERENCE_PREFIX = 'tax_jurisdiction';
 
-    const COUNTRY_US = 'US';
-    const STATE_US_NY = 'US-NY';
-    const STATE_US_AL = 'US-AL';
-    const ZIP_CODE = '012345';
-    const STATE_US_CA = 'US-CA';
+    public const COUNTRY_US = 'US';
+    public const STATE_US_NY = 'US-NY';
+    public const STATE_US_CA = 'US-CA';
+    public const STATE_US_AL = 'US-AL';
 
-    const REFERENCE_PREFIX = 'tax_jurisdiction';
+    public const ZIP_CODE = '012345';
+
+    private const DATA = [
+        LoadTaxes::TAX_1 => [
+            'country' => self::COUNTRY_US
+        ],
+        LoadTaxes::TAX_2 => [
+            'country' => self::COUNTRY_US,
+            'region'  => self::STATE_US_NY
+        ],
+        LoadTaxes::TAX_3 => [
+            'country' => self::COUNTRY_US,
+            'region'  => self::STATE_US_CA
+        ],
+        LoadTaxes::TAX_4 => [
+            'country' => self::COUNTRY_US,
+            'region'  => self::STATE_US_AL,
+            'zipCode' => self::ZIP_CODE
+        ]
+    ];
 
     /**
-     * @param EntityManager $manager
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $this->createTaxJurisdiction(
-            $manager,
-            LoadTaxes::TAX_1,
-            self::DESCRIPTION,
-            $this->getCountryByCode($manager, self::COUNTRY_US)
-        );
+        foreach (self::DATA as $code => $item) {
+            /** @var Country $country */
+            $country = $manager->getReference(Country::class, $item['country']);
 
-        $this->createTaxJurisdiction(
-            $manager,
-            LoadTaxes::TAX_2,
-            self::DESCRIPTION,
-            $this->getCountryByCode($manager, self::COUNTRY_US),
-            $this->getRegionByCode($manager, self::STATE_US_NY)
-        );
-
-        $this->createTaxJurisdiction(
-            $manager,
-            LoadTaxes::TAX_3,
-            self::DESCRIPTION,
-            $this->getCountryByCode($manager, self::COUNTRY_US),
-            $this->getRegionByCode($manager, self::STATE_US_CA)
-        );
-
-        $this->createTaxJurisdiction(
-            $manager,
-            LoadTaxes::TAX_4,
-            self::DESCRIPTION,
-            $this->getCountryByCode($manager, self::COUNTRY_US),
-            $this->getRegionByCode($manager, self::STATE_US_AL),
-            null,
-            ZipCodeTestHelper::getSingleValueZipCode(self::ZIP_CODE)
-        );
-
+            $taxJurisdiction = new TaxJurisdiction();
+            $taxJurisdiction->setCode($code);
+            $taxJurisdiction->setDescription('Tax description');
+            $taxJurisdiction->setCountry($country);
+            if (isset($item['region'])) {
+                /** @var Region $region */
+                $region = $manager->getReference(Region::class, $item['region']);
+                $taxJurisdiction->setRegion($region);
+            }
+            if (isset($item['zipCode'])) {
+                $taxJurisdiction->addZipCode(ZipCodeTestHelper::getSingleValueZipCode($item['zipCode']));
+            }
+            $manager->persist($taxJurisdiction);
+            $this->addReference(static::REFERENCE_PREFIX . '.' . $code, $taxJurisdiction);
+        }
         $manager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-        ];
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string $code
-     * @param string $description
-     * @param Country $country
-     * @param Region $region
-     * @param string $regionText
-     * @param ZipCode $zipCode
-     * @return TaxJurisdiction
-     * @throws \Doctrine\ORM\ORMException
-     */
-    protected function createTaxJurisdiction(
-        ObjectManager $manager,
-        $code,
-        $description,
-        Country $country,
-        Region $region = null,
-        $regionText = null,
-        ZipCode $zipCode = null
-    ) {
-        $taxJurisdiction = new TaxJurisdiction();
-        $taxJurisdiction->setCode($code);
-        $taxJurisdiction->setDescription($description);
-        $taxJurisdiction->setCountry($country);
-
-        if ($region) {
-            $taxJurisdiction->setRegion($region);
-        } elseif ($regionText) {
-            $taxJurisdiction->setRegionText($regionText);
-        }
-
-        if ($zipCode) {
-            $taxJurisdiction->addZipCode($zipCode);
-        }
-
-        $manager->persist($taxJurisdiction);
-        $this->addReference(static::REFERENCE_PREFIX . '.' . $code, $taxJurisdiction);
-
-        return $taxJurisdiction;
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string $code
-     * @return Country
-     */
-    public static function getCountryByCode(ObjectManager $manager, $code)
-    {
-        /** @var EntityManagerInterface $manager */
-        return $manager->getReference('OroAddressBundle:Country', $code);
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string $code
-     * @return Region
-     */
-    public static function getRegionByCode(ObjectManager $manager, $code)
-    {
-        /** @var EntityManagerInterface $manager */
-        return $manager->getReference('OroAddressBundle:Region', $code);
     }
 }

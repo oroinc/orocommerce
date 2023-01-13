@@ -21,6 +21,9 @@
 {% if not isFreeFormProduct %}
     <div class="customer-line-items__row">
         {{ 'oro.product.item_number.label'|trans }}: <span class="customer-line-items__sku-value">{{ record.getValue('productSku') }}</span>
+        {% for label, value in record.getValue('productAdditionalAttributes') %}
+            {{ label|trans }} <span class="customer-line-items__attr-value">{{ value }}</span>
+        {% endfor %}
     </div>
     {% for field in record.getValue('productVariantFields') %}
         <div  class="customer-line-items__row">

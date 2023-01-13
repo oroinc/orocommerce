@@ -14,39 +14,16 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
 /**
- * Gets parameters needed to create PaymentContext from Checkout and other sources
+ * The factory to create a payment context for a specific checkout object.
  */
 class CheckoutPaymentContextFactory
 {
-    /**
-     * @var CheckoutLineItemsManager
-     */
-    protected $checkoutLineItemsManager;
-
-    /**
-     * @var SubtotalProviderInterface
-     */
-    protected $checkoutSubtotalProvider;
-
-    /**
-     * @var TotalProcessorProvider
-     */
-    protected $totalProcessor;
-
-    /**
-     * @var OrderPaymentLineItemConverterInterface
-     */
-    private $paymentLineItemConverter;
-
-    /**
-     * @var PaymentContextBuilderFactoryInterface|null
-     */
-    private $paymentContextBuilderFactory;
-
-    /**
-     * @var ShippingOriginProvider
-     */
-    private $shippingOriginProvider;
+    private CheckoutLineItemsManager $checkoutLineItemsManager;
+    private SubtotalProviderInterface $checkoutSubtotalProvider;
+    private TotalProcessorProvider $totalProcessor;
+    private OrderPaymentLineItemConverterInterface $paymentLineItemConverter;
+    private ShippingOriginProvider $shippingOriginProvider;
+    private ?PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory;
 
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
@@ -64,60 +41,33 @@ class CheckoutPaymentContextFactory
         $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
     }
 
-    /**
-     * @param Checkout $checkout
-     *
-     * @return PaymentContextInterface|null
-     */
-    public function create(Checkout $checkout)
+    public function create(Checkout $checkout): ?PaymentContextInterface
     {
         if (null === $this->paymentContextBuilderFactory) {
             return null;
         }
-
-        $lineItems = $this->checkoutLineItemsManager->getData($checkout);
-        $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($lineItems);
 
         $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
             $checkout,
             (string)$checkout->getId()
         );
 
-        $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
-        $subtotalPrice = Price::create(
-            $subtotal->getAmount(),
-            $subtotal->getCurrency()
-        );
-
-        $paymentContextBuilder
-            ->setSubTotal($subtotalPrice)
-            ->setCurrency($checkout->getCurrency());
-
-        if (null !== $checkout->getWebsite()) {
-            $paymentContextBuilder
-                ->setWebsite($checkout->getWebsite());
-        }
-
         $this->addAddresses($paymentContextBuilder, $checkout);
+        $this->addCustomer($paymentContextBuilder, $checkout);
+        $this->addSubTotal($paymentContextBuilder, $checkout);
 
         if (null !== $checkout->getShippingMethod()) {
             $paymentContextBuilder->setShippingMethod($checkout->getShippingMethod());
         }
 
+        $convertedLineItems = $this->paymentLineItemConverter->convertLineItems(
+            $this->checkoutLineItemsManager->getData($checkout)
+        );
         if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
             $paymentContextBuilder->setLineItems($convertedLineItems);
         }
 
-        if (null !== $checkout->getCustomer()) {
-            $paymentContextBuilder->setCustomer($checkout->getCustomer());
-        }
-
-        if (null !== $checkout->getCustomerUser()) {
-            $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
-        }
-
-        $total = $this->totalProcessor->getTotal($checkout);
-        $paymentContextBuilder->setTotal($total->getAmount());
+        $paymentContextBuilder->setTotal($this->totalProcessor->getTotal($checkout)->getAmount());
 
         return $paymentContextBuilder->getResult();
     }
@@ -125,7 +75,7 @@ class CheckoutPaymentContextFactory
     private function addAddresses(
         PaymentContextBuilderInterface $paymentContextBuilder,
         Checkout $checkout
-    ) {
+    ): void {
         if (null !== $checkout->getBillingAddress()) {
             $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
         }
@@ -134,9 +84,33 @@ class CheckoutPaymentContextFactory
             $paymentContextBuilder->setShippingAddress($checkout->getShippingAddress());
         }
 
-        $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
-        if (null !== $shippingOrigin) {
-            $paymentContextBuilder->setShippingOrigin($shippingOrigin);
+        $paymentContextBuilder->setShippingOrigin($this->shippingOriginProvider->getSystemShippingOrigin());
+    }
+
+    private function addCustomer(
+        PaymentContextBuilderInterface $paymentContextBuilder,
+        Checkout $checkout
+    ): void {
+        if (null !== $checkout->getCustomer()) {
+            $paymentContextBuilder->setCustomer($checkout->getCustomer());
         }
+
+        if (null !== $checkout->getCustomerUser()) {
+            $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
+        }
+
+        $website = $checkout->getWebsite();
+        if (null !== $website) {
+            $paymentContextBuilder->setWebsite($website);
+        }
+    }
+
+    private function addSubTotal(
+        PaymentContextBuilderInterface $paymentContextBuilder,
+        Checkout $checkout
+    ): void {
+        $paymentContextBuilder->setCurrency($checkout->getCurrency());
+        $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
+        $paymentContextBuilder->setSubTotal(Price::create($subtotal->getAmount(), $subtotal->getCurrency()));
     }
 }

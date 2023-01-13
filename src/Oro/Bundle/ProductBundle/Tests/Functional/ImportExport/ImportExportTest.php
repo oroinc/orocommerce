@@ -6,9 +6,11 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageProcessTrait;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -19,11 +21,6 @@ use Symfony\Component\Yaml\Yaml;
 class ImportExportTest extends AbstractImportExportTestCase
 {
     use MessageProcessTrait;
-
-    /**
-     * @var string
-     */
-    protected $file;
 
     protected function setUp(): void
     {
@@ -69,10 +66,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testImportProcess($strategy)
+    public function testImportProcess(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -83,39 +79,26 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertImportResponse($data, 1, 0);
     }
 
-    /**
-     * @return array
-     */
-    public function strategyDataProvider()
+    public function strategyDataProvider(): array
     {
         return [
             'add or replace' => ['oro_product_product.add_or_replace'],
         ];
     }
 
-    /**
-     * @return string
-     */
-    protected function getExportFile()
+    protected function getExportFile(): string
     {
-        $result = $this
-            ->getContainer()
+        $result = $this->getContainer()
             ->get('oro_importexport.handler.export')
-            ->getExportResult(
-                JobExecutor::JOB_EXPORT_TO_CSV,
-                'oro_product_product',
-                ProcessorRegistry::TYPE_EXPORT
-            );
+            ->getExportResult(JobExecutor::JOB_EXPORT_TO_CSV, 'oro_product_product');
 
-        return $this
-            ->getContainer()
+        return $this->getContainer()
             ->get('oro_importexport.file.file_manager')
             ->writeToTmpLocalStorage($result['file']);
     }
 
     /**
-     * @param string $fileName
-     * @return array
+     * {@inheritDoc}
      */
     protected function getFileContents($fileName)
     {
@@ -127,8 +110,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $exportFile
-     * @param int $expectedItemsCount
+     * {@inheritDoc}
      */
     protected function validateExportResult($exportFile, $expectedItemsCount)
     {
@@ -139,12 +121,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param string $fileName
-     * @param array $contextErrors
-     *
      * @dataProvider validationDataProvider
      */
-    public function testValidation($fileName, array $contextErrors = [])
+    public function testValidation(string $fileName, array $contextErrors = [])
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -184,10 +163,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->getContainer()->get('security.token_storage')->setToken(null);
     }
 
-    /**
-     * @return array
-     */
-    public function validationDataProvider()
+    public function validationDataProvider(): array
     {
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
 
@@ -254,10 +230,10 @@ class ImportExportTest extends AbstractImportExportTestCase
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
         );
         $token = new OrganizationToken(
-            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
+            $this->getContainer()->get('doctrine')->getRepository(Organization::class)->findOneBy([])
         );
         $token->setUser(
-            $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
+            $this->getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([])
         );
         $this->getContainer()->get('security.token_storage')->setToken($token);
 
@@ -310,9 +286,8 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     /**
      * @dataProvider strategyDataProvider
-     * @param string $strategy
      */
-    public function testAddNewProducts($strategy)
+    public function testAddNewProducts(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests
@@ -328,7 +303,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         /** @var EntityManager $productManager */
         $productManager = $doctrine->getManagerForClass($productClass);
-        $productManager->createQuery('DELETE FROM OroProductBundle:Product')->execute();
+        $productManager->createQuery('DELETE FROM ' . Product::class)->execute();
 
         $this->validateImportFile($strategy, $file);
         $data = $this->doImport($strategy);
@@ -340,9 +315,8 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     /**
      * @dataProvider strategyDataProvider
-     * @param string $strategy
      */
-    public function testUpdateProducts($strategy)
+    public function testUpdateProducts(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests
@@ -359,9 +333,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     }
 
     /**
-     * @param array $data
-     * @param int $added
-     * @param int $updated
+     * {@inheritDoc}
      */
     protected function assertImportResponse(array $data, $added, $updated)
     {
@@ -375,13 +347,16 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setSecurityToken()
     {
         $token = new OrganizationToken(
-            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
+            $this->getContainer()->get('doctrine')->getRepository(Organization::class)->findOneBy([])
         );
         $token->setUser(
-            $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
+            $this->getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([])
         );
         $this->getContainer()->get('security.token_storage')->setToken($token);
     }

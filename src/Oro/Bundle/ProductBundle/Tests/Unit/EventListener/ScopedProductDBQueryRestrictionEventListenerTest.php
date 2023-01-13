@@ -4,16 +4,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class ScopedProductDBQueryRestrictionEventListenerTest extends ProductDBQueryRestrictionEventListenerTest
 {
-    const SCOPE = 'test_scope';
+    private const SCOPE = 'test_scope';
 
-    /**
-     * @var ScopedProductDBQueryRestrictionEventListener
-     */
+    /** @var ScopedProductDBQueryRestrictionEventListener */
     protected $listener;
 
     /**
@@ -21,13 +17,10 @@ class ScopedProductDBQueryRestrictionEventListenerTest extends ProductDBQueryRes
      */
     protected function createListener()
     {
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request());
         $listener = new ScopedProductDBQueryRestrictionEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper,
-            $requestStack
+            $this->frontendHelper
         );
         $listener->setScope(self::SCOPE);
 
@@ -36,11 +29,8 @@ class ScopedProductDBQueryRestrictionEventListenerTest extends ProductDBQueryRes
 
     /**
      * @dataProvider onQueryDataProvider
-     * @param bool $isFrontend
-     * @param string|null $frontendPath
-     * @param string|null $backendPath
      */
-    public function testOnQuery($isFrontend, $frontendPath, $backendPath)
+    public function testOnQuery(bool $isFrontend, ?string $frontendPath, ?string $backendPath)
     {
         $this->event->expects($this->any())
             ->method('getDataParameters')

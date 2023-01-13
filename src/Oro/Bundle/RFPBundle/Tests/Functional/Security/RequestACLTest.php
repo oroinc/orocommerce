@@ -11,39 +11,28 @@ use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Symfony\Component\DomCrawler\Form;
 
 class RequestACLTest extends WebTestCase
 {
     use RolePermissionExtension;
 
-    /** @var WorkflowManager */
-    protected $manager;
+    private WorkflowManager $manager;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->loadFixtures([LoadCustomerUsersData::class]);
 
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
-
-        $this->loadFixtures([
-            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadCustomerUsersData'
-        ]);
     }
 
     /**
      * @dataProvider permissionsDataProvider
-     * @param int $level
-     * @param array $permissions
-     * @param int $expectedCode
      */
-    public function testRFPPermissions($level, $permissions, $expectedCode)
+    public function testRFPPermissions(int $level, array  $permissions, int $expectedCode)
     {
         $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
 
@@ -52,23 +41,22 @@ class RequestACLTest extends WebTestCase
 
         /** @var CustomerUser $user */
         $user = $this->getContainer()->get('oro_security.token_accessor')->getUser();
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $user);
+        $this->assertInstanceOf(CustomerUser::class, $user);
         $this->assertEquals(LoadCustomerUsersData::USER_EMAIL, $user->getUsername());
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Submit Request')->form();
         $form->remove('oro_rfp_frontend_request[requestProducts][0]');
         $form['oro_rfp_frontend_request[firstName]'] = LoadCustomerUsersData::USER_NAME;
-        $form['oro_rfp_frontend_request[lastName]']  = LoadCustomerUsersData::USER_LAST_NAME;
-        $form['oro_rfp_frontend_request[email]']     = LoadCustomerUsersData::USER_EMAIL;
-        $form['oro_rfp_frontend_request[phone]']     = 123456789;
-        $form['oro_rfp_frontend_request[company]']   = 'Company name';
-        $form['oro_rfp_frontend_request[role]']      = 'Manager';
-        $form['oro_rfp_frontend_request[note]']      = 'This is test Request For Quote';
+        $form['oro_rfp_frontend_request[lastName]'] = LoadCustomerUsersData::USER_LAST_NAME;
+        $form['oro_rfp_frontend_request[email]'] = LoadCustomerUsersData::USER_EMAIL;
+        $form['oro_rfp_frontend_request[phone]'] = 123456789;
+        $form['oro_rfp_frontend_request[company]'] = 'Company name';
+        $form['oro_rfp_frontend_request[role]'] = 'Manager';
+        $form['oro_rfp_frontend_request[note]'] = 'This is test Request For Quote';
 
         $this->client->followRedirects(true);
         $this->client->submit($form);
@@ -78,10 +66,11 @@ class RequestACLTest extends WebTestCase
 
         // Check isset RFP request with first user ownership
         /** @var Request $request */
-        $request = $this->getContainer()->get('doctrine')->getRepository('OroRFPBundle:Request')
+        $request = $this->getContainer()->get('doctrine')
+            ->getRepository(Request::class)
             ->findOneBy(['email' => LoadCustomerUsersData::USER_EMAIL]);
 
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $request->getCustomerUser());
+        $this->assertInstanceOf(CustomerUser::class, $request->getCustomerUser());
         $this->assertEquals($user->getId(), $request->getCustomerUser()->getId());
 
         // Check owner access
@@ -103,10 +92,7 @@ class RequestACLTest extends WebTestCase
         $this->assertIsGranted($permissions['notSameCustomerUser'], $request);
     }
 
-    /**
-     * @return array
-     */
-    public function permissionsDataProvider()
+    public function permissionsDataProvider(): array
     {
         return [
             'customer user' => [
@@ -132,10 +118,7 @@ class RequestACLTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param int $level
-     */
-    protected function setRolePermissions($level)
+    private function setRolePermissions(int $level): void
     {
         $chainMetadataProvider = $this->getContainer()->get('oro_security.owner.metadata_provider.chain');
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
@@ -155,22 +138,14 @@ class RequestACLTest extends WebTestCase
         $chainMetadataProvider->stopProviderEmulation();
     }
 
-    /**
-     * @param string $email
-     * @param string $password
-     */
-    protected function login($email, $password)
+    private function login(string $email, string $password): void
     {
         $this->initClient([], $this->generateBasicAuthHeader($email, $password));
         $this->client->useHashNavigation(true);
         $this->client->request('GET', '/'); // any page to apply new user
     }
 
-    /**
-     * @param bool $expected
-     * @param Request $request
-     */
-    protected function assertIsGranted($expected, Request $request)
+    private function assertIsGranted(bool $expected, Request $request): void
     {
         $authorizationChecker = $this->getContainer()->get('security.authorization_checker');
 

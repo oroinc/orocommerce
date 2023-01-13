@@ -14,10 +14,8 @@ use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 
 class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceListQueryConverterExtension
-     */
-    protected $extension;
+    /** @var PriceListQueryConverterExtension */
+    private $extension;
 
     protected function setUp(): void
     {
@@ -27,9 +25,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
     public function testConvertWithPriceLists()
     {
         $expressionBuilder = $this->initializeExpressionBuilder();
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
         $qb->expects($this->any())
             ->method('getRootAliases')
             ->willReturn(['root']);
@@ -57,9 +53,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
         $definition = [
             'price_lists' => [42]
         ];
-        $source = $this->getMockBuilder(AbstractQueryDesigner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $source = $this->createMock(AbstractQueryDesigner::class);
         $source->expects($this->once())
             ->method('getDefinition')
             ->willReturn(QueryDefinitionUtil::encodeDefinition($definition));
@@ -74,9 +68,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
     public function testConvertWithPrices()
     {
         $expressionBuilder = $this->initializeExpressionBuilder();
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
         $qb->expects($this->any())
             ->method('getRootAliases')
             ->willReturn(['root']);
@@ -110,9 +102,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
         $definition = [
             'prices' => [42]
         ];
-        $source = $this->getMockBuilder(AbstractQueryDesigner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $source = $this->createMock(AbstractQueryDesigner::class);
         $source->expects($this->once())
             ->method('getDefinition')
             ->willReturn(QueryDefinitionUtil::encodeDefinition($definition));
@@ -125,31 +115,19 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedAliases, $tableAliasByColumn);
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function initializeExpressionBuilder()
+    private function initializeExpressionBuilder(): ExpressionBuilder
     {
-        $expressionBuilder = $this->getMockBuilder(ExpressionBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $expressionBuilder = $this->createMock(ExpressionBuilder::class);
         $expressionBuilder->expects($this->any())
             ->method('eq')
-            ->willReturnCallback(
-                function ($x, $y) {
-                    return $x . ' = ' . $y;
-                }
-            );
-
+            ->willReturnCallback(function ($x, $y) {
+                return $x . ' = ' . $y;
+            });
         $expressionBuilder->expects($this->any())
             ->method('andX')
-            ->willReturnCallback(
-                function () {
-                    $args = func_get_args();
-                    return implode(' AND ', $args);
-                }
-            );
+            ->willReturnCallback(function () {
+                return implode(' AND ', func_get_args());
+            });
 
         return $expressionBuilder;
     }

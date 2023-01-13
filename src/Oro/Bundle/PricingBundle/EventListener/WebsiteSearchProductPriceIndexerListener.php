@@ -13,6 +13,8 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
+use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
@@ -22,30 +24,30 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
+    use ContextTrait;
 
-    const MP_ALIAS = 'minimal_price_CPL_ID_CURRENCY_UNIT';
-
-    private WebsiteContextManager $websiteContextManger;
-    private ManagerRegistry $doctrine;
-    private ConfigManager $configManager;
+    public const MP_ALIAS = 'minimal_price.CPL_ID_CURRENCY_UNIT';
+    public const MP_MERGED_ALIAS = 'minimal_price.CPL_ID_CURRENCY';
 
     public function __construct(
-        WebsiteContextManager $websiteContextManager,
-        ManagerRegistry $doctrine,
-        ConfigManager $configManager
+        private WebsiteContextManager $websiteContextManager,
+        private ManagerRegistry $doctrine,
+        private ConfigManager $configManager,
+        private ValueFormatterInterface $decimalValueFormatter
     ) {
-        $this->websiteContextManger = $websiteContextManager;
-        $this->doctrine = $doctrine;
-        $this->configManager = $configManager;
     }
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'pricing')) {
+            return;
+        }
+
         if (!$this->isFeaturesEnabled()) {
             return;
         }
 
-        $websiteId = (int)$this->websiteContextManger->getWebsiteId($event->getContext());
+        $websiteId = (int)$this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
 
@@ -72,7 +74,7 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
             $event->addPlaceholderField(
                 $price['product'],
                 self::MP_ALIAS,
-                $price['value'],
+                $this->decimalValueFormatter->format($price['value']),
                 [
                     CPLIdPlaceholder::NAME => $price['cpl'],
                     CurrencyPlaceholder::NAME => $price['currency'],
@@ -89,8 +91,8 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
         foreach ($prices as $price) {
             $event->addPlaceholderField(
                 $price['product'],
-                'minimal_price_CPL_ID_CURRENCY',
-                $price['value'],
+                self::MP_MERGED_ALIAS,
+                $this->decimalValueFormatter->format($price['value']),
                 [
                     CPLIdPlaceholder::NAME => $price['cpl'],
                     CurrencyPlaceholder::NAME => $price['currency'],

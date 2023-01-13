@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new_text
+            optionName: visible
+            optionValue: true
+
+        - '@move':
+            id: product_item_select_row
+            parentId: product_datagrid_row_product_secondary_content_first_container
+
+    conditions: 'context.has("theme_name") && context["theme_name"] == "no-image-view"'

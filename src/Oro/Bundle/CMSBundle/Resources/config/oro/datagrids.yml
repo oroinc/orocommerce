@@ -52,7 +52,7 @@ datagrids:
                     - { table: 'Oro\Bundle\CMSBundle\Entity\LoginPage', alias: loginPage }
         columns:
             id:
-              label: oro.cms.loginpage.id.label
+                label: oro.cms.loginpage.id.label
         properties:
             id: ~
             view_link:
@@ -82,9 +82,9 @@ datagrids:
                     - { table: 'Oro\Bundle\CMSBundle\Entity\Page', alias: page }
         columns:
             id:
-              label: oro.cms.page.id.label
+                label: oro.cms.page.id.label
             title:
-              label: oro.cms.page.titles.singular_label
+                label: oro.cms.page.titles.singular_label
         properties:
             id: ~
             title:
@@ -145,8 +145,8 @@ datagrids:
                 label: oro.cms.contentblock.enabled.label
                 frontend_type: select
                 choices:
-                   Disabled: 0
-                   Enabled: 1
+                    Disabled: 0
+                    Enabled: 1
             createdAt:
                 label: oro.cms.contentblock.createdat.label
                 frontend_type: datetime
@@ -423,3 +423,96 @@ datagrids:
                 updatedAt:
                     type: datetime
                     data_name: page.updatedAt
+
+    content-template-grid:
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\ContentTemplate'
+        acl_resource: oro_cms_content_template_view
+        options:
+            entity_pagination: true
+            entityHint: oro.cms.contenttemplate.entity_plural_label
+        source:
+            type: orm
+            query:
+                select:
+                    - template.id
+                    - template.name
+                    - template.enabled
+                    - template.createdAt
+                    - template.updatedAt
+                    - CONCAT(owner.firstName, ' ', owner.lastName) as ownerName
+                    - preview.id as previewImage
+                from:
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\ContentTemplate', alias: template }
+                join:
+                    left:
+                        - { join: template.owner, alias: owner }
+                        - { join: template.previewImage, alias: preview }
+        columns:
+            name:
+                label: oro.cms.contenttemplate.name.label
+            previewImage:
+                label: oro.cms.contenttemplate.preview_image.label
+                type: twig
+                frontend_type: html
+                template: '@OroCMS/ContentTemplate/Datagrid/previewImage.html.twig'
+            enabled:
+                label: oro.cms.contenttemplate.enabled.label
+                frontend_type: select
+                choices:
+                    oro.cms.contenttemplate.disabled.label: 0
+                    oro.cms.contenttemplate.enabled.label: 1
+            createdAt:
+                frontend_type: datetime
+                label: oro.ui.created_at
+            updatedAt:
+                frontend_type: datetime
+                label: oro.ui.updated_at
+            ownerName:
+                label: oro.cms.contenttemplate.owner.label
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_cms_content_template_view
+                params: [ id ]
+        actions:
+            view:
+                type: navigate
+                label: oro.grid.action.view
+                link: view_link
+                icon: eye
+                rowAction: true
+        sorters:
+            columns:
+                name:
+                    data_name: template.name
+                enabled:
+                    data_name: template.enabled
+                createdAt:
+                    data_name: template.createdAt
+                updatedAt:
+                    data_name: template.updatedAt
+                ownerName:
+                    data_name: ownerName
+            default:
+                createdAt: DESC
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: template.name
+                enabled:
+                    type: boolean
+                    data_name: template.enabled
+                createdAt:
+                    type: datetime
+                    data_name: template.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: template.updatedAt
+                ownerName:
+                    type: choice-tree
+                    data_name: template.owner
+                    autocomplete_alias: assigned_to_organization_users
+                    renderedPropertyName: 'fullName'
+                    className: 'Oro\Bundle\UserBundle\Entity\User'

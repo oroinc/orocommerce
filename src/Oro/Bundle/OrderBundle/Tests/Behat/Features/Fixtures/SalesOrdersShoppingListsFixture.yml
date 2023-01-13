@@ -37,6 +37,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         subtotalObject: '@subtotal1'
         totalObject: '@total1'
         estimatedShippingCostAmount: 1.00
+        lineItems: [ '@simpleOrderLineItem' ]
     secondOrder:
         organization: '@organization'
         owner: '@admin'
@@ -53,6 +54,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         subtotalObject: '@subtotal2'
         totalObject: '@total2'
         estimatedShippingCostAmount: 2.00
+        lineItems: [ '@secondOrderLineItem' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:

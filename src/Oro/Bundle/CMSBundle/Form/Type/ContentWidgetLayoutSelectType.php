@@ -5,6 +5,9 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 use Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider;
 use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
@@ -16,16 +19,37 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ContentWidgetLayoutSelectType extends AbstractType
 {
-    /** @var ContentWidgetLayoutProvider */
-    private $widgetLayoutProvider;
+    private ContentWidgetLayoutProvider $widgetLayoutProvider;
 
-    /** @var TranslatorInterface */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(ContentWidgetLayoutProvider $widgetLayoutProvider, TranslatorInterface $translator)
     {
         $this->widgetLayoutProvider = $widgetLayoutProvider;
         $this->translator = $translator;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                if ($event->getData()) {
+                    return;
+                }
+
+                $form = $event->getForm();
+                $parentData = $form->getParent()?->getData();
+                if ($parentData && null !== $parentData->getId()) {
+                    return;
+                }
+
+                $availableChoices = $form->getConfig()->getOption('choices');
+                if (!empty($availableChoices)) {
+                    $event->setData(reset($availableChoices));
+                }
+            }
+        );
     }
 
     /**
@@ -75,6 +99,8 @@ class ContentWidgetLayoutSelectType extends AbstractType
             $class .= $view->vars['attr']['class'] ?? '';
 
             $view->vars['attr']['class'] = $class;
+        } else {
+            $view->vars['required'] = true;
         }
     }
 

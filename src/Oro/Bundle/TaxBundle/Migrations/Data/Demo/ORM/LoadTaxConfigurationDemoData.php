@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loads TAX configuration.
+ * Loads tax configuration.
  */
 class LoadTaxConfigurationDemoData extends AbstractFixture implements
     DependentFixtureInterface,

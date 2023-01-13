@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryProvider;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
-use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
+use Oro\Bundle\ProductBundle\Provider\ProductSegmentProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
@@ -19,7 +19,7 @@ class FeaturedProductsProvider
     private const PRODUCT_LIST_TYPE = 'featured_products';
 
     private SegmentProductsQueryProvider $segmentProductsQueryProvider;
-    private ProductSegmentProviderInterface $productSegmentProvider;
+    private ProductSegmentProvider $productSegmentProvider;
     private ProductListBuilder $productListBuilder;
     private AclHelper $aclHelper;
     private ConfigManager $configManager;
@@ -29,7 +29,7 @@ class FeaturedProductsProvider
 
     public function __construct(
         SegmentProductsQueryProvider $segmentProductsQueryProvider,
-        ProductSegmentProviderInterface $productSegmentProvider,
+        ProductSegmentProvider $productSegmentProvider,
         ProductListBuilder $productListBuilder,
         AclHelper $aclHelper,
         ConfigManager $configManager

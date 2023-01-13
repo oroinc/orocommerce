@@ -30,9 +30,19 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
      */
     public function getNewActualRules(\DateTime $now)
     {
+        return $this->getNewActualRulesForCombinedPriceList($now);
+    }
+
+    public function getNewActualRulesForCombinedPriceList(\DateTime $now, CombinedPriceList $fullCpl = null)
+    {
         $qb = $this->getActualRuleQb($now)
             ->andWhere('rule.active = :activity')
             ->setParameter('activity', false);
+
+        if ($fullCpl) {
+            $qb->andWhere('rule.fullChainPriceList = :fullCpl')
+                ->setParameter('fullCpl', $fullCpl);
+        }
 
         return $qb->getQuery()->getResult();
     }

@@ -8,19 +8,14 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class LoginPageControllerTest extends WebTestCase
 {
-    const TOP_CONTENT = 'html top content';
-    const BOTTOM_CONTENT = 'html bottom content';
-    const CSS = 'css styles';
+    private const TOP_CONTENT = 'html top content';
+    private const BOTTOM_CONTENT = 'html bottom content';
 
-    const TOP_CONTENT_UPDATE = 'html top content update';
-    const BOTTOM_CONTENT_UPDATE = 'html bottom content update';
-    const CSS_UPDATE = 'css styles update';
+    private const TOP_CONTENT_UPDATE = 'html top content update';
+    private const BOTTOM_CONTENT_UPDATE = 'html bottom content update';
 
-    const LOGIN_PAGE_ID = 1;
+    private const LOGIN_PAGE_ID = 1;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -32,38 +27,33 @@ class LoginPageControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_loginpage_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('cms-login-page-grid', $crawler->html());
+        self::assertStringContainsString('cms-login-page-grid', $crawler->html());
         $this->assertEquals('Customer Login Pages', $crawler->filter('h1.oro-subtitle')->html());
-        static::assertStringNotContainsString(
+        self::assertStringNotContainsString(
             'Create Login Page',
             $crawler->filter('div.title-buttons-container')->html()
         );
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_loginpage_create'));
 
-        $this->assertLoginPageSave($crawler, static::TOP_CONTENT, static::BOTTOM_CONTENT, static::CSS);
+        $this->assertLoginPageSave($crawler, self::TOP_CONTENT, self::BOTTOM_CONTENT);
 
         /** @var LoginPage $page */
         $page = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCMSBundle:LoginPage')
-            ->getRepository('OroCMSBundle:LoginPage')
-            ->findOneBy(['id' => static::LOGIN_PAGE_ID]);
+            ->getRepository(LoginPage::class)
+            ->findOneBy(['id' => self::LOGIN_PAGE_ID]);
         $this->assertNotEmpty($page);
 
         return $page->getId();
     }
 
     /**
-     * @param int $id
      * @depends testCreate
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request(
             'GET',
@@ -73,21 +63,15 @@ class LoginPageControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertLoginPageSave(
-            $crawler,
-            static::TOP_CONTENT_UPDATE,
-            static::BOTTOM_CONTENT_UPDATE,
-            static::CSS_UPDATE
-        );
+        $this->assertLoginPageSave($crawler, self::TOP_CONTENT_UPDATE, self::BOTTOM_CONTENT_UPDATE);
 
         return $id;
     }
 
     /**
      * @depends testUpdate
-     * @param int $id
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -98,32 +82,30 @@ class LoginPageControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString(static::TOP_CONTENT_UPDATE, $html);
-        static::assertStringContainsString(static::BOTTOM_CONTENT_UPDATE, $html);
+        self::assertStringContainsString(self::TOP_CONTENT_UPDATE, $html);
+        self::assertStringContainsString(self::BOTTOM_CONTENT_UPDATE, $html);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string $topContent
-     * @param string $bottomContent
-     */
-    private function assertLoginPageSave(Crawler $crawler, $topContent, $bottomContent)
+    private function assertLoginPageSave(Crawler $crawler, string $topContent, string $bottomContent): void
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
         $form['oro_cms_login_page[topContent]'] = $topContent;
         $form['oro_cms_login_page[bottomContent]'] = $bottomContent;
+        // we need to specify input_action form parameter manually because JS is not executed
+        // and the value of this parameter have no correct redirect route data
+        $form['input_action'] = '{"route":"oro_cms_loginpage_view","params":{"id":"$id"}}';
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        static::assertStringContainsString('Login form has been saved', $html);
-        static::assertStringContainsString($topContent, $html);
-        static::assertStringContainsString($bottomContent, $html);
+        self::assertStringContainsString('Login form has been saved', $html);
+        self::assertStringContainsString($topContent, $html);
+        self::assertStringContainsString($bottomContent, $html);
 
         self::assertArrayNotHasKey('oro_cms_login_page[css]', $form);
     }

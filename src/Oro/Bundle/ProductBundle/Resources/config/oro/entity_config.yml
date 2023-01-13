@@ -1,6 +1,6 @@
 entity_config:
     attribute:
-        # You can find out more about attributes in the documentation: https://doc.oroinc.com/backend/configuration/annotation/config-field.html#attribute
+        # You can find out more about attributes in the documentation: https://doc.oroinc.com/backend/configuration/annotation/config-field/#attribute
         field:
             items:
                 searchable:
@@ -8,10 +8,14 @@ entity_config:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.searchable.tooltip
                 filterable:
+                    options:
+                        indexed: true
                     form:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.filterable.tooltip
                 sortable:
+                    options:
+                        indexed: true
                     form:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.sortable.tooltip

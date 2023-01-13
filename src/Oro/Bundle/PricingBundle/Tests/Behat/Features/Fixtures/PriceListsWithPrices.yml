@@ -11,6 +11,14 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@piece'
+        precision: '1'
+
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
@@ -19,8 +27,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision1'
+        unitPrecisions: [ '@precision1' ]
         __calls:
-            - addName: ['@locvalue1']
+            -   addName: [ '@locvalue1' ]
         inventoryStatus: '@enumInventoryStatuses'
     product2:
         sku: 'PSKU2'
@@ -29,26 +39,29 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision2'
+        unitPrecisions: [ '@precision2' ]
         __calls:
-            - addName: ['@locvalue2']
+            -   addName: [ '@locvalue2' ]
         inventoryStatus: '@enumInventoryStatuses'
 
 Doctrine\Common\Collections\ArrayCollection:
     products:
-        __construct: [['@product1', '@product2']]
+        __construct: [ [ '@product1', '@product2' ] ]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
-            - addTitle: ['@localNewCategory']
-            - setParentCategory: ['@root_category']
-            - setProducts: ['@products']
+            -   addTitle: [ '@localNewCategory' ]
+            -   setParentCategory: [ '@root_category' ]
+            -   setProducts: [ '@products' ]
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     priceList1:
         name: 'First Price List'
         __calls:
-            - addCurrencyByCode: ['USD']
+            -   addCurrencyByCode: [ 'USD' ]
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:

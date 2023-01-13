@@ -6,62 +6,38 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
-use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
-
-    /**
-     * @var DirectUrlMessageFactory
-     */
-    protected $factory;
+    /** @var DirectUrlMessageFactory */
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->factory = new DirectUrlMessageFactory($this->registry, $this->configManager);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+
+        $this->factory = new DirectUrlMessageFactory($this->doctrine);
     }
 
     /**
      * @dataProvider redirectStrategyDataProvider
-     * @param string $strategy
-     * @param bool $requestCreateRedirect
-     * @param bool $expectedCreateRedirect
      */
-    public function testCreateMessage($strategy, $requestCreateRedirect, $expectedCreateRedirect)
+    public function testCreateMessage(bool $requestCreateRedirect): void
     {
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn($strategy);
         $entity = new SluggableEntityStub();
         $entity->setId(42);
         $entity->getSlugPrototypesWithRedirect()->setCreateRedirect($requestCreateRedirect);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'class' => SluggableEntityStub::class,
                 'id' => 42,
-                'createRedirect' => $expectedCreateRedirect
+                'createRedirect' => $requestCreateRedirect,
             ],
             $this->factory->createMessage($entity)
         );
@@ -69,167 +45,85 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider redirectStrategyDataProvider
-     * @param string $strategy
-     * @param bool $requestCreateRedirect
-     * @param bool $expectedCreateRedirect
      */
-    public function testCreateMassMessage($strategy, $requestCreateRedirect, $expectedCreateRedirect)
+    public function testCreateMassMessage(bool $requestCreateRedirect): void
     {
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn($strategy);
-
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'class' => SluggableEntityStub::class,
                 'id' => [1, 2, 3],
-                'createRedirect' => $expectedCreateRedirect
+                'createRedirect' => $requestCreateRedirect,
             ],
             $this->factory->createMassMessage(SluggableEntityStub::class, [1, 2, 3], $requestCreateRedirect)
         );
     }
 
-    /**
-     * @return array
-     */
-    public function redirectStrategyDataProvider()
+    public function redirectStrategyDataProvider(): array
     {
         return [
-            'if strategy is always then expectedCreateRedirect is always true #1' => [
-                'strategy' => Configuration::STRATEGY_ALWAYS,
-                'requestCreateRedirect' => false,
-                'expectedCreateRedirect' => true
-            ],
-            'if strategy is always then expectedCreateRedirect is always true #2' => [
-                'strategy' => Configuration::STRATEGY_ALWAYS,
+            'expectedCreateRedirect equals to requestCreateRedirect #1' => [
                 'requestCreateRedirect' => true,
-                'expectedCreateRedirect' => true
             ],
-            'if strategy is never then expectedCreateRedirect is always false #1' => [
-                'strategy' => Configuration::STRATEGY_NEVER,
+            'expectedCreateRedirect equals to requestCreateRedirect #2' => [
                 'requestCreateRedirect' => false,
-                'expectedCreateRedirect' => false
             ],
-            'if strategy is never then expectedCreateRedirect is always false #2' => [
-                'strategy' => Configuration::STRATEGY_NEVER,
-                'requestCreateRedirect' => true,
-                'expectedCreateRedirect' => false
-            ],
-            'if strategy is ask then expectedCreateRedirect equals to requestCreateRedirect #1' => [
-                'strategy' => Configuration::STRATEGY_ASK,
-                'requestCreateRedirect' => true,
-                'expectedCreateRedirect' => true
-            ],
-            'if strategy is ask then expectedCreateRedirect equals to requestCreateRedirect #2' => [
-                'strategy' => Configuration::STRATEGY_ASK,
-                'requestCreateRedirect' => false,
-                'expectedCreateRedirect' => false
-            ]
         ];
     }
 
-    public function testGetEntityClassFromMessage()
+    public function testGetEntityClassFromMessage(): void
     {
         $message = ['class' => SluggableEntityStub::class, 'id' => 42];
-        $this->assertEquals(SluggableEntityStub::class, $this->factory->getEntityClassFromMessage($message));
+        self::assertEquals(SluggableEntityStub::class, $this->factory->getEntityClassFromMessage($message));
     }
 
-    public function testGetEntityClassFromEmptyMessage()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->factory->getEntityClassFromMessage(null);
-    }
-
-    /**
-     * @dataProvider invalidMessagesDataProvider
-     */
-    public function testGetEntitiesFromMessageInvalidMessage(array $message)
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->factory->getEntitiesFromMessage($message);
-    }
-
-    /**
-     * @return array
-     */
-    public function invalidMessagesDataProvider()
-    {
-        return [
-            'empty array' => [[]],
-            'no class' => [['id' => 1]],
-            'no id' => [['class' => SluggableEntityStub::class]],
-            'unsupported class' => [['id' => 1, 'class' => \DateTime::class]],
-            'non integer id' => [['id' => 'one', 'class' => SluggableEntityStub::class]],
-            'non string class' => [['id' => 'one', 'class' => 123]],
-            'not bool require cache calculation' => [['id' => 1, 'class' => '123', 'requireCacheCalculation' => '3']],
-        ];
-    }
-
-    public function testGetEntitiesFromMessage()
+    public function testGetEntitiesFromMessage(): void
     {
         $message = [
             'id' => 1,
-            'class' => SluggableEntityStub::class
+            'class' => SluggableEntityStub::class,
         ];
         $entity = new SluggableEntityStub();
         $entity->setId(1);
 
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->expects($this->once())
+        $metadata = $this->createMock(ClassMetadata::class);
+        $metadata->expects(self::once())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
 
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
-        $repository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())
+        $repository = $this->createMock(EntityRepository::class);
+        $repository->expects(self::once())
             ->method('findBy')
             ->with(['id' => 1])
             ->willReturn([$entity]);
 
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with(SluggableEntityStub::class)
             ->willReturn($repository);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getClassMetadata')
             ->with(SluggableEntityStub::class)
             ->willReturn($metadata);
-        $this->registry->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(SluggableEntityStub::class)
             ->willReturn($em);
 
-        $this->assertEquals([$entity], $this->factory->getEntitiesFromMessage($message));
+        self::assertEquals([$entity], $this->factory->getEntitiesFromMessage($message));
     }
 
     /**
      * @dataProvider redirectStrategyDataProvider
-     * @param string $strategy
-     * @param bool $requestCreateRedirect
-     * @param bool $expectedCreateRedirect
      */
-    public function testGetCreateRedirectFromMessage($strategy, $requestCreateRedirect, $expectedCreateRedirect)
+    public function testGetCreateRedirectFromMessage(bool $requestCreateRedirect): void
     {
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn($strategy);
-
         $data = [
             DirectUrlMessageFactory::ID => 1,
             DirectUrlMessageFactory::ENTITY_CLASS_NAME => SluggableEntityStub::class,
             DirectUrlMessageFactory::CREATE_REDIRECT => $requestCreateRedirect,
         ];
 
-        $this->assertEquals($expectedCreateRedirect, $this->factory->getCreateRedirectFromMessage($data));
+        self::assertEquals($requestCreateRedirect, $this->factory->getCreateRedirectFromMessage($data));
     }
 }

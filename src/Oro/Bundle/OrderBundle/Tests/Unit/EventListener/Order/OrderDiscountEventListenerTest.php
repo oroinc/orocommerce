@@ -14,14 +14,14 @@ use Twig\Environment;
 
 class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OrderAddressEventListener */
-    protected $listener;
-
     /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    protected $twig;
+    private $twig;
 
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $formFactory;
+    private $formFactory;
+
+    /** @var OrderAddressEventListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -34,40 +34,42 @@ class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnOrderEvent()
     {
         $order = new Order();
-        $viewHtml = "any html";
+        $viewHtml = 'any html';
         $fieldName = OrderType::DISCOUNTS_FIELD_NAME;
 
-        /** @var Form|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = static::createMock(Form::class);
-        $form->expects(static::once())
+        $form = $this->createMock(Form::class);
+        $form->expects(self::once())
             ->method('has')
             ->with($fieldName)
             ->willReturn(true);
-        $form->expects(static::any())->method('getData')->willReturn($order);
+        $form->expects(self::any())
+            ->method('getData')
+            ->willReturn($order);
 
-        $formView = static::createMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
         $formView->children = ['discounts' => $this->createMock(FormView::class)];
 
-        $this->twig->expects(static::once())
+        $this->twig->expects(self::once())
             ->method('render')
             ->with(OrderDiscountEventListener::TEMPLATE, ['form' => $formView])
             ->willReturn($viewHtml);
-        $form->expects(static::once())->method('createView')->willReturn($formView);
+        $form->expects(self::once())
+            ->method('createView')
+            ->willReturn($formView);
 
         $event = new OrderEvent($form, $order, ['order' => []]);
         $this->listener->onOrderEvent($event);
 
         $eventData = $event->getData()->getArrayCopy();
 
-        static::assertArrayHasKey($fieldName, $eventData);
-        static::assertEquals($viewHtml, $eventData[$fieldName]);
+        self::assertArrayHasKey($fieldName, $eventData);
+        self::assertEquals($viewHtml, $eventData[$fieldName]);
     }
 
     public function testDoNothingIfNoSubmission()
     {
-        /** @var OrderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = static::createMock(OrderEvent::class);
-        $event->expects(static::never())
+        $event = $this->createMock(OrderEvent::class);
+        $event->expects(self::never())
             ->method('getForm');
         $this->listener->onOrderEvent($event);
     }

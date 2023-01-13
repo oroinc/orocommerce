@@ -228,6 +228,11 @@ oro_behat_extension:
         locator: '//h2[contains(@class,"product-item__title product-item__title")]'
         type: xpath
 
+    Product Name in Embedded Block:
+      selector:
+        locator: '//h3[contains(@class,"product-item__title product-item__title")]'
+        type: xpath
+
     Green Box:
       selector:
         locator: '//div[@class="shopping-lists"]'
@@ -235,12 +240,12 @@ oro_behat_extension:
 
     Update Shopping List button:
       selector:
-        locator: '//div/a[contains(text(),"Update Shopping List")]'
+        locator: '//div/button[contains(text(),"Update Shopping List")]'
         type: xpath
 
     Add to Shopping List button:
       selector:
-        locator: '//div/a[contains(text(),"Add to Shopping List")]'
+        locator: '//div/button[contains(text(),"Add to Shopping List")]'
         type: xpath
 
     Gallery View:
@@ -260,6 +265,9 @@ oro_behat_extension:
 
     Matrix Grid Popup:
       selector: 'div.matrix-order-widget--dialog'
+
+    Matrix Grid Popup Header:
+      selector: 'div.matrix-order-widget--dialog div.product-popup__header'
 
     Matrix Grid Form:
       selector:
@@ -369,7 +377,7 @@ oro_behat_extension:
 
     Ship to this address:
       selector:
-        locator: '//span[text()="Ship to this address"]'
+        locator: '//label[text()="Ship to this address"]'
         type: xpath
 
     Use billing address:
@@ -379,11 +387,16 @@ oro_behat_extension:
 
     Edit RFQ Line Item:
       selector:
-        locator: '//div[contains (@id,"oro_rfp_frontend_request_requestProducts-uid")]//button[@title="Edit"]'
+        locator: '//div[contains(@class, "request-form-line-container")][1]//button[@data-role="edit"]'
+        type: xpath
+
+    Edit RFQ Line Item 2:
+      selector:
+        locator: '//div[contains(@class, "request-form-line-container")][2]//button[@data-role="edit"]'
         type: xpath
 
     Add a Note to This Item:
-      selector: 'label.custom-checkbox:contains("Add a Note to This Item")'
+      selector: 'label.request-form-editnote__label:contains("Add a Note to This Item")'
 
     Frontstore RFQ Line Item Form1:
       selector: 'form[name="oro_rfp_frontend_request"]'
@@ -406,6 +419,18 @@ oro_behat_extension:
           SKU:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_rfp_frontend_request_requestProducts_1_product-uid")]//input'
+          Quantity: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][quantity]'
+          Unit: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][productUnit]'
+          Target Price: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][price][value]'
+
+    Frontstore RFQ Line Item Form3:
+      selector: 'form[name="oro_rfp_frontend_request"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_rfp_frontend_request_requestProducts_2_product-uid")]//input'
           Quantity: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][quantity]'
           Unit: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][productUnit]'
           Target Price: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][price][value]'
@@ -440,7 +465,7 @@ oro_behat_extension:
 
     Add Another Line2:
       selector:
-        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//a[text()="Add Another Line"]'
+        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//button[text()="Add Another Line"]'
         type: xpath
 
     Quotes Role Tab:
@@ -511,5 +536,5 @@ oro_behat_extension:
 
     Add to New Front Shopping List:
       selector:
-        locator: '//div/a[@title="Add to New Front Shopping List"]'
+        locator: '//div/button[@title="Add to New Front Shopping List"]'
         type: xpath

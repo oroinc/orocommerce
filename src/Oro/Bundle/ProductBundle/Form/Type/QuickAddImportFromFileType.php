@@ -29,6 +29,9 @@ class QuickAddImportFromFileType extends AbstractType
                     'required' => true,
                     'label' => false,
                     'constraints' => [
+                        new NotBlank(
+                            ['message' => 'oro.product.frontend.quick_add.validation.empty_file']
+                        ),
                         new File(
                             [
                                 'mimeTypes' => [
@@ -40,10 +43,8 @@ class QuickAddImportFromFileType extends AbstractType
                                     // xlsx
                                     'application/octet-stream'
                                 ],
-                                'mimeTypesMessage' => 'oro.product.frontend.quick_add.invalid_file_type'
                             ]
                         ),
-                        new NotBlank(),
                     ]
                 ]
             );

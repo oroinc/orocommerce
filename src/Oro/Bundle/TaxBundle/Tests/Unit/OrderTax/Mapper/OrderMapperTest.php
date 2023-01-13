@@ -29,45 +29,30 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemMapper|\PHPUnit\Framework\MockObject\MockObject */
     private $orderLineItemMapper;
 
-    /** @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $addressProvider;
-
-    /** @var ContextEventDispatcher */
-    private $eventDispatcher;
-
     /** @var PreloadingManager */
     private $preloadingManager;
 
     protected function setUp(): void
     {
-        $this->orderLineItemMapper = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderLineItemMapper = $this->createMock(OrderLineItemMapper::class);
+        $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
-        $this->addressProvider = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $addressProvider = $this->createMock(TaxationAddressProvider::class);
+        $addressProvider->expects($this->any())
+            ->method('getDestinationAddress')
+            ->willReturnArgument(0);
+        $addressProvider->expects($this->any())
+            ->method('getTaxationAddress')
+            ->willReturnArgument(1);
 
-        $this->addressProvider->expects($this->any())->method('getDestinationAddress')->willReturnArgument(0);
-        $this->addressProvider->expects($this->any())->method('getTaxationAddress')->willReturnArgument(1);
-
-        $this->eventDispatcher = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Event\ContextEventDispatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->eventDispatcher
-            ->expects($this->any())
+        $eventDispatcher = $this->createMock(ContextEventDispatcher::class);
+        $eventDispatcher->expects($this->any())
             ->method('dispatch')
             ->willReturn(new \ArrayObject([self::CONTEXT_KEY => self::CONTEXT_VALUE]));
 
-        $this->preloadingManager = $this->createMock(PreloadingManager::class);
-
         $this->mapper = new OrderMapper(
-            $this->eventDispatcher,
-            $this->addressProvider,
+            $eventDispatcher,
+            $addressProvider,
             $this->orderLineItemMapper,
             $this->preloadingManager
         );
@@ -85,16 +70,12 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('preloadInEntities')
             ->with(
                 $order->getLineItems()->toArray(),
-                [
-                    'product' => [
-                        'taxCode' => [],
-                    ],
-                ]
+                ['product' => ['taxCode' => []]]
             );
 
         $taxable = $this->mapper->map($order);
 
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
+        $this->assertInstanceOf(Taxable::class, $taxable);
         $this->assertEquals(self::ORDER_ID, $taxable->getIdentifier());
         $this->assertEquals('1', $taxable->getQuantity());
         $this->assertEquals('0', $taxable->getPrice());
@@ -105,18 +86,11 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
         $this->assertNotEmpty($taxable->getItems());
         $this->assertCount(1, $taxable->getItems());
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
+        $this->assertInstanceOf(Taxable::class, $taxable->getItems()->current());
         $this->assertEquals('20', $taxable->getShippingCost());
     }
 
-    /**
-     * Create order
-     *
-     * @param int $id
-     * @param float $subtotal
-     * @return Order
-     */
-    protected function createOrder($id, $subtotal)
+    private function createOrder(int $id, float $subtotal): Order
     {
         $billingAddress = (new OrderAddress())
             ->setFirstName('FirstName')
@@ -127,8 +101,7 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->setLastName('LastName')
             ->setStreet('street');
 
-        /** @var Order $order */
-        $order = $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', ['id' => $id]);
+        $order = $this->getEntity(Order::class, ['id' => $id]);
         $order
             ->setSubtotal($subtotal)
             ->addLineItem(new OrderLineItem())

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -42,6 +43,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->assertSame(200, $response->getStatusCode());
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
 
         /** @var ChoiceFormField $allForm */
         $allForm = $form['oro_scoped_data_type'][$scope->getId()]['all'];
@@ -53,12 +55,16 @@ class ProductVisibilityControllerTest extends WebTestCase
         // assert form data is set correct with loaded fixtures
         $this->assertSame('config', $allForm->getValue(), 'visibility to all');
         $this->assertSame(
-            json_encode([$this->getReference('customer.level_1')->getId() => ['visibility' => 'visible']]),
+            json_encode([
+                $this->getReference('customer.level_1')->getId() => ['visibility' => 'visible']
+            ], JSON_THROW_ON_ERROR),
             $customerForm->getValue(),
             'customer visibility'
         );
         $this->assertSame(
-            json_encode([$this->getReference(LoadGroups::GROUP1)->getId() => ['visibility' => 'hidden']]),
+            json_encode([
+                $this->getReference(LoadGroups::GROUP1)->getId() => ['visibility' => 'hidden']
+            ], JSON_THROW_ON_ERROR),
             $customerGroupForm->getValue(),
             'customer group visibility'
         );
@@ -70,21 +76,18 @@ class ProductVisibilityControllerTest extends WebTestCase
                 'oro_scoped_data_type' => [
                     $scope->getId() => [
                         'all' => 'hidden',
-                        'customer' => json_encode(
-                            [
-                                $this->getReference('customer.level_1')->getId() => ['visibility' => 'hidden'],
-                                $this->getReference('customer.level_1.2')->getId() => ['visibility' => 'visible'],
-                            ]
-                        ),
-                        'customerGroup' => json_encode(
-                            [
-                                $this->getReference(LoadGroups::GROUP1)->getId() =>
-                                    ['visibility' => CustomerGroupProductVisibility::getDefault($product)],
-                                $this->getReference(LoadGroups::GROUP2)->getId() => ['visibility' => 'visible'],
-                            ]
-                        ),
+                        'customer' => json_encode([
+                            $this->getReference('customer.level_1')->getId() => ['visibility' => 'hidden'],
+                            $this->getReference('customer.level_1.2')->getId() => ['visibility' => 'visible'],
+                        ], JSON_THROW_ON_ERROR),
+                        'customerGroup' => json_encode([
+                            $this->getReference(LoadGroups::GROUP1)->getId() =>
+                                ['visibility' => CustomerGroupProductVisibility::getDefault($product)],
+                            $this->getReference(LoadGroups::GROUP2)->getId() => ['visibility' => 'visible'],
+                        ], JSON_THROW_ON_ERROR),
                     ],
                 ],
+                'input_action' => $redirectAction
             ]
         );
 
@@ -123,20 +126,14 @@ class ProductVisibilityControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $class
-     * @param string $value
-     * @param array $context
-     * @param Product $product
-     */
-    protected function assertVisibilityEntity($class, $value, array $context, Product $product)
+    private function assertVisibilityEntity(string $class, string $value, array $context, Product $product): void
     {
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $type = call_user_func([$class, 'getScopeType']);
         $scope = $this->client->getContainer()->get('oro_scope.scope_manager')->findOrCreate($type, $context);
         /** @var VisibilityInterface $visibility */
         $visibility = $em->getRepository($class)->findOneBy(['product' => $product, 'scope' => $scope]);
-        $this->assertNotNull($visibility, sprintf("%s entity missing for expected value %s", $class, $value));
+        $this->assertNotNull($visibility, sprintf('%s entity missing for expected value %s', $class, $value));
         $this->assertSame($value, $visibility->getVisibility());
     }
 
@@ -163,7 +160,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->assertSame(
             json_encode([
                 $this->getReference('customer.level_1')->getId() => ['visibility' => 'hidden']
-            ]),
+            ], JSON_THROW_ON_ERROR),
             $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][customer]"]', $scope->getId()))
                 ->attr('value'),
             'customer visibility form data'
@@ -172,22 +169,17 @@ class ProductVisibilityControllerTest extends WebTestCase
             json_encode([
                 $this->getReference(LoadGroups::GROUP1)->getId() => ['visibility' => 'hidden'],
                 $this->getAnonymousGroupId() => ['visibility' => 'visible']
-            ]),
+            ], JSON_THROW_ON_ERROR),
             $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][customerGroup]"]', $scope->getId()))
                 ->attr('value'),
             'customer group visibility form data'
         );
     }
 
-    /**
-     * @return int
-     */
-    private function getAnonymousGroupId()
+    private function getAnonymousGroupId(): int
     {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
-            ->getRepository('OroCustomerBundle:CustomerGroup')
+        return $this->getContainer()->get('doctrine')
+            ->getRepository(CustomerGroup::class)
             ->findOneBy(['name' => LoadAnonymousCustomerGroup::GROUP_NAME_NON_AUTHENTICATED])
             ->getId();
     }

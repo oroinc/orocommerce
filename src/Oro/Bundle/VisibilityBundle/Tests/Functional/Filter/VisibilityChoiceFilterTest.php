@@ -12,21 +12,13 @@ class VisibilityChoiceFilterTest extends WebTestCase
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                LoadFilterProductVisibilityData::class,
-            ]
-        );
+        $this->loadFixtures([LoadFilterProductVisibilityData::class]);
     }
 
     /**
      * @dataProvider filterDataProvider
-     *
-     * @param array $filter
-     * @param integer $total
-     * @param array $customers
      */
-    public function testFilter(array $filter, $total, array $customers)
+    public function testFilter(array $filter, int $total, array $customers)
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
@@ -56,14 +48,11 @@ class VisibilityChoiceFilterTest extends WebTestCase
             },
             $result['data']
         );
-        static::assertEqualsCanonicalizing($customers, $resultCustomers);
+        self::assertEqualsCanonicalizing($customers, $resultCustomers);
         $this->assertSame($total, $result['options']['totalRecords']);
     }
 
-    /**
-     * @return array
-     */
-    public function filterDataProvider()
+    public function filterDataProvider(): array
     {
         return [
             'filter by non default visibility' => [

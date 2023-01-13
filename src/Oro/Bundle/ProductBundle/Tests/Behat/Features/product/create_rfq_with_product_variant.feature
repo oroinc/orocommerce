@@ -45,7 +45,7 @@ Feature: Create RFQ with product variant
     And I click Edit Attribute Family in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes                                                                                                                                                                       |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Attribute_1] |
+      | Attribute group | true    | [Attribute_1] |
     And I save form
     Then I should see "Successfully updated" flash message
 
@@ -76,7 +76,7 @@ Feature: Create RFQ with product variant
     And I signed in as AmandaRCole@example.org on the store frontend
 
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
     Then I should see text matching "Item number cannot be found"
@@ -146,7 +146,7 @@ Feature: Create RFQ with product variant
     Given I proceed as the User
     And I am on the homepage
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
     And I click "Get Quote"

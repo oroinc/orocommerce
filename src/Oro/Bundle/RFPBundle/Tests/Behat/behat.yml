@@ -86,6 +86,10 @@ oro_behat_extension:
                     Do Not Ship Later Than:
                         type: 'css'
                         locator: 'input[name^="oro_rfp_frontend_request_shipUntil"]'
+                    Line Item First Unit:
+                        type: 'css'
+                        locator: 'select[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][productUnit]"]'
+                        element: Select2Entity
 
         RFQ Products List:
             selector: '.request-form__content'
@@ -114,6 +118,16 @@ oro_behat_extension:
             selector:
                 locator: '//div[@data-role="line-item"][1]//div[@data-role="lineitems"]/div[last()]//input[@data-name="field__quantity"]'
                 type: xpath
+
+        Assigned To Tooltip Icon:
+            selector:
+                type: xpath
+                locator: '//label[contains(., "Assigned To")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+
+        Assigned Customer Users Tooltip Icon:
+            selector:
+                type: xpath
+                locator: '//label[contains(., "Assigned Customer Users")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
 
     pages:
         RequestViewBackendPage:

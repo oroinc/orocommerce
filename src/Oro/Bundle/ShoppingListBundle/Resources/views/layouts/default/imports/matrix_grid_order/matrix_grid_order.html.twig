@@ -1,0 +1,115 @@
+{% block __matrix_grid_order__wrapper_widget %}
+    {% set class_prefix = 'matrix-order-widget' %}
+
+    {% if rows is not defined %}
+        {% set rows = [
+            form.rows|length,
+            form.vars.columns|length
+        ] %}
+    {% endif %}
+
+    {% do block|merge_context({
+        class_prefix: class_prefix,
+        form: form,
+        product: product,
+        shoppingList: shoppingList,
+        rows: rows,
+        totals: totals,
+        prices: prices
+    }) %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}',
+        '~data-page-component-view': {
+            view: 'oropricing/js/app/views/base-product-matrix-view',
+            prices: prices,
+            dimension: form.vars.dimensions,
+            autoRender: true
+        }
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __matrix_grid_order__header_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header',
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_picture_widget %}
+    <picture {{ block('block_attributes') }}>
+        {% set productImage = product.imagesByType('listing').first.image|default(null) %}
+        {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
+        <img src="{{ productImageUrl }}" alt="{{ product.names|localized_value|e }}" class="product-popup__header-img" />
+    </picture>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_attributes_widget %}
+    <section {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </section>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_name_widget %}
+    <h4 {{ block('block_attributes') }}>
+        {{ product.names|localized_value|e }}
+    </h4>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_sku_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ 'oro.product.frontend.index.item'|trans }}
+        <span class="product-item__sku-value">{{ product.sku|e }}</span>
+    </div>
+{% endblock %}
+
+{% block __matrix_grid_order__form_start_widget %}
+    {% set form_route_name = 'oro_shopping_list_frontend_matrix_grid_order' %}
+    {% set form_route_parameters = form_route_parameters|merge({
+        productId: product.id,
+        shoppingListId: shoppingList is not empty ? shoppingList.id : null
+    }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': class_prefix ~ '__form fields-row',
+        'novalidate': 'novalidate'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __matrix_grid_order__form_summary_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': class_prefix ~ '__totals '
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __matrix_grid_order__form_end_widget %}
+    {% if renderCache is not defined %}
+        {% set renderCache %}
+               {{ form_widget(form._token) }}
+           {% endset %}
+        {% do block|merge_context({
+            renderCache: renderCache
+        }) %}
+    {% endif %}
+    {{ renderCache }}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __matrix_grid_order__matrix_form_clear_button_widget %}
+    {% if totals.quantity|default(0) == 0 %}
+        {% set style = style ~ ' disabled' %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

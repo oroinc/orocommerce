@@ -8,11 +8,13 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   customer_user{1..12}:
-    email: 'customer_user_email@example.com<current()>'
+    __calls:
+      - setEmail: [ 'customer_user_email@example.com<current()>' ]
     username: 'Acme_<current()>'
     password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
     salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
     firstName: 'Acme_<current()>'
+    lastName: 'Demo_<current()>'
     enabled: true
     confirmed: true
     customer: '@customer<current()>'

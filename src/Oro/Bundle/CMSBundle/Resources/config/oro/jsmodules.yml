@@ -2,20 +2,33 @@ aliases:
     codemirror/lib/codemirror$: codemirror/lib/codemirror.css
     codemirror/theme/hopscotch$: codemirror/theme/hopscotch.css
     grapesjs$: grapesjs/dist/grapes.min
-    grapesjs-parser-postcss$: grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
-    grapesjs-preset-webpage$: grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
+    grapesjs-parser-postcss$: grapesjs-parser-postcss/dist
+    grapesjs-plugin-export$: grapesjs-plugin-export/dist
     spectrum-colorpicker/spectrum$: spectrum-colorpicker/spectrum.css
 app-modules:
-    - orocms/js/app/modules/grapesjs-module
     - orocms/js/app/modules/editor-validation-module
 configs:
     orocms/js/app/grapesjs/grapesjs-editor-view: {}
 dynamic-imports:
     orocms:
         - orocms/js/app/components/content-variant-collection-component
+        - orocms/js/app/grapesjs/grapesjs-editor-component
         - orocms/js/app/grapesjs/grapesjs-editor-view
+        - orocms/js/app/validator/wysiwyg
+        - orocms/js/app/validator/wysiwyg-style
         - orocms/js/app/views/content-widget-view
         - orocms/js/app/views/default-variant-collection-view
         - orocms/js/app/views/variants-collection-view
-        - orocms/js/app/validator/wysiwyg
-        - orocms/js/app/validator/wysiwyg-style
+    wysiwyg_plugins:
+        - orocms/js/app/grapesjs/plugins/component-types
+        - orocms/js/app/grapesjs/plugins/components/sorter-hints
+        - orocms/js/app/grapesjs/plugins/components/grapesjs-components
+        - orocms/js/app/grapesjs/plugins/grapesjs-style-isolation
+        - orocms/js/app/grapesjs/plugins/import
+        - orocms/js/app/grapesjs/plugins/export
+        - orocms/js/app/grapesjs/plugins/code
+        - orocms/js/app/grapesjs/plugins/panel-scrolling-hints
+        - orocms/js/app/grapesjs/plugins/code-mode
+        - orocms/js/app/grapesjs/plugins/screenshot
+        - orocms/js/app/grapesjs/plugins/content-templates
+        - orocms/js/app/grapesjs/plugins/settings

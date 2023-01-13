@@ -11,6 +11,11 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_tax.provider.taxation_settings_provider'
 
+    oro_tax.api.compute_tax_jurisdiction_zip_codes:
+        class: Oro\Bundle\TaxBundle\Api\Processor\ComputeTaxJurisdictionZipCodes
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\TaxBundle\Entity\TaxJurisdiction }
+
     oro_tax.api.compute_order_taxes:
         class: Oro\Bundle\TaxBundle\Api\Processor\ComputeOrderTaxes
         arguments:

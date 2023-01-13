@@ -34,9 +34,6 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     /** @var SearchNumberRangeFilter */
     private $filter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
@@ -69,26 +66,24 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 
     public function testApplyBetween()
     {
-        $ds = $this->getMockBuilder(SearchFilterDatasourceAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
 
         $ds->expects($this->exactly(2))
             ->method('addRestriction')
             ->withConsecutive(
                 [
-                    new CommonComparison('decimal.minimal_price_CPL_ID_CURRENCY_kg', Comparison::GTE, 100),
+                    new CommonComparison('decimal.minimal_price.CPL_ID_CURRENCY_kg', Comparison::GTE, 100),
                     FilterUtility::CONDITION_AND,
                     false,
                 ],
                 [
-                    new CommonComparison('decimal.minimal_price_CPL_ID_CURRENCY_kg', Comparison::LTE, 150),
+                    new CommonComparison('decimal.minimal_price.CPL_ID_CURRENCY_kg', Comparison::LTE, 150),
                     FilterUtility::CONDITION_AND,
                     false,
                 ]
             );
 
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price_CPL_ID_CURRENCY_UNIT']);
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price.CPL_ID_CURRENCY_UNIT']);
         $this->assertTrue(
             $this->filter->apply(
                 $ds,
@@ -104,23 +99,20 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 
     public function testApplyNotBetween()
     {
-        $ds = $this->getMockBuilder(SearchFilterDatasourceAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $ds->expects($this->exactly(1))
+        $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
+        $ds->expects($this->once())
             ->method('addRestriction')
             ->with(
                 new CompositeExpression(
                     FilterUtility::CONDITION_OR,
                     [
                         new CommonComparison(
-                            'decimal.minimal_price_CPL_ID_CURRENCY_kg',
+                            'decimal.minimal_price.CPL_ID_CURRENCY_kg',
                             Comparison::LTE,
                             new Value(100)
                         ),
                         new CommonComparison(
-                            'decimal.minimal_price_CPL_ID_CURRENCY_kg',
+                            'decimal.minimal_price.CPL_ID_CURRENCY_kg',
                             Comparison::GTE,
                             new Value(150)
                         ),
@@ -128,7 +120,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price_CPL_ID_CURRENCY_UNIT']);
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price.CPL_ID_CURRENCY_UNIT']);
         $this->assertTrue(
             $this->filter->apply(
                 $ds,
@@ -152,12 +144,10 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     {
         $fieldValue = 100;
 
-        $ds = $this->getMockBuilder(SearchFilterDatasourceAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
 
         $restriction = new CommonComparison(
-            'decimal.minimal_price_CPL_ID_CURRENCY_' . $unit,
+            'decimal.minimal_price.CPL_ID_CURRENCY_' . $unit,
             $comparisonOperator,
             $fieldValue
         );
@@ -165,7 +155,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->method('addRestriction')
             ->with($restriction, FilterUtility::CONDITION_AND);
 
-        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price_CPL_ID_CURRENCY_UNIT']);
+        $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price.CPL_ID_CURRENCY_UNIT']);
         $this->assertTrue(
             $this->filter->apply(
                 $ds,
@@ -179,10 +169,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function applyDataProvider()
+    public function applyDataProvider(): array
     {
         return [
             '>=' => [
@@ -225,16 +212,16 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->with('test value', true)
             ->willReturn('formatted test label');
 
-        $formView = $this->createFormView();
+        $formView = new FormView();
         $formView->vars['formatter_options'] = ['decimals' => 0];
         $formView->vars['array_separator'] = ',';
         $formView->vars['array_operators'] = [9, 10];
         $formView->vars['data_type'] = 'data_integer';
 
-        $typeFormView = $this->createFormView($formView);
+        $typeFormView = new FormView($formView);
         $typeFormView->vars['choices'] = [];
 
-        $unitFormView = $this->createFormView($formView);
+        $unitFormView = new FormView($formView);
         $unitFormView->vars['choices'] = [new ChoiceView('test data', 'test value', 'test label')];
 
         $formView->children = ['type' => $typeFormView, 'unit' => $unitFormView];
@@ -264,15 +251,5 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         $this->assertEquals($expected, $this->filter->getMetadata());
-    }
-
-    /**
-     * @param null|FormView $parent
-     *
-     * @return FormView
-     */
-    private function createFormView(?FormView $parent = null)
-    {
-        return new FormView($parent);
     }
 }

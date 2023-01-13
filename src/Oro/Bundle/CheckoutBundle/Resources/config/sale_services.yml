@@ -13,3 +13,5 @@ services:
             - '@oro_checkout.provider.shipping_context'
             - '@oro_sale.quote.configured_shipping_price_provider'
             - '@oro_sale.quote.shipping_configuration_factory'
+        calls:
+            - ['setSuccessor', ['@oro_checkout.shipping_method.multi_shipping_price.provider']]

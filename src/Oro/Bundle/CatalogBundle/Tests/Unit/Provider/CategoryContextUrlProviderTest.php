@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CatalogBundle\Provider\CategoryContextUrlProvider;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -16,44 +16,34 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     private $requestStack;
 
-    /**
-     * @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
-    /**
-     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $userLocalizationManager;
+    /** @var LocalizationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationProvider;
 
-    /**
-     * @var CategoryContextUrlProvider
-     */
+    /** @var CategoryContextUrlProvider */
     private $provider;
 
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->cache = $this->createMock(UrlCacheInterface::class);
-        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
 
         $this->provider = new CategoryContextUrlProvider(
             $this->requestStack,
             $this->cache,
-            $this->userLocalizationManager
+            $this->localizationProvider
         );
     }
 
-    public function testGetUrlByRequest()
+    public function testGetUrlByRequest(): void
     {
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $categoryId = 2;
         $url = '/my-category';
@@ -71,11 +61,9 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($url, $this->provider->getUrl($categoryId));
     }
 
-    public function testGetUrlFromCacheNonCategoryRoute()
+    public function testGetUrlFromCacheNonCategoryRoute(): void
     {
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $categoryId = 2;
         $url = '/my-url';
@@ -96,14 +84,12 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($categoryUrl, $this->provider->getUrl($categoryId));
     }
 
-    public function testGetUrlFromCacheNonCategoryIdInRoute()
+    public function testGetUrlFromCacheNonCategoryIdInRoute(): void
     {
         $categoryId = 2;
         $categoryUrl = '/category';
 
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $slug = new Slug();
         $slug->setRouteName(CategoryContextUrlProvider::CATEGORY_ROUTE_NAME);
@@ -120,14 +106,12 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($categoryUrl, $this->provider->getUrl($categoryId));
     }
 
-    public function testGetUrlFromCacheSlugIsNull()
+    public function testGetUrlFromCacheSlugIsNull(): void
     {
         $categoryId = 2;
         $categoryUrl = '/category';
 
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $slug = null;
         $request->attributes = new ParameterBag([CategoryContextUrlProvider::USED_SLUG_KEY => $slug]);
@@ -141,14 +125,12 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($categoryUrl, $this->provider->getUrl($categoryId));
     }
 
-    public function testGetUrlFromCacheNoRequestAttribute()
+    public function testGetUrlFromCacheNoRequestAttribute(): void
     {
         $categoryId = 2;
         $categoryUrl = '/category';
 
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
         $request->attributes = new ParameterBag();
 
         $this->requestStack->expects($this->once())
@@ -160,7 +142,7 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($categoryUrl, $this->provider->getUrl($categoryId));
     }
 
-    public function testGetUrlFromCacheNoRequest()
+    public function testGetUrlFromCacheNoRequest(): void
     {
         $categoryId = 2;
         $categoryUrl = '/category';
@@ -174,7 +156,7 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($categoryUrl, $this->provider->getUrl($categoryId));
     }
 
-    public function testGetUrlFromCacheNoRequestNoUrlInCache()
+    public function testGetUrlFromCacheNoRequestNoUrlInCache(): void
     {
         $categoryId = 2;
 
@@ -183,7 +165,7 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn(null);
         $localizationId = 1;
         $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
-        $this->userLocalizationManager->expects($this->once())
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
@@ -202,15 +184,11 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->provider->getUrl($categoryId));
     }
 
-    /**
-     * @param int $categoryId
-     * @param string $categoryUrl
-     */
-    private function assertCacheCall($categoryId, $categoryUrl)
+    private function assertCacheCall($categoryId, $categoryUrl): void
     {
         $localizationId = 1;
         $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
-        $this->userLocalizationManager->expects($this->once())
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 

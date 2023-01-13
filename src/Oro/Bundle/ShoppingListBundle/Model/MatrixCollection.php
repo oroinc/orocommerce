@@ -5,6 +5,9 @@ namespace Oro\Bundle\ShoppingListBundle\Model;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Matrix form data holder
+ */
 class MatrixCollection
 {
     /**
@@ -17,6 +20,10 @@ class MatrixCollection
      * @var ProductUnit
      */
     public $unit;
+
+    public $columns = [];
+
+    public $dimensions = 0;
 
     public function hasLineItems()
     {

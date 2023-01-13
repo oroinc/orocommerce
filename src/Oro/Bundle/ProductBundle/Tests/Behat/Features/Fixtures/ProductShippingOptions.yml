@@ -22,14 +22,6 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     productSlugPrototype:
         string: 'product'
 
-Oro\Bundle\RedirectBundle\Entity\Slug:
-    productSlug:
-        url: '/product'
-        slugPrototype: 'product'
-        routeName: 'oro_product_frontend_product_view'
-        routeParameters: []
-        organization: '@organization'
-
 Oro\Bundle\ProductBundle\Entity\Brand:
     brand:
         owner: '@business_unit'
@@ -69,7 +61,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addAdditionalUnitPrecision: ['@additionalPrecision']
             - addDescription: ['@description']
             - addShortDescription: ['@shortDescription']
-        slugs: ['@productSlug']
         slugPrototypes: ['@productSlugPrototype']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Oro\Bundle\ImportExportBundle\Async\Topics;
+use Oro\Bundle\ImportExportBundle\Async\Topic\PreImportTopic;
 use Oro\Bundle\ImportExportBundle\File\FileManager;
 use Oro\Bundle\ImportExportBundle\Handler\ImportHandler;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
@@ -100,7 +100,7 @@ HELP
         $process = $validation ? ProcessorRegistry::TYPE_IMPORT_VALIDATION : ProcessorRegistry::TYPE_IMPORT;
 
         $this->messageProducer->send(
-            Topics::PRE_IMPORT,
+            PreImportTopic::getName(),
             [
                 'fileName'       => $fileName,
                 'originFileName' => $originFileName,

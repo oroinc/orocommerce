@@ -7,6 +7,7 @@ use Oro\Bundle\OrderBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -15,36 +16,24 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 {
     use EntityTrait;
 
-    const WEBSITE_ID = 1;
+    private const WEBSITE_ID = 1;
 
-    /**
-     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteContextManager;
 
-    /**
-     * @var LatestOrderedProductsInfoProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LatestOrderedProductsInfoProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $infoProvider;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /**
-     * @var IndexEntityEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IndexEntityEvent|\PHPUnit\Framework\MockObject\MockObject */
     private $event;
 
-    /**
-     * @var Website
-     */
+    /** @var Website */
     private $website;
 
-    /**
-     * @var WebsiteSearchProductIndexerListener
-     */
+    /** @var WebsiteSearchProductIndexerListener */
     private $listener;
 
     protected function setUp(): void
@@ -60,19 +49,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->addFeature('previously_purchased_products');
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->websiteContextManager);
-        unset($this->website);
-        unset($this->event);
-        unset($this->infoProvider);
-        unset($this->featureChecker);
-        unset($this->listener);
-    }
-
     public function testWebsiteNotFound()
     {
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('getContext')
             ->willReturn([]);
         $this->featureChecker->expects($this->never())
@@ -88,9 +67,25 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onWebsiteSearchIndex($this->event);
     }
 
-    public function testFeatureDisabled()
+    public function testOnWebsiteSearchIndexForUnsupportedContext()
     {
         $this->event->expects($this->once())
+            ->method('getContext')
+            ->willReturn([AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]);
+        $this->featureChecker->expects($this->never())
+            ->method('isFeatureEnabled');
+        $this->websiteContextManager->expects($this->never())
+            ->method('getWebsite');
+
+        $this->event->expects($this->never())
+            ->method('getEntities');
+
+        $this->listener->onWebsiteSearchIndex($this->event);
+    }
+
+    public function testFeatureDisabled()
+    {
+        $this->event->expects($this->any())
             ->method('getContext')
             ->willReturn([]);
         $this->featureChecker->expects($this->once())
@@ -113,11 +108,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     public function testWebsiteSearchIndex(
         array $products,
         array $orderInfo,
-        callable $assertPlaceholderFieldCallback
+        callable $assertPlaceholderFieldCallback,
+        array $context
     ) {
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('getContext')
-            ->willReturn([]);
+            ->willReturn($context);
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
@@ -140,51 +136,52 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onWebsiteSearchIndex($this->event);
     }
 
-    /**
-     * @return \Generator
-     */
-    public function productsInfo()
+    public function productsInfo(): array
     {
-        yield 'Test reindex two products' => [
-            'products' => [
-                0 => $this->getEntity(Product::class, ['id' => 1]),
-                1 => $this->getEntity(Product::class, ['id' => 2])
-            ],
-            'orderInfo' => [
-                1 => [
-                    ['customer_user_id' => 1, 'created_at' => 20171],
-                    ['customer_user_id' => 2, 'created_at' => 20172]
+        return [
+            'reindex two products' => [
+                'products' => [
+                    0 => $this->getEntity(Product::class, ['id' => 1]),
+                    1 => $this->getEntity(Product::class, ['id' => 2])
                 ],
-                2 => [
-                    ['customer_user_id' => 1, 'created_at' => 20173]
-                ]
+                'orderInfo' => [
+                    1 => [
+                        ['customer_user_id' => 1, 'created_at' => 20171],
+                        ['customer_user_id' => 2, 'created_at' => 20172]
+                    ],
+                    2 => [
+                        ['customer_user_id' => 1, 'created_at' => 20173]
+                    ]
+                ],
+                'assertPlaceholderFieldCallback' => function (\PHPUnit\Framework\MockObject\MockObject $event) {
+                    $event->expects($this->exactly(3))
+                        ->method('addPlaceholderField')
+                        ->withConsecutive(
+                            [1, 'ordered_at_by.CUSTOMER_USER_ID', 20171, ['CUSTOMER_USER_ID' => 1]],
+                            [1, 'ordered_at_by.CUSTOMER_USER_ID', 20172, ['CUSTOMER_USER_ID' => 2]],
+                            [2, 'ordered_at_by.CUSTOMER_USER_ID', 20173, ['CUSTOMER_USER_ID' => 1]]
+                        );
+                },
+                []
             ],
-            'assertPlaceholderFieldCallback' => function (\PHPUnit\Framework\MockObject\MockObject $event) {
-                $event
-                    ->expects($this->exactly(3))
-                    ->method('addPlaceholderField')
-                    ->withConsecutive(
-                        [
-                            1, 'ordered_at_by.CUSTOMER_USER_ID', 20171, [ 'CUSTOMER_USER_ID' => 1 ]
-                        ],
-                        [
-                            1, 'ordered_at_by.CUSTOMER_USER_ID', 20172, [ 'CUSTOMER_USER_ID' => 2 ]
-                        ],
-                        [
-                            2, 'ordered_at_by.CUSTOMER_USER_ID', 20173, [ 'CUSTOMER_USER_ID' => 1 ]
-                        ]
-                    );
-            }
-        ];
-
-        yield 'Test no products' => [
-            'products' => [],
-            'orderInfo' => [],
-            'assertPlaceholderFieldCallback' => function (\PHPUnit\Framework\MockObject\MockObject $event) {
-                $event
-                    ->expects($this->never())
-                    ->method('addPlaceholderField');
-            }
+            'no products' => [
+                'products' => [],
+                'orderInfo' => [],
+                'assertPlaceholderFieldCallback' => function (\PHPUnit\Framework\MockObject\MockObject $event) {
+                    $event->expects($this->never())
+                        ->method('addPlaceholderField');
+                },
+                []
+            ],
+            'no products with order fields group' => [
+                'products' => [],
+                'orderInfo' => [],
+                'assertPlaceholderFieldCallback' => function (\PHPUnit\Framework\MockObject\MockObject $event) {
+                    $event->expects($this->never())
+                        ->method('addPlaceholderField');
+                },
+                [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['order']]
+            ]
         ];
     }
 }

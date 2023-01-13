@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
@@ -11,8 +13,10 @@ use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
 /**
  * Adds minimal price value to the search autocomplete data.
  */
-class ProductAutocompleteListener
+class ProductAutocompleteListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     private UserCurrencyManager $currencyManager;
     private NumberFormatter $numberFormatter;
 
@@ -24,20 +28,30 @@ class ProductAutocompleteListener
 
     public function onCollectAutocompleteFields(CollectAutocompleteFieldsEvent $event): void
     {
-        $event->addField('decimal.minimal_price_CPL_ID_CURRENCY as cpl_price');
-        $event->addField('decimal.minimal_price_PRICE_LIST_ID_CURRENCY as pl_price');
+        if ($this->featureChecker->isFeatureEnabled('oro_price_lists_flat')) {
+            $event->addField('decimal.minimal_price.PRICE_LIST_ID_CURRENCY as pl_price');
+        }
+
+        if ($this->featureChecker->isFeatureEnabled('oro_price_lists_combined')) {
+            $event->addField('decimal.minimal_price.CPL_ID_CURRENCY as cpl_price');
+        }
     }
 
     public function onProcessAutocompleteData(ProcessAutocompleteDataEvent $event): void
     {
+        if (!$this->featureChecker->isFeatureEnabled('oro_price_lists_flat')
+            && !$this->featureChecker->isFeatureEnabled('oro_price_lists_combined')) {
+            return;
+        }
+
         $currency = $this->currencyManager->getUserCurrency();
 
         $data = $event->getData();
-        foreach ($data as $sku => $productData) {
+        foreach ($data['products'] as $key => $productData) {
             $price = null;
-            if (null !== $productData['cpl_price'] && '' !== $productData['cpl_price']) {
+            if (isset($productData['cpl_price']) && '' !== $productData['cpl_price']) {
                 $price = $productData['cpl_price'];
-            } elseif (null !== $productData['pl_price'] && '' !== $productData['pl_price']) {
+            } elseif (isset($productData['pl_price']) && '' !== $productData['pl_price']) {
                 $price = $productData['pl_price'];
             }
             unset($productData['cpl_price'], $productData['pl_price']);
@@ -48,7 +62,7 @@ class ProductAutocompleteListener
                 $productData['formatted_price'] = $this->numberFormatter->formatCurrency($price, $currency);
             }
 
-            $data[$sku] = $productData;
+            $data['products'][$key] = $productData;
         }
 
         $event->setData($data);

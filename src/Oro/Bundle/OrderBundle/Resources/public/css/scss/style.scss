@@ -163,6 +163,10 @@
         // stylelint-disable-next-line declaration-no-important
         width: 70px !important;
     }
+
+    .order-line-item-type-product {
+        word-break: break-word;
+    }
 }
 
 td.order-discount-item-remove {
@@ -202,10 +206,6 @@ td.order-discount-item-remove {
         padding: 5px 10px 5px 0;
         width: 20px;
     }
-}
-
-.oro-discount-collection {
-    max-width: 1000px;
 }
 
 .oro-discount-collection.grid-container {
@@ -251,10 +251,6 @@ td.order-discount-item-remove {
     }
 }
 
-.order-shipping-trackings-grid {
-    width: 300px;
-}
-
 .possible-shipping-methods-info {
     .possible_shipping_methods_container {
         max-width: none;
@@ -271,12 +267,6 @@ td.order-discount-item-remove {
         label {
             margin-bottom: 0;
         }
-
-        input[type='radio'] {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
     }
 
     .possible_shipping_methods_form {
@@ -289,7 +279,7 @@ td.order-discount-item-remove {
         }
 
         input[type='radio'] {
-            margin-top: 3px;
+            margin-top: -1px;
         }
     }
 

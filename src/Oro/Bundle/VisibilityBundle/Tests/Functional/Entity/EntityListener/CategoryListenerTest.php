@@ -7,14 +7,14 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCategoryPositionTopic;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnRemoveCategoryTopic;
 
 class CategoryListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /** @var EntityManagerInterface */
-    private $categoryManager;
+    private EntityManagerInterface $categoryManager;
 
     protected function setUp(): void
     {
@@ -22,20 +22,18 @@ class CategoryListenerTest extends WebTestCase
         self::enableMessageBuffering();
 
         $this->categoryManager = self::getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category');
+            ->getManagerForClass(Category::class);
     }
 
-    /**
-     * @return Category
-     */
-    private function getCategory()
+    private function getCategory(): Category
     {
         $category = new Category();
         $category->addTitle((new CategoryTitle())->setString('default title'));
+
         return $category;
     }
 
-    public function testPreUpdateParentCategoryChange()
+    public function testPreUpdateParentCategoryChange(): void
     {
         $newCategory = $this->getCategory();
         $parentCategory = $this->getCategory();
@@ -49,12 +47,12 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
 
         self::assertMessageSent(
-            Topics::CATEGORY_POSITION_CHANGE,
+            VisibilityOnChangeCategoryPositionTopic::getName(),
             ['id' => $newCategory->getId()]
         );
     }
 
-    public function testPreRemove()
+    public function testPreRemove(): void
     {
         $newCategory = $this->getCategory();
         $this->categoryManager->persist($newCategory);
@@ -67,7 +65,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
 
         self::assertMessageSent(
-            Topics::CATEGORY_REMOVE,
+            VisibilityOnRemoveCategoryTopic::getName(),
             ['id' => $id]
         );
     }

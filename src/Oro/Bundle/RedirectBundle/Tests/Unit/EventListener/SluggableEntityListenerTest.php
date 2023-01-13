@@ -13,7 +13,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
@@ -21,7 +21,6 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -30,17 +29,17 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var MessageFactoryInterface|MockObject */
-    protected $messageFactory;
+    /** @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageFactory;
 
-    /** @var MessageProducerInterface|MockObject */
-    protected $messageProducer;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageProducer;
 
-    /** @var ConfigManager|MockObject */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /** @var SluggableEntityListener */
-    protected $sluggableEntityListener;
+    private $sluggableEntityListener;
 
     protected function setUp(): void
     {
@@ -55,85 +54,91 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPostPersistDisabledDirectUrl()
+    public function testPostPersistDisabledDirectUrl(): void
     {
-        /** @var LifecycleEventArgs|MockObject $args **/
-        $args = $this->getMockBuilder(LifecycleEventArgs::class)->disableOriginalConstructor()->getMock();
+        $args = $this->createMock(LifecycleEventArgs::class);
 
-        /** @var SluggableInterface $entity */
         $entity = $this->createMock(SluggableInterface::class);
-        $args->expects(static::once())
+        $args->expects(self::once())
             ->method('getEntity')
             ->willReturn($entity);
 
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(false);
 
         // assertions
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->postPersist($args);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersistNotSluggableEntity()
+    public function testPostPersistNotSluggableEntity(): void
     {
-        /** @var LifecycleEventArgs|MockObject $args **/
-        $args = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $args = $this->createMock(LifecycleEventArgs::class);
 
-        $this->configManager->expects(static::any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
         $entity = new \stdClass();
-        $args->expects(static::once())
+        $args->expects(self::once())
             ->method('getEntity')
             ->willReturn($entity);
 
         // assertions
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->postPersist($args);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersistWithDisabledListener()
+    public function testPostPersistWithDisabledListener(): void
     {
         $args = $this->createMock(LifecycleEventArgs::class);
-        $args->expects(static::never())->method('getEntity');
-        $this->configManager->expects(static::never())->method('get');
-        $this->messageFactory->expects(static::never())->method('createMessage');
+        $args->expects(self::never())
+            ->method('getEntity');
+        $this->configManager->expects(self::never())
+            ->method('get');
+        $this->messageFactory->expects(self::never())
+            ->method('createMessage');
 
         $this->assertAndDisableListener();
 
         // assertions
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->postPersist($args);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersist()
+    public function testPostPersist(): void
     {
-        /** @var LifecycleEventArgs|MockObject $args **/
-        $args = $this->getMockBuilder(LifecycleEventArgs::class)->disableOriginalConstructor()->getMock();
+        $args = $this->createMock(LifecycleEventArgs::class);
 
         $entityId = 1;
 
-        /** @var SluggableInterface|MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
-        $entity->expects(static::once())->method('getId')->willReturn($entityId);
-        $args->expects(static::once())->method('getEntity')->willReturn($entity);
+        $entity->expects(self::once())
+            ->method('getId')
+            ->willReturn($entityId);
+        $args->expects(self::once())
+            ->method('getEntity')
+            ->willReturn($entity);
 
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
@@ -141,42 +146,45 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         // assertions
         $message = ['id' => [$entityId], 'class' => \get_class($entity), 'createRedirect' => true];
 
-        $this->messageFactory->expects(static::once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with(\get_class($entity), [$entityId], true)
             ->willReturn($message);
 
-        $this->messageProducer->expects(static::once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->postPersist($args);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testPostPersistWithDraft()
+    public function testPostPersistWithDraft(): void
     {
-        /** @var LifecycleEventArgs|MockObject $args **/
         $args = $this->createMock(LifecycleEventArgs::class);
 
         $entity = $this->getEntity(Page::class, ['id' => 1, 'draftUuid' => 42]);
-        $args->expects(static::once())->method('getEntity')->willReturn($entity);
+        $args->expects(self::once())
+            ->method('getEntity')
+            ->willReturn($entity);
 
         // assertions
-        $this->configManager->expects(static::never())->method('get');
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->configManager->expects(self::never())
+            ->method('get');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->postPersist($args);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushDisabledDirectUrl()
+    public function testOnFlushDisabledDirectUrl(): void
     {
-        /** @var OnFlushEventArgs|MockObject $event **/
-        $event = $this->getMockBuilder(OnFlushEventArgs::class)->disableOriginalConstructor()->getMock();
+        $event = $this->createMock(OnFlushEventArgs::class);
 
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(false);
@@ -184,100 +192,118 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->prepareSluggableEntity($event);
 
         // assertions
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushNoChangedSlugs()
+    public function testOnFlushNoChangedSlugs(): void
     {
-        /** @var OnFlushEventArgs|MockObject $event **/
-        $event = $this->getMockBuilder(OnFlushEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(OnFlushEventArgs::class);
 
-        $this->configManager->expects(static::any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        /** @var UnitOfWork|MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uow = $this->createMock(UnitOfWork::class);
 
-        /** @var EntityManagerInterface|MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(static::any())->method('getUnitOfWork')->willReturn($uow);
-        $event->expects(static::any())->method('getEntityManager')->willReturn($em);
-        $uow->expects(static::any())
+        $em->expects(self::any())
+            ->method('getUnitOfWork')
+            ->willReturn($uow);
+        $event->expects(self::any())
+            ->method('getEntityManager')
+            ->willReturn($em);
+        $uow->expects(self::any())
             ->method('getScheduledEntityInsertions')
             ->willReturn([new LocalizedFallbackValue()]);
-        $uow->expects(static::any())->method('getScheduledEntityUpdates')->willReturn([new LocalizedFallbackValue()]);
-        $uow->expects(static::any())->method('getScheduledEntityInsertions')->willReturn([]);
-        $uow->expects(static::any())->method('getScheduledEntityDeletions')->willReturn([]);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([new LocalizedFallbackValue()]);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([]);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
 
         // assertions
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushChangedSlugWithoutChangedPrototypesUp()
+    public function testOnFlushChangedSlugWithoutChangedPrototypesUp(): void
     {
-        /** @var OnFlushEventArgs|MockObject $event **/
-        $event = $this->getMockBuilder(OnFlushEventArgs::class)->disableOriginalConstructor()->getMock();
+        $event = $this->createMock(OnFlushEventArgs::class);
 
-        $this->configManager->expects(static::any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        /** @var UnitOfWork|MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)->disableOriginalConstructor()->getMock();
+        $uow = $this->createMock(UnitOfWork::class);
 
-        /** @var EntityManagerInterface|MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(static::any())->method('getUnitOfWork')->willReturn($uow);
-        $event->expects(static::any())->method('getEntityManager')->willReturn($em);
+        $em->expects(self::any())
+            ->method('getUnitOfWork')
+            ->willReturn($uow);
+        $event->expects(self::any())
+            ->method('getEntityManager')
+            ->willReturn($em);
 
-        /** @var SluggableInterface|MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $slugPrototypes = $this->createMock(Collection::class);
-        $entity->expects(static::once())->method('getSlugPrototypes')->willReturn($slugPrototypes);
+        $entity->expects(self::once())
+            ->method('getSlugPrototypes')
+            ->willReturn($slugPrototypes);
 
-        $slugPrototypes->expects(static::once())->method('count')->willReturn(0);
+        $slugPrototypes->expects(self::once())
+            ->method('count')
+            ->willReturn(0);
 
-        $uow->expects(static::any())
+        $uow->expects(self::any())
             ->method('getScheduledEntityUpdates')
             ->willReturn([$entity, new LocalizedFallbackValue()]);
-        $uow->expects(static::any())->method('getScheduledEntityInsertions')->willReturn([]);
-        $uow->expects(static::any())->method('getScheduledEntityDeletions')->willReturn([]);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([]);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
 
         // assertions
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushChangedSlugWithChangedPrototypesIns()
+    public function testOnFlushChangedSlugWithChangedPrototypesIns(): void
     {
-        /** @var OnFlushEventArgs|MockObject $event **/
-        $event = $this->getMockBuilder(OnFlushEventArgs::class)->disableOriginalConstructor()->getMock();
+        $event = $this->createMock(OnFlushEventArgs::class);
 
         $entityId = 1;
 
         $entity = $this->prepareSluggableEntity($event);
-        $entity->expects(static::once())->method('getId')->willReturn($entityId);
+        $entity->expects(self::once())
+            ->method('getId')
+            ->willReturn($entityId);
 
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
@@ -285,47 +311,55 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         // assertions
         $message = ['id' => [$entityId], 'class' => \get_class($entity), 'createRedirect' => true];
 
-        $this->messageFactory->expects(static::once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with(\get_class($entity), [$entityId], true)
             ->willReturn($message);
 
-        $this->messageProducer->expects(static::once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushChangedSlugWithChangedPrototypesDel()
+    public function testOnFlushChangedSlugWithChangedPrototypesDel(): void
     {
-        /** @var SluggableInterface|MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
         $entityId = 1;
 
-        /** @var OnFlushEventArgs|MockObject $event **/
-        $event = $this->getMockBuilder(OnFlushEventArgs::class)->disableOriginalConstructor()->getMock();
+        $event = $this->createMock(OnFlushEventArgs::class);
 
         $uow = $this->prepareUow($event, $entity);
 
         $prototype = new LocalizedFallbackValue();
 
         $slugPrototypes = $this->createMock(Collection::class);
-        $entity->expects(static::once())->method('getSlugPrototypes')->willReturn($slugPrototypes);
-        $slugPrototypes->expects(static::once())->method('count')->willReturn(1);
+        $entity->expects(self::once())
+            ->method('getSlugPrototypes')
+            ->willReturn($slugPrototypes);
+        $slugPrototypes->expects(self::once())
+            ->method('count')
+            ->willReturn(1);
 
-        $entity->expects(static::once())
+        $entity->expects(self::once())
             ->method('hasSlugPrototype')
             ->with($prototype)
             ->willReturn(true);
 
-        $entity->expects(static::once())->method('getId')->willReturn($entityId);
+        $entity->expects(self::once())
+            ->method('getId')
+            ->willReturn($entityId);
 
-        $uow->expects(static::any())->method('getScheduledEntityInsertions')->willReturn([]);
-        $uow->expects(static::any())->method('getScheduledEntityDeletions')->willReturn([$prototype]);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([]);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([$prototype]);
 
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
@@ -333,31 +367,36 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         // assertions
         $message = ['id' => [$entityId], 'class' => \get_class($entity), 'createRedirect' => true];
 
-        $this->messageFactory->expects(static::once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with(\get_class($entity), [$entityId], true)
             ->willReturn($message);
 
-        $this->messageProducer->expects(static::once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
     }
 
-    public function testOnFlushWithDisabledListener()
+    public function testOnFlushWithDisabledListener(): void
     {
         $event = $this->createMock(OnFlushEventArgs::class);
-        $event->expects(static::never())->method('getEntityManager');
-        $this->configManager->expects(static::never())->method('get');
-        $this->messageFactory->expects(static::never())->method('createMessage');
+        $event->expects(self::never())
+            ->method('getEntityManager');
+        $this->configManager->expects(self::never())
+            ->method('get');
+        $this->messageFactory->expects(self::never())
+            ->method('createMessage');
 
         $this->assertAndDisableListener();
 
         // assertions
-        $this->messageFactory->expects(static::never())->method('createMassMessage');
-        $this->messageProducer->expects(static::never())->method('send');
+        $this->messageFactory->expects(self::never())
+            ->method('createMassMessage');
+        $this->messageProducer->expects(self::never())
+            ->method('send');
 
         $this->sluggableEntityListener->onFlush($event);
         $this->sluggableEntityListener->postFlush();
@@ -366,8 +405,10 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider slugPrototypeWithRedirectDataProvider
      */
-    public function testPostFlushWithSlugPrototypeWithRedirect(bool $createRedirect, bool $expectedCreateRedirect)
-    {
+    public function testPostFlushWithSlugPrototypeWithRedirect(
+        bool $createRedirect,
+        bool $expectedCreateRedirect
+    ): void {
         $entityId = 1;
         $entity = new SluggableEntityStub();
         $entity->setId($entityId);
@@ -376,7 +417,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             $createRedirect
         ));
 
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
@@ -388,14 +429,14 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             'createRedirect' => $createRedirect
         ];
 
-        $this->messageFactory->expects(static::once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with(get_class($entity), [$entityId], $expectedCreateRedirect)
             ->willReturn($message);
 
-        $this->messageProducer->expects(static::once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->postPersist(
             new LifecycleEventArgs($entity, $this->createMock(ObjectManager::class))
@@ -417,7 +458,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testPostFlushWithSlugPrototypeWithRedirectWithMultiple()
+    public function testPostFlushWithSlugPrototypeWithRedirectWithMultiple(): void
     {
         $entityWithoutRedirectId = 1;
         $entityWithoutRedirect = new SluggableEntityStub();
@@ -435,7 +476,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             true
         ));
 
-        $this->configManager->expects(static::any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
@@ -452,7 +493,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             'createRedirect' => true
         ];
 
-        $this->messageFactory->expects(static::exactly(2))
+        $this->messageFactory->expects(self::exactly(2))
             ->method('createMassMessage')
             ->withConsecutive(
                 [get_class($entityWithoutRedirect), [$entityWithoutRedirectId]],
@@ -466,23 +507,19 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->sluggableEntityListener
             ->postPersist(new LifecycleEventArgs($entityWithRedirect, $this->createMock(ObjectManager::class)));
 
-        $this->messageProducer->expects(static::exactly(2))
+        $this->messageProducer->expects(self::exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $messageWithoutRedirect],
-                [Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $messageWithRedirect]
+                [GenerateDirectUrlForEntitiesTopic::getName(), $messageWithoutRedirect],
+                [GenerateDirectUrlForEntitiesTopic::getName(), $messageWithRedirect]
             );
 
         $this->sluggableEntityListener->postFlush();
     }
 
-    /**
-     * @param OnFlushEventArgs|MockObject $event
-     * @return SluggableInterface|MockObject
-     */
-    protected function prepareSluggableEntity($event)
-    {
-        /** @var SluggableInterface|MockObject $entity */
+    private function prepareSluggableEntity(
+        OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event
+    ): SluggableInterface|\PHPUnit\Framework\MockObject\MockObject {
         $entity = $this->createMock(SluggableInterface::class);
 
         $uow  = $this->prepareUow($event, $entity);
@@ -491,54 +528,53 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $slugPrototypes = $this->createMock(Collection::class);
 
-        $entity
-            ->expects(static::once())
+        $entity->expects(self::once())
             ->method('getSlugPrototypes')
             ->willReturn($slugPrototypes);
 
-        $slugPrototypes
-            ->expects(static::once())
+        $slugPrototypes->expects(self::once())
             ->method('count')
             ->willReturn(1);
 
-        $entity->expects(static::once())
+        $entity->expects(self::once())
             ->method('hasSlugPrototype')
             ->with($prototype)
             ->willReturn(true);
 
-        $uow->expects(static::any())
+        $uow->expects(self::any())
             ->method('getScheduledEntityInsertions')
             ->willReturn([$prototype]);
-        $uow->expects(static::any())
+        $uow->expects(self::any())
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
         return $entity;
     }
 
-    /**
-     * @param OnFlushEventArgs|MockObject $event
-     * @param SluggableInterface|MockObject $entity
-     * @return UnitOfWork|MockObject
-     */
-    protected function prepareUow($event, $entity)
-    {
-        /** @var UnitOfWork|MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)->disableOriginalConstructor()->getMock();
+    private function prepareUow(
+        OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event,
+        SluggableInterface $entity
+    ): UnitOfWork|\PHPUnit\Framework\MockObject\MockObject {
+        $uow = $this->createMock(UnitOfWork::class);
 
-        /** @var EntityManagerInterface|MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
 
-        $em->expects(static::any())->method('getUnitOfWork')->willReturn($uow);
-        $event->expects(static::any())->method('getEntityManager')->willReturn($em);
-        $uow->expects(static::any())->method('getScheduledEntityUpdates')->willReturn([$entity]);
+        $em->expects(self::any())
+            ->method('getUnitOfWork')
+            ->willReturn($uow);
+        $event->expects(self::any())
+            ->method('getEntityManager')
+            ->willReturn($em);
+        $uow->expects(self::any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([$entity]);
 
         return $uow;
     }
 
-    protected function assertAndDisableListener()
+    private function assertAndDisableListener(): void
     {
-        static::assertInstanceOf(OptionalListenerInterface::class, $this->sluggableEntityListener);
+        self::assertInstanceOf(OptionalListenerInterface::class, $this->sluggableEntityListener);
         $this->sluggableEntityListener->setEnabled(false);
     }
 }

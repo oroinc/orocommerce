@@ -62,19 +62,14 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getReferenceProvider
-     * @param array $data
-     * @param string $expected
      */
-    public function testGetReference($data, $expected)
+    public function testGetReference(array $data, ?string $expected)
     {
         $response = new Response($data);
         $this->assertSame($expected, $response->getReference());
     }
 
-    /**
-     * @return array
-     */
-    public function getReferenceProvider()
+    public function getReferenceProvider(): array
     {
         return [
             [
@@ -90,19 +85,14 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getResultProvider
-     * @param array $data
-     * @param string $expected
      */
-    public function testGetResult($data, $expected)
+    public function testGetResult(array $data, ?string $expected)
     {
         $response = new Response($data);
         $this->assertSame($expected, $response->getResult());
     }
 
-    /**
-     * @return array
-     */
-    public function getResultProvider()
+    public function getResultProvider(): array
     {
         return [
             [
@@ -118,21 +108,15 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getOffsetProvider
-     * @param array $data
-     * @param string $index
-     * @param string $expected
      */
-    public function testGetOffset($data, $index, $expected)
+    public function testGetOffset(array $data, string $index, string $expected)
     {
         $response = new Response($data);
         $actual = $response->getOffset($index, 'defaultValue');
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getOffsetProvider()
+    public function getOffsetProvider(): array
     {
         return [
             [

@@ -18,7 +18,7 @@ const QuickAddRowPricesView = BaseView.extend({
 
     elem: {
         subtotal: '[data-name="field__product-subtotal"]',
-        pricesHintContentRendered: '[data-class="prices-hint-content"]'
+        pricesHint: '[data-role="price-hint-trigger"]'
     },
 
     listen: {
@@ -44,7 +44,7 @@ const QuickAddRowPricesView = BaseView.extend({
     initialize(options) {
         this.options = Object.assign({}, this.defaults, _.pick(options, Object.keys(this.defaults)));
         this.elem = Object.assign({}, this.elem, options.elements || {});
-        Object.assign(this, _.pick(options, ['pricesHintTemplateSelector', 'pricesHintTemplateContentSelector']));
+        Object.assign(this, _.pick(options, 'pricesHintTemplateContentSelector'));
         QuickAddRowPricesView.__super__.initialize.call(this, options);
     },
 
@@ -70,21 +70,7 @@ const QuickAddRowPricesView = BaseView.extend({
         const unit = this.model.get('unit');
         const price = PricesHelper.findPrice(this.prices, unit, quantity);
         this.model.set('price', price);
-        this.checkMinQtyForUnit();
         this.model.set('subtotal', this.calcSubtotal());
-    },
-
-    checkMinQtyForUnit() {
-        const unit = this.model.get('unit');
-        const changedManually = this.model.get('quantity_changed_manually');
-        if (!changedManually && unit && this.prices && this.prices[unit]) {
-            const quantity = this.model.get('quantity');
-            const unitPrices = this.prices[unit];
-            const index = _.findLastIndex(unitPrices, price => price.quantity);
-            if (index !== -1 && quantity < unitPrices[index].quantity) {
-                this.model.set('quantity', unitPrices[index].quantity);
-            }
-        }
     },
 
     calcSubtotal() {
@@ -108,18 +94,12 @@ const QuickAddRowPricesView = BaseView.extend({
 
         this.renderHint();
 
-        const $pricesHintEl = this.$(this.elem.pricesHintContentRendered);
-        if (this.model.get('subtotal')) {
-            $pricesHintEl.show();
-        } else {
-            $pricesHintEl.hide();
-        }
+        this.$pricesHint.toggleClass('hidden', !this.model.get('subtotal'));
     },
 
     renderHint() {
         if (this.$pricesHint === void 0) {
-            const pricesHint = this.getTemplateFunction('pricesHintTemplate');
-            this.$pricesHint = this.$(this.elem.subtotal).after(pricesHint).next();
+            this.$pricesHint = this.$(this.elem.pricesHint);
         }
     },
 
@@ -133,6 +113,7 @@ const QuickAddRowPricesView = BaseView.extend({
         attrs.prices = prices;
 
         if (!this.$pricesHint.data(Popover.DATA_KEY)) {
+            this.$pricesHint.attr('data-toggle', 'popover');
             layout.initPopoverForElements(this.$pricesHint, {
                 container: 'body',
                 forceToShowTitle: true

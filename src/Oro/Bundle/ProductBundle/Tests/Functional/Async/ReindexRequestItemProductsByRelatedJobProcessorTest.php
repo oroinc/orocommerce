@@ -3,11 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Async;
 
 use Monolog\Handler\TestHandler;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductWebsiteReindexRequestItems;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Component\MessageQueue\Transport\ConnectionInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -20,7 +20,6 @@ use Symfony\Component\Yaml\Yaml;
 class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
 {
     use MessageQueueExtension;
-    use MessageQueueAssertTrait;
 
     private ReindexRequestItemProductsByRelatedJobProcessor $processor;
 
@@ -29,7 +28,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         $this->initClient();
         $this->setUpMessageCollector();
         $this->loadFixtures([
-            LoadProductWebsiteReindexRequestItems::class
+            LoadProductWebsiteReindexRequestItems::class,
         ]);
         $this->processor = self::getContainer()->get(
             'oro_product.async.reindex_request_item_products_by_related_job_processor'
@@ -41,7 +40,8 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         $session = $this->getConnection()->createSession();
         $message = $this->createMessage(
             [
-                'relatedJobId' => 999
+                'relatedJobId' => 999,
+                'indexationFieldsGroups' => null,
             ]
         );
 
@@ -54,11 +54,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
             $result
         );
 
-        $messageBodies = self::getSentMessagesByTopic(
-            'oro.website.search.indexer.reindex',
-            true
-        );
-        self::assertEmpty($messageBodies);
+        self::assertMessagesEmpty(WebsiteSearchReindexTopic::getName());
         self::assertEmpty($logger->getLogs());
     }
 
@@ -67,12 +63,13 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
      *
      * @return void
      */
-    public function testProcess(int $relatedJobId): void
+    public function testProcess(int $relatedJobId, array $fieldGroups = null): void
     {
         $session = $this->getConnection()->createSession();
         $message = $this->createMessage(
             [
-                'relatedJobId' => $relatedJobId
+                'relatedJobId' => $relatedJobId,
+                'indexationFieldsGroups' => $fieldGroups,
             ]
         );
 
@@ -87,17 +84,14 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         );
         self::assertEmpty($logger->getLogs());
 
-        $messageBodies = self::getSentMessagesByTopic(
-            'oro.website.search.indexer.reindex',
-            true
-        );
+        $messageBodies = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
         self::assertNotEmpty($messageBodies);
         $valuableDataFromMessageBodies = \array_map(
             [$this, 'getValuableDataFromMessageBody'],
             $messageBodies
         );
 
-        $expectedData = $this->getExpectedResultsFor($relatedJobId);
+        $expectedData = $this->getExpectedResultsFor($relatedJobId, $fieldGroups);
         self::assertEquals($expectedData, $valuableDataFromMessageBodies);
 
         $this->assertNoRecordsForRelatedJobId($relatedJobId);
@@ -107,15 +101,21 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
     {
         return [
             'Test process products in different websites' => [
-                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES
+                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES,
+                'indexationFieldsGroups' => null,
+            ],
+            'Test process products in different websites group main' => [
+                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES,
+                'indexationFieldsGroups' => ['main'],
             ],
             'Test process products in same websites' => [
-                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_SAME_WEBSITES
+                'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_SAME_WEBSITES,
+                'indexationFieldsGroups' => null,
             ],
         ];
     }
 
-    private function getExpectedResultsFor(string $relatedJobId): array
+    private function getExpectedResultsFor(string $relatedJobId, array $fieldsGroups = null): array
     {
         $expectedResults = Yaml::parse(
             file_get_contents(
@@ -124,7 +124,14 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
             )
         );
 
-        return $expectedResults['data'][$relatedJobId];
+        $data = $expectedResults['data'][$relatedJobId];
+        if ($fieldsGroups) {
+            foreach ($data as &$row) {
+                $row['context']['fieldGroups'] = $fieldsGroups;
+            }
+        }
+
+        return $data;
     }
 
     private function assertNoRecordsForRelatedJobId(int $relatedJobId): void

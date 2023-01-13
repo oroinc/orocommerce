@@ -33,7 +33,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         street: '801 Scenic Hwy'
         city: 'Haines City'
         postalCode: '33844'
-        organization: '@organization'
+        organization: 'ORO'
     amandaAddress2:
         region: '@new_york'
         frontendOwner: '@amanda'
@@ -45,7 +45,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         street: '23400 Caldwell Road'
         city: 'Rochester'
         postalCode: '14608'
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     customerAddress1:
@@ -59,7 +59,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         street: '905 New Street'
         city: 'Gamburg'
         postalCode: '33987'
-        organization: '@organization'
+        organization: 'ORO'
     customerAddress2:
         region: '@new_york'
         frontendOwner: '@customer1'
@@ -71,7 +71,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         street: '23555 Hard Road'
         city: 'York'
         postalCode: '12103'
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     amandaAddress1ShippingDefault:
@@ -141,6 +141,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
+        unitPrecisions: [ '@precision1' ]
         __calls:
             - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
@@ -161,6 +162,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         website: '@website1'
         owner: '@admin'
         organization: '@organization'
+        lineItems: [ '@order1_line_item1' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:

@@ -21,33 +21,19 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EntityVisibilityTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var EntityVisibilityType
-     */
-    protected $formType;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|VisibilityPostSetDataListener */
+    private $visibilityPostSetDataListener;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|VisibilityPostSetDataListener
-     */
-    protected $visibilityPostSetDataListener;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider */
+    private $visibilityChoicesProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider
-     */
-    protected $visibilityChoicesProvider;
+    /** @var EntityVisibilityType */
+    private $formType;
 
     protected function setUp(): void
     {
-        $this->visibilityPostSetDataListener = $this->getMockBuilder(
-            VisibilityPostSetDataListener::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->visibilityChoicesProvider = $this
-            ->getMockBuilder(VisibilityChoicesProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->visibilityPostSetDataListener = $this->createMock(VisibilityPostSetDataListener::class);
+        $this->visibilityChoicesProvider = $this->createMock(VisibilityChoicesProvider::class);
 
         $this->formType = new EntityVisibilityType(
             $this->visibilityPostSetDataListener,
@@ -57,16 +43,18 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $validator = $this->createMock(ValidatorInterface::class);
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $validator->method('validate')->willReturn(new ConstraintViolationList());
-        $validator->method('getMetadataFor')->willReturn($metadata);
+        $metadata = $this->createMock(ClassMetadata::class);
+        $validator->expects($this->any())
+            ->method('validate')
+            ->willReturn(new ConstraintViolationList());
+        $validator->expects($this->any())
+            ->method('getMetadataFor')
+            ->willReturn($metadata);
 
         return [
             new PreloadedExtension(

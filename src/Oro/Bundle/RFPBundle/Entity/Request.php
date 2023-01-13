@@ -743,12 +743,4 @@ class Request extends ExtendRequest implements
     {
         return ['email'];
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getClass()
-    {
-        return self::class;
-    }
 }

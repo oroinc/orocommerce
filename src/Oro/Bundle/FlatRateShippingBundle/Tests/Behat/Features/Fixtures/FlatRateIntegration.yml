@@ -18,3 +18,4 @@ Oro\Bundle\IntegrationBundle\Entity\Channel:
         enabled: true
         organization: '@organization'
         transport: '@flatRateSettings'
+        defaultUserOwner: '@admin'

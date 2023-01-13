@@ -2,23 +2,16 @@ import $ from 'jquery';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import grapesJS from 'grapesjs';
+import tools from 'oroui/js/tools';
 
 import BaseView from 'oroui/js/app/views/base/view';
 import styleManagerModule from 'orocms/js/app/grapesjs/modules/style-manager-module';
 import PanelManagerModule from 'orocms/js/app/grapesjs/modules/panels-module';
 import DevicesModule from 'orocms/js/app/grapesjs/modules/devices-module';
 import mediator from 'oroui/js/mediator';
-import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 import StateModel from 'orocms/js/app/grapesjs/modules/state-model';
 
-import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
-import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
-import 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
-import 'orocms/js/app/grapesjs/plugins/import/import';
-import 'orocms/js/app/grapesjs/plugins/code/code';
-import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
-import 'orocms/js/app/grapesjs/plugins/code-mode';
 import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
 import i18nMessages from 'orocms/js/app/grapesjs/plugins/i18n-messages';
@@ -44,9 +37,9 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
-        'autoRender', 'allow_tags', 'allowed_iframe_domains', 'builderPlugins', 'currentTheme', 'canvasConfig',
+        'autoRender', 'allow_tags', 'allowed_iframe_domains', 'currentTheme', 'canvasConfig',
         'contextClass', 'storageManager', 'stylesInputSelector', 'storagePrefix', 'themes',
-        'entityClass', 'disableDeviceManager'
+        'entityClass', 'disableDeviceManager', 'disableIsolation', 'extraStyles'
     ]),
 
     /**
@@ -104,6 +97,8 @@ const GrapesjsEditorView = BaseView.extend({
         requestParams: {},
         noticeOnUnload: false,
         cssIcons: false,
+        showDevices: false,
+        log: tools.debug ? ['warning', 'error'] : [],
         selectorManager: {
             // This option allows to apply styles by id attribute, therefore will affect only actual element
             componentFirst: true
@@ -117,7 +112,8 @@ const GrapesjsEditorView = BaseView.extend({
             appendTo: 'body',
             showPalette: false,
             chooseText: __('oro.cms.wysiwyg.color_picker.choose_text'),
-            cancelText: __('oro.cms.wysiwyg.color_picker.cancel_text')
+            cancelText: __('oro.cms.wysiwyg.color_picker.cancel_text'),
+            containerClassName: 'prevent-click-outside'
         },
 
         codeManager: {
@@ -127,7 +123,34 @@ const GrapesjsEditorView = BaseView.extend({
         /**
          * Modal Export Title text
          */
-        textViewCode: __('oro.cms.wysiwyg.export.title')
+        textViewCode: __('oro.cms.wysiwyg.export.title'),
+
+        deviceManager: {
+            devices: []
+        },
+
+        Parser: {
+            returnArray: true
+        },
+
+        blockManager: {
+            appendOnClick(block, editor) {
+                const selected = editor.getSelected();
+
+                const [model] = selected && selected.get('droppable') === true
+                    ? selected.append(block.get('content'))
+                    : editor.getWrapper().append(block.get('content'));
+
+                if (block.get('activate')) {
+                    editor.selectAdd(model);
+                    model.trigger('active');
+                }
+
+                editor.Canvas.scrollTo(model, {
+                    behavior: 'smooth'
+                });
+            }
+        }
     },
 
     /**
@@ -161,16 +184,14 @@ const GrapesjsEditorView = BaseView.extend({
      * Canvas options
      * @property {Object}
      */
-    canvasConfig: {
-        canvasCss: canvasStyle
-    },
+    canvasConfig: {},
 
     /**
      * Style manager options
      * @property {Object}
      */
     styleManager: {
-        clearProperties: 1,
+        clearProperties: true,
         sectors: []
     },
 
@@ -244,43 +265,25 @@ const GrapesjsEditorView = BaseView.extend({
     inFallbackContainer: false,
 
     /**
+     * @property {boolean}
+     */
+    disableIsolation: false,
+
+    /**
+     * Extra styles for editor preview
+     * @property {Array}
+     */
+    extraStyles: [],
+
+    /**
      * List of grapesjs plugins
      * @property {Object}
      */
     builderPlugins: {
-        'gjs-preset-webpage': {
-            aviaryOpts: false,
-            filestackOpts: null,
-            formsOpts: {
-                labelInputName: __('oro.cms.wysiwyg.forms.label_input_name'),
-                labelTextareaName: __('oro.cms.wysiwyg.forms.label_textarea_name'),
-                labelSelectName: __('oro.cms.wysiwyg.forms.label_select_name'),
-                labelCheckboxName: __('oro.cms.wysiwyg.forms.label_checkbox_name'),
-                labelRadioName: __('oro.cms.wysiwyg.forms.label_radio_name'),
-                labelButtonName: __('oro.cms.wysiwyg.forms.label_button_name'),
-                labelTypeText: __('oro.cms.wysiwyg.forms.label_type_text'),
-                labelTypeEmail: __('oro.cms.wysiwyg.forms.label_type_email'),
-                labelTypePassword: __('oro.cms.wysiwyg.forms.label_type_password'),
-                labelTypeNumber: __('oro.cms.wysiwyg.forms.label_type_number'),
-                labelTypeSubmit: __('oro.cms.wysiwyg.forms.label_type_submit'),
-                labelTypeReset: __('oro.cms.wysiwyg.forms.label_type_reset'),
-                labelTypeButton: __('oro.cms.wysiwyg.forms.label_type_button'),
-                labelNameLabel: __('oro.cms.wysiwyg.forms.label_name_label'),
-                labelForm: __('oro.cms.wysiwyg.forms.label_form'),
-                labelSelectOption: __('oro.cms.wysiwyg.forms.label_select_option'),
-                labelOption: __('oro.cms.wysiwyg.forms.label_option'),
-                labelStateNormal: __('oro.cms.wysiwyg.forms.label_state_normal'),
-                labelStateSuccess: __('oro.cms.wysiwyg.forms.label_state_success'),
-                labelStateError: __('oro.cms.wysiwyg.forms.label_state_error')
-            },
-            navbarOpts: false,
-            countdownOpts: false,
-            importViewerOptions: {},
-            codeViewerOptions: {},
-            exportOpts: {
-                btnLabel: __('oro.cms.wysiwyg.export.btn_label')
-            }
-        },
+        'component-types-plugin': {},
+        'grapesjs-export': {},
+        'wysiwyg-settings': {},
+        'sorter-hints': {},
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
         'grapesjs-import': {},
@@ -330,18 +333,32 @@ const GrapesjsEditorView = BaseView.extend({
             extendOptions.allowedIframeDomains = this.allowed_iframe_domains;
         }
 
-        this.builderPlugins['grapesjs-components'] = _.extend({},
-            this.builderPlugins['grapesjs-components'],
-            extendOptions
-        );
+        if (options.builderPlugins) {
+            this.builderPlugins = {
+                ...this.builderPlugins,
+                ...options.builderPlugins
+            };
+        }
 
-        this.builderPlugins['grapesjs-import'] = {
-            ...this.builderPlugins['grapesjs-import'],
+        this.extendPluginOptions('component-types-plugin', options);
+        this.extendPluginOptions('grapesjs-components', extendOptions);
+        this.extendPluginOptions('grapesjs-import', {
             entityClass: this.entityClass,
             fieldName: this.$el.attr('data-grapesjs-field')
-        };
+        });
 
         GrapesjsEditorView.__super__.initialize.call(this, options);
+    },
+
+    extendPluginOptions(pluginName, opts = {}) {
+        if (!this.builderPlugins[pluginName]) {
+            return;
+        }
+
+        this.builderPlugins[pluginName] = {
+            ...this.builderPlugins[pluginName],
+            ...opts
+        };
     },
 
     /**
@@ -375,6 +392,10 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         this.disableEditor();
+
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
         GrapesjsEditorView.__super__.dispose.call(this);
     },
 
@@ -416,6 +437,8 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.builder.destroy();
         this.disposeElements();
+
+        this.stopListening();
 
         this.builder = null;
         this.enabled = false;
@@ -481,17 +504,7 @@ const GrapesjsEditorView = BaseView.extend({
 
         this.builderDelegateEvents();
 
-        this.builder.setComponents(escapeWrapper(this.$el.val()));
-
-        const wrapperAttrs = getWrapperAttrs(this.$el.val());
-        if (!_.isEmpty(wrapperAttrs)) {
-            wrapperAttrs.class && this.builder.getWrapper().addClass(wrapperAttrs.class);
-        }
-
         this.rte = this.builder.RichTextEditor;
-
-        this.builder.setStyle(this.builder.getPureStyleString(this.$stylesInputElement.val()));
-
         if (_.isRTL()) {
             this.rtlFallback();
         }
@@ -510,8 +523,11 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'update', this._onUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'component:update', this._onComponentUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'changeTheme', this._updateTheme.bind(this));
+        this.listenTo(this.builder, 'component:add', this.componentAdd.bind(this));
         this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
         this.listenTo(this.builder, 'component:deselected', this.componentDeselected.bind(this));
+        this.listenTo(this.builder, 'component:remove:before', this.componentBeforeRemove.bind(this));
+        this.listenTo(this.builder, 'component:remove', this.componentRemove.bind(this));
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
 
@@ -543,6 +559,17 @@ const GrapesjsEditorView = BaseView.extend({
             if (keyCode === 13 && this.$container.get(0).contains(e.target)) {
                 e.preventDefault();
                 return false;
+            }
+        });
+
+        $(document).on(`mousedown${this.eventNamespace()}`, event => {
+            const prevents = document.querySelectorAll('.prevent-click-outside, .ui-dialog, .modal');
+            if ([...prevents].some(prevent => prevent.contains(event.target))) {
+                return;
+            }
+
+            if (!this.builder.getContainer().contains(event.target)) {
+                this.builder.getSelectedAll().forEach(selected => this.builder.selectRemove(selected));
             }
         });
 
@@ -587,6 +614,8 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         this.stopListening(this.builder);
+
+        $(document).off(this.eventNamespace());
 
         if (this.builder) {
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
@@ -653,7 +682,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {String}
      */
     getEditorContent() {
-        return this.builder.getIsolatedHtml();
+        return this.disableIsolation ? this.builder.getHtml() : this.builder.getIsolatedHtml();
     },
 
     /**
@@ -661,14 +690,28 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {String}
      */
     getEditorStyles() {
-        return this.builder.getIsolatedCss();
+        return this.disableIsolation ? this.builder.getCss() : this.builder.getIsolatedCss();
     },
 
     getToolbarItems() {
         return $(this.builder.editor.view.$el.find('.gjs-toolbar .gjs-toolbar-item'));
     },
 
-    componentDeselected() {
+    componentBeforeRemove(model) {
+        model.trigger('model:remove:before', model);
+    },
+
+    componentRemove(model) {
+        model.trigger('model:remove', model);
+    },
+
+    componentAdd(model) {
+        if (model.get('type') === 'textnode' && model.parent()?.get('type') === 'wrapper') {
+            model.replaceWith(`<div>${model.get('content')}</div>`);
+        }
+    },
+
+    componentDeselected(model) {
         this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         this.getToolbarItems().each(function() {
             const tooltip = $(this).data('bs.tooltip');
@@ -677,6 +720,9 @@ const GrapesjsEditorView = BaseView.extend({
                 tooltip.dispose();
             }
         });
+
+        model.trigger('model:deselected', model);
+        this.togglePrivateClasses(model, false);
     },
 
     componentSelected(model) {
@@ -685,7 +731,7 @@ const GrapesjsEditorView = BaseView.extend({
             toolbar = toolbar.map(tool => {
                 const attributes = tool.attributes || {};
                 tool.label = '';
-                if (_.isFunction(tool.command) && !attributes.label) {
+                if (_.isFunction(tool.command) && !attributes.label && !tool.id) {
                     attributes.label = __('oro.cms.wysiwyg.toolbar.selectParent');
                     attributes.class = 'fa fa-arrow-up';
 
@@ -693,7 +739,8 @@ const GrapesjsEditorView = BaseView.extend({
                     return tool;
                 }
 
-                switch (tool.command) {
+                const name = tool.id || tool.command;
+                switch (name) {
                     case 'tlb-move':
                         attributes.label = __('oro.cms.wysiwyg.toolbar.move');
                         attributes.class = 'fa fa-arrows';
@@ -713,6 +760,9 @@ const GrapesjsEditorView = BaseView.extend({
             });
 
             model.set('toolbar', toolbar);
+
+            model.trigger('model:selected', model);
+            this.builder.Panels.getButton('views', 'open-sm').set('active', true);
         }
 
         this.builder.editor.view.$el.find('.gjs-toolbar')
@@ -724,6 +774,41 @@ const GrapesjsEditorView = BaseView.extend({
 
                 $(e.target).tooltip('show');
             });
+
+        this.toggleSelectorManager(model);
+        this.togglePrivateClasses(model, true);
+    },
+
+    /**
+     * Toggle Selector Manager in current model doesn't support selector manager
+     * @param {Backbone.Model} model
+     */
+    toggleSelectorManager(model) {
+        const {SelectorManager} = this.builder;
+        const styleManagerEl = SelectorManager.selectorTags.el;
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('gjs-sm-header');
+        messageContainer.innerText = __('oro.cms.wysiwyg.style_manager.unsupport');
+        if (model.get('disableSelectorManager')) {
+            styleManagerEl.style.display = 'none';
+            if (!SelectorManager.selectorTags.messageContainer) {
+                styleManagerEl.after(messageContainer);
+                SelectorManager.selectorTags.messageContainer = messageContainer;
+            }
+        } else {
+            styleManagerEl.style.display = '';
+            if (SelectorManager.selectorTags.messageContainer) {
+                SelectorManager.selectorTags.messageContainer.remove();
+                delete SelectorManager.selectorTags.messageContainer;
+            }
+        }
+    },
+
+    togglePrivateClasses(model, state) {
+        const selectors = this.builder.Selectors.getSelected();
+        const privateClasses = model.get('privateClasses') || [];
+
+        selectors.forEach(selector => privateClasses.includes(selector.get('name')) && selector.set('private', state));
     },
 
     /**
@@ -770,7 +855,6 @@ const GrapesjsEditorView = BaseView.extend({
             });
         }
 
-        this.setActiveButton('options', 'sw-visibility');
         this.setActiveButton('views', 'open-blocks');
         this._addClassForFrameWrapper();
 
@@ -778,6 +862,16 @@ const GrapesjsEditorView = BaseView.extend({
         mediator.trigger('page:afterChange');
 
         this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
+
+        if (this.$el.valid()) {
+            this.builder.setComponents(escapeWrapper(this.$el.val()));
+            this.builder.setStyle(this.builder.getPureStyleString(this.$stylesInputElement.val()));
+        }
+
+        const wrapperAttrs = getWrapperAttrs(this.$el.val());
+        if (!_.isEmpty(wrapperAttrs)) {
+            wrapperAttrs.class && this.builder.getWrapper().addClass(wrapperAttrs.class);
+        }
 
         this.enabled = true;
         _.delay(() => {
@@ -885,6 +979,19 @@ const GrapesjsEditorView = BaseView.extend({
         this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
     },
 
+    getCanvasStylesheets() {
+        if (!this.extraStyles) {
+            return [];
+        }
+
+        return this.extraStyles.reduce((styles, {name, url}) => {
+            if (name === 'canvas') {
+                styles.push(url);
+                return styles;
+            }
+        }, []);
+    },
+
     /**
      * Collect and compare builder options
      * @returns {GrapesjsEditorView.builderOptions|{fromElement}}
@@ -945,9 +1052,10 @@ const GrapesjsEditorView = BaseView.extend({
      */
     _getCanvasConfig() {
         const theme = this.getCurrentTheme();
+        const canvasStylesheets = this.getCanvasStylesheets();
         return _.extend({}, this.canvasConfig, {
             canvas: {
-                styles: theme ? [theme.stylesheet] : ['']
+                styles: theme ? [theme.stylesheet, ...canvasStylesheets] : canvasStylesheets
             },
             protectedCss: []
         });
@@ -982,7 +1090,17 @@ const GrapesjsEditorView = BaseView.extend({
             pluginsOpts: this.builderPlugins
         };
 
-        pluginConfig.plugins.forEach(plugin => {
+        const priority = plugin => {
+            if (typeof plugin === 'string') {
+                plugin = grapesJS.plugins.get(plugin);
+            }
+
+            return plugin && (plugin.priority ?? 200);
+        };
+
+        pluginConfig.plugins.sort(
+            (aPlugin, bPlugin) => priority(aPlugin) - priority(bPlugin)
+        ).forEach(plugin => {
             if (typeof plugin === 'function') {
                 plugin.bind({
                     editorView: this

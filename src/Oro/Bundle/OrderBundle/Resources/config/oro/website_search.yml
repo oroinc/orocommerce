@@ -4,3 +4,4 @@ Oro\Bundle\ProductBundle\Entity\Product:
       -
         name: ordered_at_by.CUSTOMER_USER_ID
         type: datetime
+        group: order

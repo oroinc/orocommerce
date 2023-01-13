@@ -219,6 +219,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
         }
 
         return [
+            'contentWidgetName' => $contentWidget->getName(),
             'pageComponentName' => $contentWidget->getName() . ($this->pointer++ ?: ''),
             'pageComponentOptions' => $this->widgetData[$key]['pageComponentOptions'],
             'imageSlides' => $this->widgetData[$key]['imageSlides'],

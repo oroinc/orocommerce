@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     const BaseClass = require('oroui/js/base-class');
-    const _ = require('underscore');
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
     const viewportManager = require('oroui/js/viewport-manager');
@@ -46,7 +45,7 @@ define(function(require) {
         /**
          * @inheritdoc
          */
-        initialize: function(options) {
+        initialize(options) {
             if (!options.builder) {
                 throw new Error('Required option builder not found.');
             } else {
@@ -57,13 +56,64 @@ define(function(require) {
                 this.allowBreakpoints = options.allowBreakpoints;
             }
 
-            this.canvasEl = this.builder.Canvas.getElement();
-            this.$builderIframe = $(this.builder.Canvas.getFrameEl());
+            const {Commands, Canvas} = this.builder;
+
+            this.patchDeviceModel();
+
+            this.canvasEl = Canvas.getElement();
+            this.$builderIframe = $(Canvas.getFrameEl());
 
             this.initButtons();
 
             this.listenTo(mediator, 'grapesjs:theme:change', this.initButtons.bind(this));
+            this.listenTo(mediator, 'layout:reposition', this.adjustCurrentDeviceWidth.bind(this));
             this.listenTo(this.builder, 'change:device', this.updateSelectedElement.bind(this));
+
+            Commands.add('setDevice', {
+                run(editor, sender) {
+                    const {Devices} = editor;
+                    const device = Devices.get(sender.id);
+
+                    device.updateCalcPreviewDeviceWidth();
+
+                    editor.setDevice(sender.id);
+                    const canvas = editor.Canvas.getElement();
+
+                    canvas.classList.add(sender.id);
+                },
+                stop(editor, sender) {
+                    const canvas = editor.Canvas.getElement();
+
+                    canvas.classList.remove(sender.id);
+                }
+            });
+        },
+
+        patchDeviceModel() {
+            const {Devices} = this.builder;
+
+            Devices.Devices.prototype.model = Devices.Device.extend({
+                editor: this.builder,
+
+                updateCalcPreviewDeviceWidth() {
+                    const {Canvas} = this.editor;
+                    const canvasEl = Canvas.getElement();
+                    const width = parseInt(this.get('width')) || 0;
+
+                    if (width >= canvasEl.offsetWidth - 100) {
+                        this.set('width', (canvasEl.offsetWidth - 100) + 'px');
+                    } else {
+                        this.set('width', this.get('widthMedia'));
+                    }
+                }
+            });
+        },
+
+        adjustCurrentDeviceWidth() {
+            const {Devices} = this.builder;
+            const currentDevice = Devices.getSelected();
+
+            currentDevice && currentDevice.updateCalcPreviewDeviceWidth();
         },
 
         initButtons() {
@@ -94,7 +144,7 @@ define(function(require) {
                 .map(breakpoint => {
                     breakpoint = {...breakpoint};
 
-                    const width = this.calculateDeviceWidth( breakpoint.max ? breakpoint.max + 'px' : false);
+                    const width = breakpoint.max ? breakpoint.max + 'px' : '';
 
                     breakpoint['widthDevice'] = width;
 
@@ -139,68 +189,41 @@ define(function(require) {
         },
 
         /**
-         * Create buttons controls via breakpoints
-         */
+        * Create buttons controls via breakpoints
+        */
         createButtons() {
-            if (!this.builder) {
-                return;
-            }
-            const devicePanel = this.builder.Panels.getPanel('devices-c');
-            const deviceButton = devicePanel.get('buttons');
-            const DeviceManager = this.builder.DeviceManager;
-            const Commands = this.builder.Commands;
-            const activeBtn = deviceButton.where({active: true});
-            let activeBtnId = 'desktop';
+            const {Panels, Devices} = this.builder;
+            const buttons = [];
 
-            if (activeBtn.length) {
-                const breakpoint = this.breakpoints.find(el => el.name === activeBtn[0].attributes.id);
+            this.breakpoints.forEach(breakpoint => {
+                Devices.add({
+                    id: breakpoint.name,
+                    width: breakpoint.widthDevice,
+                    widthMedia: breakpoint.max ? breakpoint.max + 'px' : ''
+                });
 
-                if (breakpoint !== void 0) {
-                    activeBtnId = breakpoint.name;
-                }
-            }
-
-            deviceButton.reset();
-            DeviceManager.getAll().reset();
-
-            Commands.add('setDevice', {
-                run: function(editor, sender) {
-                    editor.setDevice(sender.id);
-                    const canvas = editor.Canvas.getElement();
-
-                    canvas.classList.add(sender.id);
-                },
-                stop: function(editor, sender) {
-                    const canvas = editor.Canvas.getElement();
-
-                    canvas.classList.remove(sender.id);
-                }
-            });
-
-            _.each(this.breakpoints, function(breakpoint) {
-                if (this.canvasEl.classList.length === 1 && breakpoint.name === 'desktop') {
-                    this.canvasEl.classList.add(breakpoint.name);
-                }
-
-                DeviceManager.add(breakpoint.name, breakpoint.widthDevice, breakpoint);
-
-                deviceButton.add({
+                buttons.push({
                     id: breakpoint.name,
                     command: 'setDevice',
                     togglable: false,
                     className: breakpoint.name,
-                    active: breakpoint.name === activeBtnId,
                     attributes: {
                         'data-toggle': 'tooltip',
                         'title': this.concatTitle(breakpoint)
                     }
                 });
+            });
 
-                $(devicePanel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
-            }, this);
+            const panel = Panels.addPanel({
+                id: 'devices-c',
+                visible: true,
+                buttons
+            });
 
-            devicePanel.view.$el.addClass('init');
-            this.builder.CssComposer.render();
+            const button = Panels.getButton('devices-c', 'desktop');
+            button.set('active', true);
+
+            $(panel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
         },
 
         /**
@@ -209,32 +232,17 @@ define(function(require) {
          * @param invert
          * @returns {string}
          */
-        calculateDeviceHeight(width, invert) {
+        calculateDeviceHeight(width, invert = false) {
             if (!width) {
                 return '';
             }
 
             width = parseInt(width);
 
-            if (!invert) {
-                invert = false;
-            }
             const ratio = width <= 640 ? 1.7 : 1.3;
             const height = invert ? width / ratio : width * ratio;
 
             return Math.round(height) + 'px';
-        },
-
-        calculateDeviceWidth(width) {
-            if (!width) {
-                return '';
-            }
-
-            width = parseInt(width);
-            if (width > this.canvasEl.offsetWidth - 100) {
-                width = this.canvasEl.offsetWidth - 100;
-            }
-            return width + 'px';
         },
 
         /**

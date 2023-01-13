@@ -56,6 +56,9 @@ Feature: Showing related products
       | Maximum Items             | 6     |
       | Minimum Items Use Default | false |
       | Minimum Items             | 4     |
+    And I fill "SimilarProductsConfig" with:
+      | Enable Similar Products Use Default | false |
+      | Enable Similar Products             | false |
     And I click "Save settings"
     And go to Products/ Products
     And I click Edit "PSKU1" in grid

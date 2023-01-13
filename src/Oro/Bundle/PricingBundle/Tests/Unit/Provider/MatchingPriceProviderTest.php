@@ -17,13 +17,13 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productPriceProvider;
+    private $productPriceProvider;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var MatchingPriceProvider */
-    protected $provider;
+    private $provider;
 
     protected function setUp(): void
     {
@@ -38,14 +38,8 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->provider, $this->doctrineHelper, $this->productPriceProvider);
-    }
-
     public function testGetMatchingPrices()
     {
-        /** @var ProductPriceScopeCriteriaInterface $priceScopeCriteria */
         $priceScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
 
         $productId = 1;
@@ -62,10 +56,8 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
 
-        /** @var ProductUnit $productUnit */
         $productUnit = $this->getEntity(ProductUnit::class, ['code' => $productUnitCode]);
 
         $this->doctrineHelper->expects($this->exactly(2))
@@ -92,14 +84,10 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param Price[] $prices
-     * @return array
-     */
-    protected function formatPrices(array $prices)
+    private function formatPrices(array $prices): array
     {
         $formattedPrices = [];
-
+        /** @var Price $value */
         foreach ($prices as $key => $value) {
             $formattedPrices[$key]['value'] = $value->getValue();
             $formattedPrices[$key]['currency'] = $value->getCurrency();

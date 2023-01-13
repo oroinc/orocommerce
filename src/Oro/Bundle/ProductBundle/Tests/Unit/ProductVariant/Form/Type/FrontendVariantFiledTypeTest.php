@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
@@ -22,50 +22,45 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const FIELD_COLOR = 'testColor';
-    const FIELD_NEW = 'testNew';
-    const PRODUCT_CLASS = Product::class;
-
-    /** @var FrontendVariantFiledType */
-    protected $type;
+    private const FIELD_COLOR = 'testColor';
+    private const FIELD_NEW = 'testNew';
+    private const PRODUCT_CLASS = Product::class;
 
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productVariantAvailabilityProvider;
+    private $productVariantAvailabilityProvider;
 
     /** @var ProductVariantTypeHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productVariantTypeHandlerRegistry;
+    private $productVariantTypeHandlerRegistry;
 
     /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $variantFieldProvider;
+    private $variantFieldProvider;
 
-    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $userLocalizationManager;
+    /** @var LocalizationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var FrontendVariantFiledType */
+    private $type;
+
     protected function setUp(): void
     {
-        $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
         $this->productVariantTypeHandlerRegistry = $this->createMock(ProductVariantTypeHandlerRegistry::class);
-
         $this->variantFieldProvider = $this->createMock(VariantFieldProvider::class);
-        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
 
         $this->type = new FrontendVariantFiledType(
             $this->productVariantAvailabilityProvider,
             $this->productVariantTypeHandlerRegistry,
             $this->variantFieldProvider,
-            $this->userLocalizationManager,
+            $this->localizationProvider,
             $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
@@ -73,9 +68,9 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->type], [])
@@ -113,7 +108,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             'green' => true
         ];
 
-        $enumHandler = $this->createTypeHandler(
+        $enumHandler = $this->getTypeHandler(
             self::FIELD_COLOR,
             $enumAvailability,
             [
@@ -129,7 +124,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             1 => true
         ];
 
-        $booleanHandler = $this->createTypeHandler(
+        $booleanHandler = $this->getTypeHandler(
             self::FIELD_NEW,
             $booleanAvailability,
             [
@@ -211,7 +206,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setRequired')
@@ -222,7 +216,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormWithoutProductInOptions()
     {
-        $this->expectException(\Symfony\Component\OptionsResolver\Exception\MissingOptionsException::class);
+        $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage('The required option "parentProduct" is missing.');
 
         $this->factory->create(FrontendVariantFiledType::class);
@@ -230,7 +224,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     public function testBuildWhenRequiredFieldProductHasOtherObject()
     {
-        $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
+        $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage(
             'The option "parentProduct" with value stdClass is expected to be of type'
             . ' "Oro\Bundle\ProductBundle\Entity\Product", but is of type "stdClass".'
@@ -240,15 +234,11 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->factory->create(FrontendVariantFiledType::class, [], $options);
     }
 
-    /**
-     * @param string $fieldName
-     * @param array $availability
-     * @param array $expectedOptions
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createTypeHandler($fieldName, array $availability, array $expectedOptions)
-    {
+    private function getTypeHandler(
+        string $fieldName,
+        array $availability,
+        array $expectedOptions
+    ): ProductVariantTypeHandlerInterface {
         $form = $this->factory->createNamed($fieldName, FormType::class, null, ['auto_initialize' => false]);
 
         $handler = $this->createMock(ProductVariantTypeHandlerInterface::class);
@@ -261,17 +251,13 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param ProductName[] $productVariantNames
-     * @param string $expectedSimpleProductName
-     * @param Localization|null $localization
      * @dataProvider getFinishViewDataProvider
      */
     public function testFinishView(
         array $productVariantNames,
         string $expectedSimpleProductName,
-        Localization $localization = null
+        ?Localization $localization = null
     ) {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $formView = new FormView();
@@ -300,7 +286,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             )
             ->willReturnOnConsecutiveCalls('value1', 'value2');
 
-        $this->userLocalizationManager->expects($this->any())
+        $this->localizationProvider->expects($this->any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
@@ -324,7 +310,10 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ],
             'view' => 'oroproduct/js/app/views/base-product-variants-view'
         ];
-        $this->assertEquals(json_encode($expectedComponentOptions), $attr['data-page-component-options']);
+        $this->assertEquals(
+            json_encode($expectedComponentOptions, JSON_THROW_ON_ERROR),
+            $attr['data-page-component-options']
+        );
     }
 
     public function getFinishViewDataProvider(): array

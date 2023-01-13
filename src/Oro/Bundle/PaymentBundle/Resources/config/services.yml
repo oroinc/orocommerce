@@ -132,6 +132,8 @@ services:
     oro_payment.action.purchase:
         class: 'Oro\Bundle\PaymentBundle\Action\PurchaseAction'
         parent: oro_payment.action.payment_method_action.abstract
+        calls:
+            - ['setPaymentStatusProvider', ['@oro_payment.provider.payment_status']]
         tags:
             - { name: oro_action.action, alias: payment_purchase }
 
@@ -352,7 +354,7 @@ services:
         public: false
         arguments:
             - '@oro_ui.html_tag_helper'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
 
     oro_payment.provider.payment_order_shipping_address_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentOrderShippingAddressOptionsProvider'
@@ -364,9 +366,22 @@ services:
         tags:
             - { name: oro_action.action, alias: payment_transaction_cancel }
 
+    oro_payment.action.refund_payment_transaction:
+        class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionRefundAction'
+        parent: oro_payment.action.payment_method_action.abstract
+        tags:
+            - { name: oro_action.action, alias: payment_transaction_refund }
+
     oro_payment.condition.payment_transaction_was_canceled:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentTransactionWasCanceled'
         arguments:
             - '@oro_payment.repository.payment_transaction'
         tags:
             - { name: oro_action.condition, alias: 'payment_transaction_was_canceled' }
+
+    oro_payment.condition.payment_transaction_was_refunded:
+        class: 'Oro\Bundle\PaymentBundle\Condition\PaymentTransactionWasRefunded'
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: oro_action.condition, alias: 'payment_transaction_was_refunded' }

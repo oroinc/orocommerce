@@ -1,0 +1,9 @@
+/* @theme: default; */
+
+.consent-item {
+    margin-bottom: $consent-item-offset-bottom;
+
+    .validation-failed {
+        margin-top: $consent-item-validation-failed-offset-top;
+    }
+}

@@ -7,7 +7,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
 
 /**
  * Represents a service that provides a way to interact with taxation system
- * and load/calculate/save TAX information.
+ * and load/calculate/save tax information.
  */
 interface TaxProviderInterface
 {
@@ -26,7 +26,7 @@ interface TaxProviderInterface
     public function getLabel();
 
     /**
-     * Loads TAX and returns TAX information for the given object.
+     * Loads tax and returns tax information for the given object.
      *
      * @param object $object
      *
@@ -37,7 +37,7 @@ interface TaxProviderInterface
     public function loadTax($object);
 
     /**
-     * Gets calculated TAX information for the given object.
+     * Gets calculated tax information for the given object.
      *
      * @param object $object
      *
@@ -48,7 +48,7 @@ interface TaxProviderInterface
     public function getTax($object);
 
     /**
-     * Saves TAX and returns TAX information for the given object.
+     * Saves tax and returns tax information for the given object.
      *
      * @param object $object
      *
@@ -59,7 +59,7 @@ interface TaxProviderInterface
     public function saveTax($object);
 
     /**
-     * Removes TAX information assigned to the given object.
+     * Removes tax information assigned to the given object.
      *
      * @param object $object
      *

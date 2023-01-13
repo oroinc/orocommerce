@@ -9,9 +9,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractFrontendScopedPr
 
 class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectTypeTest
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->setDatagridName('products-select-grid-frontend');
@@ -29,7 +26,7 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
     /**
      * {@inheritdoc}
      */
-    public function restrictionGridDataProvider()
+    public function restrictionGridDataProvider(): array
     {
         return [
             [

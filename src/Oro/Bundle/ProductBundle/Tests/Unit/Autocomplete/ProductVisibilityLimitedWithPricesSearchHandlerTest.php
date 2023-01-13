@@ -5,23 +5,16 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Autocomplete;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use PHPUnit\Framework\TestCase;
 
-class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
+class ProductVisibilityLimitedWithPricesSearchHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productWithPricesSearchHandler;
 
-    /**
-     * @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productVisibilityLimitedSearchHandler;
 
-    /**
-     * @var SearchHandlerInterface
-     */
+    /** @var SearchHandlerInterface */
     private $searchHandler;
 
     protected function setUp(): void
@@ -109,10 +102,7 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
         $this->assertSame($expected, $this->searchHandler->search($query, $page, $perPage, $isId));
     }
 
-    /**
-     * @return array
-     */
-    public function searchDataProvider()
+    public function searchDataProvider(): array
     {
         return [
             'pricing results does not match' => [
@@ -158,6 +148,7 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
                 [
                     'more' => false,
                     'results' => [
+                        ['sku' => 'Sku1', 'name' => 'Sku1', 'prices' => [['value' => 1, 'unit' => 'item']]],
                         ['sku' => 'SkuАбв', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
                     ]
                 ],

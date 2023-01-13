@@ -1,10 +1,11 @@
 @ticket-BB-14800
+@ticket-BB-21621
 @fixture-OroLocaleBundle:GermanLocalization.yml
 @fixture-OroShoppingListBundle:ShoppingListWithFractionalPriceFixture.yml
 
 Feature: RFQ with fractional price
   In order to use correct decimal separator for fractional prices in different locales
-  As an Buyer
+  As an Buyer and Administrator
     I should see fractional prices formatted according locale settings in the process of RFQ.
     Also I should offer new fractional price using decimal delimiter according locale settings.
 
@@ -40,3 +41,19 @@ Feature: RFQ with fractional price
       | Last Name     | Cole                    |
       | Email Address | AmandaRCole@example.org |
       | Company       | first customer          |
+
+  Scenario: Create order from RFQ in back-office
+    Given I login as administrator
+    When I go to System / Configuration
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And I fill form with:
+      | Default Localization | German_Loc |
+    And I submit form
+    Then I should see "Configuration saved" flash message
+    When I go to Sales/Requests For Quote
+    And I click view Amanda Cole in grid
+    And I click on "RFQ Create Order"
+    And I click "Order Form Line Item 1 Offer 1"
+    When I save and close form
+    And I click "Save" in modal window
+    Then I should see "Order has been saved" flash message

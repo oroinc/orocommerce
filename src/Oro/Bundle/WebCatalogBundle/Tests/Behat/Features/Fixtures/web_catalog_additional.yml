@@ -2,14 +2,33 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeAdditionalWebCatalog:
         __calls:
             - addTitle: ['@localValueAdditionalWebCatalog']
+            - addContentVariant: [ '@systemPageVariant' ]
+            - addScope: [ '@defaultAdditionalWebCatalogScope' ]
         webCatalog: '@additionalWebCatalog'
 
     nodeOnSale:
         __calls:
             - addTitle: ['@localValueOnSale']
             - addSlugPrototype: ['@localValueOnSaleSlug']
-        ParentNode: '@nodeAdditionalWebCatalog'
+            - addContentVariant: [ '@nodeOnSalePageVariant' ]
+            - addScope: [ '@defaultAdditionalWebCatalogScope' ]
+        parentNode: '@nodeAdditionalWebCatalog'
         webCatalog: '@additionalWebCatalog'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    systemPageVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_frontend_root'
+        default: true
+        __calls:
+            - addScope: [ '@defaultAdditionalWebCatalogScope' ]
+
+    nodeOnSalePageVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_frontend_root'
+        default: true
+        __calls:
+            - addScope: [ '@defaultAdditionalWebCatalogScope' ]
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueAdditionalWebCatalog:
@@ -27,3 +46,7 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
         description: 'Additional Web Catalog description'
         organization: '@organization'
         owner: '@business_unit'
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+    defaultAdditionalWebCatalogScope:
+        webCatalog: '@additionalWebCatalog'

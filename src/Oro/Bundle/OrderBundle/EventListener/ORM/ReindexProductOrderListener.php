@@ -7,8 +7,11 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Reindexes related products when order is updated or removed.
@@ -21,170 +24,130 @@ class ReindexProductOrderListener
      * This is extended field
      * @see \Oro\Bundle\OrderBundle\Model\ExtendOrder::getInternalStatus()
      */
-    const ORDER_INTERNAL_STATUS_FIELD = 'internal_status';
+    private const INTERNAL_STATUS_FIELD = 'internal_status';
+    /** @see \Oro\Bundle\OrderBundle\Entity\Order::$website */
+    private const WEBSITE_FIELD = 'website';
+    /** @see \Oro\Bundle\OrderBundle\Entity\Order::$customerUser */
+    private const CUSTOMER_USER_FIELD = 'customerUser';
+    /** @see \Oro\Bundle\OrderBundle\Entity\Order::$createdAt */
+    private const CREATED_AT_FIELD = 'createdAt';
 
-    /**
-     * @see \Oro\Bundle\OrderBundle\Entity\Order::$website
-     */
-    const ORDER_INTERNAL_WEBSITE_FIELD = 'website';
-
-    /**
-     * This is extended field
-     * @see \Oro\Bundle\OrderBundle\Entity\Order::$customerUser
-     */
-    const ORDER_CUSTOMER_USER_FIELD = 'customerUser';
-
-    /**
-     * @see \Oro\Bundle\OrderBundle\Entity\Order::$createdAt
-     */
-    const ORDER_CREATED_AT_FIELD = 'createdAt';
-
-    /**
-     * @var ProductReindexManager
-     */
-    protected $productReindexManager;
-
-    /**
-     * @var OrderStatusesProviderInterface
-     */
-    protected $statusesProvider;
+    private EventDispatcherInterface $eventDispatcher;
+    private OrderStatusesProviderInterface $statusesProvider;
+    private ReindexationWebsiteProviderInterface $websiteProvider;
 
     public function __construct(
-        ProductReindexManager $productReindexManager,
-        OrderStatusesProviderInterface $statusesProvider
+        EventDispatcherInterface $eventDispatcher,
+        OrderStatusesProviderInterface $statusesProvider,
+        ReindexationWebsiteProviderInterface $websiteProvider
     ) {
-        $this->productReindexManager = $productReindexManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->statusesProvider = $statusesProvider;
+        $this->websiteProvider = $websiteProvider;
     }
 
-    protected function onStatusChange(Order $order, PreUpdateEventArgs $event)
+    public function processOrderUpdate(Order $order, PreUpdateEventArgs $event): void
     {
-        if ($event->hasChangedField(static::ORDER_INTERNAL_STATUS_FIELD)) {
-            $oldStatus = $event->getOldValue(static::ORDER_INTERNAL_STATUS_FIELD);
-            $newStatus = $event->getNewValue(static::ORDER_INTERNAL_STATUS_FIELD);
-            if ($this->isOrderStatusChangedForReindex($oldStatus, $newStatus)) {
-                $this->reindexProductsInOrderWithoutStatusChecking($order, $order->getWebsite());
+        $websites = [];
+        $website = $order->getWebsite();
+        if ($this->isInternalStatusChanged($order, $event)) {
+            $websites[] = $website;
+        } elseif ($this->isCustomerUserChanged($order, $event)) {
+            $websites[] = $website;
+        } elseif ($this->isCreatedAtChanged($order, $event)) {
+            $websites[] = $website;
+        }
+        if ($this->isWebsiteChanged($order, $event)) {
+            if (!$websites && $this->isFeaturesEnabledForWebsite($website)) {
+                $websites[] = $website;
+            }
+            $oldWebsite = $event->getOldValue(self::WEBSITE_FIELD);
+            if ($this->isFeaturesEnabledForWebsite($oldWebsite)) {
+                $websites[] = $oldWebsite;
             }
         }
-    }
-
-    protected function onWebsiteChange(Order $order, PreUpdateEventArgs $event)
-    {
-        if ($event->hasChangedField(static::ORDER_INTERNAL_WEBSITE_FIELD)) {
-            $oldWebsite = $event->getOldValue(static::ORDER_INTERNAL_WEBSITE_FIELD);
-            $newWebsite = $event->getNewValue(static::ORDER_INTERNAL_WEBSITE_FIELD);
-            $this->reindexProductsInOrderWithinWebsite($order, $oldWebsite);
-            $this->reindexProductsInOrderWithinWebsite($order, $newWebsite);
+        if ($websites) {
+            $this->reindexOrderProducts($order, $websites);
         }
     }
 
-    protected function onCustomerUserChange(Order $order, PreUpdateEventArgs $event)
+    public function processOrderRemove(Order $order): void
     {
-        if ($event->hasChangedField(static::ORDER_CUSTOMER_USER_FIELD)) {
-            $this->reindexProductsInOrderWithinWebsite($order, $order->getWebsite());
+        $website = $order->getWebsite();
+        if ($this->isFeaturesEnabledForWebsite($website) && $this->isAllowedStatus($order->getInternalStatus())) {
+            $this->reindexOrderProducts($order, [$website]);
         }
     }
 
-    protected function onCreatedAtChange(Order $order, PreUpdateEventArgs $event)
+    private function reindexOrderProducts(Order $order, array $websites): void
     {
-        if ($event->hasChangedField(static::ORDER_CREATED_AT_FIELD)) {
-            $this->reindexProductsInOrderWithinWebsite($order, $order->getWebsite());
-        }
-    }
-
-    public function processOrderUpdate(Order $order, PreUpdateEventArgs $event)
-    {
-        $this->onStatusChange($order, $event);
-        $this->onCreatedAtChange($order, $event);
-        $this->onWebsiteChange($order, $event);
-        $this->onCustomerUserChange($order, $event);
-    }
-
-    public function processOrderRemove(Order $order)
-    {
-        $this->reindexProductsInOrderWithinWebsite($order, $order->getWebsite());
-    }
-
-    protected function reindexProductsInOrderWithinWebsite(Order $order, Website $website = null)
-    {
-        $orderStatus = $order->getInternalStatus();
-        if (!$this->isAllowedStatus($orderStatus)) {
-            return;
-        }
-
-        $this->reindexProductsInOrderWithoutStatusChecking($order, $website);
-    }
-
-    protected function reindexProductsInOrderWithoutStatusChecking(Order $order, Website $website = null)
-    {
-        if (!$this->isReindexAllowed($website)) {
-            return;
-        }
-
         $productIds = [];
-        $websiteId = $website->getId();
         foreach ($order->getProductsFromLineItems() as $product) {
             $productIds[] = $product->getId();
         }
-
-        $this->productReindexManager->reindexProducts($productIds, $websiteId);
-        $this->productReindexManager->reindexProducts($this->getParentProductIds($order), $websiteId);
-    }
-
-    /**
-     * @param AbstractEnumValue|null $oldStatus
-     * @param AbstractEnumValue|null $newStatus
-     * @return bool
-     */
-    protected function isOrderStatusChangedForReindex(
-        AbstractEnumValue $oldStatus = null,
-        AbstractEnumValue $newStatus = null
-    ) {
-        return ($this->isAllowedStatus($newStatus) && !$this->isAllowedStatus($oldStatus))
-            || (!$this->isAllowedStatus($newStatus) && $this->isAllowedStatus($oldStatus));
-    }
-
-    /**
-     * @param AbstractEnumValue|null $status
-     * @return bool
-     */
-    protected function isAllowedStatus(AbstractEnumValue $status = null)
-    {
-        $availableStatuses = $this->statusesProvider->getAvailableStatuses();
-        $statusId = $status !== null ? $status->getId() : null;
-
-        return in_array($statusId, $availableStatuses);
-    }
-
-    /**
-     * @param Website|null $website
-     * @return bool
-     */
-    protected function isReindexAllowed(Website $website = null)
-    {
-        /**
-         * Ignore reindex update in case when order doesn't attached to any website
-         */
-        if (!($website instanceof Website)) {
-            return false;
-        }
-
-        if (!$this->isFeaturesEnabled($website)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function getParentProductIds(Order $order): array
-    {
-        $ids = [];
         foreach ($order->getLineItems() as $lineItem) {
-            if ($lineItem->getParentProduct()) {
-                $ids[] = $lineItem->getParentProduct()->getId();
+            $parentProduct = $lineItem->getParentProduct();
+            if (null !== $parentProduct) {
+                $productIds[] = $parentProduct->getId();
             }
         }
+        $productIds = array_unique($productIds);
 
-        return $ids;
+        $websiteIds = [];
+        foreach ($websites as $website) {
+            $websiteIds[] = $this->websiteProvider->getReindexationWebsiteIds($website);
+        }
+        $websiteIds = array_unique(array_merge(...$websiteIds));
+
+        $this->eventDispatcher->dispatch(
+            new ReindexationRequestEvent([Product::class], $websiteIds, $productIds, true, ['order']),
+            ReindexationRequestEvent::EVENT_NAME
+        );
+    }
+
+    private function isInternalStatusChanged(Order $order, PreUpdateEventArgs $event): bool
+    {
+        return
+            $event->hasChangedField(self::INTERNAL_STATUS_FIELD)
+            && $this->isFeaturesEnabledForWebsite($order->getWebsite())
+            && (
+                $this->isAllowedStatus($event->getNewValue(self::INTERNAL_STATUS_FIELD))
+                xor $this->isAllowedStatus($event->getOldValue(self::INTERNAL_STATUS_FIELD))
+            );
+    }
+
+    private function isCustomerUserChanged(Order $order, PreUpdateEventArgs $event): bool
+    {
+        return
+            $event->hasChangedField(self::CUSTOMER_USER_FIELD)
+            && $this->isFeaturesEnabledForWebsite($order->getWebsite())
+            && $this->isAllowedStatus($order->getInternalStatus());
+    }
+
+    private function isCreatedAtChanged(Order $order, PreUpdateEventArgs $event): bool
+    {
+        return
+            $event->hasChangedField(self::CREATED_AT_FIELD)
+            && $this->isFeaturesEnabledForWebsite($order->getWebsite())
+            && $this->isAllowedStatus($order->getInternalStatus());
+    }
+
+    private function isWebsiteChanged(Order $order, PreUpdateEventArgs $event): bool
+    {
+        return
+            $event->hasChangedField(self::WEBSITE_FIELD)
+            && $this->isAllowedStatus($order->getInternalStatus());
+    }
+
+    private function isAllowedStatus(?AbstractEnumValue $status): bool
+    {
+        return
+            null !== $status
+            && \in_array($status->getId(), $this->statusesProvider->getAvailableStatuses(), true);
+    }
+
+    private function isFeaturesEnabledForWebsite(?Website $website): bool
+    {
+        return null !== $website && $this->isFeaturesEnabled($website);
     }
 }

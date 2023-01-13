@@ -7,14 +7,18 @@ use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
 
 class TransparentRedirectTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new TransparentRedirect()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],

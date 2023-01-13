@@ -8,14 +8,17 @@ use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 /**
  * Adds webp images urls for products.
  */
-class WebpAwareWebsiteSearchProductIndexerListener
+class WebpAwareWebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexerListenerInterface
 {
+    use ContextTrait;
+
     private ManagerRegistry $managerRegistry;
 
     private AttachmentManager $attachmentManager;
@@ -34,6 +37,10 @@ class WebpAwareWebsiteSearchProductIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'image')) {
+            return;
+        }
+
         if (!$this->attachmentManager->isWebpEnabledIfSupported()) {
             return;
         }

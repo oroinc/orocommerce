@@ -6,15 +6,19 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'product1'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision:
+    itemPrecision:
         unit: '@item'
+        precision: '1'
+    setPrecision:
+        unit: '@set'
         precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU123'
         attributeFamily: '@defaultProductFamily'
-        primaryUnitPrecision: '@precision'
+        primaryUnitPrecision: '@itemPrecision'
+        unitPrecisions: ['@setPrecision', '@itemPrecision']
         __calls:
             - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
@@ -73,11 +77,13 @@ Oro\Bundle\RFPBundle\Entity\RequestProduct:
         request: '@request1'
         product: '@product'
         product_sku: 'SKU123'
+        requestProductItems: [ '@requestproductitem1' ]
 
 Oro\Bundle\RFPBundle\Entity\RequestProductItem:
     requestproductitem1:
         request_product: '@requestproduct1'
         quantity: 1
+        productUnit: '@item'
         product_unit_code: 'item'
         value: 2
         currency: 'USD'

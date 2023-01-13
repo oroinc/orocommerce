@@ -1,0 +1,23 @@
+/* @theme: default; */
+
+$responsive-shopping-list-edit-select-row-cell-width: 80px !default;
+
+$responsive-shopping-list-edit-action-in-desktop-height: $product-item-image-holder-tiny-height !default;
+
+$responsive-shopping-list-edit-checkbox-offset: $offset-x !default;
+
+// Mobile
+
+$responsive-shopping-list-edit-select-row-cell-width-mobile: 50px !default;
+$responsive-shopping-list-edit-sub-row-offset: (
+    $responsive-shopping-list-edit-select-row-cell-width-mobile * .5
+) !default;
+$responsive-shopping-list-edit-select-row-cell-height-mobile: $product-item-image-holder-tiny-height !default;
+
+$responsive-shopping-list-edit-action-cell-width-mobile: 52px !default;
+
+// Mobile small
+$responsive-shopping-list-edit-select-row-cell-width-mobile-s: 36px !default;
+$responsive-shopping-list-edit-sub-row-offset-mobile-s: (
+    $responsive-shopping-list-edit-select-row-cell-width-mobile-s * .5
+) !default;

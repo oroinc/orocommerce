@@ -1,5 +1,6 @@
 @ticket-BB-11551
 @ticket-BB-16275
+@fixture-OroWebCatalogBundle:empty_web_catalog.yml
 @fixture-OroCatalogBundle:all_products_page.yml
 
 Feature: All products page feature
@@ -74,7 +75,7 @@ Feature: All products page feature
     # Filtering by full product name "Product3`\"'&йёщ®&reg;>" does not work on elasticsearch, see BB-19131
     When I filter Name as contains "Product3`\"'&йёщ®"
     And I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     When I click "Shopping List"
     And I should see "Product3`\"'&йёщ®&reg;>"
     Then I click "All Products"

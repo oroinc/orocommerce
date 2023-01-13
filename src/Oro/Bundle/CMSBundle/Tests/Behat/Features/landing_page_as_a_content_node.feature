@@ -20,19 +20,12 @@ Feature: Landing Page as a Content Node
     When I save and close form
     Then I should see "Page has been saved" flash message
 
-  Scenario: Prepare Web Catalog
-    Given I set "Default Web Catalog" as default web catalog
-    And I go to Marketing/ Web Catalogs
-    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
-    And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
-    When I save form
-    Then I should see "Content Node has been saved" flash message
-
   Scenario: Create Content Node for Landing Page
-    Given I click "Create Content Node"
+    Given I set "Default Web Catalog" as default web catalog
+    When I go to Marketing/ Web Catalogs
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I save form
+    When I click "Create Content Node"
     And I fill "Content Node" with:
       | Title | Test page |
       | Slug  | test-page |
@@ -40,8 +33,8 @@ Feature: Landing Page as a Content Node
     And I click "Add Landing Page"
     And I fill "Content Node Form" with:
       | Landing Page | Test page |
-    When I save form
-    Then I should see "Content Node has been saved" flash message
+    Then I save form
+    And I should see "Content Node has been saved" flash message
 
   Scenario: Open Landing Page
     Given I proceed as the Buyer

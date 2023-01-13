@@ -26,66 +26,62 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
-    use EnabledPaymentMethodIdentifierTrait {
-        getReference as protected;
-    }
+    use EnabledPaymentMethodIdentifierTrait;
 
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            static::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures(
-            [
-                LoadCustomerAddresses::class,
-                LoadProductUnitPrecisions::class,
-                LoadShoppingListLineItems::class,
-                LoadCombinedProductPrices::class,
-                LoadPaymentTermData::class,
-                LoadPaymentMethodsConfigsRuleData::class,
-                LoadShippingMethodsConfigsRulesWithConfigs::class,
-                UpdateInventoryLevelsQuantities::class
-            ]
-        );
-        $this->registry = static::getContainer()->get('doctrine');
+        $this->loadFixtures([
+            LoadCustomerAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadShoppingListLineItems::class,
+            LoadCombinedProductPrices::class,
+            LoadPaymentTermData::class,
+            LoadPaymentMethodsConfigsRuleData::class,
+            LoadShippingMethodsConfigsRulesWithConfigs::class,
+            UpdateInventoryLevelsQuantities::class
+        ]);
+        $this->registry = self::getContainer()->get('doctrine');
 
         $this->ensureSessionIsAvailable();
     }
 
     public function testStartCheckoutProductsWithoutPrices()
     {
-        $translator = static::getContainer()->get('translator');
+        $translator = self::getContainer()->get('translator');
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
         $this->startCheckout($shoppingList);
-        static::assertNull(self::$checkoutUrl);
+        self::assertNull(self::$checkoutUrl);
 
         $flashBag = $this->getSession()->getFlashBag();
         $noItemsWithPriceError = $translator
             ->trans('oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price');
-        static::assertTrue($flashBag->has('error'));
-        static::assertContains($noItemsWithPriceError, $flashBag->get('error'));
+        self::assertTrue($flashBag->has('error'));
+        self::assertContains($noItemsWithPriceError, $flashBag->get('error'));
     }
 
     public function testStartCheckoutSeveralProductsWithoutPrices()
     {
-        $translator = static::getContainer()->get('translator');
+        $translator = self::getContainer()->get('translator');
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $noProductsError = $translator
             ->trans('oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message');
-        static::assertStringContainsString($noProductsError, $crawler->html());
+        self::assertStringContainsString($noProductsError, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
         $crawler = $this->client->request('POST', $form->getUri(), $data);
-        static::assertStringContainsString($noProductsError, $crawler->html());
+        self::assertStringContainsString($noProductsError, $crawler->html());
 
         $productId = $this->getReference(LoadProductData::PRODUCT_5)->getId();
         $url = $this->getUrl('oro_shopping_list_frontend_remove_product', [
@@ -95,18 +91,18 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         ]);
         $this->ajaxRequest('DELETE', $url);
         $result = $this->client->getResponse();
-        static::assertResponseStatusCodeEquals($result, 200);
-        $response = json_decode($result->getContent(), true);
-        static::assertTrue($response['successful']);
+        self::assertResponseStatusCodeEquals($result, 200);
+        $response = self::jsonToArray($result->getContent());
+        self::assertTrue($response['successful']);
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         // because checkout line items updating on start checkout, removed product will still in the Checkout
         $noProductsError = $translator->trans(
             'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
         );
-        static::assertStringContainsString($noProductsError, $crawler->html());
+        self::assertStringContainsString($noProductsError, $crawler->html());
     }
 
     public function testCheckoutErrorsOnNotAvailableShippingMethods()
@@ -116,25 +112,25 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         //Billing Information step
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        static::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        self::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Information step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        self::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Method step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        self::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
 
         //Shipping Method step with error for no shipping rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
-        static::assertStringContainsString(
+        self::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
+        self::assertStringContainsString(
             'Please return to the shipping method selection step and select a different one.',
             $crawler->html()
         );
@@ -143,15 +139,15 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         //Payment step
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        self::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
 
         //Payment step with error for no shipping rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
-        static::assertStringContainsString(
+        self::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
+        self::assertStringContainsString(
             'Please return to the shipping method selection step and select a different one.',
             $crawler->html()
         );
@@ -160,15 +156,15 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         //Order Review step
         $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler); //order content has changed
-        static::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
+        self::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
 
         //Order Review step with error for no shipping rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
-        static::assertStringContainsString(
+        self::assertStringContainsString('The selected shipping method is not available.', $crawler->html());
+        self::assertStringContainsString(
             'Please return to the shipping method selection step and select a different one.',
             $crawler->html()
         );
@@ -181,30 +177,30 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         //Billing Information step
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        static::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        self::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Information step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        self::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Method step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        self::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
 
         //Payment step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        self::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         $this->disableAllPaymentRules();
 
         //Payment step with error for no payment rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString('The selected payment method is not available.', $crawler->html());
-        static::assertStringContainsString(
+        self::assertStringContainsString('The selected payment method is not available.', $crawler->html());
+        self::assertStringContainsString(
             'Please return to the payment method selection step and select a different one.',
             $crawler->html()
         );
@@ -213,21 +209,21 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         //Order Review step
         $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler);
-        static::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
+        self::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllPaymentRules();
 
         //Order Review step with error for no payment rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString('The selected payment method is not available.', $crawler->html());
-        static::assertStringContainsString(
+        self::assertStringContainsString('The selected payment method is not available.', $crawler->html());
+        self::assertStringContainsString(
             'Please return to the payment method selection step and select a different one.',
             $crawler->html()
         );
     }
 
-    private function disableAllShippingRules()
+    private function disableAllShippingRules(): void
     {
         $shippingRules = $this->getAllShippingRules();
 
@@ -238,7 +234,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->registry->getManager()->flush();
     }
 
-    private function disableAllPaymentRules()
+    private function disableAllPaymentRules(): void
     {
         $paymentRules = $this->getAllPaymentRules();
 
@@ -249,7 +245,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->registry->getManager()->flush();
     }
 
-    private function enableAllShippingRules()
+    private function enableAllShippingRules(): void
     {
         $shippingRules = $this->getAllShippingRules();
 
@@ -260,7 +256,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->registry->getManager()->flush();
     }
 
-    private function enableAllPaymentRules()
+    private function enableAllPaymentRules(): void
     {
         $paymentRules = $this->getAllPaymentRules();
 
@@ -274,7 +270,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
     /**
      * @return ShippingMethodsConfigsRule[]
      */
-    private function getAllShippingRules()
+    private function getAllShippingRules(): array
     {
         return $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
     }
@@ -282,15 +278,12 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
     /**
      * @return PaymentMethodsConfigsRule[]
      */
-    private function getAllPaymentRules()
+    private function getAllPaymentRules(): array
     {
         return $this->registry->getRepository(PaymentMethodsConfigsRule::class)->findAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function goToOrderReviewStepFromPaymentWithPaymentTerm(Crawler $crawler)
+    private function goToOrderReviewStepFromPaymentWithPaymentTerm(Crawler $crawler): Crawler
     {
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
@@ -308,7 +301,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         );
     }
 
-    protected function getLineItemIdByProductId(int $productId, ShoppingList $shoppingList): int
+    private function getLineItemIdByProductId(int $productId, ShoppingList $shoppingList): int
     {
         $lineItems = $shoppingList->getLineItems();
         $filteredLineItems = $lineItems->filter(

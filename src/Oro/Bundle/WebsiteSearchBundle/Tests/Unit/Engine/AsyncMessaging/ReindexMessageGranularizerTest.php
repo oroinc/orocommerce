@@ -9,38 +9,60 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
 
 class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
 {
-    const IDS_FROM_REPOSITORY = [11, 23];
-
     use ContextTrait;
 
-    /**
-     * @var array
-     */
-    private $tenIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    private const IDS_FROM_REPOSITORY = [11, 23];
 
-    /**
-     * @var ReindexMessageGranularizer
-     */
-    private $testable;
+    private array $tenIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-    /**
-     * @var EntityIdentifierRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityIdentifierRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $identifierRepository;
+
+    /** @var ReindexMessageGranularizer */
+    private $granularizer;
 
     protected function setUp(): void
     {
-        $this->identifierRepository = $this->getMockBuilder(EntityIdentifierRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->identifierRepository = $this->createMock(EntityIdentifierRepository::class);
 
-        $this->testable = new ReindexMessageGranularizer($this->identifierRepository);
+        $this->granularizer = new ReindexMessageGranularizer($this->identifierRepository);
+    }
+
+    public function testGranulationWithFieldGroup()
+    {
+        $context = [];
+        $context = $this->setContextEntityIds($context, self::IDS_FROM_REPOSITORY);
+        $context = $this->setContextFieldGroups($context, ['main']);
+
+        $this->identifierRepository->expects($this->any())
+            ->method('getIds')
+            ->willReturn(self::IDS_FROM_REPOSITORY);
+
+        $result = $this->granularizer->process(
+            ['Product'],
+            [1],
+            $context
+        );
+
+        $this->assertEquals(
+            [
+                [
+                    'class'   => ['Product'],
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => self::IDS_FROM_REPOSITORY,
+                        AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']
+                    ]
+                ]
+            ],
+            iterator_to_array($result)
+        );
     }
 
     /**
      * @dataProvider smallDataProvider
      */
-    public function testGranulationSmall($input, $output)
+    public function testGranulationSmall(array $input, array $output)
     {
         $context = [];
         $context = $this->setContextEntityIds($context, $input['ids']);
@@ -49,7 +71,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
             ->method('getIds')
             ->willReturn(self::IDS_FROM_REPOSITORY);
 
-        $result = $this->testable->process(
+        $result = $this->granularizer->process(
             $input['entities'],
             $input['websites'],
             $context
@@ -61,7 +83,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider bigDataProvider
      */
-    public function testGranulation($input, $output)
+    public function testGranulation(array $input, array $output)
     {
         $context = [];
         $context = $this->setContextEntityIds($context, range(1, 500));
@@ -70,7 +92,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
             ->method('getIds')
             ->willReturn(self::IDS_FROM_REPOSITORY);
 
-        $result = $this->testable->process(
+        $result = $this->granularizer->process(
             $input['entities'],
             $input['websites'],
             $context
@@ -81,10 +103,8 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function smallDataProvider()
+    public function smallDataProvider(): array
     {
         return [
             [
@@ -187,10 +207,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function bigDataProvider()
+    public function bigDataProvider(): array
     {
         return [
             [

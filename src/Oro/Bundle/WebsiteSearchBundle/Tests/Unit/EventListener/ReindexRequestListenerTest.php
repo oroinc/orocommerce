@@ -11,38 +11,30 @@ use Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener;
 
 class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_CLASSNAME = 'testClass';
-    const TEST_WEBSITE_ID = 1234;
+    private const TEST_CLASSNAME = 'testClass';
+    private const TEST_WEBSITE_ID = 1234;
 
-    /**
-     * @var ReindexRequestListener
-     */
-    protected $listener;
+    /** @var ReindexRequestListener */
+    private $listener;
 
-    /**
-     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $regularIndexerMock;
+    /** @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $regularIndexer;
 
-    /**
-     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $asyncIndexerMock;
+    /** @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $asyncIndexer;
 
-    /**
-     * @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $granularizer;
+    /** @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject */
+    private $granularizer;
 
     protected function setUp(): void
     {
-        $this->regularIndexerMock = $this->getMockBuilder(IndexerInterface::class)->getMock();
-        $this->asyncIndexerMock   = $this->getMockBuilder(IndexerInterface::class)->getMock();
+        $this->regularIndexer = $this->createMock(IndexerInterface::class);
+        $this->asyncIndexer = $this->createMock(IndexerInterface::class);
         $this->granularizer = $this->createMock(ReindexMessageGranularizer::class);
 
         $this->listener = new ReindexRequestListener(
-            $this->regularIndexerMock,
-            $this->asyncIndexerMock
+            $this->regularIndexer,
+            $this->asyncIndexer
         );
         $this->listener->setReindexMessageGranularizer($this->granularizer);
     }
@@ -56,16 +48,13 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
             true
         );
 
-        $this->granularizer
-            ->expects($this->never())
+        $this->granularizer->expects($this->never())
             ->method('process');
 
-        $this->regularIndexerMock
-            ->expects($this->never())
+        $this->regularIndexer->expects($this->never())
             ->method('reindex');
 
-        $this->asyncIndexerMock
-            ->expects($this->never())
+        $this->asyncIndexer->expects($this->never())
             ->method('reindex');
 
         (new ReindexRequestListener())->process($event);
@@ -79,8 +68,7 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
         $event = new ReindexationRequestEvent($classes, $websiteIds, $productIds, false);
 
         if ($productIds) {
-            $this->granularizer
-                ->expects($this->once())
+            $this->granularizer->expects($this->once())
                 ->method('process')
                 ->with($classes, $websiteIds, [
                     AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
@@ -97,16 +85,14 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
                 ]);
         }
 
-        $this->regularIndexerMock
-            ->expects($this->once())
+        $this->regularIndexer->expects($this->once())
             ->method('reindex')
             ->with($classes, [
                 AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
                 AbstractIndexer::CONTEXT_WEBSITE_IDS => $websiteIds
             ]);
 
-        $this->asyncIndexerMock
-            ->expects($this->never())
+        $this->asyncIndexer->expects($this->never())
             ->method('reindex');
 
         $this->listener->process($event);
@@ -114,14 +100,13 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWithDisabledListener()
     {
-        $this->granularizer
-            ->expects($this->never())
+        $this->granularizer->expects($this->never())
             ->method('process');
 
-        $this->regularIndexerMock->expects($this->never())
+        $this->regularIndexer->expects($this->never())
             ->method('reindex');
 
-        $this->asyncIndexerMock->expects($this->never())
+        $this->asyncIndexer->expects($this->never())
             ->method('reindex');
 
         $this->disableListener();
@@ -136,8 +121,7 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
         $event = new ReindexationRequestEvent($classes, $websiteIds, $productIds, true);
 
         if ($productIds) {
-            $this->granularizer
-                ->expects($this->once())
+            $this->granularizer->expects($this->once())
                 ->method('process')
                 ->with($classes, $websiteIds, [
                     AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
@@ -154,31 +138,26 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
                 ]);
         }
 
-        $this->asyncIndexerMock
-            ->expects($this->once())
+        $this->asyncIndexer->expects($this->once())
             ->method('reindex')
             ->with($classes, [
                 AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
                 AbstractIndexer::CONTEXT_WEBSITE_IDS => $websiteIds
             ]);
 
-        $this->regularIndexerMock
-            ->expects($this->never())
+        $this->regularIndexer->expects($this->never())
             ->method('reindex');
 
         $this->listener->process($event);
     }
 
-    protected function disableListener()
+    private function disableListener()
     {
         $this->assertInstanceOf(OptionalListenerInterface::class, $this->listener);
         $this->listener->setEnabled(false);
     }
 
-    /**
-     * @return array
-     */
-    public function processDataProvider()
+    public function processDataProvider(): array
     {
         return [
             'with products and websites' => [

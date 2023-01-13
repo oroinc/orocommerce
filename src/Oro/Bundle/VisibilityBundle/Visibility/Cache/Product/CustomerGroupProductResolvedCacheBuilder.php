@@ -2,28 +2,47 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
 /**
- * Cache builder based on customer group
+ * The customer group visibility cache builder.
  */
-class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
+class CustomerGroupProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
 {
+    private ScopeManager $scopeManager;
+    private InsertFromSelectQueryExecutor $insertExecutor;
+
+    public function __construct(
+        ManagerRegistry $doctrine,
+        ProductReindexManager $productReindexManager,
+        ScopeManager $scopeManager,
+        InsertFromSelectQueryExecutor $insertExecutor
+    ) {
+        parent::__construct($doctrine, $productReindexManager);
+        $this->scopeManager = $scopeManager;
+        $this->insertExecutor = $insertExecutor;
+    }
+
     /**
-     * @param VisibilityInterface|CustomerGroupProductVisibility $visibilitySettings
+     * {@inheritdoc}
      */
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
+        /** @var CustomerGroupProductVisibility $visibilitySettings */
         $product = $visibilitySettings->getProduct();
         $scope = $visibilitySettings->getScope();
 
@@ -35,9 +54,7 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuil
         $update = [];
         $where = ['scope' => $scope, 'product' => $product];
 
-        $em = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved');
-        $er = $em->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved');
+        $er = $this->doctrine->getRepository(CustomerGroupProductVisibilityResolved::class);
         $hasCustomerGroupProductVisibilityResolved = $er->hasEntity($where);
 
         if (!$hasCustomerGroupProductVisibilityResolved
@@ -47,18 +64,11 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuil
         }
 
         if ($selectedVisibility === CustomerGroupProductVisibility::CATEGORY) {
-            $category = $this->registry
-                ->getManagerForClass('OroCatalogBundle:Category')
-                ->getRepository('OroCatalogBundle:Category')
-                ->findOneByProduct($product);
+            $category = $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
             if ($category) {
                 $categoryScope = $this->scopeManager->findOrCreate('customer_group_category_visibility', $scope);
 
-                /** @var CustomerGroupCategoryRepository $customerGroupCategoryRepository */
-                $customerGroupCategoryRepository = $this->registry
-                    ->getManagerForClass(CustomerGroupCategoryVisibilityResolved::class)
-                    ->getRepository(CustomerGroupCategoryVisibilityResolved::class);
-                $visibility = $customerGroupCategoryRepository
+                $visibility = $this->doctrine->getRepository(CustomerGroupCategoryVisibilityResolved::class)
                     ->getFallbackToGroupVisibility($category, $categoryScope);
 
                 $update = [
@@ -98,19 +108,15 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuil
      */
     public function productCategoryChanged(Product $product, bool $scheduleReindex)
     {
-        $category = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
-            ->findOneByProduct($product);
+        $category = $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
         if (!$category) {
-            $this->registry
-                ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
-                ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
+            $this->doctrine->getRepository(CustomerGroupProductVisibility::class)
                 ->setToDefaultWithoutCategoryByProduct($product);
         }
 
-        $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct($this->insertExecutor, $product, $category);
+        $repository = $this->getCustomerGroupProductRepository();
+        $repository->deleteByProduct($product);
+        $repository->insertByProduct($this->insertExecutor, $product, $category);
 
         $this->triggerProductReindexation($product, null, $scheduleReindex);
     }
@@ -120,33 +126,22 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuil
      */
     public function buildCache(Scope $scope = null)
     {
-        $this->getManager()->beginTransaction();
+        $repository = $this->getCustomerGroupProductRepository();
+        $em = $this->doctrine->getManagerForClass(CustomerGroupProductVisibilityResolved::class);
+        $em->beginTransaction();
         try {
-            $repository = $this->getRepository();
             $repository->clearTable($scope);
             $repository->insertStatic($this->insertExecutor, $scope);
             $repository->insertByCategory($this->insertExecutor, $this->scopeManager, $scope);
-            $this->getManager()->commit();
+            $em->commit();
         } catch (\Exception $exception) {
-            $this->getManager()->rollback();
+            $em->rollback();
             throw $exception;
         }
     }
 
-    /**
-     * @return CustomerGroupProductRepository
-     */
-    protected function getRepository()
+    private function getCustomerGroupProductRepository(): CustomerGroupProductRepository
     {
-        return $this->repository;
-    }
-
-    /**
-     * @return EntityManagerInterface|null
-     */
-    protected function getManager()
-    {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved');
+        return $this->doctrine->getRepository(CustomerGroupProductVisibilityResolved::class);
     }
 }

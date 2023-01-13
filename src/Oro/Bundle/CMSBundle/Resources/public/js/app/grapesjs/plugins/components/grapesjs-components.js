@@ -1,26 +1,33 @@
 import _ from 'underscore';
 import GrapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
 import traitManagerExtends from 'orocms/js/app/grapesjs/plugins/components/trait-manager-extends';
+import {unescapeTwigExpression} from '../../utils';
+import fullscreenCommand from '../../commands/fullscreen';
+import clearCanvasCommand from '../../commands/clear-canvas';
 
 export default GrapesJS.plugins.add('grapesjs-components', function(editor, options) {
-    // Overwrite default addType method
-    // Check and update manually componentTypes array
-    // Check functionality at next version GrapesJS, if need delete wrap function
-    editor.DomComponents.addType = _.wrap(editor.DomComponents.addType, (func, typeName, methods) => {
-        const dom = func.call(editor.DomComponents, typeName, methods);
+    const {Blocks, Commands, Panels} = editor;
 
-        const index = _.findIndex(dom.componentTypes, type => type.id === typeName);
+    const superCategoryDefaults = Blocks.Category.prototype.defaults;
+    Blocks.Category.prototype.defaults = () => {
+        return {
+            ...superCategoryDefaults(),
+            order: 100
+        };
+    };
 
-        if (index !== -1) {
-            dom.componentTypes[index] = dom.getType(typeName);
-        } else {
-            dom.componentTypes.unshift(dom.getType(typeName));
+    Blocks.Categories = Blocks.Categories.extend({
+        comparator: 'order',
+
+        add(...args) {
+            const res = this.__super__.add.apply(this, args);
+            this.sort();
+            return res;
         }
-
-        return dom;
     });
+
+    editor.getHtml = _.wrap(editor.getHtml, (func, ...args) => unescapeTwigExpression(func.apply(editor, args)));
 
     editor.editor.runDefault = _.wrap(editor.editor.runDefault, (func, opts = {}) => {
         if (!editor.editor.get('Commands')) {
@@ -30,19 +37,40 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
         func.call(editor.editor, opts);
     });
 
+    Commands.add('fullscreen', fullscreenCommand);
+    Commands.add('core:canvas-clear', clearCanvasCommand);
+
     traitManagerExtends(editor);
 
     editor.ComponentRestriction = new ComponentRestriction(editor, options);
 
-    const componentManager = new ComponentManager({
-        editor,
-        typeBuildersOptions: _.pick(options, 'excludeContentBlockAlias', 'excludeContentWidgetAlias')
-    });
-
-    editor.Panels.removeButton('options', 'preview');
+    Panels.removeButton('options', 'preview');
+    Panels.addButton('options', [
+        {
+            id: 'undo',
+            className: 'fa fa-undo',
+            command(editor) {
+                editor.runCommand('core:undo');
+            }
+        },
+        {
+            id: 'redo',
+            className: 'fa fa-repeat',
+            command(editor) {
+                editor.runCommand('core:redo');
+            }
+        },
+        {
+            id: 'canvas-clear',
+            className: 'fa fa-trash',
+            command(editor) {
+                editor.runCommand('core:canvas-clear');
+            }
+        }
+    ]);
 
     editor.once('destroy', function() {
-        componentManager.dispose();
+        editor.componentManager.dispose();
         delete editor.ComponentRestriction;
     });
 });

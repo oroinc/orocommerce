@@ -56,8 +56,10 @@ define(function(require) {
 
             this.$valueContainer = this.options._sourceElement.find(this.options.selectors.valueContainer);
 
-            mediator.on('entry-point:order:load', this.setItemValue, this);
-            mediator.on('entry-point:order:load:before', this.initializeAttribute, this);
+            this.listenTo(mediator, {
+                'entry-point:order:load': this.setItemValue,
+                'entry-point:order:load:before': this.initializeAttribute
+            });
         },
 
         initializeAttribute: function() {
@@ -102,20 +104,6 @@ define(function(require) {
             );
 
             this.$valueContainer.html(this.template({value: value}));
-        },
-
-        /**
-         * @inheritdoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:load', this.setItemValue, this);
-            mediator.off('entry-point:order:load:before', this.initializeAttribute, this);
-
-            OrderLineItemItemComponent.__super__.dispose.call(this);
         }
     });
 

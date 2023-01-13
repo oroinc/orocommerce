@@ -1,0 +1,8 @@
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+<div class="grid-container oro-collection-table">
+    <div class="oro-collection-table-heading">
+        <h5>{{ 'oro.order.shipping_tracking.entity_label'|trans }}</h5>
+    </div>
+    {{ dataGrid.renderGrid('order-shipping-trackings-grid', { order_id: entity.id }, { cssClass: 'inner-grid order-shipping-trackings-grid' }) }}
+</div>

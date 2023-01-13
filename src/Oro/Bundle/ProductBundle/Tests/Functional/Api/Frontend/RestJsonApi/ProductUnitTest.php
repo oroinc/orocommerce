@@ -6,7 +6,8 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdm
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits;
-use Symfony\Component\Translation\MessageCatalogueInterface;
+use Oro\Bundle\TranslationBundle\Entity\Translation;
+use Oro\Bundle\TranslationBundle\Manager\TranslationManager;
 
 /**
  * @dbIsolationPerTest
@@ -26,42 +27,43 @@ class ProductUnitTest extends FrontendRestJsonApiTestCase
 
     private function loadLocalizedProductUnits()
     {
-        $spanishLocalization = 'es';
         $productUnitTranslations = [
-            $spanishLocalization => [
-                'item'  => [
-                    'label.full'         => 'Spanish Item',
-                    'label.full_plural'  => 'Spanish Item',
-                    'label.short'        => 'Spanish Item',
-                    'label.short_plural' => 'Spanish Item'
+            'item'  => [
+                'label.full'         => 'Spanish Item',
+                'label.full_plural'  => 'Spanish Item',
+                'label.short'        => 'Spanish Item',
+                'label.short_plural' => 'Spanish Item'
 
-                ],
-                'set'   => [
-                    'label.full'         => 'Spanish Set',
-                    'label.full_plural'  => 'Spanish Set',
-                    'label.short'        => 'Spanish Set',
-                    'label.short_plural' => 'Spanish Set'
+            ],
+            'set'   => [
+                'label.full'         => 'Spanish Set',
+                'label.full_plural'  => 'Spanish Set',
+                'label.short'        => 'Spanish Set',
+                'label.short_plural' => 'Spanish Set'
 
-                ],
-                'peace' => [
-                    'label.full'         => 'Spanish Peace',
-                    'label.full_plural'  => 'Spanish Peace',
-                    'label.short'        => 'Spanish Peace',
-                    'label.short_plural' => 'Spanish Peace'
-                ]
+            ],
+            'peace' => [
+                'label.full'         => 'Spanish Peace',
+                'label.full_plural'  => 'Spanish Peace',
+                'label.short'        => 'Spanish Peace',
+                'label.short_plural' => 'Spanish Peace'
             ]
         ];
-        /** @var MessageCatalogueInterface $spanishTranslationCatalogue */
-        $spanishTranslationCatalogue = self::getContainer()->get('translator')->getCatalogue('es');
-        foreach ($productUnitTranslations as $locale => $productUnits) {
-            foreach ($productUnits as $productUnitName => $translations) {
-                $keyPrefix = 'oro.product_unit.' . $productUnitName;
-                foreach ($translations as $key => $translation) {
-                    $spanishTranslationCatalogue
-                        ->set(sprintf('%s.%s', $keyPrefix, $key), $translation);
-                }
+        /** @var TranslationManager $translationManager */
+        $translationManager = self::getContainer()->get('oro_translation.manager.translation');
+        foreach ($productUnitTranslations as $productUnitName => $translations) {
+            $keyPrefix = 'oro.product_unit.' . $productUnitName;
+            foreach ($translations as $key => $translation) {
+                $translationManager->saveTranslation(
+                    sprintf('%s.%s', $keyPrefix, $key),
+                    $translation,
+                    'es',
+                    'messages',
+                    Translation::SCOPE_UI
+                );
             }
         }
+        $translationManager->flush();
     }
 
     public function testGetList()

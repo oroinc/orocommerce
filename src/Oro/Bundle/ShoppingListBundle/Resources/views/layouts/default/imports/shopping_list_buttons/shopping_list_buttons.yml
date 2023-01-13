@@ -1,0 +1,24 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroShoppingList/layouts/default/imports/shopping_list_buttons/shopping_list_buttons.html.twig'
+        - '@add':
+            id: __line_item_form_buttons_shopping_list
+            blockType: add_to_shopping_list_form_button
+            parentId: __root
+            siblingId: ~
+            prepend: true
+            options:
+                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'
+                shoppingLists:  '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
+                productShoppingLists: '=data.offsetExists("product") ? data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data)) : []'
+                vars:
+                    matrixFormType: '=data.offsetExists("product") ? data["product_view_form_availability_provider"].getAvailableMatrixFormType(data["product"]) : "none"'
+                    product: '=data.offsetExists("product") ? data["oro_product_variant"].getProductVariantOrProduct(data)'
+        - '@add':
+            id: __shopping_list_quick_search
+            parentId: __root
+            blockType: container
+            prepend: true
+            options:
+                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'

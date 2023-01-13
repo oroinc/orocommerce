@@ -18,6 +18,7 @@ oro_behat_extension:
         - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroShippingBundle/Tests/Behat/Features'
 
@@ -32,10 +33,10 @@ oro_behat_extension:
       selector: 'td.order-checkout-widget__total span.order-checkout-widget__total-price'
 
     CheckoutFormRow:
-      selector: '.checkout-form span.custom-radio__text'
+      selector: '.checkout-form label.checkbox-label'
 
     Flat Rate Shipping Method Icon:
-      selector: '.shipping-method-config .fa-plus-square-o'
+      selector: '.shipping-method-config .fa-minus-square-o'
 
     Flat Rate Shipping Method Body:
       selector: '.shipping-method-config .shipping-method-config__body'

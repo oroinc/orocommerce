@@ -27,6 +27,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
         currency: 'USD'
         organization: '@organization'
         destinations: ['@shippingMethodsConfigsRuleDestination']
+        methodConfigs: ['@shippingMethodConfig']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     shippingMethodsConfigsRuleDestination:

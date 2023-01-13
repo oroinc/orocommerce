@@ -9,6 +9,7 @@ use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
@@ -164,9 +165,9 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateWrongEntity()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(
-            'Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given'
+            'Expected argument of type "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given'
         );
 
         $constraint = new ZipCodeFields();

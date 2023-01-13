@@ -46,8 +46,9 @@ class CombinedPriceListPostProcessingStepsProcessor implements
     {
         $messageData = $message->getBody();
         $jobId = $messageData['relatedJobId'];
+        $cpls = $messageData['cpls'];
 
-        $this->executeGc($jobId);
+        $this->executeGc($jobId, $cpls);
         $this->executeScheduledProductsIndexation($jobId);
 
         return self::ACK;
@@ -58,11 +59,11 @@ class CombinedPriceListPostProcessingStepsProcessor implements
         return [RunCombinedPriceListPostProcessingStepsTopic::getName()];
     }
 
-    private function executeGc(int $jobId): void
+    private function executeGc(int $jobId, array $cpls = []): void
     {
         try {
             $this->triggerHandler->startCollect($jobId);
-            $this->garbageCollector->cleanCombinedPriceLists();
+            $this->garbageCollector->cleanCombinedPriceLists($cpls);
             $this->triggerHandler->commit();
         } catch (\Exception $e) {
             $this->triggerHandler->rollback();
@@ -80,7 +81,10 @@ class CombinedPriceListPostProcessingStepsProcessor implements
     {
         $this->producer->send(
             ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-            ['relatedJobId' => $jobId]
+            [
+                'relatedJobId' => $jobId,
+                'indexationFieldsGroups' => ['pricing']
+            ]
         );
     }
 }

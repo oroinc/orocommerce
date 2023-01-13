@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\WYSIWYG;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\CMSBundle\Entity\Page;
@@ -16,7 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 {
-    /** @var ObjectManager */
+    /** @var EntityManagerInterface */
     private $em;
 
     /** @var ContentWidgetUsageRepository */
@@ -29,10 +28,7 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 
         $this->getOptionalListenerManager()->enableListener('oro_cms.event_listener.wysiwyg_field_twig_listener');
 
-        /** @var Registry */
-        $doctrine = $this->getContainer()->get('doctrine');
-
-        $this->em = $doctrine->getManager();
+        $this->em = $this->getContainer()->get('doctrine')->getManager();
         $this->usageRepository = $this->em->getRepository(ContentWidgetUsage::class);
     }
 

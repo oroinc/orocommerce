@@ -4,7 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCategoryPositionTopic;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnRemoveCategoryTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -13,8 +14,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class CategoryListener
 {
-    /** @var MessageProducerInterface */
-    private $messageProducer;
+    private MessageProducerInterface $messageProducer;
 
     public function __construct(MessageProducerInterface $messageProducer)
     {
@@ -24,12 +24,15 @@ class CategoryListener
     public function preUpdate(Category $category, PreUpdateEventArgs $event): void
     {
         if ($event->hasChangedField(Category::FIELD_PARENT_CATEGORY)) {
-            $this->messageProducer->send(Topics::CATEGORY_POSITION_CHANGE, ['id' => $category->getId()]);
+            $this->messageProducer->send(
+                VisibilityOnChangeCategoryPositionTopic::getName(),
+                ['id' => $category->getId()]
+            );
         }
     }
 
     public function preRemove(Category $category): void
     {
-        $this->messageProducer->send(Topics::CATEGORY_REMOVE, ['id' => $category->getId()]);
+        $this->messageProducer->send(VisibilityOnRemoveCategoryTopic::getName(), ['id' => $category->getId()]);
     }
 }

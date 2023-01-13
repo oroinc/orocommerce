@@ -10,7 +10,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@precision<current()>'
-        unitPrecisions: []
+        unitPrecisions: [ '@precision<current()>' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@localValueProduct<current()>']
@@ -31,6 +31,7 @@ Doctrine\Common\Collections\ArrayCollection:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueLightingProducts']
             - addSlugPrototype: ['@localValueLightingProductsSlug']
@@ -38,6 +39,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setProducts: ['@lightingProducts']
 
     categoryArchitecturalFloodlighting:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueArchitecturalFloodlighting']
             - addSlugPrototype: ['@localValueArchitecturalFloodlightingSlug']
@@ -45,6 +47,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setProducts: ['@architecturalFloodlightingProducts']
 
     categoryHeadlamps:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueHeadlamps']
             - addSlugPrototype: ['@localValueHeadlampsSlug']
@@ -52,6 +55,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setProducts: ['@categoryHeadlampsProducts']
 
     categoryMedicalApparel:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueMedicalApparel']
             - addSlugPrototype: ['@localValueMedicalApparelSlug']
@@ -59,6 +63,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setProducts: ['@categoryMedicalApparelProducts']
 
     categoryMedicalUniforms:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueMedicalUniforms']
             - addSlugPrototype: ['@localValueMedicalUniformsSlug']

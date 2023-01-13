@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-19469
+@ticket-BB-21750
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
@@ -31,7 +32,7 @@ Feature: My Shopping List Actions
     When I click "Shopping List Actions"
     And I click "Duplicate"
     And I click "Yes, duplicate"
-    Then I should see "The shopping list has been duplicated" flash message
+    Then I should see "The shopping list has been duplicated" flash message and I close it
     When I open shopping list widget
     Then I should see "Shopping List 3 (Copied" in the "Shopping List Widget" element
     And I reload the page
@@ -42,7 +43,7 @@ Feature: My Shopping List Actions
     And I fill "Shopping List Rename Action Form" with:
       | Label | Shopping List 4 |
     And I click "Shopping List Action Submit"
-    Then I should see "Shopping list has been successfully renamed" flash message
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
     When I open shopping list widget
     Then I should see "Shopping List 4" on shopping list widget
     And I close shopping list widget
@@ -93,8 +94,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,818.00 | 32    | No      |
-      | Shopping List 1 | $1,581.00 | 3     | Yes     |
+      | Shopping List 3 | $8,818.00 | 32    | Yes     |
+      | Shopping List 1 | $1,581.00 | 3     | No      |
     And I click Edit "Shopping List 3" in grid
     And I sort grid by "SKU"
     When I click on "First Line Item Row Checkbox"
@@ -109,8 +110,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,785.00 | 31    | No      |
-      | Shopping List 1 | $1,614.00 | 4     | Yes     |
+      | Shopping List 3 | $8,785.00 | 31    | Yes     |
+      | Shopping List 1 | $1,614.00 | 4     | No      |
 
   Scenario: Delete line items from shopping list mass action
     Given I follow "Account"
@@ -118,8 +119,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,785.00 | 31    | No      |
-      | Shopping List 1 | $1,614.00 | 4     | Yes     |
+      | Shopping List 3 | $8,785.00 | 31    | Yes     |
+      | Shopping List 1 | $1,614.00 | 4     | No      |
     And I filter Name as is equal to "Shopping List 1"
     And I click Edit "Shopping List 1" in grid
     When I check first 4 records in "Frontend Shopping List Edit Grid"
@@ -131,8 +132,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,785.00 | 31    | No      |
-      | Shopping List 1 | $0.00     | 0     | Yes     |
+      | Shopping List 3 | $8,785.00 | 31    | Yes     |
+      | Shopping List 1 | $0.00     | 0     | No      |
 
   Scenario: Re-assign Action
     Given I click View "Shopping List 3" in grid
@@ -167,3 +168,12 @@ Feature: My Shopping List Actions
     And I click on "Shopping Lists Navigation Link"
     And I click View "Shopping List 1" in grid
     Then I should not see a "Shopping List Actions" element
+
+  Scenario: Filter by owner should be visible after clearing all filters
+    Given I follow "Account"
+    And I click on "Shopping Lists Navigation Link"
+    And Page title equals to "Shopping Lists - My Account"
+    When I click "Frontend Grid Action Filter Button"
+    And I filter Owner as contains "Amanda"
+    And I click "Clear All Filters"
+    Then I should see "Owner" filter in frontend grid

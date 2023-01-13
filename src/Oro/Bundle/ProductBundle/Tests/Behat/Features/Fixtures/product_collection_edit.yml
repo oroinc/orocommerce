@@ -1,5 +1,8 @@
 include:
-    - '@OroProductBundle:product_collection_add.yml'
+    - '@OroProductBundle:default_webcatalog.yml'
+    - '@OroProductBundle:root_node.yml'
+    - '@OroProductBundle:products_for_product_collection.yml'
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
 
 Oro\Bundle\SegmentBundle\Entity\Segment:
     productCollection1Segment:
@@ -11,8 +14,7 @@ Oro\Bundle\SegmentBundle\Entity\Segment:
         owner: '@business_unit'
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
-    productCollection1:
-        node: '@nodeRoot'
+    pageVariant:
         type: 'product_collection'
         default: true
         productCollectionSegment: '@productCollection1Segment'

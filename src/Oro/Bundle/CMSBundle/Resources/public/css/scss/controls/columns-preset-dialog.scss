@@ -1,0 +1,73 @@
+/* @theme: admin.oro; */
+
+.columns-presets {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.column-preset {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+
+    &__label {
+        text-align: center;
+        width: 100px;
+    }
+
+    &-preview {
+        display: grid;
+        height: 100px;
+        width: 100px;
+        grid-template-columns: repeat(var(--preview-col-count, 3), minmax(0, 1fr));
+        grid-gap: 4px;
+        position: relative;
+        cursor: pointer;
+
+        &__col {
+            background-color: $info-lighten;
+            border: 2px dashed $info-light;
+            grid-column-end: span var(--preview-col-span, 1);
+        }
+
+        &:hover {
+            .column-preset-preview__col {
+                border-color: $info;
+                border-style: solid;
+            }
+        }
+    }
+}
+
+.column-resizer-placeholder {
+    background-color: rgba($secondary, .2);
+    border: 3px dashed $secondary;
+    border-left: none;
+    position: absolute;
+    top: -5px;
+    bottom: -1px;
+    left: 0;
+    pointer-events: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > .span-number {
+        background-color: $secondary;
+        color: $primary-inverse;
+        padding: 4px 8px;
+        border-radius: 3px;
+    }
+
+    &.cl {
+        border-right: none;
+        border-left: 3px dashed $secondary;
+        left: auto;
+        right: 0;
+        margin-left: -5px;
+    }
+}

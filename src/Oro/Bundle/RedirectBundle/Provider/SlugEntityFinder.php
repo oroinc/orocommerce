@@ -7,7 +7,6 @@ use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Provides methods to find a slug entity.
@@ -16,14 +15,12 @@ class SlugEntityFinder
 {
     private ManagerRegistry $doctrine;
     private ScopeManager $scopeManager;
-    private AclHelper $aclHelper;
     private ?ScopeCriteria $scopeCriteria = null;
 
-    public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager, AclHelper $aclHelper)
+    public function __construct(ManagerRegistry $doctrine, ScopeManager $scopeManager)
     {
         $this->doctrine = $doctrine;
         $this->scopeManager = $scopeManager;
-        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -31,11 +28,7 @@ class SlugEntityFinder
      */
     public function findSlugEntityByUrl(string $url): ?Slug
     {
-        return $this->getSlugRepository()->getSlugByUrlAndScopeCriteria(
-            $url,
-            $this->getScopeCriteria(),
-            $this->aclHelper
-        );
+        return $this->getSlugRepository()->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria());
     }
 
     /**
@@ -45,15 +38,8 @@ class SlugEntityFinder
     {
         return $this->getSlugRepository()->getSlugBySlugPrototypeAndScopeCriteria(
             $slugPrototype,
-            $this->getScopeCriteria(),
-            $this->aclHelper
+            $this->getScopeCriteria()
         );
-    }
-
-    private function getSlugRepository(): SlugRepository
-    {
-        return $this->doctrine->getManagerForClass(Slug::class)
-            ->getRepository(Slug::class);
     }
 
     private function getScopeCriteria(): ScopeCriteria
@@ -63,5 +49,10 @@ class SlugEntityFinder
         }
 
         return $this->scopeCriteria;
+    }
+
+    private function getSlugRepository(): SlugRepository
+    {
+        return $this->doctrine->getRepository(Slug::class);
     }
 }

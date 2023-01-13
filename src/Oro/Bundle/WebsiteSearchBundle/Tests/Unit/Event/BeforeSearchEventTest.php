@@ -7,25 +7,16 @@ use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 
 class BeforeSearchEventTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var BeforeSearchEvent
-     */
-    private $event;
-
-    /**
-     * @var Query
-     */
+    /** @var Query */
     private $query;
+
+    /** @var BeforeSearchEvent */
+    private $event;
 
     protected function setUp(): void
     {
         $this->query = new Query();
         $this->event = new BeforeSearchEvent($this->query, []);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->query, $this->event);
     }
 
     public function testGetQuery()

@@ -28,6 +28,10 @@ class SkipOrderTaxRecalculationEvent extends Event
     {
         $this->skipOrderTaxRecalculation = $skipOrderTaxRecalculation;
 
+        if ($skipOrderTaxRecalculation === false) {
+            $this->stopPropagation();
+        }
+
         return $this;
     }
 

@@ -9,24 +9,15 @@ use Oro\Bundle\OrderBundle\Factory\SupportsOrderPaymentContextFactory;
 
 class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var OrderPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $orderPaymentContextFactory;
+    /** @var OrderPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $orderPaymentContextFactory;
 
-    /**
-     * @var SupportsOrderPaymentContextFactory
-     */
-    protected $factory;
+    /** @var SupportsOrderPaymentContextFactory */
+    private $factory;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -43,14 +34,12 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         $orderId = 1;
         $order = $this->createMock(Order::class);
 
-        $this->doctrineHelper
-            ->expects(static::once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntity')
             ->with(Order::class, $orderId)
             ->willReturn($order);
 
-        $this->orderPaymentContextFactory
-            ->expects(static::once())
+        $this->orderPaymentContextFactory->expects(self::once())
             ->method('create')
             ->with($order);
 
@@ -59,14 +48,10 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider supportsWithSupportedClassDataProvider
-     *
-     * @param int $entityId
-     * @param bool $expected
      */
-    public function testSupportsWithSupportedClass($entityId, $expected)
+    public function testSupportsWithSupportedClass(int $entityId, bool $expected)
     {
-        $this->doctrineHelper
-            ->expects(static::once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntity')
             ->willReturnMap([
                 [Order::class, 1, new \stdClass()],
@@ -74,13 +59,10 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $actual = $this->factory->supports(Order::class, $entityId);
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function supportsWithSupportedClassDataProvider()
+    public function supportsWithSupportedClassDataProvider(): array
     {
         return [
             'with existing order' => [1, true],
@@ -91,6 +73,6 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
     public function testSupportsWithUnsupportedClass()
     {
         $actual = $this->factory->supports(\stdClass::class, 1);
-        static::assertFalse($actual);
+        self::assertFalse($actual);
     }
 }

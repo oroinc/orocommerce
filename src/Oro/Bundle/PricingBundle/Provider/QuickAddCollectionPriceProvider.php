@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
@@ -17,25 +18,13 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
  */
 class QuickAddCollectionPriceProvider
 {
-    /**
-     * @var ProductPriceProviderInterface
-     */
-    private $productPriceProvider;
+    private ProductPriceProviderInterface $productPriceProvider;
 
-    /**
-     * @var UserCurrencyManager
-     */
-    private $currencyManager;
+    private UserCurrencyManager $currencyManager;
 
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
-    /**
-     * @var RoundingServiceInterface
-     */
-    private $rounding;
+    private RoundingServiceInterface $rounding;
 
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
@@ -47,6 +36,48 @@ class QuickAddCollectionPriceProvider
         $this->currencyManager = $currencyManager;
         $this->doctrineHelper = $doctrineHelper;
         $this->rounding = $rounding;
+    }
+
+    public function addAllPrices(
+        QuickAddRowCollection $quickAddRowCollection,
+        ProductPriceScopeCriteriaInterface $scopeCriteria
+    ) {
+        /** @var array{int: ProductPriceInterface[]} $productPricesByProductId */
+        $productPricesByProductId = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+            $scopeCriteria,
+            $quickAddRowCollection->getProducts(),
+            [$this->currencyManager->getUserCurrency()]
+        );
+
+        /** @var QuickAddRow $quickAddRow */
+        foreach ($quickAddRowCollection as $quickAddRow) {
+            if (!$quickAddRow->getProduct()) {
+                continue;
+            }
+
+            $productId = $quickAddRow->getProduct()->getId();
+            if (!isset($productPricesByProductId[$productId])) {
+                continue;
+            }
+
+            /** @var ProductPriceInterface[] $productPrices */
+            $productPrices = $productPricesByProductId[$productId];
+            $rowPrices = [];
+            foreach ($productPrices as $productPrice) {
+                $priceValue = $productPrice->getPrice()->getValue();
+                $priceCurrency = $productPrice->getPrice()->getCurrency();
+                $unitCode = $productPrice->getUnit()->getCode();
+
+                $rowPrices[$unitCode][] = [
+                    'price' => $priceValue,
+                    'currency' => $priceCurrency,
+                    'quantity' => $productPrice->getQuantity(),
+                    'unit' => $unitCode,
+                ];
+            }
+
+            $quickAddRow->addAdditionalField(new QuickAddField('prices', $rowPrices));
+        }
     }
 
     /**
@@ -67,11 +98,13 @@ class QuickAddCollectionPriceProvider
 
         /** @var QuickAddRow $quickAddRow */
         foreach ($quickAddRowCollection->getValidRows() as $quickAddRow) {
-            if (!isset($productPrices[$quickAddRow->getProduct()->getId()])) {
+            $priceIndex = $quickAddRow->getProduct()->getId().'-'.$quickAddRow->getUnit();
+
+            if (!isset($productPrices[$priceIndex])) {
                 continue;
             }
 
-            $productPrice = $productPrices[$quickAddRow->getProduct()->getId()];
+            $productPrice = $productPrices[$priceIndex];
             $rowUnitPrice = [
                 'value' => $productPrice->getValue(),
                 'currency' => $productPrice->getCurrency()
@@ -101,8 +134,8 @@ class QuickAddCollectionPriceProvider
         $prices = $this->productPriceProvider->getMatchedPrices($productPriceCriteria, $scopeCriteria);
         $result = [];
         foreach ($prices as $key => $price) {
-            $identifier = explode('-', $key);
-            $result[$identifier[0]] = $price;
+            [$productId, $unitName] = explode('-', $key);
+            $result[$productId.'-'.$unitName] = $price;
         }
 
         return $result;

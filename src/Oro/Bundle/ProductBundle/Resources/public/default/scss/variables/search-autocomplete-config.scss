@@ -1,0 +1,99 @@
+/* @theme: default; */
+
+$search-autocomplete-position: absolute !default;
+$search-autocomplete-z-index: z('dropdown') + 1 !default;
+$search-autocomplete-selected-box-shadow: $focus-visible-style !default;
+
+$search-autocomplete-content-min-width: 385px !default;
+$search-autocomplete-content-display: block !default;
+$search-autocomplete-content-inner-offset: $offset-y-s $offset-x !default;
+$search-autocomplete-content-float: none !default;
+$search-autocomplete-content-position: static !default;
+
+$search-autocomplete-item-border-bottom: 1px solid get-color('additional', 'light') !default;
+$search-autocomplete-item-offset: 0 -#{$offset-y-m + $offset-y-s} !default;
+$search-autocomplete-item-inner-offset: #{$offset-y-m + $offset-y-s} #{$offset-y-m + $offset-y-s} !default;
+
+$search-autocomplete-highlight-background: get-color('ui', 'warning') !default;
+
+$search-autocomplete-submit-line-height: $base-line-height !default;
+$search-autocomplete-submit-border: none !default;
+
+$search-autocomplete-no-found-inner-offset: #{$offset-y-m + $offset-y-s} 0 !default;
+
+$search-autocomplete-product-text-decoration: none !default;
+$search-autocomplete-product-display: flex !default;
+$search-autocomplete-product-hover-text-decoration: none !default;
+
+$search-autocomplete-product-image-width: 40px !default;
+$search-autocomplete-product-image-height: 40px !default;
+$search-autocomplete-product-image-display: block !default;
+$search-autocomplete-product-image-border: 1px solid get-color('additional', 'light') !default;
+$search-autocomplete-product-image-offset-right: $offset-x !default;
+$search-autocomplete-product-image-flex-grow: 0 !default;
+$search-autocomplete-product-image-flex-shrink: 0 !default;
+
+$search-autocomplete-product-image-img-max-width: 100% !default;
+
+$search-autocomplete-product-info-width: calc(
+    100% - #{$search-autocomplete-product-image-width + $search-autocomplete-product-image-offset-right}
+) !default;
+$search-autocomplete-product-info-flex-grow: 1 !default;
+$search-autocomplete-product-info-flex-shrink: 1 !default;
+
+$search-autocomplete-product-head-display: flex !default;
+$search-autocomplete-product-head-justify-content: space-between !default;
+$search-autocomplete-product-head-offset-bottom: 6px !default;
+
+$search-autocomplete-product-title-min-width: 50% !default;
+$search-autocomplete-product-title-word-break: break-word !default;
+
+$search-autocomplete-product-body-display: flex !default;
+$search-autocomplete-product-body-justify-content: space-between !default;
+
+$search-autocomplete-product-sku-color: get-color('primary', 'dark') !default;
+$search-autocomplete-product-sku-word-break: break-all !default;
+
+$search-autocomplete-product-price-font-weight: font-weight('bold') !default;
+$search-autocomplete-product-price-color: get-color('additional', 'dark') !default;
+$search-autocomplete-product-price-inner-offset-left: $offset-x-m !default;
+
+$search-autocomplete-product-status-inner-offset-left: $offset-x-m !default;
+
+$search-autocomplete-category-text-decoration: none !default;
+$search-autocomplete-category-display: flex !default;
+$search-autocomplete-category-color: get-color('additional', 'middle') !default;
+
+$search-autocomplete-category-image-width: 40px !default;
+$search-autocomplete-category-image-height: 40px !default;
+$search-autocomplete-category-image-display: block !default;
+$search-autocomplete-category-image-border: none !default;
+$search-autocomplete-category-image-offset-right: $offset-x !default;
+$search-autocomplete-category-image-font-size: 25px !default;
+$search-autocomplete-category-image-text-align: center !default;
+$search-autocomplete-category-image-span-vertical-align: bottom !default;
+
+$search-autocomplete-category-info-width: calc(
+        100% - #{$search-autocomplete-category-image-width + $search-autocomplete-category-image-offset-right}
+) !default;
+$search-autocomplete-category-info-flex-grow: 1 !default;
+$search-autocomplete-category-info-flex-shrink: 1 !default;
+
+$search-autocomplete-category-head-offset-bottom: 6px !default;
+$search-autocomplete-category-head-color: get-color('additional', 'dark') !default;
+
+$search-autocomplete-category-body-font-size: .85em !default;
+$search-autocomplete-category-body-color: #919193 !default;
+$search-autocomplete-category-body-line-height: 1em !default;
+$search-autocomplete-category-body-span-white-space: nowrap !default;
+$search-autocomplete-category-body-last-category-color: get-color('primary', 'dark') !default;
+$search-autocomplete-category-body-last-category-font-weight: font-weight('bold') !default;
+
+// Tablet
+$search-autocomplete-tablet-offset-bottom: -$offset-y !default;
+$search-autocomplete-tablet-position: relative !default;
+
+$search-autocomplete-content-tablet-min-width: initial !default;
+$search-autocomplete-content-tablet-border: none !default;
+$search-autocomplete-content-tablet-inner-offset: $offset-y-s 0 !default;
+$search-autocomplete-content-tablet-box-shadow: none !default;

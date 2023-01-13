@@ -1,0 +1,7 @@
+/* stylelint-disable scale-unlimited/declaration-strict-value */
+.two-columns-text-and-button-call-to-action .block-bordered {
+    border-left: 8px solid #cc5c28;
+    border-right: 8px solid #cc5c28;
+    padding: 20px;
+}
+/* stylelint-enable scale-unlimited/declaration-strict-value */

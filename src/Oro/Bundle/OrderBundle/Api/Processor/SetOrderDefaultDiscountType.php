@@ -7,7 +7,8 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Sets "order" as the default value of "type" property for objects in "discounts" collection of Order entity.
+ * Sets "order" as the default value of "type" property for objects
+ * in "discounts" collection of Order entity.
  */
 class SetOrderDefaultDiscountType implements ProcessorInterface
 {

@@ -5,17 +5,17 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\DataAuditBundle\Async\Topic\AuditChangedEntitiesTopic;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\ProductBundle\Async\Topics as ProductTopics;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\RedirectBundle\Async\Topics as RedirectTopics;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\SearchBundle\Async\Topic\IndexEntitiesByIdTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer as WebsiteSearchAsyncIndexerTopics;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessagePriority;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -27,101 +27,98 @@ class ProductImageListenerTest extends WebTestCase
     use DefaultWebsiteIdTestTrait;
     use MessageQueueExtension;
 
-    /** @var EntityManagerInterface */
-    private $em;
+    private EntityManagerInterface $em;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
+        $this->em = self::getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
 
-        $this->getOptionalListenerManager()->enableListener('oro_product.event_listener.product_image_resize_listener');
-        $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_prototype_change');
-        $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_change');
-        $this->getOptionalListenerManager()->enableListener(
-            'oro_dataaudit.listener.send_changed_entities_to_message_queue'
-        );
+        $optionalListenerManager = $this->getOptionalListenerManager();
+        $optionalListenerManager->enableListener('oro_product.event_listener.product_image_resize_listener');
+        $optionalListenerManager->enableListener('oro_redirect.event_listener.slug_prototype_change');
+        $optionalListenerManager->enableListener('oro_redirect.event_listener.slug_change');
+        $optionalListenerManager->enableListener('oro_dataaudit.listener.send_changed_entities_to_message_queue');
 
         $this->loadFixtures([LoadProductData::class]);
     }
 
-    /**
-     * @param ProductImage $productImage
-     *
-     * @return array
-     */
-    private function prepareProductImageResizeMessage(ProductImage $productImage)
+    private function prepareProductImageResizeMessage(ProductImage $productImage): array
     {
         return [
             'productImageId' => $productImage->getId(),
             'force' => true,
-            'dimensions' => null
+            'dimensions' => null,
         ];
     }
 
-    /**
-     * @param Product[] $products
-     *
-     * @return Message
-     */
-    private function prepareProductsReindexMessage(array $products)
+    private function prepareProductsReindexMessage(array $products, array $expectedFieldGroups = null): array
     {
         $entityIds = [];
+        /** @var Product $product */
         foreach ($products as $product) {
             $entityIds[] = $product->getId();
         }
 
-        return new Message(
-            [
-                'class' => [Product::class],
-                'granulize' => true,
-                'context' => [
-                    'entityIds' => $entityIds,
-                    'websiteIds' => [$this->getDefaultWebsiteId()]
-                ],
-            ],
-            MessagePriority::LOW
-        );
+        $context = [
+            'entityIds' => $entityIds,
+            'websiteIds' => [self::getDefaultWebsiteId()],
+        ];
+        if ($expectedFieldGroups) {
+            $context[AbstractIndexer::CONTEXT_FIELD_GROUPS] = $expectedFieldGroups;
+        }
+
+        return [
+            'class' => [Product::class],
+            'granulize' => true,
+            'context' => $context,
+        ];
     }
 
-    public function testCreateProductImage()
+    private function getProduct(string $reference): Product
     {
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        return $this->getReference($reference);
+    }
+
+    private function getProductImage(Product $product): ProductImage
+    {
+        return $product->getImages()->first();
+    }
+
+    public function testCreateProductImage(): void
+    {
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
         $productImage = new ProductImage();
         $productImage->addType(ProductImageType::TYPE_MAIN);
         $productImage->setProduct($product);
-
         $this->em->persist($productImage);
+
         $this->em->flush();
 
-        $this->assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 1);
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 1);
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage)
         );
     }
 
-    public function testCreateProductImagesForSeveralProducts()
+    public function testCreateProductImagesForSeveralProducts(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
         $productImage1 = new ProductImage();
         $productImage1->addType(ProductImageType::TYPE_MAIN);
         $productImage1->setProduct($product1);
         $this->em->persist($productImage1);
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
         $productImage2 = new ProductImage();
         $productImage2->addType(ProductImageType::TYPE_MAIN);
         $productImage2->setProduct($product2);
         $this->em->persist($productImage2);
 
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
         $productImage3 = new ProductImage();
         $productImage3->addType(ProductImageType::TYPE_MAIN);
         $productImage3->setProduct($product3);
@@ -129,38 +126,37 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 3);
-        $this->assertMessagesCount(WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX, 1);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 3);
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage3)
         );
 
-        $this->assertMessageSent(
-            WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2, $product3])
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product1, $product2, $product3], ['image'])
         );
+        self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 
-    public function testUpdateTypesOnProductImage()
+    public function testUpdateTypesOnProductImage(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_3);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_3);
         $productImage1 = new ProductImage();
         $productImage1->setProduct($product1);
         $this->em->persist($productImage1);
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_4);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_4);
         $productImage2 = new ProductImage();
         $productImage2->setProduct($product2);
         $this->em->persist($productImage2);
@@ -168,8 +164,8 @@ class ProductImageListenerTest extends WebTestCase
         $this->em->flush();
 
         /* nothing sent if product image have no types */
-        $this->assertEmptyMessages(ProductTopics::PRODUCT_IMAGE_RESIZE);
-        $this->assertEmptyMessages(WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX);
+        self::assertEmptyMessages(ResizeProductImageTopic::getName());
+        self::assertEmptyMessages(WebsiteSearchReindexTopic::getName());
 
         /* message sent if product image has been updated */
         $productImage1->addType(ProductImageType::TYPE_MAIN);
@@ -182,39 +178,36 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
-        $this->assertMessagesCount(WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX, 1);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
 
-        $this->assertMessageSent(
-            WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2])
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product1, $product2], ['image'])
         );
+        self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 
-    public function testUpdateFileOnProductImage()
+    public function testUpdateFileOnProductImage(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var ProductImage $productImage1 */
-        $productImage1 = $product1->getImages()->first();
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage1 = $this->getProductImage($product1);
 
         $image1 = $productImage1->getImage();
         $image1->setFile(new File('test1.file', false));
         $image1->preUpdate();
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        /** @var ProductImage $productImage2 */
-        $productImage2 = $product2->getImages()->first();
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $productImage2 = $this->getProductImage($product2);
 
         $image2 = $productImage2->getImage();
         $image2->setFile(new File('test2.file', false));
@@ -222,30 +215,29 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
-        $this->assertMessagesCount(WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX, 1);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
 
-        $this->assertMessageSent(
-            WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2])
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product1, $product2], ['image'])
         );
+        self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 
-    public function testUpdateFileAndTypesOnProductImage()
+    public function testUpdateFileAndTypesOnProductImage(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var ProductImage $productImage1 */
-        $productImage1 = $product1->getImages()->first();
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage1 = $this->getProductImage($product1);
         $productImage1->removeType(ProductImageType::TYPE_MAIN);
         $productImage1->addType(ProductImageType::TYPE_ADDITIONAL);
 
@@ -253,10 +245,8 @@ class ProductImageListenerTest extends WebTestCase
         $image1->setFile(new File('test.file', false));
         $image1->preUpdate();
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        /** @var ProductImage $productImage2 */
-        $productImage2 = $product2->getImages()->first();
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $productImage2 = $this->getProductImage($product2);
         $productImage2->removeType(ProductImageType::TYPE_MAIN);
         $productImage2->addType(ProductImageType::TYPE_ADDITIONAL);
 
@@ -266,64 +256,63 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
-        $this->assertMessagesCount(WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX, 1);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
 
-        $this->assertMessageSent(
-            WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
-            $this->prepareProductsReindexMessage([$product1, $product2])
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
+            $this->prepareProductsReindexMessage([$product1, $product2], ['image'])
         );
+        self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 
-    public function testDuplicateProductImage()
+    public function testDuplicateProductImage(): void
     {
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
-        $productCopy3 = $this->getContainer()->get('oro_product.service.duplicator')->duplicate($product3);
+        $duplicator = self::getContainer()->get('oro_product.service.duplicator');
+
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
+        $productCopy3 = $duplicator->duplicate($product3);
         $this->em->refresh($productCopy3);
-        /** @var ProductImage $productImageCopy1 */
-        $productImageCopy1 = $productCopy3->getImages()->first();
+        $productImageCopy1 = $this->getProductImage($productCopy3);
 
-        /** @var Product $product8 */
-        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
-        $productCopy8 = $this->getContainer()->get('oro_product.service.duplicator')->duplicate($product8);
+        $product8 = $this->getProduct(LoadProductData::PRODUCT_8);
+        $productCopy8 = $duplicator->duplicate($product8);
         $this->em->refresh($productCopy8);
-        /** @var ProductImage $productImageCopy2 */
-        $productImageCopy2 = $productCopy8->getImages()->first();
+        $productImageCopy2 = $this->getProductImage($productCopy8);
 
-        $this->assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
-        $this->assertMessagesCount(WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX, 2);
-        $this->assertMessagesCount(IndexEntitiesByIdTopic::getName(), 2);
-        $this->assertMessagesCount(RedirectTopics::GENERATE_DIRECT_URL_FOR_ENTITIES, 2);
-        $this->assertMessagesCount(AuditChangedEntitiesTopic::getName(), 4);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
+        self::assertMessagesCount(IndexEntitiesByIdTopic::getName(), 2);
+        self::assertMessagesCount(GenerateDirectUrlForEntitiesTopic::getName(), 2);
+        self::assertMessagesCount(AuditChangedEntitiesTopic::getName(), 4);
 
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImageCopy1)
         );
-        $this->assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+        self::assertMessageSent(
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImageCopy2)
         );
 
         // There are 3 of the same message after duplicate
-        $this->assertMessageSent(
-            WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
             $this->prepareProductsReindexMessage([$productCopy3])
         );
 
         // There are 3 of the same message after duplicate
-        $this->assertMessageSent(
-            WebsiteSearchAsyncIndexerTopics::TOPIC_REINDEX,
+        self::assertMessageSent(
+            WebsiteSearchReindexTopic::getName(),
             $this->prepareProductsReindexMessage([$productCopy8])
         );
     }

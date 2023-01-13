@@ -23,3 +23,4 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
         customerTaxCode: '@customer_tax_code_1'
         tax: '@tax_1'
         taxJurisdiction: '@tax_jurisdiction_1'
+        organization: '@organization'

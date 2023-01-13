@@ -17,25 +17,17 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /**
-     * @var CombinedPriceListActivationPlanBuilder
-     */
-    protected $cplActivationPlanBuilder;
+    /** @var CombinedPriceListActivationPlanBuilder */
+    private $cplActivationPlanBuilder;
 
-    /**
-     * @var \DateTime
-     */
-    protected $now;
+    /** @var \DateTime */
+    private $now;
 
-    /**
-     * @var EntityManager
-     */
-    protected $manager;
+    /** @var EntityManager */
+    private $manager;
 
-    /**
-     * @var CombinedPriceListActivationRuleRepository
-     */
-    protected $activationRulesRepository;
+    /** @var CombinedPriceListActivationRuleRepository */
+    private $activationRulesRepository;
 
     protected function setUp(): void
     {
@@ -44,7 +36,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         // Switch to merge by priority strategy to use old CPL naming
-        self::getConfigManager('global')
+        self::getConfigManager()
             ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
         $this->cplActivationPlanBuilder = $this->getContainer()
             ->get('oro_pricing.builder.combined_price_list_activation_plan_builder');
@@ -60,16 +52,13 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     /**
      * @dataProvider activationPlanDataProvider
      */
-    public function testBuildActivationPlan($schedule, $combinedPriceListsChanges)
+    public function testBuildActivationPlan(array $schedule, array $combinedPriceListsChanges)
     {
         $this->updateSchedule($schedule);
         $this->comparePlan($combinedPriceListsChanges);
     }
 
-    /**
-     * @return array
-     */
-    public function activationPlanDataProvider()
+    public function activationPlanDataProvider(): array
     {
         return [
             [
@@ -117,7 +106,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         ];
     }
 
-    protected function updateSchedule(array $scheduleData)
+    private function updateSchedule(array $scheduleData): void
     {
         foreach ($scheduleData as $priceListKey => $schedule) {
             /** @var PriceList $priceList */
@@ -146,15 +135,12 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         }
     }
 
-    protected function comparePlan($combinedPriceListsChanges)
+    private function comparePlan(array $combinedPriceListsChanges): void
     {
         foreach ($combinedPriceListsChanges as $cplKey => $plan) {
             /** @var CombinedPriceListActivationRule[] $rules */
-            $rules = $this->getActivationRulesRepository()->findBy(
-                [],
-                ['id' => 'ASC']
-            );
-            $this->assertCount(count($combinedPriceListsChanges[$cplKey]), $rules);
+            $rules = $this->getActivationRulesRepository()->findBy([], ['id' => 'ASC']);
+            $this->assertCount(count($plan), $rules);
             foreach ($rules as $i => $rule) {
                 $expectedData = $plan[$i];
                 $activeAt = null;
@@ -178,10 +164,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         }
     }
 
-    /**
-     * @return CombinedPriceListActivationRuleRepository
-     */
-    protected function getActivationRulesRepository()
+    private function getActivationRulesRepository(): CombinedPriceListActivationRuleRepository
     {
         if (!$this->activationRulesRepository) {
             $this->activationRulesRepository = $this->manager
@@ -191,11 +174,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
         return $this->activationRulesRepository;
     }
 
-    /**
-     * @param array $priceLists
-     * @return string
-     */
-    protected function getCplName(array $priceLists)
+    private function getCplName(array $priceLists): string
     {
         $name = [];
         foreach ($priceLists as $priceList => $merge) {

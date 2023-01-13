@@ -48,7 +48,10 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn(['relatedJobId' => $jobId]);
+            ->willReturn([
+                'relatedJobId' => $jobId,
+                'cpls' => [1]
+            ]);
 
         $this->triggerHandler->expects($this->once())
             ->method('startCollect')
@@ -56,14 +59,19 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
         $this->triggerHandler->expects($this->once())
             ->method('commit');
 
-        $this->garbageCollector->expects($this->once())
-            ->method('cleanCombinedPriceLists');
+        $this->garbageCollector
+            ->expects($this->once())
+            ->method('cleanCombinedPriceLists')
+            ->with([1]);
 
         $this->producer->expects($this->once())
             ->method('send')
             ->with(
                 ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-                ['relatedJobId' => $jobId]
+                [
+                    'relatedJobId' => $jobId,
+                    'indexationFieldsGroups' => ['pricing']
+                ]
             );
 
         $this->assertEquals(
@@ -78,7 +86,10 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn(['relatedJobId' => $jobId]);
+            ->willReturn([
+                'relatedJobId' => $jobId,
+                'cpls' => [1]
+            ]);
 
         $e = new \Exception('Cpl GC error');
 
@@ -111,7 +122,10 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
             ->method('send')
             ->with(
                 ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-                ['relatedJobId' => $jobId]
+                [
+                    'relatedJobId' => $jobId,
+                    'indexationFieldsGroups' => ['pricing']
+                ]
             );
 
         $this->assertEquals(

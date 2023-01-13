@@ -1,0 +1,14 @@
+<div class="tiles-presets">
+    <% _.each(presets, function(preset) { %>
+    <div class="tiles-preset" data-name="<%- preset.name %>">
+        <div class="tiles-preset-preview" style="--preview-col-count: <%- preset.count %>">
+            <% for(var i = 0; i < preset.items; i++) { %>
+            <span class="tiles-preset-preview__item">
+                <strong><%- i + 1 %></strong>
+            </span>
+            <% } %>
+        </div>
+        <div class="tiles-preset__label"><%- preset.label %></div>
+    </div>
+    <% }) %>
+</div>

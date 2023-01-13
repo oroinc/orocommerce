@@ -1,0 +1,7 @@
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+  pageVariant:
+    type: 'system_page'
+    systemPageRoute: 'oro_frontend_root'
+    default: 'true'
+    __calls:
+      - addScope: ['@defaultWebCatalogScope' ]

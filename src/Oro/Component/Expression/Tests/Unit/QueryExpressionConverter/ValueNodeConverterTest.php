@@ -22,12 +22,8 @@ class ValueNodeConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider valuesDataProvider
-     * @param mixed $value
-     * @param string|int $expected
-     * @param array $expectedParameters
-     * @param array $params
      */
-    public function testConvert($value, $expected, array $expectedParameters, array $params)
+    public function testConvert(mixed $value, string|int $expected, array $expectedParameters, array $params)
     {
         $expr = new Expr();
 
@@ -37,10 +33,7 @@ class ValueNodeConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedParameters, $params);
     }
 
-    /**
-     * @return array
-     */
-    public function valuesDataProvider()
+    public function valuesDataProvider(): array
     {
         return [
             'scalar value' => [

@@ -9,20 +9,18 @@ use Oro\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider;
 
 class LoginPageProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const LOGIN_PAGE_CLASS = 'Oro\Bundle\CMSBundle\Entity\LoginPage';
-    /**
-     * @var LoginPageProvider
-     */
-    protected $provider;
+    private const LOGIN_PAGE_CLASS = LoginPage::class;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $managerRegistry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $managerRegistry;
+
+    /** @var LoginPageProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->managerRegistry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+
         $this->provider = new LoginPageProvider($this->managerRegistry);
         $this->provider->setLoginPageClass(self::LOGIN_PAGE_CLASS);
     }
@@ -31,8 +29,7 @@ class LoginPageProviderTest extends \PHPUnit\Framework\TestCase
     {
         $loginPage = new LoginPage();
 
-        /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
-        $repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('findOneBy')
             ->with([])

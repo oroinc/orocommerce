@@ -4,13 +4,13 @@ namespace Oro\Bundle\PaymentBundle\Context\Builder\Factory;
 
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 
+/**
+ * Represents a factory to create a payment context builder.
+ */
 interface PaymentContextBuilderFactoryInterface
 {
-    /**
-     * @param object           $sourceEntity
-     * @param string           $sourceEntityId
-     *
-     * @return PaymentContextBuilderInterface
-     */
-    public function createPaymentContextBuilder($sourceEntity, $sourceEntityId);
+    public function createPaymentContextBuilder(
+        object $sourceEntity,
+        mixed $sourceEntityId
+    ): PaymentContextBuilderInterface;
 }

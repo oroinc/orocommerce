@@ -7,42 +7,25 @@ use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var AbstractTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AbstractTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
-    /**
-     * @var AbstractTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AbstractTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $customerRepository;
 
-    /**
-     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $taxCodesCache;
 
-    /**
-     * @var TaxCodeProvider
-     */
-    private $provider;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    private TaxCodeProvider $provider;
+
     protected function setUp(): void
     {
         $this->productRepository = $this->createMock(AbstractTaxCodeRepository::class);
@@ -69,9 +52,8 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider taxCodeTypesDataProvider
-     * @param string $taxCodeType
      */
-    public function testGetTaxCodeWhenCacheExists($taxCodeType)
+    public function testGetTaxCodeWhenCacheExists(string $taxCodeType)
     {
         $taxableObject = new \stdClass();
         $taxCode = new TaxCode('TAX1', $taxCodeType);
@@ -80,10 +62,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($taxCode, $this->provider->getTaxCode($taxCodeType, $taxableObject));
     }
 
-    /**
-     * @return array
-     */
-    public function taxCodeTypesDataProvider()
+    public function taxCodeTypesDataProvider(): array
     {
         return [
             'account type' => [TaxCodeInterface::TYPE_ACCOUNT],
@@ -99,10 +78,9 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
         $taxCode = new TaxCode('TAX1', $taxType);
 
         $this->assertCache();
-        $this->productRepository
-            ->expects($this->once())
+        $this->productRepository->expects($this->once())
             ->method('findOneByEntity')
-            ->with($taxType, $taxableObject)
+            ->with($taxableObject)
             ->willReturn($taxCode);
 
         $this->assertEquals($taxCode, $this->provider->getTaxCode($taxType, $taxableObject));
@@ -110,27 +88,22 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider customerTaxCodeTypesDataProvider
-     * @param string $taxType
      */
-    public function testGetTaxCodeWhenCacheNotExistsForCustomerTaxTypes($taxType)
+    public function testGetTaxCodeWhenCacheNotExistsForCustomerTaxTypes(string $taxType)
     {
         $taxableObject = new \stdClass();
         $taxCode = new TaxCode('TAX1', $taxType);
 
         $this->assertCache();
-        $this->customerRepository
-            ->expects($this->once())
+        $this->customerRepository->expects($this->once())
             ->method('findOneByEntity')
-            ->with($taxType, $taxableObject)
+            ->with($taxableObject)
             ->willReturn($taxCode);
 
         $this->assertEquals($taxCode, $this->provider->getTaxCode($taxType, $taxableObject));
     }
 
-    /**
-     * @return array
-     */
-    public function customerTaxCodeTypesDataProvider()
+    public function customerTaxCodeTypesDataProvider(): array
     {
         return [
             'account tax code type' => [
@@ -152,18 +125,15 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
         $taxCode1 = $this->createMock(TaxCodeInterface::class);
         $taxCode2 = $this->createMock(TaxCodeInterface::class);
 
-        $this->productRepository
-            ->expects($this->once())
+        $this->productRepository->expects($this->once())
             ->method('findManyByEntities')
-            ->with($taxCodeType, $objects)
+            ->with($objects)
             ->willReturn([$taxCode1, $taxCode2]);
 
-        $this->doctrineHelper
-            ->expects($this->exactly(2))
+        $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityIdentifier')
-            ->willReturnOnConsecutiveCalls([1], [2]);
-        $this->taxCodesCache
-            ->expects($this->exactly(2))
+            ->willReturnOnConsecutiveCalls(['id' => 1], ['id' => 2]);
+        $this->taxCodesCache->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(['stdClass_1'], ['stdClass_2'])
             ->willReturnOnConsecutiveCalls($taxCode1, $taxCode2);
@@ -173,22 +143,18 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
 
     private function assertCache($isCached = false): void
     {
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityIdentifier')
-            ->willReturn([77]);
+            ->willReturn(['id' => 77]);
         if ($isCached) {
-            $this->taxCodesCache
-                ->expects($this->any())
+            $this->taxCodesCache->expects($this->any())
                 ->method('get')
                 ->willReturn($isCached);
         } else {
-            $this->taxCodesCache
-                ->expects($this->any())
+            $this->taxCodesCache->expects($this->any())
                 ->method('get')
                 ->willReturnCallback(function ($cacheKey, $callback) {
-                    $item = $this->createMock(ItemInterface::class);
-                    return $callback($item);
+                    return $callback($this->createMock(ItemInterface::class));
                 });
         }
     }

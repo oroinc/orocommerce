@@ -18,9 +18,6 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerTaxCodeImportExportHelper */
     private $manager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    private $doctrineHelper;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|CustomerTaxCodeRepository */
     private $repository;
 
@@ -41,37 +38,43 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         $this->repository = $this->createMock(CustomerTaxCodeRepository::class);
         $this->entityManager = $this->createMock(EntityManager::class);
 
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper->expects($this->any())
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->repository);
-        $this->doctrineHelper->expects($this->any())
+        $doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->willReturn($this->entityManager);
 
-        $this->manager = new CustomerTaxCodeImportExportHelper(
-            $this->doctrineHelper
-        );
+        $this->manager = new CustomerTaxCodeImportExportHelper($doctrineHelper);
     }
 
-    public function testGetCustomerTaxCodeTest()
+    public function testLoadNormalizedCustomerTaxCodes(): void
     {
         $this->doctrineShouldReturnTaxCodesByCustomer();
-        $customerTaxCodes = $this->manager->loadCustomerTaxCode($this->customers);
+        $customerTaxCodes = $this->manager->loadNormalizedCustomerTaxCodes($this->customers);
 
         foreach ($this->customers as $customer) {
-            $this->assertEquals($customer->getId(), $customerTaxCodes[$customer->getId()]->getId());
+            $this->assertEquals(
+                ['code' => 'code_' . $customer->getId()],
+                $customerTaxCodes[$customer->getId()]
+            );
         }
+    }
+
+    public function testLoadNormalizedCustomerTaxCodesWithEmptyTaxCode(): void
+    {
+        $customerWithoutTaxCode = $this->getEntity(CustomerStub::class, ['id' => 1]);
+        $customerTaxCodes = $this->manager->loadNormalizedCustomerTaxCodes([$customerWithoutTaxCode]);
+
+        $this->assertCount(1, $customerTaxCodes);
+        $this->assertEquals(['code' => ''], $customerTaxCodes[$customerWithoutTaxCode->getId()]);
     }
 
     /**
      * @dataProvider normalizeCustomerTaxCodeDataProvider
-     * @param string $expectedName
-     * @param CustomerTaxCode $customerTaxCode
      */
-    public function testNormalizeCustomerTaxCode($expectedName, CustomerTaxCode $customerTaxCode)
+    public function testNormalizeCustomerTaxCode(?string $expectedName, CustomerTaxCode $customerTaxCode)
     {
         $normalizedCustomerTaxCode = $this->manager->normalizeCustomerTaxCode($customerTaxCode);
 
@@ -82,7 +85,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider denormalizeCustomerTaxCodeDataProvider
      */
-    public function testDenormalizeCustomerTaxCode(CustomerTaxCode $expectedTaxCode = null, array $data)
+    public function testDenormalizeCustomerTaxCode(?CustomerTaxCode $expectedTaxCode, array $data)
     {
         $this->doctrineShouldReturnTagsByCode();
         $taxCode = $this->manager->denormalizeCustomerTaxCode($data);
@@ -91,7 +94,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider testDenormalizeCustomerTaxCodeShouldThrowExceptionDataProvider
+     * @dataProvider denormalizeCustomerTaxCodeShouldThrowExceptionDataProvider
      */
     public function testDenormalizeCustomerTaxCodeShouldThrowException(array $data)
     {
@@ -100,10 +103,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         $this->manager->denormalizeCustomerTaxCode($data);
     }
 
-    /**
-     * @return array
-     */
-    public function normalizeCustomerTaxCodeDataProvider()
+    public function normalizeCustomerTaxCodeDataProvider(): array
     {
         return [
             ['test', $this->getEntity(CustomerTaxCode::class, ['code' => 'test'])],
@@ -111,10 +111,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function denormalizeCustomerTaxCodeDataProvider()
+    public function denormalizeCustomerTaxCodeDataProvider(): array
     {
         $this->createCustomersTaxCodes();
 
@@ -124,7 +121,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testDenormalizeCustomerTaxCodeShouldThrowExceptionDataProvider()
+    public function denormalizeCustomerTaxCodeShouldThrowExceptionDataProvider(): array
     {
         return [
             [['tax_code' => ['code' => 'NoneExistingCode']]],
@@ -158,18 +155,6 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
         $this->repository->expects($this->once())
             ->method('findOneBy')
             ->willReturnMap($map);
-    }
-
-    private function shouldNotCreateEntityReference()
-    {
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityReference');
-    }
-
-    private function doctrineShouldFlushOnce()
-    {
-        $this->entityManager->expects($this->once())
-            ->method('flush');
     }
 
     private function createCustomers()

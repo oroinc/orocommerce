@@ -3,17 +3,22 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ButtonSource;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class ButtonSourceTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new ButtonSource()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -21,9 +26,9 @@ class ButtonSourceTest extends AbstractOptionTest
                 ['BUTTONSOURCE' => 100001],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "BUTTONSOURCE" with value 100001 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "BUTTONSOURCE" with value 100001 is expected to be of type "string", but is of '
+                    . 'type "int".',
                 ],
             ],
             'valid' => [['BUTTONSOURCE' => 'OroCommerce_SP'], ['BUTTONSOURCE' => 'OroCommerce_SP']],

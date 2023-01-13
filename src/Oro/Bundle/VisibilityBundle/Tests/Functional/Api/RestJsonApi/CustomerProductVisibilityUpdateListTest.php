@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 
 /**
@@ -25,7 +25,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
         ]);
     }
 
-    public function testCreateEntities()
+    public function testCreateEntities(): void
     {
         $this->processUpdateList(
             CustomerProductVisibility::class,
@@ -42,7 +42,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
             'scope'   => $this->getReference('scope_2')->getId(),
         ]);
         self::assertMessagesSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 [
                     'entity_class_name' => CustomerProductVisibility::class,
@@ -63,7 +63,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
         $this->assertResponseContains('update_list_create_customer_product_visibilities.yml', $response);
     }
 
-    public function testUpdateEntities()
+    public function testUpdateEntities(): void
     {
         $visibility1Id = $this->getReference('visibility_1')->getId();
         $visibility2Id = $this->getReference('visibility_2')->getId();
@@ -91,7 +91,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
         $this->processUpdateList(CustomerProductVisibility::class, $data);
 
         self::assertMessagesSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 [
                     'entity_class_name' => CustomerProductVisibility::class,
@@ -122,7 +122,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testCreateAndUpdateEntities()
+    public function testCreateAndUpdateEntities(): void
     {
         $data = [
             'data' => [
@@ -166,7 +166,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
             ]
         );
         self::assertMessagesSent(
-            Topics::RESOLVE_PRODUCT_VISIBILITY,
+            ResolveProductVisibilityTopic::getName(),
             [
                 [
                     'entity_class_name' => CustomerProductVisibility::class,
@@ -195,7 +195,7 @@ class CustomerProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestC
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testTryToCreateEntitiesWithIncludes()
+    public function testTryToCreateEntitiesWithIncludes(): void
     {
         $data = [
             'data'     => [

@@ -13,8 +13,6 @@ Feature: Shopping list duplication
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
-    And I click "Update Cache"
-    And I should see "Translation Cache has been updated" flash message
 
   Scenario: Duplicate shopping list
     Given I proceed as the Buyer
@@ -27,7 +25,7 @@ Feature: Shopping list duplication
     And I click "Shopping List Actions"
     And I click "Duplicate"
     And I click "Yes, duplicate"
-    Then I should see "The shopping list has been duplicated" flash message
+    Then I should see "The shopping list has been duplicated" flash message and I close it
     And I should not see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List A (copied "
     And I should see following grid:
@@ -54,7 +52,7 @@ Feature: Shopping list duplication
     And I click "Shopping List Actions"
     And I click "Duplicate"
     And I click "Yes, duplicate"
-    Then I should see "The shopping list has been duplicated" flash message
+    Then I should see "The shopping list has been duplicated" flash message and I close it
     And I should see "Some products are not available and cannot be added to shopping list" flash message
     And I should see "Shopping List B (copied "
     And I should see following grid:

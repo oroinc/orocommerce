@@ -98,7 +98,7 @@ Feature: Shopping list duplication for non authenticated visitor
     And I go to Sales / Shopping Lists
     And I click view "Shopping List" in grid
     When I click "Duplicate List"
-    Then I should see "The shopping list has been duplicated" flash message
+    Then I should see "The shopping list has been duplicated" flash message and I close it
     And I should not see "Unable to duplicate as only one shopping list is allowed for unregistered users" flash message
     And I should see "Shopping List (copied "
 

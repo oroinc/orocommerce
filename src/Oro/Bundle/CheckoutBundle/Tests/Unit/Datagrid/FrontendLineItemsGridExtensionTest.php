@@ -410,6 +410,82 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testProcessConfigsWithAcceptableIds(): void
+    {
+        $this->parameters->set('checkout_id', 42);
+        $this->parameters->set('acceptable_ids', [2, 3, 5]);
+
+        $config = DatagridConfiguration::create(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
+            ->willReturn(1000);
+
+        $checkout = $this->createCheckout(10);
+
+        $this->checkoutRepository->expects($this->once())
+            ->method('find')
+            ->with(42)
+            ->willReturn($checkout);
+
+        $converter = new CheckoutLineItemsConverter();
+
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
+            ->with($checkout)
+            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
+
+        $this->extension->processConfigs($config);
+
+        $this->assertEquals(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [
+                                10,
+                                25,
+                                50,
+                                100,
+                                [
+                                    'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
+                                    'size' => 1000
+                                ]
+                            ],
+                        ],
+                    ],
+                ],
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            'lineItem.id',
+                        ],
+                        'where' => [
+                            'and' => [
+                                'lineItem.id IN (:acceptable_ids)'
+                            ]
+                        ]
+                    ],
+                    'bind_parameters' => [
+                        'acceptable_ids'
+                    ]
+                ],
+            ],
+            $config->toArray()
+        );
+    }
+
     public function testVisitMetadata(): void
     {
         $this->parameters->set('checkout_id', 42);

@@ -13,6 +13,8 @@ use Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\PriceListIdPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
+use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
@@ -22,43 +24,26 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
+    use ContextTrait;
 
-    public const MP_ALIAS = 'minimal_price_PRICE_LIST_ID_CURRENCY_UNIT';
-
-    /**
-     * @var WebsiteContextManager
-     */
-    private $websiteContextManager;
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $doctrine;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
-     * @var AbstractPriceListTreeHandler
-     */
-    private $priceListTreeHandler;
+    public const MP_ALIAS = 'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT';
+    public const MP_MERGED_ALIAS = 'minimal_price.PRICE_LIST_ID_CURRENCY';
 
     public function __construct(
-        WebsiteContextManager $websiteContextManager,
-        ManagerRegistry $doctrine,
-        ConfigManager $configManager,
-        AbstractPriceListTreeHandler $priceListTreeHandler
+        private WebsiteContextManager $websiteContextManager,
+        private ManagerRegistry $doctrine,
+        private ConfigManager $configManager,
+        private AbstractPriceListTreeHandler $priceListTreeHandler,
+        private ValueFormatterInterface $decimalValueFormatter
     ) {
-        $this->websiteContextManager = $websiteContextManager;
-        $this->doctrine = $doctrine;
-        $this->configManager = $configManager;
-        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'pricing')) {
+            return;
+        }
+
         if (!$this->isFeaturesEnabled()) {
             return;
         }
@@ -86,7 +71,7 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
             $event->addPlaceholderField(
                 $price['product_id'],
                 self::MP_ALIAS,
-                $price['value'],
+                $this->decimalValueFormatter->format($price['value']),
                 [
                     PriceListIdPlaceholder::NAME => $price['price_list_id'],
                     CurrencyPlaceholder::NAME => $price['currency'],
@@ -104,8 +89,8 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
         foreach ($prices as $price) {
             $event->addPlaceholderField(
                 $price['product_id'],
-                'minimal_price_PRICE_LIST_ID_CURRENCY',
-                $price['value'],
+                self::MP_MERGED_ALIAS,
+                $this->decimalValueFormatter->format($price['value']),
                 [
                     PriceListIdPlaceholder::NAME => $price['price_list_id'],
                     CurrencyPlaceholder::NAME => $price['currency'],

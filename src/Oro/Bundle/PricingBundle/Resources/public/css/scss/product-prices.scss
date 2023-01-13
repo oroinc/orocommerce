@@ -104,6 +104,12 @@ table.product-price-attributes {
     width: auto;
 }
 
+.price-attribute-item {
+    &:not(:last-child) {
+        margin-bottom: 16px;
+    }
+}
+
 .form-horizontal {
     .pricing-price-attribute {
         .table {
@@ -121,18 +127,29 @@ table.product-price-attributes {
         &:only-child {
             .price-attributes-collection {
                 display: flex;
+                flex-wrap: wrap;
 
                 .control-group-collection {
                     width: 50%;
                     position: relative;
                     padding: 0 23px;
 
-                    &:first-child {
+                    &:only-child {
+                        width: 100%;
+                        padding: 0;
+                    }
+
+                    &:nth-child(odd) {
                         padding-left: 0;
                     }
 
-                    &:last-child {
+                    &:nth-child(even) {
                         padding-right: 0;
+
+                        // stylelint-disable-next-line max-nesting-depth
+                        &::after {
+                            content: none;
+                        }
                     }
 
                     &:not(:last-child) {
@@ -159,6 +176,17 @@ table.product-price-attributes {
             }
 
             #product_prices {
+                .price-attributes-collection {
+                    .control-group-collection {
+                        width: 50%;
+
+                        // stylelint-disable-next-line max-nesting-depth
+                        &:only-child {
+                            width: 100%;
+                        }
+                    }
+                }
+
                 .control-group {
                     display: block;
                     width: auto;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 
@@ -11,25 +11,16 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
  */
 class ProductVisibilityProcessor extends AbstractVisibilityProcessor implements TopicSubscriberInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::RESOLVE_PRODUCT_VISIBILITY];
+        return [ResolveProductVisibilityTopic::getName()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getResolvedVisibilityClassName(): string
     {
         return ProductVisibilityResolved::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function resolveVisibility(array $body): void
     {
         $this->cacheBuilder->resolveVisibilitySettings($this->getVisibility($body));

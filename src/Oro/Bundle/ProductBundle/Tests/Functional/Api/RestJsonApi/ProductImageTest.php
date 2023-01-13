@@ -153,14 +153,9 @@ class ProductImageTest extends RestJsonApiTestCase
         );
 
         $expectedData = self::updateExpectedData(
-            $this->getResponseData('get_product_image_include.yml'),
+            $this->getResponseData('get_product_image_include_webp_enabled_for_all.yml'),
             ['{fileId}' => (string)$fileId]
         );
-        foreach ($expectedData['included'][0]['attributes']['filePath'] as &$filePath) {
-            $filePath['url'] .= '.webp';
-            unset($filePath['url_webp']);
-        }
-        unset($filePath);
         $this->assertResponseContains($expectedData, $response);
     }
 

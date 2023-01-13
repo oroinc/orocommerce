@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Checker;
 
+/**
+ * Represents a service to check whether a shipping method with a specific identifier is enabled or not.
+ */
 interface ShippingMethodEnabledByIdentifierCheckerInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function isEnabled($identifier);
+    public function isEnabled(string $identifier): bool;
 }

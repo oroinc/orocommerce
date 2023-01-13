@@ -140,14 +140,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_notes_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shopping-list-notes shopping-list-notes--no-offset collapse-view init',
-        '~data-page-component-viewport': {
-            widgetModule: 'oroui/js/widget/collapse-widget',
-            animationSpeed: 0,
-            closeClass: 'overflows',
-            checkOverflow: true,
-            open: false
-        }
+        '~class': ' shopping-list-notes shopping-list-notes--no-offset'
     }) %}
     {% if notes is not null %}
         <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
@@ -166,19 +159,27 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_notes_widget %}
+    {% set collapseId = 'collapse-'|uniqid %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shopping-list-notes__content shopping-list-notes__content--limited',
-        'data-collapse-container': true
+        'id': collapseId,
+        '~class': ' shopping-list-notes__content shopping-list-notes__content--limited collapse collapse-overflow no-transition',
+        'data-trigger-icon-show-class': 'fa-angle-up',
+        'data-trigger-icon-hide-class': 'fa-angle-down',
+        'data-collapsed-text': 'oro.ui.collapse.more'|trans,
+        'data-expanded-text': 'oro.ui.collapse.less'|trans,
+        'data-check-overflow': 'true',
+        'data-toggle': 'false'
     }) %}
     {% if notes is not null %}
-        <div {{ block('block_attributes') }}>
-            {{- notes -}}
-        </div>
-        <button class="btn btn--link btn--size-s btn--no-x-offset toggle-more" data-collapse-trigger>
-            {{ 'oro.ui.collapse.more'|trans }}<span class="fa-angle-down fa--offset-l" aria-hidden="true"></span>
-        </button>
-        <button class="btn btn--link btn--size-s btn--no-x-offset toggle-less" data-collapse-trigger>
-            {{ 'oro.ui.collapse.less'|trans }}<span class="fa-angle-up fa--offset-l" aria-hidden="true"></span>
+
+        <div {{ block('block_attributes') }}>{{- notes -}}</div>
+        <button class="btn btn--link btn--no-x-offset btn--no-y-offset collapse-toggle"
+                data-toggle="collapse"
+                data-target="{{ '#' ~ collapseId }}"
+                aria-controls="{{ collapseId }}"
+        >
+            <span data-text>{{ 'oro.ui.collapse.more'|trans }}</span>
+            <span class="fa-angle-down fa--offset-l" aria-hidden="true" data-icon></span>
         </button>
     {% endif %}
 {% endblock %}
@@ -238,12 +239,12 @@
 
 {% block __oro_checkout_content__checkout_button_continue_widget -%}
     {% if transitionData is defined and transitionData %}
-        <div class="grid__row grid__row--offset-none">
-            <div class="grid__column grid__column--gutter-l-none">
+        <div class="checkout__botton-container">
+            <div class="checkout__botton-action">
                 {{ block_widget(block) }}
             </div>
             {% if showRequiredLabel %}
-            <div class="grid__column">
+            <div class="checkout__require-label">
                 <div data-role="checkout-require"
                      class="required-label {% if transitionData.isAllowed == false %}hidden{% endif %}"
                      aria-hidden="true"

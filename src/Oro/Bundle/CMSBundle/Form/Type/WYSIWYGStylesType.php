@@ -3,8 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
-use Oro\Bundle\CMSBundle\Form\DataTransformer\DigitalAssetTwigTagsTransformer;
-use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,33 +17,24 @@ class WYSIWYGStylesType extends AbstractType
 {
     public const TYPE_SUFFIX = WYSIWYGStyleType::TYPE_SUFFIX;
 
-    private DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter;
+    private EventSubscriberInterface $digitalAssetTwigTagsEventSubscriber;
 
-    public function __construct(DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter)
+    public function __construct(EventSubscriberInterface $digitalAssetTwigTagsEventSubscriber)
     {
-        $this->digitalAssetTwigTagsConverter = $digitalAssetTwigTagsConverter;
+        $this->digitalAssetTwigTagsEventSubscriber = $digitalAssetTwigTagsEventSubscriber;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addViewTransformer(new DigitalAssetTwigTagsTransformer($this->digitalAssetTwigTagsConverter));
+        $builder->addEventSubscriber($this->digitalAssetTwigTagsEventSubscriber);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['attr']['data-grapesjs-styles'] = $form->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return HiddenType::class;
     }

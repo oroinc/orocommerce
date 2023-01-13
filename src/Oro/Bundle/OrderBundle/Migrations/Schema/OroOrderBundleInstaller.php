@@ -54,7 +54,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_14_2';
+        return 'v1_15';
     }
 
     /**
@@ -96,6 +96,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -247,6 +248,14 @@ class OroOrderBundleInstaller implements
         $table->addColumn('ship_by', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
         $table->addColumn('from_external_source', 'boolean', []);
         $table->addColumn('comment', 'text', ['notnull' => false]);
+        $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_estimate_amount', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['product_id'], 'idx_de9136094584665a', []);
         $table->addIndex(['product_unit_id'], 'idx_de91360929646bbd', []);
@@ -315,6 +324,12 @@ class OroOrderBundleInstaller implements
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $table,
+            ['parent_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
@@ -12,23 +15,22 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PriceListWithPriorityCollectionHandler */
-    protected $handler;
-
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
+
+    /** @var PriceListWithPriorityCollectionHandler */
+    private $handler;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $accessor = new PropertyAccessor();
-
-        $this->handler = new PriceListWithPriorityCollectionHandler($this->doctrineHelper, $accessor);
+        $this->handler = new PriceListWithPriorityCollectionHandler(
+            $this->doctrineHelper,
+            new PropertyAccessor()
+        );
     }
 
     public function testNoChanges()
@@ -43,13 +45,9 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\Test
             $notChangedRelation
         ];
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
-        $uow = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uow = $this->createMock(UnitOfWork::class);
 
         $uow->expects($this->once())
             ->method('computeChangesets');
@@ -83,13 +81,9 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\Test
             $notChangedRelation
         ];
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
-        $uow = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uow = $this->createMock(UnitOfWork::class);
 
         $uow->expects($this->once())
             ->method('computeChangesets');
@@ -125,9 +119,7 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\Test
             $notChangedRelation
         ];
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
@@ -156,18 +148,14 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\Test
             $notChangedRelation
         ];
 
-        $meta = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $meta = $this->createMock(ClassMetadata::class);
 
         $meta->expects($this->once())
             ->method('getAssociationsByTargetClass')
             ->with(get_class($customer))
             ->willReturn([['fieldName'=>'customer']]);
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManagerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')

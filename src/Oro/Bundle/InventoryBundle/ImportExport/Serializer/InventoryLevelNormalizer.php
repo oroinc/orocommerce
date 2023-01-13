@@ -76,24 +76,22 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         return $this->dispatchNormalize($object, $result, $context, Events::AFTER_NORMALIZE_ENTITY);
     }
 
-    /**
-     * @param InventoryLevel $inventoryLevel
-     * @return float|int
-     */
     protected function getQuantity(InventoryLevel $inventoryLevel)
     {
-        $productUnit = $inventoryLevel->getProductUnitPrecision()
-            ? $inventoryLevel->getProductUnitPrecision()->getUnit()
-            : null;
+        $productUnit = $inventoryLevel->getProductUnitPrecision()?->getUnit();
+        $quantity = $inventoryLevel->getQuantity();
+
         if (!$productUnit) {
-            return $inventoryLevel->getQuantity();
+            return $quantity;
         }
 
-        return $this->roundingService->roundQuantity(
-            $inventoryLevel->getQuantity(),
-            $productUnit,
-            $inventoryLevel->getProduct()
-        );
+        $precision = $productUnit->getDefaultPrecision();
+
+        if ($inventoryLevel->getProduct()) {
+            $precision = (int) $inventoryLevel->getProductUnitPrecision()->getPrecision();
+        }
+
+        return $this->roundingService->round($quantity, $precision);
     }
 
     /**
@@ -126,11 +124,11 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         }
 
         /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $this->dispatchDenormalizeEvent(
+        $inventoryLevel = $this->dispatchDenormalize(
             $data,
             $this->createObject($type),
             Events::BEFORE_DENORMALIZE_ENTITY
-        );
+        )->getObject();
 
         $productData = $data['product'];
 
@@ -159,7 +157,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
 
         $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
 
-        return $this->dispatchDenormalizeEvent($data, $inventoryLevel, Events::AFTER_DENORMALIZE_ENTITY);
+        return $this->dispatchDenormalize($data, $inventoryLevel, Events::AFTER_DENORMALIZE_ENTITY)->getObject();
     }
 
     protected function determineQuantity(InventoryLevel $inventoryLevel, array $data)

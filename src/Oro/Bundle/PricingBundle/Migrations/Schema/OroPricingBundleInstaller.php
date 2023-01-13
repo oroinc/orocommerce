@@ -32,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_22';
+        return 'v1_23';
     }
 
     /**
@@ -66,6 +66,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->createOroPriceRuleTable($schema);
         $this->createOroPriceRuleLexemeTable($schema);
         $this->createOroPriceListCombinedBuildActivityTable($schema);
+        $this->createOroPriceListCombinedGCTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroPriceListCurrencyForeignKeys($schema);
@@ -91,6 +92,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->addOroPriceRuleForeignKeys($schema);
         $this->addOroPriceRuleLexemeForeignKeys($schema);
         $this->addOroPriceListCombinedBuildActivityForeignKeys($schema);
+        $this->addOroPriceListCombinedGCForeignKeys($schema);
     }
 
     /**
@@ -312,6 +314,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['customer_id', 'website_id'], 'oro_cpl_to_cus_ws_unq');
         $table->setPrimaryKey(['id']);
     }
@@ -327,6 +330,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['customer_group_id', 'website_id'], 'oro_cpl_to_cus_gr_ws_unq');
         $table->setPrimaryKey(['id']);
     }
@@ -341,6 +345,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['website_id'], 'oro_cpl_to_ws_unq');
         $table->setPrimaryKey(['id']);
     }
@@ -488,6 +493,32 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addIndex(['parent_job_id'], 'oro_cpl_build_activity_job_idx');
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create `oro_combined_price_gc' table.
+     *
+     * This table stores CPL removal request by GC. Records are removed from this table only when actual CPL removal is
+     * performed. Presence of CPL in the table does not mean that it will be actually removed, the request actuality is
+     * checked and the moment of actual removal.
+     */
+    protected function createOroPriceListCombinedGCTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_price_list_combined_gc');
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('requested_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addUniqueIndex(['combined_price_list_id'], 'oro_cpl_gc_unq_idx');
+    }
+
+    protected function addOroPriceListCombinedGCForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_price_list_combined_gc');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_price_list_combined'),
+            ['combined_price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**

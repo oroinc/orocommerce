@@ -16,32 +16,17 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestC
     use EntityTestCaseTrait;
     use EntityTrait;
 
-    /**
-     * @var Region
-     */
-    protected $region;
-
-    /**
-     * @var Country
-     */
-    protected $country;
-
-    /**
-     * @var ShippingMethodsConfigsRuleDestination
-     */
-    protected $shippingRuleDestination;
+    /** @var ShippingMethodsConfigsRuleDestination */
+    private $shippingRuleDestination;
 
     protected function setUp(): void
     {
-        $this->country = $this->createMockCountry();
-        $this->region = $this->createMockRegion();
-
         $this->shippingRuleDestination = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
+            ShippingMethodsConfigsRuleDestination::class,
             [
-                'region' => $this->region,
-                'country' => $this->country,
-                'postalCodes' => new ArrayCollection([$this->createPostalCode('123')]),
+                'region' => $this->getRegion(),
+                'country' => $this->getCountry(),
+                'postalCodes' => new ArrayCollection([$this->getPostalCode('123')]),
             ]
         );
     }
@@ -57,12 +42,8 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestC
         ];
 
         $destination = new ShippingMethodsConfigsRuleDestination();
-        static::assertPropertyAccessors($destination, $properties);
-        static::assertPropertyCollection(
-            $destination,
-            'postalCodes',
-            $this->createPostalCode('123')
-        );
+        self::assertPropertyAccessors($destination, $properties);
+        self::assertPropertyCollection($destination, 'postalCodes', $this->getPostalCode('123'));
     }
 
     public function testGetRegionName()
@@ -102,55 +83,49 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider toStringDataProvider
-     *
-     * @param array $data
-     * @param string $expectedString
      */
-    public function testToString(array $data, $expectedString)
+    public function testToString(array $data, string $expectedString)
     {
         $entity = (string) $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
+            ShippingMethodsConfigsRuleDestination::class,
             $data
         );
         $this->assertEquals($expectedString, $entity);
     }
 
-    /**
-     * @return array
-     */
-    public function toStringDataProvider()
+    public function toStringDataProvider(): array
     {
         return [
             'all' => [
                 'data' => [
-                    'country' => $this->createMockCountry(),
-                    'region' => $this->createMockRegion(),
-                    'postalCodes' => new ArrayCollection([$this->createPostalCode('12345')]),
+                    'country' => $this->getCountry(),
+                    'region' => $this->getRegion(),
+                    'postalCodes' => new ArrayCollection([$this->getPostalCode('12345')]),
                 ],
                 'expectedString' => 'RegionName, CountryName 12345'
             ],
             'country and postal code' => [
                 'data' => [
-                    'country' => $this->createMockCountry(),
+                    'country' => $this->getCountry(),
                     'region' => null,
                     'postalCodes' => new ArrayCollection([
-                        $this->createPostalCode('12345'),
-                        $this->createPostalCode('54321'),
+                        $this->getPostalCode('12345'),
+                        $this->getPostalCode('54321'),
                     ]),
                 ],
                 'expectedString' => 'CountryName 12345, 54321'
             ],
             'country and region' => [
                 'data' => [
-                    'country' => $this->createMockCountry('SecondCountryName'),
-                    'region' => $this->createMockRegion('SecondRegionName'),
+                    'country' => $this->getCountry('SecondCountryName'),
+                    'region' => $this->getRegion('SecondRegionName'),
                     'postalCodes' => new ArrayCollection(),
                 ],
                 'expectedString' => 'SecondRegionName, SecondCountryName'
             ],
             'only country' => [
                 'data' => [
-                    'country' => $this->createMockCountry(),
+                    'country' => $this->getCountry(),
                     'region' => null,
                     'postalCodes' => new ArrayCollection(),
                 ],
@@ -159,58 +134,44 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestC
         ];
     }
 
-    /**
-     * @param string $name
-     * @param string $iso2
-     * @param string $iso3
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createMockCountry($name = 'CountryName', $iso2 = 'CountryIso2', $iso3 = 'CountryIso3')
-    {
-        $result = $this->getMockBuilder('Oro\Bundle\AddressBundle\Entity\Country')
-            ->disableOriginalConstructor()
-            ->getMock();
+    private function getCountry(
+        string $name = 'CountryName',
+        string $iso2 = 'CountryIso2',
+        string $iso3 = 'CountryIso3'
+    ): Country {
+        $result = $this->createMock(Country::class);
         $result->expects($this->any())
             ->method('__toString')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
         $result->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
         $result->expects($this->any())
             ->method('getIso2Code')
-            ->will($this->returnValue($iso2));
+            ->willReturn($iso2);
         $result->expects($this->any())
             ->method('getIso3Code')
-            ->will($this->returnValue($iso3));
+            ->willReturn($iso3);
 
         return $result;
     }
 
-    /**
-     * @param string $name
-     * @param string $code
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
+    private function getRegion(string $name = 'RegionName', string $code = 'RegionCode'): Region
     {
-        $result = $this->createMock('Oro\Bundle\AddressBundle\Entity\Region', [], ['combinedCode']);
+        $result = $this->createMock(Region::class);
         $result->expects($this->any())
             ->method('__toString')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
         $result->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
         $result->expects($this->any())
             ->method('getCode')
-            ->will($this->returnValue($code));
+            ->willReturn($code);
         return $result;
     }
 
-    /**
-     * @param string $name
-     * @return ShippingMethodsConfigsRuleDestinationPostalCode
-     */
-    protected function createPostalCode($name)
+    private function getPostalCode(string $name): ShippingMethodsConfigsRuleDestinationPostalCode
     {
         return (new ShippingMethodsConfigsRuleDestinationPostalCode())->setName($name);
     }

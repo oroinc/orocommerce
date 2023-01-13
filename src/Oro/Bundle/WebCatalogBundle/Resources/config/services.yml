@@ -82,6 +82,7 @@ services:
             - '@oro_commerce_entity.extra_insert_entity_storage'
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
+            - '@oro_product.handler.collection_sort_order'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: preUpdate }
@@ -109,13 +110,15 @@ services:
         arguments:
             - '@doctrine'
 
-    oro_web_catalog.event_listener.system_config:
-        class: Oro\Bundle\WebCatalogBundle\EventListener\SystemConfigListener
+    oro_web_catalog.event_listener.system_config.web_catalog:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
         arguments:
             - '@doctrine'
+            - 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
+            - 'oro_web_catalog.web_catalog'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_web_catalog.web_catalog, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
@@ -139,11 +142,10 @@ services:
             - '@oro_redirect.routing.matched_url_decision_maker'
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
-            - ["name"]
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType, acl_resource: oro_web_catalog_view }
 
@@ -215,6 +217,7 @@ services:
             - '@oro_web_catalog.web_catalog_provider'
         tags:
             - { name: oro_scope.provider, scopeType: web_content, priority: 250 }
+            - { name: oro_scope.provider, scopeType: web_content_for_sitemap, priority: 250 }
 
     oro_web_catalog.web_catalog_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider
@@ -266,6 +269,7 @@ services:
             - '@oro_website_search.manager.website_context_manager'
             - '@oro_web_catalog.content_variant_provider'
             - '@oro_locale.helper.localization'
+            - '@oro_website_search.formatter.decimal_flat_value_formatter'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
 
@@ -317,7 +321,6 @@ services:
     oro_web_catalog.layout.data_provider.menu_data:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider
         arguments:
-            - '@doctrine'
             - '@oro_web_catalog.web_catalog_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
             - '@oro_locale.helper.localization'
@@ -359,50 +362,6 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.context_configurator }
-
-    oro_web_catalog.async.web_catalog_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_message_queue.client.message_producer'
-            - '@doctrine'
-            - '@oro_config.manager'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_message_queue.client.message_producer'
-            - '@doctrine'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_tree_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeTreeCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_web_catalog.content_node_tree_cache_dumper'
-            - '@doctrine'
-            - '@logger'
-            - '@oro_web_catalog.layout.data_provider.menu_data.cache'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_slug_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_web_catalog.resolver.default_variant_scope'
-            - '@oro_web_catalog.generator.slug_generator'
-            - '@oro_message_queue.client.message_producer'
-            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
-            - '@logger'
-            - '@oro_web_catalog.content_node_tree_cache'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
 
     oro_web_catalog.resolver.default_variant_scope:
         class: Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver

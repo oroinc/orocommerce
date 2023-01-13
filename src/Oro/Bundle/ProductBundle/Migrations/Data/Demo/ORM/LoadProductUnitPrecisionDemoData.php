@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -12,6 +12,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loading product unit precision demo data.
+ */
 class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -86,11 +89,11 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param EntityManager $manager
+     * @param EntityManagerInterface $manager
      * @param string $sku
      * @return Product|null
      */
-    protected function getProductBySku(EntityManager $manager, $sku)
+    protected function getProductBySku(EntityManagerInterface $manager, $sku)
     {
         if (!array_key_exists($sku, $this->products)) {
             $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
@@ -100,11 +103,11 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param EntityManager $manager
+     * @param EntityManagerInterface $manager
      * @param string $code
      * @return ProductUnit|null
      */
-    protected function getProductUnit(EntityManager $manager, $code)
+    protected function getProductUnit(EntityManagerInterface $manager, $code)
     {
         if (!array_key_exists($code, $this->productUnis)) {
             $this->productUnis[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);

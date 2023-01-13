@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Model;
 
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\RestrictProductVariationsBuilderModifier;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductVariants;
@@ -10,12 +11,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RestrictProductVariationsBuilderModifierTest extends WebTestCase
 {
-    /** @var RestrictProductVariationsBuilderModifier */
-    protected $modifier;
+    private RestrictProductVariationsBuilderModifier $modifier;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -23,15 +20,16 @@ class RestrictProductVariationsBuilderModifierTest extends WebTestCase
 
         $this->loadFixtures([LoadProductVariants::class]);
 
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $this->modifier = new RestrictProductVariationsBuilderModifier($doctrineHelper);
+        $this->modifier = new RestrictProductVariationsBuilderModifier(
+            $this->getContainer()->get('oro_entity.doctrine_helper')
+        );
     }
 
     public function testModify()
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->getContainer()->get('doctrine')
-            ->getRepository('OroProductBundle:Product')
+            ->getRepository(Product::class)
             ->createQueryBuilder('p')
             ->select('p.id')
             ->orderBy('p.id');

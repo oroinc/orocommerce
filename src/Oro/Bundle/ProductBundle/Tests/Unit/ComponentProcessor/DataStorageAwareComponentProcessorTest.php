@@ -71,7 +71,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
         $this->componentProcessorFilter->expects($this->any())
             ->method('filterData')
-            ->will($this->returnArgument(0));
+            ->willReturnArgument(0);
 
         $this->router->expects($this->never())
             ->method($this->anything());
@@ -87,7 +87,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->componentProcessorFilter->expects($this->any())
             ->method('filterData')
-            ->will($this->returnArgument(0));
+            ->willReturnArgument(0);
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
         $redirectRouteName = 'redirect_route';
         $redirectUrl = '/redirect/url';

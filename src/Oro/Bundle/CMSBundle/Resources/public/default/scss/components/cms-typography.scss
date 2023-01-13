@@ -1,0 +1,261 @@
+/* @theme: default; */
+
+.cms-typography {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-bottom: $cms-typography-heading-offset;
+        color: inherit;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    small {
+        font-size: $cms-typography-small-font-size;
+    }
+
+    address {
+        font-style: $cms-typography-address-font-style;
+    }
+
+    p,
+    address {
+        margin: $cms-typography-paragraph-offset;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    blockquote {
+        margin: $cms-typography-blockquote-offset;
+
+        font-size: $cms-typography-blockquote-font-size;
+        font-style: $cms-typography-blockquote-font-style;
+        font-weight: $cms-typography-blockquote-font-weight;
+
+        background-color: $cms-typography-blockquote-background-color;
+        padding: $cms-typography-blockquote-inner-offset;
+        line-height: $cms-typography-blockquote-line-height;
+
+        color: $cms-typography-blockquote-color;
+
+        position: relative;
+
+        @include fa-icon($icon: $cms-typography-blockquote-fa-icon, $extra-rules: true) {
+            position: absolute;
+            top: $cms-typography-blockquote-fa-icon-top;
+            left: $cms-typography-blockquote-fa-icon-left;
+            font-size: $cms-typography-blockquote-fa-icon-font-size;
+            color: $cms-typography-blockquote-fa-icon-color;
+        }
+
+        @include fa-icon($icon: $cms-typography-blockquote-fa-end-icon, $state: after, $extra-rules: true) {
+            position: absolute;
+            bottom: $cms-typography-blockquote-fa-icon-bottom;
+            right: $cms-typography-blockquote-fa-icon-right;
+            font-size: $cms-typography-blockquote-fa-icon-font-size;
+            color: $cms-typography-blockquote-fa-icon-color;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    hr {
+        margin: $cms-typography-hr-offset;
+        border: none;
+        border-top: $cms-typography-border-top;
+    }
+
+    ul,
+    ol {
+        margin: $cms-typography-list-offset;
+        padding: $cms-typography-list-inner-offset;
+
+        ul,
+        ol {
+            margin-bottom: 0;
+        }
+    }
+
+    dt {
+        font-weight: font-weight('bold');
+        margin-bottom: $offset-half;
+    }
+
+    dd {
+        margin-left: $offset-default;
+        margin-bottom: $offset-default;
+    }
+
+    img {
+        max-width: $cms-typography-img-max-width;
+        height: auto;
+        display: block;
+        margin: $cms-typography-img-offset;
+
+        &.bordered {
+            border: $cms-typography-img-border;
+        }
+    }
+
+    figure {
+        display: $cms-typography-figure-display;
+        margin: $cms-typography-figure-offset;
+
+        picture {
+            grid-column: $cms-typography-figure-picture-grid-column;
+            grid-row: $cms-typography-figure-picture-grid-row;
+        }
+
+        img {
+            width: $cms-typography-figure-img-width;
+            height: $cms-typography-figure-img-height;
+            object-fit: $cms-typography-figure-img-object-fit;
+        }
+    }
+
+    figcaption {
+        grid-column: $cms-typography-figcaption-grid-column;
+        grid-row: $cms-typography-figcaption-grid-row;
+        display: $cms-typography-figcaption-display;
+        margin: $cms-typography-figcaption-offset;
+        padding: $cms-typography-figcaption-padding;
+
+        font-size: $cms-typography-figcaption-font-size;
+        text-align: $cms-typography-figcaption-text-align;
+        text-transform: $cms-typography-figcaption-text-transform;
+
+        align-items: $cms-typography-figcaption-align-items;
+        justify-content: $cms-typography-figcaption-justify-content;
+
+        color: $cms-typography-figcaption-color;
+
+        &.centered {
+            flex-direction: column;
+            text-transform: none;
+        }
+    }
+
+    strong,
+    b {
+        font-weight: font-weight('bold');
+    }
+
+    em,
+    i {
+        font-style: italic;
+    }
+
+    code,
+    samp {
+        border-top: $cms-typography-code-border;
+        border-bottom: $cms-typography-code-border;
+        padding: $cms-typography-code-inner-offset;
+        margin: $cms-typography-code-offset;
+        display: block;
+
+        font-family: $cms-typography-code-font-family;
+        line-height: $cms-typography-code-line-height;
+    }
+
+    sub {
+        vertical-align: $cms-typography-sub-vertical-align;
+        font-size: $cms-typography-sub-font-size;
+    }
+
+    sup {
+        vertical-align: $cms-typography-sup-vertical-align;
+        font-size: $cms-typography-sup-font-size;
+    }
+
+    time {
+        color: $cms-typography-time-color;
+    }
+
+    .dropdown-menu,
+    .dropdown-menu ul,
+    .dropdown-menu ol {
+        list-style: none;
+        padding: $dropdown-padding-y 0;
+        margin: $dropdown-spacer 0 0;
+    }
+
+    .video-container {
+        width: 100%;
+    }
+
+    .list-style-none {
+        list-style-type: none;
+    }
+
+    .list-style-disc {
+        list-style-type: disc;
+    }
+
+    .list-style-circle {
+        list-style-type: circle;
+    }
+
+    .list-style-square {
+        list-style-type: square;
+    }
+
+    .list-style-decimal {
+        list-style-type: decimal;
+    }
+
+    .list-style-lower-alpha {
+        list-style-type: lower-alpha;
+    }
+
+    .list-style-upper-alpha {
+        list-style-type: upper-alpha;
+    }
+
+    .list-style-lower-roman {
+        list-style-type: lower-roman;
+    }
+
+    .list-style-upper-roman {
+        list-style-type: upper-roman;
+    }
+
+    .list-style-greek {
+        list-style-type: lower-greek;
+    }
+
+    .nav-tabs {
+        margin: $cms-typography-nav-tabs-offset;
+        padding: $cms-typography-nav-tabs-inner-offset;
+    }
+
+    .tabbed-content {
+        margin-bottom: $cms-typography-tabbed-content-bottom-offset;
+    }
+
+    .offset {
+        &-inner {
+            padding: $offset-y;
+        }
+
+        &-bottom {
+            margin-bottom: $offset-y;
+        }
+    }
+
+    .extra-text {
+        color: $cms-typography-extra-text-color;
+    }
+
+    .extra-block-bg {
+        background-color: $cms-typography-extra-block-bg-color;
+    }
+}

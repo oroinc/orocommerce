@@ -7,6 +7,8 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_product.service.product_update_handler, key: Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler }
+            - { name: container.service_subscriber, id: oro_product.provider.page_template_provider, key: Oro\Bundle\ProductBundle\Provider\PageTemplateProvider }
 
     Oro\Bundle\ProductBundle\Controller\Frontend\ProductController:
         calls:
@@ -14,6 +16,9 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_product.layout.data_provider.product_view_form_availability_provider, key: Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProvider }
+            - { name: container.service_subscriber, id: oro_product.provider.product_variant_availability_provider, key: Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider }
+            - { name: container.service_subscriber, id: oro_product.provider.page_template_provider, key: Oro\Bundle\ProductBundle\Provider\PageTemplateProvider }
+            - { name: container.service_subscriber, id: oro_product.provider.product_autocomplete, key: Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider }
 
     Oro\Bundle\ProductBundle\Controller\BrandController:
         calls:
@@ -32,6 +37,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_product.provider.grid_count_provider, key: Oro\Bundle\ProductBundle\Provider\GridCountProvider }
 
     Oro\Bundle\ProductBundle\Controller\AjaxProductUnitController:
         calls:
@@ -57,6 +63,8 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_product.provider.product_images_urls, key: Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider }
+            - { name: container.service_subscriber, id: oro_product.manager.user_product_filters_sidebar_state_manager, key: Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager }
 
     Oro\Bundle\ProductBundle\Controller\Frontend\AjaxProductUnitController:
         calls:
@@ -69,4 +77,4 @@ services:
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
-            - { name: 'container.service_subscriber' }
+            - { name: container.service_subscriber }

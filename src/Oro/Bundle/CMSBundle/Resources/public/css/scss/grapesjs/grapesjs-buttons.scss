@@ -22,6 +22,53 @@
                 }
             }
         }
+
+        &--switch {
+            border: $checkbox-border;
+            border-radius: $checkbox-border-radius;
+            background-color: $checkbox-background;
+            width: $checkbox-size-var;
+            min-width: $checkbox-size-var;
+            height: $checkbox-size-var;
+            min-height: $checkbox-size-var;
+            margin: $checkbox-margin;
+            color: $checkbox-color;
+            appearance: $checkbox-appearance;
+            vertical-align: $checkbox-vertical-align;
+            display: $checkbox-display;
+            // To prevent shrink or grow checkbox if it's in flex container context
+            flex: $checkbox-flex;
+            outline: $checkbox-outline;
+            place-self: center;
+
+            @include fa-icon($icon: $checkbox-icon-checked, $extra-rules: true) {
+                font-size: $checkbox-icon-size;
+                line-height: $checkbox-icon-line-height;
+            }
+
+            &::before {
+                place-self: $checkbox-icon-place-self;
+                opacity: $checkbox-icon-opacity;
+            }
+
+            &:hover {
+                border-color: $checkbox-border-color-hover;
+            }
+
+            &:focus {
+                border-color: $checkbox-border-color-focus;
+                box-shadow: $checkbox-box-shadow-focus;
+            }
+
+            &.#{$app-prefix}pn-active {
+                background-color: $checkbox-background-checked;
+                border-color: $checkbox-border-color-checked;
+
+                &::before {
+                    opacity: $checkbox-icon-opacity-checked;
+                }
+            }
+        }
     }
 
     &btn {
@@ -44,6 +91,115 @@
             font-family: $fa-font-family;
             text-align: center;
             line-height: 1;
+        }
+    }
+}
+
+.content-template-block {
+    overflow: hidden;
+    padding: 0;
+    justify-content: center;
+    position: relative;
+
+    &.highlight-not-found {
+        display: none;
+    }
+
+    .#{$app-prefix}block-label {
+        background-color: rgba($primary-inverse, .8);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        font-size: 11px;
+        padding: 5px 5px 4px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: $primary-400;
+    }
+
+    .#{$app-prefix}block__media {
+        margin-bottom: 0;
+
+        img {
+            max-width: 100%;
+        }
+    }
+}
+
+.content-templates-container {
+    height: 100%;
+    overflow: hidden;
+
+    &__panel {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .gjs-title {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &__blocks {
+        overflow-y: auto;
+        height: 100%;
+        position: relative;
+
+        .#{$app-prefix}blocks-c {
+            padding: 12px 8px 0;
+            gap: 12px;
+        }
+
+        .#{$app-prefix}block {
+            margin: 0;
+            padding: 2px;
+            height: 120px;
+        }
+    }
+
+    .title-text {
+        width: 100%;
+    }
+
+    .quick-search {
+        &-container {
+            display: flex;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        &-button {
+            position: relative;
+
+            .btn {
+                &:hover,
+                &:focus {
+                    z-index: 1;
+                }
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                margin: auto;
+                height: 16px;
+                border-left: 1px solid $additional-ultra-light;
+            }
+        }
+
+        &-control {
+            width: 100%;
+
+            input[type='text'] {
+                width: 100%;
+                height: 32px;
+                padding-right: 32px;
+            }
         }
     }
 }

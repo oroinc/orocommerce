@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -10,7 +10,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -28,11 +27,8 @@ class PaymentTermController extends AbstractController
      *      class="OroPaymentTermBundle:PaymentTerm",
      *      permission="VIEW"
      * )
-     *
-     * @param PaymentTerm $paymentTerm
-     * @return array
      */
-    public function viewAction(PaymentTerm $paymentTerm)
+    public function viewAction(PaymentTerm $paymentTerm): array
     {
         return [
             'entity' => $paymentTerm
@@ -43,10 +39,8 @@ class PaymentTermController extends AbstractController
      * @Route("/", name="oro_payment_term_index")
      * @Template
      * @AclAncestor("oro_payment_term_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => PaymentTerm::class
@@ -64,13 +58,10 @@ class PaymentTermController extends AbstractController
      *      class="OroPaymentTermBundle:PaymentTerm",
      *      permission="CREATE"
      * )
-     *
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction(): array|RedirectResponse
     {
-        return $this->update(new PaymentTerm(), $request);
+        return $this->update(new PaymentTerm());
     }
 
     /**
@@ -84,67 +75,45 @@ class PaymentTermController extends AbstractController
      *      class="OroPaymentTermBundle:PaymentTerm",
      *      permission="EDIT"
      * )
-     * @param PaymentTerm $paymentTerm
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function updateAction(PaymentTerm $paymentTerm, Request $request)
+    public function updateAction(PaymentTerm $paymentTerm): array|RedirectResponse
     {
-        return $this->update($paymentTerm, $request);
+        return $this->update($paymentTerm);
     }
 
     /**
      * @Route("/widget/info/{id}", name="oro_payment_term_widget_info", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_payment_term_view")
-     * @param PaymentTerm $entity
-     * @return array
      */
-    public function infoAction(PaymentTerm $entity)
+    public function infoAction(PaymentTerm $entity): array
     {
         return [
             'entity' => $entity,
         ];
     }
 
-    /**
-     * @param PaymentTerm $paymentTerm
-     * @param Request $request
-     * @return array|RedirectResponse
-     */
-    protected function update(PaymentTerm $paymentTerm, Request $request)
+    protected function update(PaymentTerm $paymentTerm): array|RedirectResponse
     {
         $form = $this->createForm(PaymentTermType::class, $paymentTerm);
 
-        return $this->get(UpdateHandler::class)->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $paymentTerm,
             $form,
-            function (PaymentTerm $paymentTerm) {
-                return [
-                    'route' => 'oro_payment_term_update',
-                    'parameters' => ['id' => $paymentTerm->getId()]
-                ];
-            },
-            function (PaymentTerm $paymentTerm) {
-                return [
-                    'route' => 'oro_payment_term_view',
-                    'parameters' => ['id' => $paymentTerm->getId()]
-                ];
-            },
             $this->get(TranslatorInterface::class)->trans('oro.paymentterm.controller.paymentterm.saved.message')
         );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
-                UpdateHandler::class,
                 TranslatorInterface::class,
+                UpdateHandlerFacade::class
             ]
         );
     }

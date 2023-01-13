@@ -6,19 +6,13 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
+/**
+ * Represents a service to provide views for all applicable shipping methods and calculate a shipping price
+ * for a specific checkout.
+ */
 interface CheckoutShippingMethodsProviderInterface
 {
-    /**
-     * @param Checkout $checkout
-     *
-     * @return ShippingMethodViewCollection
-     */
-    public function getApplicableMethodsViews(Checkout $checkout);
+    public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection;
 
-    /**
-     * @param Checkout $checkout
-     *
-     * @return Price|null
-     */
-    public function getPrice(Checkout $checkout);
+    public function getPrice(Checkout $checkout): ?Price;
 }

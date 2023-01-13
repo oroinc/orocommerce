@@ -165,9 +165,9 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                 new ReindexationRequestEvent(
                     [Product::class],
                     [],
-                    [
-                        101 => 101,
-                    ]
+                    [101 => 101],
+                    true,
+                    ['image']
                 ),
                 ReindexationRequestEvent::EVENT_NAME
             );
@@ -352,7 +352,9 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
                         101 => 101,
                         102 => 102,
                         103 => 103,
-                    ]
+                    ],
+                    true,
+                    ['image']
                 ),
                 ReindexationRequestEvent::EVENT_NAME
             );

@@ -17,7 +17,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWorkflowDefinitions;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -34,7 +33,6 @@ class ProductTest extends RestJsonApiTestCase
             LoadProductUnitPrecisions::class,
             LoadBusinessUnitData::class,
             LoadOrganizations::class,
-            LoadProductTaxCodes::class,
             LoadCategoryData::class,
             LoadVariantFields::class,
             LoadWorkflowDefinitions::class,

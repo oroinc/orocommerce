@@ -175,6 +175,7 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         return new ResolvedContentNode(
             $nodeId,
             $this->getIdentifier($node),
+            $node->getLeft(), // The "left" tree option used as the priority of the menu item.
             $node->getTitles(),
             $this->createResolvedContentVariant($variants[$nodeId], $variantMetadata),
             $node->isRewriteVariantTitle()

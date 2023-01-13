@@ -63,7 +63,7 @@ class PriceListFilterTest extends \PHPUnit\Framework\TestCase
         self::assertSame($expectedMetadata, $metadata);
     }
 
-    public function getMetadataDataProvider()
+    public function getMetadataDataProvider(): array
     {
         return [
             'if required, then allowClear is not allowed' => [

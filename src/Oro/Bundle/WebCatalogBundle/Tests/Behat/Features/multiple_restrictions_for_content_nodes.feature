@@ -23,7 +23,7 @@ Feature: Multiple restrictions for content nodes
       | Restriction1 Customer | Customer 1 |
       | Restriction2 Customer | Customer 2 |
     And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
+    And I click "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Titles            | Root Node                               |
       | System Page Route | Oro Frontend Root (Welcome - Home page) |

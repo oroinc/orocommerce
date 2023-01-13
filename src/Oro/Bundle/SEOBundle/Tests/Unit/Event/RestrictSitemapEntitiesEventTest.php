@@ -9,21 +9,12 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class RestrictSitemapEntitiesEventTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RestrictSitemapEntitiesEvent
-     */
-    protected $restrictSitemapEntitiesEvent;
-
     public function testEventWithWebsite()
     {
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
         $version = 1;
 
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
 
         $event = new RestrictSitemapEntitiesEvent($qb, $version, $website);
@@ -36,10 +27,7 @@ class RestrictSitemapEntitiesEventTest extends \PHPUnit\Framework\TestCase
 
     public function testEventWithoutWebsite()
     {
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
         $version = 1;
 

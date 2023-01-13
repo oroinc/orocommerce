@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import config from 'orofrontend/blank/js/app/views/filter-settings';
+import config from 'orofrontend/default/js/app/views/filter-settings';
 
 export default $.extend(true, {}, config, {
     appearance: {

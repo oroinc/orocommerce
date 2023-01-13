@@ -1,0 +1,4 @@
+include:
+    - '@OroProductBundle:product_collections_web_catalog.yml'
+    - '@OroProductBundle:product_sort_order.yml'
+

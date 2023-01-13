@@ -43,35 +43,50 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         __calls:
             - addLabel: ['@localProductAttributeFamily']
         owner: '@organization'
+        attributeGroups: [ '@attributeGroupGeneral', '@attributeGroupInventory', '@attributeGroupImages', '@attributeGroupProductPrices', '@attributeGroupSEO' ]
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
     attributeGroupGeneral:
         __calls:
             - addLabel: ['@localProductAttributeFamilyGroupGeneral']
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationSku' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationIsFeatured' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationNewArrival' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationName' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationName' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationDescription' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationShortDescription' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationBrand' ]
         code: 'general'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupInventory:
         __calls:
             - addLabel: ['@localProductAttributeFamilyGroupInventory']
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationInventoryStatus' ]
         code: 'inventory'
         attributeFamily: '@productAttributeFamily'
         isVisible: false
     attributeGroupImages:
         __calls:
             - addLabel: ['@localProductAttributeFamilyGroupImages']
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationImages' ]
         code: 'images'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupProductPrices:
         __calls:
             - addLabel: ['@localProductAttributeFamilyGroupProductPrices']
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationProductPrices' ]
         code: 'prices'
         attributeFamily: '@productAttributeFamily'
         isVisible: true
     attributeGroupSEO:
         __calls:
             - addLabel: ['@localProductAttributeFamilyGroupSEO']
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationMetaTitle' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationMetaDescription' ]
+            - addAttributeRelation: [ '@attributeGroupGeneralRelationMetaKeywords' ]
         code: 'seo'
         attributeFamily: '@productAttributeFamily'
         isVisible: false
@@ -80,10 +95,10 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
     attributeGroupGeneralRelationSku:
         attributeGroup: '@attributeGroupGeneral'
         entityConfigFieldId: '@product_attribute_sku->id'
-    attributeGroupGeneralRelationIs Featured:
+    attributeGroupGeneralRelationIsFeatured:
         attributeGroup: '@attributeGroupGeneral'
         entityConfigFieldId: '@product_attribute_featured->id'
-    attributeGroupGeneralRelationNew Arrival:
+    attributeGroupGeneralRelationNewArrival:
         attributeGroup: '@attributeGroupGeneral'
         entityConfigFieldId: '@product_attribute_newArrival->id'
     attributeGroupGeneralRelationName:
@@ -92,19 +107,19 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
     attributeGroupGeneralRelationDescription:
         attributeGroup: '@attributeGroupGeneral'
         entityConfigFieldId: '@product_attribute_descriptions->id'
-    attributeGroupGeneralRelationShort Description:
+    attributeGroupGeneralRelationShortDescription:
         attributeGroup: '@attributeGroupGeneral'
         entityConfigFieldId: '@product_attribute_shortDescriptions->id'
     attributeGroupGeneralRelationBrand:
         attributeGroup: '@attributeGroupGeneral'
         entityConfigFieldId: '@product_attribute_brand->id'
-    attributeGroupGeneralRelationInventory Status:
+    attributeGroupGeneralRelationInventoryStatus:
         attributeGroup: '@attributeGroupInventory'
         entityConfigFieldId: '@product_attribute_inventory_status->id'
     attributeGroupGeneralRelationImages:
         attributeGroup: '@attributeGroupImages'
         entityConfigFieldId: '@product_attribute_images->id'
-    attributeGroupGeneralRelationProduct prices:
+    attributeGroupGeneralRelationProductPrices:
         attributeGroup: '@attributeGroupProductPrices'
         entityConfigFieldId: '@product_attribute_productPriceAttributesPrices->id'
     attributeGroupGeneralRelationMetaTitle:
@@ -122,6 +137,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU<current()>'
         primaryUnitPrecision: '@productUnitPrecision<current()>'
+        unitPrecisions: [ '@productUnitPrecision<current()>' ]
         __calls:
             - addName: ['@localProductName<current()>']
         inventoryStatus: '@enumInventoryStatuses'
@@ -131,6 +147,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueLightingProducts']
             - setParentCategory: ['@root_category']
@@ -138,6 +155,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setInventoryThreshold: ['@treshhold100']
 
     categoryRetailSupplies:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValueRetailSupplies']
             - setParentCategory: ['@root_category']
@@ -145,6 +163,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setInventoryThreshold: ['@treshhold200']
 
     categoryPrinters:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localValuePrinters']
             - setParentCategory: ['@categoryRetailSupplies']

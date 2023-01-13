@@ -2,51 +2,124 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## UNRELEASED
+## Changes in the Сommerce package versions
+
+- [5.1.0](#510-unreleased)
+- [5.0.0](#500-2022-01-26)
+- [4.2.3](#423)
+- [4.2.2](#422)
+- [4.2.0](#420-2020-01-29)
+- [4.1.0](#410-2020-01-31)
+- [4.0.0](#400-2019-07-31)
+- [3.1.2](#312-2019-02-05)
+- [3.1.0](#310-2019-01-30)
+- [3.0.0](#300-2018-07-27)
+- [1.6.0](#160-2018-01-31)
+- [1.5.0](#150-2017-11-30)
+- [1.4.0](#140-2017-09-29)
+- [1.3.0](#130-2017-07-28)
+- [1.2.0](#120-2017-06-01)
+- [1.1.0](#110-2017-03-31)
+
+
+
+## 5.1.0 (UNRELEASED)
+
+[Show detailed list of changes](incompatibilities-5-1-beta-2.md)
 
 ### Added
 
-#### SEOBundle
-* Enabled `orphanRemoval` option for SEO fields: metaDescriptions, metaKeywords, metaTitles.
+#### CatalogBundle
+* Category. Added sort order management for Products in categories:
+    - New field `category_sort_order` in Product entity & website search index to manage sort orders in Categories
+    - New input fields in Category edition grid in backend
+    - New default ordering behaviour for related frontend grids  (`frontend-product-search-grid` based on Category)
 
 #### CMSBundle
-* Added entity name provider for `Page` entity
+* WYSIWYG editor. 
+   - Added a new control option to add/remove cells and rows in the table.
+   - Added the `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on the storefront. See the [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/) article for more information.
+   
+* Added entity name provider for the `Page` entity.
 
 #### ConsentBundle
-* Added entity name provider for `Consent` entity
+* Added an entity name provider for the `Consent` entity.
+* Added `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on storefront.
+  See article [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/)
+  for more information.
+* Updated WYSIWYG editor to v0.20.1.
+* Added the possibility to define a model and a view for WYSIWYG component types with a function and an object. 
 
 #### ProductBundle
-* `Brand` entity now has its own search result template for the backend search
-* Added `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`
+* The `Brand` entity now has its own search result template for the backend search
+* Added the `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`.
   is disabled and `oro_product.original_file_names_enabled` is enabled.
+  
+* The `relevance_weight` field is added to the website search mapping for the Product entity.
+
+* Product Collections. Added sort order management for Products in Product Collections:
+    - New entity `ProductCollectionSortOrder` and website search field `assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID` have been added to link Products to Segments with a SortOrder to manage sort orders in Product Collections
+    - New default ordering behaviour added for related frontend grids (`frontend-product-search-grid` based on ProductCollection)
 
 #### PromotionBundle
-* Added entity name provider for `Promotion` entity
+* Added entity name provider for the `Promotion` entity.
+
+#### SEOBundle
+* Enabled the `orphanRemoval` option for SEO fields: metaDescriptions, metaKeywords, metaTitles.
+
+
+#### WebCatalogBundle
+* ProductCollection ContentVariant. Added sort order management for Products in categories
+    - New input fields in ProductCollection ContentVariant edition grid
 
 ### Changed
 
+#### CMSBundle
+* Update Grapesjs to 0.19.5 version
+* Changed the base-type component. Changed `modelMixin` to `modelProps` and `viewMixin` to `viewProps`.  An object definition of the editor type model/view was passed.
+    Added `ModelType` and ViewType properties to pass the constructor function
+* Changed component types naming from `text-type-builder.js` to `text-type.js`. Removed `-builder` in file names
+
+#### InventoryBundle
+
+* Inventory status website search index field has been renamed from `inventory_status` to `inv_status`
+  to avoid collision with the field name for the inventory status product attribute
+* Inventory website search index fields (inventory status, low inventory threshold, is upcoming,
+  availability date) have been moved to the separate `inventory` indexation group
+
+#### PricingBundle
+
+* Price index fields have been renamed (pay attention to a dot notation):
+  `minimal_price_CPL_ID_CURRENCY_UNIT` to `minimal_price.CPL_ID_CURRENCY_UNIT`,
+  `minimal_price_CPL_ID_CURRENCY` to `minimal_price.CPL_ID_CURRENCY`,
+  `minimal_price_PRICE_LIST_ID_CURRENCY_UNIT` to `minimal_price.PRICE_LIST_ID_CURRENCY_UNIT`,
+  `minimal_price_PRICE_LIST_ID_CURRENCY` to `minimal_price.PRICE_LIST_ID_CURRENCY`
+  
 #### ProductBundle
+* Product search index field `product_id` has been replaced with `system_entity_id`
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
+* Storefront product autocomplete now includes list of categories with found products  
+* ProcessAutocompleteDataEvent data format has been changed, now it includes full autocomplete data: products, categories, and total count
 
-## 5.0.0
-
-### Changed
-
-#### OroSearchBundle
+#### SearchBundle
 * Changed website search engine configuration: `website_search_engine_dsn` parameter is used instead of `search_engine_name`, `search_engine_host`, `search_engine_port`, `search_engine_index_prefix`, `search_engine_username`, `search_engine_password`, `search_engine_ssl_verification`, `search_engine_ssl_cert`,  `search_engine_ssl_cert_password`, `search_engine_ssl_key`, `search_engine_ssl_key_password`, `website_search_engine_index_prefix`.
 * Separate setup via dedicated DSN-s allows splitting search engine's connections between back-office and storefront.
+
+### Removed
+
+#### CMSBundle
+* Removed `text_with_placeholders`, `wysiwyg_style` layout block types. Use `wysiwyg_content` instead.
+* Removed app module `grapesjs-module.js`.
+
+#### OrderBundle
+* Listener `oro_order.event_listener.frontend_order_datagrid` is removed. Its responsibility is merged 
+  into `oro_order.event_listener.order_datagrid`.
+
+
 
 ## 5.0.0 (2022-01-26)
 [Show detailed list of changes](incompatibilities-5-0.md)
 
-## 5.0.0-rc (2021-12-07)
-[Show detailed list of changes](incompatibilities-5-0-rc.md)
-
-## 5.0.0-beta.2 (2021-09-30)
-[Show detailed list of changes](incompatibilities-5-0-beta-2.md)
-
-## 5.0.0-beta.1 (2021-07-30)
-[Show detailed list of changes](incompatibilities-5-0-beta-1.md)
 
 ### Added
 
@@ -76,9 +149,7 @@ The current file describes significant changes in the code that may affect the u
 #### CMSBundle
 * Created `optimized` layout theme with `landing` extra js build utilized on oro_cms_frontend_page_view page, see article [How to Create Extra JS Build for a Landing Page](https://doc.oroinc.com/master/frontend/storefront/how-to/how-to-create-extra-js-build-for-landing-page/).  
 
-### Removed
-#### ApplicationBundle
-* Removed all deprecated code intended to run multiple Symfony applications on the same codebase.
+
 
 ### Changed
 #### CatalogBundle
@@ -101,21 +172,14 @@ The current file describes significant changes in the code that may affect the u
 #### VisibilityBundle
 * Website search field `visibility_customer_CUSTOMER_ID` has been renamed to `visibility_customer.CUSTOMER_ID`
 
-
-## 5.0.0-alpha.2 (2021-05-28)
-[Show detailed list of changes](incompatibilities-5-0-alpha-2.md)
-
-## 5.0.0-alpha.1 (2021-03-31)
-[Show detailed list of changes](incompatibilities-5-0-alpha-1.md)
-
-### Added
-
-### Changed
 #### WebsiteSearchBundle
 * Changed `oro_website_search.event_listener.orm.fulltext_index_listener` to use `doctrine.dbal.search_connection`
 * Changed `oro_website_search.fulltext_index_manager` to use `doctrine.dbal.search_connection`
 
 ### Removed
+#### ApplicationBundle
+* Removed all deprecated code intended to run multiple Symfony applications on the same codebase.
+
 #### WebsiteSearchBundle
 * Removed `oro_website_search.tests.disable_listeners_for_data_fixtures`, listeners disabled by default during fixtures loading.
 
@@ -157,21 +221,50 @@ The current file describes significant changes in the code that may affect the u
     - `frontend-checkout-line-items-grid`
     - `frontend-single-page-checkout-line-items-grid`.
   For more details on datagrid customizations please see the [datagrid documentation](https://doc.oroinc.com/backend/entities/customize-datagrids/)
+  
+#### PricingBundle
+* `oropricing/js/app/views/quick-add-item-price-view` js module is re-developed and renamed to `oropricing/js/app/views/quick-add-row-price-view`
 
 #### ProductBundle
 * The message queue topic `imageResize` was renamed to `oro_product.image_resize`.
+* Functionality of Quick Order Form is re-developed
+* `oroproduct/js/app/components/quick-add-copy-paste-form-component` js module is re-developed and renamed to `oroproduct/js/app/views/quick-add-copy-paste-form-view`
+* `oroproduct/js/app/views/quick-add-item-view` js module is re-developed and renamed to `oroproduct/js/app/views/quick-add-row-view`
+* `oroproduct/js/app/views/quick-add-view` js module is re-developed and renamed to `oroproduct/js/app/views/quick-order-form-view`
+* js mediator events `autocomplete:productFound` `autocomplete:productNotFound` are replaced with custom DOM events
 
 #### PromotionBundle
 * The service `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` can be used without caching processed DiscountContext. Please refer to `oro_promotion.promotion_executor` and `oro_promotion.shipping_promotion_executor` examples.
 
+#### RFPBundle
+* The name for `/admin/api/requests` REST API resource was changed to `/admin/api/rfqs`.
+* The name for `/admin/api/requestproducts` REST API resource was changed to `/admin/api/rfqproducts`.
+* The name for `/admin/api/requestproductitems` REST API resource was changed to `/admin/api/rfqproductitems`.
+* The name for `/admin/api/requestadditionalnotes` REST API resource was changed to `/admin/api/rfqadditionalnotes`.
+* The name for `/admin/api/rfpcustomerstatuses` REST API resource was changed to `/admin/api/rfqcustomerstatuses`.
+* The name for `/admin/api/rfpinternalstatuses` REST API resource was changed to `/admin/api/rfqinternalstatuses`.
+
 #### ShippingBundle
 * The method `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findByProductsAndUnits()` was renamed to  `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findIndexedByProductsAndUnits()` and now uses a plain DQL query without entity hydration.
+
+#### ShoppingListBundle
+* The shopping list page has been completely redesigned. Removed all layout config, styles, javascript, translations,
+etc. related to the old design.
 
 #### TaxBundle
 * Order tax recalculation check is not used on storefront.
 * Changing the Order currency will no longer cause taxes to be recalculated, because changing the Order currency is not supported.
 
+#### WebsiteSearchBundle
+* `oro_website_search.event.website_search_mapping.configuration` event dispatches
+with `Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` event class
+that have configuration loaded from config files. So event have full access to configuration. 
+* The merge of website search mapping config after the `oro_website_search.event.website_search_mapping.configuration` event
+was dispatched has been removed. At listeners please add full configuration that do not need additional processing with config processor. 
+
 ### Removed
+
+* Removed long-unused `oro_customer_menu` layout import from all bundles.
 
 #### CheckoutBundle
 * Removed duplicated workflow preconditions/conditions checks.
@@ -185,46 +278,10 @@ The current file describes significant changes in the code that may affect the u
 
 #### ProductBundle
 * Method `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProductByProductHolders()` is removed, use `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProduct()` instead.
-
-## 4.2.0-rc (2020-11-30)
-[Show detailed list of changes](incompatibilities-4-2-rc.md)
-
-### Added
-
-#### ShoppingListBundle
-* Added two additional permissions `RENAME_SHOPPING_LIST` and `SET_AS_DEFAULT_SHOPPING_LIST`
-related to the ShoppingList entity management functionality.
-* Added the `oro_shopping_list_frontend_url` twig function which will help to display a link to the shopping list
-in accordance with user permissions.
-
-### Changed
+* Removed the `oro_product.matrix_form_on_shopping_list` option from the system configuration.
 
 #### PricingBundle
-* `oropricing/js/app/views/quick-add-item-price-view` js module is re-developed and renamed to `oropricing/js/app/views/quick-add-row-price-view`
-
-#### ProductBundle
-* Functionality of Quick Order Form is re-developed
-* `oroproduct/js/app/components/quick-add-copy-paste-form-component` js module is re-developed and renamed to `oroproduct/js/app/views/quick-add-copy-paste-form-view`
-* `oroproduct/js/app/views/quick-add-item-view` js module is re-developed and renamed to `oroproduct/js/app/views/quick-add-row-view`
-* `oroproduct/js/app/views/quick-add-view` js module is re-developed and renamed to `oroproduct/js/app/views/quick-order-form-view`
-* js mediator events `autocomplete:productFound` `autocomplete:productNotFound` are replaced with custom DOM events
-
-#### ShoppingListBundle
-* The shopping list page has been completely redesigned. Removed all layout config, styles, javascript, translations,
-etc. related to the old design.
-
-#### WebsiteSearchBundle
-* `oro_website_search.event.website_search_mapping.configuration` event dispatches
-with `Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` event class
-that have configuration loaded from config files. So event have full access to configuration. 
-* The merge of website search mapping config after the `oro_website_search.event.website_search_mapping.configuration` event
-was dispatched has been removed. At listeners please add full configuration that do not need additional processing with config processor. 
-
-### Removed
-* Removed long-unused `oro_customer_menu` layout import from all bundles.
-
-#### ProductBundle
-* Removed the `oro_product.matrix_form_on_shopping_list` option from the system configuration.
+* The `unique_job_slug` option was removed during sending the import price list MQ message. 
 
 #### ShoppingListBundle
 * Method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicate()` is removed, use
@@ -251,68 +308,10 @@ was dispatched has been removed. At listeners please add full configuration that
 * Removed `Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider` and used
 `\Oro\Bundle\SearchBundle\Provider\SearchMappingProvider` class instead of.
 
-## 4.2.0-alpha.3 (2020-07-30)
 
-### Changed
-
-#### RFPBundle
-* The name for `/admin/api/requests` REST API resource was changed to `/admin/api/rfqs`.
-* The name for `/admin/api/requestproducts` REST API resource was changed to `/admin/api/rfqproducts`.
-* The name for `/admin/api/requestproductitems` REST API resource was changed to `/admin/api/rfqproductitems`.
-* The name for `/admin/api/requestadditionalnotes` REST API resource was changed to `/admin/api/rfqadditionalnotes`.
-* The name for `/admin/api/rfpcustomerstatuses` REST API resource was changed to `/admin/api/rfqcustomerstatuses`.
-* The name for `/admin/api/rfpinternalstatuses` REST API resource was changed to `/admin/api/rfqinternalstatuses`.
-
-### Removed
-
-#### PricingBundle
-* The `unique_job_slug` option was removed during sending the import price list MQ message. 
-
-## 4.2.0-alpha.2 (2020-05-29)
-[Show detailed list of changes](incompatibilities-4-2-alpha-2.md)
-
-## 4.2.0-alpha (2020-03-30)
-[Show detailed list of changes](incompatibilities-4-2-alpha.md)
 
 ## 4.1.0 (2020-01-31)
 [Show detailed list of changes](incompatibilities-4-1.md)
-
-### Removed
-
-* `*.class` parameters for all entities were removed from the dependency injection container.
-The entity class names should be used directly, e.g. `'Oro\Bundle\EmailBundle\Entity\Email'`
-instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid config files, placeholders, etc.), and
-`\Oro\Bundle\EmailBundle\Entity\Email::class` instead of `$container->getParameter('oro_email.email.entity.class')`
-(in PHP code).
-
-#### Config component
-* The trait `Oro\Component\Cache\Layout\DataProviderCacheTrait` was removed as it added additional complexity
-  to cacheable layout data providers instead of simplify them.
-* The unneeded class `Oro\Component\Cache\Layout\DataProviderCacheCleaner` was removed.
-
-#### PricingBundle
-* The `getName()` method was removed from `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface`.
-  Use the `alias` attribute of the `oro_pricing.subtotal_provider` DIC tag instead.
-
-#### PromotionBundle
-* The handling of `priority` attribute for `oro_promotion.discount_context_converter`,
-  `oro_promotion.promotion_context_converter` and `oro_promotion.discount_strategy` DIC tags
-  was changed to correspond Symfony recommendations.
-  If you have services with these tags, change the sign of the priority value for them.
-  E.g. `{ name: oro_promotion.discount_context_converter, priority: 100 }` should be changed to
-  `{ name: oro_promotion.discount_context_converter, priority: -100 }`
-
-#### TaxBundle
-* The `getProcessingClassName()` method was removed from `Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface`.
-  Use the `class` attribute of the `oro_tax.tax_mapper` DIC tag instead.
-* The `getName()` method was removed from `Oro\Bundle\TaxBundle\Provider\TaxProviderInterface`.
-  Use the `alias` attribute of the `oro_tax.tax_provider` DIC tag instead.
-
-## 4.1.0-rc (2019-12-10)
-[Show detailed list of changes](incompatibilities-4-1-rc.md)
-
-## 4.1.0-beta (2019-09-30)
-[Show detailed list of changes](incompatibilities-4-1-beta.md)
 
 ### Added
 #### CMSBundle
@@ -344,27 +343,45 @@ It will render slider via widget.
 * The `current_website` request attribute was removed.
   To get the current website from HTTP request `Oro\Bundle\WebsiteBundle\Provider\RequestWebsiteProvider` was added.
   This class loads the website on demand.
+  
+### Removed
+
+* `*.class` parameters for all entities were removed from the dependency injection container.
+The entity class names should be used directly, e.g. `'Oro\Bundle\EmailBundle\Entity\Email'`
+instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid config files, placeholders, etc.), and
+`\Oro\Bundle\EmailBundle\Entity\Email::class` instead of `$container->getParameter('oro_email.email.entity.class')`
+(in PHP code).
+
+#### Config component
+* The trait `Oro\Component\Cache\Layout\DataProviderCacheTrait` was removed as it added additional complexity
+  to cacheable layout data providers instead of simplify them.
+* The unneeded class `Oro\Component\Cache\Layout\DataProviderCacheCleaner` was removed.
+
+#### PricingBundle
+* The `getName()` method was removed from `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface`.
+  Use the `alias` attribute of the `oro_pricing.subtotal_provider` DIC tag instead.
+
+#### PromotionBundle
+* The handling of `priority` attribute for `oro_promotion.discount_context_converter`,
+  `oro_promotion.promotion_context_converter` and `oro_promotion.discount_strategy` DIC tags
+  was changed to correspond Symfony recommendations.
+  If you have services with these tags, change the sign of the priority value for them.
+  E.g. `{ name: oro_promotion.discount_context_converter, priority: 100 }` should be changed to
+  `{ name: oro_promotion.discount_context_converter, priority: -100 }`
+
+#### TaxBundle
+* The `getProcessingClassName()` method was removed from `Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface`.
+  Use the `class` attribute of the `oro_tax.tax_mapper` DIC tag instead.
+* The `getName()` method was removed from `Oro\Bundle\TaxBundle\Provider\TaxProviderInterface`.
+  Use the `alias` attribute of the `oro_tax.tax_provider` DIC tag instead.
+
+
 
 ## 4.0.0 (2019-07-31)
 [Show detailed list of changes](incompatibilities-4-0.md)
 
 ### Changed
-#### ShoppingListBundle
 
-* The `removeProductFromViewAction` in `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController` (`oro_shopping_list_frontend_remove_product` route) now support only `DELETE` method insteadof `POST`.
-
-## 4.0.0-rc (2019-05-29)
-[Show detailed list of changes](incompatibilities-4-0-rc.md)
-
-### Removed
-#### PaymentBundle
- * Event `oro_payment.event.extract_line_item_options` will no longer be dispatched. Implementations of `Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface` will be used instead.
- * Event `oro_payment.event.extract_address_options` will no longer be dispatched. Class `PaymentOrderShippingAddressOptionsProvider` will be used instead.
-
-## 4.0.0-beta (2019-03-28)
-[Show detailed list of changes](incompatibilities-4-0-beta.md)
-
-### Changed
 #### PaymentBundle
 * In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::enableAction` 
  (`/paymentrules/{id}/enable` path)
@@ -379,30 +396,35 @@ It will render slider via widget.
 * In `Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController::deleteAction` 
  (`oro_pricing_price_list_default` route)
  action the request method was changed to DELETE.
-#### SaleBundle
-* In `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController::entryPointAction` 
- (`oro_quote_entry_point` route)
- action the request method was changed to POST.
-#### ShippingBundle
-* In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::enableAction` 
- (`/shippingrules/{id}/enable` path)
- action the request method was changed to POST.
-* In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::disableAction` 
- (`/shippingrules/{id}/disable` path)
- action the request method was changed to POST.
+* Introduced concept of import/export owner. Applied approach with role-based owner-based permissions to the export and import functionality.
+* Option `--email` has become required for `oro:import:price-list:file` command.
+* `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface`:
+ 	- all methods from the removed `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` except `getFilterStorageFieldType` and `getFilterableFieldName` are moved to this interface.
+ 
+ #### SaleBundle
+ * In `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController::entryPointAction` 
+  (`oro_quote_entry_point` route)
+  action the request method was changed to POST.
+ #### ShippingBundle
+ * In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::enableAction` 
+  (`/shippingrules/{id}/enable` path)
+  action the request method was changed to POST.
+ * In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::disableAction` 
+  (`/shippingrules/{id}/disable` path)
+  action the request method was changed to POST.
+ 
 #### ShoppingListBundle
+
+* The `removeProductFromViewAction` in `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController` (`oro_shopping_list_frontend_remove_product` route) now support only `DELETE` method insteadof `POST`.
 * In `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::addProductFromViewAction` 
  (`oro_shopping_list_frontend_add_product` route)
  action the request method was changed to POST.
 
-### Changed
-#### PricingBundle
-* Introduced concept of import/export owner. Applied approach with role-based owner-based permissions to the export and import functionality.
-* Option `--email` has become required for `oro:import:price-list:file` command.
-* `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface`:
-	- all methods from the removed `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` except `getFilterStorageFieldType` and `getFilterableFieldName` are moved to this interface.
-
 ### Removed
+#### PaymentBundle
+ * Event `oro_payment.event.extract_line_item_options` will no longer be dispatched. Implementations of `Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface` will be used instead.
+ * Event `oro_payment.event.extract_address_options` will no longer be dispatched. Class `PaymentOrderShippingAddressOptionsProvider` will be used instead.
+
 #### WebsiteSearchBundle
 * Service `oro_website_search.async_messaging.search_message.processor.job_runner` was removed, that trigger duplicated messages to the message queue with topics:
     - `oro.website.search.indexer.save`
@@ -411,13 +433,9 @@ It will render slider via widget.
     - `oro.website.search.indexer.reindex`
 
 ## 3.1.2 (2019-02-05)
-[Show detailed list of changes](incompatibilities-3-1-2.md)
 
 ## 3.1.0 (2019-01-30)
 [Show detailed list of changes](incompatibilities-3-1.md)
-
-## 3.1.0-rc (2018-11-30)
-[Show detailed list of changes](incompatibilities-3-1-rc.md)
 
 ### Changed
 #### OrderBundle
@@ -428,17 +446,9 @@ It will render slider via widget.
 * Functionality related to the currently active shopping list was moved from `Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager` to `Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager`. The service id for the CurrentShoppingListManager is `oro_shopping_list.manager.current_shopping_list`.
 * Service `oro_shopping_list.shopping_list.manager` was renamed to `oro_shopping_list.manager.shopping_list`.
 
-## 3.1.0-beta (2018-09-27)
-[Show detailed list of changes](incompatibilities-3-1-beta.md)
 
 ## 3.0.0 (2018-07-27)
 [Show detailed list of changes](incompatibilities-3-0.md)
-
-## 3.0.0-rc (2018-05-31)
-[Show detailed list of changes](incompatibilities-3-0-rc.md)
-
-## 3.0.0-beta (2018-03-30)
-[Show detailed list of changes](incompatibilities-3-0-beta.md)
 
 ### Changed
 #### ElasticSearchBundle
@@ -645,7 +655,7 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * Class `Router`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.4.0/src/Oro/Bundle/RedirectBundle/Routing/Router.php "Oro\Bundle\RedirectBundle\Routing\Router")</sup>
     * removed method `setFrontendHelper`, `setMatchedUrlDecisionMaker` method added instead.
 
-## 1.3.0 LTS (2017-07-28)
+## 1.3.0 (2017-07-28)
 [Show detailed list of changes](incompatibilities-1-3.md)
 
 ### Added
@@ -798,6 +808,8 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * class `UPSMethodIdentifierGenerator` is removed in favor of `PrefixedIntegrationIdentifierGenerator`.
 #### WebsiteSearchBundle
 * class `ReindexDemoDataListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/ReindexDemoDataListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataListener")</sup> was removed, `ReindexDemoDataFixturesListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/ReindexDemoDataFixturesListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener")</sup> class is used instead
+
+
 ## 1.2.0 (2017-06-01)
 [Show detailed list of changes](incompatibilities-1-2.md)
 
@@ -859,6 +871,8 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
    - `$unitOfWeight`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L84 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$unitOfWeight")</sup> is removed, use `$upsUnitOfWeight` instead
    - `$country`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L92 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$country")</sup> is removed, us `$upsCountry` instead
    - `$invalidateCacheAt`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L138 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$invalidateCacheAt")</sup> is removed, use `$upsInvalidateCacheAt` instead
+   
+   
 ## 1.1.0 (2017-03-31)
 [Show detailed list of changes](incompatibilities-1-1.md)
 
@@ -953,8 +967,10 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * the construction signature of the [`CustomerExtension`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CustomerBundle/Twig/CustomerExtension.php "Oro\Bundle\CustomerBundle\Twig\CustomerExtension") class was changed and the constructor accepts only one `ContainerInterface $container` parameter.
 #### FlatRateBundle
 * the bundle <sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/FlatRateBundle/ "Oro\Bundle\FlatRateBundle") was renamed to [`FlatRateShippingBundle`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/ "Oro\Bundle\FlatRateShippingBundle") 
+
 #### FrontendBundle
 * the bundle <sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/FrontendBundle "Oro\Bundle\FrontendBundle") moved from the [`OroCommerce`](https://github.com/orocommerce/orocommerce) package into the [`OroCRM Customer Portal`](https://github.com/orocrm/customer-portal) package.
+
 #### FrontendLocalizationBundle
 * the service definition for `oro_frontend_localization.extension.transtation_packages_provider` was updated in a following way: 
     - the class changed to `UPSTransport`

@@ -42,34 +42,50 @@ const ComponentManager = BaseClass.extend({
      * Add components
      */
     applyTypeBuilders() {
-        for (const [id, componentType] of Object.entries(ComponentManager.componentTypes)) {
-            let options = {
-                componentType: id,
-                editor: this.editor
-            };
+        const priority = ([, type]) => {
+            return type.Constructor.priority ?? 300;
+        };
 
-            if (componentType.optionNames) {
-                const builderOptions = _.pick(this.typeBuildersOptions, componentType.optionNames);
+        Object.entries(ComponentManager.componentTypes)
+            .sort(
+                (aType, bType) => priority(aType) - priority(bType)
+            )
+            .forEach(([id, componentType]) => {
+                if (this.getTypeBuilder(id)) {
+                    return;
+                }
 
-                options = {...builderOptions, ...options};
-            }
+                let options = {
+                    componentType: id,
+                    editor: this.editor
+                };
 
-            const ComponentType = componentType.Constructor;
-            const isAllowedContentType = _.isFunction(ComponentType.isAllowed)
-                ? ComponentType.isAllowed(options)
-                : true;
+                if (componentType.optionNames) {
+                    const builderOptions = _.pick(this.typeBuildersOptions, componentType.optionNames);
 
-            if (!isAllowedContentType) {
-                this.editor.DomComponents.removeType(id);
-                this.editor.BlockManager.remove(id);
-                continue;
-            }
+                    options = {...builderOptions, ...options};
+                }
 
-            const instance = new ComponentType(options);
+                const ComponentType = componentType.Constructor;
+                const isAllowedContentType = _.isFunction(ComponentType.isAllowed)
+                    ? ComponentType.isAllowed(options)
+                    : true;
 
-            instance.execute();
-            this.typeBuilders.push(instance);
-        }
+                if (!isAllowedContentType) {
+                    this.editor.Components.removeType(id);
+                    this.editor.BlockManager.remove(id);
+                    return;
+                }
+
+                const instance = new ComponentType(options);
+
+                instance.execute();
+                this.typeBuilders.push(instance);
+            });
+    },
+
+    getTypeBuilder(type) {
+        return this.typeBuilders.find(({componentType}) => componentType === type);
     }
 }, {
     componentTypes: {},

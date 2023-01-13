@@ -1,0 +1,163 @@
+{% block __oro_product_line_item_form__line_item_form_fields_widget %}
+    {% set class_prefix = 'line_item_form_fields' %}
+
+    {% set unitAttr = {
+        'aria-label': 'oro.product.unit.aria_label'|trans
+    } %}
+    {% if skipInputWidgets is not defined %}
+        {% set skipInputWidgets = true %}
+    {% endif %}
+
+    {% if skipInputWidgets %}
+        {% set unitAttr = layout_attr_defaults(unitAttr, {
+            'data-skip-input-widgets': ''
+        }) %}
+    {% endif %}
+
+    {% do block|merge_context({
+        class_prefix: class_prefix
+    }) %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
+    {% if not is_configurable_product_type(product.type) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__qty__current-grid' ~ ' product-item__qty__current-grid--' ~ class_prefix,
+            'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
+            'data-page-component-options': {
+                'singleUnitMode': singleUnitMode,
+                'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+                'configDefaultUnit': defaultUnitCode
+            }|json_encode
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            <div class="form-row {{ class_prefix }}">
+                {{ form_widget(form.quantity, {attr: {
+                    'class': 'product-item__qty-input',
+                    'aria-label': 'oro.product.quantity.aria_label'|trans
+                }}) }}
+            </div>
+            <div class="form-row {{ class_prefix }}">
+                {% if product is iterable %}
+                    {% set currentProduct = product %}
+                {% else %}
+                    {% set currentProduct = {
+                        'id': product.id,
+                        'sku': product.sku,
+                        'name': product.name,
+                        'unit': product.unit,
+                        'product_units': product.product_units
+                    } %}
+                {% endif %}
+
+                {% if currentProduct.product_units is not defined or currentProduct.product_units|length > 1 %}
+                    {% if singleUnitMode %}
+                        {% if currentProduct.product_units is not defined %}
+                            {{ form_widget(form.unit, {attr: unitAttr}) }}
+                        {% else %}
+                            {% if singleUnitModeCodeVisible %}
+                                {% if currentProduct.unit == defaultUnitCode %}
+                                    <div class="product-item__placeholder-label" data-role="unit-label">
+                                        {{- currentProduct.unit|oro_format_product_unit_label -}}
+                                    </div>
+                                    {% set unitAttr = layout_attr_defaults(unitAttr, {
+                                        'data-skip-input-widgets': '',
+                                        'class': 'hidden'
+                                    }) %}
+                                    {{ form_widget(form.unit, {attr: unitAttr}) }}
+                                {% else %}
+                                    {{ form_widget(form.unit, {attr: unitAttr}) }}
+                                {% endif %}
+                            {% else %}
+                                    {{ form_widget(form.unit, {attr: unitAttr}) }}
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        {{ form_widget(form.unit, {attr: unitAttr}) }}
+                    {% endif %}
+                {% else %}
+                    {% if singleUnitModeCodeVisible %}
+                        <div class="product-item__placeholder-label" data-role="unit-label">
+                            {{- currentProduct.unit|oro_format_product_unit_label -}}
+                        </div>
+                    {% endif %}
+                    {% set unitAttr = layout_attr_defaults(unitAttr, {
+                        'data-skip-input-widgets': '',
+                        'class': 'hidden'
+                    }) %}
+                    {{ form_widget(form.unit, {attr: unitAttr}) }}
+                {% endif %}
+            </div>
+            {{ form_widget(form._token) }}
+            {% if render_rest %}
+                {{ form_rest(form) }}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__qty product-item__qty--{{ class_prefix }}',
+        'data-role': 'line-item-form-container'
+    }) %}
+
+    {% if originalForm is defined %}
+        {% do block|merge_context({
+            product: product,
+            form: clone_form_view_with_unique_id(originalForm, 'pid-' ~ product.id)
+        }) %}
+    {% else %}
+        {% do block|merge_context({
+            product: product,
+            originalForm: form,
+            form: clone_form_view_with_unique_id(form, 'pid-' ~ product.id)
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_start_widget %}
+    {% set attr = attr|merge({
+        'data-prevent-submit': ''
+    }) %}
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_form_buttons_widget %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " add-product-from-view-component"
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_buttons_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~options': {
+            'truncateLength': 25,
+            'appendToBody': true,
+            'decoreClass': 'btn--info'
+        }
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block __oro_product_line_item_form__line_item_view_details_widget %}
+    {% if is_configurable_product_type(product.type) and matrixFormType == 'none' %}
+        {% set path = product.view_link|default(path('oro_product_frontend_product_view', {id: product.id})) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " btn btn--info btn--block"
+        }) %}
+
+        {{ parent_block_widget(block) }}
+    {% endif %}
+{% endblock %}

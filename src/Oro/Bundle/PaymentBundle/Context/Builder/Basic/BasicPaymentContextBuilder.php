@@ -10,92 +10,33 @@ use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * Creates PaymentContext with needed parameters
+ * The basic implementation of payment context builder.
  */
 class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
 {
-    /**
-     * @var AddressInterface
-     */
-    private $shippingAddress;
+    private object $sourceEntity;
+    private mixed $sourceEntityIdentifier;
+    private PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory;
+    private array $lineItems = [];
+    private ?AddressInterface $billingAddress = null;
+    private ?AddressInterface $shippingAddress = null;
+    private ?AddressInterface $shippingOrigin = null;
+    private ?string $shippingMethod = null;
+    private ?Customer $customer = null;
+    private ?CustomerUser $customerUser = null;
+    private ?Price $subTotal = null;
+    private ?string $currency = null;
+    private ?Website $website = null;
+    private ?float $total = null;
 
-    /**
-     * @var AddressInterface
-     */
-    private $shippingOrigin;
-
-    /**
-     * @var string
-     */
-    private $currency;
-
-    /**
-     * @var Price
-     */
-    private $subTotal;
-
-    /**
-     * @var object
-     */
-    private $sourceEntity;
-
-    /**
-     * @var string
-     */
-    private $sourceEntityIdentifier;
-
-    /**
-     * @var array
-     */
-    private $lineItems = [];
-
-    /**
-     * @var AddressInterface
-     */
-    private $billingAddress;
-
-    /**
-     * @var string
-     */
-    private $shippingMethod;
-
-    /**
-     * @var Customer
-     */
-    private $customer;
-
-    /**
-     * @var CustomerUser
-     */
-    private $customerUser;
-
-    /**
-     * @var PaymentLineItemCollectionFactoryInterface
-     */
-    private $paymentLineItemCollectionFactory;
-
-    /**
-     * @var Website
-     */
-    private $website;
-
-    /**
-     * @var float
-     */
-    private $total;
-
-    /**
-     * @param object                                    $sourceEntity
-     * @param string                                    $sourceEntityIdentifier
-     * @param PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
-     */
     public function __construct(
-        $sourceEntity,
-        $sourceEntityIdentifier,
+        object $sourceEntity,
+        mixed $sourceEntityIdentifier,
         PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
     ) {
         $this->sourceEntity = $sourceEntity;
@@ -106,7 +47,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function getResult()
+    public function getResult(): PaymentContextInterface
     {
         $params = $this->getMandatoryParams();
         $params += $this->getOptionalParams();
@@ -117,7 +58,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setLineItems(PaymentLineItemCollectionInterface $lineItemCollection)
+    public function setLineItems(PaymentLineItemCollectionInterface $lineItemCollection): static
     {
         $this->lineItems = $lineItemCollection->toArray();
 
@@ -127,7 +68,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function addLineItem(PaymentLineItemInterface $paymentLineItem)
+    public function addLineItem(PaymentLineItemInterface $paymentLineItem): static
     {
         $this->lineItems[] = $paymentLineItem;
 
@@ -137,7 +78,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setBillingAddress(AddressInterface $billingAddress)
+    public function setBillingAddress(?AddressInterface $billingAddress): static
     {
         $this->billingAddress = $billingAddress;
 
@@ -147,7 +88,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setShippingAddress(AddressInterface $shippingAddress)
+    public function setShippingAddress(?AddressInterface $shippingAddress): static
     {
         $this->shippingAddress = $shippingAddress;
 
@@ -157,7 +98,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setShippingOrigin(AddressInterface $shippingOrigin)
+    public function setShippingOrigin(?AddressInterface $shippingOrigin): static
     {
         $this->shippingOrigin = $shippingOrigin;
 
@@ -167,7 +108,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setShippingMethod($shippingMethod)
+    public function setShippingMethod(?string $shippingMethod): static
     {
         $this->shippingMethod = $shippingMethod;
 
@@ -177,7 +118,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCustomer(Customer $customer)
+    public function setCustomer(?Customer $customer): static
     {
         $this->customer = $customer;
 
@@ -187,7 +128,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCustomerUser(CustomerUser $customerUser)
+    public function setCustomerUser(?CustomerUser $customerUser): static
     {
         $this->customerUser = $customerUser;
 
@@ -197,7 +138,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setSubTotal(Price $subTotal)
+    public function setSubTotal(?Price $subTotal): static
     {
         $this->subTotal = $subTotal;
 
@@ -207,7 +148,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCurrency($currency)
+    public function setCurrency(?string $currency): static
     {
         $this->currency = $currency;
 
@@ -217,7 +158,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(?Website $website): static
     {
         $this->website = $website;
 
@@ -227,32 +168,24 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setTotal($total)
+    public function setTotal(?float $total): static
     {
         $this->total = $total;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    private function getMandatoryParams()
+    private function getMandatoryParams(): array
     {
-        $lineItems = $this->paymentLineItemCollectionFactory->createPaymentLineItemCollection($this->lineItems);
-        $params = [
+        return [
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
-            PaymentContext::FIELD_LINE_ITEMS => $lineItems,
+            PaymentContext::FIELD_LINE_ITEMS => $this->paymentLineItemCollectionFactory
+                ->createPaymentLineItemCollection($this->lineItems)
         ];
-
-        return $params;
     }
 
-    /**
-     * @return array
-     */
-    private function getOptionalParams()
+    private function getOptionalParams(): array
     {
         $optionalParams = [
             PaymentContext::FIELD_CURRENCY => $this->currency,

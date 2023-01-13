@@ -17,21 +17,18 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var PriceMatcher */
-    protected $matcher;
-
     /** @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $provider;
+    private $provider;
 
     /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceScopeCriteriaFactory;
+    private $priceScopeCriteriaFactory;
 
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
+    private $logger;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var PriceMatcher */
+    private $matcher;
+
     protected function setUp(): void
     {
         $this->provider = $this->createMock(MatchingPriceProvider::class);
@@ -96,8 +93,7 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
             ->willReturn($scopeCriteria);
 
         $matchedPrices = ['matched', 'prices'];
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('getMatchingPrices')
             ->with($expectedLineItemsArray, $scopeCriteria)
             ->willReturn($matchedPrices);
@@ -201,7 +197,8 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        $this->provider->expects($this->never())->method('getMatchingPrices');
+        $this->provider->expects($this->never())
+            ->method('getMatchingPrices');
 
         $this->matcher->fillMatchingPrices($order, $matchedPrices);
 
@@ -212,11 +209,9 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function orderEventAddMatchedPricesDataProvider()
+    public function orderEventAddMatchedPricesDataProvider(): array
     {
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $invalidProduct = $this->getEntity(Product::class);

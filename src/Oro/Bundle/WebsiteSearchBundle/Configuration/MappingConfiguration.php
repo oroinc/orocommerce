@@ -39,6 +39,9 @@ class MappingConfiguration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
+                ->booleanNode('synonyms_enabled')
+                    ->defaultFalse()
+                ->end()
                 ->arrayNode('fields')
                     ->isRequired()
                     ->requiresAtLeastOneElement()
@@ -55,6 +58,7 @@ class MappingConfiguration implements ConfigurationInterface
                             ->booleanNode('default_search_field')->end()
                             ->booleanNode('fulltext')->defaultTrue()->end()
                             ->scalarNode('organization_id')->defaultNull()->end()
+                            ->scalarNode('group')->defaultValue('main')->end()
                         ->end()
                         ->validate()
                             ->always(

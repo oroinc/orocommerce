@@ -21,13 +21,13 @@ use Oro\Component\Routing\RouteData;
 class SlugEntityGenerator
 {
     private RoutingInformationProviderInterface $routingInformationProvider;
-    private UniqueSlugResolver $slugResolver;
+    private UniqueSlugResolverInterface $slugResolver;
     private RedirectGenerator $redirectGenerator;
     private SluggableUrlDumper $urlCacheDumper;
 
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
-        UniqueSlugResolver $slugResolver,
+        UniqueSlugResolverInterface $slugResolver,
         RedirectGenerator $redirectGenerator,
         SluggableUrlDumper $urlCacheDumper
     ) {
@@ -42,6 +42,17 @@ class SlugEntityGenerator
      * @param bool $generateRedirects
      */
     public function generate(SluggableInterface $entity, $generateRedirects = false)
+    {
+        $this->generateWithoutCacheDump($entity, $generateRedirects);
+
+        $this->urlCacheDumper->dump($entity);
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @param bool $generateRedirects
+     */
+    public function generateWithoutCacheDump(SluggableInterface $entity, $generateRedirects = false)
     {
         $slugUrls = $this->getResolvedSlugUrls($entity);
 
@@ -66,8 +77,6 @@ class SlugEntityGenerator
         // Add new
         $this->addNewSlugs($entity, $slugUrls);
         $this->updateSlugPrototypes($entity, $slugUrls);
-
-        $this->urlCacheDumper->dump($entity);
     }
 
     /**

@@ -6,27 +6,22 @@ use Oro\Bundle\CronBundle\Checker\ScheduleIntervalChecker;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ScheduleFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class ScheduleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $filtrationService;
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtrationService;
 
-    /**
-     * @var ScheduleIntervalChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $scheduleIntervalChecker;
+    /** @var ScheduleIntervalChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $scheduleIntervalChecker;
 
-    /**
-     * @var ScheduleFiltrationService
-     */
-    protected $scheduleFiltrationService;
+    /** @var ScheduleFiltrationService */
+    private $scheduleFiltrationService;
 
     protected function setUp(): void
     {
@@ -78,6 +73,13 @@ class ScheduleFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     public function testFilterIsSkippable()
     {
-        $this->assertServiceSkipped($this->scheduleFiltrationService, $this->filtrationService);
+        $this->filtrationService->expects($this->never())
+            ->method('getFilteredRuleOwners');
+
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $this->scheduleFiltrationService->getFilteredRuleOwners(
+            [$ruleOwner],
+            ['skip_filters' => [get_class($this->scheduleFiltrationService) => true]]
+        );
     }
 }

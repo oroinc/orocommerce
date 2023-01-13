@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -48,12 +48,15 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
             ]);
 
         static::assertNotNull($relation);
-
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $this->getWebsiteForTest()->getId(),
-                'customer' => $customer->getId()
+                'assignments' => [
+                    [
+                        'website'  => $this->getWebsiteForTest()->getId(),
+                        'customer' => $customer->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -79,14 +82,20 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
             $this->getEntityManager()->find(PriceListCustomerFallback::class, $relationId2)
         );
 
-        $this->assertFirstRelationMessageSent();
-
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
-                'customer'      => $this->getReference('customer.level_1.2')->getId(),
-                'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                'assignments' => [
+                    [
+                        'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1_1')->getId()
+                    ],
+                    [
+                        'website'       => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+                        'customer'      => $this->getReference('customer.level_1.2')->getId(),
+                        'customerGroup' => $this->getReference('customer_group.group2')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -154,10 +163,14 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
-            RebuildCombinedPriceListsTopic::getName(),
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                'customer' => $this->getReference('customer.level_1_1')->getId()
+                'assignments' => [
+                    [
+                        'website'  => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1_1')->getId()
+                    ]
+                ]
             ]
         );
     }

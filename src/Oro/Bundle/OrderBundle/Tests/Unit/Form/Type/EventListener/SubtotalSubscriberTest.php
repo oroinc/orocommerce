@@ -19,9 +19,6 @@ use Symfony\Component\Form\FormInterface;
 
 class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var SubtotalSubscriber */
-    private $subscriber;
-
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $totalProvider;
 
@@ -39,6 +36,9 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
 
     /** @var OrderLineItemCurrencyHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $currencyHandler;
+
+    /** @var SubtotalSubscriber */
+    private $subscriber;
 
     protected function setUp(): void
     {
@@ -58,20 +58,6 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->subscriber = new SubtotalSubscriber($totalHelper, $this->priceMatcher, $this->currencyHandler);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->totalProvider,
-            $this->lineItemSubtotalProvider,
-            $this->discountSubtotalProvider,
-            $this->priceMatcher,
-            $this->rateConverter
-        );
-    }
-
     public function testGetSubscribedEvents(): void
     {
         $this->assertEquals(
@@ -85,14 +71,11 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
     public function testOnSubmitEventListenerOnNotOrder(): void
     {
         $event = $this->createMock(FormEvent::class);
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getForm');
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getData');
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
             ->method('setData');
 
         $this->subscriber->onSubmitEventListener($event);
@@ -103,19 +86,17 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         $order = $this->prepareOrder();
         $event = $this->prepareEvent($order);
 
-        $this->lineItemSubtotalProvider
-            ->expects($this->any())
+        $this->lineItemSubtotalProvider->expects($this->any())
             ->method('getSubtotal')
             ->willReturn(new Subtotal());
 
-        $this->totalProvider
-            ->expects($this->once())
+        $this->totalProvider->expects($this->once())
             ->method('enableRecalculation')
             ->willReturnSelf();
 
-        $this->totalProvider
-            ->expects($this->any())
+        $this->totalProvider->expects($this->any())
             ->method('getTotal')
+            ->with($order)
             ->willReturn(new Subtotal());
 
         $this->discountSubtotalProvider->expects($this->any())
@@ -172,7 +153,8 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getSubtotal')
             ->willReturn([$discountSubtotal, $discountSubtotal2]);
 
-        $this->priceMatcher->expects($this->any())->method('addMatchingPrices');
+        $this->priceMatcher->expects($this->any())
+            ->method('addMatchingPrices');
 
         $this->totalProvider->expects($this->any())
             ->method('enableRecalculation')
@@ -183,7 +165,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
             ->willReturn($total);
     }
 
-    protected function prepareOrder(): Order
+    private function prepareOrder(): Order
     {
         $order = new Order();
         $discount1 = new OrderDiscount();
@@ -194,44 +176,30 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
         return $order;
     }
 
-    /**
-     * @param $order
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Component\Form\FormEvent
-     */
-    protected function prepareEvent($order): FormEvent
+    private function prepareEvent(Order $order): FormEvent
     {
-        $event = $this->createMock(FormEvent::class);
         $form = $this->createMock(FormInterface::class);
 
-        $event
-            ->expects($this->once())
+        $event = $this->createMock(FormEvent::class);
+        $event->expects($this->once())
             ->method('getForm')
             ->willReturn($form);
+        $event->expects($this->once())
+            ->method('setData');
 
-        $form
-            ->expects($this->exactly(2))
+        $form->expects($this->exactly(2))
             ->method('has')
             ->willReturn(true);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getData')
             ->willReturn($order);
 
-        $event
-            ->expects($this->once())
-            ->method('setData');
-
         $subForm = $this->createMock(FormInterface::class);
-
-        $subForm
-            ->expects($this->once())
+        $subForm->expects($this->once())
             ->method('submit')
             ->willReturnSelf();
 
-        $form
-            ->expects($this->any())
+        $form->expects($this->any())
             ->method('get')
             ->willReturnMap([
                 ['lineItems', $subForm],

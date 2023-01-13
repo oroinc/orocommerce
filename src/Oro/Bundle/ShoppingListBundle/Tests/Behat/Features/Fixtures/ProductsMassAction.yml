@@ -16,10 +16,16 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localNewCategory']
             - setParentCategory: ['@root_category']
             - addProduct: ['@product1']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unitPrecision{1..3}:
+        unit: '@each'
+        precision: '0'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product{1..3}:
@@ -27,8 +33,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
+        unitPrecisions: [ '@unitPrecision<current()>' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue<current()>']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        primaryUnitPrecision: '@unitPrecision<current()>'

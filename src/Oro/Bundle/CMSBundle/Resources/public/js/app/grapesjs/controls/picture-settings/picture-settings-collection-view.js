@@ -92,7 +92,7 @@ const PictureSettingsCollectionView = BaseCollectionView.extend({
                 title: __('oro.cms.wysiwyg.digital_asset.image.title'),
                 routeName: 'oro_digital_asset_widget_choose_image',
                 loadingElement: this.dialog.loadingElement,
-                onSelect: function(digitalAssetModel) {
+                onSelect(digitalAssetModel) {
                     collection.add({
                         attributes: {
                             srcset: digitalAssetModel.get('previewMetadata').url,

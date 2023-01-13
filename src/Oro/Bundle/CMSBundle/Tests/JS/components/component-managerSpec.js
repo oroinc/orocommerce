@@ -2,8 +2,8 @@ import grapesJS from 'grapesjs';
 import 'jasmine-jquery';
 import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import QuoteTypeBuilder from 'orocms/js/app/grapesjs/type-builders/quote-type-builder';
-import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
+import QuoteTypeBuilder from 'orocms/js/app/grapesjs/types/quote-type';
+import TextTypeBuilder from 'orocms/js/app/grapesjs/types/text';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
 describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
@@ -11,12 +11,17 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
     let componentManager;
     let componentTypes = {};
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
@@ -99,8 +104,8 @@ describe('orocms/js/app/grapesjs/plugins/components/component-manager', () => {
             componentManager.applyTypeBuilders();
             componentManager.dispose();
 
-            expect(componentManager.typeBuilders[0].disposed).toBeTruthy();
-            expect(componentManager.typeBuilders[1].disposed).toBeTruthy();
+            expect(componentManager.typeBuilders[0].disposed).toBe(true);
+            expect(componentManager.typeBuilders[1].disposed).toBe(true);
         });
     });
 });

@@ -55,6 +55,16 @@ layout:
                     blockType: quote_products_container
                     options:
                         quoteProducts: '=data["entity"].getQuoteProducts()'
+                quote_view_line_items_rows:
+                    blockType: quote_products_container
+                    options:
+                        quoteProducts: '=data["entity"].getQuoteProducts()'
+                quote_view_line_items_row_title:
+                    blockType: block
+                quote_view_line_items_row_item:
+                    blockType: container
+                quote_view_line_items_row_item_sku:
+                    blockType: block
                 quote_view_back_link:
                     blockType: link
                     options:
@@ -84,7 +94,11 @@ layout:
                         quote_view_controls_list: ~
                         quote_view_information:
                             quote_shipping_address: ~
-                        quote_view_line_items: ~
+                        quote_view_line_items:
+                            quote_view_line_items_rows:
+                                quote_view_line_items_row_title: ~
+                                quote_view_line_items_row_item:
+                                    quote_view_line_items_row_item_sku: ~
                         quote_view_accept_container:
                             quote_view_back_link: ~
                             quote_view_accept_button: ~

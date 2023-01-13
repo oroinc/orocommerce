@@ -30,7 +30,8 @@ class EmailOwnerProvider implements EmailOwnerProviderInterface
         $qb = $em->createQueryBuilder()
             ->from(Request::class, 'r')
             ->select('r')
-            ->setParameter('email', $email);
+            ->setParameter('email', $email)
+            ->setMaxResults(1);
         if ($em->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform) {
             $qb->where('LOWER(r.email) = LOWER(:email)');
         } else {

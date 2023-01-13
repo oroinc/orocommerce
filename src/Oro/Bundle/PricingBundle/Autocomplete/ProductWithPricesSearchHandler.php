@@ -229,7 +229,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $query = $this->productSearchRepository->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults);
         }
         // Add marker `autocomplete_record_id` to be able to determine query context in listeners
-        $query->addSelect('integer.product_id as autocomplete_record_id');
+        $query->addSelect('integer.system_entity_id as autocomplete_record_id');
         $foundItems = $query->getResult()->getElements();
 
         return array_combine(

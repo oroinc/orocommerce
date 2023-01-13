@@ -9,6 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignIdPlaceholder;
@@ -20,8 +21,10 @@ use Oro\Component\WebCatalog\ContentVariantProviderInterface;
  * Search indexer listener that adds information for each record that was assigned to product collection manually.
  * This information can be used for custom queries by manually added products.
  */
-class ManuallyAddedProductCollectionIndexerListener
+class ManuallyAddedProductCollectionIndexerListener implements WebsiteSearchProductIndexerListenerInterface
 {
+    use ContextTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -63,6 +66,10 @@ class ManuallyAddedProductCollectionIndexerListener
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         if (!$this->isApplicable($event)) {
             return;
         }
@@ -171,7 +178,7 @@ class ManuallyAddedProductCollectionIndexerListener
             $definitionParts = $this->productCollectionDefinitionConverter->getDefinitionParts($item['definition']);
             $manuallyAddedByVariantId[$item['id']] = array_filter(array_map(
                 'intval',
-                explode(',', $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY])
+                explode(',', (string)$definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY])
             ));
         }
 

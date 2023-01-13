@@ -16,6 +16,8 @@ oro_behat_extension:
         - Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context\SearchIndexContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:
@@ -33,6 +35,9 @@ oro_behat_extension:
             type: css
           Visibility To Customer First Group:
             locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
+            type: css
+          Active Tab Visibility To All:
+            locator: 'div.tab-pane.active select[name^="oro_scoped_data_type"]'
             type: css
 
     Short Description English (United States) fallback selector:

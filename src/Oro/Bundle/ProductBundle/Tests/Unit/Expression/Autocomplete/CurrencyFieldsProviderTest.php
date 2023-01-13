@@ -7,10 +7,8 @@ use Oro\Bundle\ProductBundle\Expression\Autocomplete\UnitFieldsProvider;
 
 class CurrencyFieldsProviderTest extends AbstractFieldsProviderTest
 {
-    /**
-     * @var UnitFieldsProvider
-     */
-    protected $provider;
+    /** @var UnitFieldsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -70,10 +68,7 @@ class CurrencyFieldsProviderTest extends AbstractFieldsProviderTest
         $this->assertEquals($expected, $this->provider->getAutocompleteData());
     }
 
-    /**
-     * @return array
-     */
-    public function getFieldsDataProvider()
+    public function getFieldsDataProvider(): array
     {
         return [
             [

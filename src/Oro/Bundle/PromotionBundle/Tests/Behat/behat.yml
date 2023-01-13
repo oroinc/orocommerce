@@ -205,7 +205,7 @@ oro_behat_extension:
       selector: 'input[data-role="coupon-code"]'
 
     IHaveACouponCode:
-      selector: 'button.collapse-view__trigger:contains("I have a Coupon Code")'
+      selector: 'button[data-role="coupon-trigger"]:contains("I have a Coupon Code")'
 
     CouponsList:
       selector: 'ul.coupons-list'

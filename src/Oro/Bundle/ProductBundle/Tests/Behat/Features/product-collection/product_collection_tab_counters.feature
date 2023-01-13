@@ -29,10 +29,10 @@ Feature: Product collection tab counters
     And I click on "Preview Results"
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
+      | PSKU12 | Product 12 |
     And I should see 4 for "All Added" counter
     And I should see 0 for "Excluded" counter
     And I should see 0 for "Manually Added" counter
@@ -47,9 +47,9 @@ Feature: Product collection tab counters
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU7 | Product 7 |
-      | PSKU4 | Product 4 |
       | PSKU3 | Product 3 |
+      | PSKU4 | Product 4 |
+      | PSKU7 | Product 7 |
     And I should see 7 for "All Added" counter
     And I should see 0 for "Excluded" counter
     And I should see 3 for "Manually Added" counter
@@ -65,8 +65,8 @@ Feature: Product collection tab counters
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU4 | Product 4 |
       | PSKU3 | Product 3 |
+      | PSKU4 | Product 4 |
     And I should see 5 for "All Added" counter
     And I should see 2 for "Excluded" counter
     And I should see 1 for "Manually Added" counter
@@ -75,18 +75,19 @@ Feature: Product collection tab counters
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
-      | PSKU7  | Product 7  |
       | PSKU1  | Product 1  |
+      | PSKU7  | Product 7  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
+      | PSKU12 | Product 12 |
+    And I scroll to "ActiveGrid"
     When I filter SKU as contains "1" in "ActiveGrid" grid
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
+      | PSKU12 | Product 12 |
     And I should see 5 for "All Added" counter
     And I should see 2 for "Excluded" counter
     And I should see 1 for "Manually Added" counter
@@ -95,17 +96,17 @@ Feature: Product collection tab counters
     When I click "Excluded"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU4 | Product 4 |
       | PSKU3 | Product 3 |
+      | PSKU4 | Product 4 |
     When I click "Add Button"
     Then I should see "Add Products"
     And I check PSKU11 record in "Add Products Popup" grid
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU11 | Product 11 |
-      | PSKU4  | Product 4  |
       | PSKU3  | Product 3  |
+      | PSKU4  | Product 4  |
+      | PSKU11 | Product 11 |
     And I should see 4 for "All Added" counter
     And I should see 3 for "Excluded" counter
     And I should see 1 for "Manually Added" counter

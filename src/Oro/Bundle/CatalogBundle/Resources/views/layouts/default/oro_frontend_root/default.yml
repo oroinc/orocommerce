@@ -1,0 +1,66 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCatalog/layouts/default/oro_frontend_root/default.html.twig'
+        - '@appendOption':
+            id: page_main
+            optionName: attr.class
+            optionValue: ' offset-none'
+        - '@addTree':
+            items:
+                featured_categories_container:
+                    blockType: container
+                    siblingId: featured_menu_container
+                    options:
+                        attr:
+                            itemscope: ~
+                featured_categories:
+                    blockType: embedded_list
+                    options:
+                        label: 'oro.catalog.featured_categories.label'
+                        item_key: 'category'
+                        items: '=data["featured_categories"].getAll([2,3,4,6,7,8,9,10,11])'
+                        items_data:
+                            categoryProductsCount: '=data["categories_products"].getCountByCategories([2,3,4,6,7,8,9,10,11])'
+                        attr:
+                            itemscope: ~
+                            itemtype: 'http://schema.org/OfferCatalog'
+                featured_category:
+                    blockType: container
+                    options:
+                        attr:
+                            itemprop: 'itemListElement'
+                            itemscope: ~
+                            itemtype: 'http://schema.org/OfferCatalog'
+                featured_category_link:
+                    blockType: container
+                    options:
+                        attr:
+                            itemprop: 'url'
+                featured_category_image:
+                    blockType: block
+                    options:
+                        attr:
+                            itemprop: 'image'
+                featured_category_desc:
+                    blockType: container
+                featured_category_label:
+                    blockType: block
+                    options:
+                        attr:
+                            itemprop: 'name'
+                featured_category_products:
+                    blockType: block
+                featured_category_short_text:
+                    blockType: block
+            tree:
+                page_content:
+                    featured_categories_container:
+                        featured_categories:
+                            featured_category:
+                                featured_category_link:
+                                    featured_category_image: ~
+                                    featured_category_desc:
+                                        featured_category_label: ~
+                                        featured_category_products: ~
+                                featured_category_short_text: ~

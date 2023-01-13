@@ -12,20 +12,13 @@ use Twig\Environment;
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 {
     /** @var ProductFormViewListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new ProductFormViewListener($this->translator);
-    }
-
-    protected function terDown()
-    {
-        unset($this->listener);
-
-        parent::tearDown();
     }
 
     public function testOnProductView()
@@ -53,17 +46,11 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
     }
 
     /**
-     * @param object $entityObject
-     * @param string $labelPrefix
-     * @return \PHPUnit\Framework\MockObject\MockObject|Environment
+     * {@inheritDoc}
      */
-    protected function getEnvironmentForView($entityObject, $labelPrefix)
+    protected function getEnvironmentForView(object $entityObject, string $labelPrefix): Environment
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $env */
-        $env = $this->getMockBuilder(Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $env = $this->createMock(Environment::class);
         $env->expects($this->exactly(4))
             ->method('render')
             ->willReturnMap([

@@ -22,8 +22,8 @@
         <h2 class="customer-info-grid__title">
             {{- 'oro.frontend.rfp.request.sections.general'|trans -}}
         </h2>
-        <div class="grid__row">
-            <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+        <div class="grid">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
                 <table class="customer-info-grid__table">
                     <tbody>
                         <tr class="customer-info-grid__row">
@@ -69,7 +69,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="grid__column grid__column--6 grid__column--no-gutters-r">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
                 <table class="customer-info-grid__table">
                     <tbody>
                         {% if is_granted_view_customer_user(request) and request.customerUser %}
@@ -106,18 +106,32 @@
     {% import '@OroUI/macros.html.twig' as UI %}
     {% if block.vars.visible %}
         {% set attr = attr|merge({
-            class: attr.class|default('') ~ " notes collapse-view expanded"
+            class: attr.class|default('') ~ " notes"
         }) %}
 
-        <div {{ block('block_attributes') }} data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
+        {% set collapseId = 'collapse-'|uniqid %}
+        <div {{ block('block_attributes') }}>
             <h3 class="section-title section-title--size-m">
                 {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
                 <span class="notes__count">({{ requestAdditionalNotes|length }})</span>
-                <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
-                    <span class="collapse-view__trigger-icon fa-caret-right" aria-hidden="true"></span>
-                </span>
+                <button type="button" class="btn btn--plain btn--default-color" title="{{ 'Show less'|trans }}"
+                      data-toggle="collapse"
+                      data-target="{{ '#' ~  collapseId }}"
+                      aria-expanded="false"
+                      aria-controls="{{ collapseId }}"
+                >
+                    <span class="fa-caret-down fa--no-offset" aria-hidden="true" data-icon></span>
+                </button>
             </h3>
-            <div data-collapse-container>
+            <div id="{{ collapseId }}"
+                 class="collapse show"
+                 data-toggle="false"
+                 data-state-id="{{ id }}"
+                 data-trigger-icon-show-class="fa-caret-down"
+                 data-trigger-icon-hide-class="fa-caret-right"
+                 data-collapsed-title="{{ 'Show more'|trans }}"
+                 data-expanded-title="{{ 'Show less'|trans }}"
+            >
                 {% for requestAdditionalNote in requestAdditionalNotes %}
                     <article class="notes__item">
                         <header class="notes__info">
@@ -137,8 +151,6 @@
 {% endblock %}
 
 {% block _rfp_request_view_line_items_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
-    {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
     <div class="customer-line-items">
         <h2 class="customer-line-items__title">
             {{- 'oro.frontend.rfp.request.sections.request_products.label'|trans -}}
@@ -152,67 +164,106 @@
                 </tr>
             </thead>
             {% for requestProduct in requestProducts %}
-                <tbody class="grid-body">
-                {% for requestProductItem in requestProduct.requestProductItems %}
-                    <tr class="grid-row">
-                        {% if loop.first %}
-                            <td class="grid-cell grid-cell--offset-none-mobile primary-cell" colspan="2" rowspan="{{ requestProduct.requestProductItems|length }}">
-                                <h3 class="oro-grid-table__title">
-                                    {% if (requestProduct.product.id is defined) %}
-                                        {{ UI.link({
-                                            path: path('oro_product_frontend_product_view', {'id': requestProduct.product.id}),
-                                            label : requestProduct.product.names|localized_value|trim,
-                                        }) }}
-                                    {% else %}
-                                        {{ requestProduct.product }}
-                                    {% endif %}
-                                </h3>
-
-                                <div class="customer-line-items__row">
-                                    {{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ requestProduct.productSku }}</span>
-                                </div>
-
-                                <div class="grid-row hide-on-desktop hide-on-strict-tablet">
-                                    <div class="grid-head grid-cell--offset-l-none-mobile" aria-hidden="true">
-                                        {{ 'oro.frontend.rfp.request.sections.request_products.columns.quantity.label'|trans }}
-                                    </div>
-                                    <div class="grid-head" aria-hidden="true">
-                                        {{ 'oro.frontend.rfp.request.sections.request_products.columns.price.label'|trans }}
-                                    </div>
-                                </div>
-                            </td>
-                        {% endif %}
-                        <td class="grid-cell grid-cell--offset-l-none-mobile">
-                            {% if oro_is_unit_code_visible(requestProductItem.productUnit.code) %}
-                                {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
-                            {% else %}
-                                {{ requestProductItem.quantity|oro_format_decimal }}
-                            {% endif %}
-                        </td>
-                        <td class="grid-cell">
-                            {% if requestProductItem.price %}
-                                {{ requestProductItem.price|oro_format_price }}
-                            {% else %}
-                                {{ dataGrid.renderBlankCellValue() }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-
-                {% if (requestProduct.comment is not empty) %}
-                    <tr class="grid-row">
-                        <td class="grid-cell notes-cell" colspan="4">
-                            <div class="customer-line-items__row customer-line-items__notes">
-                                {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}:
-                                <span class="customer-line-items__value">{{ requestProduct.comment }}</span>
-                            </div>
-                        </td>
-                    </tr>
-                {% endif %}
-            </tbody>
+                {%- for child in block -%}
+                    <tbody class="grid-body">
+                    {{ block_widget(child, {requestProduct: requestProduct}) }}
+                    </tbody>
+                {%- endfor -%}
             {% endfor %}
         </table>
     </div>
+{% endblock %}
+
+{% block _rfp_request_view_line_item_products_widget %}
+    {% for requestProductItem in requestProduct.requestProductItems %}
+    {% set isFirst = loop.first %}
+    <tr class="grid-row">
+        {% for child in block %}
+            {{ block_widget(child, {requestProduct: requestProduct, requestProductItem: requestProductItem, isFirst: isFirst }) }}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block _rfp_request_view_line_item_product_item_widget %}
+    {% if isFirst %}
+    <td class="grid-cell grid-cell--offset-none-mobile primary-cell" colspan="2" rowspan="{{ requestProduct.requestProductItems|length }}">
+        {%- for child in block -%}
+            {{ block_widget(child, {requestProduct: requestProduct, requestProductItem: requestProductItem, isFirst: isFirst }) }}
+        {% endfor %}
+    </td>
+    {% endif %}
+{% endblock %}
+
+{% block _rfp_request_view_line_item_product_item_title_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <h3 class="oro-grid-table__title">
+        {% if (requestProduct.product.id is defined) %}
+            {{ UI.link({
+                path: path('oro_product_frontend_product_view', {'id': requestProduct.product.id}),
+                label : requestProduct.product.names|localized_value|trim,
+            }) }}
+        {% else %}
+            {{ requestProduct.product }}
+        {% endif %}
+    </h3>
+{% endblock %}
+
+{% block _rfp_request_view_line_item_product_item_attributes_widget %}
+    <div class="customer-line-items__row">
+    {%- for child in block -%}
+        {{ block_widget(child, {requestProduct: requestProduct, requestProductItem: requestProductItem }) }}
+    {% endfor %}
+    </div>
+{% endblock %}
+
+{% block _rfp_request_view_line_item_product_item_attributes_sku_widget %}
+    {{ 'oro.frontend.rfp.requestproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ requestProduct.productSku }}</span>
+{% endblock %}
+
+{% block _rfp_request_view_line_item_product_item_attributes_mobile_widget %}
+    <div class="grid-row hide-on-desktop hide-on-strict-tablet">
+        <div class="grid-head grid-cell--offset-l-none-mobile" aria-hidden="true">
+            {{ 'oro.frontend.rfp.request.sections.request_products.columns.quantity.label'|trans }}
+        </div>
+        <div class="grid-head" aria-hidden="true">
+            {{ 'oro.frontend.rfp.request.sections.request_products.columns.price.label'|trans }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _rfp_request_view_line_item_product_quantity_widget %}
+    <td class="grid-cell grid-cell--offset-l-none-mobile">
+        {% if oro_is_unit_code_visible(requestProductItem.productUnit.code) %}
+            {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
+        {% else %}
+            {{ requestProductItem.quantity|oro_format_decimal }}
+        {% endif %}
+    </td>
+{% endblock %}
+
+{% block _rfp_request_view_line_item_product_price_widget %}
+    {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+    <td class="grid-cell">
+        {% if requestProductItem.price %}
+            {{ requestProductItem.price|oro_format_price }}
+        {% else %}
+            {{ dataGrid.renderBlankCellValue() }}
+        {% endif %}
+    </td>
+{% endblock %}
+
+{% block _rfp_request_view_line_item_comment_widget %}
+    {% if (requestProduct.comment is not empty) %}
+    <tr class="grid-row">
+        <td class="grid-cell notes-cell" colspan="4">
+            <div class="customer-line-items__row customer-line-items__notes">
+                {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}:
+                <span class="customer-line-items__value">{{ requestProduct.comment }}</span>
+            </div>
+        </td>
+    </tr>
+    {% endif %}
 {% endblock %}
 
 {% block _rfp_request_view_notes_container_widget %}

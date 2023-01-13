@@ -1,0 +1,183 @@
+Oro\Bundle\UserBundle\Entity\User:
+    owner_user:
+        username: user_owner
+        email: user_owner2@example.com
+        firstName: SubOrder
+        lastName: Owner
+        password: password
+        salt: salt
+        organization: '@organization'
+        owner: '@business_unit'
+        businessUnits: ['@businessUnit', '@businessUnit2']
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: 'Common Business Unit'
+        organization: '@organization'
+    businessUnit2:
+        name: 'Second Business Unit'
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+    precision3:
+        unit: '@item'
+        precision: '1'
+    precision4:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName1:
+        string: '400-Watt Bulb Work Light'
+    productName2:
+        string: 'iPhone 13'
+    productName3:
+        string: 'iPhone X'
+    productName4:
+        string: 'Round Meeting Table, 30 in. x 30in.'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    categoryTitleLighting:
+        string: 'Lighting Products'
+    categoryTitlePhones:
+        string: 'Phones'
+
+Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
+    isUpcoming1:
+        scalarValue: 1
+    isUpcoming2:
+        scalarValue: 1
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@productName1']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+        isUpcoming: '@isUpcoming1'
+    product2:
+        sku: 'SKU2'
+        type: 'simple'
+        primaryUnitPrecision: '@precision2'
+        __calls:
+            - addName: ['@productName2']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit2'
+        status: 'enabled'
+    product3:
+        sku: 'SKU3'
+        type: 'simple'
+        primaryUnitPrecision: '@precision3'
+        __calls:
+            - addName: ['@productName3']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit2'
+        status: 'enabled'
+        isUpcoming: '@isUpcoming2'
+    product4:
+        sku: 'SKU4'
+        type: 'simple'
+        primaryUnitPrecision: '@precision4'
+        __calls:
+            - addName: ['@productName4']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit2'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationToPriceListDefault1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelationToPriceListDefault2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+    priceRelationToPriceListDefault3:
+        product: '@product3'
+        priceList: '@defaultPriceList'
+    priceRelationToPriceListDefault4:
+        product: '@product4'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPriceUsd1:
+        pricelist: '@defaultPriceList'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPriceEur1:
+        pricelist: '@defaultPriceList'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 5
+        unit: '@item'
+        value: 1.9
+        currency: 'EUR'
+    productPriceUsd2:
+        pricelist: '@defaultPriceList'
+        product: '@product2'
+        productSku: 'SKU2'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPriceEur2:
+        pricelist: '@defaultPriceList'
+        product: '@product2'
+        productSku: 'SKU2'
+        quantity: 5
+        unit: '@item'
+        value: 1.9
+        currency: 'EUR'
+    productPriceUsd3:
+        pricelist: '@defaultPriceList'
+        product: '@product3'
+        productSku: 'SKU3'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPriceEur3:
+        pricelist: '@defaultPriceList'
+        product: '@product3'
+        productSku: 'SKU3'
+        quantity: 5
+        unit: '@item'
+        value: 1.9
+        currency: 'EUR'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        __calls:
+            - addTitle: ['@categoryTitleLighting']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
+            - setOrganization: ['@organization']
+    categoryPhones:
+        __calls:
+            - addTitle: ['@categoryTitlePhones']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product2']
+            - addProduct: ['@product3']
+            - addProduct: ['@product4']
+            - setOrganization: ['@organization']

@@ -52,18 +52,14 @@ services:
         arguments:
             - "@oro_product.storage.product_data_storage"
 
-    Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler:
-        alias: oro_rfp.service.request_update_handler
-
     oro_rfp.service.request_update_handler:
         class: 'Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'
         public: true
-        parent: oro_form.model.update_handler
+        parent: oro_form.update_handler
         calls:
             - [setRepresentativesNotifier, ['@oro_rfp.mailer.request_representatives_notifier']]
-
-    Oro\Bundle\RFPBundle\Storage\OffersDataStorage:
-        alias: oro_rfp.storage.offers_data_storage
+            - [setAuthorizationChecker, ['@security.authorization_checker']]
+            - [setSymfonyRouter, ['@router']]
 
     oro_rfp.storage.offers_data_storage:
         class: 'Oro\Bundle\RFPBundle\Storage\OffersDataStorage'
@@ -73,9 +69,6 @@ services:
     oro_rfp.storage.offers_form_storage:
         class: 'Oro\Bundle\RFPBundle\Storage\OffersFormStorage'
         public: false
-
-    Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider:
-        alias: oro_rfp.layout.data_provider.request_form
 
     oro_rfp.layout.data_provider.request_form:
         class: 'Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider'
@@ -92,9 +85,6 @@ services:
             - '@oro_pricing.layout.data_provider.frontend_product_prices'
         tags:
             - { name: layout.data_provider, alias: oro_rfp_product_prices }
-
-    Oro\Bundle\RFPBundle\Model\RequestManager:
-        alias: oro_rfp.request.manager
 
     oro_rfp.request.manager:
         class: 'Oro\Bundle\RFPBundle\Model\RequestManager'
@@ -116,13 +106,6 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-user-view, method: onCustomerUserView }
             - { name: oro_featuretogle.feature, feature: 'rfp' }
-
-    oro_rfp.layout.decider.rfp_action_decider:
-        class: 'Oro\Bundle\RFPBundle\Layout\Decider\RFPActionDecider'
-        public: true
-        arguments:
-            - '@event_dispatcher'
-            - '@request_stack'
 
     oro_rfp.provider.quote_currency_checker:
        class: Oro\Bundle\RFPBundle\Provider\CurrencyCheckerProvider
@@ -193,14 +176,15 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\RFPBundle\Entity\Request', event: prePersist }
 
-    oro_rfp.event_listener.system_config:
-        parent: oro_user.event_listener.default_user_system_config
-        calls:
-            - [setAlias, ['oro_rfp']]
-            - [setConfigKey, ['default_guest_rfp_owner']]
+    oro_rfp.event_listener.system_config.default_guest_rfp_owner:
+        class: Oro\Bundle\UserBundle\EventListener\DefaultUserSystemConfigListener
+        arguments:
+            - '@oro_user.provider.default_user'
+            - '@doctrine'
+            - 'oro_rfp.default_guest_rfp_owner'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_rfp.default_guest_rfp_owner, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_rfp.twig.request_products:
         class: 'Oro\Bundle\RFPBundle\Twig\RequestProductsExtension'

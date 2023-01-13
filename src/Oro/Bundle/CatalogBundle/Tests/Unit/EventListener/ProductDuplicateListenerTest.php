@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\ProductDuplicateListener;
@@ -12,45 +13,26 @@ use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var string */
+    private $categoryClass = 'stdClass';
 
-    /**
-     * @var string
-     */
-    protected $categoryClass = 'stdClass';
+    /** @var Category */
+    private $category;
 
-    /**
-     * @var Category
-     */
-    protected $category;
+    /** @var ProductDuplicateListener */
+    private $listener;
 
-    /**
-     * @var ProductDuplicateListener
-     */
-    protected $listener;
+    /** @var CategoryRepository */
+    private $categoryRepository;
 
-    /**
-     * @var CategoryRepository
-     */
-    protected $categoryRepository;
+    /** @var ObjectManager */
+    private $objectManager;
 
-    /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
+    /** @var Product */
+    private $product;
 
-    /**
-     * @var Product
-     */
-    protected $product;
-
-    /**
-     * @var Product
-     */
-    protected $sourceProduct;
+    /** @var Product */
+    private $sourceProduct;
 
     protected function setUp(): void
     {
@@ -58,45 +40,30 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
         $this->sourceProduct = new Product();
         $this->category = new Category();
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->categoryRepository = $this
-            ->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->objectManager = $this->createMock(EntityManager::class);
 
         $this->categoryRepository->expects($this->once())
             ->method('findOneByProduct')
-            ->will($this->returnCallback(function () {
-                $args = func_get_args();
-                $product = $args[0];
+            ->willReturnCallback(function (Product $product) {
+                return $this->category->getProducts()->contains($product)
+                    ? $this->category
+                    : null;
+            });
 
-                if ($this->category->getProducts()->contains($product)) {
-                    return $this->category;
-                } else {
-                    return null;
-                }
-            }));
-
-        $this->objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper->expects($this->once())
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with($this->categoryClass)
-            ->will($this->returnValue($this->categoryRepository));
-
-        $this->doctrineHelper->expects($this->any())
+            ->willReturn($this->categoryRepository);
+        $doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->with($this->categoryClass)
-            ->will($this->returnValue($this->objectManager));
+            ->willReturn($this->objectManager);
 
         $this->listener = new ProductDuplicateListener();
         $this->listener->setCategoryClass($this->categoryClass);
-        $this->listener->setDoctrineHelper($this->doctrineHelper);
+        $this->listener->setDoctrineHelper($doctrineHelper);
     }
 
     public function testOnDuplicateAfterSourceProductLinkedWithCategory()

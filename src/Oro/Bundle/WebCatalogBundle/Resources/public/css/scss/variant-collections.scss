@@ -35,8 +35,8 @@
         margin-bottom: 0;
 
         input[type='radio'] {
-            margin-top: -2px;
-            margin-right: 7px;
+            margin-top: -3px;
+            margin-right: 4px;
         }
 
         .content-variant-item-default-label {
@@ -80,7 +80,8 @@
         }
     }
 
-    input {
+    // stylelint-disable-next-line selector-type-no-unknown
+    #{map_get($oro-form-selectors, 'inputs')} {
         width: 100%;
         max-width: $field-width;
     }

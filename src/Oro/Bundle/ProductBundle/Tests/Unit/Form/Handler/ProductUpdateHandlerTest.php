@@ -11,7 +11,10 @@ use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\FormBundle\Form\Handler\FormHandler;
-use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub;
+use Oro\Bundle\FormBundle\Model\Update;
+use Oro\Bundle\FormBundle\Model\UpdateFactory;
+use Oro\Bundle\FormBundle\Provider\CallbackFormTemplateDataProvider;
+use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
 use Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler;
@@ -111,7 +114,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             $this->session,
             $this->router,
             $this->doctrineHelper,
-            new FormHandler($this->eventDispatcher, $this->doctrineHelper)
+            $this->getUpdateFactoryMock()
         );
         $this->handler->setTranslator($this->translator);
         $this->handler->setActionGroupRegistry($this->actionGroupRegistry);
@@ -119,11 +122,40 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setRelatedItemsHandler($this->relatedItemsHandler);
     }
 
+    private function getUpdateFactoryMock(): UpdateFactory|\PHPUnit\Framework\MockObject\MockObject
+    {
+        $updateFactory = $this->createMock(UpdateFactory::class);
+        $updateFactory->expects(self::any())
+            ->method('createUpdate')
+            ->willReturnCallback(function ($entity, $form, $formHandler, $resultProvider) {
+                if ($resultProvider) {
+                    if (\is_callable($resultProvider)) {
+                        $resultProvider = new CallbackFormTemplateDataProvider($resultProvider);
+                    }
+                } else {
+                    $resultProvider = $this->createMock(FormTemplateDataProviderInterface::class);
+                    $resultProvider->expects(self::any())
+                        ->method('getData')
+                        ->willReturnCallback(function ($entity, FormInterface $form) {
+                            return ['form' => $form->createView()];
+                        });
+                }
+
+                return (new Update())->setFormData($entity)
+                    ->setFrom($form)
+                    ->setHandler($formHandler ?? new FormHandler($this->eventDispatcher, $this->doctrineHelper))
+                    ->setTemplateDataProvider($resultProvider);
+            });
+
+        return $updateFactory;
+    }
+
     public function testHandleUpdateFailsWhenFormHandlerIsInvalid(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $this->expectExceptionMessage(
-            'Argument $formHandler should be an object with method "process", stdClass given.'
+            'Oro\Bundle\FormBundle\Model\UpdateHandlerFacade::update(): Argument #4 ($request) '
+            . 'must be of type ?Symfony\Component\HttpFoundation\Request, stdClass given'
         );
 
         $entity = new ProductStub();
@@ -144,11 +176,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $expected = $this->getExpectedSaveData($form, $entity);
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved'
         );
         $this->assertEquals($expected, $result);
@@ -192,17 +222,15 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (FormProcessEvent $event) use ($entity) {
                 $this->assertSame($this->form, $event->getForm());
                 $this->assertSame($entity, $event->getData());
-                
+
                 return $event;
             });
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $this->form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved'
         );
         $this->assertEquals($expected, $result);
@@ -283,6 +311,10 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityManager')
             ->with($entity)
             ->willReturn($em);
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($entity)
@@ -306,11 +338,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $expected = $this->getExpectedSaveData($this->form, $entity);
         $expected['savedId'] = 1;
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $this->form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved'
         );
         $this->assertEquals($expected, $result);
@@ -360,6 +390,10 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifier')
             ->with($entity)
             ->willReturn(1);
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
 
         $this->eventDispatcher->expects($this->exactly(4))
             ->method('dispatch')
@@ -419,11 +453,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn($em);
 
-        $this->handler->handleUpdate(
+        $this->handler->update(
             $entity,
             $this->form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved'
         );
     }
@@ -487,11 +519,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $this->form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved'
         );
         $this->assertEquals($expected, $result);
@@ -526,11 +556,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $this->form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved'
         );
         $this->assertEquals($expected, $result);
@@ -586,17 +614,20 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifier')
             ->with($entity)
             ->willReturn(1);
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
         $expected['savedId'] = 1;
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $this->form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved',
-            $this->getHandlerStub($entity)
+            $this->request,
+            $this->getFormHandlerStub($entity)
         );
         $this->assertEquals($expected, $result);
     }
@@ -618,15 +649,10 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifier')
             ->with($entity)
             ->willReturn(1);
-
-        $saveAndStayRoute = ['route' => 'test_update'];
-        $saveAndCloseRoute = ['route' => 'test_view'];
-        $saveAndStayCallback = function () use ($saveAndStayRoute) {
-            return $saveAndStayRoute;
-        };
-        $saveAndCloseCallback = function () use ($saveAndCloseRoute) {
-            return $saveAndCloseRoute;
-        };
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
 
         $expectedForm = $this->createMock(FormInterface::class);
         $expected = $this->getExpectedSaveData($this->form, $entity);
@@ -634,13 +660,12 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $expected['test'] = 1;
         $expected['form'] = $expectedForm;
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $this->form,
-            $saveAndStayCallback,
-            $saveAndCloseCallback,
             'Saved',
-            $this->getHandlerStub($entity),
+            $this->request,
+            $this->getFormHandlerStub($entity),
             $this->getResultCallback($expectedForm)
         );
         $this->assertTrue($this->resultCallbackInvoked);
@@ -671,27 +696,20 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getFlashBag')
             ->willReturn($flashBag);
 
-        $saveAndStayRoute = ['route' => 'test_update'];
-        $saveAndCloseRoute = ['route' => 'test_view'];
-        $expected = ['redirect' => true];
+        $redirectResponse = new RedirectResponse('ijoj/oij');
         $this->router->expects($this->once())
-            ->method('redirectAfterSave')
-            ->with(
-                array_merge($saveAndStayRoute, ['parameters' => $queryParameters]),
-                array_merge($saveAndCloseRoute, ['parameters' => $queryParameters]),
-                $entity
-            )
-            ->willReturn($expected);
+            ->method('redirect')
+            ->with($entity)
+            ->willReturn($redirectResponse);
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $this->form,
-            $saveAndStayRoute,
-            $saveAndCloseRoute,
             $message,
-            $this->getHandlerStub($entity)
+            $this->request,
+            $this->getFormHandlerStub($entity)
         );
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($redirectResponse, $result);
     }
 
     public function testUpdateWorksWithoutWid(): void
@@ -710,13 +728,19 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getFlashBag')
             ->willReturn($flashBag);
 
-        $redirectResponse = new \stdClass();
+        $redirectResponse = new RedirectResponse('kl');
         $this->router->expects($this->once())
             ->method('redirect')
             ->with($entity)
             ->willReturn($redirectResponse);
 
-        $actual = $this->handler->update($entity, $this->form, $message, $this->getHandlerStub($entity));
+        $actual = $this->handler->update(
+            $entity,
+            $this->form,
+            $message,
+            $this->request,
+            $this->getFormHandlerStub($entity)
+        );
         $this->assertEquals($redirectResponse, $actual);
     }
 
@@ -730,11 +754,21 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifier')
             ->with($entity)
             ->willReturn(1);
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
         $expected['savedId'] = 1;
 
-        $result = $this->handler->update($entity, $this->form, 'Saved', $this->getHandlerStub($entity));
+        $result = $this->handler->update(
+            $entity,
+            $this->form,
+            'Saved',
+            $this->request,
+            $this->getFormHandlerStub($entity)
+        );
         $this->assertEquals($expected, $result);
     }
 
@@ -748,6 +782,10 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifier')
             ->with($entity)
             ->willReturn(1);
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
 
         $expected = $this->getExpectedSaveData($this->form, $entity);
         $expected['savedId'] = 1;
@@ -758,7 +796,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             $entity,
             $this->form,
             'Saved',
-            $this->getHandlerStub($entity),
+            $this->request,
+            $this->getFormHandlerStub($entity),
             $this->getResultCallback($this->form)
         );
         $this->assertEquals($expected, $result);
@@ -800,24 +839,14 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $flashBag = $this->createMock(FlashBagInterface::class);
         $flashBag->expects($this->once())
             ->method('add')
-            ->with('success', $message);
-        $flashBag->expects($this->once())
-            ->method('set')
             ->with('success', $savedAndDuplicatedMessage);
         $this->session->expects($this->any())
             ->method('getFlashBag')
             ->willReturn($flashBag);
 
-        $saveAndStayRoute = ['route' => 'test_update'];
-        $saveAndCloseRoute = ['route' => 'test_view'];
-
         $this->router->expects($this->once())
-            ->method('redirectAfterSave')
-            ->with(
-                array_merge($saveAndStayRoute, ['parameters' => $queryParameters]),
-                array_merge($saveAndCloseRoute, ['parameters' => $queryParameters]),
-                $entity
-            )
+            ->method('redirect')
+            ->with($entity)
             ->willReturn(new RedirectResponse('test_url'));
 
         $this->translator->expects($this->once())
@@ -825,7 +854,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->with('oro.product.controller.product.saved_and_duplicated.message')
             ->willReturn($savedAndDuplicatedMessage);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ActionGroup $actionGroup */
         $actionGroup = $this->createMock(ActionGroup::class);
 
         $actionGroup->expects($this->once())
@@ -838,11 +866,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_product_duplicate')
             ->willReturn($actionGroup);
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $form,
-            $saveAndStayRoute,
-            $saveAndCloseRoute,
             $message
         );
 
@@ -860,53 +886,10 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $expected = $this->assertSaveData($form, $entity);
 
-        $result = $this->handler->handleUpdate(
+        $result = $this->handler->update(
             $entity,
             $form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
             'Saved'
-        );
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testSaveHandler(): void
-    {
-        $this->request->initialize(['_wid' => 'WID']);
-
-        $entity = $this->getProduct(0);
-
-        $form = $this->createMock(Form::class);
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                ['appendRelated', $this->getSubForm()],
-                ['removeRelated', $this->getSubForm()],
-            ]);
-
-        $handler = $this->createMock(HandlerStub::class);
-        $handler->expects($this->once())
-            ->method('process')
-            ->with($entity)
-            ->willReturn(true);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getSingleEntityIdentifier')
-            ->with($entity)
-            ->willReturn(1);
-
-        $expected = $this->assertSaveData($form, $entity);
-        $expected['savedId'] = 1;
-
-        $this->relatedItemsHandler->expects($this->never())
-            ->method('process');
-
-        $result = $this->handler->handleUpdate(
-            $entity,
-            $form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
-            'Saved',
-            $handler
         );
         $this->assertEquals($expected, $result);
     }
@@ -928,19 +911,24 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             $this->session,
             $this->router,
             $this->doctrineHelper,
-            $this->getFormHandlerStub($entity)
+            $this->getUpdateFactoryMock()
         );
         $handler->setRelatedItemsHandler($this->relatedItemsHandler);
 
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
-        $result = $handler->handleUpdate(
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
+
+        $result = $handler->update(
             $entity,
             $form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
-            'Saved'
+            'Saved',
+            $this->request,
+            $this->getFormHandlerStub($entity)
         );
         $this->assertEquals($expected, $result);
     }
@@ -948,9 +936,15 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
     public function testSaveHandlerRemoveRelatedProducts(): void
     {
         $this->request->initialize(['_wid' => 'WID']);
+        $this->request->setMethod('POST');
 
         $entity = $this->getProduct(0);
         $relatedEntity = $this->getProduct(0);
+
+        $this->doctrineHelper->expects(self::once())
+            ->method('isManageableEntity')
+            ->with($entity)
+            ->willReturn(true);
 
         $appendRelatedProductsField = $this->getSubForm();
         $removeRelatedProductsField = $this->getSubForm([$relatedEntity]);
@@ -965,17 +959,18 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             $this->session,
             $this->router,
             $this->doctrineHelper,
-            $this->getFormHandlerStub($entity)
+            $this->getUpdateFactoryMock()
         );
         $handler->setRelatedItemsHandler($this->relatedItemsHandler);
 
-        $result = $handler->handleUpdate(
+        $result = $handler->update(
             $entity,
             $form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
-            'Saved'
+            'Saved',
+            $this->request,
+            $this->getFormHandlerStub($entity)
         );
+
         $this->assertEquals($expected, $result);
     }
 
@@ -1009,19 +1004,19 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             $this->session,
             $this->router,
             $this->doctrineHelper,
-            $this->getFormHandlerStub($entity)
+            $this->getUpdateFactoryMock()
         );
         $handler->setRelatedItemsHandler($this->relatedItemsHandler);
         $handler->setTranslator($this->translator);
 
         $expected = $this->assertSaveData($form, $entity);
 
-        $result = $handler->handleUpdate(
+        $result = $handler->update(
             $entity,
             $form,
-            ['route' => 'test_update'],
-            ['route' => 'test_view'],
-            'Saved'
+            'Saved',
+            $this->request,
+            $this->getFormHandlerStub($entity)
         );
         $this->assertEquals($expected, $result);
     }
@@ -1058,17 +1053,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             $this->resultCallbackInvoked = true;
             return ['form' => $expectedForm, 'test' => 1];
         };
-    }
-
-    private function getHandlerStub(Product $entity): HandlerStub
-    {
-        $handler = $this->createMock(HandlerStub::class);
-        $handler->expects($this->once())
-            ->method('process')
-            ->with($entity)
-            ->willReturn(true);
-
-        return $handler;
     }
 
     private function getFormHandlerStub(Product $entity): FormHandler

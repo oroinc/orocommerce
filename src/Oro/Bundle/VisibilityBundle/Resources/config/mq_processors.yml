@@ -1,0 +1,43 @@
+services:
+    _instanceof:
+        Oro\Component\MessageQueue\Consumption\MessageProcessorInterface:
+            tags:
+                - { name: oro_message_queue.client.message_processor }
+
+        Psr\Log\LoggerAwareInterface:
+            calls:
+                - [setLogger, ['@logger']]
+            tags:
+                - { name: monolog.logger, channel: oro_visibility }
+
+    oro_visibility.async.visibility.product_processor:
+        class: Oro\Bundle\VisibilityBundle\Async\Visibility\ProductProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_visibility.visibility.cache.product.cache_builder'
+
+    oro_visibility.async.visibility.product_visibility_processor:
+        class: Oro\Bundle\VisibilityBundle\Async\Visibility\ProductVisibilityProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_visibility.visibility.cache.product.cache_builder'
+
+    oro_visibility.async.visibility.category_visibility_processor:
+        class: Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_visibility.visibility.cache.product.category.cache_builder'
+
+    oro_visibility.async.category_processor:
+        class: Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_visibility.visibility.cache.product.category.cache_builder'
+            - '@oro_scope.scope_manager'
+
+    oro_visibility.async.visibility.customer_processor:
+        class: Oro\Bundle\VisibilityBundle\Async\Visibility\CustomerProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_website_search.driver.customer_partial_update_driver'

@@ -107,6 +107,15 @@ services:
         arguments:
             - '@.inner'
 
+    oro_promotion.rule_filtration.sub_entities_promotions_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\SubOrdersPromotionsFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 5
+        public: false
+        arguments:
+            - '@.inner'
+            - '@oro_promotion.promotion.context_data_converter_registry'
+
     oro_promotion.promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
         public: false
@@ -115,6 +124,7 @@ services:
             - '@oro_promotion.rule_filtration.service'
             - '@oro_promotion.promotion.context_data_converter_registry'
             - '@oro_promotion.mapper.applied_promotion'
+            - '@oro_security.token_accessor'
 
     oro_promotion.shipping_promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
@@ -123,6 +133,7 @@ services:
             - '@oro_promotion.rule_filtration.service'
             - '@oro_promotion.shipping_promotion.context_data_converter_registry'
             - '@oro_promotion.mapper.applied_promotion'
+            - '@oro_security.token_accessor'
 
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
@@ -300,21 +311,19 @@ services:
             - { name: form.type, alias: oro_promotion_shipping_discount_options }
 
     oro_promotion.form.autocomplete.promotion.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\PromotionBundle\Entity\Promotion'
-            - ["rule.name"]
+            - ['rule.name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PromotionBundle\Form\Type\PromotionType, acl_resource: oro_promotion_view }
 
     oro_promotion.form.autocomplete.promotion_use_coupons.search_handler:
         class: Oro\Bundle\PromotionBundle\Form\Autocomplete\PromotionsUseCouponsSearchHandler
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
             - 'Oro\Bundle\PromotionBundle\Entity\Promotion'
-            - ["rule.name"]
+            - ['rule.name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_promotion_use_coupons, acl_resource: oro_promotion_view }
 
@@ -400,12 +409,6 @@ services:
     oro_promotion.provider.applied_discounts_provider:
         class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider
         public: false
-
-    oro_promotion.coupon_entity_name_provider:
-        class: Oro\Bundle\PromotionBundle\Provider\CouponEntityNameProvider
-        public: false
-        tags:
-            - { name: oro_entity.name_provider, priority: 100 }
 
     oro_promotion.promotion_entity_name_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionEntityNameProvider
@@ -644,7 +647,7 @@ services:
         calls:
             - [setCouponApplicabilityQueryBuilderModifier, ['@oro_promotion.model.coupon_applicability_query_builder_modifier']]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: 'oro_coupon', acl_resource: 'oro_promotion_coupon_view' }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_coupon, acl_resource: oro_promotion_coupon_view }
 
     oro_promotion.event_listener.select_coupon_grid_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\SelectCouponGridListener
@@ -795,6 +798,12 @@ services:
             - '@doctrine'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PromotionBundle\Entity\AppliedCoupon', event: postPersist }
+
+    oro_promotion.factory.multishipping.checkout_factory_decorator:
+        class: Oro\Bundle\PromotionBundle\Factory\MultiShipping\CheckoutFactoryDecorator
+        decorates: oro_checkout.factory.multi_shipping.checkout_factory
+        arguments:
+            - '@.inner'
 
     oro_promotion.mapper.order_mapper_decorator:
         class: Oro\Bundle\PromotionBundle\Mapper\OrderMapperDecorator

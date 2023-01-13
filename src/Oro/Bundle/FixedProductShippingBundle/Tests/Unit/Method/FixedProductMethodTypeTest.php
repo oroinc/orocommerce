@@ -18,20 +18,14 @@ class FixedProductMethodTypeTest extends TestCase
 
     public const LABEL = 'Fixed Product';
 
-    /**
-     * @var FixedProductMethodType
-     */
-    protected FixedProductMethodType $fixedProductType;
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $roundingService;
 
-    /**
-     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected RoundingServiceInterface $roundingService;
+    /** @var ShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingCostProvider;
 
-    /**
-     * @var ShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected ShippingCostProvider $shippingCostProvider;
+    /** @var FixedProductMethodType */
+    private $fixedProductType;
 
     protected function setUp(): void
     {
@@ -76,10 +70,6 @@ class FixedProductMethodTypeTest extends TestCase
     }
 
     /**
-     * @param array $options
-     * @param float $shippingCost
-     * @param float $expectedPrice
-     *
      * @dataProvider ruleConfigProvider
      */
     public function testCalculatePrice(array $options, float $shippingCost, float $expectedPrice): void
@@ -107,9 +97,6 @@ class FixedProductMethodTypeTest extends TestCase
         $this->assertEquals($context->getCurrency(), $price->getCurrency());
     }
 
-    /**
-     * @return array
-     */
     public function ruleConfigProvider(): array
     {
         return [

@@ -1,0 +1,5 @@
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+            full: [ label ]
+            short: [ label ]

@@ -29,9 +29,6 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressSecurityProvider */
     private $orderAddressSecurityProvider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
@@ -50,7 +47,6 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setRequired')
@@ -110,12 +106,8 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param OrderAddress|null $defaultData
-     * @param array $submittedData
-     * @param OrderAddress|null $expectedData
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit(OrderAddress $defaultData, array $submittedData, OrderAddress $expectedData)
     {
         $form = $this->factory->create(OrderAddressType::class, $defaultData, [
             'object' => new Order(),
@@ -132,10 +124,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'new order address' => [
@@ -168,10 +157,9 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $formType = new OrderAddressType($this->orderAddressSecurityProvider);
-        /** @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject $addressManager */
         $addressManager = $this->createMock(OrderAddressManager::class);
         $addressManager->expects($this->any())
             ->method('getGroupedAddresses')
@@ -204,17 +192,13 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param string|null $label
-     * @param string|null $firstName
-     * @param string|null $lastName
-     * @param string|null $phone
-     * @param string|null $street
-     *
-     * @return OrderAddress
-     */
-    private function getOrderAddress($label = null, $firstName = null, $lastName = null, $phone = null, $street = null)
-    {
+    private function getOrderAddress(
+        ?string $label = null,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        ?string $phone = null,
+        ?string $street = null
+    ): OrderAddress {
         $orderAddress = new OrderAddress();
         $orderAddress->setLabel($label);
         $orderAddress->setFirstName($firstName);

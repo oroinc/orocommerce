@@ -14,13 +14,14 @@ define(
                 widgetManager.getWidgetInstance(
                     options._wid,
                     function(widget) {
-                        if (!options.message) {
-                            options.message = __('oro_frontend.widget_form_component.save_flash_success');
+                        if (_.isEmpty(options.messages)) {
+                            options.messages = [__('oro_frontend.widget_form_component.save_flash_success')];
                         }
 
-                        _.each(options.messages, function(message) {
-                            messenger.notificationFlashMessage('success', message);
-                        }, this);
+                        options.messages.forEach((message, index) => {
+                            const messageOptions = index === 0 ? {namespace: 'shopping_list'} : {};
+                            messenger.notificationFlashMessage('success', message, messageOptions);
+                        });
 
                         mediator.trigger('widget_success:' + widget.getAlias(), options);
                         mediator.trigger('widget_success:' + widget.getWid(), options);

@@ -1,0 +1,42 @@
+/* @theme: default; */
+$shopping-lists-popup-width: 100% !default;
+$shopping-lists-popup-font-family: $base-font !default;
+
+$shopping-lists-popup-content-display: block !default;
+$shopping-lists-popup-content-overflow-y: auto !default;
+$shopping-lists-popup-content-max-height: 420px !default;
+
+$shopping-lists-popup-item-display: block !default;
+$shopping-lists-popup-item-border-top: 1px solid get-color('additional', 'light') !default;
+
+$shopping-lists-popup-list-display: inline-block !default;
+$shopping-lists-popup-list-vertical-align: top !default;
+$shopping-lists-popup-list-width: 54% !default;
+$shopping-lists-popup-list-width-mobile: 40% !default;
+$shopping-lists-popup-list-inner-offset: 15px !default;
+
+$shopping-lists-popup-quantity-width: 46% !default;
+$shopping-lists-popup-quantity-width-mobile: 60% !default;
+$shopping-lists-popup-quantity-inner-offset: 10px 0 10px 15px !default;
+$shopping-lists-popup-quantity-inner-offset-mobile: 10px 0 10px 5px !default;
+
+$shopping-lists-popup-headline-background: get-color('additional', 'light') !default;
+$shopping-lists-popup-headline-text-align: left !default;
+
+$shopping-lists-popup-headline-item-text-border: 0 !default;
+
+$shopping-lists-popup-headline-list-text-inner-offset: 8px 15px !default;
+
+$shopping-lists-popup-footer-background: get-color('additional', 'light') !default;
+
+$shopping-lists-popup-footer-list-inner-offset: 4px 5px !default;
+$shopping-lists-popup-footer-list-vertical-align: middle !default;
+
+$shopping-lists-popup-footer-list-inner-offset-mobile: 4px 0 4px 7px !default;
+$shopping-lists-popup-footer-list-width-mobile: 40% !default;
+
+$shopping-lists-popup-footer-quantity-inner-offset: 4px 0 4px 15px !default;
+$shopping-lists-popup-footer-quantity-vertical-align: middle !default;
+
+$shopping-lists-popup-footer-quantity-width-mobile: 60% !default;
+$shopping-lists-popup-footer-quantity-inner-offset-mobile: 4px 0 4px 6px !default;

@@ -19,6 +19,7 @@ use Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
@@ -28,33 +29,30 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
     private const CONTENT_VARIANT_OTHER_TYPE_ID = 242;
 
     /** @var RequestContentVariantHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private RequestContentVariantHandler $requestHandler;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private ManagerRegistry $managerRegistry;
+    private $requestHandler;
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private ConfigManager $configManager;
+    private $configManager;
 
-    private ProductCollectionContentVariantFilteringEventListener $listener;
+    /** @var ProductCollectionContentVariantFilteringEventListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->requestHandler = $this->createMock(RequestContentVariantHandler::class);
-        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
-        $this->listener = new ProductCollectionContentVariantFilteringEventListener(
-            $this->requestHandler,
-            $this->managerRegistry,
-            $this->configManager
-        );
-
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->managerRegistry
-            ->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(ContentVariant::class)
             ->willReturn($entityManager);
+
+        $this->requestHandler = $this->createMock(RequestContentVariantHandler::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->listener = new ProductCollectionContentVariantFilteringEventListener(
+            $this->requestHandler,
+            $doctrine,
+            $this->configManager
+        );
 
         $contentVariant = (new ContentVariantStub())
             ->setId(self::CONTENT_VARIANT_ID)
@@ -62,15 +60,12 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
         $contentVariantOfOtherType = (new ContentVariantStub())
             ->setId(self::CONTENT_VARIANT_OTHER_TYPE_ID)
             ->setType('sample_type');
-        $entityManager
-            ->expects($this->any())
+        $entityManager->expects($this->any())
             ->method('find')
-            ->willReturnMap(
-                [
-                    [ContentVariant::class, self::CONTENT_VARIANT_ID, $contentVariant],
-                    [ContentVariant::class, self::CONTENT_VARIANT_OTHER_TYPE_ID, $contentVariantOfOtherType],
-                ]
-            );
+            ->willReturnMap([
+                [ContentVariant::class, self::CONTENT_VARIANT_ID, $contentVariant],
+                [ContentVariant::class, self::CONTENT_VARIANT_OTHER_TYPE_ID, $contentVariantOfOtherType],
+            ]);
     }
 
     /**
@@ -231,11 +226,9 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
 
     public function testOnBuildAfterWhenDatasourceIsNotSearch()
     {
-        /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $configuration */
         $configuration = $this->createMock(DatagridConfiguration::class);
         $parameterBag = new ParameterBag([]);
         $grid = new Datagrid('name', $configuration, $parameterBag);
-        /** @var DatasourceInterface $datasource */
         $datasource = $this->createMock(DatasourceInterface::class);
         $grid->setDatasource($datasource);
         $configuration->expects($this->never())
@@ -250,7 +243,6 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
         $configuration = DatagridConfiguration::create([]);
         $parameterBag = new ParameterBag([]);
         $grid = new Datagrid('name', $configuration, $parameterBag);
-        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(SearchDatasource::class);
         $grid->setDatasource($datasource);
         $datasource->expects($this->never())
@@ -286,7 +278,6 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
                 [Criteria::expr()->eq(sprintf('integer.assigned_to.variant_%s', $contentVariantId), 1)],
                 [Criteria::expr()->gte('integer.is_variant', 0)]
             );
-        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(SearchDatasource::class);
         $datasource->expects($this->atLeastOnce())
             ->method('getSearchQuery')
@@ -335,7 +326,6 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
                     Criteria::expr()->eq('integer.is_variant', 0)
                 )]
             );
-        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(SearchDatasource::class);
         $datasource->expects($this->atLeastOnce())
             ->method('getSearchQuery')
@@ -353,5 +343,59 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
                 ProductCollectionContentVariantFilteringEventListener::VIEW_LINK_PARAMS_CONFIG_PATH
             )
         );
+    }
+
+    /**
+     * @dataProvider onSearchResultBeforeDataProvider
+     */
+    public function testOnSearchResultBefore(array $parameters): void
+    {
+        $configurationMock = $this->createMock(DatagridConfiguration::class);
+        $configurationMock->expects($this->once())
+            ->method('offsetGetByPath')
+            ->with(ProductCollectionContentVariantFilteringEventListener::CONTENT_VARIANT_ID_CONFIG_PATH)
+            ->willReturn($parameters['contentVariantId']);
+
+        $searchQuery = $this->createMock(SearchQueryInterface::class);
+        if ($parameters['contentVariantId']) {
+            $searchQuery->expects($this->once())
+                ->method('getSortOrder')
+                ->willReturn(empty($parameters['sortBy'])? null : 'ASC');
+
+            if (empty($parameters['sortBy'])) {
+                $searchQuery->expects($this->once())
+                    ->method('setOrderBy')
+                    ->with('decimal.assigned_to_sort_order.variant_' . $parameters['contentVariantId']);
+            }
+        }
+
+        $grid = new Datagrid('name', $configurationMock, new ParameterBag([]));
+        $event = new SearchResultBefore($grid, $searchQuery);
+
+        $this->listener->onSearchResultBefore($event);
+    }
+
+    public function onSearchResultBeforeDataProvider(): array
+    {
+        return [
+            'without variant' => [
+                'parameters' => [
+                    'contentVariantId' => null,
+                    'sortBy' => []
+                ]
+            ],
+            'with sort already defined' => [
+                'parameters' => [
+                    'contentVariantId' => 100,
+                    'sortBy' => ['text.sku', 'ASC']
+                ]
+            ],
+            'without sort predefined' => [
+                'parameters' => [
+                    'contentVariantId' => 100,
+                    'sortBy' => []
+                ]
+            ]
+        ];
     }
 }

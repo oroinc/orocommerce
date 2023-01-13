@@ -1,0 +1,10 @@
+/* @theme: default; */
+
+$shopping-list-grid-effect-background-color: rgba(255 255 255 / 0%) !default;
+$shopping-list-grid-effect-transition: background-color 1s !default;
+$shopping-list-grid-effect-highlight: get-color('ui', 'warning') !default;
+$shopping-list-grid-effect-success: get-color('ui', 'success') !default;
+$shopping-list-grid-effect-error: get-color('ui', 'error') !default;
+$shopping-list-grid-effect-error-dark: get-color('ui', 'error-dark') !default;
+$shopping-list-grid-effect-warning: get-color('ui', 'warning') !default;
+$shopping-list-grid-effect-warning-dark: get-color('ui', 'warning-dark') !default;

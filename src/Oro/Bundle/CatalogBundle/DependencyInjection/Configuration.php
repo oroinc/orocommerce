@@ -13,6 +13,7 @@ class Configuration implements ConfigurationInterface
     const DIRECT_URL_PREFIX = 'category_direct_url_prefix';
     const ALL_PRODUCTS_PAGE_ENABLED = 'all_products_page_enabled';
     const CATEGORY_IMAGE_PLACEHOLDER = 'category_image_placeholder';
+    const SEARCH_AUTOCOMPLETE_MAX_CATEGORIES = 'search_autocomplete_max_categories';
 
     /**
      * {@inheritDoc}
@@ -29,6 +30,7 @@ class Configuration implements ConfigurationInterface
                 self::DIRECT_URL_PREFIX => ['value' => ''],
                 self::ALL_PRODUCTS_PAGE_ENABLED => ['type' => 'boolean', 'value' => false],
                 self::CATEGORY_IMAGE_PLACEHOLDER => ['value' => null],
+                static::SEARCH_AUTOCOMPLETE_MAX_CATEGORIES => ['type' => 'integer', 'value' => 2],
             ]
         );
 

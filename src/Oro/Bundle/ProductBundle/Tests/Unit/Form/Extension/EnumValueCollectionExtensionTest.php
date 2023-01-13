@@ -20,13 +20,10 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const ENUM_FIELD_NAME = 'enumField';
+    private const ENUM_FIELD_NAME = 'enumField';
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
-
-    /** @var EnumValueCollectionExtension */
-    private $extension;
 
     /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
@@ -40,24 +37,16 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var EnumValueCollectionExtension */
+    private $extension;
+
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->form = $this->createMock(FormInterface::class);
         $this->configInterface = $this->createMock(FormConfigInterface::class);
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->extension = new EnumValueCollectionExtension($this->doctrineHelper, $this->configManager);
     }
@@ -157,11 +146,7 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->productRepository->expects($this->once())
             ->method('findParentSkusByAttributeOptions')
-            ->with(
-                Product::TYPE_SIMPLE,
-                'enumFieldName',
-                [1]
-            )
+            ->with(Product::TYPE_SIMPLE, 'enumFieldName', [1])
             ->willReturn([]);
 
         $attributeConfigProvider = $this->getAttributeProvider();
@@ -222,7 +207,7 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider buildViewProvider
      */
-    public function testFinishView(array $skus, $expectedTooltip)
+    public function testFinishView(array $skus, string $expectedTooltip)
     {
         $childView = new FormView();
         $childView->vars['value']['id'] = 1;
@@ -245,11 +230,7 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->productRepository->expects($this->once())
             ->method('findParentSkusByAttributeOptions')
-            ->with(
-                Product::TYPE_SIMPLE,
-                self::ENUM_FIELD_NAME,
-                [1]
-            )
+            ->with(Product::TYPE_SIMPLE, self::ENUM_FIELD_NAME, [1])
             ->willReturn([1 => $skus]);
 
         $attributeConfigProvider = $this->getAttributeProvider();
@@ -278,15 +259,9 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($childView->vars['allow_delete']);
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
-     */
-    private function getAttributeProvider()
+    private function getAttributeProvider(): ConfigProvider|\PHPUnit\Framework\MockObject\MockObject
     {
-        $attributeConfigProvider = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $attributeConfigProvider = $this->createMock(ConfigProvider::class);
         $this->configManager->expects($this->once())
             ->method('getProvider')
             ->with('attribute')
@@ -295,10 +270,7 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         return $attributeConfigProvider;
     }
 
-    /**
-     * @return array
-     */
-    public function buildViewProvider()
+    public function buildViewProvider(): array
     {
         return [
             '3 config products sku' => [
@@ -328,12 +300,11 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    private function prepareForm()
+    private function prepareForm(): void
     {
         $this->form->expects($this->once())
             ->method('getData')
             ->willReturn([['id' => 1]]);
-
         $this->form->expects($this->once())
             ->method('getConfig')
             ->willReturn($this->configInterface);

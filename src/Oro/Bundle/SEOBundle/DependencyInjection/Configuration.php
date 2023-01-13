@@ -39,6 +39,7 @@ class Configuration implements ConfigurationInterface
                 'sitemap_priority_cms_page' => ['value' => self::DEFAULT_PRIORITY],
                 'sitemap_cron_definition' => ['value' => self::DEFAULT_CRON_DEFINITION],
                 'sitemap_exclude_landing_pages' => ['value' => true],
+                'sitemap_include_landing_pages_not_in_web_catalog' => ['value' => false],
             ]
         );
 

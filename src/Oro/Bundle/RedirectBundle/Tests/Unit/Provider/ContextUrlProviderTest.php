@@ -14,7 +14,6 @@ class ContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $data = ['id' => 1];
         $url = '/test/url';
 
-        /** @var ContextUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject $urlProvider */
         $urlProvider = $this->createMock(ContextUrlProviderInterface::class);
         $urlProvider->expects($this->once())
             ->method('getUrl')

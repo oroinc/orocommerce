@@ -1,3 +1,4 @@
+@container-incompatible
 @ticket-BAP-17428
 @fixture-OroProductBundle:CustomEmptyGridTranslation.yml
 
@@ -11,9 +12,6 @@ Feature: Custom messages for grids without result data
       | Buyer | second_session |
     And I proceed as the Admin
     When I login as administrator
-    And I go to System/ Localization/ Translations
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Empty grid custom message
     Given I proceed as the Buyer

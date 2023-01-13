@@ -10,6 +10,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'OrderWithoutCustomerUser'
         website: '@website1'
         currency: USD
+        lineItems: [ '@quoteproductWithoutCustomerUser' ]
     orderWithChildCustomerAndWithCustomerUser:
         organization: '@organization'
         owner: '@admin'
@@ -18,6 +19,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'OrderWithChildCustomerAndWithCustomerUser'
         website: '@website1'
         currency: USD
+        lineItems: [ '@quoteproductWithChildCustomerAndWithCustomerUser' ]
     orderWithChildCustomerAndWithoutCustomerUser:
         organization: '@organization'
         owner: '@admin'
@@ -25,6 +27,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'OrderWithChildCustomerAndWithoutCustomerUser'
         website: '@website1'
         currency: USD
+        lineItems: [ '@quoteproductWithChildCustomerAndWithoutCustomerUser' ]
     orderWithCustomerAndCustomerUser:
         organization: '@organization'
         owner: '@admin'
@@ -33,8 +36,9 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'OrderWithCustomerAndCustomerUser'
         website: '@website1'
         currency: USD
+        lineItems: [ '@quoteproductWithCustomerAndCustomerUser' ]
 
-Oro\Bundle\CurrencyBundle\Entity\Price :
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:
         value: 5
         currency: USD

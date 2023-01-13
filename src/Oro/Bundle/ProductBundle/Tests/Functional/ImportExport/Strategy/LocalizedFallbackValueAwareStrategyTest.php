@@ -13,8 +13,12 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
+use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -27,8 +31,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 {
     use EntityTrait;
 
-    /** @var LocalizedFallbackValueAwareStrategy */
-    protected $strategy;
+    private LocalizedFallbackValueAwareStrategy $strategy;
 
     protected function setUp(): void
     {
@@ -99,20 +102,19 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function processDataProvider()
+    public function processDataProvider(): array
     {
         return [
             [
                 'entityData' => [
                     'sku' => 'product-1',
                     'primaryUnitPrecision' => [
-                        'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testEntity' => ProductUnitPrecision::class,
                         'testProperties' => [
                             'unit' => $this->getEntity(
-                                'Oro\Bundle\ProductBundle\Entity\ProductUnit',
+                                ProductUnit::class,
                                 ['code' => 'kg']
                             ),
                             'precision' => 3,
@@ -120,13 +122,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                     'names' => [
                         [
-                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
+                            'testEntity' => ProductName::class,
                             'testProperties' => [
                                 'string' => 'product-1 Default Name'
                             ],
                         ],
                         [
-                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
+                            'testEntity' => ProductName::class,
                             'testProperties' => [
                                 'string' => 'product-1 en_CA Name',
                                 'localization' => [
@@ -140,13 +142,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                     'slugPrototypes' => [
                         [
-                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testEntity' => LocalizedFallbackValue::class,
                             'testProperties' => [
                                 'string' => 'product-1-default-slug-prototype-updated'
                             ]
                         ],
                         [
-                            'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
+                            'testEntity' => LocalizedFallbackValue::class,
                             'testProperties' => [
                                 'string' => 'product-1-en-ca-slug-prototype-added',
                                 'localization' => [
@@ -237,16 +239,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $entity = $this->getEntity($productClass, $entityData);
         $entity->setInventoryStatus($inventoryStatus);
         $entity->setOwner(
-            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:BusinessUnit')->findOneBy([])
+            $this->getContainer()->get('doctrine')->getRepository(BusinessUnit::class)->findOneBy([])
         );
 
         $resultCallback($this->strategy->process($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function skippedDataProvider()
+    public function skippedDataProvider(): array
     {
         return [
             'New product will not be imported if names is empty' => [
@@ -254,10 +253,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'sku' => 'new_sku',
                     'attributeFamily' => 'default_family',
                     'primaryUnitPrecision' => [
-                        'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testEntity' => ProductUnitPrecision::class,
                         'testProperties' => [
                             'unit' => $this->getEntity(
-                                'Oro\Bundle\ProductBundle\Entity\ProductUnit',
+                                ProductUnit::class,
                                 ['code' => 'kg']
                             ),
                             'precision' => 3,
@@ -273,10 +272,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'sku' => 'product-4',
                     'attributeFamily' => 'default_family',
                     'primaryUnitPrecision' => [
-                        'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+                        'testEntity' => ProductUnitPrecision::class,
                         'testProperties' => [
                             'unit' => $this->getEntity(
-                                'Oro\Bundle\ProductBundle\Entity\ProductUnit',
+                                ProductUnit::class,
                                 ['code' => 'each']
                             ),
                             'precision' => 0,
@@ -284,11 +283,11 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     ],
                     'names' => [
                         [
-                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
+                            'testEntity' => ProductName::class,
                             'testProperties' => ['string' => 'product-4 Default Name']
                         ],
                         [
-                            'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductName',
+                            'testEntity' => ProductName::class,
                             'testProperties' => [
                                 'string' => 'product-4 en_CA Name',
                                 'localization' => [
@@ -301,10 +300,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         ],
                     ]
                 ],
-                function ($product) {
-                    $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
-
-                    /** @var Product $product */
+                function (Product $product) {
                     $this->assertNotNull($product->getId());
                     $this->assertNotEmpty($product->getNames()->toArray());
                     $this->assertNull($product->getNames()->last()->getId());
@@ -313,11 +309,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $expectedValues
-     * @param array|Collection $actualValues
-     */
-    protected function assertLocalizedFallbackValues(array $expectedValues, $actualValues)
+    private function assertLocalizedFallbackValues(array $expectedValues, Collection $actualValues): void
     {
         $this->assertCount(count($expectedValues), $actualValues);
         foreach ($actualValues as $localizedFallbackValue) {

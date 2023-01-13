@@ -5,13 +5,18 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 use Oro\Bundle\PaymentBundle\Action\PurchaseAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
 
 class PurchaseActionTest extends AbstractActionTest
 {
-    const PAYMENT_METHOD = 'testPaymentMethod';
+    private const PAYMENT_METHOD = 'testPaymentMethod';
+
+    private PaymentStatusProviderInterface|MockObject $paymentStatusProvider;
 
     /**
      * @dataProvider executeDataProvider
@@ -21,58 +26,56 @@ class PurchaseActionTest extends AbstractActionTest
         $context = [];
         $options = $data['options'];
 
-        $responseValue = $this->returnValue($data['response']);
-
         if ($data['response'] instanceof \Exception) {
             $responseValue = $this->throwException($data['response']);
+        } else {
+            $responseValue = $this->returnValue($data['response']);
         }
 
         $this->action->initialize($options);
 
-        $this->contextAccessor
-            ->expects($this->any())
+        $this->contextAccessor->expects($this->any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
             ->setAction(PaymentMethodInterface::PURCHASE)
             ->setPaymentMethod($options['paymentMethod']);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        /** @var PaymentMethodInterface|MockObject $paymentMethod */
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with(PaymentMethodInterface::PURCHASE, $paymentTransaction)
             ->will($responseValue);
+        $paymentMethod->expects($this->once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(false);
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects($this->once())
             ->method('createPaymentTransaction')
             ->with($options['paymentMethod'], PaymentMethodInterface::PURCHASE, $options['object'])
             ->willReturn($paymentTransaction);
 
         $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects($this->once())
             ->method('savePaymentTransaction')
             ->with($paymentTransaction)
-            ->willReturnCallback(
-                function (PaymentTransaction $paymentTransaction) use ($options) {
-                    $this->assertEquals($options['amount'], $paymentTransaction->getAmount());
-                    $this->assertEquals($options['currency'], $paymentTransaction->getCurrency());
-                    if (!empty($options['transactionOptions'])) {
-                        $this->assertEquals(
-                            $options['transactionOptions'],
-                            $paymentTransaction->getTransactionOptions()
-                        );
-                    }
+            ->willReturnCallback(function (PaymentTransaction $paymentTransaction) use ($options) {
+                $this->assertEquals($options['amount'], $paymentTransaction->getAmount());
+                $this->assertEquals($options['currency'], $paymentTransaction->getCurrency());
+                if (!empty($options['transactionOptions'])) {
+                    $this->assertEquals(
+                        $options['transactionOptions'],
+                        $paymentTransaction->getTransactionOptions()
+                    );
                 }
-            );
+            });
 
-        $this->router
-            ->expects($this->exactly(2))
+        $this->router->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
                 [
@@ -90,20 +93,16 @@ class PurchaseActionTest extends AbstractActionTest
                     RouterInterface::ABSOLUTE_URL
                 ]
             )
-            ->will($this->returnArgument(0));
+            ->willReturnArgument(0);
 
-        $this->contextAccessor
-            ->expects($this->once())
+        $this->contextAccessor->expects($this->once())
             ->method('setValue')
             ->with($context, $options['attribute'], $expected);
 
         $this->action->execute($context);
     }
 
-    /**
-     * @return array
-     */
-    public function executeDataProvider()
+    public function executeDataProvider(): array
     {
         return [
             'default' => [
@@ -178,12 +177,16 @@ class PurchaseActionTest extends AbstractActionTest
      */
     protected function getAction()
     {
-        return new PurchaseAction(
+        $action = new PurchaseAction(
             $this->contextAccessor,
             $this->paymentMethodProvider,
             $this->paymentTransactionProvider,
             $this->router
         );
+        $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
+        $action->setPaymentStatusProvider($this->paymentStatusProvider);
+
+        return $action;
     }
 
     public function testSourcePaymentTransactionNotFound()
@@ -202,22 +205,26 @@ class PurchaseActionTest extends AbstractActionTest
             ],
         ];
 
-        $this->contextAccessor->expects($this->any())->method('getValue')->will($this->returnArgument(1));
+        $this->contextAccessor->expects($this->any())
+            ->method('getValue')
+            ->willReturnArgument(1);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
             ->setAction(PaymentMethodInterface::PURCHASE)
             ->setPaymentMethod(self::PAYMENT_METHOD);
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects($this->once())
             ->method('createPaymentTransaction')
             ->with($options['paymentMethod'], PaymentMethodInterface::PURCHASE, $options['object'])
             ->willReturn($paymentTransaction);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
-        $paymentMethod->expects($this->once())->method('supports')->with('validate')->willReturn(true);
+        /** @var PaymentMethodInterface|MockObject $paymentMethod */
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod->expects($this->once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(true);
 
         $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
 
@@ -227,16 +234,13 @@ class PurchaseActionTest extends AbstractActionTest
 
     /**
      * @dataProvider sourcePaymentTransactionProvider
-     * @param PaymentTransaction $paymentTransaction
-     * @param PaymentTransaction $sourcePaymentTransaction
-     * @param array $expectedAttributes
-     * @param array $expectedSourceTransactionProperties
      */
     public function testSourcePaymentTransaction(
         PaymentTransaction $paymentTransaction,
         PaymentTransaction $sourcePaymentTransaction,
-        $expectedAttributes = [],
-        $expectedSourceTransactionProperties = []
+        array $expectedAttributes = [],
+        array $expectedSourceTransactionProperties = [],
+        string $status = PaymentStatusProvider::FULL
     ) {
         $options = [
             'object' => new \stdClass(),
@@ -251,20 +255,29 @@ class PurchaseActionTest extends AbstractActionTest
 
         $context = [];
 
-        $this->contextAccessor->expects($this->any())->method('getValue')->will($this->returnArgument(1));
+        $this->contextAccessor->expects($this->any())
+            ->method('getValue')
+            ->willReturnArgument(1);
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects($this->once())
             ->method('createPaymentTransaction')
             ->with($options['paymentMethod'], PaymentMethodInterface::PURCHASE, $options['object'])
             ->willReturn($paymentTransaction);
 
-        $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
+        $this->paymentTransactionProvider->expects($this->once())
+            ->method('getActiveValidatePaymentTransaction')
             ->willReturn($sourcePaymentTransaction);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
-        $paymentMethod->expects($this->once())->method('supports')->with('validate')->willReturn(true);
+        $this->paymentStatusProvider->expects($this->exactly((int)$paymentTransaction->isSuccessful()))
+            ->method('getPaymentStatus')
+            ->willReturn($status);
+
+        /** @var PaymentMethodInterface|MockObject $paymentMethod */
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod->expects($this->once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(true);
         $paymentMethod
             ->expects($this->once())
             ->method('execute')
@@ -273,8 +286,7 @@ class PurchaseActionTest extends AbstractActionTest
 
         $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
 
-        $this->contextAccessor
-            ->expects($this->once())
+        $this->contextAccessor->expects($this->once())
             ->method('setValue')
             ->with($context, $options['attribute'], $this->callback(function ($value) use ($expectedAttributes) {
                 foreach ($expectedAttributes as $expectedAttribute) {
@@ -295,10 +307,7 @@ class PurchaseActionTest extends AbstractActionTest
         }
     }
 
-    /**
-     * @return array
-     */
-    public function sourcePaymentTransactionProvider()
+    public function sourcePaymentTransactionProvider(): array
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -334,6 +343,15 @@ class PurchaseActionTest extends AbstractActionTest
                     'purchaseSuccessful' => true,
                 ],
             ],
+            'successful transaction partially paid' => [
+                $successfulTransaction,
+                new PaymentTransaction(),
+                [
+                    'purchasePartial' => true,
+                ],
+                [],
+                PaymentStatusProvider::AUTHORIZED_PARTIALLY
+            ],
             'unsuccessful transaction with validation' => [
                 $unsuccessfulTransaction,
                 new PaymentTransaction(),
@@ -356,41 +374,53 @@ class PurchaseActionTest extends AbstractActionTest
             ],
         ];
 
-        $this->contextAccessor->expects($this->any())->method('getValue')->will($this->returnArgument(1));
+        $this->contextAccessor->expects($this->any())
+            ->method('getValue')
+            ->willReturnArgument(1);
 
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
             ->setAction(PaymentMethodInterface::PURCHASE)
             ->setPaymentMethod(self::PAYMENT_METHOD);
 
-        $this->paymentTransactionProvider->expects($this->once())->method('createPaymentTransaction')
+        $this->paymentTransactionProvider->expects($this->once())
+            ->method('createPaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
-        $paymentMethod->expects($this->once())->method('execute')->willThrowException(new \Exception());
+        /** @var PaymentMethodInterface|MockObject $paymentMethod */
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod->expects($this->once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(false);
+        $paymentMethod->expects($this->once())
+            ->method('execute')
+            ->willThrowException(new \Exception());
 
         $this->mockPaymentMethodProvider($paymentMethod, $options['paymentMethod']);
 
-        $this->logger->expects($this->once())->method('error')->with($this->isType('string'), $this->isType('array'));
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->isType('string'),
+                $this->isType('array')
+            );
 
         $this->action->initialize($options);
         $this->action->execute([]);
     }
 
     /**
-     * @param PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod
+     * @param PaymentMethodInterface|MockObject $paymentMethod
      * @param string $identifier
      */
-    protected function mockPaymentMethodProvider($paymentMethod, $identifier)
+    protected function mockPaymentMethodProvider(PaymentMethodInterface $paymentMethod, string $identifier): void
     {
         $this->paymentMethodProvider->expects($this->atLeastOnce())
             ->method('hasPaymentMethod')
             ->with($identifier)
             ->willReturn(true);
-
-        $this->paymentMethodProvider
-            ->expects($this->atLeastOnce())
+        $this->paymentMethodProvider->expects($this->atLeastOnce())
             ->method('getPaymentMethod')
             ->with($identifier)
             ->willReturn($paymentMethod);

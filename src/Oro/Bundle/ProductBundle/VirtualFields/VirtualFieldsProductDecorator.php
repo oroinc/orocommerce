@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\VirtualFields;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
@@ -10,7 +11,6 @@ use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQuer
 use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**

@@ -9,7 +9,6 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -19,12 +18,7 @@ class ProductControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const SIDEBAR_ROUTE = 'oro_catalog_category_product_sidebar';
-
-    /**
-     * @var Client
-     */
-    protected $client;
+    private const SIDEBAR_ROUTE = 'oro_catalog_category_product_sidebar';
 
     protected function setUp(): void
     {
@@ -35,12 +29,8 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider viewDataProvider
-     *
-     * @param bool $includeSubcategories
-     * @param bool $includeNotCategorized
-     * @param array $expected
      */
-    public function testView($includeSubcategories, $includeNotCategorized, $expected)
+    public function testView(bool $includeSubcategories, bool $includeNotCategorized, array $expected)
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -77,14 +67,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertCount(1, $result['data']);
 
         foreach ($result['data'] as $data) {
-            static::assertStringContainsString($data['sku'], LoadProductData::PRODUCT_9);
+            self::assertStringContainsString($data['sku'], LoadProductData::PRODUCT_9);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function viewDataProvider()
+    public function viewDataProvider(): array
     {
         return [
             'includeSubcategories' => [
@@ -130,7 +117,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                static::SIDEBAR_ROUTE,
+                self::SIDEBAR_ROUTE,
                 [RequestProductHandler::CATEGORY_ID_KEY => $categoryId]
             ),
             ['_widgetContainer' => 'widget']
@@ -139,21 +126,17 @@ class ProductControllerTest extends WebTestCase
             ->attr('data-page-component-view');
 
         $this->assertJson($json);
-        $arr = json_decode($json, true);
+        $arr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
         $this->assertCount(8, $arr['data']);
     }
 
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
-     *
-     * @param boolean $singleUnitMode
-     * @param string $category
-     * @param string $expected
      */
-    public function testDefaultProductUnitPrecision($singleUnitMode, $category, $expected)
+    public function testDefaultProductUnitPrecision(bool $singleUnitMode, ?string $category, string $expected)
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_product.single_unit_mode', $singleUnitMode);
         $configManager->flush();
         $systemDefaultUnit = $configManager->get('oro_product.default_unit');
@@ -206,10 +189,7 @@ class ProductControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function defaultUnitPrecisionDataProvider()
+    public function defaultUnitPrecisionDataProvider(): array
     {
         return [
             'noCategory' => [
@@ -241,13 +221,9 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * checking if default product unit field is added and filled
-     *
-     * @param Form $form
-     * @param string $unit
-     * @param integer $precision
+     * Asserts that default product unit field is added and filled.
      */
-    protected function assertDefaultProductUnit($form, $unit, $precision)
+    private function assertDefaultProductUnit(Form $form, string $unit, int $precision): void
     {
         $formValues = $form->getValues();
 

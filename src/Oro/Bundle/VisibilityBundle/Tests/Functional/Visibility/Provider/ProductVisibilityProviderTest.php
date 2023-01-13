@@ -12,27 +12,22 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData as LoadWebsiteDataMigration;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class ProductVisibilityProviderTest extends WebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const QUERY_BUFFER_SIZE = 10000;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ProductVisibilityProvider
-     */
+    /** @var ProductVisibilityProvider */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
@@ -44,32 +39,24 @@ class ProductVisibilityProviderTest extends WebTestCase
             LoadProductVisibilityScopedData::class
         ]);
 
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->provider = new ProductVisibilityProvider(
             $this->getContainer()->get('oro_entity.doctrine_helper'),
-            $this->configManager,
-            $this->getContainer()->get('oro_scope.scope_manager')
+            $this->configManager
         );
-
         $this->provider->setVisibilityScopeProvider(
             $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );
+        $this->provider->setQueryBufferSize(self::QUERY_BUFFER_SIZE);
 
         $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 
-    /**
-     * @return int
-     */
-    private function getAnonymousCustomerGroupId()
+    private function getAnonymousCustomerGroupId(): int
     {
-        $customerGroupRepository = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
-            ->getRepository('OroCustomerBundle:CustomerGroup');
+        $customerGroupRepository = $this->getContainer()->get('doctrine')
+            ->getRepository(CustomerGroup::class);
 
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $customerGroupRepository
@@ -80,8 +67,7 @@ class ProductVisibilityProviderTest extends WebTestCase
 
     public function testGetCustomerVisibilitiesForProducts()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -89,8 +75,8 @@ class ProductVisibilityProviderTest extends WebTestCase
             )
             ->willReturnOnConsecutiveCalls(VisibilityInterface::HIDDEN, VisibilityInterface::HIDDEN);
 
-        $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $expectedCustomersVisibilities = [
             [
@@ -117,8 +103,7 @@ class ProductVisibilityProviderTest extends WebTestCase
 
     public function testGetCustomerVisibilitiesForProductsWhenCustomerGroupVisibilityDiffersProduct()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -126,8 +111,8 @@ class ProductVisibilityProviderTest extends WebTestCase
             )
             ->willReturnOnConsecutiveCalls(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE);
 
-        $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $expectedCustomersVisibilities = [
             [
@@ -170,8 +155,7 @@ class ProductVisibilityProviderTest extends WebTestCase
 
     public function testGetCustomerVisibilitiesForProductsWhenCustomerGroupVisibilityDiffers()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -179,8 +163,8 @@ class ProductVisibilityProviderTest extends WebTestCase
             )
             ->willReturnOnConsecutiveCalls(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE);
 
-        $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $expectedCustomersVisibilities = [
             [
@@ -219,8 +203,7 @@ class ProductVisibilityProviderTest extends WebTestCase
 
     public function testGetCustomerVisibilitiesForProductsWhenCustomerGroupVisibilityDiffersAndInversed()
     {
-        $this->configManager
-            ->expects($this->exactly(2))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -228,8 +211,8 @@ class ProductVisibilityProviderTest extends WebTestCase
             )
             ->willReturnOnConsecutiveCalls(VisibilityInterface::HIDDEN, VisibilityInterface::VISIBLE);
 
-        $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $expectedCustomersVisibilities = [
             [
@@ -305,23 +288,17 @@ class ProductVisibilityProviderTest extends WebTestCase
         );
     }
 
-    /**
-     * @return int
-     */
-    private function getDefaultWebsiteId()
+    private function getDefaultWebsiteId(): int
     {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroWebsiteBundle:Website')
-            ->getRepository('OroWebsiteBundle:Website')
+        return $this->getContainer()->get('doctrine')
+            ->getRepository(Website::class)
             ->findOneBy(['name' => LoadWebsiteDataMigration::DEFAULT_WEBSITE_NAME])
             ->getId();
     }
 
     public function testGetNewUserAndAnonymousVisibilitiesForProducts()
     {
-        $this->configManager
-            ->expects($this->exactly(3))
+        $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
@@ -334,8 +311,8 @@ class ProductVisibilityProviderTest extends WebTestCase
                 $this->getAnonymousCustomerGroupId()
             );
 
-        $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->provider->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $expectedVisibilities = [
             [
@@ -361,11 +338,7 @@ class ProductVisibilityProviderTest extends WebTestCase
         );
     }
 
-    /**
-     * @param iterable $items
-     * @return array
-     */
-    private function getActualResult($items): array
+    private function getActualResult(\Traversable $items): array
     {
         if (!is_array($items)) {
             $items = iterator_to_array($items, false);

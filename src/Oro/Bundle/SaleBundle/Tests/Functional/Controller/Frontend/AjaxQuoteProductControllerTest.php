@@ -13,35 +13,21 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxQuoteProductControllerTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures(
-            [
-                LoadQuoteProductDemandData::class,
-            ]
-        );
+        $this->loadFixtures([LoadQuoteProductDemandData::class]);
     }
 
     /**
      * @dataProvider offerDataProvider
-     *
-     * @param string $productSku
-     * @param string $quoteProductOfferReference
-     * @param string $unitCode
-     * @param string $quantity
-     * @param array $expected
      */
     public function testMatchQuoteProductOfferAction(
-        $productSku,
-        $quoteProductOfferReference,
-        $unitCode,
-        $quantity,
+        string $productSku,
+        string $quoteProductOfferReference,
+        ?string $unitCode,
+        ?int $quantity,
         array $expected = []
     ) {
         $this->initClient(
@@ -49,7 +35,6 @@ class AjaxQuoteProductControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
 
-        /** @var QuoteProduct $quoteProduct */
         $quoteProduct = $this->getQuoteProduct($productSku);
 
         /** @var QuoteProductOffer $quoteProductOffer */
@@ -82,10 +67,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function offerDataProvider()
+    public function offerDataProvider(): array
     {
         return [
             'valid' => [
@@ -104,12 +86,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $productSku
-     *
-     * @return null|QuoteProduct
-     */
-    protected function getQuoteProduct($productSku)
+    private function getQuoteProduct(string $productSku): ?QuoteProduct
     {
         /** @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE1);

@@ -8,10 +8,8 @@ use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductVisibilitySearchQueryModifier
-     */
-    protected $modifier;
+    /** @var ProductVisibilitySearchQueryModifier */
+    private $modifier;
 
     protected function setUp(): void
     {
@@ -22,8 +20,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
     {
         $statuses = ['enabled', 'disabled'];
 
-        $query = $this->getMockBuilder(Query::class)
-            ->disableOriginalConstructor()->getMock();
+        $query = $this->createMock(Query::class);
 
         $criteria = $this->createMock(Criteria::class);
 
@@ -44,12 +41,11 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
     {
         $statuses = ['in_stock', 'out_of_stock'];
 
-        $query = $this->getMockBuilder(Query::class)
-            ->disableOriginalConstructor()->getMock();
+        $query = $this->createMock(Query::class);
 
         $criteria = $this->createMock(Criteria::class);
 
-        $expression = Criteria::expr()->in('inventory_status', $statuses);
+        $expression = Criteria::expr()->in('inv_status', $statuses);
 
         $criteria->expects($this->once())
             ->method('andWhere')

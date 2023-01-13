@@ -36,7 +36,7 @@ class PriceListSystemConfigSubscriber
             . ConfigManager::SECTION_VIEW_SEPARATOR
             . Configuration::DEFAULT_PRICE_LISTS;
         $settings = $event->getSettings();
-        if (is_array($settings) && array_key_exists($settingKey, $settings)) {
+        if (isset($settings[$settingKey]['value'])) {
             $settings[$settingKey]['value'] = $this->converter->convertFromSaved($settings[$settingKey]['value']);
             $event->setSettings($settings);
         }
@@ -45,7 +45,7 @@ class PriceListSystemConfigSubscriber
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
-        if (!array_key_exists('value', $settings)) {
+        if (!\array_key_exists('value', $settings)) {
             return;
         }
 

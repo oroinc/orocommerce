@@ -63,6 +63,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
         $expectedConfig = [
             'Oro\Bundle\TestBundle2\Entity\Page' => [
                 'alias' => 'page_WEBSITE_ID',
+                'synonyms_enabled' => false,
                 'fields' => [
                     'title_LOCALIZATION_ID' => [
                         'name' => 'title_LOCALIZATION_ID',
@@ -70,6 +71,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'test_first_repeating_field' => [
                         'name' => 'test_first_repeating_field',
@@ -77,6 +79,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'test_second_repeating_field' => [
                         'name' => 'test_second_repeating_field',
@@ -84,6 +87,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'custom_field' => [
                         'name' => 'custom_field',
@@ -91,11 +95,13 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ]
                 ]
             ],
             'Oro\Bundle\TestBundle3\Entity\Product' => [
                 'alias' => 'product_WEBSITE_ID',
+                'synonyms_enabled' => false,
                 'fields' => [
                     'title_LOCALIZATION_ID' => [
                         'name' => 'title_LOCALIZATION_ID',
@@ -103,6 +109,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => true,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                     'price' => [
                         'name' => 'price',
@@ -110,6 +117,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'fulltext' => false,
                         'organization_id' => null,
                         'store' => true,
+                        'group' => 'main'
                     ],
                 ]
             ]

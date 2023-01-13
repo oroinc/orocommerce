@@ -4,12 +4,13 @@ namespace Oro\Bundle\ShippingBundle\Checker;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
+/**
+ * The default implementation of the service to check whether a shipping method
+ * with a specific identifier is enabled or not.
+ */
 class ShippingMethodEnabledByIdentifierChecker implements ShippingMethodEnabledByIdentifierCheckerInterface
 {
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    private $shippingMethodProvider;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
 
     public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
@@ -19,10 +20,10 @@ class ShippingMethodEnabledByIdentifierChecker implements ShippingMethodEnabledB
     /**
      * {@inheritDoc}
      */
-    public function isEnabled($identifier)
+    public function isEnabled(string $identifier): bool
     {
-        return $this->shippingMethodProvider->getShippingMethod($identifier) !== null ?
-            $this->shippingMethodProvider->getShippingMethod($identifier)->isEnabled() :
-            false;
+        $shippingMethod = $this->shippingMethodProvider->getShippingMethod($identifier);
+
+        return null !== $shippingMethod && $shippingMethod->isEnabled();
     }
 }

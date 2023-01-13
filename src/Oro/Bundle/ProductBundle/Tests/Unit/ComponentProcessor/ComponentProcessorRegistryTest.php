@@ -10,7 +10,7 @@ class ComponentProcessorRegistryTest extends \PHPUnit\Framework\TestCase
     public function testRegistry()
     {
         $name = 'processor1';
-        $processorOne = $this->getProcessorMock($name);
+        $processorOne = $this->getProcessor($name);
 
         $registry = new ComponentProcessorRegistry();
 
@@ -24,24 +24,20 @@ class ComponentProcessorRegistryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($processorOne, $registry->getProcessorByName($name));
     }
 
-    /**
-     * @param string $name
-     * @return \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorInterface
-     */
-    protected function getProcessorMock($name)
+    private function getProcessor(string $name): ComponentProcessorInterface|\PHPUnit\Framework\MockObject\MockObject
     {
-        $processor = $this->createMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
+        $processor = $this->createMock(ComponentProcessorInterface::class);
         $processor->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
 
         return $processor;
     }
 
     public function testHasAllowedProcessor()
     {
-        $processorAllowed = $this->getProcessorMock('allowed');
-        $processorDisallowed = $this->getProcessorMock('disallowed');
+        $processorAllowed = $this->getProcessor('allowed');
+        $processorDisallowed = $this->getProcessor('disallowed');
 
         $registry = new ComponentProcessorRegistry();
         $registry->addProcessor($processorAllowed);
@@ -49,7 +45,9 @@ class ComponentProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($registry->hasAllowedProcessor());
 
-        $processorAllowed->expects($this->once())->method('isAllowed')->willReturn(true);
+        $processorAllowed->expects($this->once())
+            ->method('isAllowed')
+            ->willReturn(true);
         $this->assertTrue($registry->hasAllowedProcessor());
     }
 }

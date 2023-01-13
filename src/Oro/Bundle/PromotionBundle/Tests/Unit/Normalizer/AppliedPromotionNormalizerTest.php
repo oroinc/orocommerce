@@ -23,29 +23,18 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RuleNormalizer|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RuleNormalizer|\PHPUnit\Framework\MockObject\MockObject */
     private $ruleNormalizer;
 
-    /**
-     * @var ScopeNormalizer|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ScopeNormalizer|\PHPUnit\Framework\MockObject\MockObject */
     private $scopeNormalizer;
 
-    /**
-     * @var SegmentNormalizer|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SegmentNormalizer|\PHPUnit\Framework\MockObject\MockObject */
     private $segmentNormalizer;
 
-    /**
-     * @var AppliedPromotionNormalizer
-     */
+    /** @var AppliedPromotionNormalizer */
     private $normalizer;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->ruleNormalizer = $this->createMock(RuleNormalizer::class);
@@ -62,10 +51,8 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider normalizeDataProvider
      */
-    public function testNormalize(
-        PromotionDataInterface $promotion,
-        array $expected
-    ) {
+    public function testNormalize(PromotionDataInterface $promotion, array $expected)
+    {
         $this->ruleNormalizer->expects($this->once())
             ->method('normalize')
             ->with($promotion->getRule())
@@ -94,15 +81,11 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function normalizeDataProvider()
+    public function normalizeDataProvider(): array
     {
-        /** @var Scope $firstScope */
         $firstScope = $this->getEntity(Scope::class, ['id' => 42]);
-
-        /** @var Scope $secondScope */
         $secondScope = $this->getEntity(Scope::class, ['id' => 45]);
 
         $rule = new Rule();
@@ -124,7 +107,6 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
         $segment->setDefinition('{"filters":[],"columns":[{"name":"sku","label":"sku","sorting":null}]}')
             ->setEntity(Product::class);
 
-        /** @var Promotion $promotion */
         $promotion = $this->getEntity(
             Promotion::class,
             [
@@ -209,12 +191,6 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider denormalizeDataProvider
-     *
-     * @param array $promotionData
-     * @param Rule $rule
-     * @param array|Scope[] $scopes
-     * @param Segment $segment
-     * @param AppliedPromotionData $expected
      */
     public function testDenormalize(
         array $promotionData,
@@ -243,15 +219,9 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function denormalizeDataProvider()
+    public function denormalizeDataProvider(): array
     {
-        /** @var Scope $firstScope */
         $firstScope = $this->getEntity(Scope::class, ['id' => 42]);
-
-        /** @var Scope $secondScope */
         $secondScope = $this->getEntity(Scope::class, ['id' => 45]);
 
         $segment = new Segment();
@@ -322,24 +292,21 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
 
     public function testRequiredOptionsException()
     {
-        $ruleData = [];
-
         $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage(
             'The required options "id", "rule", "useCoupons" are missing.'
         );
 
-        $this->normalizer->denormalize($ruleData);
+        $this->normalizer->denormalize([]);
     }
 
     public function testInvalidArgumentException()
     {
-        $object = new \stdClass();
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Argument promotion should be instance of Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface entity'
         );
 
-        $this->normalizer->normalize($object);
+        $this->normalizer->normalize(new \stdClass());
     }
 }

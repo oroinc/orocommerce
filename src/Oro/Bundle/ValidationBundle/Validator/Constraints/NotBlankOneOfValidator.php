@@ -5,18 +5,15 @@ namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Validates that one of fields is required.
+ * This validator checks that one of fields is required.
  */
 class NotBlankOneOfValidator extends ConstraintValidator
 {
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -24,44 +21,37 @@ class NotBlankOneOfValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
-     * @param NotBlankOneOf $constraint
+     * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
+        if (!$constraint instanceof NotBlankOneOf) {
+            throw new UnexpectedTypeException($constraint, NotBlankOneOf::class);
+        }
+
         foreach ($constraint->fields as $fieldGroup) {
             $this->processFieldGroup($value, $fieldGroup, $constraint);
         }
     }
 
-    /**
-     * @param object|array $value
-     * @param array $fieldGroup
-     * @param NotBlankOneOf $constraint
-     */
-    protected function processFieldGroup($value, array $fieldGroup, NotBlankOneOf $constraint)
+    private function processFieldGroup(mixed $value, array $fieldGroup, NotBlankOneOf $constraint): void
     {
         $fields = array_keys($fieldGroup);
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($fields as $field) {
             $fieldValue = $accessor->getValue($value, $field);
-
             if (true === $fieldValue || !empty($fieldValue) || '0' == $fieldValue) {
                 return;
             }
         }
 
         foreach ($fields as $field) {
-            /** @var ExecutionContextInterface $context */
-            $context = $this->context;
-            $context->buildViolation(
-                $constraint->message,
-                [
-                    "%fields%" => implode(', ', array_map(function ($value) {
-                        return $this->translator->trans((string) $value);
+            $this->context
+                ->buildViolation($constraint->message, [
+                    '%fields%' => implode(', ', array_map(function ($value) {
+                        return $this->translator->trans((string)$value);
                     }, $fieldGroup))
-                ]
-            )
+                ])
                 ->atPath($field)
                 ->addViolation();
         }

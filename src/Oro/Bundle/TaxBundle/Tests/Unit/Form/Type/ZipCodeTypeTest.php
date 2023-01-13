@@ -17,22 +17,13 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
-    private const DATA_CLASS = ZipCode::class;
-
     /** @var ZipCodeType */
     private $formType;
 
     protected function setUp(): void
     {
         $this->formType = new ZipCodeType();
-        $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
-    }
-
-    public function testGetName()
-    {
-        $this->assertIsString($this->formType->getName());
-        $this->assertEquals('oro_tax_zip_code_type', $this->formType->getName());
     }
 
     /**
@@ -112,7 +103,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         $zipCodeFieldsValidator->expects($this->any())
             ->method('isInteger')
             ->willReturnCallback(function ($value) {
-                return filter_var(str_replace('0', '', $value), FILTER_VALIDATE_INT);
+                return (bool)filter_var(str_replace('0', '', $value), FILTER_VALIDATE_INT);
             });
         $zipCodeFieldsValidator->expects($this->any())
             ->method('initialize')
@@ -145,7 +136,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
             });
 
         return [
-            'oro_tax_zip_code_fields' => $zipCodeFieldsValidator,
+            ZipCodeFieldsValidator::class => $zipCodeFieldsValidator
         ];
     }
 

@@ -12,22 +12,16 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class InventoryFallbackTest extends WebTestCase
 {
-    const VIEW_MANAGED_INVENTORY_XPATH =
+    protected const VIEW_MANAGED_INVENTORY_XPATH =
         "//label[text() = 'Highlight Low Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures($this->getFixtures());
     }
 
-    /**
-     * @return array
-     */
-    protected function getFixtures()
+    protected function getFixtures(): array
     {
         return [LoadCategoryProductData::class];
     }
@@ -43,29 +37,22 @@ abstract class InventoryFallbackTest extends WebTestCase
         $this->assertEquals('Yes', $manageInventoryValue);
     }
 
-    /**
-     * @param mixed  $systemValue
-     * @param string $expectedProductValue
-     * @param bool   $updateProduct
-     * @param bool   $updateCategory
-     */
     abstract public function testProductCategorySystemFallback(
-        $systemValue,
-        $expectedProductValue,
-        $updateProduct = false,
-        $updateCategory = false
+        mixed $systemValue,
+        string $expectedProductValue,
+        bool $updateProduct = false,
+        bool $updateCategory = false
     );
 
     /**
-     * @param mixed $ownValue
-     * @param bool $useFallbackValue
-     * @param mixed $fallbackValue
-     * @param string $expectedValue
-     *
      * @dataProvider productWithNoFallbackProvider
      */
-    public function testProductWithNoFallback($ownValue, $useFallbackValue, $fallbackValue, $expectedValue)
-    {
+    public function testProductWithNoFallback(
+        mixed $ownValue,
+        bool $useFallbackValue,
+        mixed $fallbackValue,
+        string $expectedValue
+    ) {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $crawler = $this->setProductInventoryField($product, $ownValue, $useFallbackValue, $fallbackValue);
@@ -74,10 +61,7 @@ abstract class InventoryFallbackTest extends WebTestCase
         $this->assertProductInventoryValue($crawler, $expectedValue);
     }
 
-    /**
-     * @return array
-     */
-    public function productWithNoFallbackProvider()
+    public function productWithNoFallbackProvider(): array
     {
         return [
             ['1', false, null, 'Yes'],
@@ -86,20 +70,14 @@ abstract class InventoryFallbackTest extends WebTestCase
     }
 
     /**
-     * @param string $categoryOwnValue
-     * @param bool $categoryUseFallbackValue
-     * @param mixed $categoryFallbackValue
-     * @param string $expectedProductValue
-     * @param bool $updateProduct
-     *
      * @dataProvider productCategoryFallbackProvider
      */
     public function testProductCategoryFallback(
-        $categoryOwnValue,
-        $categoryUseFallbackValue,
-        $categoryFallbackValue,
-        $expectedProductValue,
-        $updateProduct = false
+        string $categoryOwnValue,
+        bool $categoryUseFallbackValue,
+        mixed $categoryFallbackValue,
+        string $expectedProductValue,
+        bool $updateProduct = false
     ) {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
@@ -117,10 +95,7 @@ abstract class InventoryFallbackTest extends WebTestCase
         $this->assertProductInventoryValue($crawler, $expectedProductValue);
     }
 
-    /**
-     * @return array
-     */
-    public function productCategoryFallbackProvider()
+    public function productCategoryFallbackProvider(): array
     {
         return [
             ['1', false, null, 'Yes', true],
@@ -128,10 +103,7 @@ abstract class InventoryFallbackTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function productCategorySystemFallbackProvider()
+    public function productCategorySystemFallbackProvider(): array
     {
         return [
             [0, 'No', true, true],
@@ -139,15 +111,11 @@ abstract class InventoryFallbackTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param mixed $ownValue
-     * @param bool $useFallbackValue
-     * @param mixed $fallbackValue
-     *
-     * @return null|Crawler
-     */
-    protected function setCategoryInventoryField($ownValue, $useFallbackValue, $fallbackValue)
-    {
+    protected function setCategoryInventoryField(
+        mixed $ownValue,
+        ?bool $useFallbackValue,
+        mixed $fallbackValue
+    ): ?Crawler {
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $crawler = $this->client->request(
             'GET',
@@ -159,21 +127,25 @@ abstract class InventoryFallbackTest extends WebTestCase
 
         $highlightLowInventoryOption = LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION;
         $lowInventoryThresholdOption = LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION;
-        if (is_null($ownValue)) {
-            unset($formValues['oro_catalog_category']['manageInventory']['scalarValue']);
-            unset($formValues['oro_catalog_category'][$highlightLowInventoryOption]['scalarValue']);
+        if (null === $ownValue) {
+            unset(
+                $formValues['oro_catalog_category']['manageInventory']['scalarValue'],
+                $formValues['oro_catalog_category'][$highlightLowInventoryOption]['scalarValue']
+            );
         } else {
             $formValues['oro_catalog_category']['manageInventory']['scalarValue'] = $ownValue;
             $formValues['oro_catalog_category'][$highlightLowInventoryOption]['scalarValue'] = $ownValue;
         }
 
-        if (!is_null($useFallbackValue)) {
+        if (null !== $useFallbackValue) {
             $formValues['oro_catalog_category']['manageInventory']['useFallback'] = $useFallbackValue;
             $formValues['oro_catalog_category'][$highlightLowInventoryOption]['useFallback'] = $useFallbackValue;
         }
-        if (is_null($fallbackValue)) {
-            unset($formValues['oro_catalog_category']['manageInventory']['fallback']);
-            unset($formValues['oro_catalog_category'][$highlightLowInventoryOption]['fallback']);
+        if (null === $fallbackValue) {
+            unset(
+                $formValues['oro_catalog_category']['manageInventory']['fallback'],
+                $formValues['oro_catalog_category'][$highlightLowInventoryOption]['fallback']
+            );
         } else {
             $formValues['oro_catalog_category']['manageInventory']['fallback'] = $fallbackValue;
             $formValues['oro_catalog_category'][$highlightLowInventoryOption]['fallback'] = $fallbackValue;
@@ -188,16 +160,12 @@ abstract class InventoryFallbackTest extends WebTestCase
         return $this->client->request($form->getMethod(), $form->getUri(), $formValues);
     }
 
-    /**
-     * @param Product $product
-     * @param mixed $ownValue
-     * @param bool $useFallbackValue
-     * @param mixed $fallbackValue
-     *
-     * @return Crawler
-     */
-    protected function setProductInventoryField($product, $ownValue, $useFallbackValue, $fallbackValue)
-    {
+    protected function setProductInventoryField(
+        Product $product,
+        mixed $ownValue,
+        ?bool $useFallbackValue,
+        mixed $fallbackValue
+    ): ?Crawler {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         $form = $crawler->selectButton('Save and Close')->form();
@@ -205,21 +173,25 @@ abstract class InventoryFallbackTest extends WebTestCase
 
         $highlightLowInventoryOption = LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION;
 
-        $formValues['input_action'] = 'save_and_close';
-        if (is_null($ownValue)) {
-            unset($formValues['oro_product']['manageInventory']['scalarValue']);
-            unset($formValues['oro_product'][$highlightLowInventoryOption]['scalarValue']);
+        $formValues['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
+        if (null === $ownValue) {
+            unset(
+                $formValues['oro_product']['manageInventory']['scalarValue'],
+                $formValues['oro_product'][$highlightLowInventoryOption]['scalarValue']
+            );
         } else {
             $formValues['oro_product']['manageInventory']['scalarValue'] = $ownValue;
             $formValues['oro_product'][$highlightLowInventoryOption]['scalarValue'] = $ownValue;
         }
-        if (!is_null($useFallbackValue)) {
+        if (null !== $useFallbackValue) {
             $formValues['oro_product']['manageInventory']['useFallback'] = $useFallbackValue;
             $formValues['oro_product'][$highlightLowInventoryOption]['useFallback'] = $useFallbackValue;
         }
-        if (is_null($fallbackValue)) {
-            unset($formValues['oro_product']['manageInventory']['fallback']);
-            unset($formValues['oro_product'][$highlightLowInventoryOption]['fallback']);
+        if (null === $fallbackValue) {
+            unset(
+                $formValues['oro_product']['manageInventory']['fallback'],
+                $formValues['oro_product'][$highlightLowInventoryOption]['fallback']
+            );
         } else {
             $formValues['oro_product']['manageInventory']['fallback'] = $fallbackValue;
             $formValues['oro_product'][$highlightLowInventoryOption]['fallback'] = $fallbackValue;
@@ -232,13 +204,7 @@ abstract class InventoryFallbackTest extends WebTestCase
         return $this->client->request($form->getMethod(), $form->getUri(), $formValues);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string $expectedValue
-     *
-     * @return string
-     */
-    protected function assertProductInventoryValue(Crawler $crawler, $expectedValue)
+    protected function assertProductInventoryValue(Crawler $crawler, string $expectedValue): string
     {
         $value = $crawler->filterXPath(static::VIEW_MANAGED_INVENTORY_XPATH)->html();
         $this->assertEquals($expectedValue, $value);

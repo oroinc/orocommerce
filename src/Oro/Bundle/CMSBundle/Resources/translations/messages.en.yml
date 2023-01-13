@@ -31,6 +31,9 @@ oro.cms:
             entity_plural_label: 'Landing Page Drafts'
             entity_grid_all_view_label: 'All Landing Page Drafts'
             owner.label:         'Owner'
+        feature:
+            label: Landing Pages
+            description: Enables creating and managing landing pages.
 
     contentblock:
         entity_label: Content Block
@@ -70,6 +73,9 @@ oro.cms:
             enabled: Enabled
             disabled: Disabled
         no_restrictions.label: No restrictions
+        feature:
+            label: Content Blocks
+            description: Enables creating and managing content blocks that help create a custom content layout.
         form:
             add_variant.label: Add Content
         sections:
@@ -89,7 +95,9 @@ oro.cms:
         widget_type.label: Type
         layout.label: Layout
         settings.label: Settings
-
+        feature:
+            label: Content Widgets
+            description: Enables creating and managing content widgets, such an image slider, contact us form, product mini block, and a product segment.
         form:
             choose_content_widget_type: Choose a content widget type...
             choose_content_widget_layout: Choose a content widget layout...
@@ -101,9 +109,16 @@ oro.cms:
             image_slides.label: Slides
             usages.label: Usages
             slider_options.label: Slider Options
+            tabbed_content_items.label: Tabs
+
+        layouts:
+            tabbed_content:
+                tabs.label: Tabs mode
+                accordion.label: Accordion mode
 
     content_widget_type:
         image_slider.label: Image Slider
+        tabbed_content.label: Tabbed Content
 
         slider_options:
             slides_to_show.label: 'Number of Slides to Show'
@@ -153,6 +168,25 @@ oro.cms:
             medium_image.label: Upload a background image for the slide, or select an existing one.
             small_image.label: Upload a background image for the slide, or select an existing one.
 
+    tabbedcontentitem:
+        entity_label: Tabbed Content Item
+        entity_plural_label: Tabbed Content Items
+        entity_grid_all_view_label: All %entity_plural_label%
+        id.label: ID
+        title:
+            label: Title
+            tooltip: Name to be displayed in the tab title
+        item_order:
+            label: Tab order
+            tooltip: Order of the current item in the widget
+        content:
+            label: Content
+            tooltip: Content of the tab, visible upon triggering it
+        content_style.label: Content Style
+        content_properties.label: Content Properties
+        content_widget.label: Content Widget
+        organization.label: Organization
+
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants
@@ -169,12 +203,15 @@ oro.cms:
         page.saved.message: 'Page has been saved'
         contentblock.saved.message: 'Content block has been saved'
         contentwidget.saved.message: 'Content widget has been saved'
+        contenttemplate.saved.message: 'Content template has been saved'
+        contenttemplate.updated.message: 'Content template has been updated'
 
     menu:
         marketing_tab.label: 'Marketing'
         page_list.description: 'List of landing pages'
         loginpage_list.description: 'List of login pages'
         shortcut_page_list.description: 'Shows list of existing landing pages'
+        content_template.description: 'Content Templates'
 
     sections:
         general: 'General'
@@ -192,6 +229,9 @@ oro.cms:
         logo_image.label: 'Logo'
         background_image.label: 'Background image'
         save.message: 'Login form has been saved'
+        feature:
+            label: Customer Login Pages
+            description: Enables creating and managing customer login pages.
 
     system_configuration:
         fields:
@@ -204,6 +244,36 @@ oro.cms:
     wysiwyg:
         formatted_twig_error_line: 'Line #{{ line }}: Invalid Twig syntax. Replace with a valid Twig code or use {{ twig escaping link }}.'
         twig_escaping_link_text: 'escaping for "{{", "{%" and "{#"'
+
+    contenttemplate:
+        entity_label: 'Content Template'
+        entity_plural_label: 'Content Templates'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
+        information_message: 'Current content view is simplified, please check the page on the Storefront to see the actual result'
+        id:
+            label: 'ID'
+        name:
+            label: 'Name'
+        content:
+            label: 'Content'
+        owner:
+            label: 'Owner'
+        organization:
+            label: 'Organization'
+        tags:
+            label: 'Tags'
+            singular_label: 'Tag'
+        enabled:
+            label: 'Enabled'
+            yes.label: 'Yes'
+            no.label: 'No'
+        disabled:
+            label: 'Disabled'
+        cloned_name_suffix: ' (Copy)'
+        preview_image.label: Preview
+        feature:
+            label: Content Templates
+            description: Enables creating and managing content templates.
 
 oro.entity_extend.form.data_type:
     wysiwyg: WYSIWYG

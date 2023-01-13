@@ -58,10 +58,10 @@ oro:
                 description:            The IDs of the products that the RFQ is made for.
             assigned_users:
                 label:                  'Assigned To'
-                description:            The IDs of the customer users that will receive the order delivery.
+                description:            The ID of the user who acts as an order fulfillment officer.
             assigned_customer_users:
                 label:                  'Assigned Customer Users'
-                description:            The ID of the user who acts as an order fulfillment officer.
+                description:            The IDs of the customer users that will receive the order delivery.
             cancellation_reason:
                 label:                  'Cancelation reason'
                 description:            The reason for the RFQ cancellation.
@@ -199,10 +199,10 @@ oro:
                         if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
                 guest_rfp:
                     title: 'Enable Guest RFQ'
-                    tooltip: 'Enable Guest RFQ'
+                    tooltip: 'Select the option to enable guest users to request quotes on the items they are interested in from the storefront.'
                 default_guest_rfp_owner:
                     title: 'Default guest RFQ owner'
-                    tooltip: 'Default guest RFQ owner'
+                    tooltip: 'Select the default owner of all guest RFQs.'
         message:
             requestproductitem.unit.removed: '{title} - removed'
 
@@ -249,13 +249,16 @@ oro:
                     qty: 'QTY'
 
         feature:
-            label: 'Request For Quote'
-            description: 'Request For Quote allows users to place Requests for chosen products'
+            label: Back-Office Requests for Quotes
+            description: Enables back-office users to work with submitted requests for quotes, process them and convert them into quotes.
+            guest_rfp:
+                label: Guest RFQ
+                description: Enables the Guest RFQ configuration feature that controls whether to allow guest users to request quotes on the items they are interested in from the storefront.
+            frontend_rfp:
+                label: Storefront Requests for Quotes
+                description: Enables customer users to submit requests for quotes through the storefront.
 
     frontend:
-        feature:
-            label: 'Request For Quote (Store Front)'
-            description: 'Request For Quote allows users to place Requests for chosen products'
         product:
             view:
                 request_a_quote: 'Request a Quote'

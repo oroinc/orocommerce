@@ -1,15 +1,28 @@
 oro.tax:
-    code.label: 'Code'
-    description.label: 'Description'
     entity_label: 'Tax'
     entity_plural_label: 'Taxes'
     entity_grid_all_view_label: 'All %entity_plural_label%'
-    id.label: 'id'
-    rate.label: 'Rate'
+    id.label: ID
+    code:
+        label: Code
+        description: The code of the tax.
+    description:
+        label: Description
+        description: The description of the tax.
+    rate:
+        label: Rate
+        description: The tax rate.
     taxcode.label: 'Tax Code'
     taxcode.customergroup.label: 'Customer Group Tax Code'
 
     subtotals.tax: 'Tax'
+    subtotals.lineitem_tax: 'Subtotal Tax'
+    subtotals.shipping_tax: 'Shipping Tax'
+
+    feature:
+        manage:
+            label: Tax Management
+            description: Enables creating and managing product and customer tax codes, tax rates, tax rules, and tax jurisdictions.
 
     form:
         choose: 'Choose a tax'
@@ -23,56 +36,87 @@ oro.tax:
         list:
             description:      'List of Product Tax Codes'
         products.label:       'Products'
-        id.label:             'ID'
+        id.label: ID
         code:
-            label:            'Code'
-            description:      The code of the tax
+            label: Code
+            description: The code of the tax.
         description:
-            label:            'Description'
-            description:      The description of the tax
+            label: Description
+            description: The description of the tax.
         organization:
             label: Organization
-            description: The relationship on organization.
+            description: An organization that the product tax code belongs to.
 
     customertaxcode:
         entity_label: 'Customer Tax Code'
         entity_plural_label: 'Customer Tax Codes'
+        entity_description: Customer Tax Code is a label that is assigned to a customer and indicates the tax obligations and exemptions a customer has. The customer tax obligations are taken into account when a customer (user) submits an order.
         entity_grid_all_view_label: 'All %entity_plural_label%'
-        description: 'List of Customer Tax Codes'
+        list:
+            description: List of Customer Tax Codes
         customers.label: 'Customers'
         customer_groups.label: 'Customer Groups'
-        id.label: 'ID'
-        code.label: 'Code'
-        description.label: 'Description'
+        id.label: ID
+        code:
+            label: Code
+            description: The code of the tax.
+        description:
+            label: Description
+            description: The description of the tax.
         customer_group.view.label: 'Defined for Customer Group'
-        organization.label: 'Organization'
-        owner.label: 'Owner'
+        organization:
+            label: Organization
+            description: An organization that the customer tax code belongs to.
+        owner:
+            label: Owner
+            description: A user who owns the customer tax code.
 
     taxrule:
         entity_label: 'Tax Rule'
         entity_plural_label: 'Tax Rules'
         entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Rules'
-        description.label: 'Description'
-        id.label: 'ID'
-        customer_tax_code.label: 'Customer Tax Code'
-        product_tax_code.label: 'Product Tax Code'
-        tax.label: 'Tax'
-        tax_jurisdiction.label: 'Tax Jurisdiction'
+        id.label: ID
+        description.label: Description
+        description.description: The description of the tax rule.
+        customer_tax_code:
+            label: Customer Tax Code
+            description: The customer tax code.
+        product_tax_code:
+            label: Product Tax Code
+            description: The product tax code
+        tax:
+            label: Tax
+            description: The tax.
+        tax_jurisdiction:
+            label: Tax Jurisdiction
+            description: The tax jurisdiction.
+        organization.label: 'Organization'
 
     taxjurisdiction:
+        form.choose: 'Choose Tax Jurisdiction'
         entity_label: 'Tax Jurisdiction'
         entity_plural_label: 'Tax Jurisdictions'
         entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Jurisdictions'
-        id.label: 'ID'
-        code.label: 'Code'
-        description.label: 'Description'
-        country.label: 'Country'
-        region.label: 'State'
-        region_text.label: 'State'
-        form.choose: 'Choose Tax Jurisdiction'
-        zip_codes.label: 'Zip Codes'
+        id.label: ID
+        code:
+            label: Code
+            description: The code of the tax jurisdiction.
+        description.label: Description
+        description.description: The description of the tax jurisdiction.
+        country:
+            label: Country
+            description: The country of the tax jurisdiction.
+        region:
+            label: State
+            description: The state or region of the tax jurisdiction.
+        region_text:
+            label: State
+            description: The region name for cases when a country does not have predefined regions.
+        zip_codes:
+            label: Zip Codes
+            description: The list of zip codes of the tax jurisdiction.
 
     zipcode:
         entity_label: 'Zip Code'
@@ -142,9 +186,9 @@ oro.tax:
             digital_products_eu.label: 'Digital Products Tax Codes'
             origin_address.label: 'Origin Address'
             shipping_tax_code.label: 'Tax Code'
-            shipping_tax_code.tooltip: 'A tax code is a tax identifier that in combination with tax rules defines the tax rate that is applied to the shipping tax calculation.'
+            shipping_tax_code.tooltip: 'A tax code is a tax identifier that in combination with tax rules defines the tax rate that is applied for the shipping tax calculation.'
             shipping_rates_include_tax.label: 'Shipping Rates Include Tax'
-            shipping_rates_include_tax.tooltip: 'Select the box to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the management console already include tax.'
+            shipping_rates_include_tax.tooltip: 'Select the option to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the back-office already include tax.'
             address_resolver_granularity:
                 label: 'Address Resolver Granularity'
                 country.label: 'Only Country'
@@ -153,7 +197,7 @@ oro.tax:
                 zip.label: 'Country, Region and Zip'
             calculate_taxes_after_promotions:
                 label: 'Calculate Taxes After Promotions'
-                tooltip: 'If this option is enabled, the taxes will be calculated on the reduced price (subtotal) after discounts are applied. Otherwise the taxes are calculated on the full price (subtotal) before discounts.'
+                tooltip: 'Enable the option to calculate taxes on the reduced price (subtotal) after discounts are applied. Otherwise the taxes are calculated on the full price (subtotal) before discounts.'
 
     providers:
         built_in.label: Built-In Table Rates
@@ -197,3 +241,13 @@ oro.product:
     tax_code:
         label: Tax Code
         description: The tax code for the product.
+
+oro.customer:
+    tax_code:
+        label: Tax Code
+        description: The tax code for the customer.
+
+oro.customer.customergroup:
+    tax_code:
+        label: Tax Code
+        description: The tax code for the customer group.

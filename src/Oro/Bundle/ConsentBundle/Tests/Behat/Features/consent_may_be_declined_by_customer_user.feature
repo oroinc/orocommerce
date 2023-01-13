@@ -25,7 +25,8 @@ Feature: Consent may be declined by customer user
     Then I should see "Web Catalog has been saved" flash message
     And I set "Store and Process" as default web catalog
 
-    When I click "Edit Content Tree"
+    When I go to Marketing/Web Catalogs
+    And I click "Edit Content Tree" on row "Store and Process" in grid
     And I click "Add System Page"
     And I fill "Content Node Form" with:
       | Titles            | Home page                               |

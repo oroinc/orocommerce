@@ -26,6 +26,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@defaultProductFamily'
+        unitPrecisions: [ '@precision1' ]
         __calls:
             - addName: ['@locvalue1']
             - setPrimaryUnitPrecision: ['@precision1']
@@ -35,12 +36,14 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@defaultProductFamily'
+        unitPrecisions: [ '@precision2' ]
         __calls:
             - addName: ['@locvalue2']
             - setPrimaryUnitPrecision: ['@precision2']
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localNewCategory']
             - setParentCategory: ['@root_category']

@@ -1,7 +1,8 @@
 /* @theme: custom; */
 
 .checkout-container {
-    padding-left: $page-sidebar-width;
+    float: right;
+    width: calc(#{$page-content-width} - #{$page-sidebar-width});
 }
 
 .checkout-sidebar {
@@ -19,8 +20,12 @@
     margin: 0;
 }
 
+.checkout-form__payment-container {
+    max-width: 400px;
+}
+
 @include breakpoint('tablet') {
     .checkout-container {
-        padding-left: 0;
+        width: $page-sidebar-tablet-s-width;
     }
 }

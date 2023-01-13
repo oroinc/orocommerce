@@ -23,12 +23,14 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
+        unitPrecisions: [ '@precision1' ]
         __calls:
             - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localNewCategory']
             - setParentCategory: ['@root_category']

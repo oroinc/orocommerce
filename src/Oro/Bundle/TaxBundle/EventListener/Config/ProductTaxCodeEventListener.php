@@ -5,55 +5,28 @@ namespace Oro\Bundle\TaxBundle\EventListener\Config;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 /**
  * Manages Tax shipping form in system configuration
  */
 class ProductTaxCodeEventListener
 {
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
+    private AclHelper $aclHelper;
+    private string $settingsKey;
 
-    /**
-     * @var TokenAccessorInterface
-     */
-    protected $tokenAccessor;
-
-    /**
-     * @var string
-     */
-    protected $settingsKey;
-
-    /**
-     * @var string
-     */
-    protected $taxCodeClass;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param string $taxCodeClass
-     * @param string $settingsKey
-     */
-    public function __construct(
-        DoctrineHelper $doctrineHelper,
-        TokenAccessorInterface $tokenAccessor,
-        $taxCodeClass,
-        $settingsKey
-    ) {
+    public function __construct(DoctrineHelper $doctrineHelper, AclHelper $aclHelper, string $settingsKey)
+    {
         $this->doctrineHelper = $doctrineHelper;
-        $this->tokenAccessor = $tokenAccessor;
-        $this->taxCodeClass = (string)$taxCodeClass;
-        $this->settingsKey = (string)$settingsKey;
+        $this->aclHelper = $aclHelper;
+        $this->settingsKey = $settingsKey;
     }
 
-    public function formPreSet(ConfigSettingsUpdateEvent $event)
+    public function formPreSet(ConfigSettingsUpdateEvent $event): void
     {
         $settings = $event->getSettings();
 
@@ -62,33 +35,34 @@ class ProductTaxCodeEventListener
             return;
         }
 
-        $organization = $this->tokenAccessor->getOrganization();
-
         $result = [];
-        $codes = $settings[$key]['value'];
+        $codes = $settings[$key][ConfigManager::VALUE_KEY];
         if ($codes) {
-            /** @var AbstractTaxCodeRepository $repository */
-            $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-            $result = $repository->findByCodes($this->filterCodes($codes), $organization);
+            $qb = $this->doctrineHelper->createQueryBuilder(ProductTaxCode::class, 'taxCode');
+            $qb
+                ->where($qb->expr()->in('taxCode.code', ':codes'))
+                ->setParameter('codes', $codes);
+
+            $result = $this->aclHelper->apply($qb)->getResult();
         }
 
-        $settings[$key]['value'] = $result;
+        $settings[$key][ConfigManager::VALUE_KEY] = $result;
         $event->setSettings($settings);
     }
 
-    public function beforeSave(ConfigSettingsUpdateEvent $event)
+    public function beforeSave(ConfigSettingsUpdateEvent $event): void
     {
         $settings = $event->getSettings();
 
-        if (!array_key_exists('value', $settings)) {
+        if (!array_key_exists(ConfigManager::VALUE_KEY, $settings)) {
             return;
         }
 
         $result = [];
-        $ids = (array)$settings['value'];
+        $ids = (array) $settings[ConfigManager::VALUE_KEY];
 
         if ($ids) {
-            $taxCodes = $this->doctrineHelper->getEntityRepository($this->taxCodeClass)
+            $taxCodes = $this->doctrineHelper->getEntityRepository(ProductTaxCode::class)
                 ->findBy(['id' => $this->filterIds($ids)]);
 
             $result = array_map(
@@ -99,15 +73,11 @@ class ProductTaxCodeEventListener
             );
         }
 
-        $settings['value'] = $result;
+        $settings[ConfigManager::VALUE_KEY] = $result;
         $event->setSettings($settings);
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function filterIds(array $data = [])
+    private function filterIds(array $data = []): array
     {
         $data = array_filter(
             $data,
@@ -117,22 +87,6 @@ class ProductTaxCodeEventListener
         );
 
         $data = array_map('intval', $data);
-
-        return array_values($data);
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function filterCodes(array $data = [])
-    {
-        $data = array_filter(
-            $data,
-            function ($value) {
-                return is_string($value) && $value;
-            }
-        );
 
         return array_values($data);
     }

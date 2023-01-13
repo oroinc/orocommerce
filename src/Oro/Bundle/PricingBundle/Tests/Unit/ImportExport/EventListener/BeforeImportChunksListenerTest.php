@@ -3,22 +3,20 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\ImportExport\EventListener\BeforeImportChunksListener;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class BeforeImportChunksListenerTest extends TestCase
 {
-    use EntityTrait;
-
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
+    private $doctrine;
 
     /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
@@ -34,12 +32,12 @@ class BeforeImportChunksListenerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->priceListRepository = $this->createMock(EntityRepository::class);
         $this->productPriceRepository = $this->createMock(ProductPriceRepository::class);
 
-        $this->listener = new BeforeImportChunksListener($this->registry, $this->shardManager);
+        $this->listener = new BeforeImportChunksListener($this->doctrine, $this->shardManager);
     }
 
     /**
@@ -49,20 +47,17 @@ class BeforeImportChunksListenerTest extends TestCase
     {
         $event = new BeforeImportChunksEvent($body);
 
-        $this->registry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method('getRepository')
             ->with(PriceList::class);
-        $this->registry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method('getRepository')
             ->with(ProductPrice::class);
 
         $this->listener->onBeforeImportChunks($event);
     }
 
-    /**
-     * @return array
-     */
-    public function onBeforeImportChunksWithoutPriceListDataProvider()
+    public function onBeforeImportChunksWithoutPriceListDataProvider(): array
     {
         return [
             'empty processor alias' => [
@@ -87,7 +82,7 @@ class BeforeImportChunksListenerTest extends TestCase
         $body['options']['price_list_id'] = 15;
         $event = new BeforeImportChunksEvent($body);
 
-        $this->registry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(PriceList::class)
             ->willReturn($this->priceListRepository);
@@ -106,9 +101,10 @@ class BeforeImportChunksListenerTest extends TestCase
         $body['options']['price_list_id'] = 16;
         $event = new BeforeImportChunksEvent($body);
 
-        $priceList = $this->getEntity(PriceList::class, ['id' => 16]);
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, 16);
 
-        $this->registry->expects($this->exactly(2))
+        $this->doctrine->expects($this->exactly(2))
             ->method('getRepository')
             ->withConsecutive([PriceList::class], [ProductPrice::class])
             ->willReturnOnConsecutiveCalls($this->priceListRepository, $this->productPriceRepository);

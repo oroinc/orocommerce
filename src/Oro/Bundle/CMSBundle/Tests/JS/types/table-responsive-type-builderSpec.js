@@ -1,20 +1,25 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/type-builders/table-responsive-type-builder';
+import TableResponsiveTypeBuilder from 'orocms/js/app/grapesjs/types/table-responsive-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/table-responsive-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/table-responsive-type', () => {
     let tableResponsiveTypeBuilder;
     let editor;
 
-    beforeEach(() => {
+    beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
+
+        editor.on('load', () => done());
     });
 
     afterEach(() => {
@@ -57,17 +62,14 @@ describe('orocms/js/app/grapesjs/type-builders/table-responsive-type-builder', (
             mockElement.classList.add('table-responsive');
 
             expect(tableResponsiveTypeBuilder.Model.isComponent).toBeDefined();
-            expect(tableResponsiveTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: tableResponsiveTypeBuilder.componentType
-            });
+            expect(tableResponsiveTypeBuilder.Model.isComponent(mockElement)).toBe(true);
 
             expect(tableResponsiveTypeBuilder.Model.componentType).toEqual(tableResponsiveTypeBuilder.componentType);
             expect(tableResponsiveTypeBuilder.Model.prototype.defaults.tagName).toEqual('div');
             expect(tableResponsiveTypeBuilder.Model.prototype.defaults.classes).toEqual(['table-responsive']);
-            expect(tableResponsiveTypeBuilder.Model.prototype.defaults.draggable).toEqual(['div']);
             expect(
                 tableResponsiveTypeBuilder.Model.prototype.defaults.droppable
-            ).toEqual(['table', 'tbody', 'thead', 'tfoot']);
+            ).toEqual(['table']);
 
             expect(tableResponsiveTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

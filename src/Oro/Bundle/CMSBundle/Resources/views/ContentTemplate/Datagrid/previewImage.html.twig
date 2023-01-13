@@ -1,0 +1,20 @@
+{% set previewImage = record.getValue('previewImage') %}
+{% if previewImage %}
+    {% set pictureSources = oro_filtered_picture_sources(previewImage, 'content_template_preview_original') %}
+    {% set smallPictureSources = oro_filtered_picture_sources(previewImage, 'content_template_preview_small') %}
+{% else %}
+    {% set pictureSources = {'sources': [], 'src': content_template_preview_image_placeholder('content_template_preview_original')} %}
+    {% set smallPictureSources = {'sources': [], 'src': content_template_preview_image_placeholder('content_template_preview_small')} %}
+{% endif %}
+
+<a class="view-image no-hash"
+   tabindex="-1"
+   data-gallery="content-template-preview-image-{{ record.getValue('id') }}"
+   data-sources="{{ pictureSources.sources|json_encode }}"
+   href="{{ pictureSources.src }}"
+>
+    {% include '@OroAttachment/Twig/picture.html.twig' with {
+        sources: smallPictureSources,
+        img_attrs: { class: 'thumbnail', alt: record.getValue('name'), width: 200 }
+    } %}
+</a>

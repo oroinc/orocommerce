@@ -9,27 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CustomerControllersTest extends WebTestCase
 {
-    /** @var CustomerUser */
-    protected $customerUser;
+    private CustomerUser $customerUser;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-            ]
-        );
-        $manager = $this->client->getContainer()->get('doctrine')->getManagerForClass(
-            'OroCustomerBundle:CustomerUser'
-        );
-        $this->customerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(
-            ['username' => LoadOrders::ACCOUNT_USER]
-        );
+        $this->loadFixtures([LoadOrders::class]);
+
+        $this->customerUser = self::getContainer()->get('doctrine')
+            ->getRepository(CustomerUser::class)
+            ->findOneBy(['username' => LoadOrders::ACCOUNT_USER]);
     }
 
     public function testCustomerViewAndGrid()
@@ -41,7 +31,7 @@ class CustomerControllersTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
-        static::assertStringContainsString('customer-orders-grid', $content);
+        self::assertStringContainsString('customer-orders-grid', $content);
 
         $response = $this->client->requestGrid(
             [
@@ -61,7 +51,7 @@ class CustomerControllersTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
-        static::assertStringContainsString('customer-user-orders-grid', $content);
+        self::assertStringContainsString('customer-user-orders-grid', $content);
 
         $response = $this->client->requestGrid(
             [
@@ -72,9 +62,38 @@ class CustomerControllersTest extends WebTestCase
         $this->checkDatagridResponse($response);
     }
 
-    protected function checkDatagridResponse(Response $response)
+    public function testCustomerUserOrdersGridSorting()
+    {
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'customer-user-orders-grid',
+                'customer-user-orders-grid[customer_user_id]' => $this->customerUser->getId(),
+            ]
+        );
+        $this->checkDatagridResponse($response);
+
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'customer-user-orders-grid',
+                'customer-user-orders-grid[customer_user_id]' => $this->customerUser->getId(),
+                'customer-user-orders-grid[_sort_by]' => ['totalDiscountsAmount' => 'DESC'],
+            ]
+        );
+        $this->checkDatagridResponse($response);
+
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'customer-user-orders-grid',
+                'customer-user-orders-grid[customer_user_id]' => $this->customerUser->getId(),
+                'customer-user-orders-grid[_sort_by]' => ['totalDiscountsAmount' => 'ASC'],
+            ]
+        );
+        $this->checkDatagridResponse($response);
+    }
+
+    private function checkDatagridResponse(Response $response): void
     {
         $result = $this->getJsonResponseContent($response, 200);
-        static::assertStringContainsString(\sprintf('USD%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
+        self::assertStringContainsString(\sprintf('USD%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
     }
 }

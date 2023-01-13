@@ -1,0 +1,7 @@
+.three-columns-call-to-action .grid-article {
+    --grid-column-count: 1;
+}
+
+.three-columns-call-to-action .extra-block-bg {
+    padding: 24px 40px 40px;
+}

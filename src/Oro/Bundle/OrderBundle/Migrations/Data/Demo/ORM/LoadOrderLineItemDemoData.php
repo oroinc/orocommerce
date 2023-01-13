@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Loads demo order line item data
+ * Loads demo data for order line items.
  */
 class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -132,21 +133,15 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
         fclose($handler);
 
-        $totalHandler = $this->container->get('oro_order.handler.order_totals_handler');
-
+        $totalHandler = $this->container->get('oro_order.order.total.total_helper');
         foreach ($this->orders as $order) {
-            $totalHandler->fillSubtotals($order);
+            $totalHandler->fill($order);
         }
 
         $manager->flush();
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $identifier
-     * @return null|Order
-     */
-    protected function getOrder(EntityManager $manager, $identifier)
+    protected function getOrder(EntityManagerInterface $manager, string $identifier): ?Order
     {
         if (!array_key_exists($identifier, $this->orders)) {
             $this->orders[$identifier] = $manager->getRepository('OroOrderBundle:Order')
@@ -156,12 +151,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         return $this->orders[$identifier];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $sku
-     * @return null|Product
-     */
-    protected function getProduct(EntityManager $manager, $sku)
+    protected function getProduct(EntityManagerInterface $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
             $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
@@ -170,12 +160,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         return $this->products[$sku];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return null|ProductUnit
-     */
-    protected function getProductUnit(EntityManager $manager, $code)
+    protected function getProductUnit(EntityManagerInterface $manager, string $code): ?ProductUnit
     {
         return $manager->getReference('OroProductBundle:ProductUnit', $code);
     }

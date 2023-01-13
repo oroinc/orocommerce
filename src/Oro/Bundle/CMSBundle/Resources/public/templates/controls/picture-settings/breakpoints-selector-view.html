@@ -7,7 +7,7 @@
 
         <ul class="dropdown-menu">
             <% _.each(breakpoints, function(breakpoint) { %>
-                <li class="dropdown-item" data-value="<%- breakpoint.id %>"><%- breakpoint.name %></li>
+                <li class="dropdown-item" title="<%- breakpoint.name %>" data-value="<%- breakpoint.id %>"><%- breakpoint.name %></li>
             <% }); %>
         </ul>
     </div>

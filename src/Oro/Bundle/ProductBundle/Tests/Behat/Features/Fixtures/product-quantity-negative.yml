@@ -24,6 +24,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
+        organization: '@organization'
         __calls:
             - addTitle: ['@localNewCategory']
             - setParentCategory: ['@root_category']
@@ -36,9 +37,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
-        unitPrecisions: ['@precision2']
+        unitPrecisions: [ '@precision2', '@precision1' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
-            - addName: ['@locvalue1']
+            -   addName: [ '@locvalue1' ]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'

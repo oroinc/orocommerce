@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -57,18 +58,33 @@ class LineItemRepository extends ServiceEntityRepository
         $qb->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
             ->join('li.product', 'product')
-            ->leftJoin('product.parentVariantLinks', 'parentVariantLinks');
+            ->leftJoin(
+                'li.product',
+                'productExpr',
+                Join::WITH,
+                'li.product = productExpr AND productExpr IN (:products)'
+            )
+            ->leftJoin(
+                'product.parentVariantLinks',
+                'parentVariantLinksExpr',
+                Join::WITH,
+                'product = parentVariantLinksExpr.parentProduct'.
+                ' AND parentVariantLinksExpr.parentProduct IN (:products)'
+            );
 
         if ($customerUser) {
             $qb->where($qb->expr()->eq('shoppingList.customerUser', ':customerUser'))
                 ->setParameter('customerUser', $customerUser);
         }
 
-        $qb->andWhere('product IN (:products)')
-            ->orWhere('li.parentProduct IN (:products)')
-            ->orWhere('parentVariantLinks.parentProduct IN (:products)')
-            ->setParameter('products', $products)
-            ->addOrderBy($qb->expr()->asc('li.id'));
+        $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->isNull('li.parentProduct'),
+            $qb->expr()->in('li.parentProduct', ':products'),
+            $qb->expr()->isNotNull('productExpr'),
+            $qb->expr()->isNotNull('parentVariantLinksExpr')
+        ))
+        ->setParameter('products', $products)
+        ->addOrderBy($qb->expr()->asc('li.id'));
 
         return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
     }

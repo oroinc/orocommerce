@@ -2,71 +2,45 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 
 class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
 {
-    private ProductResolvedCacheBuilder $cacheBuilder;
-
-    private ScopeManager $scopeManager;
+    private ProductResolvedCacheBuilder $builder;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadCategoryVisibilityData::class,
-            LoadProductVisibilityData::class,
-        ]);
+        $this->loadFixtures([LoadCategoryVisibilityData::class, LoadProductVisibilityData::class]);
 
-        $container = $this->getContainer();
-
-        $productReindexManager = new ProductReindexManager(
-            $container->get('event_dispatcher')
+        $this->builder = self::getContainer()->get(
+            'oro_visibility.visibility.cache.product.product_resolved_cache_builder'
         );
 
-        $indexScheduler = new ProductIndexScheduler(
-            $container->get('oro_entity.doctrine_helper'),
-            $productReindexManager
-        );
-        $this->scopeManager = $container->get('oro_scope.scope_manager');
-        $this->cacheBuilder = new ProductResolvedCacheBuilder(
-            $container->get('doctrine'),
-            $container->get('oro_scope.scope_manager'),
-            $indexScheduler,
-            $container->get('oro_entity.orm.insert_from_select_query_executor'),
-            $productReindexManager
-        );
-        $this->cacheBuilder->setCacheClass(ProductVisibilityResolved::class);
-        $this->cacheBuilder->setRepository(
-            $container->get('oro_visibility.product_repository')
-        );
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
     public function testBuildCache(): void
     {
-        $repository = $this->getRepository();
-        $manager = $this->getManager();
-        $scope = $this->scopeManager->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
+        $repository = self::getContainer()->get('doctrine')->getRepository(ProductVisibilityResolved::class);
+        $manager = self::getContainer()->get('doctrine')->getManagerForClass(ProductVisibilityResolved::class);
+        $scope = self::getContainer()->get('oro_scope.scope_manager')->findOrCreate(
+            ProductVisibility::VISIBILITY_TYPE
+        );
         $product = $this->getReference(LoadProductData::PRODUCT_8);
         // new entities were generated
         $repository->createQueryBuilder('entity')
-            ->delete('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved', 'entity')
+            ->delete(ProductVisibilityResolved::class, 'entity')
             ->getQuery()
             ->execute();
         $this->assertResolvedEntitiesCount(0);
@@ -75,7 +49,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $manager->remove($visibility);
         $manager->flush();
 
-        $this->cacheBuilder->buildCache($scope);
+        $this->builder->buildCache($scope);
         $this->assertResolvedEntitiesCount(4);
 
         // config fallback
@@ -119,27 +93,17 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
 
         // invalid entities were removed
         self::assertNotNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
-        $this->cacheBuilder->buildCache();
+        $this->builder->buildCache();
         self::assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
     }
 
-    protected function assertResolvedEntitiesCount(int $expected): void
+    private function assertResolvedEntitiesCount(int $expected): void
     {
-        $count = $this->getRepository()->createQueryBuilder('entity')
+        $count = self::getContainer()->get('doctrine')->getRepository(ProductVisibilityResolved::class)
+            ->createQueryBuilder('entity')
             ->select('COUNT(entity.visibility)')
             ->getQuery()
             ->getSingleScalarResult();
         self::assertEquals($expected, $count);
-    }
-
-    protected function getManager(): EntityManager
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
-    }
-
-    protected function getRepository(): ProductRepository
-    {
-        return $this->getManager()->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 }

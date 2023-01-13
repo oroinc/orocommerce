@@ -22,54 +22,43 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 class PaymentTermTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentTermProvider;
+    private $paymentTermProvider;
 
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentTermAssociationProvider;
+    private $paymentTermAssociationProvider;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
-
-    /** @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentConfig;
+    private $doctrineHelper;
 
     /** @var PaymentTransaction */
-    protected $paymentTransaction;
+    private $paymentTransaction;
 
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
+    private $logger;
 
     /** @var PaymentTermMethod */
-    protected $method;
+    private $method;
 
     protected function setUp(): void
     {
-        $this->paymentTermProvider = $this->getMockBuilder(PaymentTermProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);
+        $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->paymentTermAssociationProvider = $this
-            ->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
-        $this->paymentConfig->method('getPaymentMethodIdentifier')->willReturn('payment_term');
+        $paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
+        $paymentConfig->expects($this->any())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('payment_term');
 
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);
-
-        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->method = new PaymentTermMethod(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
             $this->doctrineHelper,
-            $this->paymentConfig
+            $paymentConfig
         );
         $this->method->setLogger($this->logger);
     }
@@ -297,20 +286,14 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $expected
-     * @param string $actionName
-     *
      * @dataProvider supportsDataProvider
      */
-    public function testSupports($expected, $actionName)
+    public function testSupports(bool $expected, string $actionName)
     {
         $this->assertEquals($expected, $this->method->supports($actionName));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             [false, PaymentTermMethod::AUTHORIZE],
@@ -325,9 +308,8 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
     {
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -343,9 +325,8 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
     {
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -359,9 +340,8 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
 
     public function testIsApplicableNullCustomer()
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getCustomer')
             ->willReturn(null);
 

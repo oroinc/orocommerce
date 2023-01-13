@@ -1,0 +1,85 @@
+features:
+    landing_pages:
+        label: oro.cms.page.feature.label
+        description: oro.cms.page.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_cms_page_view
+            - oro_cms_page_info
+            - oro_cms_page_index
+            - oro_cms_page_create
+            - oro_cms_page_update
+            - oro_cms_page_get_changed_urls
+        operations:
+            - CMS_CREATE_DRAFT
+            - CMS_PUBLISH_DRAFT
+            - CMS_DUPLICATE_DRAFT
+            - CMS_UPDATE_DRAFT
+            - CMS_DELETE_DRAFT
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\Page
+        navigation_items:
+            - application_menu.marketing_tab.page_list
+            - shortcuts.shortcut_pages_list
+
+    content_blocks:
+        label: oro.cms.contentblock.feature.label
+        description: oro.cms.contentblock.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_cms_content_block_index
+            - oro_cms_content_block_view
+            - oro_cms_content_block_create
+            - oro_cms_content_block_update
+        operations:
+            - oro_cms_content_block_delete
+            - oro_cms_content_block_update
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\ContentBlock
+            - Oro\Bundle\CMSBundle\Entity\TextContentVariant
+        navigation_items:
+            - application_menu.marketing_tab.content_block_list
+
+    content_widgets:
+        label: oro.cms.contentwidget.feature.label
+        description: oro.cms.contentwidget.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_cms_content_widget_index
+            - oro_cms_content_widget_view
+            - oro_cms_content_widget_create
+            - oro_cms_content_widget_update
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\ContentWidget
+            - Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage
+        navigation_items:
+            - application_menu.marketing_tab.content_widget_list
+
+    customer_login_pages:
+        label: oro.cms.loginpage.feature.label
+        description: oro.cms.loginpage.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_cms_loginpage_index
+            - oro_cms_loginpage_view
+            - oro_cms_loginpage_create
+            - oro_cms_loginpage_update
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\LoginPage
+        navigation_items:
+            - application_menu.marketing_tab.login_page_list
+
+    content_templates:
+        label: oro.cms.contenttemplate.feature.label
+        description: oro.cms.contenttemplate.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_cms_content_template_index
+            - oro_cms_content_template_view
+            - oro_cms_content_template_widget
+            - oro_cms_content_template_create
+            - oro_cms_content_template_update
+        entities:
+            - Oro\Bundle\CMSBundle\Entity\ContentTemplate
+        navigation_items:
+            - application_menu.marketing_tab.content_template_list

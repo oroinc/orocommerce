@@ -89,6 +89,10 @@ oro.visibility:
             config: Config
             visible: Visible
             hidden: Hidden
+        feature:
+            manage:
+                label: Product Visibility Management
+                description: Enables managing product visibilities
 
     catalog:
         visibility:

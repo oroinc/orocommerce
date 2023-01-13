@@ -336,8 +336,6 @@ Feature: Frontend workflow configuration
     And I click "Activate" in modal window
     # for now, in UI no way to change applications
     And I allow workflow "Workflow Button Titles" for "commerce" application
-    And go to System/ Localization/ Translations
-    And click "Update Cache"
     # start workflow to see it on frontend
     And I go to Sales/ Requests For Quote
     And click View 0110 in grid

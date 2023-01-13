@@ -5,9 +5,8 @@ namespace Oro\Bundle\ProductBundle\Async;
 use Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorageInterface;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -15,33 +14,36 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * MQ Processor that dispatches search reindexation event for all records that found by given relatedJobId.
  */
 class ReindexRequestItemProductsByRelatedJobProcessor implements
     MessageProcessorInterface,
-    TopicSubscriberInterface
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private const BATCH_SIZE = 100;
 
     private ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage;
     private JobRunner $jobRunner;
     private MessageProducerInterface $producer;
-    private LoggerInterface $logger;
     private int $batchSize = self::BATCH_SIZE;
 
     public function __construct(
         ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage,
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
-        LoggerInterface $logger
     ) {
         $this->websiteReindexRequestDataStorage = $websiteReindexRequestDataStorage;
         $this->jobRunner = $jobRunner;
         $this->producer = $producer;
-        $this->logger = $logger;
+        $this->logger = new NullLogger();
     }
 
     public function setBatchSize(int $batchSize): void
@@ -54,6 +56,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         try {
             $body = $message->getBody();
             $relatedJobId = $body['relatedJobId'];
+            $fieldGroups = $body['indexationFieldsGroups'];
             $websiteIdsOnReindex = $this->websiteReindexRequestDataStorage->getWebsiteIdsByRelatedJobId(
                 $relatedJobId
             );
@@ -66,8 +69,8 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 $jobName,
-                function (JobRunner $jobRunner, Job $job) use ($relatedJobId, $websiteIdsOnReindex) {
-                    $this->doJob($jobRunner, $job, $relatedJobId, $websiteIdsOnReindex);
+                function (JobRunner $jobRunner, Job $job) use ($relatedJobId, $websiteIdsOnReindex, $fieldGroups) {
+                    $this->doJob($jobRunner, $job, $relatedJobId, $websiteIdsOnReindex, $fieldGroups);
 
                     return true;
                 }
@@ -79,7 +82,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => ReindexRequestItemProductsByRelatedJobIdTopic::NAME
+                    'topic' => ReindexRequestItemProductsByRelatedJobIdTopic::getName()
                 ]
             );
 
@@ -91,7 +94,8 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         JobRunner $jobRunner,
         Job $job,
         int $relatedJobId,
-        array $websiteIds
+        array $websiteIds,
+        array $fieldGroups = null
     ): void {
         foreach ($websiteIds as $websiteId) {
             $productIdIteratorOnReindex = $this->websiteReindexRequestDataStorage
@@ -108,7 +112,8 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
                     $job,
                     $websiteId,
                     $productIds,
-                    $batchIndex
+                    $batchIndex,
+                    $fieldGroups
                 );
 
                 $this->websiteReindexRequestDataStorage->deleteProcessedRequestItems(
@@ -128,6 +133,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
      * @param int $websiteId
      * @param array $productIds
      * @param int $batchId
+     * @param array|null $fieldGroups
      * @return void
      */
     protected function sendToReindex(
@@ -135,23 +141,21 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         Job $job,
         int $websiteId,
         array $productIds,
-        int $batchId
+        int $batchId,
+        array $fieldGroups = null
     ): void {
         $jobRunner->createDelayed(
             sprintf('%s:reindex:%d:%d', $job->getName(), $websiteId, $batchId),
-            function (JobRunner $jobRunner, Job $child) use ($websiteId, $productIds) {
-                $message = new Message(
-                    [
-                        'jobId' => $child->getId(),
-                        'class' => Product::class,
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS => [$websiteId],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
-                        ]
-                    ],
-                    AsyncIndexer::DEFAULT_PRIORITY_REINDEX
-                );
-                $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $message);
+            function (JobRunner $jobRunner, Job $child) use ($websiteId, $productIds, $fieldGroups) {
+                $this->producer->send(WebsiteSearchReindexTopic::getName(), [
+                    'jobId' => $child->getId(),
+                    'class' => Product::class,
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [$websiteId],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds,
+                        AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldGroups
+                    ]
+                ]);
             }
         );
     }
@@ -162,17 +166,15 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
      */
     private function getUniqueJobName(int $relatedJobId): string
     {
-        $jobKey = sprintf(
+        return sprintf(
             '%s:%s',
-            ReindexRequestItemProductsByRelatedJobIdTopic::NAME,
+            ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
             $relatedJobId
         );
-
-        return $jobKey;
     }
 
     public static function getSubscribedTopics()
     {
-        return [ReindexRequestItemProductsByRelatedJobIdTopic::NAME];
+        return [ReindexRequestItemProductsByRelatedJobIdTopic::getName()];
     }
 }

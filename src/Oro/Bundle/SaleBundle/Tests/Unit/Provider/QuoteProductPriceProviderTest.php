@@ -28,23 +28,23 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var QuoteProductPriceProvider */
-    protected $quoteProductPriceProvider;
-
     /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceScopeCriteriaFactory;
+    private $priceScopeCriteriaFactory;
 
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productPriceProvider;
 
     /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $currencyProvider;
+    private $currencyProvider;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
+
+    /** @var QuoteProductPriceProvider */
+    private $quoteProductPriceProvider;
 
     protected function setUp(): void
     {
@@ -63,21 +63,10 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->currencyProvider);
-        unset($this->quoteProductPriceProvider);
-        unset($this->productPriceProvider);
-        unset($this->priceScopeCriteriaFactory);
-    }
-
     /**
      * @dataProvider getTierPricesDataProvider
-     * @param QuoteProduct[] $quoteProducts
-     * @param array|null $products
-     * @param int $tierPricesCount
      */
-    public function testGetTierPrices($quoteProducts, $products, $tierPricesCount)
+    public function testGetTierPrices(array $quoteProducts, ?array $products, int $tierPricesCount)
     {
         $website = new Website();
         $customer = new Customer();
@@ -86,8 +75,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $quote->setWebsite($website)->setCustomer($customer);
 
         $currencies = ['USD', 'EUR'];
-        $this->currencyProvider
-            ->expects($this->any())
+        $this->currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn($currencies);
 
@@ -101,14 +89,12 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ->method('createByContext')
                 ->with($quote)
                 ->willReturn($productScopeCriteria);
-            $this->productPriceProvider
-                ->expects($this->once())
+            $this->productPriceProvider->expects($this->once())
                 ->method('getPricesByScopeCriteriaAndProducts')
                 ->with($productScopeCriteria, $products)
                 ->willReturn(range(0, $tierPricesCount - 1), $currencies);
         } else {
-            $this->productPriceProvider
-                ->expects($this->never())
+            $this->productPriceProvider->expects($this->never())
                 ->method('getPricesByScopeCriteriaAndProducts');
         }
 
@@ -120,11 +106,8 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getTierPricesDataProvider
-     * @param QuoteProduct[] $quoteProducts
-     * @param array|null $products
-     * @param int $tierPricesCount
      */
-    public function testGetTierPricesForProducts($quoteProducts, $products, $tierPricesCount)
+    public function testGetTierPricesForProducts(array $quoteProducts, ?array $products, int $tierPricesCount)
     {
         $website = new Website();
         $customer = new Customer();
@@ -133,8 +116,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $quote->setWebsite($website)->setCustomer($customer);
 
         $currencies = ['USD', 'EUR'];
-        $this->currencyProvider
-            ->expects($this->any())
+        $this->currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn($currencies);
 
@@ -144,14 +126,12 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ->method('createByContext')
                 ->with($quote)
                 ->willReturn($productScopeCriteria);
-            $this->productPriceProvider
-                ->expects($this->once())
+            $this->productPriceProvider->expects($this->once())
                 ->method('getPricesByScopeCriteriaAndProducts')
                 ->with($productScopeCriteria, $products)
                 ->willReturn(range(0, $tierPricesCount - 1), $currencies);
         } else {
-            $this->productPriceProvider
-                ->expects($this->never())
+            $this->productPriceProvider->expects($this->never())
                 ->method('getPricesByScopeCriteriaAndProducts');
         }
 
@@ -160,7 +140,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             array_filter(
                 array_map(
                     function (QuoteProduct $quoteProduct) {
-                        return $quoteProduct->getProduct() ? $quoteProduct->getProduct() : null;
+                        return $quoteProduct->getProduct();
                     },
                     $quoteProducts
                 )
@@ -171,10 +151,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertCount($tierPricesCount, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getTierPricesDataProvider()
+    public function getTierPricesDataProvider(): array
     {
         $quoteProduct = $this->getQuoteProduct();
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
@@ -202,13 +179,13 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getMatchedPricesDataProvider
-     * @param QuoteProduct[] $quoteProducts
-     * @param array|null $productPriceCriteria
-     * @param array $prices
-     * @param array $expectedResult
      */
-    public function testGetMatchedPrices($quoteProducts, $productPriceCriteria, $prices, $expectedResult)
-    {
+    public function testGetMatchedPrices(
+        array $quoteProducts,
+        ?array $productPriceCriteria,
+        array $prices,
+        array $expectedResult
+    ) {
         $quote = new Quote();
         $website = new Website();
         $customer = new Customer();
@@ -224,14 +201,12 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ->method('createByContext')
                 ->with($quote)
                 ->willReturn($productScopeCriteria);
-            $this->productPriceProvider
-                ->expects($this->once())
+            $this->productPriceProvider->expects($this->once())
                 ->method('getMatchedPrices')
                 ->with($productPriceCriteria, $productScopeCriteria)
                 ->willReturn($prices);
         } else {
-            $this->productPriceProvider
-                ->expects($this->never())
+            $this->productPriceProvider->expects($this->never())
                 ->method('getMatchedPrices');
         }
 
@@ -240,10 +215,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getMatchedPricesDataProvider()
+    public function getMatchedPricesDataProvider(): array
     {
         $quoteProduct = $this->getQuoteProduct();
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
@@ -307,11 +279,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $type
-     * @return QuoteProduct
-     */
-    protected function getQuoteProduct($type = '')
+    private function getQuoteProduct(string $type = ''): QuoteProduct
     {
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
@@ -415,8 +383,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getBySkuQueryBuilder')
             ->with('psku')
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
@@ -454,10 +421,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getMatchedProductPriceProvider()
+    public function getMatchedProductPriceProvider(): array
     {
         $expectedPrice = Price::create(9.99, 'USD');
 
@@ -497,8 +461,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getBySkuQueryBuilder')
             ->with('psku')
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
@@ -552,8 +515,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getBySkuQueryBuilder')
             ->with('psku')
             ->willReturn($queryBuilder);
-        $this->aclHelper
-            ->expects($this->once())
+        $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);

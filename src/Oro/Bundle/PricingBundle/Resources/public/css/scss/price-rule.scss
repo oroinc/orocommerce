@@ -52,13 +52,6 @@
         }
     }
 
-    &__row &__quantity .validation-failed {
-        position: absolute;
-        top: 50px;
-        white-space: nowrap;
-        margin-left: 25px;
-    }
-
     &.error-block {
         margin-left: 170px;
         // stylelint-disable-next-line declaration-no-important

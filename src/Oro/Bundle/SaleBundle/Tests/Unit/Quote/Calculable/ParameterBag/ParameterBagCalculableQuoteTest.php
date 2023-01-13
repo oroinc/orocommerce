@@ -10,24 +10,12 @@ class ParameterBagCalculableQuoteTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {
-        $lineItems = new ArrayCollection([
-            $this->getShippingLineItemMock()
-        ]);
+        $lineItems = new ArrayCollection([$this->createMock(ShippingLineItemInterface::class)]);
 
         $calculableQuote = new ParameterBagCalculableQuote([
             ParameterBagCalculableQuote::FIELD_LINE_ITEMS => $lineItems
         ]);
 
         $this->assertEquals($lineItems, $calculableQuote->getLineItems());
-    }
-
-    /**
-     * @return ShippingLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getShippingLineItemMock()
-    {
-        return $this
-            ->getMockBuilder(ShippingLineItemInterface::class)
-            ->getMock();
     }
 }

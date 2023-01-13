@@ -4,7 +4,7 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const ApiAccessor = require('oroui/js/tools/api-accessor');
     const mediator = require('oroui/js/mediator');
-    const tools = require('oroui/js/tools');
+    const loadModules = require('oroui/js/app/services/load-modules');
     const $ = require('jquery');
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
@@ -25,6 +25,7 @@ define(function(require) {
                 processingMessage: __('oro.form.inlineEditing.saving_progress'),
                 preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
             },
+            successMessageOptions: {},
             elements: {
                 saveButton: '',
                 quantity: '[name$="[quantity]"]',
@@ -70,6 +71,7 @@ define(function(require) {
             this._isSaving = false;
 
             this.messages = options.messages;
+            this.successMessageOptions = options.successMessageOptions;
             this.dataKey = options.dataKey;
             this.quantityFieldName = options.quantityFieldName;
             this.unitFieldName = options.unitFieldName;
@@ -144,7 +146,7 @@ define(function(require) {
 
             if (options.validation.showErrorsHandler) {
                 const waitors = [];
-                waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler')
+                waitors.push(loadModules.fromObjectProp(options.validation, 'showErrorsHandler')
                     .then(() => {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
                         this.updateValidation($form, validationOptions);
@@ -272,7 +274,7 @@ define(function(require) {
             this.trigger('product:quantity-unit:update', value);
             mediator.trigger('product:quantity-unit:update', value);
 
-            mediator.execute('showFlashMessage', 'success', this.messages.success);
+            mediator.execute('showFlashMessage', 'success', this.messages.success, this.successMessageOptions);
         },
 
         onSaveError: function(jqXHR) {

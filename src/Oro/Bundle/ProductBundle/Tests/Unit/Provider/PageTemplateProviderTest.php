@@ -15,32 +15,27 @@ class PageTemplateProviderTest extends \PHPUnit\Framework\TestCase
     private $pageTemplateProvider;
 
     /** @var ThemeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $themeManagerMock;
+    private $themeManager;
 
     /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private $fallbackResolverMock;
+    private $fallbackResolver;
 
     /** @var Product */
     private $product;
 
     protected function setUp(): void
     {
-        $this->themeManagerMock = $this->getMockBuilder(ThemeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->themeManager = $this->createMock(ThemeManager::class);
+        $this->fallbackResolver = $this->createMock(EntityFallbackResolver::class);
 
-        $this->fallbackResolverMock = $this->getMockBuilder(EntityFallbackResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->pageTemplateProvider = new PageTemplateProvider($this->themeManagerMock, $this->fallbackResolverMock);
+        $this->pageTemplateProvider = new PageTemplateProvider($this->themeManager, $this->fallbackResolver);
 
         $this->product = new Product();
     }
 
     public function testGetPageTemplateWithNoFallback()
     {
-        $this->fallbackResolverMock->expects($this->once())
+        $this->fallbackResolver->expects($this->once())
             ->method('getFallbackValue')
             ->with($this->product, 'pageTemplate')
             ->willReturn([]);
@@ -50,12 +45,12 @@ class PageTemplateProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPageTemplateWithNoFoundInTheme()
     {
-        $this->fallbackResolverMock->expects($this->once())
+        $this->fallbackResolver->expects($this->once())
             ->method('getFallbackValue')
             ->with($this->product, 'pageTemplate')
             ->willReturn(['resolved_route' => 'some_template_key']);
 
-        $this->themeManagerMock->expects($this->once())
+        $this->themeManager->expects($this->once())
             ->method('getAllThemes')
             ->willReturn([]);
 
@@ -64,7 +59,7 @@ class PageTemplateProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPageTemplate()
     {
-        $this->fallbackResolverMock->expects($this->once())
+        $this->fallbackResolver->expects($this->once())
             ->method('getFallbackValue')
             ->with($this->product, 'pageTemplate')
             ->willReturn(['resolved_route' => 'some_template_key']);
@@ -73,7 +68,7 @@ class PageTemplateProviderTest extends \PHPUnit\Framework\TestCase
         $pageTemplate = new PageTemplate('some label', 'some_template_key', 'resolved_route');
         $theme->addPageTemplate($pageTemplate);
 
-        $this->themeManagerMock->expects($this->once())
+        $this->themeManager->expects($this->once())
             ->method('getAllThemes')
             ->willReturn([$theme]);
 

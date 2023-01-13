@@ -9,54 +9,45 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $dispatcher;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $dispatcher;
 
-    /**
-     * @var WebCatalogConfigChangeListener
-     */
-    protected $webCatalogConfigChangeListener;
+    /** @var WebCatalogConfigChangeListener */
+    private $webCatalogConfigChangeListener;
 
     protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $this->webCatalogConfigChangeListener = new WebCatalogConfigChangeListener($this->dispatcher);
     }
 
     public function testOnConfigurationUpdate()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
 
-        $event->method('isChanged')
+        $event->expects($this->any())
+            ->method('isChanged')
             ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
             ->willReturn(true);
 
-        $this->dispatcher
-            ->expects($this->once())
+        $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(new ReindexationRequestEvent(), ReindexationRequestEvent::EVENT_NAME);
+            ->with(new ReindexationRequestEvent([], [], [], true, ['main']), ReindexationRequestEvent::EVENT_NAME);
 
         $this->webCatalogConfigChangeListener->onConfigurationUpdate($event);
     }
 
     public function testOnOtherConfigurationUpdate()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
 
-        $event->method('isChanged')
+        $event->expects($this->any())
+            ->method('isChanged')
             ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
             ->willReturn(false);
 
-        $this->dispatcher
-            ->expects($this->never())
+        $this->dispatcher->expects($this->never())
             ->method('dispatch');
 
         $this->webCatalogConfigChangeListener->onConfigurationUpdate($event);

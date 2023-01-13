@@ -19,7 +19,7 @@ class MultipleChoice extends BaseMultipleChoice
         $widgets = $this->getPage()
             ->findAll(
                 'css',
-                'body div.filter-box div.dropdown-menu ul.ui-multiselect-checkboxes'
+                'body div.filter-box ul.ui-multiselect-checkboxes'
             );
 
         /** @var NodeElement $widget */
@@ -48,16 +48,28 @@ class MultipleChoice extends BaseMultipleChoice
         $this->getDriver()->waitForAjax();
 
         $widget = $this->getWidget();
-        $inputs = $widget->findAll('css', 'li span.custom-checkbox__text');
+        $inputs = $widget->findAll('css', 'li span');
 
         $choices = [];
         /** @var Element $input */
         foreach ($inputs as $input) {
-            $choices[] = trim($input->getText());
+            if ($input->isVisible()) {
+                $choices[] = trim($input->getText());
+            }
         }
 
         $this->close();
 
         return $choices;
+    }
+
+    public function getSearchField()
+    {
+        $searchInput = $this->getWidget()->getParent()->find('css', 'input[type="search"]');
+        if ($searchInput && $searchInput->isVisible()) {
+            return $searchInput;
+        }
+
+        self::fail('Can\'t find search input in multiselect filter or it\'s not visible');
     }
 }

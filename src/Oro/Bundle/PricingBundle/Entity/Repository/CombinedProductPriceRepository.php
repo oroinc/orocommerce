@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -34,6 +35,7 @@ use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
     private const BATCH_SIZE = 100000;
+    private const BATCH_SIZE_GROUP_BY = 10;
 
     public function copyPricesByPriceList(
         ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
@@ -198,6 +200,61 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $qb->getQuery()->execute();
     }
 
+    public function deleteDuplicatePrices(array $cpls = []): int
+    {
+        $delete = <<<SQL
+            DELETE FROM oro_price_product_combined cpp1 
+            USING oro_price_product_combined cpp2
+            WHERE
+                cpp1.id < cpp2.id
+                AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
+                AND cpp1.product_id = cpp2.product_id
+                AND cpp1.value = cpp2.value
+                AND cpp1.currency = cpp2.currency
+                AND cpp1.quantity = cpp2.quantity
+                AND cpp1.unit_code = cpp2.unit_code %s
+            RETURNING cpp1.id
+        SQL;
+
+        $sql = "WITH deleted_rows AS ($delete) SELECT COUNT(*) FROM deleted_rows";
+
+        return $this->executeDuplicatePricesQuery($sql, $cpls);
+    }
+
+    public function hasDuplicatePrices(array $cpls = []): bool
+    {
+        $sql = <<<SQL
+            SELECT cpp1.id
+            FROM oro_price_product_combined cpp1 
+            INNER JOIN oro_price_product_combined cpp2 ON 
+                cpp1.id < cpp2.id
+                AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
+                AND cpp1.product_id = cpp2.product_id
+                AND cpp1.value = cpp2.value
+                AND cpp1.currency = cpp2.currency
+                AND cpp1.quantity = cpp2.quantity
+                AND cpp1.unit_code = cpp2.unit_code %s
+            LIMIT 1
+        SQL;
+
+        return (bool) $this->executeDuplicatePricesQuery($sql, $cpls);
+    }
+
+    private function executeDuplicatePricesQuery(string $sql, array $cpls = []): int
+    {
+        $connection = $this->_em->getConnection();
+        $parameters = $types = [];
+        if ($cpls) {
+            $sql = sprintf($sql, 'AND cpp1.combined_price_list_id IN (:combinedPriceLists)');
+            $parameters = ['combinedPriceLists' => $cpls];
+            $types = ['combinedPriceLists' => Connection::PARAM_INT_ARRAY];
+        } else {
+            $sql = sprintf($sql, '');
+        }
+
+        return $connection->executeQuery($sql, $parameters, $types)->fetchOne();
+    }
+
     /**
      * When merge allowed = true
      *   - include only prices for product quantities that are not yet present.
@@ -296,17 +353,20 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         array $products,
         ?CombinedPriceList $configCpl = null
     ): iterable {
-        $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
-        $qb->select(
-            'IDENTITY(mp.product) as product',
-            'MIN(mp.value) as value',
-            'mp.currency',
-            'IDENTITY(mp.priceList) as cpl',
-            'IDENTITY(mp.unit) as unit'
-        );
-        $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
+        $cplIds = $this->getCplIdsForWebsite($websiteId, $configCpl);
+        foreach (array_chunk($products, self::BATCH_SIZE_GROUP_BY) as $productsBatch) {
+            $qb = $this->getQbForMinimalPrices($productsBatch, $cplIds);
+            $qb->select(
+                'IDENTITY(mp.product) as product',
+                'MIN(mp.value) as value',
+                'mp.currency',
+                'IDENTITY(mp.priceList) as cpl',
+                'IDENTITY(mp.unit) as unit'
+            );
+            $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
 
-        return $qb->getQuery()->getArrayResult();
+            yield from $qb->getQuery()->getArrayResult();
+        }
     }
 
     public function findMinByWebsiteForSort(
@@ -314,16 +374,19 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         array $products,
         ?CombinedPriceList $configCpl = null
     ): iterable {
-        $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
-        $qb->select(
-            'IDENTITY(mp.product) as product',
-            'MIN(mp.value) as value',
-            'mp.currency',
-            'IDENTITY(mp.priceList) as cpl'
-        );
-        $qb->groupBy('mp.priceList, mp.product, mp.currency');
+        $cplIds = $this->getCplIdsForWebsite($websiteId, $configCpl);
+        foreach (array_chunk($products, self::BATCH_SIZE_GROUP_BY) as $productsBatch) {
+            $qb = $this->getQbForMinimalPrices($productsBatch, $cplIds);
+            $qb->select(
+                'IDENTITY(mp.product) as product',
+                'MIN(mp.value) as value',
+                'mp.currency',
+                'IDENTITY(mp.priceList) as cpl'
+            );
+            $qb->groupBy('mp.priceList, mp.product, mp.currency');
 
-        return $qb->getQuery()->getArrayResult();
+            yield from $qb->getQuery()->getArrayResult();
+        }
     }
 
     public function insertMinimalPricesByPriceList(
@@ -450,9 +513,8 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     protected function getQbForMinimalPrices(
-        int $websiteId,
         array $products,
-        ?CombinedPriceList $configCpl = null
+        array $cplIds
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('mp');
 
@@ -463,7 +525,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                     $qb->expr()->in('mp.product', ':products')
                 )
             )
-            ->setParameter('cplIds', $this->getCplIdsForWebsite($websiteId, $configCpl))
+            ->setParameter('cplIds', $cplIds)
             ->setParameter(
                 'products',
                 array_map(
