@@ -849,6 +849,8 @@ services:
             - '@oro_promotion.promotion_executor'
             - '@oro_pricing.user_currency_manager'
             - '@oro_locale.formatter.number'
+        calls:
+            - [setSplitEntitiesProvider, ['@oro_checkout.provider.multi_shipping.split_entities_provider']]
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
