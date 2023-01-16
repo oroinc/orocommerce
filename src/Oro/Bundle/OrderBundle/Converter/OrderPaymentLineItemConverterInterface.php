@@ -6,12 +6,15 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 
+/**
+ * Represents a service to convert order line items to a collection of payment line items.
+ */
 interface OrderPaymentLineItemConverterInterface
 {
     /**
-     * @param OrderLineItem[]|Collection $orderLineItems
+     * @param Collection<int, OrderLineItem> $orderLineItems
      *
-     * @return PaymentLineItemCollectionInterface|null
+     * @return PaymentLineItemCollectionInterface
      */
-    public function convertLineItems(Collection $orderLineItems);
+    public function convertLineItems(Collection $orderLineItems): PaymentLineItemCollectionInterface;
 }

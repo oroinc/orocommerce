@@ -13,7 +13,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Symfony\Component\Form\FormInterface;
 
-class PossibleShippingMethodsEventListenerTest extends \PHPUnit\Framework\TestCase
+class PossibleShippingMethodEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $factory;
@@ -168,26 +168,5 @@ class PossibleShippingMethodsEventListenerTest extends \PHPUnit\Framework\TestCa
                 ],
             ],
         ];
-    }
-
-    public function testOnOrderEventWithoutProvider()
-    {
-        $this->listener = new PossibleShippingMethodEventListener($this->factory, $this->priceConverter, null);
-        $order = new Order();
-        $this->factory->expects(self::never())
-            ->method('create');
-
-        $this->priceProvider->expects(self::never())
-            ->method('getApplicableMethodsViews');
-
-        $methods = ['field' => 'value'];
-        $event = new OrderEvent($this->createMock(FormInterface::class), $order, $methods);
-
-        $this->listener->onEvent($event);
-
-        self::assertArrayNotHasKey(
-            PossibleShippingMethodEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
-            $event->getData()
-        );
     }
 }
