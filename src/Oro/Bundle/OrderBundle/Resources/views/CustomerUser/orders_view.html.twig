@@ -1,3 +1,21 @@
 {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if oro_config_value('oro_ui.enable_quick_creation_buttons') and is_granted('oro_order_create') %}
+    {{ UI.renderButtonsRow(UI.quickAccessAddButton({
+        'dataUrl' : path('oro_order_create_for_customer_user', { customerUser: entity.id }),
+        'title': 'oro.order.customer_user.quick_access_button.new_order.label'|trans,
+        'label': 'oro.order.customer_user.quick_access_button.new_order.label'|trans,
+        'widget': {
+            'reload-grid-name': 'customer-user-orders-grid',
+            'options': {
+                'alias': 'oro_order_create_for_customer_user_dialog',
+                'dialogOptions': {
+                    'title': 'oro.order.customer_user.quick_access_button.create_order.widget.title'|trans,
+                }
+            }
+        }
+    })) }}
+{% endif %}
 
 {{ dataGrid.renderGrid('customer-user-orders-grid', {customer_user_id: entity.id}, {cssClass: 'inner-grid'}) }}

@@ -542,3 +542,19 @@ services:
             - '@oro_order.order.provider.order_address'
         tags:
             - { name: validator.constraint_validator, alias: oro_order_customer_or_user_address_granted }
+
+    oro_order.order_create_for_customer.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_button
+            - order_create_for_customer_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_order.order_create_for_customer_user.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_user_button
+            - order_create_for_customer_user_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }

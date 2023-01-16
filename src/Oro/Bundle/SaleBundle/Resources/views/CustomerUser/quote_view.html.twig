@@ -1,3 +1,21 @@
 {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if oro_config_value('oro_ui.enable_quick_creation_buttons') and is_granted('oro_sale_quote_create') %}
+    {{ UI.renderButtonsRow(UI.quickAccessAddButton({
+        'dataUrl' : path('oro_sale_quote_create_for_customer_user', { customerUser: entity.id }),
+        'title': 'oro.sale.quote.customer_user.quick_access_button.new_quote.label'|trans,
+        'label': 'oro.sale.quote.customer_user.quick_access_button.new_quote.label'|trans,
+        'widget': {
+            'reload-grid-name': 'customer-user-view-quote-grid',
+            'options': {
+                'alias': 'oro_sale_quote_create_for_customer_user_dialog',
+                'dialogOptions': {
+                    'title': 'oro.sale.quote.customer_user.quick_access_button.create_quote.widget.title'|trans,
+                }
+            }
+        }
+    })) }}
+{% endif %}
 
 {{ dataGrid.renderGrid('customer-user-view-quote-grid', {customer_user_id: entity.id}, {cssClass: 'inner-grid'}) }}
