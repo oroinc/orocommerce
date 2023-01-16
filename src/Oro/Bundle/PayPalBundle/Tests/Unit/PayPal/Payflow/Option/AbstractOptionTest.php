@@ -17,12 +17,9 @@ abstract class AbstractOptionTest extends \PHPUnit\Framework\TestCase
     /**
      * @return Option\AbstractOption[]
      */
-    abstract protected function getOptions();
+    abstract protected function getOptions(): array;
 
-    /**
-     * @return array
-     */
-    abstract public function configureOptionDataProvider();
+    abstract public function configureOptionDataProvider(): array;
 
     /**
      * @dataProvider configureOptionDataProvider

@@ -9,13 +9,14 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class ScopeFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -133,6 +134,13 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 
     public function testFilterIsSkippable()
     {
-        $this->assertServiceSkipped($this->scopeFiltrationService, $this->filtrationService);
+        $this->filtrationService->expects($this->never())
+            ->method('getFilteredRuleOwners');
+
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $this->scopeFiltrationService->getFilteredRuleOwners(
+            [$ruleOwner],
+            ['skip_filters' => [get_class($this->scopeFiltrationService) => true]]
+        );
     }
 }

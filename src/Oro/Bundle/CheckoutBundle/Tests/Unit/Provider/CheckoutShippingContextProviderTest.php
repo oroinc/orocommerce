@@ -27,8 +27,7 @@ class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContextWhenCache(): void
     {
-        $this->checkoutShippingContextFactory
-            ->expects($this->never())
+        $this->checkoutShippingContextFactory->expects($this->never())
             ->method('create');
 
         $context = $this->createMock(ShippingContextInterface::class);
@@ -44,8 +43,7 @@ class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
         $checkout = $this->createMock(Checkout::class);
         $context = $this->createMock(ShippingContextInterface::class);
 
-        $this->checkoutShippingContextFactory
-            ->expects($this->once())
+        $this->checkoutShippingContextFactory->expects($this->once())
             ->method('create')
             ->with($checkout)
             ->willReturn($context);

@@ -13,7 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 {
-    const DEFAULT_EXPECTED_LOCALIZATION = [
+    private const DEFAULT_EXPECTED_LOCALIZATION = [
         'sku' => '',
         'status' => '',
         'type' => '',
@@ -97,12 +97,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'wysiwygAttr' => ''
     ];
 
-    /**
-     * @var LocalizedFallbackValueAwareDataConverter
-     */
-    protected $converter;
+    private LocalizedFallbackValueAwareDataConverter $converter;
 
-    /** {@inheritdoc} */
     protected function setUp(): void
     {
         $this->initClient();
@@ -110,9 +106,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
         $container = $this->getContainer();
 
-        $this->loadFixtures(
-            [LoadLocalizationData::class, LoadOrganization::class]
-        );
+        $this->loadFixtures([LoadLocalizationData::class, LoadOrganization::class]);
 
         $organization = $this->getReference('organization');
         $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
@@ -141,10 +135,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $this->assertEquals($expected, $this->converter->convertToImportFormat($data));
     }
 
-    /**
-     * @return array
-     */
-    public function importDataProvider()
+    public function importDataProvider(): array
     {
         return [
             'default localization' => [
@@ -181,11 +172,9 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function exportDataProvider()
+    public function exportDataProvider(): array
     {
         return [
             'default localization' => [

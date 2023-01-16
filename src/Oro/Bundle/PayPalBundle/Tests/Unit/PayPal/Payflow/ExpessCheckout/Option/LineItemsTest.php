@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpessCheckout\Optio
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class LineItemsTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new ECOption\LineItems(), new ECOption\Action()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -60,7 +65,7 @@ class LineItemsTest extends AbstractOptionTest
                 ],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException',
+                    UndefinedOptionsException::class,
                     'The options "L_COST1", "L_DESC1", "L_NAME1", "L_QTY1" do not exist. Defined options are: "ACTION".'
                 ]
             ],

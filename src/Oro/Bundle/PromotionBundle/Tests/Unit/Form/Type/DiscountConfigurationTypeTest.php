@@ -14,14 +14,8 @@ use Symfony\Component\Form\FormView;
 
 class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var DiscountFormTypeProvider
-     */
-    private $discountFormTypeProvider;
+    private DiscountFormTypeProvider $discountFormTypeProvider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->discountFormTypeProvider = new DiscountFormTypeProvider();
@@ -30,11 +24,8 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param mixed $defaultData
-     * @param array $submittedData
-     * @param DiscountConfiguration $expectedData
      */
-    public function testSubmit($defaultData, array $submittedData, DiscountConfiguration $expectedData)
+    public function testSubmit(mixed $defaultData, array $submittedData, DiscountConfiguration $expectedData)
     {
         $this->discountFormTypeProvider->addFormType('discount_type', ScopeCollectionTypeStub::class);
         $this->discountFormTypeProvider->setDefaultFormType(ScopeCollectionTypeStub::class);
@@ -52,10 +43,7 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $scope = (new ScopeStub())->setLocale('zu');
         $discountType = 'discount_type';
@@ -67,11 +55,11 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 
         $expectedConfiguration = new DiscountConfiguration();
         $expectedConfiguration->setType($discountType);
-        $expectedConfiguration->setOptions(["locale" => $scope]);
+        $expectedConfiguration->setOptions(['locale' => $scope]);
 
         $existingConfiguration = new DiscountConfiguration();
         $existingConfiguration->setType('existing_type');
-        $existingConfiguration->setOptions(["locale" => $scope]);
+        $existingConfiguration->setOptions(['locale' => $scope]);
 
         return [
             'new discount configuration' => [
@@ -120,9 +108,9 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(

@@ -7,19 +7,16 @@ use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $filtrationService;
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtrationService;
 
-    /**
-     * @var ShippingFiltrationService
-     */
-    protected $shippingFiltrationService;
+    /** @var ShippingFiltrationService */
+    private $shippingFiltrationService;
 
     protected function setUp(): void
     {
@@ -45,10 +42,7 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
         );
     }
 
-    /**
-     * @return array
-     */
-    public function contextDataProvider()
+    public function contextDataProvider(): array
     {
         return [
             'empty context' => [
@@ -153,6 +147,13 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     public function testFilterIsSkippable()
     {
-        $this->assertServiceSkipped($this->shippingFiltrationService, $this->filtrationService);
+        $this->filtrationService->expects($this->never())
+            ->method('getFilteredRuleOwners');
+
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $this->shippingFiltrationService->getFilteredRuleOwners(
+            [$ruleOwner],
+            ['skip_filters' => [get_class($this->shippingFiltrationService) => true]]
+        );
     }
 }

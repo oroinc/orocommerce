@@ -8,15 +8,20 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class PromotionSubtotalProviderDecoratorTest extends TestCase
+class PromotionSubtotalProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    private SubtotalProvider|MockObject $baseSubtotalProvider;
-    private RoundingServiceInterface|MockObject $rounding;
-    private SplitEntitiesProviderInterface|MockObject $splitEntitiesProvider;
-    private PromotionSubtotalProviderDecorator $subtotalProvider;
+    /** @var SubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $baseSubtotalProvider;
+
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $rounding;
+
+    /** @var SplitEntitiesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $splitEntitiesProvider;
+
+    /** @var PromotionSubtotalProviderDecorator */
+    private $subtotalProvider;
 
     protected function setUp(): void
     {

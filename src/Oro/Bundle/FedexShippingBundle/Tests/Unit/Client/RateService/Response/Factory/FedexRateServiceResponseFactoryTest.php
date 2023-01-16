@@ -22,7 +22,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         $notification1 = $this->createNotification(23);
         $notification2 = $this->createNotification(34);
 
-        $soapResponse = new \StdClass();
+        $soapResponse = new \stdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_ERROR;
         $soapResponse->Notifications = [$notification1, $notification2];
 
@@ -36,7 +36,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
     {
         $notification = $this->createNotification(1);
 
-        $soapResponse = new \StdClass();
+        $soapResponse = new \stdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_FAILURE;
         $soapResponse->Notifications = $notification;
 
@@ -50,7 +50,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
     {
         $notification = $this->createNotification(1);
 
-        $soapResponse = new \StdClass();
+        $soapResponse = new \stdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_WARNING;
         $soapResponse->Notifications = $notification;
 
@@ -67,15 +67,15 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         $service = 'service1';
         $notificationCode = 42;
 
-        $rateReplyDetails = new \StdClass();
+        $rateReplyDetails = new \stdClass();
         $rateReplyDetails->ServiceType = $service;
-        $rateReplyDetails->RatedShipmentDetails = new \StdClass();
-        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail = new \StdClass();
-        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge = new \StdClass();
+        $rateReplyDetails->RatedShipmentDetails = new \stdClass();
+        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail = new \stdClass();
+        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge = new \stdClass();
         $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge->Amount = $price;
         $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge->Currency = $currency;
 
-        $soapResponse = new \StdClass();
+        $soapResponse = new \stdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_WARNING;
         $soapResponse->Notifications = $this->createNotification($notificationCode);
         $soapResponse->RateReplyDetails = $rateReplyDetails;
@@ -99,7 +99,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         ];
         $notificationCode = 65;
 
-        $soapResponse = new \StdClass();
+        $soapResponse = new \stdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_SUCCESS;
         $soapResponse->Notifications = $this->createNotification($notificationCode);
         $soapResponse->RateReplyDetails = [
@@ -120,13 +120,13 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         );
     }
 
-    private function createRateReplyDetail(string $serviceName, Price $price): \StdClass
+    private function createRateReplyDetail(string $serviceName, Price $price): \stdClass
     {
-        $rateReplyDetails = new \StdClass();
+        $rateReplyDetails = new \stdClass();
         $rateReplyDetails->ServiceType = $serviceName;
-        $rateReplyDetails->RatedShipmentDetails = [new \StdClass()];
-        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail = new \StdClass();
-        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge = new \StdClass();
+        $rateReplyDetails->RatedShipmentDetails = [new \stdClass()];
+        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail = new \stdClass();
+        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge = new \stdClass();
         $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Amount = $price->getValue();
         $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Currency =
             $price->getCurrency();
@@ -134,9 +134,9 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         return $rateReplyDetails;
     }
 
-    private function createNotification(int $code): \StdClass
+    private function createNotification(int $code): \stdClass
     {
-        $notification = new \StdClass();
+        $notification = new \stdClass();
         $notification->Code = $code;
 
         return $notification;

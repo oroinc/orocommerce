@@ -31,58 +31,36 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 {
-    /** @var ProductUnitSelectionType */
-    protected $formType;
+    private array $units = ['test01', 'test02'];
 
-    /**
-     * @var array
-     */
-    protected $units = ['test01', 'test02'];
+    private ProductUnitSelectionType $formType;
 
-    /**
-     * @var array
-     */
-    protected $labels = [];
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator
-            ->expects(static::any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($id, array $params) {
-                    return isset($params['{title}']) ? $id . ':' . $params['{title}'] : $id;
-                }
-            );
-        $productUnitLabelFormatter = new UnitLabelFormatter($this->translator);
+            ->willReturnCallback(function ($id, array $params) {
+                return isset($params['{title}']) ? $id . ':' . $params['{title}'] : $id;
+            });
+        $productUnitLabelFormatter = new UnitLabelFormatter($translator);
         $productUnitLabelFormatter->setTranslationPrefix('oro.product_unit');
 
-        $this->formType = new ProductUnitSelectionType($productUnitLabelFormatter, $this->translator);
+        $this->formType = new ProductUnitSelectionType($productUnitLabelFormatter, $translator);
         $this->formType->setEntityClass(ProductUnit::class);
 
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub($this->prepareChoices());
-
         return [
             new PreloadedExtension(
                 [
-                    EntityType::class => $entityType,
+                    EntityType::class => new EntityTypeStub($this->prepareChoices()),
                     ProductUnitSelectionType::class => $this->formType
                 ],
                 []
@@ -93,7 +71,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->exactly(2))
             ->method('setDefaults')
@@ -123,14 +100,13 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider getProductUnitsDataProvider
-     *
-     * @param array $option
-     * @param ProductUnitPrecision $primaryUnitPrecision
-     * @param ArrayCollection $additionalUnitPrecisions
-     * @param array $expectedData ;
      */
-    public function testGetProductUnits($option, $primaryUnitPrecision, $additionalUnitPrecisions, $expectedData)
-    {
+    public function testGetProductUnits(
+        array $option,
+        ProductUnitPrecision $primaryUnitPrecision,
+        ArrayCollection $additionalUnitPrecisions,
+        array $expectedData
+    ) {
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())
             ->method('getOptions')
@@ -156,12 +132,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * @param string $code
-     * @param boolean $sell
-     * @return ProductUnitPrecision
-     */
-    private function makePrecision($code, $sell)
+    private function makePrecision(string $code, bool $sell): ProductUnitPrecision
     {
         $unit = new ProductUnit();
         $unit->setCode($code);
@@ -171,10 +142,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         return $precision;
     }
 
-    /**
-     * @return array
-     */
-    public function getProductUnitsDataProvider()
+    public function getProductUnitsDataProvider(): array
     {
         $primaryUnitPrecision = $this->makePrecision('box', true);
 
@@ -208,14 +176,13 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $inputOptions
-     * @param array $expectedOptions
-     * @param array $expectedLabels
-     * @param string $submittedData
      */
-    public function testSubmit(array $inputOptions, array $expectedOptions, array $expectedLabels, $submittedData)
-    {
+    public function testSubmit(
+        array $inputOptions,
+        array $expectedOptions,
+        array $expectedLabels,
+        string $submittedData
+    ) {
         $form = $this->factory->create(ProductUnitSelectionType::class, null, $inputOptions);
 
         $precision1 = new ProductUnitPrecision();
@@ -261,10 +228,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($submittedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'without compact option' => [
@@ -299,10 +263,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals(EntityType::class, $this->formType->getParent());
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareChoices()
+    private function prepareChoices(): array
     {
         $choices = [];
         foreach ($this->units as $unitCode) {
@@ -315,13 +276,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     * @param boolean $withParent
-     *
      * @dataProvider finishViewProvider
      */
-    public function testFinishView(array $inputData = [], array $expectedData = [], $withParent = true)
+    public function testFinishView(array $inputData = [], array $expectedData = [], bool $withParent = true)
     {
         $form = $this->factory->create(ProductUnitSelectionType::class, null, $inputData['options']);
 
@@ -349,16 +306,14 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             if (!isset($view->vars[$field])) {
                 $view->vars[$field] = null;
             }
-            static::assertEquals($value, $view->vars[$field]);
+            self::assertEquals($value, $view->vars[$field]);
         }
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function finishViewProvider()
+    public function finishViewProvider(): array
     {
         $precision = new ProductUnitPrecision();
         $unit = new ProductUnit();
@@ -500,54 +455,36 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param int $id
-     * @param $productUnitCode
-     * @param ProductUnit $productUnit
-     * @param ProductHolderInterface $productHolder
-     * @return ProductUnitHolderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createProductUnitHolder(
-        $id,
-        $productUnitCode,
+    private function createProductUnitHolder(
+        ?int $id,
+        ?string $productUnitCode,
         ProductUnit $productUnit = null,
         ProductHolderInterface $productHolder = null
-    ) {
+    ): ProductUnitHolderInterface {
         $productUnitHolder = $this->createMock(ProductUnitHolderInterface::class);
-        $productUnitHolder
-            ->expects(static::any())
+        $productUnitHolder->expects(self::any())
             ->method('getEntityIdentifier')
             ->willReturn($id);
-        $productUnitHolder
-            ->expects(static::any())
+        $productUnitHolder->expects(self::any())
             ->method('getProductUnit')
             ->willReturn($productUnit);
-        $productUnitHolder
-            ->expects(static::any())
+        $productUnitHolder->expects(self::any())
             ->method('getProductUnitCode')
             ->willReturn($productUnitCode);
-        $productUnitHolder
-            ->expects(static::any())
+        $productUnitHolder->expects(self::any())
             ->method('getProductHolder')
             ->willReturn($productHolder);
 
         return $productUnitHolder;
     }
 
-    /**
-     * @param string $productSku
-     * @param Product $product
-     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
-     */
-    protected function createProductHolder($productSku, Product $product = null)
+    private function createProductHolder(string $productSku, Product $product = null): ProductHolderInterface
     {
         $productHolder = $this->createMock(ProductHolderInterface::class);
-        $productHolder
-            ->expects(static::any())
+        $productHolder->expects(self::any())
             ->method('getProduct')
             ->willReturn($product);
-        $productHolder
-            ->expects(static::any())
+        $productHolder->expects(self::any())
             ->method('getProductSku')
             ->willReturn($productSku);
 
@@ -556,39 +493,39 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider postSetDataProvider
-     * @param mixed $productUnitHolder
-     * @param mixed $productHolder
-     * @param mixed $productUnit
-     * @param array $options
-     * @param bool $expectedFieldOverride
      */
     public function testPostSetData(
-        $productUnitHolder,
-        $productHolder,
-        $productUnit,
+        mixed $productUnitHolder,
+        mixed $productHolder,
+        mixed $productUnit,
         array $options = [],
-        $expectedFieldOverride = false
+        bool $expectedFieldOverride = false
     ) {
         $form = $this->factory->create(ProductUnitSelectionType::class, $productUnitHolder, $options);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $parentForm */
         $parentForm = $this->createMock(FormInterface::class);
-        $parentForm->expects($this->any())->method('has')->willReturn($expectedFieldOverride);
+        $parentForm->expects($this->any())
+            ->method('has')
+            ->willReturn($expectedFieldOverride);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $productForm */
         $productForm = $this->createMock(FormInterface::class);
         $form->setParent($parentForm);
 
         if ($expectedFieldOverride) {
-            $productForm->expects($this->once())->method('getData')->willReturn($productHolder);
-            $parentForm->expects($this->once())->method('get')->willReturn($productForm);
-            $parentForm->expects($this->once())->method('add')->with(
-                $this->isType('string'),
-                $this->isType('string'),
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->callback(
-                        function (array $options) use ($productUnit) {
+            $productForm->expects($this->once())
+                ->method('getData')
+                ->willReturn($productHolder);
+            $parentForm->expects($this->once())
+                ->method('get')
+                ->willReturn($productForm);
+            $parentForm->expects($this->once())
+                ->method('add')
+                ->with(
+                    $this->isType('string'),
+                    $this->isType('string'),
+                    $this->logicalAnd(
+                        $this->isType('array'),
+                        $this->callback(function (array $options) use ($productUnit) {
                             $this->assertArrayHasKey('choices_updated', $options);
                             $this->assertTrue($options['choices_updated']);
 
@@ -596,22 +533,19 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                             $this->assertEquals([$productUnit->getCode() => 0], $options['choices']);
 
                             return true;
-                        }
+                        })
                     )
-                )
-            );
+                );
         } else {
-            $parentForm->expects($this->never())->method('add');
+            $parentForm->expects($this->never())
+                ->method('add');
         }
 
         $event = new FormEvent($form, null);
         $this->formType->setAcceptableUnits($event);
     }
 
-    /**
-     * @return array
-     */
-    public function postSetDataProvider()
+    public function postSetDataProvider(): array
     {
         return [
             'already updated' => [
@@ -632,11 +566,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param string $code
-     * @return ProductUnit
-     */
-    protected function getProductUnit($code = 'sku')
+    private function getProductUnit(string $code = 'sku'): ProductUnit
     {
         $productUnit = new ProductUnit();
         $productUnit->setCode($code);
@@ -644,35 +574,23 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         return $productUnit;
     }
 
-    /**
-     * @param string $code
-     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
-     */
-    protected function getProductHolder($code = 'sku')
+    private function getProductHolder(string $code = 'sku'): ProductHolderInterface
     {
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($this->getProductUnit());
-        $productHolder = $this->createProductHolder($code, (new Product())->addUnitPrecision($unitPrecision));
 
-        return $productHolder;
+        return $this->createProductHolder($code, (new Product())->addUnitPrecision($unitPrecision));
     }
 
-    /**
-     * @param string $code
-     * @return \PHPUnit\Framework\MockObject\MockObject|ProductUnitHolderInterface
-     */
-    protected function getProductUnitHolder($code = 'sku')
+    private function getProductUnitHolder(string $code = 'sku'): ProductUnitHolderInterface
     {
         return $this->createProductUnitHolder(1, $code, $this->getProductUnit(), $this->getProductHolder());
     }
 
     /**
      * @dataProvider preSubmitDataProvider
-     * @param mixed $product
-     * @param mixed $data
-     * @param string $expectedError
      */
-    public function testPreSubmit($product, $data, $expectedError = '')
+    public function testPreSubmit(mixed $product, mixed $data, string $expectedError = '')
     {
         $form = $this->factory->create(ProductUnitSelectionType::class, null, ['product' => $product]);
 
@@ -682,10 +600,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedError, (string)$form->getErrors(true, true));
     }
 
-    /**
-     * @return array
-     */
-    public function preSubmitDataProvider()
+    public function preSubmitDataProvider(): array
     {
         $productUnit = new ProductUnit();
         $code = 'valid';

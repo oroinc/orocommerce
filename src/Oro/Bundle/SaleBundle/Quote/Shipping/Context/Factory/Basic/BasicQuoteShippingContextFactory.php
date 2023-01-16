@@ -9,31 +9,17 @@ use Oro\Bundle\SaleBundle\Quote\Calculable\Factory\CalculableQuoteFactoryInterfa
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 /**
- * Creates shipping context based on a quote entity.
+ * Creates a shipping context based on a quote entity.
  */
 class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterface
 {
-    /**
-     * @var ShippingContextBuilderFactoryInterface
-     */
-    private $shippingContextBuilderFactory;
-
-    /**
-     * @var QuoteToShippingLineItemConverterInterface
-     */
-    private $quoteToShippingLineItemConverter;
-
-    /**
-     * @var TotalProcessorProvider
-     */
-    private $totalProcessorProvider;
-
-    /**
-     * @var CalculableQuoteFactoryInterface
-     */
-    private $calculableQuoteFactory;
+    private ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory;
+    private QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter;
+    private TotalProcessorProvider $totalProcessorProvider;
+    private CalculableQuoteFactoryInterface $calculableQuoteFactory;
 
     public function __construct(
         ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory,
@@ -48,63 +34,51 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
     }
 
     /**
-     * {@inheritdoc}
-     * @param Quote $quote
+     * {@inheritDoc}
      */
-    public function create($quote)
+    public function create(object $entity): ShippingContextInterface
     {
-        $this->ensureApplicable($quote);
+        if (!$entity instanceof Quote) {
+            throw new \InvalidArgumentException(sprintf(
+                '"%s" expected, "%s" given',
+                Quote::class,
+                get_debug_type($entity)
+            ));
+        }
 
         $this->totalProcessorProvider->enableRecalculation();
 
         $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
-            $quote,
-            $quote->getId()
+            $entity,
+            $entity->getId()
         );
 
-        $convertedLineItems = $this->quoteToShippingLineItemConverter->convertLineItems($quote);
+        $convertedLineItems = $this->quoteToShippingLineItemConverter->convertLineItems($entity);
         $calculableQuote = $this->calculableQuoteFactory->createCalculableQuote($convertedLineItems);
         $total = $this->totalProcessorProvider->getTotal($calculableQuote);
         $subtotal = Price::create($total->getAmount(), $total->getCurrency());
 
         $shippingContextBuilder
             ->setSubTotal($subtotal)
-            ->setCurrency($quote->getCurrency())
+            ->setCurrency($entity->getCurrency())
             ->setLineItems($convertedLineItems);
 
-        if ($quote->getCustomer()) {
-            $shippingContextBuilder->setCustomer($quote->getCustomer());
+        if ($entity->getCustomer()) {
+            $shippingContextBuilder->setCustomer($entity->getCustomer());
         }
 
-        if ($quote->getCustomerUser()) {
-            $shippingContextBuilder->setCustomerUser($quote->getCustomerUser());
+        if ($entity->getCustomerUser()) {
+            $shippingContextBuilder->setCustomerUser($entity->getCustomerUser());
         }
 
-        if (null !== $quote->getWebsite()) {
-            $shippingContextBuilder
-                ->setWebsite($quote->getWebsite());
+        if (null !== $entity->getWebsite()) {
+            $shippingContextBuilder->setWebsite($entity->getWebsite());
         }
 
-        if (null !== $quote->getShippingAddress()) {
-            $shippingContextBuilder
-                ->setShippingAddress($quote->getShippingAddress());
+        if (null !== $entity->getShippingAddress()) {
+            $shippingContextBuilder->setShippingAddress($entity->getShippingAddress());
         }
 
         return $shippingContextBuilder->getResult();
-    }
-
-    /**
-     * @param object $entity
-     * @throws \InvalidArgumentException
-     */
-    protected function ensureApplicable($entity)
-    {
-        if (!is_a($entity, Quote::class)) {
-            throw new \InvalidArgumentException(sprintf(
-                '"%s" expected, "%s" given',
-                Quote::class,
-                is_object($entity) ? get_class($entity) : gettype($entity)
-            ));
-        }
     }
 }

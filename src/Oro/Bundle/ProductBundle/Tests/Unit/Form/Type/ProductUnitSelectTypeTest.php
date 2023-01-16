@@ -17,19 +17,12 @@ use Symfony\Component\Validator\Validation;
 
 class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductUnitSelectType
-     */
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitLabelFormatter;
+
+    /** @var ProductUnitSelectType */
     private $formType;
 
-    /**
-     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productUnitLabelFormatter;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
@@ -41,22 +34,18 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub(
-            [
-                'item' => (new ProductUnit())->setCode('item'),
-                'kg' => (new ProductUnit())->setCode('kg')
-            ]
-        );
-
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    EntityType::class => $entityType
+                    EntityType::class => new EntityTypeStub([
+                        'item' => (new ProductUnit())->setCode('item'),
+                        'kg' => (new ProductUnit())->setCode('kg')
+                    ])
                 ],
                 []
             ),
@@ -89,10 +78,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $data->getCode());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'without compact option' => [
@@ -118,7 +104,6 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->exactly(2))
             ->method('setDefaults')

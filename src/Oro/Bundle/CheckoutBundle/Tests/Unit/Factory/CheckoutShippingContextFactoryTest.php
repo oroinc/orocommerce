@@ -81,20 +81,6 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory->create($checkout);
     }
 
-    public function testWithNullLineItems()
-    {
-        $checkout = $this->prepareCheckout();
-
-        $this->shippingLineItemConverter->expects(self::once())
-            ->method('convertLineItems')
-            ->willReturn(null);
-
-        $this->contextBuilder->expects(self::never())
-            ->method('setLineItems');
-
-        $this->factory->create($checkout);
-    }
-
     private function prepareCheckout(): Checkout
     {
         $address = $this->createMock(OrderAddress::class);

@@ -9,14 +9,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     private $requestStack;
 
-    /**
-     * @var RequestContentVariantHandler
-     */
+    /** @var RequestContentVariantHandler */
     private $handler;
 
     protected function setUp(): void
@@ -67,11 +63,8 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider overrideVariantConfigurationDataProvider
-     *
-     * @param string|int|bool $value
-     * @param bool $expected
      */
-    public function testGetOverrideVariantConfiguration($value, $expected)
+    public function testGetOverrideVariantConfiguration(string|int|bool|null $value, bool $expected)
     {
         $request = new Request([ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY => $value]);
         $this->requestStack->expects($this->once())
@@ -82,10 +75,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function overrideVariantConfigurationDataProvider()
+    public function overrideVariantConfigurationDataProvider(): array
     {
         return [
             [

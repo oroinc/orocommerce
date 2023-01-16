@@ -8,7 +8,6 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
-use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\Normalizer\NormalizerInterface;
@@ -21,49 +20,20 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var int
-     */
-    const PROMOTION_ID = 123;
+    private const PROMOTION_ID = 123;
+    private const PROMOTION_NAME = 'Order Promotion';
+    private const COUPON_ID = 71;
+    private const COUPON_CODE = 'summer2010';
+    private const DISCOUNT_TYPE = 'order';
+    private const DISCOUNT_OPTIONS = ['discount_type' => 'amount'];
 
-    /**
-     * @var string
-     */
-    const PROMOTION_NAME = 'Order Promotion';
-
-    /**
-     * @var string
-     */
-    const COUPON_ID = 71;
-
-    /**
-     * @var string
-     */
-    const COUPON_CODE = 'summer2010';
-
-    /**
-     * @var string
-     */
-    const DISCOUNT_TYPE = 'order';
-
-    /**
-     * @var array
-     */
-    const DISCOUNT_OPTIONS = ['discount_type' => 'amount'];
-
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var NormalizerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var NormalizerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $normalizer;
 
-    /**
-     * @var AppliedPromotionMapper
-     */
+    /** @var AppliedPromotionMapper */
     private $appliedPromotionMapper;
 
     protected function setUp(): void
@@ -79,15 +49,13 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setType(self::DISCOUNT_TYPE)
             ->setOptions(self::DISCOUNT_OPTIONS);
 
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $appliedPromotionData **/
         $appliedPromotionData = (new AppliedPromotionData())
             ->setDiscountConfiguration($discountConfiguration)
             ->setId(self::PROMOTION_ID)
             ->setRule((new Rule())->setName(self::PROMOTION_NAME));
 
         $normalizedPromotion = ['rule' => ['name' => self::PROMOTION_NAME]];
-        $this->normalizer
-            ->expects($this->once())
+        $this->normalizer->expects($this->once())
             ->method('normalize')
             ->with($appliedPromotionData)
             ->willReturn($normalizedPromotion);
@@ -109,7 +77,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             $order
         );
 
-        static::assertEquals($expectedAppliedPromotionEntity, $appliedPromotion);
+        self::assertEquals($expectedAppliedPromotionEntity, $appliedPromotion);
     }
 
     public function testMapPromotionDataToAppliedPromotion()
@@ -118,7 +86,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setType(self::DISCOUNT_TYPE)
             ->setOptions(self::DISCOUNT_OPTIONS);
 
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $appliedPromotionData **/
         $appliedPromotionData = (new AppliedPromotionData())
             ->setDiscountConfiguration($discountConfiguration)
             ->setId(self::PROMOTION_ID)
@@ -126,8 +93,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->addCoupon((new Coupon())->setCode('code'));
 
         $normalizedPromotion = ['rule' => ['name' => self::PROMOTION_NAME]];
-        $this->normalizer
-            ->expects($this->once())
+        $this->normalizer->expects($this->once())
             ->method('normalize')
             ->with($appliedPromotionData)
             ->willReturn($normalizedPromotion);
@@ -153,7 +119,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             $order
         );
 
-        static::assertEquals($expectedAppliedPromotionEntity, $appliedPromotion);
+        self::assertEquals($expectedAppliedPromotionEntity, $appliedPromotion);
     }
 
     public function testMapAppliedPromotionToPromotionDataWithoutAppliedCoupon()
@@ -164,7 +130,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setType(self::DISCOUNT_TYPE)
             ->setOptions(self::DISCOUNT_OPTIONS);
 
-        /** @var AppliedPromotion|\PHPUnit\Framework\MockObject\MockObject $appliedPromotionEntity **/
         $appliedPromotionEntity = $this->getEntity(AppliedPromotion::class, [
             'promotionData' => $promotionData,
             'type' => self::DISCOUNT_TYPE,
@@ -173,8 +138,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
 
         $appliedPromotion = (new AppliedPromotionData());
 
-        $this->normalizer
-            ->expects($this->once())
+        $this->normalizer->expects($this->once())
             ->method('denormalize')
             ->with($promotionData)
             ->willReturn($appliedPromotion);
@@ -182,11 +146,10 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
         $expectedAppliedPromotion = (new AppliedPromotionData())
             ->setDiscountConfiguration($discountConfiguration);
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
-        static::assertEquals(
+        self::assertEquals(
             $expectedAppliedPromotion,
             $this->appliedPromotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity)
         );
@@ -205,7 +168,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setSourceCouponId(self::COUPON_ID)
             ->setSourcePromotionId(self::PROMOTION_ID);
 
-        /** @var AppliedPromotion $appliedPromotionEntity **/
         $appliedPromotionEntity = $this->getEntity(AppliedPromotion::class, [
             'promotionData' => $promotionData,
             'type' => self::DISCOUNT_TYPE,
@@ -215,13 +177,11 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
 
         $appliedPromotion = (new AppliedPromotionData());
 
-        $this->normalizer
-            ->expects($this->once())
+        $this->normalizer->expects($this->once())
             ->method('denormalize')
             ->with($promotionData)
             ->willReturn($appliedPromotion);
 
-        /** @var Coupon $coupon */
         $coupon = $this->getEntity(Coupon::class, [
             'id' => self::COUPON_ID,
             'code' => self::COUPON_CODE,
@@ -229,16 +189,14 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $couponManager = $this->createMock(EntityManager::class);
-        $couponManager
-            ->expects($this->once())
+        $couponManager->expects($this->once())
             ->method('find')
             ->with(Coupon::class, self::COUPON_ID)
             ->willReturn($coupon);
 
         $promotionManager = $this->createMock(EntityManager::class);
 
-        $this->registry
-            ->expects($this->any())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturnMap([
                 [Promotion::class, $promotionManager],
@@ -249,7 +207,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setDiscountConfiguration($discountConfiguration)
             ->addCoupon($coupon);
 
-        static::assertEquals(
+        self::assertEquals(
             $expectedAppliedPromotion,
             $this->appliedPromotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity)
         );
@@ -257,9 +215,8 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider couponDataProvider
-     * @param Coupon|null $coupon
      */
-    public function testMapAppliedPromotionToPromotionDataWhenCouponNotExistsOrChanged($coupon)
+    public function testMapAppliedPromotionToPromotionDataWhenCouponNotExistsOrChanged(?Coupon $coupon)
     {
         $promotionData = ['rule' => ['name' => self::PROMOTION_NAME]];
 
@@ -272,7 +229,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setSourceCouponId(self::COUPON_ID)
             ->setSourcePromotionId(self::PROMOTION_ID);
 
-        /** @var AppliedPromotion $appliedPromotionEntity **/
         $appliedPromotionEntity = $this->getEntity(AppliedPromotion::class, [
             'promotionData' => $promotionData,
             'type' => self::DISCOUNT_TYPE,
@@ -282,36 +238,31 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
 
         $appliedPromotion = (new AppliedPromotionData());
 
-        $this->normalizer
-            ->expects($this->once())
+        $this->normalizer->expects($this->once())
             ->method('denormalize')
             ->with($promotionData)
             ->willReturn($appliedPromotion);
 
         $couponManager = $this->createMock(EntityManager::class);
-        $couponManager
-            ->expects($this->once())
+        $couponManager->expects($this->once())
             ->method('find')
             ->with(Coupon::class, self::COUPON_ID)
             ->willReturn($coupon);
 
         $promotion = new Promotion();
         $promotionManager = $this->createMock(EntityManager::class);
-        $promotionManager
-            ->expects($this->once())
+        $promotionManager->expects($this->once())
             ->method('find')
             ->with(Promotion::class, self::PROMOTION_ID)
             ->willReturn($promotion);
 
-        $this->registry
-            ->expects($this->any())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturnMap([
                 [Promotion::class, $promotionManager],
                 [Coupon::class, $couponManager]
             ]);
 
-        /** @var Coupon $newCoupon */
         $newCoupon = $this->getEntity(Coupon::class, [
             'code' => self::COUPON_CODE,
             'promotion' => $promotion
@@ -321,20 +272,14 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setDiscountConfiguration($discountConfiguration)
             ->addCoupon($newCoupon);
 
-        static::assertEquals(
+        self::assertEquals(
             $expectedAppliedPromotion,
             $this->appliedPromotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity)
         );
     }
 
-    /**
-     * @return array
-     */
-    public function couponDataProvider()
+    public function couponDataProvider(): array
     {
-        /** @var Promotion $promotion */
-        $promotion = $this->getEntity(Promotion::class, ['id' => 1]);
-
         return [
             'no coupon found' => [
                 'coupon' => null
@@ -346,7 +291,8 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
                 'coupon' => (new Coupon())->setCode(self::COUPON_CODE)->setPromotion(null)
             ],
             'coupon was assigned to other promotion' => [
-                'coupon' => (new Coupon())->setCode(self::COUPON_CODE)->setPromotion($promotion)
+                'coupon' => (new Coupon())->setCode(self::COUPON_CODE)
+                    ->setPromotion($this->getEntity(Promotion::class, ['id' => 1]))
             ]
         ];
     }
@@ -364,7 +310,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setSourceCouponId(self::COUPON_ID)
             ->setSourcePromotionId(self::PROMOTION_ID);
 
-        /** @var AppliedPromotion $appliedPromotionEntity **/
         $appliedPromotionEntity = $this->getEntity(AppliedPromotion::class, [
             'promotionData' => $promotionData,
             'type' => self::DISCOUNT_TYPE,
@@ -372,28 +317,24 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             'appliedCoupon' => $appliedCoupon
         ]);
 
-        $this->normalizer
-            ->expects($this->once())
+        $this->normalizer->expects($this->once())
             ->method('denormalize')
             ->with($promotionData)
             ->willReturn(new AppliedPromotionData());
 
         $couponManager = $this->createMock(EntityManager::class);
-        $couponManager
-            ->expects($this->once())
+        $couponManager->expects($this->once())
             ->method('find')
             ->with(Coupon::class, self::COUPON_ID)
             ->willReturn(null);
 
         $promotionManager = $this->createMock(EntityManager::class);
-        $promotionManager
-            ->expects($this->once())
+        $promotionManager->expects($this->once())
             ->method('find')
             ->with(Promotion::class, self::PROMOTION_ID)
             ->willReturn(null);
 
-        $this->registry
-            ->expects($this->any())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturnMap([
                 [Promotion::class, $promotionManager],
@@ -402,7 +343,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
 
         $promotion = $this->getEntity(Promotion::class, ['id' => self::PROMOTION_ID]);
 
-        /** @var Coupon $newCoupon */
         $newCoupon = $this->getEntity(Coupon::class, [
             'code' => self::COUPON_CODE,
             'promotion' => $promotion
@@ -414,9 +354,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->addCoupon($newCoupon);
         $actual = $this->appliedPromotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity);
 
-        static::assertEquals(
-            $expectedAppliedPromotion,
-            $actual
-        );
+        self::assertEquals($expectedAppliedPromotion, $actual);
     }
 }

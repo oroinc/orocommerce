@@ -114,10 +114,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function partialConfigDataProvider()
+    public function partialConfigDataProvider(): array
     {
         return [
             'partial' => [true],
@@ -198,10 +195,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         self::assertMessagesEmpty(ReindexProductCollectionBySegmentTopic::NAME);
     }
 
-    /**
-     * @return array
-     */
-    public function partialConfigDataWithCommandResponseDataProvider()
+    public function partialConfigDataWithCommandResponseDataProvider(): array
     {
         return [
             'partial' => [
@@ -242,13 +236,14 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         self::assertSame('0 0 0 0 *', $commandSchedule->getDefinition());
     }
 
-    protected function getContentVariantMetadata(): ClassMetadata
+    private function getContentVariantMetadata(): ClassMetadata
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(Segment::class);
-        return $em->getClassMetadata(ContentVariantInterface::class);
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass(Segment::class)
+            ->getClassMetadata(ContentVariantInterface::class);
     }
 
-    protected function getRootJob(bool $isFull): Job
+    private function getRootJob(bool $isFull): Job
     {
         $namePrefix = sprintf(
             '%s:%s:%s',
@@ -277,7 +272,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         return $rootJob;
     }
 
-    protected function assertRootJobContainsDependentJob(Job $rootJob): void
+    private function assertRootJobContainsDependentJob(Job $rootJob): void
     {
         $data = $rootJob->getData();
         self::assertArrayHasKey('dependentJobs', $data);
@@ -297,7 +292,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         );
     }
 
-    protected function getFirstChildJobId(Job $rootJob): int
+    private function getFirstChildJobId(Job $rootJob): int
     {
         $qb = self::getContainer()->get('doctrine')
             ->getRepository(Job::class)

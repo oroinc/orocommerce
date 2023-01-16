@@ -17,10 +17,10 @@ export default {
         });
     },
 
-    updateClasses({__clear}) {
+    updateClasses({__clear, namespace = '', devices = true, replace = true} = {}) {
         const {Devices, Selectors} = this.editor;
         const classes = this.get('classes');
-        const currentDevice = Devices.getSelected();
+        const currentDevice = devices ? Devices.getSelected() : false;
         let breakpoint = currentDevice ? currentDevice.get('id') : '';
 
         if (breakpoint === 'desktop') {
@@ -28,29 +28,35 @@ export default {
         }
 
         if (__clear) {
-            const stored = this.storedClasses[`grid-col-${breakpoint}`];
+            const stored = this.storedClasses[`${namespace}-${breakpoint}`];
             stored && Selectors.addSelected(stored);
             return;
         }
 
         const found = classes.find(
-            cls => new RegExp(`grid-col-${breakpoint}[\\-\\d]+`, 'g').test(cls.get('name'))
+            cls => new RegExp(`${namespace}-${breakpoint}[\\-\\d]+`, 'g').test(cls.get('name'))
         );
 
         if (found) {
             this.storedClasses = {
                 ...this.storedClasses,
-                [`grid-col-${breakpoint}`]: found
+                [`${namespace}-${breakpoint}`]: found
             };
 
             Selectors.removeSelected(found);
 
-            if (!this.getClasses().includes('grid-col')) {
-                this.addClass('grid-col');
+            if (!this.getClasses().includes(namespace) && replace) {
+                this.addClass(namespace);
                 classes.forEach(
                     cls => this.get('privateClasses').includes(cls.get('name')) && cls.set('private', true)
                 );
             }
         }
+    },
+
+    getCodeModeState() {
+        const state = this.editor.getState();
+
+        return state.get('codeMode') || false;
     }
 };

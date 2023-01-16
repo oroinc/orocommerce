@@ -3,17 +3,22 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\CancelUrl;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class CancelUrlTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new CancelUrl(false)];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -21,9 +26,9 @@ class CancelUrlTest extends AbstractOptionTest
                 ['CANCELURL' => 123],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "CANCELURL" with value 123 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "CANCELURL" with value 123 is expected to be of type "string", but is of '
+                    . 'type "int".',
                 ],
             ],
             'valid' => [['CANCELURL' => 'http://127.0.0.1'], ['CANCELURL' => 'http://127.0.0.1']],

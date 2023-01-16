@@ -16,15 +16,11 @@ use Oro\Component\Expression\Node\ValueNode;
 
 class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fieldsProvider;
+    /** @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldsProvider;
 
-    /**
-     * @var AssignedProductsConverter
-     */
-    protected $converter;
+    /** @var AssignedProductsConverter */
+    private $converter;
 
     protected function setUp(): void
     {
@@ -52,12 +48,10 @@ class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->fieldsProvider->expects($this->any())
             ->method('getRealClassName')
-            ->willReturnMap(
-                [
-                    [ProductPrice::class, 'priceList', PriceList::class],
-                    [ProductPrice::class, 'product', Product::class]
-                ]
-            );
+            ->willReturnMap([
+                [ProductPrice::class, 'priceList', PriceList::class],
+                [ProductPrice::class, 'product', Product::class]
+            ]);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -66,12 +60,10 @@ class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
         $this->converter->convert($node, $expr, $params, $aliasMapping);
     }
 
-    /**
-     * @return array
-     */
-    public function invalidLeftOperandsDataProvider()
+    public function invalidLeftOperandsDataProvider(): array
     {
         $right = new NameNode(PriceList::class, 'assignedProducts', 4);
+
         return [
             'incorrect node type' => [
                 new BinaryNode(

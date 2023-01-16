@@ -12,14 +12,17 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class MultiShippingPriceProviderTest extends TestCase
+class MultiShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private DefaultMultipleShippingMethodProvider|MockObject $shippingMethodProvider;
-    private CheckoutShippingContextProvider|MockObject $checkoutShippingContextProvider;
-    private MultiShippingPriceProvider $multiShippingPriceProvider;
+    /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
+
+    /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutShippingContextProvider;
+
+    /** @var MultiShippingPriceProvider */
+    private $multiShippingPriceProvider;
 
     protected function setUp(): void
     {
@@ -203,41 +206,27 @@ class MultiShippingPriceProviderTest extends TestCase
 
     private function getSuccessor(?Price $shippingPrice = null): CheckoutShippingMethodsProviderInterface
     {
-        return new class($shippingPrice) implements CheckoutShippingMethodsProviderInterface {
-            private ?Price $shippingPrice = null;
-
-            public function __construct(?Price $shippingPrice)
-            {
-                $this->shippingPrice = $shippingPrice;
-            }
-
-            public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
-            {
+        $successor = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
+        $successor->expects(self::any())
+            ->method('getApplicableMethodsViews')
+            ->willReturnCallback(function () {
                 $shippingMethodViewCollection = new ShippingMethodViewCollection();
                 $shippingMethodViewCollection->addMethodView(
                     'test_shipping_1',
-                    [
-                        'identifier' => 'test_shipping_1',
-                        'label' => 'Test Shipping'
-                    ]
+                    ['identifier' => 'test_shipping_1', 'label' => 'Test Shipping']
                 );
-
                 $shippingMethodViewCollection->addMethodTypeView(
                     'test_shipping_1',
                     'test_shipping_type_1',
-                    [
-                        'identifier' => 'test_shipping_type_1',
-                        'label' => 'Test Type'
-                    ]
+                    ['identifier' => 'test_shipping_type_1', 'label' => 'Test Type']
                 );
 
                 return $shippingMethodViewCollection;
-            }
+            });
+        $successor->expects(self::any())
+            ->method('getPrice')
+            ->willReturn($shippingPrice);
 
-            public function getPrice(Checkout $checkout): ?Price
-            {
-                return $this->shippingPrice;
-            }
-        };
+        return $successor;
     }
 }

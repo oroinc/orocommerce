@@ -24,6 +24,16 @@ class TrackingAwareShippingMethodsProviderTest extends \PHPUnit\Framework\TestCa
         );
     }
 
+    private function getShippingMethod(string $class, string $identifier): object
+    {
+        $method = $this->createMock($class);
+        $method->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn($identifier);
+
+        return $method;
+    }
+
     /**
      * @dataProvider getTrackingAwareShippingMethodsProvider
      */
@@ -72,15 +82,5 @@ class TrackingAwareShippingMethodsProviderTest extends \PHPUnit\Framework\TestCa
             ]
 
         ];
-    }
-
-    private function getShippingMethod(string $class, string $identifier): object
-    {
-        $method = $this->createMock($class);
-        $method->expects(self::any())
-            ->method('getIdentifier')
-            ->willReturn($identifier);
-
-        return $method;
     }
 }

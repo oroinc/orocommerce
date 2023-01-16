@@ -11,9 +11,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class ProductVariantUniqueTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,9 +31,8 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'status' => '400',
-                'title' => 'product variant links constraint',
-                'detail' => 'Can\'t save product variants. Product "PSKU2" has no filled field(s) "testAttrEnum" ',
+                'title'  => 'product variant links constraint',
+                'detail' => 'Can\'t save product variants. Product "PSKU2" has no filled field(s) "testAttrEnum" '
             ],
             $response
         );
@@ -53,9 +49,8 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'status' => '400',
-                'title' => 'unique product variant links constraint',
-                'detail' => "Can't save product variants. Configurable attribute combinations should be unique.",
+                'title'  => 'unique product variant links constraint',
+                'detail' => "Can't save product variants. Configurable attribute combinations should be unique."
             ],
             $response
         );
@@ -63,9 +58,8 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 
     /**
      * @dataProvider failedUpdateDataProvider
-     * @param string $requestFile
      */
-    public function testChangeSimpleProductToProductWithTheSameConfigureAttribute($requestFile)
+    public function testChangeSimpleProductToProductWithTheSameConfigureAttribute(string $requestFile)
     {
         $response = $this->patch(
             ['entity' => 'productvariantlinks', 'id' => '<toString(@configurable_product1_variant2_link->id)>'],
@@ -76,18 +70,14 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'status' => '400',
-                'title' => 'unique product variant links constraint',
+                'title'  => 'unique product variant links constraint',
                 'detail' => "Can't save product variants. Configurable attribute combinations should be unique."
             ],
             $response
         );
     }
 
-    /**
-     * @return array
-     */
-    public function failedUpdateDataProvider()
+    public function failedUpdateDataProvider(): array
     {
         return [
             ['update_product_variant_link_fail.yml'],
@@ -97,9 +87,8 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 
     /**
      * @dataProvider failedUpdateWithoutAttributesDataProvider
-     * @param string $requestFile
      */
-    public function testChangeSimpleProductToProductWithNoAttributes($requestFile)
+    public function testChangeSimpleProductToProductWithNoAttributes(string $requestFile)
     {
         $response = $this->patch(
             ['entity' => 'productvariantlinks', 'id' => '<toString(@configurable_product1_variant2_link->id)>'],
@@ -110,18 +99,14 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'status' => '400',
-                'title' => 'product variant links constraint',
-                'detail' => 'Can\'t save product variants. Product "PSKU2" has no filled field(s) "testAttrEnum" ',
+                'title'  => 'product variant links constraint',
+                'detail' => 'Can\'t save product variants. Product "PSKU2" has no filled field(s) "testAttrEnum" '
             ],
             $response
         );
     }
 
-    /**
-     * @return array
-     */
-    public function failedUpdateWithoutAttributesDataProvider()
+    public function failedUpdateWithoutAttributesDataProvider(): array
     {
         return [
             ['update_product_variant_link_fail_no_attributes.yml'],
@@ -152,7 +137,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
     public function testChangeSimpleProductToProductWithAnotherConfigureAttribute()
     {
         $this->patch(
-            ['entity' => 'productvariantlinks', 'id' =>  '<toString(@configurable_product1_variant1_link->id)>'],
+            ['entity' => 'productvariantlinks', 'id' => '<toString(@configurable_product1_variant1_link->id)>'],
             'update_product_variant_link_success.yml'
         );
 
@@ -180,12 +165,9 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'status' => '400',
-                'title' => 'unchangeable field constraint',
+                'title'  => 'unchangeable field constraint',
                 'detail' => 'Field cannot be changed once set',
-                "source" => [
-                    "pointer" => "/data/relationships/parentProduct/data"
-                ]
+                'source' => ['pointer' => '/data/relationships/parentProduct/data']
             ],
             $response
         );

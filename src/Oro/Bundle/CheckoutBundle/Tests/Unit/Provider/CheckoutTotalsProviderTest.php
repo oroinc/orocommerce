@@ -15,12 +15,9 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutToOrderConverter;
 
@@ -59,19 +56,15 @@ class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
 
         $checkout = new Checkout();
 
-        $order = $this->getEntity(
-            Order::class,
-            [
-                'estimatedShippingCostAmount' => $price->getValue(),
-                'currency' => $price->getCurrency(),
-                'shippingAddress' => $address,
-                'billingAddress' => $address,
-                'customer' => $customer,
-                'website' => $website,
-                'organization' => $organization,
-                'lineItems' => $lineItems,
-            ]
-        );
+        $order = new Order();
+        $order->setEstimatedShippingCostAmount($price->getValue());
+        $order->setCurrency($price->getCurrency());
+        $order->setShippingAddress($address);
+        $order->setBillingAddress($address);
+        $order->setCustomer($customer);
+        $order->setWebsite($website);
+        $order->setOrganization($organization);
+        $order->setLineItems($lineItems);
 
         $this->checkoutShippingMethodsProvider->expects(self::once())
             ->method('getPrice')

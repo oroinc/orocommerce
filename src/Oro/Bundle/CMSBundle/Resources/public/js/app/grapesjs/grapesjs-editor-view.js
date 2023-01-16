@@ -281,9 +281,8 @@ const GrapesjsEditorView = BaseView.extend({
      */
     builderPlugins: {
         'component-types-plugin': {},
-        'grapesjs-export': {
-            btnLabel: __('oro.cms.wysiwyg.export.btn_label')
-        },
+        'grapesjs-export': {},
+        'wysiwyg-settings': {},
         'sorter-hints': {},
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
@@ -393,6 +392,10 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         this.disableEditor();
+
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
         GrapesjsEditorView.__super__.dispose.call(this);
     },
 
@@ -852,7 +855,6 @@ const GrapesjsEditorView = BaseView.extend({
             });
         }
 
-        this.setActiveButton('options', 'sw-visibility');
         this.setActiveButton('views', 'open-blocks');
         this._addClassForFrameWrapper();
 
@@ -1088,7 +1090,7 @@ const GrapesjsEditorView = BaseView.extend({
             pluginsOpts: this.builderPlugins
         };
 
-        const getPluginPriority = plugin => {
+        const priority = plugin => {
             if (typeof plugin === 'string') {
                 plugin = grapesJS.plugins.get(plugin);
             }
@@ -1096,22 +1098,9 @@ const GrapesjsEditorView = BaseView.extend({
             return plugin && (plugin.priority ?? 200);
         };
 
-        const sortPluginsByPriority = (aPlugin, bPlugin) => {
-            const aPriority = getPluginPriority(aPlugin);
-            const bPriority = getPluginPriority(bPlugin);
-
-            if (aPriority > bPriority) {
-                return 1;
-            }
-
-            if (aPriority < bPriority) {
-                return -1;
-            }
-
-            return 0;
-        };
-
-        pluginConfig.plugins.sort(sortPluginsByPriority).forEach(plugin => {
+        pluginConfig.plugins.sort(
+            (aPlugin, bPlugin) => priority(aPlugin) - priority(bPlugin)
+        ).forEach(plugin => {
             if (typeof plugin === 'function') {
                 plugin.bind({
                     editorView: this

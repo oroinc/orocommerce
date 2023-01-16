@@ -13,9 +13,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getPaymentFixtures()
+    protected function getPaymentFixtures(): array
     {
         return [
             LoadPayPalMethodsConfigsRuleData::class,
@@ -29,26 +29,26 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         //Billing Information step
         $this->startCheckout($shoppingList);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        static::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        self::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Information step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        self::assertStringContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
 
         //Shipping Method step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        self::assertStringContainsString(self::SHIPPING_METHOD_SIGN, $crawler->html());
 
         //Payment step
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        static::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        self::assertStringContainsString(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         //Order Review step
         $crawler = $this->goToOrderReviewStepFromPayment($crawler, ExpressCheckoutMethodStub::TYPE);
-        static::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
+        self::assertStringContainsString(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         //Submit order
         $form = $crawler->selectButton('Submit Order')->form();
@@ -59,7 +59,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             $form->getPhpFiles(),
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
-        $data = static::getJsonResponseContent($this->client->getResponse(), 200);
+        $data = self::getJsonResponseContent($this->client->getResponse(), 200);
         $this->assertArrayHasKey('purchaseRedirectUrl', $data['responseData']);
         $this->assertNotEmpty($data['responseData']['purchaseRedirectUrl']);
         $this->client->followRedirects();
@@ -70,9 +70,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         //Go back to checkout
         $crawler = $this->client->request('GET', self::$checkoutUrl);
 
-        static::assertStringContainsString(self::EDIT_BILLING_SIGN, $crawler->html());
-        static::assertStringContainsString(self::EDIT_SHIPPING_INFO_SIGN, $crawler->html());
-        static::assertStringContainsString(self::EDIT_SHIPPING_METHOD_SIGN, $crawler->html());
-        static::assertStringContainsString(self::EDIT_PAYMENT_SIGN, $crawler->html());
+        self::assertStringContainsString(self::EDIT_BILLING_SIGN, $crawler->html());
+        self::assertStringContainsString(self::EDIT_SHIPPING_INFO_SIGN, $crawler->html());
+        self::assertStringContainsString(self::EDIT_SHIPPING_METHOD_SIGN, $crawler->html());
+        self::assertStringContainsString(self::EDIT_PAYMENT_SIGN, $crawler->html());
     }
 }

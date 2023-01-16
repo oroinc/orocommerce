@@ -164,13 +164,13 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testWithNullLineItems()
+    public function testWithEmptyLineItems()
     {
         $checkout = $this->getCheckout();
 
         $this->paymentLineItemConverter->expects($this->once())
             ->method('convertLineItems')
-            ->willReturn(null);
+            ->willReturn(new DoctrinePaymentLineItemCollection([]));
 
         $this->contextBuilder->expects($this->never())
             ->method('setLineItems');

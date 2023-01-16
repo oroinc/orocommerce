@@ -10,10 +10,6 @@ const buttonsConfig = {
             'fullscreen': {
                 order: 10
             },
-            'export-template': {
-                order: 20,
-                className: 'fa fa-upload'
-            },
             'undo': {
                 order: 30
             },
@@ -21,13 +17,30 @@ const buttonsConfig = {
                 order: 30
             },
             'gjs-open-import-webpage': {
-                order: 20
+                order: 20,
+                className: 'fa fa-code'
             },
             'canvas-clear': {
                 order: 50
             },
             'enable-code-mode': {
                 order: 40
+            }
+        }
+    },
+    views: {
+        props: {
+            comparator: 'order'
+        },
+        buttons: {
+            'open-sm': {
+                order: 10
+            },
+            'open-layers': {
+                order: 20
+            },
+            'open-blocks': {
+                order: 30
             }
         }
     }

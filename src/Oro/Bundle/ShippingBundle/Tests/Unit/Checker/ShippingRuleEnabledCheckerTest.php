@@ -24,31 +24,45 @@ class ShippingRuleEnabledCheckerTest extends \PHPUnit\Framework\TestCase
         $this->ruleChecker = new ShippingRuleEnabledChecker($this->methodEnabledChecker);
     }
 
-    public function testCanBeEnabledForOneEnabledMethod()
+    private function getRule(array $methods): ShippingMethodsConfigsRule
     {
-        $this->methodEnabledChecker->expects(self::once())
-            ->method('isEnabled')
-            ->willReturn(true);
+        $rule = new ShippingMethodsConfigsRule();
+        foreach ($methods as $method) {
+            $rule->addMethodConfig($this->getMethodConfig($method));
+        }
 
-        $rule = $this->getRule();
+        return $rule;
+    }
+
+    private function getMethodConfig(string $method): ShippingMethodConfig
+    {
+        $methodConfig = new ShippingMethodConfig();
+        $methodConfig->setMethod($method);
+
+        return $methodConfig;
+    }
+
+    public function testCanBeEnabledForOneEnabledMethod(): void
+    {
+        $rule = $this->getRule(['method_1', 'method_2', 'method_3']);
+
+        $this->methodEnabledChecker->expects(self::exactly(2))
+            ->method('isEnabled')
+            ->withConsecutive(['method_1'], ['method_2'])
+            ->willReturnOnConsecutiveCalls(false, true);
 
         self::assertTrue($this->ruleChecker->canBeEnabled($rule));
     }
 
-    public function testCanBeEnabledForNoEnabledMethods()
+    public function testCanBeEnabledForNoEnabledMethods(): void
     {
-        $rule = $this->getRule();
+        $rule = $this->getRule(['method_1', 'method_2']);
+
+        $this->methodEnabledChecker->expects(self::exactly(2))
+            ->method('isEnabled')
+            ->withConsecutive(['method_1'], ['method_2'])
+            ->willReturn(false);
 
         self::assertFalse($this->ruleChecker->canBeEnabled($rule));
-    }
-
-    private function getRule(): ShippingMethodsConfigsRule
-    {
-        $rule = $this->createMock(ShippingMethodsConfigsRule::class);
-        $rule->expects(self::any())
-            ->method('getMethodConfigs')
-            ->willReturn([new ShippingMethodConfig(), new ShippingMethodConfig()]);
-
-        return $rule;
     }
 }

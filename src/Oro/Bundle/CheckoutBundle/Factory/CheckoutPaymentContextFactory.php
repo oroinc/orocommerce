@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
 /**
- * The factory to create a payment context for a specific checkout object.
+ * Creates a payment context for a specific checkout object.
  */
 class CheckoutPaymentContextFactory
 {
@@ -23,7 +23,7 @@ class CheckoutPaymentContextFactory
     private TotalProcessorProvider $totalProcessor;
     private OrderPaymentLineItemConverterInterface $paymentLineItemConverter;
     private ShippingOriginProvider $shippingOriginProvider;
-    private ?PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory;
+    private PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory;
 
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
@@ -31,7 +31,7 @@ class CheckoutPaymentContextFactory
         TotalProcessorProvider $totalProcessor,
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
         ShippingOriginProvider $shippingOriginProvider,
-        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null
+        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
         $this->checkoutSubtotalProvider = $checkoutSubtotalProvider;
@@ -41,12 +41,8 @@ class CheckoutPaymentContextFactory
         $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
     }
 
-    public function create(Checkout $checkout): ?PaymentContextInterface
+    public function create(Checkout $checkout): PaymentContextInterface
     {
-        if (null === $this->paymentContextBuilderFactory) {
-            return null;
-        }
-
         $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
             $checkout,
             (string)$checkout->getId()
@@ -63,7 +59,7 @@ class CheckoutPaymentContextFactory
         $convertedLineItems = $this->paymentLineItemConverter->convertLineItems(
             $this->checkoutLineItemsManager->getData($checkout)
         );
-        if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
+        if (!$convertedLineItems->isEmpty()) {
             $paymentContextBuilder->setLineItems($convertedLineItems);
         }
 

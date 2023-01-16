@@ -93,12 +93,12 @@ oro_behat_extension:
 
         BreakpointDropdownToggle:
             selector: '.ui-dialog .breakpoint-selector'
-            
+
         breakpointMobileLandscape:
             selector:
                 type: 'xpath'
                 locator: '//ul[contains(@class, "dropdown-menu")]/li[contains(text(),"mobile-landscape")]'
-            
+
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"
 
@@ -153,7 +153,7 @@ oro_behat_extension:
             selector: "textarea[name='oro_cms_content_block[contentVariants][1][content]']"
 
         Homepage Slider:
-            selector: 'div.promo-slider'
+            selector: '[data-title="home-page-slider"]'
 
         CMS Page:
             selector: 'div.cms-page'
@@ -263,12 +263,11 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//div[contains(@class, "cms-page")]//figcaption[contains(text(),"RV & Gear Seller")]/..//img'
-        
+
         External Mode Button:
-            selector: 'span[data-original-title="External Markup Mode"]'
-            
+            selector: 'span[title="Enable External Markup"]'
         Import Button:
-            selector: 'span[data-original-title="Import"]'
+            selector: 'span[data-original-title="Source Code"]'
 
         Example1 svg wysiwyg image:
             selector:
@@ -462,10 +461,10 @@ oro_behat_extension:
 
         SelectedComponent:
             selector: '.gjs-selected'
-        
+
         WysiwygCanvas:
             selector: '.grapesjs .gjs-cv-canvas'
-            
+
         RteBoldAction:
             selector: '.gjs-rte-action[data-original-title="Bold"]'
 
@@ -474,43 +473,46 @@ oro_behat_extension:
 
         RteOrderedListAction:
             selector: '.gjs-rte-action[data-original-title="Ordered List"]'
-        
+
         RteUnorderedListAction:
             selector: '.gjs-rte-action[data-original-title="Unordered List"]'
 
         DialogClose:
             selector: '.ui-dialog .close-dialog'
-            
+
         OpenBlocksTab:
             selector: '.gjs-pn-btn[title="Open Blocks"]'
-            
+
         OpenLayerTab:
             selector: '.gjs-pn-btn[title="Open Layer Manager"]'
-            
+
         OpenStyleTab:
             selector: '.gjs-pn-btn[title="Open Style Manager"]'
-            
+
+        SettingsTab:
+            selector: '.gjs-pn-btn[title="Settings"]'
+
         Layers:
             selector: '.gjs-layer__t-wrapper'
 
         ClearCanvas:
             selector: '[data-original-title="Clear Canvas"]'
-            
+
         HrefField:
             selector: '.modal input[name$="href"]'
-            
+
         TitleField:
             selector: '.modal input[name$="title"]'
-            
+
         ActiveEditableComponent:
             selector: '[data-gjs-type="text"][contenteditable="true"]'
-            
+
         InlineContentWidget:
             selector: 'span[data-gjs-type="content-widget"]'
-            
+
         TableCellInTableBody:
             selector: '[data-gjs-type="tbody"] [data-gjs-type="row"]:nth-child(1) [data-gjs-type="cell"]:nth-child(2)'
-            
+
         FirstColumnInGrid:
             selector: '[data-gjs-type="grid-row"] > [data-gjs-type="grid-column"]:first-child'
     suites:

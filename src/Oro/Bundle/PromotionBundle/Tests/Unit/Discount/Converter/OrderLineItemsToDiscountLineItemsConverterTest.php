@@ -14,10 +14,7 @@ class OrderLineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\
 {
     use EntityTrait;
 
-    /**
-     * @var OrderLineItemsToDiscountLineItemsConverter
-     */
-    private $converter;
+    private OrderLineItemsToDiscountLineItemsConverter $converter;
 
     protected function setUp(): void
     {
@@ -32,15 +29,11 @@ class OrderLineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\
         $this->assertEquals($expected, $this->converter->convert($lineItems));
     }
 
-    /**
-     * @return array
-     */
-    public function converterDataProvider()
+    public function converterDataProvider(): array
     {
         $productId = 42;
         $unitCode = 'item';
 
-        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
 
         $price = Price::create(100, 'USD');

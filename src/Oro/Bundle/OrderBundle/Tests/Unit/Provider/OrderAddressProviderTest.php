@@ -10,9 +10,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
 {
-    /**
-     * @var OrderAddressProvider
-     */
+    /** @var OrderAddressProvider */
     protected $provider;
 
     protected function setUp(): void
@@ -45,10 +43,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
         $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 
-    /**
-     * @return array
-     */
-    public function customerAddressPermissions()
+    public function customerAddressPermissions(): array
     {
         return [
             ['shipping', 'oro_order_address_shipping_customer_use_any', new CustomerUser()],
@@ -59,10 +54,9 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function customerUserAddressPermissions()
+    public function customerUserAddressPermissions(): array
     {
         return [
             [

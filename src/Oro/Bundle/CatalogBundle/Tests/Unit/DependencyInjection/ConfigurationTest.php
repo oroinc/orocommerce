@@ -35,6 +35,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'category_image_placeholder' => [
                     'value' => null,
                     'scope' => 'app',
+                ],
+                'search_autocomplete_max_categories' => [
+                    'value' => 2,
+                    'scope' => 'app',
                 ]
             ]
         ];

@@ -5,6 +5,7 @@ export default GrapesJS.plugins.add('grapesjs-import', function(editor, options 
     const {Commands, Panels} = editor;
     const commandId = 'gjs-open-import-webpage';
 
+    Panels.removeButton('options', 'export-template');
     Panels.addButton('options', {
         id: commandId,
         className: 'fa fa-download',

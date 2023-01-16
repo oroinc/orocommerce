@@ -31,6 +31,7 @@
         .gjs-highlighter-sel {
             margin-left: -2px;
             margin-top: -2px;
+            outline-offset: 0;
         }
 
         ##{$app-prefix}tools,
@@ -100,15 +101,39 @@
     &pn-commands,
     &pn-options,
     &pn-devices-c {
-        .#{$pn-prefix}btn {
+        .#{$pn-prefix}btn,
+        .btn {
             background-color: $button-bg-color;
             border-radius: 30px;
             margin-right: 7px;
 
-            &.#{$pn-prefix}active {
+            &.#{$pn-prefix}active,
+            &[aria-expanded="true"] {
                 background-color: $additional-extra-light;
                 box-shadow: $button-bg-shadow;
             }
+        }
+    }
+
+    &pn-settings {
+        position: relative;
+        padding: 0;
+        display: none;
+        min-width: 250px;
+
+        .#{$pn-prefix}views-container & {
+            display: block;
+        }
+
+        .#{$pn-prefix}buttons {
+            display: grid;
+            grid-template-columns: 1fr 32px;
+            grid-gap: 8px;
+            text-align: left;
+        }
+
+        .tooltip-icon {
+            margin-right: 8px;
         }
     }
 
@@ -372,6 +397,10 @@
     &action {
         position: relative;
     }
+
+    &resizer-h-cl {
+        margin: auto -8px;
+    }
 }
 
 .table-edition-toolbar {
@@ -467,6 +496,23 @@
     .validation-failed {
         margin-left: $grapesjs-content-editor-offset;
         margin-right: $grapesjs-content-editor-offset;
+    }
+}
+
+.settings-panel {
+    padding: 10px;
+
+    &:not(.show) {
+        display: none;
+    }
+
+    &__body {
+        padding: 12px;
+    }
+
+    &__tooltip-trigger {
+        position: absolute;
+        inset: 0;
     }
 }
 

@@ -155,6 +155,25 @@ services:
     oro_checkout.factory.multi_shipping.checkout_factory:
         class: Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactory
         arguments:
+            -
+                - 'owner'
+                - 'billingAddress'
+                - 'currency'
+                - 'customerNotes'
+                - 'customer'
+                - 'customerUser'
+                - 'deleted'
+                - 'completed'
+                - 'registeredCustomerUser'
+                - 'shippingAddress'
+                - 'source'
+                - 'website'
+                - 'shippingMethod'
+                - 'shippingMethodType'
+                - 'paymentMethod'
+                - 'poNumber'
+                - 'shipUntil'
+                - 'organization'
             - '@property_accessor'
 
     oro_checkout.manager.multi_shipping.checkout_line_items_shipping:

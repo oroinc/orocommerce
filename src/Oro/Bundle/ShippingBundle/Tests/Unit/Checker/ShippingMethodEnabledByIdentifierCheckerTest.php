@@ -8,78 +8,62 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingMethodInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $method;
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
 
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingMethodProvider;
-
-    /**
-     * @var ShippingMethodEnabledByIdentifierChecker
-     */
-    protected $shippingMethodEnabledByIdentifierChecker;
+    /** @var ShippingMethodEnabledByIdentifierChecker */
+    private $checker;
 
     protected function setUp(): void
     {
-        $this->method = $this->createMock(ShippingMethodInterface::class);
-
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
-        $this->shippingMethodEnabledByIdentifierChecker = new ShippingMethodEnabledByIdentifierChecker(
-            $this->shippingMethodProvider
-        );
+        $this->checker = new ShippingMethodEnabledByIdentifierChecker($this->shippingMethodProvider);
     }
 
-    public function testIsEnabledForEnabledMethod()
+    public function testIsEnabledForEnabledMethod(): void
     {
         $identifier = 'shipping_method_1';
 
-        $this->method
-            ->expects(static::once())
+        $shippingMethod = $this->createMock(ShippingMethodInterface::class);
+        $shippingMethod->expects(self::once())
             ->method('isEnabled')
             ->willReturn(true);
 
-        $this->shippingMethodProvider
-            ->expects(static::any())
+        $this->shippingMethodProvider->expects(self::once())
             ->method('getShippingMethod')
             ->with($identifier)
-            ->willReturn($this->method);
+            ->willReturn($shippingMethod);
 
-        $this->assertTrue($this->shippingMethodEnabledByIdentifierChecker->isEnabled($identifier));
+        self::assertTrue($this->checker->isEnabled($identifier));
     }
 
-    public function testIsEnabledForDisabledMethod()
+    public function testIsEnabledForDisabledMethod(): void
     {
         $identifier = 'shipping_method_1';
 
-        $this->method
-            ->expects(static::once())
+        $shippingMethod = $this->createMock(ShippingMethodInterface::class);
+        $shippingMethod->expects(self::once())
             ->method('isEnabled')
             ->willReturn(false);
 
-        $this->shippingMethodProvider
-            ->expects(static::any())
+        $this->shippingMethodProvider->expects(self::once())
             ->method('getShippingMethod')
             ->with($identifier)
-            ->willReturn($this->method);
+            ->willReturn($shippingMethod);
 
-        $this->assertFalse($this->shippingMethodEnabledByIdentifierChecker->isEnabled($identifier));
+        self::assertFalse($this->checker->isEnabled($identifier));
     }
 
-    public function testIsEnabledForNotExistingMethod()
+    public function testIsEnabledForNotExistingMethod(): void
     {
         $identifier = 'shipping_method_1';
 
-        $this->shippingMethodProvider
-            ->expects(static::any())
+        $this->shippingMethodProvider->expects(self::once())
             ->method('getShippingMethod')
             ->with($identifier)
             ->willReturn(null);
 
-        $this->assertFalse($this->shippingMethodEnabledByIdentifierChecker->isEnabled($identifier));
+        self::assertFalse($this->checker->isEnabled($identifier));
     }
 }

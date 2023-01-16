@@ -4,24 +4,30 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\PayPal;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class PartnerTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new Partner()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [
                 [],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\MissingOptionsException',
+                    MissingOptionsException::class,
                     'The required option "PARTNER" is missing.',
                 ],
             ],
@@ -29,10 +35,10 @@ class PartnerTest extends AbstractOptionTest
                 ['PARTNER' => 123],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "PARTNER" with value 123 is invalid. Accepted values are: "PayPal", "PayPalCA",' .
-                    ' "AMEX", "MESP", "NOVA", "NASH", "NORT", "SOUT", "MAPP", "NDCE", "HTLD", "LITL", "MONE", "PAYT",' .
-                    ' "TMPA", "PPAY", "SNET", "VITA", "TELN", "FIFT", "VSA", "WPAY".',
+                    InvalidOptionsException::class,
+                    'The option "PARTNER" with value 123 is invalid. Accepted values are: "PayPal", "PayPalCA",'
+                    . ' "AMEX", "MESP", "NOVA", "NASH", "NORT", "SOUT", "MAPP", "NDCE", "HTLD", "LITL", "MONE", "PAYT",'
+                    . ' "TMPA", "PPAY", "SNET", "VITA", "TELN", "FIFT", "VSA", "WPAY".',
                 ],
             ],
             'valid' => [['PARTNER' => 'PayPal'], ['PARTNER' => 'PayPal']],

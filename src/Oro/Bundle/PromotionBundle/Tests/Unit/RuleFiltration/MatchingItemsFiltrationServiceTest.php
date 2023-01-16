@@ -15,26 +15,20 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    const UNIT_CODE_ITEM = 'item';
-    const UNIT_CODE_SET = 'set';
-
     use EntityTrait;
 
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    private const UNIT_CODE_ITEM = 'item';
+    private const UNIT_CODE_SET = 'set';
+
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
 
-    /**
-     * @var MatchingProductsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MatchingProductsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $matchingProductsProvider;
 
-    /**
-     * @var MatchingItemsFiltrationService
-     */
+    /** @var MatchingItemsFiltrationService */
     private $matchingItemsFiltrationService;
 
     protected function setUp(): void
@@ -52,8 +46,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
     {
         $this->configureFiltrationService();
 
-        $this->matchingProductsProvider
-            ->expects($this->never())
+        $this->matchingProductsProvider->expects($this->never())
             ->method('getMatchingProducts');
 
         $promotion = $this->createPromotion(new Segment());
@@ -69,8 +62,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
 
         $this->configureFiltrationService();
 
-        $this->matchingProductsProvider
-            ->expects($this->never())
+        $this->matchingProductsProvider->expects($this->never())
             ->method('getMatchingProducts');
 
         $this->assertEmpty(
@@ -97,8 +89,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
 
         $this->configureFiltrationService();
 
-        $this->matchingProductsProvider
-            ->expects($this->exactly(2))
+        $this->matchingProductsProvider->expects($this->exactly(2))
             ->method('getMatchingProducts')
             ->withConsecutive([$firstPromotionSegment, $lineItems], [$secondPromotionSegment, $lineItems])
             ->willReturn([]);
@@ -125,8 +116,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
 
         $this->configureFiltrationService();
 
-        $this->matchingProductsProvider
-            ->expects($this->once())
+        $this->matchingProductsProvider->expects($this->once())
             ->method('getMatchingProducts')
             ->with($promotionSegment, $lineItems)
             ->willReturn([$product]);
@@ -154,8 +144,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
 
         $this->configureFiltrationService();
 
-        $this->matchingProductsProvider
-            ->expects($this->once())
+        $this->matchingProductsProvider->expects($this->once())
             ->method('getMatchingProducts')
             ->with($promotionSegment, $lineItems)
             ->willReturn([$product]);
@@ -182,8 +171,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
 
         $this->configureFiltrationService();
 
-        $this->matchingProductsProvider
-            ->expects($this->once())
+        $this->matchingProductsProvider->expects($this->once())
             ->method('getMatchingProducts')
             ->with($promotionSegment, $lineItems)
             ->willReturn([$product]);
@@ -197,12 +185,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
         );
     }
 
-    /**
-     * @param Segment $segment
-     * @param string|null $productUnitCode
-     * @return PromotionDataInterface
-     */
-    private function createPromotion(Segment $segment, $productUnitCode = null)
+    private function createPromotion(Segment $segment, string $productUnitCode = null): PromotionDataInterface
     {
         $options = [];
         if ($productUnitCode) {
@@ -210,7 +193,6 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
         }
         $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['options' => $options]);
 
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getProductsSegment')
@@ -224,8 +206,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
 
     private function configureFiltrationService()
     {
-        $this->filtrationService
-            ->expects($this->any())
+        $this->filtrationService->expects($this->any())
             ->method('getFilteredRuleOwners')
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
@@ -234,6 +215,13 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
 
     public function testFilterIsSkippable()
     {
-        $this->assertServiceSkipped($this->matchingItemsFiltrationService, $this->filtrationService);
+        $this->filtrationService->expects($this->never())
+            ->method('getFilteredRuleOwners');
+
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $this->matchingItemsFiltrationService->getFilteredRuleOwners(
+            [$ruleOwner],
+            ['skip_filters' => [get_class($this->matchingItemsFiltrationService) => true]]
+        );
     }
 }

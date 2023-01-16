@@ -8,10 +8,7 @@ use Oro\Component\Expression\FieldsProviderInterface;
 
 class FieldsProviderTest extends WebTestCase
 {
-    /**
-     * @var FieldsProviderInterface
-     */
-    protected $provider;
+    private FieldsProviderInterface $provider;
 
     protected function setUp(): void
     {
@@ -22,22 +19,14 @@ class FieldsProviderTest extends WebTestCase
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param string $class
-     * @param bool $onlyNumerical
-     * @param bool $withRelations
-     * @param array $expectedFields
-     * @throws \Exception
      */
-    public function testGetFiends($class, $onlyNumerical, $withRelations, array $expectedFields)
+    public function testGetFiends(string $class, bool $onlyNumerical, bool $withRelations, array $expectedFields)
     {
         $fields = $this->provider->getFields($class, $onlyNumerical, $withRelations);
         $this->assertEquals(sort($expectedFields), sort($fields));
     }
 
-    /**
-     * @return array
-     */
-    public function getFieldsDataProvider()
+    public function getFieldsDataProvider(): array
     {
         return [
             [Product::class, true, false, ['id']],

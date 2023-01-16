@@ -1,40 +1,38 @@
 <?php
 namespace Oro\Bundle\ShippingBundle\Provider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
+/**
+ * The decorator of the a shipping price provider that returns views for enabled shipping methods only.
+ */
 class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProviderInterface
 {
-    /**
-     * @var ShippingPriceProviderInterface
-     */
-    protected $provider;
-
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    protected $shippingMethodProvider;
+    private ShippingPriceProviderInterface $innerProvider;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
 
     public function __construct(
-        ShippingPriceProviderInterface $provider,
+        ShippingPriceProviderInterface $innerProvider,
         ShippingMethodProviderInterface $shippingMethodProvider
     ) {
-        $this->provider = $provider;
+        $this->innerProvider = $innerProvider;
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getApplicableMethodsViews(ShippingContextInterface $context)
+    public function getApplicableMethodsViews(ShippingContextInterface $context): ShippingMethodViewCollection
     {
-        $methodViewCollection = clone $this->provider->getApplicableMethodsViews($context);
+        $methodViewCollection = clone $this->innerProvider->getApplicableMethodsViews($context);
         $methodViews = $methodViewCollection->getAllMethodsViews();
         foreach ($methodViews as $methodId => $methodView) {
             $method = $this->shippingMethodProvider->getShippingMethod($methodId);
-            if (!$method->isEnabled()) {
+            if (null !== $method && !$method->isEnabled()) {
                 $methodViewCollection->removeMethodView($methodId);
             }
         }
@@ -43,10 +41,10 @@ class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProvi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
+    public function getPrice(ShippingContextInterface $context, ?string $methodId, ?string $typeId): ?Price
     {
-        return $this->provider->getPrice($context, $methodId, $typeId);
+        return $this->innerProvider->getPrice($context, $methodId, $typeId);
     }
 }

@@ -13,23 +13,13 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CopyCustomerConsentsHelperTest extends WebTestCase
 {
-    /** @var CopyCustomerConsentsHelper */
-    private $helper;
+    private CopyCustomerConsentsHelper $helper;
+    private DoctrineHelper $doctrineHelper;
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(
-            [
-                LoadConsentsData::class,
-            ]
-        );
+        $this->loadFixtures([LoadConsentsData::class]);
 
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
         $this->helper = $this->getContainer()->get('oro_consent.helper.copy_customer_consents');
@@ -108,16 +98,10 @@ class CopyCustomerConsentsHelperTest extends WebTestCase
         $this->assertEmpty($missedConsentAcceptances);
     }
 
-    /**
-     * @param array        $sourceConsentAcceptances
-     * @param CustomerUser $targetCustomerUser
-     *
-     * @return array
-     */
     private function getSourceConsentAcceptanceFromTargetConsentAcceptance(
         array $sourceConsentAcceptances,
         CustomerUser $targetCustomerUser
-    ) {
+    ): array {
         $targetConsentAcceptances = [];
         foreach ($sourceConsentAcceptances as $sourceConsentAcceptance) {
             $consentAcceptance = new ConsentAcceptance();

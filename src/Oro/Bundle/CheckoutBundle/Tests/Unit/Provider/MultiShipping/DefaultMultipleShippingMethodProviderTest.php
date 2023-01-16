@@ -5,17 +5,19 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider\MultiShipping;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodProvider;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class DefaultMultipleShippingMethodProviderTest extends TestCase
+class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private MultiShippingMethodProvider|MockObject $shippingMethodProvider;
-    private DefaultMultipleShippingMethodProvider $provider;
+    /** @var MultiShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
+
+    /** @var DefaultMultipleShippingMethodProvider */
+    private $provider;
 
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(MultiShippingMethodProvider::class);
+
         $this->provider = new DefaultMultipleShippingMethodProvider($this->shippingMethodProvider);
     }
 

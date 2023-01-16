@@ -8,15 +8,20 @@ use Oro\Bundle\CheckoutBundle\RuleFiltration\MultiShipping\MultiShippingMethodFi
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class MultiShippingMethodFiltrationServiceDecoratorTest extends TestCase
+class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    private RuleFiltrationServiceInterface|MockObject $filtrationService;
-    private DefaultMultipleShippingMethodProvider|MockObject $multiShippingMethodsProvider;
-    private ConfigProvider|MockObject $configProvider;
-    private MultiShippingMethodFiltrationServiceDecorator $multiShippingFiltrationService;
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtrationService;
+
+    /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $multiShippingMethodsProvider;
+
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var MultiShippingMethodFiltrationServiceDecorator */
+    private $multiShippingFiltrationService;
 
     protected function setUp(): void
     {
@@ -46,7 +51,7 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends TestCase
 
         $rule1 = $this->createShippingMethodConfigRule('multi_shipping_1');
         $rule2 = $this->createShippingMethodConfigRule('flat_rate_1');
-        $rule3 = new \StdClass();
+        $rule3 = new \stdClass();
 
         $ruleOwners = [$rule1, $rule2, $rule3];
 
@@ -65,7 +70,7 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends TestCase
         $method = $ruleConfig1->getMethodConfigs()[0];
         $this->assertEquals('flat_rate_1', $method);
 
-        $this->assertInstanceOf(\StdClass::class, $ruleConfig2);
+        $this->assertInstanceOf(\stdClass::class, $ruleConfig2);
     }
 
     public function testGetFilteredRuleOwnersWhenMultiShippingDisabledButMethodsConfigured()

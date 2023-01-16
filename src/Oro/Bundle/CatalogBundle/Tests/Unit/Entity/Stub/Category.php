@@ -102,11 +102,15 @@ class Category extends BaseCategory
         if (!$this->products->contains($value)) {
             $this->products->add($value);
         }
+
+        return $this;
     }
 
     public function removeProduct(Product $value)
     {
         $this->products->removeElement($value);
+
+        return $this;
     }
 
     /**

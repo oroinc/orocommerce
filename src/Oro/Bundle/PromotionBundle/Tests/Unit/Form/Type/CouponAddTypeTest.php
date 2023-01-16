@@ -19,19 +19,12 @@ class CouponAddTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var CouponAddType
-     */
+    /** @var CouponAddType */
     private $formType;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -42,12 +35,9 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var Coupon $coupon */
         $coupon1 = $this->getEntity(Coupon::class, ['id' => 1]);
-
-        /** @var Coupon $coupon */
         $coupon2 = $this->getEntity(Coupon::class, ['id' => 2]);
 
         return [
@@ -93,10 +83,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty data' => [
@@ -125,7 +112,6 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $entityId = 777;
         $entity = $this->getEntity(Order::class, ['id' => $entityId]);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')

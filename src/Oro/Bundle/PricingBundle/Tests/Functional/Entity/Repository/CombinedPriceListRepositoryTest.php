@@ -27,11 +27,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadCombinedPriceListsActivationRulesForRepository::class,
-            ]
-        );
+        $this->loadFixtures([LoadCombinedPriceListsActivationRulesForRepository::class]);
     }
 
     public function testGetPriceListRelations()
@@ -357,10 +353,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertCount(1, $cPriceLists);
     }
 
-    /**
-     * @return array
-     */
-    public function getCPLsForPriceCollectByTimeOffsetDataProvider()
+    public function getCPLsForPriceCollectByTimeOffsetDataProvider(): array
     {
         return [
             [
@@ -389,18 +382,12 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertTrue($this->getRepository()->hasOtherRelations($relation3));
     }
 
-    /**
-     * @return CombinedPriceListRepository
-     */
-    protected function getRepository()
+    private function getRepository(): CombinedPriceListRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(CombinedPriceList::class);
     }
 
-    /**
-     * @return ObjectManager
-     */
-    protected function getManager()
+    private function getManager(): ObjectManager
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
     }

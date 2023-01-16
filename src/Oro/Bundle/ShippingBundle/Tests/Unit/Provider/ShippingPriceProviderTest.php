@@ -21,26 +21,27 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ShippingPriceProviderTest extends TestCase
+class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
     use MemoryCacheProviderAwareTestTrait;
 
-    private MethodsConfigsRulesByContextProviderInterface|MockObject $shippingRulesProvider;
+    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingRulesProvider;
 
-    private ShippingPriceCache|MockObject $priceCache;
+    /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceCache;
 
-    private EventDispatcherInterface|MockObject $eventDispatcher;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    private ShippingPriceProvider $shippingPriceProvider;
+    /** @var ShippingPriceProvider */
+    private $shippingPriceProvider;
 
     protected function setUp(): void
     {
@@ -49,30 +50,12 @@ class ShippingPriceProviderTest extends TestCase
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $methods = [
-            'flat_rate' => $this->getEntity(ShippingMethodStub::class, [
-                'identifier' => 'flat_rate',
-                'sortOrder' => 1,
-                'types' => [
-                    'primary' => $this->getEntity(ShippingMethodTypeStub::class, [
-                        'identifier' => 'primary',
-                        'sortOrder' => 1,
-                    ])
-                ]
+            'flat_rate' => $this->getShippingMethod('flat_rate', 1, [
+                'primary' => $this->getShippingMethodType('primary', 1)
             ]),
-            'integration_method' => $this->getEntity(PriceAwareShippingMethodStub::class, [
-                'identifier' => 'integration_method',
-                'sortOrder' => 2,
-                'isGrouped' => true,
-                'types' => [
-                    'ground' => $this->getEntity(ShippingMethodTypeStub::class, [
-                        'identifier' => 'ground',
-                        'sortOrder' => 1,
-                    ]),
-                    'air' => $this->getEntity(ShippingMethodTypeStub::class, [
-                        'identifier' => 'air',
-                        'sortOrder' => 2,
-                    ])
-                ]
+            'integration_method' => $this->getPriceAwareShippingMethod('integration_method', 2, true, [
+                'ground' => $this->getShippingMethodType('ground', 1),
+                'air' => $this->getShippingMethodType('air', 2)
             ])
         ];
 
@@ -90,6 +73,72 @@ class ShippingPriceProviderTest extends TestCase
             new ShippingMethodViewFactory($shippingMethodProvider),
             $this->eventDispatcher
         );
+    }
+
+    private function getShippingMethod(string $identifier, int $sortOrder, array $types): ShippingMethodStub
+    {
+        $shippingMethod = new ShippingMethodStub();
+        $shippingMethod->setIdentifier($identifier);
+        $shippingMethod->setSortOrder($sortOrder);
+        $shippingMethod->setTypes($types);
+
+        return $shippingMethod;
+    }
+
+    private function getPriceAwareShippingMethod(
+        string $identifier,
+        int $sortOrder,
+        bool $isGrouped,
+        array $types
+    ): PriceAwareShippingMethodStub {
+        $shippingMethod = new PriceAwareShippingMethodStub();
+        $shippingMethod->setIdentifier($identifier);
+        $shippingMethod->setSortOrder($sortOrder);
+        $shippingMethod->setIsGrouped($isGrouped);
+        $shippingMethod->setTypes($types);
+
+        return $shippingMethod;
+    }
+
+    private function getShippingMethodType(string $identifier, int $sortOrder): ShippingMethodTypeStub
+    {
+        $shippingMethodType = new ShippingMethodTypeStub();
+        $shippingMethodType->setIdentifier($identifier);
+        $shippingMethodType->setSortOrder($sortOrder);
+
+        return $shippingMethodType;
+    }
+
+    private function getShippingMethodsConfigsRule(int $id, array $methodConfigs): ShippingMethodsConfigsRule
+    {
+        $shippingMethodsConfigsRule = new ShippingMethodsConfigsRule();
+        ReflectionUtil::setId($shippingMethodsConfigsRule, $id);
+        foreach ($methodConfigs as $methodConfig) {
+            $shippingMethodsConfigsRule->addMethodConfig($methodConfig);
+        }
+
+        return $shippingMethodsConfigsRule;
+    }
+
+    private function getShippingMethodConfig(string $method, array $typeConfigs = []): ShippingMethodConfig
+    {
+        $shippingMethodConfig = new ShippingMethodConfig();
+        $shippingMethodConfig->setMethod($method);
+        foreach ($typeConfigs as $typeConfig) {
+            $shippingMethodConfig->addTypeConfig($typeConfig);
+        }
+
+        return $shippingMethodConfig;
+    }
+
+    private function getShippingMethodTypeConfig(string $type, array $options): ShippingMethodTypeConfig
+    {
+        $shippingMethodTypeConfig = new ShippingMethodTypeConfig();
+        $shippingMethodTypeConfig->setEnabled(true);
+        $shippingMethodTypeConfig->setType($type);
+        $shippingMethodTypeConfig->setOptions($options);
+
+        return $shippingMethodTypeConfig;
     }
 
     public function testGetApplicablePaymentMethodsWhenCache(): void
@@ -130,9 +179,7 @@ class ShippingPriceProviderTest extends TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->shippingPriceProvider
-                ->getApplicableMethodsViews($context)
-                ->toArray()
+            $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
         );
     }
 
@@ -155,47 +202,18 @@ class ShippingPriceProviderTest extends TestCase
         return [
             'one rule' => [
                 'shippingRule' => [
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 111,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'flat_rate',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'primary',
-                                        'options' => [
-                                            'price' => Price::create(12, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
+                    $this->getShippingMethodsConfigsRule(111, [
+                        $this->getShippingMethodConfig('flat_rate', [
+                            $this->getShippingMethodTypeConfig('primary', ['price' => Price::create(12, 'USD')])
+                        ])
                     ]),
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 222,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'ground',
-                                        'options' => [
-                                            'aware_price' => null,
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
+                    $this->getShippingMethodsConfigsRule(222, [
+                        $this->getShippingMethodConfig('integration_method', [
+                            $this->getShippingMethodTypeConfig('ground', ['aware_price' => null])
+                        ])
                     ]),
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 333,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'unknown_method',
-                            ])
-                        ]
+                    $this->getShippingMethodsConfigsRule(333, [
+                        $this->getShippingMethodConfig('unknown_method')
                     ])
                 ],
                 'expectedData' => [
@@ -217,76 +235,25 @@ class ShippingPriceProviderTest extends TestCase
             ],
             'several rules with same methods ans diff types' => [
                 'shippingRule' => [
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 1234,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'ground',
-                                        'options' => [
-                                            'aware_price' => Price::create(2, 'USD'),
-                                        ],
-                                    ]),
-                                ],
-                            ]),
-                        ]
+                    $this->getShippingMethodsConfigsRule(1234, [
+                        $this->getShippingMethodConfig('integration_method', [
+                            $this->getShippingMethodTypeConfig('ground', ['aware_price' => Price::create(2, 'USD')])
+                        ])
                     ]),
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 2345,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'flat_rate',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'primary',
-                                        'options' => [
-                                            'price' => Price::create(1, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
+                    $this->getShippingMethodsConfigsRule(2345, [
+                        $this->getShippingMethodConfig('flat_rate', [
+                            $this->getShippingMethodTypeConfig('primary', ['price' => Price::create(1, 'USD')])
+                        ])
                     ]),
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 4567,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'ground',
-                                        'options' => [
-                                            'aware_price' => Price::create(3, 'USD'),
-                                        ],
-                                    ]),
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'air',
-                                        'options' => [
-                                            'aware_price' => Price::create(4, 'USD'),
-                                        ],
-                                    ]),
-                                ],
-                            ]),
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'flat_rate',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'primary',
-                                        'options' => [
-                                            'price' => Price::create(5, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
-                    ]),
+                    $this->getShippingMethodsConfigsRule(4567, [
+                        $this->getShippingMethodConfig('integration_method', [
+                            $this->getShippingMethodTypeConfig('ground', ['aware_price' => Price::create(3, 'USD')]),
+                            $this->getShippingMethodTypeConfig('air', ['aware_price' => Price::create(4, 'USD')]),
+                        ]),
+                        $this->getShippingMethodConfig('flat_rate', [
+                            $this->getShippingMethodTypeConfig('primary', ['price' => Price::create(5, 'USD')])
+                        ])
+                    ])
                 ],
                 'expectedData' => [
                     'flat_rate' => [
@@ -342,22 +309,10 @@ class ShippingPriceProviderTest extends TestCase
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
-                $this->getEntity(ShippingMethodsConfigsRule::class, [
-                    'id' => $ruleId,
-                    'methodConfigs' => [
-                        $this->getEntity(ShippingMethodConfig::class, [
-                            'method' => 'flat_rate',
-                            'typeConfigs' => [
-                                $this->getEntity(ShippingMethodTypeConfig::class, [
-                                    'enabled' => true,
-                                    'type' => 'primary',
-                                    'options' => [
-                                        'price' => Price::create(1, 'USD'),
-                                    ],
-                                ])
-                            ],
-                        ])
-                    ]
+                $this->getShippingMethodsConfigsRule($ruleId, [
+                    $this->getShippingMethodConfig('flat_rate', [
+                        $this->getShippingMethodTypeConfig('primary', ['price' => Price::create(1, 'USD')])
+                    ])
                 ])
             ]);
         $price = Price::create(1, 'USD');
@@ -435,23 +390,11 @@ class ShippingPriceProviderTest extends TestCase
                 'methodId' => 'integration_method',
                 'typeId' => 'ground',
                 'shippingRules' => [
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 111,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'flat_rate',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'primary',
-                                        'options' => [
-                                            'price' => Price::create(12, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
-                    ]),
+                    $this->getShippingMethodsConfigsRule(111, [
+                        $this->getShippingMethodConfig('flat_rate', [
+                            $this->getShippingMethodTypeConfig('primary', ['price' => Price::create(12, 'USD')])
+                        ])
+                    ])
                 ],
                 'expectedData' => null,
             ],
@@ -459,23 +402,11 @@ class ShippingPriceProviderTest extends TestCase
                 'methodId' => 'flat_rate',
                 'typeId' => 'primary',
                 'shippingRules' => [
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 222,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'flat_rate',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'primary',
-                                        'options' => [
-                                            'price' => Price::create(12, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
-                    ]),
+                    $this->getShippingMethodsConfigsRule(222, [
+                        $this->getShippingMethodConfig('flat_rate', [
+                            $this->getShippingMethodTypeConfig('primary', ['price' => Price::create(12, 'USD')])
+                        ])
+                    ])
                 ],
                 'expectedData' => Price::create(12, 'USD'),
             ],
@@ -483,23 +414,11 @@ class ShippingPriceProviderTest extends TestCase
                 'methodId' => 'flat_rate',
                 'typeId' => 'primary',
                 'shippingRules' => [
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 333,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'flat_rate',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'primary',
-                                        'options' => [
-                                            'price' => null
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
-                    ]),
+                    $this->getShippingMethodsConfigsRule(333, [
+                        $this->getShippingMethodConfig('flat_rate', [
+                            $this->getShippingMethodTypeConfig('primary', ['price' => null])
+                        ])
+                    ])
                 ],
                 'expectedData' => null,
             ],
@@ -507,51 +426,18 @@ class ShippingPriceProviderTest extends TestCase
                 'methodId' => 'integration_method',
                 'typeId' => 'ground',
                 'shippingRules' => [
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 444,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'ground',
-                                        'options' => [
-                                            'price' => Price::create(1, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ]),
-                        ]
+                    $this->getShippingMethodsConfigsRule(444, [
+                        $this->getShippingMethodConfig('integration_method', [
+                            $this->getShippingMethodTypeConfig('ground', ['price' => Price::create(1, 'USD')])
+                        ])
                     ]),
-                    $this->getEntity(ShippingMethodsConfigsRule::class, [
-                        'id' => 1234,
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'ground',
-                                        'options' => [
-                                            'price' => Price::create(2, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ]),
-                            $this->getEntity(ShippingMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'air',
-                                        'options' => [
-                                            'price' => Price::create(3, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
+                    $this->getShippingMethodsConfigsRule(1234, [
+                        $this->getShippingMethodConfig('integration_method', [
+                            $this->getShippingMethodTypeConfig('ground', ['price' => Price::create(2, 'USD')])
+                        ]),
+                        $this->getShippingMethodConfig('integration_method', [
+                            $this->getShippingMethodTypeConfig('air', ['price' => Price::create(3, 'USD')])
+                        ])
                     ])
                 ],
                 'expectedData' => Price::create(1, 'USD'),
@@ -594,22 +480,10 @@ class ShippingPriceProviderTest extends TestCase
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
-                $this->getEntity(ShippingMethodsConfigsRule::class, [
-                    'id' => $ruleId,
-                    'methodConfigs' => [
-                        $this->getEntity(ShippingMethodConfig::class, [
-                            'method' => $methodId,
-                            'typeConfigs' => [
-                                $this->getEntity(ShippingMethodTypeConfig::class, [
-                                    'enabled' => true,
-                                    'type' => $typeId,
-                                    'options' => [
-                                        'price' => Price::create(1, 'USD'),
-                                    ],
-                                ])
-                            ],
-                        ])
-                    ]
+                $this->getShippingMethodsConfigsRule($ruleId, [
+                    $this->getShippingMethodConfig($methodId, [
+                        $this->getShippingMethodTypeConfig($typeId, ['price' => Price::create(1, 'USD')])
+                    ])
                 ])
             ]);
 

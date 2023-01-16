@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Manager\MultiShipping;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
@@ -44,9 +43,7 @@ class CheckoutLineItemsShippingManager
         Checkout $checkout,
         bool $useDefaults = false
     ): void {
-        $checkoutLineItems = $this->getLineItems($checkout);
-
-        /** @var CheckoutLineItem $lineItem */
+        $checkoutLineItems = $this->lineItemsProvider->getCheckoutLineItems($checkout);
         foreach ($checkoutLineItems as $lineItem) {
             $lineItemIdentifier = $this->getLineItemIdentifier($lineItem);
             $lineItemShippingData = $shippingData[$lineItemIdentifier] ?? [];
@@ -56,11 +53,8 @@ class CheckoutLineItemsShippingManager
             }
 
             if (!empty($lineItemShippingData)) {
-                $shippingMethod = $lineItemShippingData[self::SHIPPING_METHOD_FIELD] ?? null;
-                $shippingMethodType = $lineItemShippingData[self::SHIPPING_METHOD_TYPE_FIELD] ?? null;
-
-                $lineItem->setShippingMethod($shippingMethod)
-                    ->setShippingMethodType($shippingMethodType);
+                $lineItem->setShippingMethod($lineItemShippingData[self::SHIPPING_METHOD_FIELD] ?? null);
+                $lineItem->setShippingMethodType($lineItemShippingData[self::SHIPPING_METHOD_TYPE_FIELD] ?? null);
             }
         }
     }
@@ -69,14 +63,13 @@ class CheckoutLineItemsShippingManager
      * Build lineItems shipping data.
      *
      * @param Checkout $checkout
+     *
      * @return array ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
      */
     public function getCheckoutLineItemsShippingData(Checkout $checkout): array
     {
-        $lineItems = $this->getLineItems($checkout);
         $lineItemsShippingData = [];
-
-        /** @var CheckoutLineItem $lineItem */
+        $lineItems = $this->lineItemsProvider->getCheckoutLineItems($checkout);
         foreach ($lineItems as $lineItem) {
             $identifier = $this->getLineItemIdentifier($lineItem);
             $lineItemsShippingData[$identifier] = [
@@ -90,25 +83,18 @@ class CheckoutLineItemsShippingManager
 
     public function updateLineItemsShippingPrices(Checkout $checkout): void
     {
-        $lineItems = $this->getLineItems($checkout);
-
-        /** @var CheckoutLineItem $lineItem */
+        $lineItems = $this->lineItemsProvider->getCheckoutLineItems($checkout);
         foreach ($lineItems as $lineItem) {
             if (!$lineItem->getShippingMethod()) {
                 continue;
             }
 
-            $shippingPrice = $this->shippingPricePriceProvider->getPrice($lineItem);
-            $lineItem->setShippingEstimateAmount($shippingPrice->getValue());
+            $lineItem->setShippingEstimateAmount(
+                $this->shippingPricePriceProvider->getPrice($lineItem)?->getValue()
+            );
         }
     }
 
-    /**
-     * Build line item key
-     *
-     * @param ProductLineItemInterface $lineItem
-     * @return string
-     */
     public function getLineItemIdentifier(ProductLineItemInterface $lineItem): string
     {
         return implode(':', [$lineItem->getProductSku(), $lineItem->getProductUnitCode()]);
@@ -133,10 +119,5 @@ class CheckoutLineItemsShippingManager
         }
 
         return [];
-    }
-
-    private function getLineItems(Checkout $checkout): ArrayCollection
-    {
-        return $this->lineItemsProvider->getCheckoutLineItems($checkout);
     }
 }

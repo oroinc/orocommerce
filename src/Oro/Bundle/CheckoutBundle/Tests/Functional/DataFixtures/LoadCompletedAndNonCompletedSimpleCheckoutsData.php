@@ -12,13 +12,13 @@ class LoadCompletedAndNonCompletedSimpleCheckoutsData extends AbstractLoadChecko
 {
     use EnabledPaymentMethodIdentifierTrait;
 
-    const CHECKOUT_COMPLETED = 'checkout_completed';
-    const CHECKOUT_NOT_COMPLETED = 'checkout_not_completed';
+    public const CHECKOUT_COMPLETED = 'checkout_completed';
+    public const CHECKOUT_NOT_COMPLETED = 'checkout_not_completed';
 
     /**
      * {@inheritDoc}
      */
-    protected function getData()
+    protected function getData(): array
     {
         $paymentTermIdentifier = $this->getPaymentMethodIdentifier($this->container);
 
@@ -39,7 +39,7 @@ class LoadCompletedAndNonCompletedSimpleCheckoutsData extends AbstractLoadChecko
     /**
      * {@inheritDoc}
      */
-    protected function getWorkflowName()
+    protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
@@ -47,7 +47,7 @@ class LoadCompletedAndNonCompletedSimpleCheckoutsData extends AbstractLoadChecko
     /**
      * {@inheritDoc}
      */
-    protected function createCheckout()
+    protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
@@ -55,7 +55,7 @@ class LoadCompletedAndNonCompletedSimpleCheckoutsData extends AbstractLoadChecko
     /**
      * {@inheritDoc}
      */
-    protected function getCheckoutSourceName()
+    protected function getCheckoutSourceName(): string
     {
         return 'shoppingList';
     }
@@ -63,7 +63,7 @@ class LoadCompletedAndNonCompletedSimpleCheckoutsData extends AbstractLoadChecko
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),

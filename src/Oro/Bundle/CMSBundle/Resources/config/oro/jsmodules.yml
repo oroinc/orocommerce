@@ -31,3 +31,4 @@ dynamic-imports:
         - orocms/js/app/grapesjs/plugins/code-mode
         - orocms/js/app/grapesjs/plugins/screenshot
         - orocms/js/app/grapesjs/plugins/content-templates
+        - orocms/js/app/grapesjs/plugins/settings

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\ORM\Proxy\Proxy;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryWithEntityFallbackValuesData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -22,35 +21,24 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
  */
 class CheckoutRepositoryTest extends FrontendWebTestCase
 {
-    /**
-     * @var CheckoutRepository
-     */
-    protected $repository;
+    private CheckoutRepository $repository;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->setCurrentWebsite('default');
-        $this->loadFixtures(
-            [
-                LoadShoppingListsCheckoutsData::class,
-                LoadCustomerUserData::class,
-                LoadCategoryProductData::class,
-                LoadCategoryWithEntityFallbackValuesData::class,
-                LoadCheckoutSubtotals::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadShoppingListsCheckoutsData::class,
+            LoadCustomerUserData::class,
+            LoadCategoryProductData::class,
+            LoadCategoryWithEntityFallbackValuesData::class,
+            LoadCheckoutSubtotals::class
+        ]);
 
         $this->repository = $this->getRepository();
     }
 
-    /**
-     * @return CheckoutRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): CheckoutRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(Checkout::class);
     }
@@ -160,9 +148,6 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         );
     }
 
-    /**
-     * @return array|array[]
-     */
     public function findCheckoutWithCurrencyDataProvider(): array
     {
         return [
@@ -273,18 +258,5 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
 
         $this->assertContains($subtotal1->getCheckout()->getId(), $ids);
         $this->assertContains($subtotal2->getCheckout()->getId(), $ids);
-    }
-
-    /**
-     * @param object $value
-     * @param string $expectedClass
-     */
-    private function assertNotProxyOrInitialized($value, string $expectedClass): void
-    {
-        if ($value instanceof Proxy) {
-            $this->assertTrue($value->__isInitialized());
-        } else {
-            $this->assertInstanceOf($expectedClass, $value);
-        }
     }
 }

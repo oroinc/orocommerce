@@ -13,7 +13,8 @@ const Index = BaseType.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-file-o'
-        }
+        },
+        activate: true
     },
 
     TypeModel,

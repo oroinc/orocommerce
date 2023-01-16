@@ -7,10 +7,7 @@ use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventFo
 
 class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TriggerEventForSelectedProductIdsMassAction
-     */
-    private $action;
+    private TriggerEventForSelectedProductIdsMassAction $action;
 
     protected function setUp(): void
     {
@@ -27,10 +24,7 @@ class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit\Framework
         $this->assertEquals($expected, $this->action->getOptions()->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function setOptionsDataProvider()
+    public function setOptionsDataProvider(): array
     {
         $handler =
             'oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler';

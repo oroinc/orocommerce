@@ -142,14 +142,14 @@ class DriverDecoratorTest extends WebTestCase
     /**
      * @dataProvider aggregationDataProvider
      */
-    public function testSearchDefaultWebsiteCountAggregate(string $function, mixed $expected)
+    public function testSearchDefaultWebsiteCountAggregate(string $function, array $parameters, mixed $expected)
     {
         $field = 'test_value';
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
         $query->from('oro_product_'.$websiteId);
-        $query->addAggregate($field, 'integer.for_count', $function);
+        $query->addAggregate($field, 'integer.for_count', $function, $parameters);
 
         $results = $this->getContainer()->get('oro_website_search.engine.orm.driver')->getAggregatedData($query);
 
@@ -161,24 +161,34 @@ class DriverDecoratorTest extends WebTestCase
     public function aggregationDataProvider(): array
     {
         return [
-            'count' => [
+            'count without parameters' => [
                 'function' => Query::AGGREGATE_FUNCTION_COUNT,
+                'parameters' => [],
                 'expected' => [100 => 1, 200 => 1]
+            ],
+            'count with max parameter' => [
+                'function' => Query::AGGREGATE_FUNCTION_COUNT,
+                'parameters' => ['max' => 1],
+                'expected' => [100 => 1]
             ],
             'sum' => [
                 'function' => Query::AGGREGATE_FUNCTION_SUM,
+                'parameters' => [],
                 'expected' => 300
             ],
             'min' => [
                 'function' => Query::AGGREGATE_FUNCTION_MIN,
+                'parameters' => [],
                 'expected' => 100
             ],
             'max' => [
                 'function' => Query::AGGREGATE_FUNCTION_MAX,
+                'parameters' => [],
                 'expected' => 200
             ],
             'avg' => [
                 'function' => Query::AGGREGATE_FUNCTION_AVG,
+                'parameters' => [],
                 'expected' => 150
             ],
         ];
