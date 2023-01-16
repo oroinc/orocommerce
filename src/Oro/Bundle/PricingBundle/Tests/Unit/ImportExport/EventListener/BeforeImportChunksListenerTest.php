@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -45,14 +46,16 @@ class BeforeImportChunksListenerTest extends TestCase
     /**
      * @dataProvider onBeforeImportChunksWithoutPriceListDataProvider
      */
-    public function testOnBeforeImportChunksWithoutPriceList(array $body)
+    public function testOnBeforeImportChunksValidation(array $body)
     {
         $event = new BeforeImportChunksEvent($body);
 
-        $this->registry->expects($this->never())
+        $this->registry
+            ->expects($this->never())
             ->method('getRepository')
             ->with(PriceList::class);
-        $this->registry->expects($this->never())
+        $this->registry
+            ->expects($this->never())
             ->method('getRepository')
             ->with(ProductPrice::class);
 
@@ -78,21 +81,31 @@ class BeforeImportChunksListenerTest extends TestCase
                     'processorAlias' => BeforeImportChunksListener::RESET_PROCESSOR_ALIAS,
                 ],
             ],
+            'invalid process type' => [
+                'body' => [
+                    'processorAlias' => BeforeImportChunksListener::RESET_PROCESSOR_ALIAS,
+                    'options' => ['price_list_id' => 1],
+                    'process' => ProcessorRegistry::TYPE_IMPORT_VALIDATION
+                ],
+            ],
         ];
     }
 
     public function testOnBeforeImportChunksNonExistentPriceList()
     {
+        $body['process'] = ProcessorRegistry::TYPE_IMPORT;
         $body['processorAlias'] = BeforeImportChunksListener::RESET_PROCESSOR_ALIAS;
         $body['options']['price_list_id'] = 15;
         $event = new BeforeImportChunksEvent($body);
 
-        $this->registry->expects($this->once())
+        $this->registry
+            ->expects($this->once())
             ->method('getRepository')
             ->with(PriceList::class)
             ->willReturn($this->priceListRepository);
 
-        $this->priceListRepository->expects($this->once())
+        $this->priceListRepository
+            ->expects($this->once())
             ->method('find')
             ->with(15)
             ->willReturn(null);
@@ -102,6 +115,7 @@ class BeforeImportChunksListenerTest extends TestCase
 
     public function testOnBeforeImportChunks()
     {
+        $body['process'] = ProcessorRegistry::TYPE_IMPORT;
         $body['processorAlias'] = BeforeImportChunksListener::RESET_PROCESSOR_ALIAS;
         $body['options']['price_list_id'] = 16;
         $event = new BeforeImportChunksEvent($body);
