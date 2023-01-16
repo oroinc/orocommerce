@@ -8,7 +8,6 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -40,14 +39,6 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         $this->reindexProductData();
     }
 
-    private function getExpectedContentWithPaginationLinks(array $expectedContent): array
-    {
-        $content = Yaml::dump($expectedContent);
-        $content = str_replace('{baseUrl}', $this->getApiBaseUrl(), $content);
-
-        return self::processTemplateData(Yaml::parse($content));
-    }
-
     private function isMySqlOrmSearchEngine(): bool
     {
         if (\Oro\Bundle\SearchBundle\Engine\Orm::ENGINE_NAME !== $this->getSearchEngine()) {
@@ -57,10 +48,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof MySqlPlatform;
     }
 
-    /**
-     * @return string
-     */
-    private function getSearchEngine()
+    private function getSearchEngine(): string
     {
         return self::getContainer()->getParameter('oro_search.engine');
     }
