@@ -4,7 +4,11 @@
 
 {% oro_title_set({params : {'%entityName%' : 'oro.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
 
-{% set formAction = formAction|default(entity.id ? path('oro_sale_quote_update', { 'id': entity.id }) : path('oro_sale_quote_create')) %}
+{% if saveFormAction is defined %}
+    {% set formAction = path(saveFormAction.route, saveFormAction.parameters) %}
+{% else %}
+    {% set formAction = formAction|default(entity.id ? path('oro_sale_quote_update', { 'id': entity.id }) : path('oro_sale_quote_create')) %}
+{% endif %}
 
 {% block pageHeader %}
     {% if entity.id %}
@@ -35,6 +39,12 @@
         {% set html = html ~ UI.saveAndStayButton({
             'route' : 'oro_sale_quote_update',
             'params' : {'id' : '$id'}
+        }) %}
+    {% endif %}
+    {% if returnAction is defined and is_granted(returnAction.aclRole) %}
+        {% set html = html ~ UI.saveAndReturnButton({
+            'route': returnAction.route,
+            'params': returnAction.parameters
         }) %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
