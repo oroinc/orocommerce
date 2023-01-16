@@ -6,7 +6,6 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdm
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\Api\Frontend\RestJsonApi\WebCatalogTreeTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -33,14 +32,6 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         parent::postFixtureLoad();
 
         $this->reindexProductData();
-    }
-
-    private function getExpectedContentWithPaginationLinks(array $expectedContent): array
-    {
-        $content = Yaml::dump($expectedContent);
-        $content = str_replace('{baseUrl}', $this->getApiBaseUrl(), $content);
-
-        return self::processTemplateData(Yaml::parse($content));
     }
 
     public function testGetWithoutSearchQueryFilter()
