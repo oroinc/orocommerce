@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Twig;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
@@ -68,14 +69,14 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
         $comment = 'Comment';
         $shipBy = new \DateTime();
 
-        $subtotals = [
+        $subtotals = new ArrayCollection([
             (new Subtotal())
                 ->setLabel('label2')
                 ->setAmount(321)
                 ->setOperation(Subtotal::OPERATION_SUBTRACTION)
                 ->setCurrency('UAH'),
             (new Subtotal())->setLabel('label1')->setAmount(123)->setCurrency('USD')
-        ];
+        ]);
         $this->totalsProvider->expects($this->once())
             ->method('getSubtotals')
             ->willReturn($subtotals);

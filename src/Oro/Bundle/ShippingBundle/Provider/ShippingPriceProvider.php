@@ -77,16 +77,12 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
                     $method->isGrouped(),
                     $method->getSortOrder()
                 );
-
                 $methodCollection->addMethodView($methodId, $methodView);
 
                 $types = $this->getApplicableMethodTypesViews($context, $methodConfig, $method);
-
-                if (\count($types) === 0) {
-                    continue;
+                if ($types) {
+                    $methodCollection->addMethodTypesViews($methodId, $types);
                 }
-
-                $methodCollection->addMethodTypesViews($methodId, $types);
             }
         }
 

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action\MultiShipping;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -14,22 +14,24 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodType;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class DefaultMultiShippingMethodSetterTest extends TestCase
+class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject  */
+    private $shippingProvider;
 
-    private DefaultMultipleShippingMethodProvider|MockObject $shippingProvider;
-    private CheckoutShippingMethodsProviderInterface|MockObject $shippingPriceProvider;
-    private CheckoutLineItemsShippingManager|MockObject $lineItemsShippingManager;
-    private ManagerRegistry|MockObject $doctrine;
-    private ObjectManager|MockObject $manager;
+    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    private $shippingPriceProvider;
 
-    private DefaultMultiShippingMethodSetter $defaultMultiShippingMethodSetter;
+    /** @var CheckoutLineItemsShippingManager|\PHPUnit\Framework\MockObject\MockObject  */
+    private $lineItemsShippingManager;
+
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    private $doctrine;
+
+    /** @var DefaultMultiShippingMethodSetter  */
+    private $defaultMultiShippingMethodSetter;
 
     protected function setUp(): void
     {
@@ -39,7 +41,6 @@ class DefaultMultiShippingMethodSetterTest extends TestCase
         $this->shippingPriceProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
         $this->lineItemsShippingManager = $this->createMock(CheckoutLineItemsShippingManager::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->manager = $this->createMock(ObjectManager::class);
 
         $this->defaultMultiShippingMethodSetter = new DefaultMultiShippingMethodSetter(
             $this->shippingProvider,
@@ -99,12 +100,12 @@ class DefaultMultiShippingMethodSetterTest extends TestCase
             ->with($checkout)
             ->willReturn(Price::create(15.00, 'USD'));
 
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(CheckoutLineItem::class)
-            ->willReturn($this->manager);
-
-        $this->manager->expects($this->once())
+            ->willReturn($em);
+        $em->expects($this->once())
             ->method('flush');
 
         $this->defaultMultiShippingMethodSetter->setDefaultShippingMethods($checkout, $lineItemsShippingMethods, true);
@@ -165,12 +166,12 @@ class DefaultMultiShippingMethodSetterTest extends TestCase
             ->with($checkout)
             ->willReturn(null);
 
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(CheckoutLineItem::class)
-            ->willReturn($this->manager);
-
-        $this->manager->expects($this->once())
+            ->willReturn($em);
+        $em->expects($this->once())
             ->method('flush');
 
         $this->defaultMultiShippingMethodSetter->setDefaultShippingMethods($checkout, $lineItemsShippingMethods, false);

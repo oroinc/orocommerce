@@ -130,6 +130,7 @@ oro_behat_extension:
           Billing Address State:
             locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type_billingAddress_region-uid")]/input'
             type: xpath
+          Billing Address Label: 'oro_order_type[billingAddress][label]'
           Billing Address First name: 'oro_order_type[billingAddress][firstName]'
           Billing Address Last name: 'oro_order_type[billingAddress][lastName]'
           Billing Address Organization: 'oro_order_type[billingAddress][organization]'

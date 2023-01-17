@@ -10,7 +10,8 @@ use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInt
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
- * Sets default shipping method for checkout if multi shipping functionality is enabled.
+ * Sets a default shipping method and a shipping cost for a checkout and its line items
+ * when the multi shipping functionality is enabled.
  */
 class DefaultMultiShippingMethodSetter
 {
@@ -31,13 +32,6 @@ class DefaultMultiShippingMethodSetter
         $this->lineItemsShippingManager = $lineItemsShippingManager;
     }
 
-    /**
-     * Sets default multiple shipping method to checkout and update line items shipping data.
-     *
-     * @param Checkout $checkout
-     * @param array $lineItemsShippingMethods
-     * @param bool $useDefaults
-     */
     public function setDefaultShippingMethods(
         Checkout $checkout,
         array $lineItemsShippingMethods = [],
@@ -47,22 +41,21 @@ class DefaultMultiShippingMethodSetter
         $methodTypes = $multiShippingMethod->getTypes();
         $multiShippingMethodType = reset($methodTypes);
 
-        $checkout->setShippingMethod($multiShippingMethod->getIdentifier())
-            ->setShippingMethodType($multiShippingMethodType->getIdentifier());
+        $checkout->setShippingMethod($multiShippingMethod->getIdentifier());
+        $checkout->setShippingMethodType($multiShippingMethodType->getIdentifier());
 
-        /**
-         * Update line items shipping data.
-         */
-        $this->lineItemsShippingManager
-            ->updateLineItemsShippingMethods($lineItemsShippingMethods, $checkout, $useDefaults);
+        $this->lineItemsShippingManager->updateLineItemsShippingMethods(
+            $lineItemsShippingMethods,
+            $checkout,
+            $useDefaults
+        );
         $this->lineItemsShippingManager->updateLineItemsShippingPrices($checkout);
 
         $price = $this->shippingPriceProvider->getPrice($checkout);
-        if ($price) {
+        if (null !== $price) {
             $checkout->setShippingCost($price);
         }
 
-        $this->doctrine->getManagerForClass(CheckoutLineItem::class)
-            ->flush();
+        $this->doctrine->getManagerForClass(CheckoutLineItem::class)->flush();
     }
 }

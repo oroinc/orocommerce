@@ -9,20 +9,18 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
+/**
+ * The factory to create FedEx shipment validation request.
+ */
 class FedexRateServiceValidateConnectionRequestFactory implements FedexRequestByIntegrationSettingsFactoryInterface
 {
-    /**
-     * @var SymmetricCrypterInterface
-     */
-    private $crypter;
+    private SymmetricCrypterInterface $crypter;
+    private ShippingOriginProvider $shippingOriginProvider;
 
-    /**
-     * @var ShippingOriginProvider
-     */
-    private $shippingOriginProvider;
-
-    public function __construct(SymmetricCrypterInterface $crypter, ShippingOriginProvider $shippingOriginProvider)
-    {
+    public function __construct(
+        SymmetricCrypterInterface $crypter,
+        ShippingOriginProvider $shippingOriginProvider
+    ) {
         $this->crypter = $crypter;
         $this->shippingOriginProvider = $shippingOriginProvider;
     }

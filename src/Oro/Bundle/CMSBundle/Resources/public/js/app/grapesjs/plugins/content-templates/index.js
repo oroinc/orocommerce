@@ -103,6 +103,7 @@ export default GrapesJS.plugins.add('content-templates', (editor, {contentTempla
             title: __('oro.cms.wysiwyg.content_template_plugin.button_title')
         },
         className: 'fa fa-book',
-        command: 'toggle-content-templates-panel'
+        command: 'toggle-content-templates-panel',
+        order: 40
     });
 });

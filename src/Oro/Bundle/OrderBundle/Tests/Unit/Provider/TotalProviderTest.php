@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubto
 
 class TotalProviderTest extends AbstractSubtotalProviderTest
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $processorProvider;
 
     /** @var TotalProvider */

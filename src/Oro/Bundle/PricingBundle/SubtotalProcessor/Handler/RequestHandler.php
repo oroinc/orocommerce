@@ -17,20 +17,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class RequestHandler
 {
-    /** @var TotalProcessorProvider */
-    protected $totalProvider;
-
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
-
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
-
-    /** @var EntityRoutingHelper */
-    protected $entityRoutingHelper;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
+    private TotalProcessorProvider $totalProvider;
+    private EventDispatcherInterface $eventDispatcher;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    private EntityRoutingHelper $entityRoutingHelper;
+    private ManagerRegistry $doctrine;
 
     public function __construct(
         TotalProcessorProvider $totalProvider,
@@ -47,95 +38,33 @@ class RequestHandler
     }
 
     /**
-     * Calculate total with subtotals for entity
-     *
-     * @param string $entityClassName
-     * @param int|null $entityId
-     * @param Request|null $request - can be used data from request for dynamic recalculate for form data
-     *
-     * @return array
+     * Calculates total with subtotals for an entity.
      */
-    public function recalculateTotals($entityClassName, $entityId, $request = null)
+    public function recalculateTotals(string $entityClassName, ?int $entityId, ?Request $request = null): array
     {
-        $entityClassName = $this->resolveClassName($entityClassName);
+        $entityClassName = $this->entityRoutingHelper->resolveEntityClass($entityClassName);
+        if (!class_exists($entityClassName)) {
+            throw new EntityNotFoundException();
+        }
 
         if ($entityId) {
-            $entity = $this->getExistEntity($entityClassName, $entityId);
-            $this->hasAccessView($entity);
+            $entity = $this->doctrine->getRepository($entityClassName)->find($entityId);
+            if (null === $entity) {
+                throw new EntityNotFoundException();
+            }
+            if (!$this->authorizationChecker->isGranted('VIEW', $entity)) {
+                throw new AccessDeniedException();
+            }
         } else {
             $entity = new $entityClassName();
         }
 
         if ($request) {
-            $event = $this->dispatchPreCalculateTotalEvent($entity, $request);
+            $event = new TotalCalculateBeforeEvent($entity, $request);
+            $this->eventDispatcher->dispatch($event, TotalCalculateBeforeEvent::NAME);
             $entity = $event->getEntity();
         }
 
-        $this->totalProvider->enableRecalculation();
-
-        return $this->totalProvider->getTotalWithSubtotalsAsArray($entity);
-    }
-
-    /**
-     * Dispatch event TotalCalculateBeforeEvent to fill entity
-     *
-     * @param object $entity
-     * @param Request $request
-     *
-     * @return TotalCalculateBeforeEvent
-     */
-    protected function dispatchPreCalculateTotalEvent($entity, $request)
-    {
-        $event = new TotalCalculateBeforeEvent($entity, $request);
-        $event = $this->eventDispatcher->dispatch($event, TotalCalculateBeforeEvent::NAME);
-
-        return $event;
-    }
-
-    /**
-     * @param string  $entityClass
-     * @param int $entityId
-     *
-     * @return object
-     * @throws EntityNotFoundException
-     */
-    protected function getExistEntity($entityClass, $entityId)
-    {
-        $entityManager = $this->doctrine->getManager();
-        $entity = $entityManager->getRepository($entityClass)->find($entityId);
-
-        if (!$entity) {
-            throw new EntityNotFoundException();
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @param object $entity
-     */
-    protected function hasAccessView($entity)
-    {
-        $isGranted = $this->authorizationChecker->isGranted('VIEW', $entity);
-        if (!$isGranted) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    /**
-     * @param string $entityClassName
-     * @return string
-     *
-     * @throws EntityNotFoundException
-     */
-    protected function resolveClassName($entityClassName)
-    {
-        $entityClass = $this->entityRoutingHelper->resolveEntityClass($entityClassName);
-
-        if (!class_exists($entityClass)) {
-            throw new EntityNotFoundException();
-        }
-
-        return $entityClass;
+        return $this->totalProvider->enableRecalculation()->getTotalWithSubtotalsAsArray($entity);
     }
 }

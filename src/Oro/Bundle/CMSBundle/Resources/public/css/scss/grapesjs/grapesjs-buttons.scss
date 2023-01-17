@@ -22,6 +22,53 @@
                 }
             }
         }
+
+        &--switch {
+            border: $checkbox-border;
+            border-radius: $checkbox-border-radius;
+            background-color: $checkbox-background;
+            width: $checkbox-size-var;
+            min-width: $checkbox-size-var;
+            height: $checkbox-size-var;
+            min-height: $checkbox-size-var;
+            margin: $checkbox-margin;
+            color: $checkbox-color;
+            appearance: $checkbox-appearance;
+            vertical-align: $checkbox-vertical-align;
+            display: $checkbox-display;
+            // To prevent shrink or grow checkbox if it's in flex container context
+            flex: $checkbox-flex;
+            outline: $checkbox-outline;
+            place-self: center;
+
+            @include fa-icon($icon: $checkbox-icon-checked, $extra-rules: true) {
+                font-size: $checkbox-icon-size;
+                line-height: $checkbox-icon-line-height;
+            }
+
+            &::before {
+                place-self: $checkbox-icon-place-self;
+                opacity: $checkbox-icon-opacity;
+            }
+
+            &:hover {
+                border-color: $checkbox-border-color-hover;
+            }
+
+            &:focus {
+                border-color: $checkbox-border-color-focus;
+                box-shadow: $checkbox-box-shadow-focus;
+            }
+
+            &.#{$app-prefix}pn-active {
+                background-color: $checkbox-background-checked;
+                border-color: $checkbox-border-color-checked;
+
+                &::before {
+                    opacity: $checkbox-icon-opacity-checked;
+                }
+            }
+        }
     }
 
     &btn {

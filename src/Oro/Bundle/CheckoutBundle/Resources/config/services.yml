@@ -401,7 +401,7 @@ services:
             - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@oro_shipping.shipping_origin.provider'
-            - '@?oro_shipping.context.builder_factory_basic'
+            - '@oro_shipping.context.builder_factory_basic'
 
     oro_checkout.factory.payment_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
@@ -411,7 +411,7 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
             - '@oro_shipping.shipping_origin.provider'
-            - '@?oro_payment.context.builder_factory_basic'
+            - '@oro_payment.context.builder_factory_basic'
 
     oro_checkout.mapper.order_mapper:
         class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'

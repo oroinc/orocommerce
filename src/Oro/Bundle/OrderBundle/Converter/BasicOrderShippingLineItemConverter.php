@@ -3,45 +3,35 @@
 namespace Oro\Bundle\OrderBundle\Converter;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 
+/**
+ * Converts order line items to a collection of shipping line items.
+ */
 class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConverterInterface
 {
-    /**
-     * @var ShippingLineItemCollectionFactoryInterface|null
-     */
-    private $shippingLineItemCollectionFactory = null;
-
-    /**
-     * @var ShippingLineItemBuilderFactoryInterface|null
-     */
-    private $shippingLineItemBuilderFactory = null;
+    private ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory;
+    private ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory;
 
     public function __construct(
-        ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory = null,
-        ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory = null
+        ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory,
+        ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory
     ) {
         $this->shippingLineItemCollectionFactory = $shippingLineItemCollectionFactory;
         $this->shippingLineItemBuilderFactory = $shippingLineItemBuilderFactory;
     }
 
     /**
-     * @param OrderLineItem[]|Collection $orderLineItems
      * {@inheritDoc}
      */
-    public function convertLineItems(Collection $orderLineItems)
+    public function convertLineItems(Collection $orderLineItems): ShippingLineItemCollectionInterface
     {
-        if (null === $this->shippingLineItemCollectionFactory || null === $this->shippingLineItemBuilderFactory) {
-            return null;
-        }
-
         $shippingLineItems = [];
         foreach ($orderLineItems as $orderLineItem) {
             if ($orderLineItem->getProductUnit() === null) {
                 $shippingLineItems = [];
-
                 break;
             }
 
@@ -51,15 +41,12 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
                 $orderLineItem->getQuantity(),
                 $orderLineItem
             );
-
             if (null !== $orderLineItem->getProduct()) {
                 $builder->setProduct($orderLineItem->getProduct());
             }
-
             if (null !== $orderLineItem->getPrice()) {
                 $builder->setPrice($orderLineItem->getPrice());
             }
-
             $shippingLineItems[] = $builder->getResult();
         }
 

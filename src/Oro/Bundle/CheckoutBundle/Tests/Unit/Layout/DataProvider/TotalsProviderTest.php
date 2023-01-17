@@ -5,12 +5,10 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TotalsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class TotalsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var CheckoutTotalsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutTotalsProvider;
 
@@ -24,9 +22,17 @@ class TotalsProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new TotalsProvider($this->checkoutTotalsProvider);
     }
 
+    private function getCheckout(int $id): Checkout
+    {
+        $checkout = new Checkout();
+        ReflectionUtil::setId($checkout, $id);
+
+        return $checkout;
+    }
+
     public function testGetData()
     {
-        $checkout = $this->getEntity(Checkout::class, ['id' => 42]);
+        $checkout = $this->getCheckout(42);
 
         $this->checkoutTotalsProvider->expects($this->once())
             ->method('getTotalsArray')

@@ -8,7 +8,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 
 /**
- * Apply coupons for new checkout from checkout source.
+ * Applies coupons for a created checkout from a specific checkout.
  */
 class CheckoutFactoryDecorator implements CheckoutFactoryInterface
 {
@@ -19,13 +19,15 @@ class CheckoutFactoryDecorator implements CheckoutFactoryInterface
         $this->checkoutFactory = $checkoutFactory;
     }
 
-    public function createCheckout(Checkout $checkoutSource, iterable $lineItems): Checkout
+    /**
+     * {@inheritDoc}
+     */
+    public function createCheckout(Checkout $source, iterable $lineItems): Checkout
     {
-        /** @var AppliedCouponsAwareInterface $order */
-        $checkout = $this->checkoutFactory->createCheckout($checkoutSource, $lineItems);
-
-        if ($checkoutSource instanceof AppliedCouponsAwareInterface) {
-            foreach ($checkoutSource->getAppliedCoupons() as $appliedCoupon) {
+        $checkout = $this->checkoutFactory->createCheckout($source, $lineItems);
+        if ($source instanceof AppliedCouponsAwareInterface) {
+            $appliedCoupons = $source->getAppliedCoupons();
+            foreach ($appliedCoupons as $appliedCoupon) {
                 $checkout->addAppliedCoupon($this->getAppliedCouponCopy($appliedCoupon));
             }
         }

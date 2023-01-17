@@ -90,6 +90,8 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testFillTotal()
     {
+        $order = new Order();
+
         $total = new Subtotal();
         $totalAmount = 90;
         $total->setType(TotalProcessorProvider::TYPE);
@@ -101,16 +103,15 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->totalProvider->expects($this->any())
             ->method('getTotal')
+            ->with($order)
             ->willReturn($total);
 
-        $this->rateConverter
-            ->expects($this->once())
+        $this->rateConverter->expects($this->once())
             ->method('getBaseCurrencyAmount')
             ->willReturnCallback(function (MultiCurrency $multiCurrency) {
                 return $multiCurrency->getValue();
             });
 
-        $order = new Order();
         $this->helper->fillTotal($order);
 
         $this->assertEquals($totalAmount, $order->getTotal());

@@ -3,18 +3,20 @@
 namespace Oro\Bundle\CheckoutBundle\Factory\MultiShipping;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 
 /**
- * Provides basic method for factories responsible for creating checkouts from checkout source.
+ * Represents a factory responsible for creating checkouts from a specific checkout.
  */
 interface CheckoutFactoryInterface
 {
     /**
-     * Implement logic to create new checkout from checkout source.
+     * Creates a new checkout from the given checkout.
      *
-     * @param Checkout $checkoutSource
-     * @param iterable $lineItems
+     * @param Checkout                   $source
+     * @param iterable<CheckoutLineItem> $lineItems
+     *
      * @return Checkout
      */
-    public function createCheckout(Checkout $checkoutSource, iterable $lineItems): Checkout;
+    public function createCheckout(Checkout $source, iterable $lineItems): Checkout;
 }

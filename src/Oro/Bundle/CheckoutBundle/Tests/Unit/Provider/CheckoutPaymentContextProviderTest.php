@@ -27,8 +27,7 @@ class CheckoutPaymentContextProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContextWhenCache(): void
     {
-        $this->checkoutPaymentContextFactory
-            ->expects($this->never())
+        $this->checkoutPaymentContextFactory->expects($this->never())
             ->method('create');
 
         $context = $this->createMock(PaymentContextInterface::class);
@@ -44,8 +43,7 @@ class CheckoutPaymentContextProviderTest extends \PHPUnit\Framework\TestCase
         $checkout = $this->createMock(Checkout::class);
         $context = $this->createMock(PaymentContextInterface::class);
 
-        $this->checkoutPaymentContextFactory
-            ->expects($this->once())
+        $this->checkoutPaymentContextFactory->expects($this->once())
             ->method('create')
             ->with($checkout)
             ->willReturn($context);

@@ -45,7 +45,7 @@ const ImportDialogView = BaseView.extend({
         'editor', 'importViewerOptions',
         'modalImportLabel', 'modalImportTitle', 'modalImportButton',
         'validateApiProps', 'entityClass', 'fieldName', 'commandId',
-        'importCallback'
+        'importCallback', 'modalExportButton'
     ]),
 
     /**
@@ -91,6 +91,11 @@ const ImportDialogView = BaseView.extend({
      * @property {String}
      */
     modalImportButton: __('oro.cms.wysiwyg.import.button'),
+
+    /**
+     * @property {String}
+     */
+    modalExportButton: __('oro.cms.wysiwyg.import.export_button'),
 
     /**
      * @property {Object}
@@ -180,7 +185,8 @@ const ImportDialogView = BaseView.extend({
      */
     getTemplateData() {
         return {
-            modalImportButton: this.modalImportButton
+            modalImportButton: this.modalImportButton,
+            modalExportButton: this.modalExportButton
         };
     },
 
@@ -194,6 +200,7 @@ const ImportDialogView = BaseView.extend({
         this.content = unescapeTwigExpression(content ?? this.getImportContent());
 
         this.importButton = this.$el.find('[data-role="import"]');
+        this.exportButton = this.$el.find('[data-role="export"]');
 
         this.dialog = new DialogWidget({
             autoRender: false,
@@ -242,6 +249,7 @@ const ImportDialogView = BaseView.extend({
         this.viewerEditor.on('blur', this.checkContentWithDelay);
         this.importButton.on('mouseover', this.checkContent.bind(this, this.viewerEditor));
         this.importButton.on('click', this.onImportCode.bind(this));
+        this.exportButton.on('click', this.onExportCode.bind(this));
         this.dialog.widget.on('resize', this.adjustHeight.bind(this));
     },
 
@@ -442,6 +450,13 @@ const ImportDialogView = BaseView.extend({
         }
 
         this.adjustHeight();
+    },
+
+    onExportCode() {
+        const {Commands} = this.editor;
+        if (Commands.has('gjs-export-zip')) {
+            Commands.run('gjs-export-zip');
+        }
     },
 
     /**

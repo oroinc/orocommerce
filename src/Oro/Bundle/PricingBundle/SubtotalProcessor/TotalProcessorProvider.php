@@ -14,25 +14,17 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstruc
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles logic for fetching totals for certain entity passed
+ * Handles logic for fetching totals for certain entity passed.
  */
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
-    const NAME = 'oro_pricing.subtotal_total';
-    const TYPE = 'total';
-    const SUBTOTALS = 'subtotals';
+    public const TYPE = 'total';
+    public const SUBTOTALS = 'subtotals';
 
-    /** @var SubtotalProviderRegistry */
-    protected $subtotalProviderRegistry;
-
-    /** @var TranslatorInterface */
-    protected $translator;
-
-    /** @var RoundingServiceInterface */
-    protected $rounding;
-
-    /** @var bool */
-    protected $recalculationEnabled = false;
+    private SubtotalProviderRegistry $subtotalProviderRegistry;
+    private TranslatorInterface $translator;
+    private RoundingServiceInterface $rounding;
+    private bool $recalculationEnabled = false;
 
     public function __construct(
         SubtotalProviderRegistry $subtotalProviderRegistry,
@@ -46,54 +38,34 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         $this->rounding = $rounding;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
-        return self::NAME;
+        return 'oro_pricing.subtotal_total';
     }
 
     /**
-     * Calculate and return total with subtotals converted to Array
-     *
-     * @param $entity
-     *
-     * @return array
+     * Calculates and returns total with subtotals converted to an array.
      */
-    public function getTotalWithSubtotalsAsArray($entity)
+    public function getTotalWithSubtotalsAsArray(object $entity): array
     {
         $subtotals = $this->getSubtotals($entity);
 
         return [
             self::TYPE => $this->getTotalForSubtotals($entity, $subtotals)->toArray(),
             self::SUBTOTALS => $subtotals
-                ->map(
-                    function (Subtotal $subtotal) {
-                        return $subtotal->toArray();
-                    }
-                )
-                ->toArray(),
+                ->map(function (Subtotal $subtotal) {
+                    return $subtotal->toArray();
+                })
+                ->toArray()
         ];
     }
 
-    /**
-     * Returns total
-     *
-     * @param object $entity
-     * @return Subtotal
-     */
-    public function getTotal($entity)
+    public function getTotal(object $entity): Subtotal
     {
         return $this->createTotal($entity);
     }
 
-    /**
-     * @param object $entity
-     * @param array $subtotals
-     * @return Subtotal
-     */
-    private function createTotal($entity, $subtotals = [])
+    private function createTotal(object $entity, ArrayCollection $subtotals = null): Subtotal
     {
         $total = new Subtotal();
 
@@ -103,16 +75,13 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         $total->setCurrency($this->getBaseCurrency($entity));
 
         $totalAmount = 0.0;
-        if (!$subtotals || ($subtotals instanceof ArrayCollection && $subtotals->isEmpty())) {
-            $subtotals = $this->getSubtotals($entity);
-        }
-        foreach ($subtotals as $subtotal) {
-            $rowTotal = $subtotal->getAmount();
-
-            $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);
-
+        $subtotalsToProcess = null === $subtotals || $subtotals->isEmpty()
+            ? $this->getSubtotals($entity)
+            : $subtotals;
+        foreach ($subtotalsToProcess as $subtotal) {
+            $totalAmount = $this->calculateTotal($subtotal->getOperation(), $subtotal->getAmount(), $totalAmount);
             if ($subtotal->isRemovable()) {
-                $subtotals->removeElement($subtotal);
+                $subtotalsToProcess->removeElement($subtotal);
             }
         }
         $total->setAmount($this->rounding->round($totalAmount));
@@ -121,36 +90,24 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     }
 
     /**
-     * Calculates and returns total based on all subtotals (which is already calculated)
-     * This method is optimized alternative of `createTotal`
-     *
-     * @param object $entity
-     * @param array|ArrayCollection $subtotals
-     *
-     * @return Subtotal
+     * Calculates and returns total based on all subtotals (which is already calculated).
+     * This method is optimized alternative of "createTotal".
      */
-    public function getTotalForSubtotals($entity, $subtotals)
+    public function getTotalForSubtotals(object $entity, ArrayCollection $subtotals): Subtotal
     {
         return $this->createTotal($entity, $subtotals);
     }
 
     /**
-     * Collect all entity subtotals
+     * Collects all entity subtotals.
      *
-     * @param object $entity
-     *
-     * @return ArrayCollection|Subtotal[]
+     * @psalm-return ArrayCollection<int, Subtotal>
      */
-    public function getSubtotals($entity)
+    public function getSubtotals(object $entity): ArrayCollection
     {
-        if (!is_object($entity)) {
-            throw new \InvalidArgumentException('Function parameter "entity" should be object.');
-        }
-
         $subtotals = [];
         foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
-            $entitySubtotals = $this->getEntitySubtotal($provider, $entity);
-            $entitySubtotals = is_object($entitySubtotals) ? [$entitySubtotals] : (array) $entitySubtotals;
+            $entitySubtotals = $this->getEntitySubtotals($provider, $entity);
             foreach ($entitySubtotals as $subtotal) {
                 $subtotals[] = $subtotal;
             }
@@ -163,46 +120,33 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         return new ArrayCollection($subtotals);
     }
 
-    /**
-     * @param SubtotalProviderInterface $provider
-     * @param object $entity
-     * @return Subtotal|Subtotal[]
-     */
-    protected function getEntitySubtotal(SubtotalProviderInterface $provider, $entity)
+    private function getEntitySubtotals(SubtotalProviderInterface $provider, object $entity): array
     {
         if ($this->recalculationEnabled) {
-            return $provider->getSubtotal($entity);
-        }
-
-        if ($provider instanceof CacheAwareInterface && $provider->supportsCachedSubtotal($entity)) {
-            return $provider->getCachedSubtotal($entity);
-        }
-
-        if ($provider instanceof SubtotalCacheAwareInterface) {
+            $result = $provider->getSubtotal($entity);
+        } elseif ($provider instanceof CacheAwareInterface && $provider->supportsCachedSubtotal($entity)) {
+            $result = $provider->getCachedSubtotal($entity);
+        } elseif ($provider instanceof SubtotalCacheAwareInterface) {
             if (!$entity instanceof SubtotalAwareInterface) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        '"%s" expected, but "%s" given',
-                        SubtotalAwareInterface::class,
-                        is_object($entity) ? get_class($entity) : gettype($entity)
-                    )
-                );
+                throw new \InvalidArgumentException(sprintf(
+                    '"%s" expected, but "%s" given',
+                    SubtotalAwareInterface::class,
+                    get_debug_type($entity)
+                ));
             }
-
-            return $provider->getCachedSubtotal($entity);
+            $result = $provider->getCachedSubtotal($entity);
+        } else {
+            $result = $provider->getSubtotal($entity);
         }
 
-        return $provider->getSubtotal($entity);
+        if (!\is_array($result)) {
+            $result = [$result];
+        }
+
+        return $result;
     }
 
-    /**
-     * @param int $operation
-     * @param float $rowTotal
-     * @param float $totalAmount
-     *
-     * @return float
-     */
-    protected function calculateTotal($operation, $rowTotal, $totalAmount)
+    private function calculateTotal(int $operation, float $rowTotal, float $totalAmount): float
     {
         if ($operation === Subtotal::OPERATION_ADD) {
             $totalAmount += $rowTotal;
@@ -216,20 +160,14 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         return $totalAmount;
     }
 
-    /**
-     * @return $this
-     */
-    public function enableRecalculation()
+    public function enableRecalculation(): self
     {
         $this->recalculationEnabled = true;
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function disableRecalculation()
+    public function disableRecalculation(): self
     {
         $this->recalculationEnabled = false;
 

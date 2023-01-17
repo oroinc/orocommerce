@@ -13,6 +13,7 @@ Feature: Wysiwyg check "External Mode" feature
     And I login as administrator
     And I go to Marketing/ Landing Page
     And I click edit "About" in grid
+    And I click "SettingsTab"
     And I click "External Mode Button"
     And I click "External Mode Button"
     Then should see "If you exit external markup mode, the editor may change the source code and break the imported content markup and styles." in confirmation dialogue
@@ -30,6 +31,7 @@ Feature: Wysiwyg check "External Mode" feature
   Scenario: Check content in normal mode
     And I go to Marketing/ Landing Page
     And I click edit "About" in grid
+    And I click "SettingsTab"
     And I click "External Mode Button"
     Then should see "If you exit external markup mode, the editor may change the source code and break the imported content markup and styles." in confirmation dialogue
     And I click "OK" in confirmation dialogue

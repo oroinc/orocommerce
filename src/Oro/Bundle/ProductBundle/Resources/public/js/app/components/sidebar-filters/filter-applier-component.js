@@ -261,7 +261,7 @@ const FilterApplierComponent = BaseComponent.extend({
         if (this._wasResetAction) {
             delete this._wasResetAction;
         }
-        this.filterManager._updateView();
+        this.applyChangedState();
     },
 
     setUnAppliedFilers() {

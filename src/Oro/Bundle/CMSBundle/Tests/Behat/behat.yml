@@ -265,10 +265,9 @@ oro_behat_extension:
                 locator: '//div[contains(@class, "cms-page")]//figcaption[contains(text(),"RV & Gear Seller")]/..//img'
 
         External Mode Button:
-            selector: 'span[data-original-title="External Markup Mode"]'
-
+            selector: 'span[title="Enable External Markup"]'
         Import Button:
-            selector: 'span[data-original-title="Import"]'
+            selector: 'span[data-original-title="Source Code"]'
 
         Example1 svg wysiwyg image:
             selector:
@@ -489,6 +488,9 @@ oro_behat_extension:
 
         OpenStyleTab:
             selector: '.gjs-pn-btn[title="Open Style Manager"]'
+
+        SettingsTab:
+            selector: '.gjs-pn-btn[title="Settings"]'
 
         Layers:
             selector: '.gjs-layer__t-wrapper'

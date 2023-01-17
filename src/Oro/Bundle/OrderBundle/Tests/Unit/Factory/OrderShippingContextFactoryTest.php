@@ -2,10 +2,15 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Factory;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -14,11 +19,15 @@ use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFact
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
+class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
+    private const TEST_PAYMENT_METHOD = 'SomePaymentMethod';
+    private const TEST_SHIPPING_METHOD = 'SomeShippingMethod';
+
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
     /** @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingLineItemConverter;
@@ -26,32 +35,110 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
     /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingContextBuilderFactory;
 
-    /** @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repository;
-
-    /** @var PaymentTransaction|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentTransaction;
-
-    /** @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextBuilder;
-
     /** @var OrderShippingContextFactory */
     private $factory;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
         $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);
-        $this->repository = $this->createMock(PaymentTransactionRepository::class);
-        $this->paymentTransaction = $this->createMock(PaymentTransaction::class);
-        $this->contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
 
         $this->factory = new OrderShippingContextFactory(
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->shippingLineItemConverter,
             $this->shippingContextBuilderFactory
         );
+    }
+
+    private function getContextBuilder(
+        AddressInterface $address,
+        Price $subtotal,
+        string $currency,
+        Website $website,
+        Customer $customer,
+        CustomerUser $customerUser
+    ): ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject {
+        $contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
+        $contextBuilder->expects(self::any())
+            ->method('setShippingAddress')
+            ->with($address)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::any())
+            ->method('setBillingAddress')
+            ->with($address)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::any())
+            ->method('setCustomer')
+            ->with($customer)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::any())
+            ->method('setCustomerUser')
+            ->with($customerUser)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::any())
+            ->method('setSubTotal')
+            ->with($subtotal)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::any())
+            ->method('setCurrency')
+            ->with($currency)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::any())
+            ->method('setWebsite')
+            ->with($website)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::once())
+            ->method('getResult');
+
+        return $contextBuilder;
+    }
+
+    private function getOrder(): Order
+    {
+        $paymentTransaction = $this->createMock(PaymentTransaction::class);
+        $paymentTransaction->expects(self::once())
+            ->method('getPaymentMethod')
+            ->willReturn(self::TEST_PAYMENT_METHOD);
+
+        $repository = $this->createMock(PaymentTransactionRepository::class);
+        $repository->expects(self::once())
+            ->method('findOneBy')
+            ->willReturn($paymentTransaction);
+
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
+            ->with(PaymentTransaction::class)
+            ->willReturn($repository);
+
+        $address = $this->createMock(OrderAddress::class);
+        $currency = 'USD';
+        $amount = 100;
+        $customer = $this->createMock(Customer::class);
+        $customerUser = $this->createMock(CustomerUser::class);
+        $websiteMock = $this->createMock(Website::class);
+
+        $orderLineItem1 = new OrderLineItem();
+        $orderLineItem1->setQuantity(10);
+        $orderLineItem1->setPrice(Price::create($amount, $currency));
+
+        $orderLineItem2 = new OrderLineItem();
+        $orderLineItem2->setQuantity(20);
+        $orderLineItem2->setPrice(Price::create($amount, $currency));
+
+        $order = new Order();
+        $order->setBillingAddress($address);
+        $order->setShippingAddress($address);
+        $order->setShippingMethod(self::TEST_SHIPPING_METHOD);
+        $order->setCurrency($currency);
+        $order->setLineItems(new ArrayCollection([$orderLineItem1, $orderLineItem2]));
+        $order->setSubtotal($amount);
+        $order->setCurrency($currency);
+        $order->setCustomer($customer);
+        $order->setCustomerUser($customerUser);
+        $order->setWebsite($websiteMock);
+
+        return $order;
     }
 
     /**
@@ -59,7 +146,7 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
      */
     public function testCreate()
     {
-        $order = $this->prepareOrder();
+        $order = $this->getOrder();
 
         $shippingLineItems = [
             new ShippingLineItem(
@@ -80,8 +167,7 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             ->with($order->getLineItems())
             ->willReturn($shippingLineItemCollection);
 
-        $this->prepareContextBuilder(
-            $this->contextBuilder,
+        $contextBuilder = $this->getContextBuilder(
             $order->getBillingAddress(),
             Price::create($order->getSubtotal(), $order->getCurrency()),
             $order->getCurrency(),
@@ -89,93 +175,24 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             $order->getCustomer(),
             $order->getCustomerUser()
         );
-
-        $this->contextBuilder->expects($this->once())
+        $contextBuilder->expects($this->once())
             ->method('setPaymentMethod')
             ->with(self::TEST_PAYMENT_METHOD);
-
-        $this->contextBuilder->expects($this->once())
+        $contextBuilder->expects($this->once())
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
 
         $this->shippingContextBuilderFactory->expects($this->once())
             ->method('createShippingContextBuilder')
             ->with($order, (string)$order->getId())
-            ->willReturn($this->contextBuilder);
+            ->willReturn($contextBuilder);
 
         $this->factory->create($order);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function testWithNullLineItems()
-    {
-        $order = $this->prepareOrder();
-
-        $this->shippingLineItemConverter->expects($this->once())
-            ->method('convertLineItems')
-            ->with($order->getLineItems())
-            ->willReturn(null);
-
-        $this->prepareContextBuilder(
-            $this->contextBuilder,
-            $order->getBillingAddress(),
-            Price::create($order->getSubtotal(), $order->getCurrency()),
-            $order->getCurrency(),
-            $order->getWebsite(),
-            $order->getCustomer(),
-            $order->getCustomerUser()
-        );
-
-        $this->contextBuilder->expects($this->once())
-            ->method('setPaymentMethod')
-            ->with(self::TEST_PAYMENT_METHOD);
-
-        $this->contextBuilder->expects($this->never())
-            ->method('setLineItems');
-
-        $this->shippingContextBuilderFactory->expects($this->once())
-            ->method('createShippingContextBuilder')
-            ->with($order, (string)$order->getId())
-            ->willReturn($this->contextBuilder);
-
-        $this->factory->create($order);
-    }
-
-    public function testCreateNullBuilderFactory()
-    {
-        $this->factory = new OrderShippingContextFactory(
-            $this->doctrineHelper,
-            $this->shippingLineItemConverter
-        );
-        $this->shippingContextBuilderFactory->expects(self::never())
-            ->method('createShippingContextBuilder');
-
-        $this->assertNull($this->factory->create(new Order()));
     }
 
     public function testUnsupportedEntity()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->factory->create(new \stdClass());
-    }
-
-    protected function prepareOrder()
-    {
-        $this->paymentTransaction->expects(self::once())
-            ->method('getPaymentMethod')
-            ->willReturn(self::TEST_PAYMENT_METHOD);
-
-        $this->repository->expects(self::once())
-            ->method('findOneBy')
-            ->willReturn($this->paymentTransaction);
-
-        $this->doctrineHelper->expects(self::once())
-            ->method('getEntityRepository')
-            ->with(PaymentTransaction::class)
-            ->willReturn($this->repository);
-
-        return parent::prepareOrder();
     }
 }

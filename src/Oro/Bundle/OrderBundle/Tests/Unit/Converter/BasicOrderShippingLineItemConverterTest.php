@@ -12,63 +12,68 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippi
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrineShippingLineItemCollectionFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /** @var DoctrineShippingLineItemCollectionFactory */
-    private $collectionFactory;
-
-    /** @var BasicShippingLineItemBuilderFactory */
-    private $shippingLineItemBuilderFactory;
-
-    /** @var BasicOrderShippingLineItemConverter */
-    private $orderShippingLineItemConverter;
+    private BasicOrderShippingLineItemConverter $orderShippingLineItemConverter;
 
     protected function setUp(): void
     {
-        $this->collectionFactory = new DoctrineShippingLineItemCollectionFactory();
-        $this->shippingLineItemBuilderFactory = new BasicShippingLineItemBuilderFactory();
-
         $this->orderShippingLineItemConverter = new BasicOrderShippingLineItemConverter(
-            $this->collectionFactory,
-            $this->shippingLineItemBuilderFactory
+            new DoctrineShippingLineItemCollectionFactory(),
+            new BasicShippingLineItemBuilderFactory()
         );
     }
 
-    public function missingDependenciesDataProvider(): array
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+
+        return $productUnit;
+    }
+
+    private function getPrice(float $value): Price
+    {
+        $price = new Price();
+        $price->setValue($value);
+
+        return $price;
+    }
+
+    private function getLineItem(
+        float $quantity,
+        ?ProductUnit $productUnit,
+        ?Price $price,
+        ?Product $product
+    ): OrderLineItem {
+        $lineItem = new OrderLineItem();
+        $lineItem->setQuantity($quantity);
+        $lineItem->setProductUnit($productUnit);
+        $lineItem->setPrice($price);
+        $lineItem->setProduct($product);
+
+        return $lineItem;
+    }
+
+    private function createExpected(OrderLineItem $lineItem): array
     {
         return [
-            [
-                'collectionFactory' => $this->collectionFactory,
-                'shippingLineItemBuilderFactory' => null
-            ],
-            [
-                'collectionFactory' => null,
-                'shippingLineItemBuilderFactory' => $this->shippingLineItemBuilderFactory,
-            ],
-            [
-                'collectionFactory' => null,
-                'shippingLineItemBuilderFactory' => null
-            ],
+            'quantity' => $lineItem->getQuantity(),
+            'product_holder' => $lineItem,
+            'product_unit' => $lineItem->getProductUnit(),
+            'product_unit_code' => $lineItem->getProductUnit()->getCode(),
+            'entity_id' => null
         ];
-    }
-
-    /**
-     * @dataProvider missingDependenciesDataProvider
-     */
-    public function testConvertLineItemsWhenSomeDependencyMissing(
-        ?DoctrineShippingLineItemCollectionFactory $collectionFactory,
-        ?BasicShippingLineItemBuilderFactory $shippingLineItemBuilderFactory
-    ) {
-        $this->orderShippingLineItemConverter = new BasicOrderShippingLineItemConverter(
-            $collectionFactory,
-            $shippingLineItemBuilderFactory
-        );
-
-        $this->assertNull($this->orderShippingLineItemConverter->convertLineItems(new ArrayCollection([])));
     }
 
     /**
@@ -84,20 +89,14 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
 
     public function lineItemsDataProvider(): array
     {
-        $product = $this->getEntity(Product::class, ['id' => 123]);
-        $unit1 = $this->getEntity(ProductUnit::class, ['code' => 'item']);
-        $unit2 = $this->getEntity(ProductUnit::class, ['code' => 'set']);
+        $product = $this->getProduct(123);
+        $unit1 = $this->getProductUnit('item');
+        $unit2 = $this->getProductUnit('set');
 
         $lineItems = [
-            $this->getLineItem(
-                ['quantity' => 12, 'productUnit' => $unit1, 'price' => $this->getPrice(10.5), 'product' => null]
-            ),
-            $this->getLineItem(
-                ['quantity' => 5, 'productUnit' => $unit2, 'price' => null, 'product' => $product]
-            ),
-            $this->getLineItem(
-                ['quantity' => 7, 'productUnit' => $unit2, 'price' => $this->getPrice(99.9), 'product' => $product]
-            ),
+            $this->getLineItem(12.0, $unit1, $this->getPrice(10.5), null),
+            $this->getLineItem(5.0, $unit2, null, $product),
+            $this->getLineItem(7.0, $unit2, $this->getPrice(99.9), $product)
         ];
 
         return [
@@ -118,32 +117,11 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
             ],
             'some line items have no product unit' => [
                 'lineItems' => [
-                    $this->getLineItem(['quantity' => 12, 'productUnit' => $unit1, 'price' => $this->getPrice(10.5)]),
-                    $this->getLineItem(['quantity' => 1, 'productUnit' => null, 'price' => $this->getPrice(1.3)]),
+                    $this->getLineItem(12.0, $unit1, $this->getPrice(10.5), null),
+                    $this->getLineItem(1.0, null, $this->getPrice(1.3), null),
                 ],
                 'expectedShippingLineItems' => [],
             ],
         ];
-    }
-
-    private function createExpected(OrderLineItem $lineItem): array
-    {
-        return [
-            'quantity' => $lineItem->getQuantity(),
-            'product_holder' => $lineItem,
-            'product_unit' => $lineItem->getProductUnit(),
-            'product_unit_code' => $lineItem->getProductUnit()->getCode(),
-            'entity_id' => null
-        ];
-    }
-
-    private function getPrice(float $price): Price
-    {
-        return $this->getEntity(Price::class, ['value' => $price]);
-    }
-
-    private function getLineItem(array $data): OrderLineItem
-    {
-        return $this->getEntity(OrderLineItem::class, $data);
     }
 }
