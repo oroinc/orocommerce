@@ -3,13 +3,11 @@
 namespace Oro\Bundle\FixedProductShippingBundle\Handler;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\FixedProductShippingBundle\Integration\FixedProductChannelType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelLoaderInterface;
 
 /**
  * Checks if product shipping cost integration is enabled or specified in shipping rules.
@@ -18,11 +16,13 @@ class ShippingCostAttributeDeleteHandler
 {
     private const FIELD_NAME = 'shippingCost';
 
-    private ManagerRegistry $managerRegistry;
+    private ManagerRegistry $doctrine;
+    private ChannelLoaderInterface $channelLoader;
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $doctrine, ChannelLoaderInterface $channelLoader)
     {
-        $this->managerRegistry = $managerRegistry;
+        $this->doctrine = $doctrine;
+        $this->channelLoader = $channelLoader;
     }
 
     public function isAttributeFixed(PriceAttributePriceList $priceAttributePriceList): bool
@@ -31,33 +31,49 @@ class ShippingCostAttributeDeleteHandler
             return false;
         }
 
-        return $this->integrationEnabled() || $this->integrationSpecifiedInShippingRules();
+        $channels = $this->channelLoader->loadChannels(FixedProductChannelType::TYPE, false);
+        if (!$channels) {
+            return false;
+        }
+
+        if ($this->hasEnabledIntegrations($channels)) {
+            return true;
+        }
+
+        return $this->doctrine->getRepository(ShippingMethodConfig::class)
+            ->configExistsByMethods($this->getIntegrationMethods($channels));
     }
 
-    private function integrationEnabled(): bool
+    /**
+     * @param Channel[] $channels
+     *
+     * @return bool
+     */
+    private function hasEnabledIntegrations(array $channels): bool
     {
-        /** @var ChannelRepository $integrationRepository */
-        $integrationRepository = $this->getRepository(Channel::class);
+        $hasEnabled = false;
+        foreach ($channels as $channel) {
+            if ($channel->isEnabled()) {
+                $hasEnabled = true;
+                break;
+            }
+        }
 
-        return (bool) $integrationRepository->findActiveByType(FixedProductChannelType::TYPE);
+        return $hasEnabled;
     }
 
-    private function integrationSpecifiedInShippingRules(): bool
+    /**
+     * @param Channel[] $channels
+     *
+     * @return string[]
+     */
+    private function getIntegrationMethods(array $channels): array
     {
-        /** @var ChannelRepository $integrationRepository */
-        $integrationRepository = $this->getRepository(Channel::class);
+        $methods = [];
+        foreach ($channels as $channel) {
+            $methods[] = sprintf('%s_%s', $channel->getType(), $channel->getId());
+        }
 
-        $callback = fn (Channel $channel) => sprintf('%s_%s', $channel->getType(), $channel->getId());
-        $methods = array_map($callback, $integrationRepository->findByType(FixedProductChannelType::TYPE));
-
-        /** @var ShippingMethodConfigRepository $shippingMethodConfigRepository */
-        $shippingMethodConfigRepository = $this->getRepository(ShippingMethodConfig::class);
-
-        return $shippingMethodConfigRepository->configExistsByMethods($methods);
-    }
-
-    private function getRepository(string $className): ObjectRepository
-    {
-        return $this->managerRegistry->getRepository($className);
+        return $methods;
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledCheckerInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
@@ -16,15 +18,19 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
     /** @var ShippingRuleEnabledCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $ruleEnabledChecker;
 
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
+
     protected function setUp(): void
     {
         $this->ruleEnabledChecker = $this->createMock(ShippingRuleEnabledCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         parent::setUp();
     }
 
     protected function createValidator(): ShippingRuleEnableValidator
     {
-        return new ShippingRuleEnableValidator($this->ruleEnabledChecker);
+        return new ShippingRuleEnableValidator($this->ruleEnabledChecker, $this->tokenAccessor);
     }
 
     private function getShippingRule(bool $isEnabled): ShippingMethodsConfigsRule
@@ -51,6 +57,10 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidateForNotEnabledRule()
     {
+        $this->tokenAccessor->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn(new Organization());
+
         $this->ruleEnabledChecker->expects(self::never())
             ->method('canBeEnabled');
 
@@ -60,8 +70,27 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
+    public function testValidateWhenNoOrganizationInSecurityContext()
+    {
+        $this->tokenAccessor->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn(null);
+
+        $this->ruleEnabledChecker->expects(self::never())
+            ->method('canBeEnabled');
+
+        $constraint = new ShippingRuleEnable();
+        $this->validator->validate($this->getShippingRule(true), $constraint);
+
+        $this->assertNoViolation();
+    }
+
     public function testValidateForCanBeEnabledRule()
     {
+        $this->tokenAccessor->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn(new Organization());
+
         $this->ruleEnabledChecker->expects(self::once())
             ->method('canBeEnabled')
             ->willReturn(true);
@@ -74,6 +103,10 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidateForCantBeEnabledRule()
     {
+        $this->tokenAccessor->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn(new Organization());
+
         $this->ruleEnabledChecker->expects(self::once())
             ->method('canBeEnabled')
             ->willReturn(false);

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Provider\Integration;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelLoaderInterface;
 use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Component\Testing\ReflectionUtil;
@@ -14,48 +13,33 @@ class ChannelShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     private const TYPE = 'custom_type';
 
-    /** @var ShippingMethodInterface */
-    private $enabledMethod;
-
-    /** @var ShippingMethodInterface */
-    private $disabledMethod;
-
-    /** @var ChannelShippingMethodProvider */
-    private $provider;
+    private ShippingMethodInterface $shippingMethod1;
+    private ShippingMethodInterface $shippingMethod2;
+    private ChannelShippingMethodProvider $provider;
 
     protected function setUp(): void
     {
-        $loadedChannel = $this->getChannel('ch_enabled');
-        $fetchedChannel = $this->getChannel('ch_disabled');
+        $channel1 = $this->getChannel('channel1');
+        $channel2 = $this->getChannel('channel2');
 
-        $this->enabledMethod = $this->getShippingMethod('ups_10');
-        $this->disabledMethod = $this->getShippingMethod('ups_20');
+        $this->shippingMethod1 = $this->getShippingMethod('ups_10');
+        $this->shippingMethod2 = $this->getShippingMethod('ups_20');
 
         $methodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
         $methodFactory->expects(self::any())
             ->method('create')
             ->willReturnMap([
-                [$loadedChannel, $this->enabledMethod],
-                [$fetchedChannel, $this->disabledMethod],
+                [$channel1, $this->shippingMethod1],
+                [$channel2, $this->shippingMethod2],
             ]);
 
-        $repository = $this->createMock(ChannelRepository::class);
-        $repository->expects(self::any())
-            ->method('findByTypeAndExclude')
-            ->willReturnCallback(function () use ($fetchedChannel) {
-                $this->provider->registerShippingMethod($fetchedChannel);
+        $channelLoader = $this->createMock(ChannelLoaderInterface::class);
+        $channelLoader->expects(self::any())
+            ->method('loadChannels')
+            ->with(self::TYPE, self::isTrue())
+            ->willReturn([$channel1, $channel2]);
 
-                return [$fetchedChannel];
-            });
-
-        $doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $doctrineHelper->expects(self::any())
-            ->method('getEntityRepository')
-            ->with(Channel::class)
-            ->willReturn($repository);
-
-        $this->provider = new ChannelShippingMethodProvider(self::TYPE, $doctrineHelper, $methodFactory);
-        $this->provider->registerShippingMethod($loadedChannel);
+        $this->provider = new ChannelShippingMethodProvider(self::TYPE, $methodFactory, $channelLoader);
     }
 
     private function getChannel(string $name): Channel
@@ -78,27 +62,37 @@ class ChannelShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
         return $shippingMethod;
     }
 
-    public function testGetShippingMethods()
+    public function testGetShippingMethods(): void
     {
-        $methods = $this->provider->getShippingMethods();
-        self::assertCount(2, $methods);
-        $actualMethod = reset($methods);
-        self::assertSame($this->enabledMethod, $actualMethod);
+        self::assertEquals(
+            [
+                $this->shippingMethod1->getIdentifier() => $this->shippingMethod1,
+                $this->shippingMethod2->getIdentifier() => $this->shippingMethod2
+            ],
+            $this->provider->getShippingMethods()
+        );
     }
 
-    public function testGetShippingMethod()
+    public function testGetShippingMethod(): void
     {
-        $method = $this->provider->getShippingMethod($this->enabledMethod->getIdentifier());
-        self::assertInstanceOf(ShippingMethodInterface::class, $method);
+        self::assertSame(
+            $this->shippingMethod1,
+            $this->provider->getShippingMethod($this->shippingMethod1->getIdentifier())
+        );
     }
 
-    public function testHasShippingMethod()
+    public function testGetShippingMethodForUnknownMethod(): void
     {
-        self::assertTrue($this->provider->hasShippingMethod($this->enabledMethod->getIdentifier()));
+        self::assertNull($this->provider->getShippingMethod('another'));
     }
 
-    public function testHasShippingMethodFalse()
+    public function testHasShippingMethod(): void
     {
-        self::assertFalse($this->provider->hasShippingMethod('wrong'));
+        self::assertTrue($this->provider->hasShippingMethod($this->shippingMethod1->getIdentifier()));
+    }
+
+    public function testHasShippingMethodForUnknownMethod(): void
+    {
+        self::assertFalse($this->provider->hasShippingMethod('another'));
     }
 }

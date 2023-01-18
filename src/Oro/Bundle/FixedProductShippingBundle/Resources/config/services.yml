@@ -16,15 +16,13 @@ services:
             - { name: oro_integration.transport, type: '%oro_fixed_product_shipping.integration.transport.type%', channel_type: '%oro_fixed_product_shipping.integration.channel.type%' }
 
     oro_fixed_product_shipping.method.provider:
-        class: 'Oro\Bundle\FixedProductShippingBundle\Method\FixedProductMethodProvider'
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider'
         arguments:
             - '%oro_fixed_product_shipping.integration.channel.type%'
-            - '@oro_entity.doctrine_helper'
             - '@oro_fixed_product_shipping.factory.method'
+            - '@oro_shipping.method.integration_channel_loader'
         tags:
             - { name: oro_shipping_method_provider }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postLoad }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postPersist }
 
     oro_fixed_product_shipping.method.identifier_generator.method:
         parent: oro_integration.generator.prefixed_identifier_generator
@@ -32,13 +30,11 @@ services:
         arguments:
             - '%oro_fixed_product_shipping.integration.channel.type%'
 
-    # Access Rule
     oro_fixed_product_shipping.acl.access_rule.price_attribute_price_list_access_rule:
         class: 'Oro\Bundle\FixedProductShippingBundle\Acl\AccessRule\PriceAttributePriceListAccessRule'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList }
 
-    # Provider
     oro_fixed_product_shipping.shipping_cost.provider:
         class: 'Oro\Bundle\FixedProductShippingBundle\Provider\ShippingCostProvider'
         arguments:
@@ -47,6 +43,7 @@ services:
 
     oro_fixed_product_shipping.handler.shipping_cost_attribute_delete_handler:
         class: Oro\Bundle\FixedProductShippingBundle\Handler\ShippingCostAttributeDeleteHandler
+        public: true
         arguments:
             - '@doctrine'
-        public: true
+            - '@oro_shipping.method.integration_channel_loader'
