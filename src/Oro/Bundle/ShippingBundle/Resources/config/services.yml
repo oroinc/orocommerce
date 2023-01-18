@@ -225,6 +225,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
 
+    oro_shipping.event_listener.enabled_shipping_methods_listener:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\EnabledShippingMethodsListener'
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.applicable_methods, method: removeDisabledShippingMethodViews, priority: -200 }
+
     oro_shipping.shipping_price.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
         arguments:
@@ -235,15 +242,6 @@ services:
             - '@event_dispatcher'
         calls:
             - [setMemoryCacheProvider, ['@oro_shipping.shipping_price.provider.memory_cache']]
-
-    oro_shipping.shipping_price.provider_enabled_methods_decorator:
-        class: 'Oro\Bundle\ShippingBundle\Provider\EnabledMethodsShippingPriceProviderDecorator'
-        public: false
-        decorates: oro_shipping.shipping_price.provider
-        decoration_priority: 255
-        arguments:
-             - '@.inner'
-             - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.shipping_price.provider.memory_cache:
         parent: oro.cache.provider.memory_cache
@@ -588,22 +586,15 @@ services:
             - '@oro_checkout.provider.multi_shipping.single_line_item_shipping_price'
 
     oro_shipping.manager.multi_shipping_integration:
-        alias: Oro\Bundle\ShippingBundle\Manager\MultiShippingIntegrationManager
-
-    Oro\Bundle\ShippingBundle\Manager\MultiShippingIntegrationManager:
+        class: Oro\Bundle\ShippingBundle\Manager\MultiShippingIntegrationManager
         arguments:
             - '@doctrine'
             - '@oro_security.token_accessor'
             - '@security.authorization_checker'
 
-    oro_shipping.form.type.create_multishipping_integration_button:
-        class: Oro\Bundle\ShippingBundle\Form\Type\CreateMultiShippingIntegrationButtonType
-        tags:
-            - { name: form.type, alias: oro_checkout_create_multishipping_integration_button }
-
     oro_shipping.twig.multi_shipping_extension:
         class: Oro\Bundle\ShippingBundle\Twig\MultiShippingExtension
         arguments:
-            - '@oro_shipping.manager.multi_shipping_integration'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }

@@ -301,7 +301,8 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
-            ShippingContext::FIELD_CURRENCY => 'USD'
+            ShippingContext::FIELD_CURRENCY => 'USD',
+            ShippingContext::FIELD_SOURCE_ENTITY => new \stdClass()
         ]);
 
         $ruleId = 111;

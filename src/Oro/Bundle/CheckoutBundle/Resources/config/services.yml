@@ -476,11 +476,29 @@ services:
         tags:
             - { name: security.voter }
 
-    oro_checkout.shipping_method.price_provider_chain_element:
-        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement'
+    oro_checkout.shipping_method.price_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\PriceCheckoutShippingMethodsProvider'
         arguments:
             - '@oro_shipping.shipping_price.provider'
             - '@oro_checkout.provider.shipping_context'
+
+    oro_checkout.shipping_method.quote_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\QuoteCheckoutShippingMethodsProvider'
+        arguments:
+            - '@oro_checkout.provider.shipping_context'
+            - '@oro_sale.quote.configured_shipping_price_provider'
+            - '@oro_sale.quote.shipping_configuration_factory'
+
+    oro_checkout.shipping_method.provider_main:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\ChainCheckoutShippingMethodsProvider'
+        public: true
+        arguments:
+            - !iterator
+                - '@oro_checkout.shipping_method.multi_shipping_provider'
+                - '@oro_checkout.shipping_method.quote_provider'
+                - '@oro_checkout.shipping_method.price_provider'
+        tags:
+            - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
 
     oro_checkout.condition.checkout_has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'

@@ -4,12 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\RuleFiltration\MultiShipping;
 
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider;
-use Oro\Bundle\CheckoutBundle\RuleFiltration\MultiShipping\MultiShippingMethodFiltrationServiceDecorator;
+use Oro\Bundle\CheckoutBundle\RuleFiltration\MultiShipping\MultiShippingMethodFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
-class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framework\TestCase
+class MultiShippingMethodFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
@@ -20,7 +20,7 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framewo
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $configProvider;
 
-    /** @var MultiShippingMethodFiltrationServiceDecorator */
+    /** @var MultiShippingMethodFiltrationService */
     private $multiShippingFiltrationService;
 
     protected function setUp(): void
@@ -29,7 +29,7 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framewo
         $this->multiShippingMethodsProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
         $this->configProvider = $this->createMock(ConfigProvider::class);
 
-        $this->multiShippingFiltrationService = new MultiShippingMethodFiltrationServiceDecorator(
+        $this->multiShippingFiltrationService = new MultiShippingMethodFiltrationService(
             $this->filtrationService,
             $this->multiShippingMethodsProvider,
             $this->configProvider
@@ -55,7 +55,7 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framewo
 
         $ruleOwners = [$rule1, $rule2, $rule3];
 
-        $ruleOwnersWithoutMultiShippingRules = [1 => $rule2, 2 => $rule3];
+        $ruleOwnersWithoutMultiShippingRules = [$rule2, $rule3];
 
         $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
@@ -64,13 +64,8 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framewo
 
         $result = $this->multiShippingFiltrationService->getFilteredRuleOwners($ruleOwners, []);
         $this->assertCount(2, $result);
-        $ruleConfig1 = $result[1];
-        $ruleConfig2 = $result[2];
-
-        $method = $ruleConfig1->getMethodConfigs()[0];
-        $this->assertEquals('flat_rate_1', $method);
-
-        $this->assertInstanceOf(\stdClass::class, $ruleConfig2);
+        $this->assertEquals('flat_rate_1', $result[0]->getMethodConfigs()[0]);
+        $this->assertInstanceOf(\stdClass::class, $result[1]);
     }
 
     public function testGetFilteredRuleOwnersWhenMultiShippingDisabledButMethodsConfigured()
@@ -92,7 +87,7 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framewo
 
         $ruleOwners = [$rule1, $rule2];
 
-        $ruleOwnersWithoutMultiShippingRules = [1 => $rule2];
+        $ruleOwnersWithoutMultiShippingRules = [$rule2];
 
         $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
@@ -101,10 +96,7 @@ class MultiShippingMethodFiltrationServiceDecoratorTest extends \PHPUnit\Framewo
 
         $result = $this->multiShippingFiltrationService->getFilteredRuleOwners($ruleOwners, []);
         $this->assertCount(1, $result);
-        $ruleConfig = reset($result);
-
-        $method = $ruleConfig->getMethodConfigs()[0];
-        $this->assertEquals('flat_rate_1', $method);
+        $this->assertEquals('flat_rate_1', $result[0]->getMethodConfigs()[0]);
     }
 
     public function testGetFilteredRuleOwnersWhenFiltrationNotAllowed()
