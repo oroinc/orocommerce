@@ -6,7 +6,7 @@ define(function(require) {
     const __ = require('orotranslation/js/translator');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
     const SelectRowCell = require('oro/datagrid/cell/select-row-cell');
-    const viewportManager = require('oroui/js/viewport-manager');
+    const viewportManager = require('oroui/js/viewport-manager').default;
 
     const modes = {
         DROPDOWN: 'Dropdown',
@@ -36,8 +36,10 @@ define(function(require) {
         /** @property */
         text: __('oro.product.grid.select_product'),
 
-        listen: {
-            'viewport:change mediator': 'defineRenderingStrategy'
+        listen() {
+            return {
+                [`viewport:${this.getScreenSize()} mediator`]: 'defineRenderingStrategy'
+            };
         },
 
         /**
@@ -122,17 +124,20 @@ define(function(require) {
         },
 
         _isSimple() {
+            return viewportManager.isApplicable(this.getScreenSize());
+        },
+
+        getScreenSize() {
             let screen = 'tablet';
 
             try {
                 const resolution = this.model.collection.options.optimizedScreenSize;
-
                 if (resolution) {
                     screen = resolution;
                 }
             } catch (e) {}
 
-            return viewportManager.isApplicable({maxScreenType: screen});
+            return screen;
         },
 
         /**

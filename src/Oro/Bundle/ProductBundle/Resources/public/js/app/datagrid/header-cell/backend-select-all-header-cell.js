@@ -5,7 +5,7 @@ define(function(require) {
     const $ = require('jquery');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
     const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
-    const viewportManager = require('oroui/js/viewport-manager');
+    const viewportManager = require('oroui/js/viewport-manager').default;
 
     const modes = {
         DROPDOWN: 'Dropdown',
@@ -25,8 +25,10 @@ define(function(require) {
         /** @property */
         template: template,
 
-        listen: {
-            'viewport:change mediator': 'defineRenderingStrategy'
+        listen() {
+            return {
+                [`viewport:${this.optimizedScreenSize} mediator`]: 'defineRenderingStrategy'
+            };
         },
 
         /**
@@ -139,7 +141,7 @@ define(function(require) {
         },
 
         _isSimple() {
-            return viewportManager.isApplicable({maxScreenType: this.optimizedScreenSize});
+            return viewportManager.isApplicable(this.optimizedScreenSize);
         },
 
         /**

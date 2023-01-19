@@ -28,15 +28,13 @@
                      'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
                  }|json_encode }}"
                  data-dom-relocation-options="{{ {
-                     responsive: [
-                         {
-                             viewport: {
-                                 maxScreenType: 'tablet',
-                             },
-                             moveTo: '[data-switcher-currency-target]'
-                         }
-                     ]
-                 }|json_encode }}">
+                    responsive: [
+                        {
+                            viewport: 'tablet',
+                            moveTo: '[data-switcher-currency-target]'
+                        }
+                    ]
+                }|json_encode }}">
                 <ul class="oro-toolbar__list">
                     {% for currency in currencies %}
                     <li class="oro-toolbar__list-item currency-switcher__item currency-switcher__item--{{ currency|lower }}">
