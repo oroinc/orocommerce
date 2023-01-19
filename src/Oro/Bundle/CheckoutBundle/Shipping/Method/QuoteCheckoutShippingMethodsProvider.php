@@ -1,10 +1,9 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote;
+namespace Oro\Bundle\CheckoutBundle\Shipping\Method;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
-use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
@@ -16,7 +15,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
  * Provides views for all applicable shipping methods and calculate a shipping price
  * for a checkout created from a quote.
  */
-class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutShippingMethodsProviderChainElement
+class QuoteCheckoutShippingMethodsProvider implements CheckoutShippingMethodsProviderInterface
 {
     private CheckoutShippingContextProvider $checkoutShippingContextProvider;
     private ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider;
@@ -37,14 +36,9 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
      */
     public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
-        $successorViews = parent::getApplicableMethodsViews($checkout);
-        if (!$successorViews->isEmpty()) {
-            return $successorViews;
-        }
-
         $quote = $this->extractQuoteFromCheckout($checkout);
         if (null === $quote) {
-            return $successorViews;
+            return new ShippingMethodViewCollection();
         }
 
         return $this->shippingConfiguredPriceProvider->getApplicableMethodsViews(
@@ -58,11 +52,6 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
      */
     public function getPrice(Checkout $checkout): ?Price
     {
-        $successorPrice = parent::getPrice($checkout);
-        if (null !== $successorPrice) {
-            return $successorPrice;
-        }
-
         $quote = $this->extractQuoteFromCheckout($checkout);
         if (null === $quote) {
             return null;

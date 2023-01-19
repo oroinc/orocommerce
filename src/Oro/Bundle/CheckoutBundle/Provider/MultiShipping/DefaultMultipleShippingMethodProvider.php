@@ -2,24 +2,24 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping;
 
-use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 /**
  * Providers available shipping methods for a checkout or main orders created during multiple shipping flow.
  */
 class DefaultMultipleShippingMethodProvider
 {
-    private MultiShippingMethodProvider $shippingProvider;
+    private ShippingMethodProviderInterface $shippingProvider;
     private ?array $shippingMethods = null;
 
-    public function __construct(MultiShippingMethodProvider $shippingProvider)
+    public function __construct(ShippingMethodProviderInterface $shippingProvider)
     {
         $this->shippingProvider = $shippingProvider;
     }
 
     /**
-     * Gets the first configured multi shipping method.
+     * Gets the first configured Multi Shipping method.
      */
     public function getShippingMethod(): ShippingMethodInterface
     {

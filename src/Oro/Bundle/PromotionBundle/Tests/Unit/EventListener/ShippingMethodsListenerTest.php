@@ -13,23 +13,45 @@ use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
-    protected $promotionExecutor;
+    private $promotionExecutor;
 
     /** @var ShippingMethodsListener */
-    protected $shippingMethodsListener;
+    private $shippingMethodsListener;
 
     protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
 
         $this->shippingMethodsListener = new ShippingMethodsListener($this->promotionExecutor);
+    }
+
+    private function getDiscountContext(?float $shippingAmount = null): DiscountContext
+    {
+        $context = new DiscountContext();
+        if (null !== $shippingAmount) {
+            $context->addShippingDiscountInformation(new DiscountInformation(new ShippingDiscount(), $shippingAmount));
+        }
+
+        return $context;
+    }
+
+    private function getShippingMethodViewCollection(array $data): ShippingMethodViewCollection
+    {
+        $collection = new ShippingMethodViewCollection();
+        foreach ($data['methodViews'] as $methodId => $methodView) {
+            $collection->addMethodView($methodId, $methodView);
+        }
+        foreach ($data['methodTypesViews'] as $methodId => $methodTypes) {
+            foreach ($methodTypes as $methodTypeId => $methodTypeView) {
+                $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView);
+            }
+        }
+
+        return $collection;
     }
 
     public function testModifyPricesNotSupportedSourceEntity(): void
@@ -92,116 +114,91 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                'shippingMethodViewCollection' => $this->getEntity(
-                    ShippingMethodViewCollection::class,
-                    [
-                        'methodViews' => [
-                            'flat_rate_3' => [
-                                'identifier' => 'flat_rate_3',
-                                'isGrouped' => false,
+                'shippingMethodViewCollection' => $this->getShippingMethodViewCollection([
+                    'methodViews' => [
+                        'flat_rate_3' => [
+                            'identifier' => 'flat_rate_3',
+                            'isGrouped' => false,
+                            'label' => 'Flat Rate',
+                            'sortOrder' => 10
+                        ],
+                        'ups_4' => [
+                            'identifier' => 'ups_4',
+                            'isGrouped' => true,
+                            'label' => 'UPS shipping',
+                            'sortOrder' => 20
+                        ]
+                    ],
+                    'methodTypesViews' => [
+                        'flat_rate_3' => [
+                            'primary' => [
+                                'identifier' => 'primary',
                                 'label' => 'Flat Rate',
-                                'sortOrder' => 10
-                            ],
-                            'ups_4' => [
-                                'identifier' => 'ups_4',
-                                'isGrouped' => true,
-                                'label' => 'UPS shipping',
-                                'sortOrder' => 20
+                                'sortOrder' => 0,
+                                'price' => Price::create(100, 'USD')
                             ]
                         ],
-                        'methodTypesViews' => [
-                            'flat_rate_3' => [
-                                'primary' => [
-                                    'identifier' => 'primary',
-                                    'label' => 'Flat Rate',
-                                    'sortOrder' => 0,
-                                    'price' => Price::create(100, 'USD')
-                                ]
+                        'ups_4' => [
+                            '02' => [
+                                'identifier' => '02',
+                                'label' => 'UPS 2nd Day Air',
+                                'sortOrder' => 0,
+                                'price' => Price::create(200, 'USD')
                             ],
-                            'ups_4' => [
-                                '02' => [
-                                    'identifier' => '02',
-                                    'label' => 'UPS 2nd Day Air',
-                                    'sortOrder' => 0,
-                                    'price' => Price::create(200, 'USD')
-                                ],
-                                '59' => [
-                                    'identifier' => '59',
-                                    'label' => 'UPS 2nd Day Air A.M.',
-                                    'sortOrder' => 0,
-                                    'price' => Price::create(300, 'USD')
-                                ],
+                            '59' => [
+                                'identifier' => '59',
+                                'label' => 'UPS 2nd Day Air A.M.',
+                                'sortOrder' => 0,
+                                'price' => Price::create(300, 'USD')
                             ]
                         ]
                     ]
-                ),
+                ]),
                 'discountContexts' => [
-                    'Discount50USD' => $this->getEntity(
-                        DiscountContext::class,
-                        [
-                            'shippingDiscountsInformation' => [
-                                new DiscountInformation(new ShippingDiscount(), 50)
-                            ]
-                        ]
-                    ),
-                    'Discount100USD' => $this->getEntity(
-                        DiscountContext::class,
-                        [
-                            'shippingDiscountsInformation' => [
-                                new DiscountInformation(new ShippingDiscount(), 100)
-                            ]
-                        ]
-                    ),
-                    'WithoutShippingDiscount' => $this->getEntity(
-                        DiscountContext::class,
-                        [
-                            'shippingDiscountsInformation' => []
-                        ]
-                    )
+                    'Discount50USD' => $this->getDiscountContext(50.0),
+                    'Discount100USD' => $this->getDiscountContext(100.0),
+                    'WithoutShippingDiscount' => $this->getDiscountContext()
                 ],
-                'modifiedShippingMethodViewCollection' => $this->getEntity(
-                    ShippingMethodViewCollection::class,
-                    [
-                        'methodViews' => [
-                            'flat_rate_3' => [
-                                'identifier' => 'flat_rate_3',
-                                'isGrouped' => false,
+                'modifiedShippingMethodViewCollection' => $this->getShippingMethodViewCollection([
+                    'methodViews' => [
+                        'flat_rate_3' => [
+                            'identifier' => 'flat_rate_3',
+                            'isGrouped' => false,
+                            'label' => 'Flat Rate',
+                            'sortOrder' => 10
+                        ],
+                        'ups_4' => [
+                            'identifier' => 'ups_4',
+                            'isGrouped' => true,
+                            'label' => 'UPS shipping',
+                            'sortOrder' => 20
+                        ]
+                    ],
+                    'methodTypesViews' => [
+                        'flat_rate_3' => [
+                            'primary' => [
+                                'identifier' => 'primary',
                                 'label' => 'Flat Rate',
-                                'sortOrder' => 10
-                            ],
-                            'ups_4' => [
-                                'identifier' => 'ups_4',
-                                'isGrouped' => true,
-                                'label' => 'UPS shipping',
-                                'sortOrder' => 20
+                                'sortOrder' => 0,
+                                'price' => Price::create(50, 'USD')
                             ]
                         ],
-                        'methodTypesViews' => [
-                            'flat_rate_3' => [
-                                'primary' => [
-                                    'identifier' => 'primary',
-                                    'label' => 'Flat Rate',
-                                    'sortOrder' => 0,
-                                    'price' => Price::create(50, 'USD')
-                                ]
+                        'ups_4' => [
+                            '02' => [
+                                'identifier' => '02',
+                                'label' => 'UPS 2nd Day Air',
+                                'sortOrder' => 0,
+                                'price' => Price::create(100, 'USD')
                             ],
-                            'ups_4' => [
-                                '02' => [
-                                    'identifier' => '02',
-                                    'label' => 'UPS 2nd Day Air',
-                                    'sortOrder' => 0,
-                                    'price' => Price::create(100, 'USD')
-                                ],
-                                '59' => [
-                                    'identifier' => '59',
-                                    'label' => 'UPS 2nd Day Air A.M.',
-                                    'sortOrder' => 0,
-                                    'price' => Price::create(300, 'USD')
-                                ],
+                            '59' => [
+                                'identifier' => '59',
+                                'label' => 'UPS 2nd Day Air A.M.',
+                                'sortOrder' => 0,
+                                'price' => Price::create(300, 'USD')
                             ]
                         ]
                     ]
-                )
+                ])
             ]
         ];
     }

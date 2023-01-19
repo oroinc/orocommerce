@@ -20,3 +20,4 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shipping.manager.multi_shipping_integration, key: Oro\Bundle\ShippingBundle\Manager\MultiShippingIntegrationManager }

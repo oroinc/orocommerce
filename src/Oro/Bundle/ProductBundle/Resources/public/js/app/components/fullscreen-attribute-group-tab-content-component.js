@@ -4,7 +4,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const AttributeGroupTabContentComponent = require('oroentityconfig/js/attribute-group-tab-content-component');
     const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');
-    const viewportManager = require('oroui/js/viewport-manager');
+    const viewportManager = require('oroui/js/viewport-manager').default;
 
     const FullscreenAttributeGroupTabContentComponent = AttributeGroupTabContentComponent.extend({
         /**

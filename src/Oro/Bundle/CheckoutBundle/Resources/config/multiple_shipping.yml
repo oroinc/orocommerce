@@ -85,9 +85,8 @@ services:
         arguments:
             - '@oro_shipping.multi_shipping.method.provider'
 
-    oro_checkout.rule_filtration.multi_shipping.shipping_method_filtration_decorator:
-        class: Oro\Bundle\CheckoutBundle\RuleFiltration\MultiShipping\MultiShippingMethodFiltrationServiceDecorator
-        public: false
+    oro_checkout.shipping_rule_filtration.multi_shipping_decorator:
+        class: Oro\Bundle\CheckoutBundle\RuleFiltration\MultiShipping\MultiShippingMethodFiltrationService
         decorates: oro_rule.rule_filtration.service
         decoration_priority: 100
         arguments:
@@ -119,8 +118,8 @@ services:
             - '@oro_checkout.provider.checkout_line_items'
             - '@oro_checkout.factory.multi_shipping.checkout_factory'
 
-    oro_checkout.shipping_method.multi_shipping_price.provider:
-        class: Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\MultiShippingPriceProvider
+    oro_checkout.shipping_method.multi_shipping_provider:
+        class: Oro\Bundle\CheckoutBundle\Shipping\Method\MultiShippingCheckoutShippingMethodsProvider
         arguments:
             - '@oro_checkout.provider.multi_shipping.default_shipping_method'
             - '@oro_checkout.provider.shipping_context'

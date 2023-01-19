@@ -3,6 +3,7 @@ import _ from 'underscore';
 import mediator from 'oroui/js/mediator';
 import template from 'tpl-loader!oroproduct/templates/sidebar-filters/filter-items-hint.html';
 import filterSettings from 'oro/filter-settings';
+import viewportManager from 'oroui/js/viewport-manager';
 
 import moduleConfig from 'module-config';
 
@@ -42,8 +43,10 @@ const FilterItemsHintView = BaseView.extend({
         'click .reset-filter-button': 'resetAllFilters'
     },
 
-    listen: {
-        'viewport:change mediator': 'doToggleBlock'
+    listen() {
+        return {
+            [`viewport:${filterSettings.fullScreenViewport} mediator`]: 'doToggleBlock'
+        };
     },
 
     /**
@@ -100,9 +103,8 @@ const FilterItemsHintView = BaseView.extend({
             return;
         }
 
-        filterSettings.isFullScreen() ? this.$el.hide() : this.$el.show();
+        viewportManager.isApplicable(filterSettings.fullScreenViewport) ? this.$el.hide() : this.$el.show();
     }
 });
 
 export default FilterItemsHintView;
-
