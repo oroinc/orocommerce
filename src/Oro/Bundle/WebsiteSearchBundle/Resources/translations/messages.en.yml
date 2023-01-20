@@ -1,4 +1,8 @@
 oro.website_search:
+    search:
+        label: Search
+    search_history:
+        label: Search History
     search_field_placeholder: Search for a product
     search_label: Search
     search_submit_btn: Start Searching
@@ -7,3 +11,18 @@ oro.website_search:
         search_boost:
             label: 'Global Search Boost'
             tooltip: 'Decimal value greater than zero. Empty value means no boosting. Any value (even 0.1) already applies boosting. Works only for searchable attributes.'
+    searchresult:
+        entity_label: Search Result
+        entity_plural_label: Search Results
+        entity_grid_all_view_label: All %entity_plural_label%
+        id.label: Id
+        search_term.label: Searh Term
+        result_type.label: Result Type
+        result.label: Result
+        website.label: Website
+        customer_user.label: Customer User
+        customer.label: Customer
+        organization.label: Organization
+        localization.label: Localization
+        owner.label: Owner
+        searched_at.label: Searched At

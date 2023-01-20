@@ -1,0 +1,13 @@
+api:
+    entity_aliases:
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult:
+            alias: searchresult
+            plural_alias: searchresults
+    entities:
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult:
+            documentation_resource: '@OroWebsiteSearchBundle/Resources/doc/api/search_results.md'
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false

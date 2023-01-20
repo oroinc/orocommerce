@@ -1,0 +1,10 @@
+Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult:
+    properties:
+        searchTerm:
+            - NotBlank: ~
+        resultType:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        result:
+            - Type: integer
