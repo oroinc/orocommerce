@@ -10,12 +10,11 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
  */
 class DefaultMultipleShippingMethodProvider
 {
-    private ShippingMethodProviderInterface $shippingProvider;
-    private ?array $shippingMethods = null;
+    private ShippingMethodProviderInterface $multiShippingMethodProvider;
 
-    public function __construct(ShippingMethodProviderInterface $shippingProvider)
+    public function __construct(ShippingMethodProviderInterface $multiShippingMethodProvider)
     {
-        $this->shippingProvider = $shippingProvider;
+        $this->multiShippingMethodProvider = $multiShippingMethodProvider;
     }
 
     /**
@@ -23,7 +22,7 @@ class DefaultMultipleShippingMethodProvider
      */
     public function getShippingMethod(): ShippingMethodInterface
     {
-        $methods = $this->getCachedShippingMethods();
+        $methods = $this->multiShippingMethodProvider->getShippingMethods();
         if (!$methods) {
             throw new \LogicException('There are no enabled multi shipping methods');
         }
@@ -36,7 +35,7 @@ class DefaultMultipleShippingMethodProvider
      */
     public function getShippingMethods(): array
     {
-        $methods = $this->getCachedShippingMethods();
+        $methods = $this->multiShippingMethodProvider->getShippingMethods();
         if (!$methods) {
             throw new \LogicException('There are no enabled multi shipping methods');
         }
@@ -46,17 +45,8 @@ class DefaultMultipleShippingMethodProvider
 
     public function hasShippingMethods(): bool
     {
-        $methods = $this->getCachedShippingMethods();
+        $methods = $this->multiShippingMethodProvider->getShippingMethods();
 
         return !empty($methods);
-    }
-
-    private function getCachedShippingMethods(): array
-    {
-        if (null === $this->shippingMethods) {
-            $this->shippingMethods = $this->shippingProvider->getShippingMethods();
-        }
-
-        return $this->shippingMethods;
     }
 }

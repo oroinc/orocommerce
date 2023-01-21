@@ -12,18 +12,17 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
 {
     private string $channelType;
-    private IntegrationShippingMethodFactoryInterface $methodFactory;
-    private ChannelLoaderInterface $channelLoader;
-    private ?array $shippingMethods = null;
+    private IntegrationShippingMethodFactoryInterface $shippingMethodFactory;
+    private ShippingMethodLoader $shippingMethodLoader;
 
     public function __construct(
         string $channelType,
-        IntegrationShippingMethodFactoryInterface $methodFactory,
-        ChannelLoaderInterface $channelLoader,
+        IntegrationShippingMethodFactoryInterface $shippingMethodFactory,
+        ShippingMethodLoader $shippingMethodLoader,
     ) {
         $this->channelType = $channelType;
-        $this->methodFactory = $methodFactory;
-        $this->channelLoader = $channelLoader;
+        $this->shippingMethodFactory = $shippingMethodFactory;
+        $this->shippingMethodLoader = $shippingMethodLoader;
     }
 
     /**
@@ -31,11 +30,7 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
      */
     public function getShippingMethods(): array
     {
-        if (null === $this->shippingMethods) {
-            $this->shippingMethods = $this->loadShippingMethods();
-        }
-
-        return $this->shippingMethods;
+        return $this->shippingMethodLoader->loadShippingMethods($this->channelType, $this->shippingMethodFactory);
     }
 
     /**
@@ -56,17 +51,5 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
         $shippingMethods = $this->getShippingMethods();
 
         return isset($shippingMethods[$name]);
-    }
-
-    private function loadShippingMethods(): array
-    {
-        $shippingMethods = [];
-        $channels = $this->channelLoader->loadChannels($this->channelType, true);
-        foreach ($channels as $channel) {
-            $method = $this->methodFactory->create($channel);
-            $shippingMethods[$method->getIdentifier()] = $method;
-        }
-
-        return $shippingMethods;
     }
 }

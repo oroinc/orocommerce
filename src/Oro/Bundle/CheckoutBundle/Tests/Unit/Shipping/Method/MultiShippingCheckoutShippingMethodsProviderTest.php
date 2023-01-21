@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodType;
 class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingMethodProvider;
+    private $multiShippingMethodProvider;
 
     /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutShippingContextProvider;
@@ -24,11 +24,11 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
 
     protected function setUp(): void
     {
-        $this->shippingMethodProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
+        $this->multiShippingMethodProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
         $this->checkoutShippingContextProvider = $this->createMock(CheckoutShippingContextProvider::class);
 
         $this->provider = new MultiShippingCheckoutShippingMethodsProvider(
-            $this->shippingMethodProvider,
+            $this->multiShippingMethodProvider,
             $this->checkoutShippingContextProvider
         );
     }
@@ -41,7 +41,7 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
 
     public function testGetPrice()
     {
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('hasShippingMethods')
             ->willReturn(true);
 
@@ -59,7 +59,7 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
             ->method('calculatePrice')
             ->willReturn(Price::create(15.00, 'USD'));
 
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($shippingMethodMock);
 
@@ -80,7 +80,7 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
 
     public function testGetPriceIfShippingMethodIsNotMultiShippingType()
     {
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('hasShippingMethods')
             ->willReturn(true);
 
@@ -92,7 +92,7 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
         $shippingMethodMock->expects($this->never())
             ->method('getType');
 
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($shippingMethodMock);
 
@@ -108,11 +108,11 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
 
     public function testGetPriceIfMultiShippingMethodINotConfigured()
     {
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('hasShippingMethods')
             ->willReturn(false);
 
-        $this->shippingMethodProvider->expects($this->never())
+        $this->multiShippingMethodProvider->expects($this->never())
             ->method('getShippingMethod');
 
         $this->checkoutShippingContextProvider->expects($this->never())

@@ -9,22 +9,22 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingMethodProvider;
+    private $multiShippingMethodProvider;
 
     /** @var DefaultMultipleShippingMethodProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $this->multiShippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
-        $this->provider = new DefaultMultipleShippingMethodProvider($this->shippingMethodProvider);
+        $this->provider = new DefaultMultipleShippingMethodProvider($this->multiShippingMethodProvider);
     }
 
     public function testGetShippingMethod()
     {
         $multiShippingShippingMethod = $this->createMock(MultiShippingMethod::class);
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn(['multi_shipping_1' => $multiShippingShippingMethod]);
 
@@ -34,7 +34,7 @@ class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestC
 
     public function testGetShippingMethodThrowsException()
     {
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn([]);
 
@@ -49,7 +49,7 @@ class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestC
         $multiShippingShippingMethod1 = $this->createMock(MultiShippingMethod::class);
         $multiShippingShippingMethod2 = $this->createMock(MultiShippingMethod::class);
 
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn([
                 'multi_shipping_1' => $multiShippingShippingMethod1,
@@ -62,7 +62,7 @@ class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestC
 
     public function testGetShippingMethodsThrowsException()
     {
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn([]);
 
@@ -77,7 +77,7 @@ class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestC
         $multiShippingShippingMethod1 = $this->createMock(MultiShippingMethod::class);
         $multiShippingShippingMethod2 = $this->createMock(MultiShippingMethod::class);
 
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn([
                 'multi_shipping_1' => $multiShippingShippingMethod1,
@@ -89,7 +89,7 @@ class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestC
 
     public function testHasShippingMethodsReturnsFalse()
     {
-        $this->shippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn([]);
 

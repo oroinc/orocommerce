@@ -13,14 +13,14 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
  */
 class MultiShippingCheckoutShippingMethodsProvider implements CheckoutShippingMethodsProviderInterface
 {
-    private DefaultMultipleShippingMethodProvider $shippingMethodProvider;
+    private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutShippingContextProvider $checkoutShippingContextProvider;
 
     public function __construct(
-        DefaultMultipleShippingMethodProvider $shippingMethodProvider,
+        DefaultMultipleShippingMethodProvider $multiShippingMethodProvider,
         CheckoutShippingContextProvider $checkoutShippingContextProvider
     ) {
-        $this->shippingMethodProvider = $shippingMethodProvider;
+        $this->multiShippingMethodProvider = $multiShippingMethodProvider;
         $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
     }
 
@@ -37,11 +37,11 @@ class MultiShippingCheckoutShippingMethodsProvider implements CheckoutShippingMe
      */
     public function getPrice(Checkout $checkout): ?Price
     {
-        if (!$this->shippingMethodProvider->hasShippingMethods()) {
+        if (!$this->multiShippingMethodProvider->hasShippingMethods()) {
             return null;
         }
 
-        $multiShippingMethod = $this->shippingMethodProvider->getShippingMethod();
+        $multiShippingMethod = $this->multiShippingMethodProvider->getShippingMethod();
         if ($checkout->getShippingMethod() !== $multiShippingMethod->getIdentifier()) {
             return null;
         }

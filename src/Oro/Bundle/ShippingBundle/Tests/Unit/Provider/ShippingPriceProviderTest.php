@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
@@ -29,8 +29,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use MemoryCacheProviderAwareTestTrait;
-
     /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingRulesProvider;
 
@@ -40,6 +38,9 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
+    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $memoryCacheProvider;
+
     /** @var ShippingPriceProvider */
     private $shippingPriceProvider;
 
@@ -48,6 +49,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->shippingRulesProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
         $this->priceCache = $this->createMock(ShippingPriceCache::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
 
         $methods = [
             'flat_rate' => $this->getShippingMethod('flat_rate', 1, [
@@ -71,7 +73,8 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             $shippingMethodProvider,
             $this->priceCache,
             new ShippingMethodViewFactory($shippingMethodProvider),
-            $this->eventDispatcher
+            $this->eventDispatcher,
+            $this->memoryCacheProvider
         );
     }
 
@@ -144,8 +147,11 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetApplicablePaymentMethodsWhenCache(): void
     {
         $methodViews = $this->createMock(ShippingMethodViewCollection::class);
-        $this->mockMemoryCacheProvider($methodViews);
-        $this->setMemoryCacheProvider($this->shippingPriceProvider);
+        $this->memoryCacheProvider->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function () use ($methodViews) {
+                return $methodViews;
+            });
 
         $this->assertEquals(
             $methodViews,
@@ -177,6 +183,12 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('dispatch')
             ->with(self::isInstanceOf(ApplicableMethodsEvent::class), ApplicableMethodsEvent::NAME);
 
+        $this->memoryCacheProvider->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
+
         $this->assertEquals(
             $expectedData,
             $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
@@ -188,10 +200,35 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetApplicableMethodsViewsWhenMemoryCacheProvider(array $shippingRules, array $expectedData)
     {
-        $this->mockMemoryCacheProvider();
-        $this->setMemoryCacheProvider($this->shippingPriceProvider);
+        $shippingLineItems = [new ShippingLineItem([])];
 
-        $this->testGetApplicableMethodsViews($shippingRules, $expectedData);
+        $sourceEntity = new \stdClass();
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD',
+            ShippingContext::FIELD_SOURCE_ENTITY => $sourceEntity
+        ]);
+
+        $this->shippingRulesProvider->expects($this->once())
+            ->method('getShippingMethodsConfigsRules')
+            ->with($context)
+            ->willReturn($shippingRules);
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(self::isInstanceOf(ApplicableMethodsEvent::class), ApplicableMethodsEvent::NAME);
+
+        $this->memoryCacheProvider->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
+
+        $this->assertEquals(
+            $expectedData,
+            $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
+        );
     }
 
     /**
@@ -346,6 +383,12 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getPrice')
             ->with($context, 'flat_rate', 'primary', $ruleId)
             ->willReturn(Price::create(2, 'USD'));
+
+        $this->memoryCacheProvider->expects($this->exactly(2))
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         $this->assertEquals(
             $expectedData,
