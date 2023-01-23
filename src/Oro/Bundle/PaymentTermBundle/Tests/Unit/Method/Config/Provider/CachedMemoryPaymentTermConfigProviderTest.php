@@ -8,37 +8,28 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProvide
 
 class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CachedMemoryPaymentTermConfigProvider
-     */
-    private $testedProvider;
+    /** @var PaymentTermConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTermConfigProvider;
 
-    /**
-     * @var PaymentTermConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $paymentTermConfigProviderMock;
+    /** @var CachedMemoryPaymentTermConfigProvider */
+    private $testedProvider;
 
     protected function setUp(): void
     {
-        $this->paymentTermConfigProviderMock = $this->createMock(PaymentTermConfigProviderInterface::class);
-        $this->testedProvider = new CachedMemoryPaymentTermConfigProvider($this->paymentTermConfigProviderMock);
-    }
+        $this->paymentTermConfigProvider = $this->createMock(PaymentTermConfigProviderInterface::class);
 
-    /**
-     * @return PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createConfigMock()
-    {
-        return $this->createMock(PaymentTermConfigInterface::class);
+        $this->testedProvider = new CachedMemoryPaymentTermConfigProvider($this->paymentTermConfigProvider);
     }
 
     public function testGetPaymentConfigs()
     {
-        $expectedConfigs = [$this->createConfigMock(), $this->createConfigMock()];
+        $expectedConfigs = [
+            $this->createMock(PaymentTermConfigInterface::class),
+            $this->createMock(PaymentTermConfigInterface::class)
+        ];
 
         // if cache works this method is only called once
-        $this->paymentTermConfigProviderMock
-            ->expects($this->once())
+        $this->paymentTermConfigProvider->expects($this->once())
             ->method('getPaymentConfigs')
             ->willReturn($expectedConfigs);
 
@@ -53,11 +44,13 @@ class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestC
 
     public function testHasPaymentConfig()
     {
-        $expectedConfigs = ['someId' => $this->createConfigMock(), 'someOtherId' => $this->createConfigMock()];
+        $expectedConfigs = [
+            'someId' => $this->createMock(PaymentTermConfigInterface::class),
+            'someOtherId' => $this->createMock(PaymentTermConfigInterface::class)
+        ];
 
         // if cache works this method is only called once
-        $this->paymentTermConfigProviderMock
-            ->expects($this->once())
+        $this->paymentTermConfigProvider->expects($this->once())
             ->method('getPaymentConfigs')
             ->willReturn($expectedConfigs);
 
@@ -72,8 +65,7 @@ class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestC
 
     public function testHasPaymentConfigWhenNoConfigs()
     {
-        $this->paymentTermConfigProviderMock
-            ->expects($this->once())
+        $this->paymentTermConfigProvider->expects($this->once())
             ->method('getPaymentConfigs')
             ->willReturn([]);
 
@@ -88,12 +80,14 @@ class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestC
 
     public function testGetPaymentConfig()
     {
-        $configOne = $this->createConfigMock();
-        $expectedConfigs = ['someId' => $configOne, 'someOtherId' => $this->createConfigMock()];
+        $configOne = $this->createMock(PaymentTermConfigInterface::class);
+        $expectedConfigs = [
+            'someId' => $configOne,
+            'someOtherId' => $this->createMock(PaymentTermConfigInterface::class)
+        ];
 
         // if cache works this method is only called once
-        $this->paymentTermConfigProviderMock
-            ->expects($this->once())
+        $this->paymentTermConfigProvider->expects($this->once())
             ->method('getPaymentConfigs')
             ->willReturn($expectedConfigs);
 
@@ -109,8 +103,7 @@ class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestC
     public function testGetPaymentConfigWhenNoConfigs()
     {
         // if cache works this method is only called once
-        $this->paymentTermConfigProviderMock
-            ->expects($this->once())
+        $this->paymentTermConfigProvider->expects($this->once())
             ->method('getPaymentConfigs')
             ->willReturn([]);
 

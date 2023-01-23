@@ -10,15 +10,20 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\SingleLineItemShip
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class SingleLineItemShippingPriceProviderTest extends TestCase
+class SingleLineItemShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private ShippingPriceProviderInterface|MockObject $shippingPriceProvider;
-    private CheckoutShippingContextProvider|MockObject $checkoutShippingContextProvider;
-    private CheckoutFactoryInterface|MockObject $checkoutFactory;
-    private SingleLineItemShippingPriceProvider $priceProvider;
+    /** @var ShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingPriceProvider;
+
+    /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutShippingContextProvider;
+
+    /** @var CheckoutFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutFactory;
+
+    /** @var SingleLineItemShippingPriceProvider */
+    private $priceProvider;
 
     protected function setUp(): void
     {
@@ -39,18 +44,25 @@ class SingleLineItemShippingPriceProviderTest extends TestCase
         $lineItem = new CheckoutLineItem();
         $checkout->addLineItem($lineItem);
         $lineItem->setCheckout($checkout);
+        $lineItem->setShippingMethod('method1');
+        $lineItem->setShippingMethodType('type1');
 
         $this->checkoutFactory->expects($this->once())
             ->method('createCheckout')
             ->willReturn($checkout);
 
-        $shippingContextMock = $this->createMock(ShippingContextInterface::class);
+        $shippingContext = $this->createMock(ShippingContextInterface::class);
         $this->checkoutShippingContextProvider->expects($this->once())
             ->method('getContext')
-            ->willReturn($shippingContextMock);
+            ->willReturn($shippingContext);
 
         $this->shippingPriceProvider->expects($this->once())
             ->method('getPrice')
+            ->with(
+                self::identicalTo($shippingContext),
+                $lineItem->getShippingMethod(),
+                $lineItem->getShippingMethodType()
+            )
             ->willReturn(Price::create(10.00, 'USD'));
 
         $price = $this->priceProvider->getPrice($lineItem);
@@ -72,13 +84,14 @@ class SingleLineItemShippingPriceProviderTest extends TestCase
             ->method('createCheckout')
             ->willReturn($checkout);
 
-        $shippingContextMock = $this->createMock(ShippingContextInterface::class);
+        $shippingContext = $this->createMock(ShippingContextInterface::class);
         $this->checkoutShippingContextProvider->expects($this->once())
             ->method('getContext')
-            ->willReturn($shippingContextMock);
+            ->willReturn($shippingContext);
 
         $this->shippingPriceProvider->expects($this->once())
             ->method('getPrice')
+            ->with(self::identicalTo($shippingContext), self::isNull(), self::isNull())
             ->willReturn(null);
 
         $price = $this->priceProvider->getPrice($lineItem);

@@ -49,6 +49,11 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testGetAvailableShippingMethods(): void
     {
+        $lineItem = new CheckoutLineItem();
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem);
+        $lineItem->setCheckout($checkout);
+
         $this->multiShippingMethodProvider->expects(self::once())
             ->method('getShippingMethods')
             ->willReturn(['multi_shipping_1', 'multi_shipping_2']);
@@ -80,11 +85,6 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
             ->method('hasShippingMethods')
             ->willReturn(true);
 
-        $lineItem = new CheckoutLineItem();
-        $checkout = new Checkout();
-        $checkout->addLineItem($lineItem);
-        $lineItem->setCheckout($checkout);
-
         $this->checkoutFactory->expects(self::once())
             ->method('createCheckout')
             ->willReturn($checkout);
@@ -107,6 +107,11 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testGetAvailableShippingMethodsWhenMultiShippingMethodsNotConfigured(): void
     {
+        $lineItem = new CheckoutLineItem();
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem);
+        $lineItem->setCheckout($checkout);
+
         $this->multiShippingMethodProvider->expects(self::never())
             ->method('getShippingMethods');
 
@@ -129,11 +134,6 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
             ->method('hasShippingMethods')
             ->willReturn(false);
 
-        $lineItem = new CheckoutLineItem();
-        $checkout = new Checkout();
-        $checkout->addLineItem($lineItem);
-        $lineItem->setCheckout($checkout);
-
         $this->checkoutFactory->expects(self::once())
             ->method('createCheckout')
             ->willReturn($checkout);
@@ -145,6 +145,11 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testResetMemoryCache(): void
     {
+        $lineItem = new CheckoutLineItem();
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem);
+        $lineItem->setCheckout($checkout);
+
         $availableShippingMethods = [
             'test_shipping_1' => [
                 'identifier' => 'test_shipping_1',
@@ -159,11 +164,6 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
         $this->multiShippingMethodProvider->expects(self::exactly(2))
             ->method('hasShippingMethods')
             ->willReturn(false);
-
-        $lineItem = new CheckoutLineItem();
-        $checkout = new Checkout();
-        $checkout->addLineItem($lineItem);
-        $lineItem->setCheckout($checkout);
 
         $this->checkoutFactory->expects(self::exactly(2))
             ->method('createCheckout')

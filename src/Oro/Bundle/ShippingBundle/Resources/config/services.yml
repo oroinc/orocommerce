@@ -525,7 +525,7 @@ services:
         public: false
         arguments:
             - '@oro_shipping.rule_filtration.basic_service'
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
 
     oro_shipping.enabled_rule_filtration.basic_service:
         class: 'Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
@@ -538,7 +538,7 @@ services:
         public: false
         arguments:
             - '@oro_shipping.enabled_rule_filtration.basic_service'
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
 
     oro_shipping.configuration_search_provider.shipping_origin:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingOriginConfigSearchProvider'

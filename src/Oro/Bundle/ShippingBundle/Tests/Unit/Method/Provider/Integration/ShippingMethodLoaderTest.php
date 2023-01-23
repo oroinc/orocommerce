@@ -51,7 +51,7 @@ class ShippingMethodLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function testLoadShippingMethods(): void
     {
-        $channelType = 'channel_type';
+        $channelType = 'test_channel_type';
 
         $channel1 = $this->getChannel(1, 'channel1', $channelType);
         $channel2 = $this->getChannel(2, 'channel2', $channelType);
@@ -74,6 +74,7 @@ class ShippingMethodLoaderTest extends \PHPUnit\Framework\TestCase
 
         $this->memoryCacheProvider->expects($this->once())
             ->method('get')
+            ->with('shipping_methods_channel_test_channel_type')
             ->willReturnCallback(function ($arguments, $callable) {
                 return $callable($arguments);
             });
@@ -103,13 +104,14 @@ class ShippingMethodLoaderTest extends \PHPUnit\Framework\TestCase
 
         $this->memoryCacheProvider->expects($this->once())
             ->method('get')
+            ->with('shipping_methods_channel_test_channel_type')
             ->willReturnCallback(function () use ($cachedShippingMethods) {
                 return $cachedShippingMethods;
             });
 
         self::assertEquals(
             $cachedShippingMethods,
-            $this->shippingMethodLoader->loadShippingMethods('channel_type', $shippingMethodFactory)
+            $this->shippingMethodLoader->loadShippingMethods('test_channel_type', $shippingMethodFactory)
         );
     }
 }

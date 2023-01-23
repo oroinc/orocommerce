@@ -138,7 +138,6 @@ services:
 
     oro_checkout.provider.multi_shipping.single_line_item_shipping_price:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\SingleLineItemShippingPriceProvider
-        public: false
         arguments:
             - '@oro_shipping.shipping_price.provider'
             - '@oro_checkout.provider.shipping_context'
@@ -177,15 +176,11 @@ services:
 
     oro_checkout.manager.multi_shipping.checkout_line_items_shipping:
         class: Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager
+        public: true
         arguments:
             - '@oro_checkout.provider.multi_shipping.available_line_item_shipping_methods'
             - '@oro_checkout.provider.checkout_line_items'
             - '@oro_checkout.provider.multi_shipping.single_line_item_shipping_price'
-        public: true
-
-    Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager:
-        alias: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
-        public: true
 
     oro_checkout.event_listener.fronetnd_checkout_line_items:
         class: Oro\Bundle\CheckoutBundle\EventListener\FrontendCheckoutLineItemsDatagridEventListener
@@ -215,7 +210,6 @@ services:
 
     oro_checkout.provider.main_order_promotion_discounts_provider_decorator:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\Promotion\MainOrderPromotionDiscountsProviderDecorator
-        public: false
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
             - '@.inner'

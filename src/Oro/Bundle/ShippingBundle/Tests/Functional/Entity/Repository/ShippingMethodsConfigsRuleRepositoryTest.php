@@ -4,18 +4,16 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
-use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
-    use FlatRateIntegrationTrait;
-
     private ShippingMethodsConfigsRuleRepository $repository;
 
     protected function setUp(): void
@@ -34,6 +32,11 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         return array_map(function ($entity) {
             return $entity->getId();
         }, $entities);
+    }
+
+    private function getFlatRateIdentifier(): string
+    {
+        return sprintf('flat_rate_%s', $this->getReference(LoadFlatRateIntegration::REFERENCE_FLAT_RATE)->getId());
     }
 
     /**
@@ -87,24 +90,22 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $this->assertEquals($this->getEntitiesIds($expectedRules), $this->getEntitiesIds($actualRules));
     }
 
-    public function testGetRulesWithoutShippingMethods()
-    {
-        $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
-        $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
-
-        self::assertCount(4, $rulesWithoutShippingMethods);
-        self::assertCount(3, $enabledRulesWithoutShippingMethods);
-    }
-
     public function testDisableRulesWithoutShippingMethods()
     {
+        $enabledRulesWithoutShippingMethodsQuery = $this->repository->createQueryBuilder('methodsConfigsRule')
+            ->select('rule.id')
+            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodsConfigsRule.rule', 'rule')
+            ->andWhere('rule.enabled = true')
+            ->having('COUNT(methodConfigs.id) = 0')
+            ->groupBy('rule.id')
+            ->getQuery();
+
+        // guard
+        self::assertCount(3, $enabledRulesWithoutShippingMethodsQuery->getArrayResult());
+
         $this->repository->disableRulesWithoutShippingMethods();
-
-        $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
-        $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
-
-        self::assertCount(4, $rulesWithoutShippingMethods);
-        self::assertCount(0, $enabledRulesWithoutShippingMethods);
+        self::assertCount(0, $enabledRulesWithoutShippingMethodsQuery->getArrayResult());
     }
 
     public function testGetRulesByMethod()

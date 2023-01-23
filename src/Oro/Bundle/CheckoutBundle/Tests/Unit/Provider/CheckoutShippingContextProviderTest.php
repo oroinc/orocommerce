@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
@@ -10,32 +10,40 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use MemoryCacheProviderAwareTestTrait;
-
     /** @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutShippingContextFactory;
+    private $shippingContextFactory;
+
+    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $memoryCacheProvider;
 
     /** @var CheckoutShippingContextProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->checkoutShippingContextFactory = $this->createMock(CheckoutShippingContextFactory::class);
+        $this->shippingContextFactory = $this->createMock(CheckoutShippingContextFactory::class);
+        $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
 
-        $this->provider = new CheckoutShippingContextProvider($this->checkoutShippingContextFactory);
+        $this->provider = new CheckoutShippingContextProvider(
+            $this->shippingContextFactory,
+            $this->memoryCacheProvider
+        );
     }
 
     public function testGetContextWhenCache(): void
     {
-        $this->checkoutShippingContextFactory->expects($this->never())
+        $this->shippingContextFactory->expects(self::never())
             ->method('create');
 
-        $context = $this->createMock(ShippingContextInterface::class);
+        $cachedContext = $this->createMock(ShippingContextInterface::class);
 
-        $this->mockMemoryCacheProvider($context);
-        $this->setMemoryCacheProvider($this->provider);
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function () use ($cachedContext) {
+                return $cachedContext;
+            });
 
-        $this->assertEquals($context, $this->provider->getContext($this->createMock(Checkout::class)));
+        self::assertSame($cachedContext, $this->provider->getContext($this->createMock(Checkout::class)));
     }
 
     public function testGetContext(): void
@@ -43,19 +51,17 @@ class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
         $checkout = $this->createMock(Checkout::class);
         $context = $this->createMock(ShippingContextInterface::class);
 
-        $this->checkoutShippingContextFactory->expects($this->once())
+        $this->shippingContextFactory->expects(self::once())
             ->method('create')
             ->with($checkout)
             ->willReturn($context);
 
-        $this->assertEquals($context, $this->provider->getContext($checkout));
-    }
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
-    public function testGetContextWhenMemoryCacheProvider(): void
-    {
-        $this->mockMemoryCacheProvider();
-        $this->setMemoryCacheProvider($this->provider);
-
-        $this->testGetContext();
+        self::assertSame($context, $this->provider->getContext($checkout));
     }
 }

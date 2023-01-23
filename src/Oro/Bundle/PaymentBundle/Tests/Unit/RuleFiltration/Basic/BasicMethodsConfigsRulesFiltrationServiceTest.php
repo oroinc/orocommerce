@@ -10,29 +10,21 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
 
-    /**
-     * @var PaymentContextToRulesValueConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PaymentContextToRulesValueConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentContextToRuleValuesConverter;
 
-    /**
-     * @var BasicMethodsConfigsRulesFiltrationService
-     */
+    /** @var BasicMethodsConfigsRulesFiltrationService */
     private $basicMethodsConfigsRulesFiltrationService;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->paymentContextToRuleValuesConverter = $this
-            ->createMock(PaymentContextToRulesValueConverterInterface::class);
+        $this->paymentContextToRuleValuesConverter = $this->createMock(
+            PaymentContextToRulesValueConverterInterface::class
+        );
 
         $this->basicMethodsConfigsRulesFiltrationService = new BasicMethodsConfigsRulesFiltrationService(
             $this->filtrationService,
@@ -40,57 +32,38 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\T
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function testGetFilteredPaymentMethodsConfigsRules()
     {
         $configRules = [
-            $this->createPaymentMethodsConfigsRule(),
-            $this->createPaymentMethodsConfigsRule(),
+            $this->createMock(PaymentMethodsConfigsRule::class),
+            $this->createMock(PaymentMethodsConfigsRule::class),
         ];
-        $context = $this->createContextMock();
+        $context = $this->createMock(PaymentContextInterface::class);
         $values = [
             'currency' => 'USD',
         ];
 
-        $this->paymentContextToRuleValuesConverter->expects(static::once())
+        $this->paymentContextToRuleValuesConverter->expects(self::once())
             ->method('convert')
             ->with($context)
             ->willReturn($values);
 
         $expectedConfigRules = [
-            $this->createPaymentMethodsConfigsRule(),
-            $this->createPaymentMethodsConfigsRule(),
+            $this->createMock(PaymentMethodsConfigsRule::class),
+            $this->createMock(PaymentMethodsConfigsRule::class),
         ];
 
-        $this->filtrationService->expects(static::once())
+        $this->filtrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with($configRules, $values)
             ->willReturn($expectedConfigRules);
 
-        static::assertEquals(
+        self::assertEquals(
             $expectedConfigRules,
             $this->basicMethodsConfigsRulesFiltrationService->getFilteredPaymentMethodsConfigsRules(
                 $configRules,
                 $context
             )
         );
-    }
-
-    /**
-     * @return PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(PaymentContextInterface::class);
-    }
-
-    /**
-     * @return PaymentMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createPaymentMethodsConfigsRule()
-    {
-        return $this->createMock(PaymentMethodsConfigsRule::class);
     }
 }
