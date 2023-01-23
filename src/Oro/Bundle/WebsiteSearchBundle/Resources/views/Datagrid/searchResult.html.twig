@@ -1,0 +1,8 @@
+{% set result = record.getValue('result') %}
+{% set resultType = record.getValue('resultType') %}
+{% if resultType == 'products' %}
+    {{ oro.website_search.searchresult.types.products.datagrid.result|trans({'%result%': result}) }}
+    {{ result ~ ' products' }}
+{% else %}
+    {{ '' }}
+{% endif %}

@@ -1,0 +1,94 @@
+datagrids:
+    website_search_results_grid:
+        extended_entity_name: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+        options:
+            entityHint: oro.website_search.searchresult.entity_plural_label
+        source:
+            type: orm
+            query:
+                select:
+                    - search_result.id
+                    - search_result.searchTerm as searchTerm
+                    - search_result.resultType as resultType
+                    - search_result.result as result
+                    - search_result.createdAt as createdAt
+                    - website.name as websiteName
+                    - localization.name as localizationName
+                    - customer.name as customerName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                from:
+                    - { table: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult', alias: search_result }
+                join:
+                    left:
+                        - { join: search_result.website, alias: website }
+                        - { join: search_result.localization, alias: localization }
+                        - { join: search_result.customer, alias: customer }
+                        - { join: search_result.customerUser, alias: customerUser }
+        columns:
+            searchTerm:
+                label:         oro.website_search.searchresult.search_term.label
+            resultType:
+                label:         oro.website_search.searchresult.result_type.label
+            result:
+                label:         oro.website_search.searchresult.result.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroWebsiteSearch/Datagrid/searchResult.html.twig'
+            createdAt:
+                label:         oro.website_search.searchresult.searched_at.label
+                frontend_type: datetime
+            websiteName:
+                label:         oro.website_search.searchresult.website.label
+            localizationName:
+                label:         oro.website_search.searchresult.localization.label
+            customerName:
+                label:         oro.website_search.searchresult.customer.label
+            customerUserName:
+                label:         oro.website_search.searchresult.customer.label
+        properties:
+            id: ~
+        sorters:
+            columns:
+                searchTerm:
+                    data_name: search_result.searchTerm
+                resultType:
+                    data_name: search_result.resultType
+                createdAt:
+                    data_name: search_result.createdAt
+                localizationName:
+                    data_name: localization.name
+                websiteName:
+                    data_name: website.name
+                customerName:
+                    data_name: customer.name
+                customerUserName:
+                    data_name: customerUserName
+            default:
+                createdAt: DESC
+        filters:
+            columns:
+                searchTerm:
+                    type:      string
+                    data_name: search_result.searchTerm
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
+                resultType:
+                    type:      string
+                    data_name: search_result.resultType
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
+                createdAt:
+                    type:      datetime
+                    data_name: search_result.createdAt
+                localizationName:
+                    type: string
+                    data_name: localization.name
+                websiteName:
+                    type: string
+                    data_name: website.name
+                customerName:
+                    type: string
+                    data_name: customer.name
+                customerUserName:
+                    type: string
+                    data_name: customerUserName
