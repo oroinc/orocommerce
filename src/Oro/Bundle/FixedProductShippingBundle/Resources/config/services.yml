@@ -20,7 +20,7 @@ services:
         arguments:
             - '%oro_fixed_product_shipping.integration.channel.type%'
             - '@oro_fixed_product_shipping.factory.method'
-            - '@oro_shipping.method.integration_channel_loader'
+            - '@oro_shipping.method.loader'
         tags:
             - { name: oro_shipping_method_provider }
 

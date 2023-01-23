@@ -13,6 +13,7 @@ services:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.manager.multi_shipping.checkout_line_items_shipping, key: Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager }
 
     Oro\Bundle\CheckoutBundle\Controller\Frontend\OpenOrdersController:
         calls:

@@ -13,16 +13,16 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 class MultiShippingMethodFiltrationService implements RuleFiltrationServiceInterface
 {
     private RuleFiltrationServiceInterface $filtrationService;
-    private DefaultMultipleShippingMethodProvider $multiShippingMethodsProvider;
+    private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private ConfigProvider $configProvider;
 
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
-        DefaultMultipleShippingMethodProvider $multiShippingMethodsProvider,
+        DefaultMultipleShippingMethodProvider $multiShippingMethodProvider,
         ConfigProvider $configProvider
     ) {
         $this->filtrationService = $filtrationService;
-        $this->multiShippingMethodsProvider = $multiShippingMethodsProvider;
+        $this->multiShippingMethodProvider = $multiShippingMethodProvider;
         $this->configProvider = $configProvider;
     }
 
@@ -32,7 +32,7 @@ class MultiShippingMethodFiltrationService implements RuleFiltrationServiceInter
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
         if ($this->isFilterApplicable()) {
-            $multipleShippingMethodsIdentifiers = $this->multiShippingMethodsProvider->getShippingMethods();
+            $multipleShippingMethodsIdentifiers = $this->multiShippingMethodProvider->getShippingMethods();
             $filteredRuleOwners = [];
             foreach ($ruleOwners as $ruleOwner) {
                 if (!$this->isMultipleShippingMethod($ruleOwner, $multipleShippingMethodsIdentifiers)) {
@@ -63,6 +63,6 @@ class MultiShippingMethodFiltrationService implements RuleFiltrationServiceInter
     {
         return
             $this->configProvider->isShippingSelectionByLineItemEnabled()
-            || $this->multiShippingMethodsProvider->hasShippingMethods();
+            || $this->multiShippingMethodProvider->hasShippingMethods();
     }
 }

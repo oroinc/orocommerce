@@ -320,7 +320,7 @@ services:
         public: false
         arguments:
             - '@oro_payment.rule_filtration.basic_service'
-            - '@oro_payment.repository.payment_methods_configs_rule'
+            - '@doctrine'
 
     oro_payment.enabled_rule_filtration.basic_service:
         class: 'Oro\Bundle\PaymentBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
@@ -333,7 +333,7 @@ services:
         public: false
         arguments:
             - '@oro_payment.enabled_rule_filtration.basic_service'
-            - '@oro_payment.repository.payment_methods_configs_rule'
+            - '@doctrine'
 
     oro_payment.provider.payment_method_object_variables:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentMethodObjectVariablesProvider'

@@ -9,28 +9,32 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class LineItemsShippingMethodsHasEnabledShippingRulesTest extends TestCase
+class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    private ShippingMethodsConfigsRuleRepository|MockObject $repository;
-    private CheckoutLineItemsProvider|MockObject $checkoutLineItemsProvider;
-    private ContextAccessorInterface|MockObject $contextAccessor;
-    private LineItemsShippingMethodsHasEnabledShippingRules $condition;
+    /** @var CheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsProvider;
+
+    /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
+
+    /** @var LineItemsShippingMethodsHasEnabledShippingRules */
+    private $condition;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ShippingMethodsConfigsRuleRepository::class);
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);
         $this->contextAccessor = $this->createMock(ContextAccessorInterface::class);
+
         $this->condition = new LineItemsShippingMethodsHasEnabledShippingRules(
             $this->repository,
             $this->checkoutLineItemsProvider
@@ -72,7 +76,7 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends TestCase
         $this->assertFalse($this->condition->evaluate([]));
     }
 
-    public function testExecuteWithTheSameLineItemsShippingMethods()
+    public function testExecuteWithSameLineItemsShippingMethods()
     {
         $checkout = $this->getCheckoutEntity('flat_rate_2');
 
@@ -90,14 +94,31 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends TestCase
         $this->assertTrue($this->condition->evaluate([]));
     }
 
+    public function testExecuteWithLineItemThatDoesNotHaveShippingMethod()
+    {
+        $checkout = $this->getCheckoutEntity('flat_rate_1', null);
+
+        $this->contextAccessor->expects($this->once())
+            ->method('getValue')
+            ->willReturn($checkout);
+
+        $this->repository->expects($this->once())
+            ->method('getEnabledRulesByMethod')
+            ->will($this->onConsecutiveCalls(
+                [new ShippingMethodsConfigsRule()],
+            ));
+
+        $this->condition->initialize(['entity' => new PropertyPath('entity')]);
+        $this->assertFalse($this->condition->evaluate([]));
+    }
+
     /**
-     * @param array $options
      * @dataProvider getSuccessfulInitializeData
      */
-    public function testInitializeSuccess($options)
+    public function testInitializeSuccess(array $options)
     {
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize($options)
         );
     }
@@ -124,7 +145,7 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends TestCase
 
     public function testToArray()
     {
-        $entity = $stdClass = new \stdClass();
+        $entity = new \stdClass();
         $this->condition->initialize([$entity]);
         $result = $this->condition->toArray();
 
@@ -157,25 +178,25 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends TestCase
     }
 
     private function getCheckoutEntity(
-        string $shippingMethod1 = 'flat_rate_1',
-        string $shippingMethod2 = 'flat_rate_2'
+        ?string $shippingMethod1 = 'flat_rate_1',
+        ?string $shippingMethod2 = 'flat_rate_2'
     ): Checkout {
-        $lineItem = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem, 1);
-        $lineItem->setShippingMethod($shippingMethod1);
+        $lineItem1 = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem1, 1);
+        $lineItem1->setShippingMethod($shippingMethod1);
 
         $lineItem2 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem, 2);
+        ReflectionUtil::setId($lineItem2, 2);
         $lineItem2->setShippingMethod($shippingMethod2);
 
         $checkout = new Checkout();
-        $checkout->addLineItem($lineItem);
+        $checkout->addLineItem($lineItem1);
         $checkout->addLineItem($lineItem2);
 
         $this->checkoutLineItemsProvider->expects($this->once())
             ->method('getCheckoutLineItems')
             ->with($checkout)
-            ->willReturn(new ArrayCollection([$lineItem, $lineItem2]));
+            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2]));
 
         return $checkout;
     }

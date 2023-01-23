@@ -17,17 +17,17 @@ class AvailableLineItemShippingMethodsProvider implements
     ResetInterface
 {
     private CheckoutShippingMethodsProviderInterface $shippingMethodsProvider;
-    private DefaultMultipleShippingMethodProvider $multipleShippingMethodsProvider;
+    private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutFactoryInterface $checkoutFactory;
     private array $cachedLineItemsShippingMethods = [];
 
     public function __construct(
         CheckoutShippingMethodsProviderInterface $shippingMethodsProvider,
-        DefaultMultipleShippingMethodProvider $multipleShippingMethodsProvider,
+        DefaultMultipleShippingMethodProvider $multiShippingMethodProvider,
         CheckoutFactoryInterface $checkoutFactory
     ) {
         $this->shippingMethodsProvider = $shippingMethodsProvider;
-        $this->multipleShippingMethodsProvider = $multipleShippingMethodsProvider;
+        $this->multiShippingMethodProvider = $multiShippingMethodProvider;
         $this->checkoutFactory = $checkoutFactory;
     }
 
@@ -57,10 +57,10 @@ class AvailableLineItemShippingMethodsProvider implements
     private function getApplicableMethodsViews(Checkout $checkout): array
     {
         $shippingMethods = $this->shippingMethodsProvider->getApplicableMethodsViews($checkout)->toArray();
-        if ($this->multipleShippingMethodsProvider->hasShippingMethods()) {
+        if ($this->multiShippingMethodProvider->hasShippingMethods()) {
             // Configured multi_shipping method should not be available for line items.
             // It should be set for checkout entity only.
-            $multipleShippingMethodIdentifiers = $this->multipleShippingMethodsProvider->getShippingMethods();
+            $multipleShippingMethodIdentifiers = $this->multiShippingMethodProvider->getShippingMethods();
             $shippingMethods = array_filter(
                 $shippingMethods,
                 fn ($identifier) => !\in_array($identifier, $multipleShippingMethodIdentifiers, true),

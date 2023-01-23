@@ -241,8 +241,7 @@ services:
             - '@oro_shipping.shipping_price.provider.cache'
             - '@oro_shipping.method.view_factory'
             - '@event_dispatcher'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_shipping.shipping_price.provider.memory_cache']]
+            - '@oro_shipping.shipping_price.provider.memory_cache'
 
     oro_shipping.shipping_price.provider.memory_cache:
         parent: oro.cache.provider.memory_cache
@@ -487,6 +486,15 @@ services:
             - '@doctrine'
             - '@oro_security.acl_helper'
 
+    oro_shipping.method.loader:
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodLoader'
+        arguments:
+            - '@oro_shipping.method.integration_channel_loader'
+            - '@oro_shipping.method.loader.memory_cache'
+
+    oro_shipping.method.loader.memory_cache:
+        parent: oro.cache.provider.memory_cache
+
     oro_shipping.method.provider.type.label.provider:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Label\Type\BasicMethodTypeLabelsProvider'
         arguments:
@@ -517,7 +525,7 @@ services:
         public: false
         arguments:
             - '@oro_shipping.rule_filtration.basic_service'
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
 
     oro_shipping.enabled_rule_filtration.basic_service:
         class: 'Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
@@ -530,7 +538,7 @@ services:
         public: false
         arguments:
             - '@oro_shipping.enabled_rule_filtration.basic_service'
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
 
     oro_shipping.configuration_search_provider.shipping_origin:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingOriginConfigSearchProvider'
@@ -565,7 +573,7 @@ services:
         arguments:
             - '%oro_shipping.multi_shipping.integration.channel.type%'
             - '@oro_shipping.multi_shipping.factory.method'
-            - '@oro_shipping.method.integration_channel_loader'
+            - '@oro_shipping.method.loader'
         tags:
             - { name: oro_shipping_method_provider }
 

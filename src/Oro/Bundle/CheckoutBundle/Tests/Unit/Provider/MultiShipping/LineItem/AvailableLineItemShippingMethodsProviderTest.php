@@ -16,7 +16,7 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
     private $shippingMethodsProvider;
 
     /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $multipleShippingMethodsProvider;
+    private $multiShippingMethodProvider;
 
     /** @var CheckoutFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutFactory;
@@ -27,12 +27,12 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
     protected function setUp(): void
     {
         $this->shippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
-        $this->multipleShippingMethodsProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
+        $this->multiShippingMethodProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);
 
         $this->provider = new AvailableLineItemShippingMethodsProvider(
             $this->shippingMethodsProvider,
-            $this->multipleShippingMethodsProvider,
+            $this->multiShippingMethodProvider,
             $this->checkoutFactory
         );
     }
@@ -49,7 +49,12 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testGetAvailableShippingMethods(): void
     {
-        $this->multipleShippingMethodsProvider->expects(self::once())
+        $lineItem = new CheckoutLineItem();
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem);
+        $lineItem->setCheckout($checkout);
+
+        $this->multiShippingMethodProvider->expects(self::once())
             ->method('getShippingMethods')
             ->willReturn(['multi_shipping_1', 'multi_shipping_2']);
 
@@ -76,14 +81,9 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
             ->method('getApplicableMethodsViews')
             ->willReturn($this->getShippingMethodViewCollection($availableShippingMethods));
 
-        $this->multipleShippingMethodsProvider->expects(self::once())
+        $this->multiShippingMethodProvider->expects(self::once())
             ->method('hasShippingMethods')
             ->willReturn(true);
-
-        $lineItem = new CheckoutLineItem();
-        $checkout = new Checkout();
-        $checkout->addLineItem($lineItem);
-        $lineItem->setCheckout($checkout);
 
         $this->checkoutFactory->expects(self::once())
             ->method('createCheckout')
@@ -107,7 +107,12 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testGetAvailableShippingMethodsWhenMultiShippingMethodsNotConfigured(): void
     {
-        $this->multipleShippingMethodsProvider->expects(self::never())
+        $lineItem = new CheckoutLineItem();
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem);
+        $lineItem->setCheckout($checkout);
+
+        $this->multiShippingMethodProvider->expects(self::never())
             ->method('getShippingMethods');
 
         $availableShippingMethods = [
@@ -125,14 +130,9 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
             ->method('getApplicableMethodsViews')
             ->willReturn($this->getShippingMethodViewCollection($availableShippingMethods));
 
-        $this->multipleShippingMethodsProvider->expects(self::once())
+        $this->multiShippingMethodProvider->expects(self::once())
             ->method('hasShippingMethods')
             ->willReturn(false);
-
-        $lineItem = new CheckoutLineItem();
-        $checkout = new Checkout();
-        $checkout->addLineItem($lineItem);
-        $lineItem->setCheckout($checkout);
 
         $this->checkoutFactory->expects(self::once())
             ->method('createCheckout')
@@ -145,6 +145,11 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testResetMemoryCache(): void
     {
+        $lineItem = new CheckoutLineItem();
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem);
+        $lineItem->setCheckout($checkout);
+
         $availableShippingMethods = [
             'test_shipping_1' => [
                 'identifier' => 'test_shipping_1',
@@ -156,14 +161,9 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
             ->method('getApplicableMethodsViews')
             ->willReturn($this->getShippingMethodViewCollection($availableShippingMethods));
 
-        $this->multipleShippingMethodsProvider->expects(self::exactly(2))
+        $this->multiShippingMethodProvider->expects(self::exactly(2))
             ->method('hasShippingMethods')
             ->willReturn(false);
-
-        $lineItem = new CheckoutLineItem();
-        $checkout = new Checkout();
-        $checkout->addLineItem($lineItem);
-        $lineItem->setCheckout($checkout);
 
         $this->checkoutFactory->expects(self::exactly(2))
             ->method('createCheckout')

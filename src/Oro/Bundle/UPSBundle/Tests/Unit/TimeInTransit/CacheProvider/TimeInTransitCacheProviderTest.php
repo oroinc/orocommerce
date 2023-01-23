@@ -12,62 +12,32 @@ use Psr\Cache\CacheItemPoolInterface;
 
 class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const BEFORE_LIFETIME_PROVIDER_CACHE_KEY = 'US:12345:US:12345:2018010112';
+    private const BEFORE_LIFETIME_PROVIDER_CACHE_KEY = 'US:12345:US:12345:2018010112';
+    private const CACHE_KEY = 'US:12345:US:12345:2018010112_transport_id';
+    private const PICKUP_DATE = '01.01.2018 12:00';
+    private const LIFETIME = 100;
 
-    /**
-     * @internal
-     */
-    const CACHE_KEY = 'US:12345:US:12345:2018010112_transport_id';
-
-    /**
-     * @internal
-     */
-    const PICKUP_DATE = '01.01.2018 12:00';
-
-    /**
-     * @internal
-     */
-    const LIFETIME = 100;
-
-    /**
-     * @var TimeInTransitCacheProvider
-     */
-    private $timeInTransitCacheProvider;
-
-    /**
-     * @var UPSSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSSettings|\PHPUnit\Framework\MockObject\MockObject */
     private $settings;
 
-    /**
-     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
     /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $cacheItem;
+    private $cacheItem;
 
-    /**
-     * @var LifetimeProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LifetimeProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $lifetimeProvider;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime */
     private $pickupDate;
 
-    /**
-     * @var AddressStub
-     */
+    /** @var AddressStub */
     private $address;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var TimeInTransitCacheProvider */
+    private $timeInTransitCacheProvider;
+
     protected function setUp(): void
     {
         $this->address = new AddressStub();
@@ -77,7 +47,8 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
         $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);
 
-        $this->lifetimeProvider->method('generateLifetimeAwareKey')
+        $this->lifetimeProvider->expects(self::any())
+            ->method('generateLifetimeAwareKey')
             ->with($this->settings, self::BEFORE_LIFETIME_PROVIDER_CACHE_KEY)
             ->willReturn(self::CACHE_KEY);
 
@@ -90,8 +61,7 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testContains()
     {
-        $this->cacheProvider
-            ->expects(static::once())
+        $this->cacheProvider->expects(self::once())
             ->method('hasItem')
             ->with(self::CACHE_KEY)
             ->willReturn(false);
@@ -103,8 +73,7 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testDelete()
     {
-        $this->cacheProvider
-            ->expects(static::once())
+        $this->cacheProvider->expects(self::once())
             ->method('deleteItem')
             ->with(self::CACHE_KEY)
             ->willReturn(true);
@@ -114,8 +83,7 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testDeleteAll()
     {
-        $this->cacheProvider
-            ->expects(static::once())
+        $this->cacheProvider->expects(self::once())
             ->method('clear')
             ->willReturn(true);
 
@@ -137,7 +105,7 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testSave()
     {
-        $timeInTransitResult = $this->createTimeInTransitResultMock();
+        $timeInTransitResult = $this->createMock(TimeInTransitResultInterface::class);
 
         $this->cacheProvider->expects($this->once())
             ->method('getItem')
@@ -158,7 +126,8 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
 
         $lifetime = 10;
 
-        $this->lifetimeProvider->method('getLifetime')
+        $this->lifetimeProvider->expects(self::any())
+            ->method('getLifetime')
             ->with($this->settings, $lifetime)
             ->willReturn(self::LIFETIME);
 
@@ -166,13 +135,5 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
             $this->timeInTransitCacheProvider
                 ->save($this->address, $this->address, $this->pickupDate, $timeInTransitResult, $lifetime)
         );
-    }
-
-    /**
-     * @return TimeInTransitResultInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createTimeInTransitResultMock()
-    {
-        return $this->createMock(TimeInTransitResultInterface::class);
     }
 }

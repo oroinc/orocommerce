@@ -15,7 +15,7 @@ class MultiShippingMethodFiltrationServiceTest extends \PHPUnit\Framework\TestCa
     private $filtrationService;
 
     /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $multiShippingMethodsProvider;
+    private $multiShippingMethodProvider;
 
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $configProvider;
@@ -26,12 +26,12 @@ class MultiShippingMethodFiltrationServiceTest extends \PHPUnit\Framework\TestCa
     protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->multiShippingMethodsProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
+        $this->multiShippingMethodProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
         $this->configProvider = $this->createMock(ConfigProvider::class);
 
         $this->multiShippingFiltrationService = new MultiShippingMethodFiltrationService(
             $this->filtrationService,
-            $this->multiShippingMethodsProvider,
+            $this->multiShippingMethodProvider,
             $this->configProvider
         );
     }
@@ -42,10 +42,10 @@ class MultiShippingMethodFiltrationServiceTest extends \PHPUnit\Framework\TestCa
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(true);
 
-        $this->multiShippingMethodsProvider->expects($this->never())
+        $this->multiShippingMethodProvider->expects($this->never())
             ->method('hasShippingMethods');
 
-        $this->multiShippingMethodsProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn(['multi_shipping_1']);
 
@@ -74,11 +74,11 @@ class MultiShippingMethodFiltrationServiceTest extends \PHPUnit\Framework\TestCa
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
 
-        $this->multiShippingMethodsProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('hasShippingMethods')
             ->willReturn(true);
 
-        $this->multiShippingMethodsProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn(['multi_shipping_1']);
 
@@ -105,11 +105,11 @@ class MultiShippingMethodFiltrationServiceTest extends \PHPUnit\Framework\TestCa
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
 
-        $this->multiShippingMethodsProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('hasShippingMethods')
             ->willReturn(false);
 
-        $this->multiShippingMethodsProvider->expects($this->never())
+        $this->multiShippingMethodProvider->expects($this->never())
             ->method('getShippingMethods');
 
         $rule1 = $this->createShippingMethodConfigRule('flat_rate_2');
