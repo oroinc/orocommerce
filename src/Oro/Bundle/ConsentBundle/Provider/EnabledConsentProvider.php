@@ -18,25 +18,12 @@ use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
  */
 class EnabledConsentProvider
 {
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    protected ConfigManager $configManager;
+    protected ConsentConfigConverter $converter;
+    protected ConsentContextProviderInterface $contextProvider;
 
-    /**
-     * @var ConsentConfigConverter
-     */
-    private $converter;
-
-    /**
-     * @var ConsentContextProviderInterface
-     */
-    private $contextProvider;
-
-    /**
-     * @var ConsentFilterInterface[]
-     */
-    private $filters;
+    /** @var ConsentFilterInterface[] */
+    protected array $filters;
 
     public function __construct(
         ConfigManager $configManager,
@@ -113,7 +100,7 @@ class EnabledConsentProvider
      *
      * @return bool
      */
-    private function filterConsent(Consent $consent, array $enabledFilters, array $filterParams)
+    protected function filterConsent(Consent $consent, array $enabledFilters, array $filterParams)
     {
         foreach ($this->filters as $filter) {
             if (in_array($filter->getName(), $enabledFilters) &&
@@ -128,7 +115,7 @@ class EnabledConsentProvider
     /**
      * @return ConsentConfig[]
      */
-    private function getConsentConfigs()
+    protected function getConsentConfigs()
     {
         /**
          * If we can't resolve website, return empty result
