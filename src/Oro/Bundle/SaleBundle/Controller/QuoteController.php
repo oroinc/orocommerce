@@ -2,7 +2,13 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
+use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderComposite;
+use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
+use Oro\Bundle\FormBundle\Provider\SaveAndReturnActionFormTemplateDataProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
@@ -15,6 +21,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -24,6 +31,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class QuoteController extends AbstractController
 {
     const REDIRECT_BACK_FLAG = 'redirect_back';
+
     /**
      * @Route("/view/{id}", name="oro_sale_quote_view", requirements={"id"="\d+"})
      * @Template
@@ -41,7 +49,7 @@ class QuoteController extends AbstractController
     public function viewAction(Quote $quote)
     {
         return [
-            'entity' => $quote
+            'entity' => $quote,
         ];
     }
 
@@ -55,7 +63,7 @@ class QuoteController extends AbstractController
     public function indexAction()
     {
         return [
-            'entity_class' => Quote::class
+            'entity_class' => Quote::class,
         ];
     }
 
@@ -70,36 +78,103 @@ class QuoteController extends AbstractController
      * )
      *
      * @param Request $request
-     * @return array|RedirectResponse
+     * @return array|Response|RedirectResponse
      */
     public function createAction(Request $request)
     {
+        return $this->createQuote($request);
+    }
+
+    /**
+     * Create sales quote form for customer
+     *
+     * @Route(
+     *     "/create/customer/{customer}",
+     *     name="oro_sale_quote_create_for_customer",
+     *     requirements={"customer"="\d+"}
+     * )
+     * @Template("@OroSale/Quote/update.html.twig")
+     * @AclAncestor("oro_sale_quote_create")
+     */
+    public function createQuoteForCustomerAction(
+        Request $request,
+        Customer $customer
+    ): array|Response {
+        if (!$this->isQuickCreationButtonsEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->isGranted('VIEW', $customer)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $quote = new Quote();
+        $quote->setCustomer($customer);
 
-        if ($request->get(self::REDIRECT_BACK_FLAG, false)) {
-            return $this->handleRequestAndRedirectBack(
-                $request,
-                $quote,
-                '@OroSale/Quote/createWithReturn.html.twig'
+        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider
+            ->setSaveFormActionRoute(
+                'oro_sale_quote_create_for_customer',
+                [
+                    'customer' => $customer->getId(),
+                ]
+            )
+            ->setReturnActionRoute(
+                'oro_customer_customer_view',
+                [
+                    'id' => $customer->getId(),
+                ],
+                'oro_customer_customer_view'
             );
+
+        return $this->createQuote($request, $quote, $saveAndReturnActionFormTemplateDataProvider);
+    }
+
+
+    /**
+     * Create sales quote form for customer user
+     *
+     * @Route(
+     *     "/create/customer-user/{customerUser}",
+     *     name="oro_sale_quote_create_for_customer_user",
+     *     requirements={"customerUser"="\d+"}
+     * )
+     * @Template("@OroSale/Quote/update.html.twig")
+     * @AclAncestor("oro_sale_quote_create")
+     */
+    public function createQuoteForCustomerUserAction(
+        Request $request,
+        CustomerUser $customerUser
+    ): array|Response {
+        if (!$this->isQuickCreationButtonsEnabled()) {
+            throw $this->createNotFoundException();
         }
 
-        if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
-            return $this->update($quote, $request);
+        if (!$this->isGranted('VIEW', $customerUser)) {
+            throw $this->createAccessDeniedException();
         }
 
-        $this->createForm(QuoteType::class, $quote);
+        $quote = new Quote();
+        $quote->setCustomerUser($customerUser);
+        $quote->setCustomer($customerUser->getCustomer());
 
-        if (!$quote->getWebsite()) {
-            $quote->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
-        }
+        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider
+            ->setSaveFormActionRoute(
+                'oro_sale_quote_create_for_customer_user',
+                [
+                    'customerUser' => $customerUser->getId(),
+                ]
+            )
+            ->setReturnActionRoute(
+                'oro_customer_customer_user_view',
+                [
+                    'id' => $customerUser->getId(),
+                ],
+                'oro_customer_customer_user_view'
+            );
 
-        $em = $this->get('doctrine')->getManagerForClass(Quote::class);
-
-        $em->persist($quote);
-        $em->flush();
-
-        return $this->redirectToRoute('oro_sale_quote_update', ['id' => $quote->getId()]);
+        return $this->createQuote($request, $quote, $saveAndReturnActionFormTemplateDataProvider);
     }
 
     /**
@@ -134,7 +209,7 @@ class QuoteController extends AbstractController
     public function infoAction(Quote $quote)
     {
         return [
-            'entity' => $quote
+            'entity' => $quote,
         ];
     }
 
@@ -145,15 +220,54 @@ class QuoteController extends AbstractController
      */
     protected function update(Quote $quote, Request $request)
     {
-        $handler = $this->get(UpdateHandlerFacade::class);
-        return $handler->update(
+        $args = \func_get_args();
+        $resultProvider = $args[2] ?? null;
+
+        $formTemplateDataProviderComposite = $this->get(FormTemplateDataProviderComposite::class)
+            ->addFormTemplateDataProviders('quote_update')
+            ->addFormTemplateDataProviders($resultProvider);
+
+        return $this->get(UpdateHandlerFacade::class)->update(
             $quote,
             QuoteType::class,
             $this->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,
-            'quote_update'
+            $formTemplateDataProviderComposite
         );
+    }
+
+    private function createQuote(
+        Request $request,
+        ?Quote $quote = null,
+        FormTemplateDataProviderInterface|null $resultProvider = null
+    ): array|Response {
+        $quote = $quote ?? new Quote();
+
+        if ($request->get(self::REDIRECT_BACK_FLAG, false)) {
+            return $this->handleRequestAndRedirectBack(
+                $request,
+                $quote,
+                '@OroSale/Quote/createWithReturn.html.twig'
+            );
+        }
+
+        if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
+            return $this->update($quote, $request, $resultProvider);
+        }
+
+        $this->createForm(QuoteType::class, $quote);
+
+        if (!$quote->getWebsite()) {
+            $quote->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
+        }
+
+        $em = $this->get('doctrine')->getManagerForClass(Quote::class);
+
+        $em->persist($quote);
+        $em->flush();
+
+        return $this->redirectToRoute('oro_sale_quote_update', ['id' => $quote->getId()]);
     }
 
     /**
@@ -184,7 +298,7 @@ class QuoteController extends AbstractController
         return $this->render(
             $template,
             array_merge($updateResponse, [
-                'return_route' => $routeToRedirectBack
+                'return_route' => $routeToRedirectBack,
             ])
         );
     }
@@ -200,6 +314,11 @@ class QuoteController extends AbstractController
         return $updateResponse instanceof RedirectResponse;
     }
 
+    private function isQuickCreationButtonsEnabled(): bool
+    {
+        return $this->get(ConfigManager::class)->get('oro_ui.enable_quick_creation_buttons');
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -212,6 +331,9 @@ class QuoteController extends AbstractController
                 TranslatorInterface::class,
                 UpdateHandlerFacade::class,
                 ReturnRouteDataStorage::class,
+                SaveAndReturnActionFormTemplateDataProvider::class,
+                FormTemplateDataProviderComposite::class,
+                ConfigManager::class,
             ]
         );
     }

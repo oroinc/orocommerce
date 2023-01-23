@@ -36,21 +36,15 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em = self::getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
 
-        $this->getOptionalListenerManager()->enableListener('oro_product.event_listener.product_image_resize_listener');
-        $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_prototype_change');
-        $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_change');
-        $this->getOptionalListenerManager()->enableListener(
-            'oro_dataaudit.listener.send_changed_entities_to_message_queue'
-        );
+        $optionalListenerManager = $this->getOptionalListenerManager();
+        $optionalListenerManager->enableListener('oro_product.event_listener.product_image_resize_listener');
+        $optionalListenerManager->enableListener('oro_redirect.event_listener.slug_prototype_change');
+        $optionalListenerManager->enableListener('oro_redirect.event_listener.slug_change');
+        $optionalListenerManager->enableListener('oro_dataaudit.listener.send_changed_entities_to_message_queue');
 
         $this->loadFixtures([LoadProductData::class]);
     }
 
-    /**
-     * @param ProductImage $productImage
-     *
-     * @return array
-     */
     private function prepareProductImageResizeMessage(ProductImage $productImage): array
     {
         return [
@@ -60,12 +54,10 @@ class ProductImageListenerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param Product[] $products
-     */
     private function prepareProductsReindexMessage(array $products, array $expectedFieldGroups = null): array
     {
         $entityIds = [];
+        /** @var Product $product */
         foreach ($products as $product) {
             $entityIds[] = $product->getId();
         }
@@ -85,15 +77,24 @@ class ProductImageListenerTest extends WebTestCase
         ];
     }
 
+    private function getProduct(string $reference): Product
+    {
+        return $this->getReference($reference);
+    }
+
+    private function getProductImage(Product $product): ProductImage
+    {
+        return $product->getImages()->first();
+    }
+
     public function testCreateProductImage(): void
     {
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
         $productImage = new ProductImage();
         $productImage->addType(ProductImageType::TYPE_MAIN);
         $productImage->setProduct($product);
-
         $this->em->persist($productImage);
+
         $this->em->flush();
 
         self::assertMessagesCount(ResizeProductImageTopic::getName(), 1);
@@ -105,22 +106,19 @@ class ProductImageListenerTest extends WebTestCase
 
     public function testCreateProductImagesForSeveralProducts(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
         $productImage1 = new ProductImage();
         $productImage1->addType(ProductImageType::TYPE_MAIN);
         $productImage1->setProduct($product1);
         $this->em->persist($productImage1);
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
         $productImage2 = new ProductImage();
         $productImage2->addType(ProductImageType::TYPE_MAIN);
         $productImage2->setProduct($product2);
         $this->em->persist($productImage2);
 
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
         $productImage3 = new ProductImage();
         $productImage3->addType(ProductImageType::TYPE_MAIN);
         $productImage3->setProduct($product3);
@@ -153,14 +151,12 @@ class ProductImageListenerTest extends WebTestCase
 
     public function testUpdateTypesOnProductImage(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_3);
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_3);
         $productImage1 = new ProductImage();
         $productImage1->setProduct($product1);
         $this->em->persist($productImage1);
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_4);
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_4);
         $productImage2 = new ProductImage();
         $productImage2->setProduct($product2);
         $this->em->persist($productImage2);
@@ -203,19 +199,15 @@ class ProductImageListenerTest extends WebTestCase
 
     public function testUpdateFileOnProductImage(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var ProductImage $productImage1 */
-        $productImage1 = $product1->getImages()->first();
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage1 = $this->getProductImage($product1);
 
         $image1 = $productImage1->getImage();
         $image1->setFile(new File('test1.file', false));
         $image1->preUpdate();
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        /** @var ProductImage $productImage2 */
-        $productImage2 = $product2->getImages()->first();
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $productImage2 = $this->getProductImage($product2);
 
         $image2 = $productImage2->getImage();
         $image2->setFile(new File('test2.file', false));
@@ -244,10 +236,8 @@ class ProductImageListenerTest extends WebTestCase
 
     public function testUpdateFileAndTypesOnProductImage(): void
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var ProductImage $productImage1 */
-        $productImage1 = $product1->getImages()->first();
+        $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
+        $productImage1 = $this->getProductImage($product1);
         $productImage1->removeType(ProductImageType::TYPE_MAIN);
         $productImage1->addType(ProductImageType::TYPE_ADDITIONAL);
 
@@ -255,10 +245,8 @@ class ProductImageListenerTest extends WebTestCase
         $image1->setFile(new File('test.file', false));
         $image1->preUpdate();
 
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-        /** @var ProductImage $productImage2 */
-        $productImage2 = $product2->getImages()->first();
+        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
+        $productImage2 = $this->getProductImage($product2);
         $productImage2->removeType(ProductImageType::TYPE_MAIN);
         $productImage2->addType(ProductImageType::TYPE_ADDITIONAL);
 
@@ -289,19 +277,17 @@ class ProductImageListenerTest extends WebTestCase
 
     public function testDuplicateProductImage(): void
     {
-        /** @var Product $product3 */
-        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
-        $productCopy3 = self::getContainer()->get('oro_product.service.duplicator')->duplicate($product3);
-        $this->em->refresh($productCopy3);
-        /** @var ProductImage $productImageCopy1 */
-        $productImageCopy1 = $productCopy3->getImages()->first();
+        $duplicator = self::getContainer()->get('oro_product.service.duplicator');
 
-        /** @var Product $product8 */
-        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
-        $productCopy8 = self::getContainer()->get('oro_product.service.duplicator')->duplicate($product8);
+        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
+        $productCopy3 = $duplicator->duplicate($product3);
+        $this->em->refresh($productCopy3);
+        $productImageCopy1 = $this->getProductImage($productCopy3);
+
+        $product8 = $this->getProduct(LoadProductData::PRODUCT_8);
+        $productCopy8 = $duplicator->duplicate($product8);
         $this->em->refresh($productCopy8);
-        /** @var ProductImage $productImageCopy2 */
-        $productImageCopy2 = $productCopy8->getImages()->first();
+        $productImageCopy2 = $this->getProductImage($productCopy8);
 
         self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);

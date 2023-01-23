@@ -30,9 +30,23 @@ oro:
         customer:
             label:                        Customer
             description:                  Customers are companies who buy products using OroCommerce store frontend. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
+            quick_access_button:
+                new_order:
+                    label: New Order
+                create_order:
+                    label: Create Order
+                    widget:
+                        title: Create Order
         customer_user:
             label:                        Customer User
             description:                  Customer User represents a person who acts on behalf of the company to buy products using OroCommerce store frontend.
+            quick_access_button:
+                new_order:
+                    label: New Order
+                create_order:
+                    label: Create Order
+                    widget:
+                        title: Create Order
         organization.label:               Organization
         currency:
             label:                        Currency

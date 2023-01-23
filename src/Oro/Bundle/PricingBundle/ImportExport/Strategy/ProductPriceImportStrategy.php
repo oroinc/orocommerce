@@ -87,29 +87,30 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
 
     /**
      * @param ProductPrice $entity
-     * @return ProductPrice|null
      *
-     * {@inheritdoc}
+     * @return ProductPrice|null
      */
-    protected function validateAndUpdateContext($entity)
+    protected function validateAndUpdateContext($entity): ?ProductPrice
     {
-        $validatedEntity = parent::validateAndUpdateContext($entity);
+        $entity = parent::validateAndUpdateContext($entity);
 
-        if (null !== $validatedEntity) {
-            $processedEntities = (array)$this->context->getValue(self::PROCESSED_ENTITIES_HASH);
-            $hash = $this->getEntityHashByUniqueFields($entity);
+        return $entity ? $this->validateEntityUniqueness($entity) : $entity;
+    }
 
-            if (!empty($processedEntities[$hash])) {
-                $this->addEntityUniquenessViolation($entity);
+    protected function validateEntityUniqueness(ProductPrice $entity): ?ProductPrice
+    {
+        $processedEntities = $this->getProcessedEntities();
+        $hash = $this->getEntityHashByUniqueFields($entity);
 
-                $validatedEntity = null;
-            } else {
-                $processedEntities[$hash] = true;
-                $this->context->setValue(self::PROCESSED_ENTITIES_HASH, $processedEntities);
-            }
+        if (!empty($processedEntities[$hash])) {
+            $this->addEntityUniquenessViolation($entity);
+            $entity = null;
+        } else {
+            $processedEntities[$hash] = true;
+            $this->context->setValue(self::PROCESSED_ENTITIES_HASH, $processedEntities);
         }
 
-        return $validatedEntity;
+        return $entity;
     }
 
     /**
@@ -154,5 +155,10 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
         } else {
             $this->context->incrementAddCount(-1);
         }
+    }
+
+    private function getProcessedEntities(): ?array
+    {
+        return $this->context->getValue(self::PROCESSED_ENTITIES_HASH);
     }
 }
