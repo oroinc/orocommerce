@@ -9,29 +9,26 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 
 /**
- * Listener for modification of shipping prices according promotions discounts
+ * Modifies shipping prices according promotions discounts.
  */
 class ShippingMethodsListener
 {
-    /**
-     * @var PromotionExecutor
-     */
-    private $promotionExecutor;
+    private PromotionExecutor $promotionExecutor;
 
     public function __construct(PromotionExecutor $promotionExecutor)
     {
         $this->promotionExecutor = $promotionExecutor;
     }
 
-    public function modifyPrices(ApplicableMethodsEvent $event)
+    public function modifyPrices(ApplicableMethodsEvent $event): void
     {
-        $methodCollection = $event->getMethodCollection();
         $sourceEntity = $event->getSourceEntity();
 
         if (!$sourceEntity instanceof Checkout || $sourceEntity->getSourceEntity() instanceof QuoteDemand) {
             return;
         }
 
+        $methodCollection = $event->getMethodCollection();
         foreach ($methodCollection->getAllMethodsTypesViews() as $shippingMethodName => $methodTypes) {
             foreach ($methodTypes as $methodTypeId => $methodTypesView) {
                 $methodTypesView['price'] = $this->calculateDiscountedPrice(
@@ -47,13 +44,6 @@ class ShippingMethodsListener
         }
     }
 
-    /**
-     * @param Checkout $checkoutSource
-     * @param string $shippingMethod
-     * @param string $methodTypeId
-     * @param Price $shippingCost `
-     * @return Price
-     */
     private function calculateDiscountedPrice(
         Checkout $checkoutSource,
         string $shippingMethod,

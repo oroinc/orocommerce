@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Manager for creating Multi Shipping integration
+ * Provides functionality to create a new Multi Shipping integration or get existing one if any.
  */
 class MultiShippingIntegrationManager
 {
@@ -38,9 +38,10 @@ class MultiShippingIntegrationManager
 
     public function createIntegration(): Channel
     {
-        $channel = $this->findIntegration();
+        $organization = $this->getOrganization();
 
-        if (!empty($channel)) {
+        $channel = $this->findIntegration($organization);
+        if (null !== $channel) {
             return $channel;
         }
 
@@ -48,17 +49,13 @@ class MultiShippingIntegrationManager
             throw new AccessDeniedException();
         }
 
-        $transport = new MultiShippingSettings();
-
         $channel = new Channel();
-        $channel->setType(MultiShippingChannelType::TYPE)
-            ->setName(
-                $this->translator->trans('oro.shipping.multi_shipping_method.label')
-            )
-            ->setEnabled(true)
-            ->setOrganization($this->getOrganization())
-            ->setDefaultUserOwner($this->getMainUser())
-            ->setTransport($transport);
+        $channel->setType(MultiShippingChannelType::TYPE);
+        $channel->setName($this->translator->trans('oro.shipping.multi_shipping_method.label'));
+        $channel->setEnabled(true);
+        $channel->setOrganization($organization);
+        $channel->setDefaultUserOwner($this->getUser());
+        $channel->setTransport(new MultiShippingSettings());
 
         $manager = $this->doctrine->getManagerForClass(Channel::class);
         $manager->persist($channel);
@@ -69,35 +66,34 @@ class MultiShippingIntegrationManager
 
     public function integrationExists(): bool
     {
-        return (bool)$this->findIntegration();
+        return null !== $this->findIntegration($this->getOrganization());
     }
 
-    private function findIntegration(): ?Channel
+    private function findIntegration(Organization $organization): ?Channel
     {
         return $this->doctrine->getRepository(Channel::class)
-            ->findOneBy([
-                'type' => MultiShippingChannelType::TYPE,
-                'organization' => $this->getOrganization(),
-            ]);
+            ->findOneBy(['type' => MultiShippingChannelType::TYPE, 'organization' => $organization]);
     }
 
     private function getOrganization(): Organization
     {
-        return $this->tokenAccessor->getOrganization();
+        $organization = $this->tokenAccessor->getOrganization();
+        if (null === $organization) {
+            throw new \RuntimeException('Organization must exist.');
+        }
+
+        return $organization;
     }
 
-    private function getMainUser(): User
+    private function getUser(): User
     {
         $user = $this->tokenAccessor->getUser();
-
         if (!$user instanceof User) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'User must be an instance of "%s", "%s" is given.',
-                    User::class,
-                    is_object($user) ? ClassUtils::getClass($user) : gettype($user)
-                )
-            );
+            throw new \RuntimeException(sprintf(
+                'User must be an instance of "%s", "%s" is given.',
+                User::class,
+                \is_object($user) ? ClassUtils::getClass($user) : \gettype($user)
+            ));
         }
 
         return $user;

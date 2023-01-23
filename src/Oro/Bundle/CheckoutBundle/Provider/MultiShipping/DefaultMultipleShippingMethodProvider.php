@@ -2,28 +2,27 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping;
 
-use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 /**
  * Providers available shipping methods for a checkout or main orders created during multiple shipping flow.
  */
 class DefaultMultipleShippingMethodProvider
 {
-    private MultiShippingMethodProvider $shippingProvider;
-    private ?array $shippingMethods = null;
+    private ShippingMethodProviderInterface $multiShippingMethodProvider;
 
-    public function __construct(MultiShippingMethodProvider $shippingProvider)
+    public function __construct(ShippingMethodProviderInterface $multiShippingMethodProvider)
     {
-        $this->shippingProvider = $shippingProvider;
+        $this->multiShippingMethodProvider = $multiShippingMethodProvider;
     }
 
     /**
-     * Gets the first configured multi shipping method.
+     * Gets the first configured Multi Shipping method.
      */
     public function getShippingMethod(): ShippingMethodInterface
     {
-        $methods = $this->getCachedShippingMethods();
+        $methods = $this->multiShippingMethodProvider->getShippingMethods();
         if (!$methods) {
             throw new \LogicException('There are no enabled multi shipping methods');
         }
@@ -36,7 +35,7 @@ class DefaultMultipleShippingMethodProvider
      */
     public function getShippingMethods(): array
     {
-        $methods = $this->getCachedShippingMethods();
+        $methods = $this->multiShippingMethodProvider->getShippingMethods();
         if (!$methods) {
             throw new \LogicException('There are no enabled multi shipping methods');
         }
@@ -46,17 +45,8 @@ class DefaultMultipleShippingMethodProvider
 
     public function hasShippingMethods(): bool
     {
-        $methods = $this->getCachedShippingMethods();
+        $methods = $this->multiShippingMethodProvider->getShippingMethods();
 
         return !empty($methods);
-    }
-
-    private function getCachedShippingMethods(): array
-    {
-        if (null === $this->shippingMethods) {
-            $this->shippingMethods = $this->shippingProvider->getShippingMethods();
-        }
-
-        return $this->shippingMethods;
     }
 }

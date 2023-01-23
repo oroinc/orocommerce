@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 /**
- * Basic interface for classes which provides line item shipping price.
+ * Represents a service to calculate a shipping price for a checkout line item.
  */
 interface LineItemShippingPriceProviderInterface
 {

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -31,7 +30,7 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
     /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
     private $subtotal;
 
-    /** @var Checkout|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var object|\PHPUnit\Framework\MockObject\MockObject */
     private $sourceEntity;
 
     /** @var Website|\PHPUnit\Framework\MockObject\MockObject */
@@ -45,7 +44,7 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
         $this->billingAddress = $this->createMock(AddressInterface::class);
         $this->shippingAddress = $this->createMock(AddressInterface::class);
         $this->subtotal = $this->createMock(Price::class);
-        $this->sourceEntity = $this->createMock(Checkout::class);
+        $this->sourceEntity = $this->createMock(\stdClass::class);
         $this->website = $this->createMock(Website::class);
     }
 

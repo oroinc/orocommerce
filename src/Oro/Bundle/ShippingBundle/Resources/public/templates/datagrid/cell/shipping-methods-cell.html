@@ -25,9 +25,9 @@
                        <% if (selected) { %>checked<% } %>
                 >
                 <%- _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
-                    'translatedMethodType': _.escape(type.label),
+                    'translatedMethodType': type.label,
                     'price': formatter.formatCurrency(type.price.value, type.price.currency)
-                    }) %>
+                }) %>
                 </label>
         </li>
     <% }); %>

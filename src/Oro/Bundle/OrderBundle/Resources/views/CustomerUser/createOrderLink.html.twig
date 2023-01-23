@@ -1,0 +1,17 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{{ UI.quickAccessLink({
+    'dataUrl': path('oro_order_create_for_customer_user', { customerUser: entity.id }),
+    'iCss': 'fa-usd',
+    'title': 'oro.order.customer_user.quick_access_button.create_order.label'|trans,
+    'label': 'oro.order.customer_user.quick_access_button.create_order.label'|trans,
+    'widget': {
+        'reload-grid-name': 'customer-user-orders-grid',
+        'options': {
+            'alias': 'oro_order_create_for_customer_user_dialog',
+            'dialogOptions': {
+                'title': 'oro.order.customer_user.quick_access_button.create_order.widget.title'|trans,
+            }
+        }
+    }
+}) }}

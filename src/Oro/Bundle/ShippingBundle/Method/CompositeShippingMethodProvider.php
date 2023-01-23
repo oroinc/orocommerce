@@ -7,11 +7,11 @@ namespace Oro\Bundle\ShippingBundle\Method;
  */
 class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
 {
-    /** @var iterable|ShippingMethodProviderInterface[] */
+    /** @var iterable<ShippingMethodProviderInterface> */
     private iterable $providers;
 
     /**
-     * @param iterable|ShippingMethodProviderInterface[] $providers
+     * @param iterable<ShippingMethodProviderInterface> $providers
      */
     public function __construct(iterable $providers)
     {

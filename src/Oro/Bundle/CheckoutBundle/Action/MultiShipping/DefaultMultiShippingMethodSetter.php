@@ -15,18 +15,18 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class DefaultMultiShippingMethodSetter
 {
-    private DefaultMultipleShippingMethodProvider $shippingProvider;
+    private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutShippingMethodsProviderInterface $shippingPriceProvider;
     private ManagerRegistry $doctrine;
     private CheckoutLineItemsShippingManager $lineItemsShippingManager;
 
     public function __construct(
-        DefaultMultipleShippingMethodProvider $shippingProvider,
+        DefaultMultipleShippingMethodProvider $multiShippingMethodProvider,
         CheckoutShippingMethodsProviderInterface $shippingPriceProvider,
         ManagerRegistry $doctrine,
         CheckoutLineItemsShippingManager $lineItemsShippingManager
     ) {
-        $this->shippingProvider = $shippingProvider;
+        $this->multiShippingMethodProvider = $multiShippingMethodProvider;
         $this->shippingPriceProvider = $shippingPriceProvider;
         $this->doctrine = $doctrine;
         $this->lineItemsShippingManager = $lineItemsShippingManager;
@@ -37,7 +37,7 @@ class DefaultMultiShippingMethodSetter
         array $lineItemsShippingMethods = [],
         bool $useDefaults = false
     ): void {
-        $multiShippingMethod = $this->shippingProvider->getShippingMethod();
+        $multiShippingMethod = $this->multiShippingMethodProvider->getShippingMethod();
         $methodTypes = $multiShippingMethod->getTypes();
         $multiShippingMethodType = reset($methodTypes);
 

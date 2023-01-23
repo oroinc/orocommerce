@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -46,11 +47,12 @@ class ImportExportResultListener implements FeatureToggleableInterface
         }
 
         $entityManager = $this->doctrine->getManagerForClass(PriceList::class);
+        $type = $importExportResult->getType();
         $options = $importExportResult->getOptions();
         $priceListId = $options['price_list_id'];
         $version = $options['importVersion'];
         $priceList = $entityManager->find(PriceList::class, $priceListId);
-        if ($priceList !== null) {
+        if ($priceList !== null && $type !== ProcessorRegistry::TYPE_IMPORT_VALIDATION) {
             $this->processLexemes($priceList, $version);
             if ($this->isFeaturesEnabled()) {
                 $this->emitCplTriggers($priceList, $version);

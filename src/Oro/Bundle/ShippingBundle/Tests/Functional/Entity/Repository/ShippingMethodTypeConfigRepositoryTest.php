@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
-use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 {
-    use FlatRateIntegrationTrait;
-
     private ShippingMethodTypeConfigRepository $repository;
 
     protected function setUp(): void
@@ -60,9 +58,7 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 
     public function testFindEnabledByMethodIdentifier()
     {
-        $method = $this->getFlatRateIdentifier();
-
-        $actual = $this->repository->findEnabledByMethodIdentifier($method);
+        $actual = $this->repository->findEnabledByMethodIdentifier($this->getFlatRateIdentifier());
 
         self::assertContains($this->getFirstType('shipping_rule.4'), $actual);
         self::assertContains($this->getFirstType('shipping_rule.9'), $actual);
@@ -77,5 +73,15 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
         $typeConfig = $methodConfig->getTypeConfigs()->first();
 
         return false !== $typeConfig ? $typeConfig : null;
+    }
+
+    private function getFlatRateIdentifier(): string
+    {
+        return sprintf('flat_rate_%s', $this->getReference(LoadFlatRateIntegration::REFERENCE_FLAT_RATE)->getId());
+    }
+
+    private function getFlatRatePrimaryIdentifier(): string
+    {
+        return 'primary';
     }
 }

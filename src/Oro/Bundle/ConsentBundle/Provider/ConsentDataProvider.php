@@ -12,15 +12,8 @@ use Oro\Bundle\ConsentBundle\Model\ConsentData;
  */
 class ConsentDataProvider
 {
-    /**
-     * @var EnabledConsentProvider
-     */
-    private $provider;
-
-    /**
-     * @var ConsentDataBuilder
-     */
-    private $consentDataBuilder;
+    protected EnabledConsentProvider $provider;
+    protected ConsentDataBuilder $consentDataBuilder;
 
     public function __construct(
         EnabledConsentProvider $provider,

@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -20,8 +20,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 {
-    use FlatRateIntegrationTrait;
-
     private ShippingMethodProviderInterface $shippingMethodProvider;
     private TranslatorInterface $translator;
 
@@ -529,5 +527,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         return $this->getEntityManager()
             ->getRepository(ShippingMethodsConfigsRule::class)
             ->find($id);
+    }
+
+    private function getFlatRateIdentifier(): string
+    {
+        return sprintf('flat_rate_%s', $this->getReference(LoadFlatRateIntegration::REFERENCE_FLAT_RATE)->getId());
     }
 }

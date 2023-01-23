@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Builder\Basic;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -27,7 +26,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testFullContextBuilding()
     {
-        $entity = $this->createMock(Checkout::class);
+        $entity = $this->createMock(\stdClass::class);
         $entityId = '12';
         $initialLineItems = [
             new PaymentLineItem([PaymentLineItem::FIELD_QUANTITY => 2]),
@@ -95,7 +94,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testOptionalFields(): void
     {
-        $entity = $this->createMock(Checkout::class);
+        $entity = $this->createMock(\stdClass::class);
         $entityId = '12';
         $lineItemsCollection = $this->createMock(PaymentLineItemCollectionInterface::class);
 
