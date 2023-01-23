@@ -4,8 +4,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProviderInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,19 +20,23 @@ class IndexerInputValidator
     use ContextTrait;
 
     private WebsiteProviderInterface $websiteProvider;
-
     private SearchMappingProvider $mappingProvider;
-
     private ManagerRegistry $managerRegistry;
+    private ReindexationWebsiteProviderInterface $reindexationWebsiteProvider;
+    private TokenAccessorInterface $tokenAccessor;
 
     public function __construct(
         WebsiteProviderInterface $websiteProvider,
         SearchMappingProvider $mappingProvider,
-        ManagerRegistry $managerRegistry
+        ManagerRegistry $managerRegistry,
+        ReindexationWebsiteProviderInterface $provider,
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->websiteProvider = $websiteProvider;
         $this->mappingProvider = $mappingProvider;
         $this->managerRegistry = $managerRegistry;
+        $this->reindexationWebsiteProvider = $provider;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     public function validateRequestParameters(array|string|null $classOrClasses, array $context): array
@@ -68,7 +74,13 @@ class IndexerInputValidator
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY, ['int[]', 'string[]']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY, 'int');
 
-            $resolver->setDefault(AbstractIndexer::CONTEXT_WEBSITE_IDS, $this->websiteProvider->getWebsiteIds());
+            $organization = $this->tokenAccessor->getOrganization();
+            $resolver->setDefault(
+                AbstractIndexer::CONTEXT_WEBSITE_IDS,
+                $organization
+                    ? $this->reindexationWebsiteProvider->getReindexationWebsiteIdsForOrganization($organization)
+                    : $this->websiteProvider->getWebsiteIds()
+            );
             $resolver->setNormalizer(
                 AbstractIndexer::CONTEXT_WEBSITE_IDS,
                 fn (OptionsResolver $resolver, array $ids) => $ids ?: $this->websiteProvider->getWebsiteIds()

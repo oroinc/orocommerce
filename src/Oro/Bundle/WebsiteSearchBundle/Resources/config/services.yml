@@ -170,6 +170,8 @@ services:
             - '@oro_website.website.provider'
             - '@oro_website_search.provider.search_mapping'
             - '@doctrine'
+            - '@oro_website_search.reindexation_website_provider'
+            - '@oro_security.token_accessor'
 
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'
