@@ -30,3 +30,9 @@ oro.website_search:
             products:
                 datagrid:
                     result: '%result% products'
+        reports:
+            number_of_times_searched.title: Number Of Times Searched
+            number_of_products.title: Times Returned Products
+            number_of_empty_results.title: Times Returned Empty Result
+    navigation:
+        search_report.label: Search Report

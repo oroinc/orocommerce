@@ -10,6 +10,13 @@ navigation:
                 route: 'oro_website_search_search_history'
                 extras:
                     routes: ['oro_website_search_search_*']
+            oro_website_search_results_report:
+                label: 'oro.website_search.navigation.search_report.label'
+                route: 'oro_report_view_grid'
+                route_parameters:
+                    gridName:    'website-search-search-results-report'
+                extras:
+                    description: 'oro.order.menu.best_selling_list.description'
 
         tree:
             application_menu:
@@ -19,3 +26,8 @@ navigation:
                             oro_website_search_search:
                                 children:
                                     oro_website_search_history: ~
+                    reports_tab:
+                        children:
+                            static_reports_tab:
+                                children:
+                                    oro_website_search_results_report: ~

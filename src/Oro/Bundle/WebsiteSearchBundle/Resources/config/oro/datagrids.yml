@@ -92,3 +92,103 @@ datagrids:
                 customerUserName:
                     type: string
                     data_name: customerUserName
+
+    website-search-search-results-report:
+        entity_name: 'Oro\Bundle\ReportBundle\Entity\CalendarDate'
+        options:
+            entityHint: oro.website_search.searchresult.entity_plural_label
+            export: true
+        source:
+            type: orm
+            query:
+                select:
+                    - searchResult.searchTerm AS searchTerm
+                    - count(searchResult.searchTerm) as searchNumbers
+                    - count(searchResult1.resultType) AS products
+                    - count(searchResult2.resultType) AS empty
+                from:
+                    - { table: 'Oro\Bundle\ReportBundle\Entity\CalendarDate', alias: calendarDate }
+                join:
+                    left:
+                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                          alias: searchResult
+                          conditionType: WITH
+                          condition: CAST(calendarDate.date as DATE) = CAST(searchResult.createdAt as DATE)
+                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                          alias: searchResult1
+                          conditionType: WITH
+                          condition: searchResult1.id = searchResult.id AND searchResult1.resultType = 'product'
+                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                          alias: searchResult2
+                          conditionType: WITH
+                          condition: searchResult2.id = searchResult.id AND searchResult2.resultType = 'empty'
+                groupBy: searchResult.searchTerm
+        columns:
+            timePeriod:
+                label:         oro.report.datagrid.column.time_period.label
+            searchTerm:
+                label:         oro.website_search.searchresult.search_term.label
+                cellClassName: 'direction-ltr'
+            searchNumbers:
+                label:         oro.website_search.searchresult.reports.number_of_times_searched.title
+            products:
+                label:         oro.website_search.searchresult.reports.number_of_products.title
+            empty:
+                label:          oro.website_search.searchresult.reports.number_of_empty_results.title
+        sorters:
+            columns:
+                timePeriod:
+                    data_name: timePeriod
+                    apply_callback: ['@oro_filter.date_grouping_filter', 'applyOrderBy']
+                searchTerm:
+                    data_name: searchTerm
+                searchNumbers:
+                    data_name: searchNumbers
+                products:
+                    data_name: products
+                empty:
+                    data_name: empty
+            default:
+                timePeriod: DESC
+        filters:
+            columns:
+                timePeriod:
+                    label:              oro.report.datagrid.column.time_period.label
+                    type:               datetime
+                    data_name:          searchResult.createdAt
+                searchTerm:
+                    type:               string
+                    data_name:          searchTerm
+                skip_empty_periods:
+                    label:              oro.report.filter.skip_empty_periods.label
+                    type:               skip_empty_periods
+                    data_name:          searchTerm
+                    options:
+                        field_options:
+                            choices:
+                                No: 0
+                                Yes: 1
+                        default_value: Yes
+                grouping:
+                    label:              oro.report.filter.grouping.label
+                    type:               date_grouping
+                    data_name:          calendarDate.date
+                    column_name:        timePeriod
+                    calendar_entity:    'Oro\Bundle\ReportBundle\Entity\CalendarDate'
+                    target_entity:      'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                    not_nullable_field: searchResult.id
+                    joined_column:      createdAt
+                    joined_table:       joinedTableAlias
+                    options:
+                        field_options:
+                            choices:
+                                Day:     day
+                                Month:   month
+                                Quarter: quarter
+                                Year:    year
+                        default_value: Day
+            default:
+                grouping:
+                    value: day
+                skip_empty_periods:
+                    value: 1
