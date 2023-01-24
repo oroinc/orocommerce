@@ -8,6 +8,8 @@ $app-prefix: 'gjs-';
 $sm-prefix: $app-prefix + 'sm-';
 $clm-prefix: $app-prefix + 'clm-';
 
+$loading-mask-prefix: $app-prefix;
+
 // Palette variables
 $primaryColor: $primary-inverse;
 $secondaryColor: $primary-100;
