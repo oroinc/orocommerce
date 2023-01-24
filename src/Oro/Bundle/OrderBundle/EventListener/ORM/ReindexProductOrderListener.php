@@ -34,7 +34,7 @@ class ReindexProductOrderListener
 
     private EventDispatcherInterface $eventDispatcher;
     private OrderStatusesProviderInterface $statusesProvider;
-    private ReindexationWebsiteProviderInterface $websiteProvider;
+    private ReindexationWebsiteProviderInterface $reindexationWebsiteProvider;
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -43,7 +43,7 @@ class ReindexProductOrderListener
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->statusesProvider = $statusesProvider;
-        $this->websiteProvider = $websiteProvider;
+        $this->reindexationWebsiteProvider = $websiteProvider;
     }
 
     public function processOrderUpdate(Order $order, PreUpdateEventArgs $event): void
@@ -95,7 +95,7 @@ class ReindexProductOrderListener
 
         $websiteIds = [];
         foreach ($websites as $website) {
-            $websiteIds[] = $this->websiteProvider->getReindexationWebsiteIds($website);
+            $websiteIds[] = $this->reindexationWebsiteProvider->getReindexationWebsiteIds($website);
         }
         $websiteIds = array_unique(array_merge(...$websiteIds));
 

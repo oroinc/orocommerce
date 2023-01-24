@@ -1196,6 +1196,11 @@ oro_behat_extension:
             locator: '//tbody/tr[.//td[contains(text(), "PSKU5")]]//input[contains (@name,"sortOrder_")]'
             type: xpath
 
+    Product Collection Grid PSKU4 input:
+      selector:
+        locator: '//tbody/tr[.//td[contains(text(), "PSKU4")]]//input[contains (@name,"sortOrder_")]'
+        type: xpath
+
     Product Item Preview:
       selector: '.product-item .product-item__preview'
 
