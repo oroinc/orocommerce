@@ -128,9 +128,6 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
             ->with('oro.shipping.multi_shipping_method.label')
             ->willReturn('Multi Shipping');
 
-        $manager = $this->createMock(ObjectManager::class);
-
-        $user = $this->getEntity(User::class, ['id' => 1]);
         $user = new User();
         $user->setId(1);
 
