@@ -16,7 +16,6 @@ class CheckoutLineItemGroupingInvalidationHelper
     private const CHECKOUT_INVALIDATION_HOURS = 24;
 
     private ConfigProvider $multiShippingConfigProvider;
-
     private GroupedCheckoutLineItemsProvider $groupedCheckoutLineItemsProvider;
 
     public function __construct(
