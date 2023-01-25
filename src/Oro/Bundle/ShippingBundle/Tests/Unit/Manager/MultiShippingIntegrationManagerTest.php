@@ -16,6 +16,7 @@ use Oro\Bundle\UserBundle\Tests\Unit\Stub\AbstractUserStub;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,6 +32,9 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface  */
+    private $translator;
+
     /** @var MultiShippingIntegrationManager */
     private $manager;
 
@@ -40,6 +44,7 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
         $this->repository = $this->createMock(EntityRepository::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->doctrine->expects($this->any())
             ->method('getRepository')
@@ -49,7 +54,8 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager = new MultiShippingIntegrationManager(
             $this->doctrine,
             $this->tokenAccessor,
-            $this->authorizationChecker
+            $this->authorizationChecker,
+            $this->translator
         );
     }
 
@@ -87,6 +93,9 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker->expects($this->never())
             ->method('isGranted');
 
+        $this->translator->expects($this->never())
+            ->method('trans');
+
         $this->tokenAccessor->expects($this->never())
             ->method('getUser');
 
@@ -113,6 +122,11 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('isGranted')
             ->with('oro_integration_create')
             ->willReturn(true);
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('oro.shipping.multi_shipping_method.label')
+            ->willReturn('Multi Shipping');
 
         $user = new User();
         $user->setId(1);
@@ -158,6 +172,9 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('isGranted')
             ->with('oro_integration_create')
             ->willReturn(false);
+
+        $this->translator->expects($this->never())
+            ->method('trans');
 
         $this->tokenAccessor->expects($this->never())
             ->method('getUser');
@@ -211,6 +228,11 @@ class MultiShippingIntegrationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('isGranted')
             ->with('oro_integration_create')
             ->willReturn(true);
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('oro.shipping.multi_shipping_method.label')
+            ->willReturn('Multi Shipping');
 
         $manager = $this->createMock(ObjectManager::class);
 

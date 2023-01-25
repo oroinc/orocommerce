@@ -41,8 +41,7 @@ class ConfigProvider
 
     public function isShowSubordersInOrderHistoryEnabled(): bool
     {
-        return $this->isLineItemsGroupingEnabled()
-            && $this->configManager->get($this->buildConfigKey(Configuration::SHOW_SUBORDERS_IN_ORDER_HISTORY));
+        return $this->configManager->get($this->buildConfigKey(Configuration::SHOW_SUBORDERS_IN_ORDER_HISTORY));
     }
 
     public function isShowMainOrdersAndSubOrdersInOrderHistoryEnabled(): bool

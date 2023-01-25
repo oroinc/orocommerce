@@ -739,6 +739,7 @@ services:
             - '@oro_checkout.layout.data_provider.transition_form'
             - '@oro_checkout.workflow_state.handler.checkout_error'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.helper.checkout_line_item_grouping_invalidation_helper'
             - '@oro_customer.handler.customer_registration_handler'
             - '@oro_customer.handler.forgot_password'
             - '@event_dispatcher'
@@ -871,3 +872,9 @@ services:
             - '@oro_checkout.provider.shipping_context'
         tags:
             - { name: checkout.workflow_state.mapper }
+
+    oro_checkout.helper.checkout_line_item_grouping_invalidation_helper:
+        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutLineItemGroupingInvalidationHelper
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.provider.grouped_line_items'

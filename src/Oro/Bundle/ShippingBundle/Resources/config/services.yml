@@ -602,6 +602,7 @@ services:
             - '@doctrine'
             - '@oro_security.token_accessor'
             - '@security.authorization_checker'
+            - '@translator'
 
     oro_shipping.twig.multi_shipping_extension:
         class: Oro\Bundle\ShippingBundle\Twig\MultiShippingExtension

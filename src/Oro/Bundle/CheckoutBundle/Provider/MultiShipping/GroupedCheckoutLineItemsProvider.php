@@ -56,7 +56,11 @@ class GroupedCheckoutLineItemsProvider
      * Checkout Line items grouping and represent data as associative array of its ids.
      *
      * @param Checkout $sourceCheckout
-     * @return array ['product.owner:1' => [1,2], 'product.owner:2' => [4,5] ... ]
+     * @return array [
+     *                  'product.owner:1' => ['sku-1:item','sku-2:item'],
+     *                  'product.owner:2' => ['sku-4:set','sku-5:item']
+     *                  ...
+     *               ]
      */
     public function getGroupedLineItemsIds(Checkout $sourceCheckout): array
     {

@@ -198,7 +198,7 @@ services:
         arguments:
             - '@oro_checkout.provider.multi_shipping.total.promotion_subtotal_decorator.inner'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_checkout.provider.multi_shipping.promotion.split_checkout'
+            - '@oro_checkout.provider.multi_shipping.split_entities_provider'
 
     oro_checkout.provider.multi_shipping.promotion.split_checkout:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitCheckoutProvider
@@ -213,3 +213,8 @@ services:
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
             - '@.inner'
+
+    oro_checkout.provider.multi_shipping.split_entities_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProvider
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.promotion.split_checkout'

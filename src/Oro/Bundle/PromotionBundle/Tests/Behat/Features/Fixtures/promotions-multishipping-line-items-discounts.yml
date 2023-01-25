@@ -1,0 +1,44 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    MultishippingLineItemDiscountPromotionWithoutCouponLabel:
+        string: 'Line Item Discount Promotion Without Coupon'
+    MultishippingLineItemDiscountPromotionWithoutCouponDescription:
+        string: 'Line Item Discount Promotion Without Coupon Description'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    MultiShippingLineItemDiscountPromotionSegmentAllProducts:
+        name: 'Promotion Matching All Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":2}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    MultiShippingLineItemDiscountPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.1
+            apply_to: 'each_item'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    MultiShippingLineItemDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'lineItemDiscountPromotionRule'
+        stopProcessing: false
+        expression: 'subtotal < 15.00'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    MultiShippingLineItemDiscountPromotionWithoutCoupon:
+        __calls:
+          - addLabel: ['@MultishippingLineItemDiscountPromotionWithoutCouponLabel']
+          - addDescription: ['@MultishippingLineItemDiscountPromotionWithoutCouponDescription']
+          - addScope: ['@default_scope']
+        productsSegment: '@MultiShippingLineItemDiscountPromotionSegmentAllProducts'
+        rule: '@MultiShippingLineItemDiscountPromotionRule'
+        discountConfiguration: '@MultiShippingLineItemDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
