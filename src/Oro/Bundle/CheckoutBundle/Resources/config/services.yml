@@ -728,6 +728,8 @@ services:
             - '@oro_customer.handler.forgot_password'
             - '@event_dispatcher'
             - '@translator'
+        calls:
+            - [setCheckoutLineItemGroupingInvalidationHelper, ['@oro_checkout.helper.checkout_line_item_grouping_invalidation_helper']]
 
     Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper:
         alias: oro_checkout.helper.checkout_workflow_helper
@@ -858,3 +860,9 @@ services:
             - '@oro_checkout.provider.shipping_context'
         tags:
             - { name: checkout.workflow_state.mapper }
+
+    oro_checkout.helper.checkout_line_item_grouping_invalidation_helper:
+        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutLineItemGroupingInvalidationHelper
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.provider.grouped_line_items'

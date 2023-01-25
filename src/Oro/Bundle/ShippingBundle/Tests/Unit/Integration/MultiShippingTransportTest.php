@@ -33,6 +33,6 @@ class MultiShippingTransportTest extends TestCase
 
     public function testGetLabel()
     {
-        $this->assertSame('oro.multi_shipping_method.settings.label', $this->transport->getLabel());
+        $this->assertSame('oro.shipping.multi_shipping_method.settings.label', $this->transport->getLabel());
     }
 }

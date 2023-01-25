@@ -28,6 +28,8 @@ system_configuration:
             title: oro.checkout.system_configuration.groups.multishipping_general_options.title
         multishipping_line_items_grouping_options:
             title: oro.checkout.system_configuration.groups.multishipping_line_items_grouping_options.title
+        multishipping_order_history_options:
+            title: oro.checkout.system_configuration.groups.multishipping_order_history_options.title
 
     fields:
         oro_checkout.frontend_show_open_orders:
@@ -150,9 +152,6 @@ system_configuration:
                 tooltip: oro.checkout.system_configuration.fields.show_suborders_in_order_history.tooltip
                 attr:
                     'data-dependee-id': 'show_suborders_in_order_history'
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
-                    'data-depend-on': 'enable_line_item_grouping'
-                    'data-show-if': 'checked'
 
         oro_checkout.show_main_orders_in_order_history:
             data_type: boolean
@@ -227,5 +226,7 @@ system_configuration:
                                             - oro_checkout.enable_line_item_grouping
                                             - oro_checkout.group_line_items_by
                                             - oro_checkout.create_suborders_for_each_group
+                                    multishipping_order_history_options:
+                                        children:
                                             - oro_checkout.show_suborders_in_order_history
                                             - oro_checkout.show_main_orders_in_order_history
