@@ -26,8 +26,8 @@ Feature: Improve manage grid swipe actions
     And click "Reset Grid"
     And click "Close Fullscreen Popup"
     Then I should see following grid with exact columns order:
-      | First Name | Last Name | Email Address           | Enabled | Confirmed | Locked |
-      | Amanda     | Cole      | AmandaRCole@example.org | Yes     | Yes       | No     |
+      | First Name | Last Name | Email Address           | Enabled | Confirmed | Password | Locked |
+      | Amanda     | Cole      | AmandaRCole@example.org | Yes     | Yes       | Active   | No     |
     When click "Grid Settings"
     Then I should see an "Manage Grid Fullscreen Popup" element
     When I drag and drop "Email Address Handle" before "First Name Handle"
@@ -35,12 +35,12 @@ Feature: Improve manage grid swipe actions
     And click "Last Name In Grid Management"
     And click "Close Fullscreen Popup"
     Then I should see following grid with exact columns order:
-      | Email Address           | First Name | Enabled | Confirmed | Locked |
-      | AmandaRCole@example.org | Amanda     | Yes     | Yes       | No     |
+      | Email Address           | First Name | Enabled | Confirmed | Password | Locked |
+      | AmandaRCole@example.org | Amanda     | Yes     | Yes       | Active   | No     |
     When click "Grid Settings"
     Then I should see an "Manage Grid Fullscreen Popup" element
     And click "Select All Button"
     And click "Close Fullscreen Popup"
     Then I should see following grid with exact columns order:
-      | Email Address           | First Name | Last Name | Enabled | Confirmed | Locked |
-      | AmandaRCole@example.org | Amanda     | Cole      | Yes     | Yes       | No     |
+      | Email Address           | First Name | Last Name | Enabled | Confirmed | Password | Locked |
+      | AmandaRCole@example.org | Amanda     | Cole      | Yes     | Yes       | Active   | No     |

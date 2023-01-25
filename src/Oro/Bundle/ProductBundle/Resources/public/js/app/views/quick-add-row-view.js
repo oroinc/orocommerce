@@ -237,7 +237,7 @@ const QuickAddRowView = BaseView.extend({
     updateRemoveRowButton() {
         const $inputs = this.$(Object.values(this.attrElem).join(','));
         const enabled = $.makeArray($inputs).some(input => $(input).val());
-        this.$(this.elem.remove).toggle(enabled);
+        this.$(this.elem.remove).toggleClass('hidden', !enabled);
     },
 
     onModelRemoved() {

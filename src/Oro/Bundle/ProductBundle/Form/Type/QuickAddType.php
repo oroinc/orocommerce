@@ -4,14 +4,21 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddComponentProcessor;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Form type that represents quick add form.
+ */
 class QuickAddType extends AbstractType
 {
     const NAME = 'oro_product_quick_add';
@@ -21,8 +28,7 @@ class QuickAddType extends AbstractType
     const ADDITIONAL_FIELD_NAME = 'additional';
     const TRANSITION_FIELD_NAME = 'transition';
 
-    /** @var ProductsGrouperFactory */
-    private $productsGrouperFactory;
+    private ProductsGrouperFactory $productsGrouperFactory;
 
     public function __construct(ProductsGrouperFactory $productsGrouperFactory)
     {
@@ -34,24 +40,42 @@ class QuickAddType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ($options['is_optimized']) {
+            $builder
+                ->add(
+                    self::PRODUCTS_FIELD_NAME,
+                    QuickAddRowCollectionType::class,
+                    [
+                        'required' => false,
+                        'mapped' => false,
+                        'constraints' => [new Count(['min' => 1, 'minMessage' => 'oro.product.at_least_one_item'])],
+                        'add_label' => 'oro.product.form.add_row',
+                    ]
+                );
+        } else {
+            $builder
+                ->add(
+                    self::PRODUCTS_FIELD_NAME,
+                    ProductRowCollectionType::class,
+                    [
+                        'required' => false,
+                        'entry_options' => [
+                            'validation_required' => $options['validation_required'],
+                        ],
+                        'error_bubbling' => true,
+                        'constraints' => [new NotBlank(['message' => 'oro.product.at_least_one_item'])],
+                        'add_label' => 'oro.product.form.add_row',
+                        'products' => $options['products'],
+                    ]
+                )
+                ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+        }
+
         $builder
             ->add(
-                self::PRODUCTS_FIELD_NAME,
-                ProductRowCollectionType::class,
-                [
-                    'required' => false,
-                    'entry_options' => [
-                        'validation_required' => $options['validation_required'],
-                    ],
-                    'error_bubbling' => true,
-                    'constraints' => [new NotBlank(['message' => 'oro.product.at_least_one_item'])],
-                    'add_label' => 'oro.product.form.add_row',
-                    'products' => $options['products'],
-                ]
-            )
-            ->add(
                 self::COMPONENT_FIELD_NAME,
-                HiddenType::class
+                HiddenType::class,
+                ['constraints' => [new QuickAddComponentProcessor()]]
             )
             ->add(
                 self::ADDITIONAL_FIELD_NAME,
@@ -61,8 +85,11 @@ class QuickAddType extends AbstractType
                 self::TRANSITION_FIELD_NAME,
                 HiddenType::class
             );
+    }
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+    public function finishView(FormView $view, FormInterface $form, array $options): void
+    {
+        $view->vars['is_optimized'] = $options['is_optimized'];
     }
 
     /**
@@ -74,6 +101,7 @@ class QuickAddType extends AbstractType
             [
                 'validation_required' => false,
                 'products' => null,
+                'is_optimized' => false,
             ]
         );
         $resolver->setAllowedTypes('validation_required', 'bool');

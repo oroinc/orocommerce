@@ -1,5 +1,9 @@
 oro:
     fixed_product:
+        action:
+            delete:
+                fixed:
+                    message: This attribute cannot be deleted as it is used by 'Fixed Product Shipping Cost' integration.
         settings:
             label: Fixed Product Transport Settings
             labels:

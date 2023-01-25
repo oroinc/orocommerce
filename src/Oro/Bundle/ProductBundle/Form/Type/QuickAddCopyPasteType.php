@@ -5,6 +5,9 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
@@ -19,7 +22,7 @@ class QuickAddCopyPasteType extends AbstractType
      * The regex for matching lines, separated by space, comma or semicolon
      * that contains: item sku, quantity, unit name
      */
-    const VALIDATION_REGEX = '/^(([^\s,;]+[\t,; ]\d{1,32}([.,]\d{1,32})?([\t,; ][^\s,;]+)?)?(\n|$))+$/';
+    const VALIDATION_REGEX = '/^(([^\s,;]+[\t,; ]\d{1,32}([.,]\d{1,32})?([\t,; ][^\s,;]+)?)?(\r?\n|$))+$/';
 
     /**
      * The regex for extract item sku, quantity, unit name from one line
@@ -49,6 +52,18 @@ class QuickAddCopyPasteType extends AbstractType
                 ],
             ]
         );
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options): void
+    {
+        $view->vars['is_optimized'] = $options['is_optimized'];
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'is_optimized' => false,
+        ]);
     }
 
     /**

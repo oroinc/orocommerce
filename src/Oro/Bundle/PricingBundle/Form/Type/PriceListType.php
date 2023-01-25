@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type for PriceList entity
+ */
 class PriceListType extends AbstractType
 {
     const NAME = 'oro_pricing_price_list';

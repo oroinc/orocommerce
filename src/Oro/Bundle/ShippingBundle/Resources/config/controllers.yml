@@ -14,3 +14,9 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_shipping.formatter.freight_class_label, key: Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter }
+
+    Oro\Bundle\ShippingBundle\Controller\MultiShippingController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

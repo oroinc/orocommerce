@@ -450,7 +450,7 @@ oro_behat_extension:
 
     Add Another Line2:
       selector:
-        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//a[text()="Add Another Line"]'
+        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//button[text()="Add Another Line"]'
         type: xpath
 
     Quotes Role Tab:
@@ -479,6 +479,7 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Quick Order Form Default: 'quick_order[oro_product___guest_quick_order_form][use_parent_scope_value]'
+          Enable Optimized Quick Order Form Default: 'quick_order[oro_product___enable_quick_order_form_optimized][use_parent_scope_value]'
 
     Request For Quote Configuration Form:
       selector: 'form[name="rfq"]'

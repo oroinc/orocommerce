@@ -111,7 +111,7 @@ oro_behat_extension:
 
     Add Offer line item2:
       selector:
-        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//a[text()="Add Offer"]'
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//button[text()="Add Offer"]'
         type: xpath
 
     Select Shipping Address element:

@@ -486,6 +486,7 @@ action_groups:
                 service: oro_website.manager
                 method: getCurrentWebsite
 
+            - '@assign_value': [$.multishippingDataNotEmpty, false]
             - '@tree':
                   conditions:
                       '@not_empty': $.checkout.id
@@ -509,8 +510,10 @@ action_groups:
                   conditions:
                       '@and':
                           - '@equal': [false, $.forceStartCheckout]
-                          - '@equal': [true, $.newCheckoutIfItemChanged]
                           - '@not_empty': $.checkout.id
+                          - '@or':
+                              - '@equal': [true, $.newCheckoutIfItemChanged]
+                              - '@is_multishipping_enabled': ~
                   actions:
                       - '@create_object':
                             attribute: $.rawSource

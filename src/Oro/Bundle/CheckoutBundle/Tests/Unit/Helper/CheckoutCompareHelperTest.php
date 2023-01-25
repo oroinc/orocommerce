@@ -297,7 +297,7 @@ class CheckoutCompareHelperTest extends TestCase
             ->method('getWorkflowItemsByEntity')
             ->with($checkout)
             ->willReturn([$workflowItem]);
-        $workflowItem->expects($this->exactly(2))
+        $workflowItem->expects($this->once())
             ->method('getData')
             ->willReturn($workflowData);
         $workflowData->expects($this->once())

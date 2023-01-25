@@ -208,7 +208,8 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => $shippingMethodType,
             ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$coupon1]),
             ContextDataConverterInterface::PAYMENT_METHODS => ['pm1', 'pm2'],
-            ContextDataConverterInterface::PAYMENT_METHOD => 'pm1'
+            ContextDataConverterInterface::PAYMENT_METHOD => 'pm1',
+            OrderContextDataConverter::SUB_ORDERS => []
         ], $this->converter->getContextData($entity));
     }
 

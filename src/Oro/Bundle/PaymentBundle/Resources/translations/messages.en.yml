@@ -45,17 +45,22 @@ oro:
         security.transaction: Work with payments
         capture: Capture
         cancel: Cancel
+        refund: Refund
+        cancel_authorization: Cancel Authorization
 
         status:
             label: Payment Status
             full: Paid in full
             authorized: Payment authorized
+            authorized_partially: Payment authorized partially
             pending: Pending payment
             declined: Payment declined
             partially: Paid partially
             invoiced: Invoiced
             canceled: Payment canceled
             canceled_partially: Canceled partially
+            refunded: Refunded
+            refunded_partially: Refunded partially
 
         message:
             error: 'General error. We were unable to process action.'
@@ -136,6 +141,7 @@ oro:
                 invoice.label: Invoice
                 pending.label: Pending
                 cancel.label: Cancel
+                refund.label: Refund
 
         sections:
             general: 'General Information'

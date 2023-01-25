@@ -19,15 +19,7 @@ const TableRowTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        let result = null;
-
-        if (el.tagName === 'TR') {
-            result = {
-                type: this.componentType
-            };
-        }
-
-        return result;
+        return el.nodeType === el.ELEMENT_NODE && el.tagName === 'TR';
     }
 });
 

@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
 const MapTypeBuilder = BaseTypeBuilder.extend({
@@ -12,13 +13,21 @@ const MapTypeBuilder = BaseTypeBuilder.extend({
 
     execute() {
         const {BlockManager} = this.editor;
-        const component = BlockManager.get(this.componentType);
-        const content = component.get('content');
-
-        content.style = {
-            height: '350px',
-            width: '100%'
-        };
+        BlockManager.add(this.componentType, {
+            label: __('oro.cms.wysiwyg.component.map.label'),
+            category: 'Basic',
+            select: true,
+            attributes: {
+                'class': 'fa fa-map-o'
+            },
+            content: {
+                type: 'map',
+                style: {
+                    height: '350px',
+                    width: '100%'
+                }
+            }
+        });
     }
 }, {
     isAllowed(options) {

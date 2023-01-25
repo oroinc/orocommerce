@@ -9,41 +9,33 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-    /** @var ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnitsProvider;
+    private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
+    private AclHelper|\PHPUnit\Framework\MockObject\MockObject $aclHelper;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
+    private QuickAddRowInputParser $quickAddRowInputParser;
 
-    /** @var QuickAddRowInputParser */
-    private $quickAddRowInputParser;
-
-    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $numberFormatter;
+    private NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $this->productRepository = $this->createMock(ProductRepository::class);
-        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
-        $this->registry->method('getRepository')->willReturnMap([
+        $registry->method('getRepository')->willReturnMap([
             [Product::class, null, $this->productRepository],
         ]);
 
-        $this->productUnitsProvider->method('getAvailableProductUnits')
+        $productUnitsProvider->method('getAvailableProductUnits')
             ->willReturn(
                 [
                     'Element' => 'item',
@@ -52,8 +44,8 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->quickAddRowInputParser = new QuickAddRowInputParser(
-            $this->registry,
-            $this->productUnitsProvider,
+            $registry,
+            $productUnitsProvider,
             $this->aclHelper,
             $this->numberFormatter
         );
@@ -65,9 +57,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
      *
      * @dataProvider exampleRowFile
      */
-    public function testCreateFromFileLine($input, $expected)
+    public function testCreateFromFileLine(array $input, array $expected): void
     {
-        $this->numberFormatter->expects($this->once())
+        $this->numberFormatter->expects(self::once())
             ->method('parseFormattedDecimal')
             ->willReturnCallback(function ($value) {
                 if (str_contains($value, ',')) {
@@ -89,17 +81,17 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->quickAddRowInputParser->createFromFileLine($input, $index++);
 
-        $this->assertEquals($expected[0], $result->getSku());
-        $this->assertEquals($expected[1], $result->getQuantity());
-        $this->assertEquals($expected[2], $result->getUnit());
+        self::assertEquals($expected[0], $result->getSku());
+        self::assertEquals($expected[1], $result->getQuantity());
+        self::assertEquals($expected[2], $result->getUnit());
 
-        $this->assertEquals(1, $index);
+        self::assertEquals(1, $index);
     }
 
     /**
      * @return array
      */
-    public function exampleRowFile()
+    public function exampleRowFile(): array
     {
         return [
             [
@@ -123,7 +115,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'ss2',
                     6,
-                    null
+                    'liter'
                 ]
             ],
             [
@@ -167,9 +159,9 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider exampleRow
      */
-    public function testCreateFromRequest($input, $expected)
+    public function testCreateFromRequest($input, $expected): void
     {
-        $this->numberFormatter->expects($this->never())
+        $this->numberFormatter->expects(self::never())
             ->method('parseFormattedDecimal');
 
         $index = 0;
@@ -180,41 +172,48 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->quickAddRowInputParser->createFromRequest($input, $index++);
 
-        $this->assertEquals($expected[0], $result->getSku());
-        $this->assertEquals($expected[1], $result->getQuantity());
-        $this->assertEquals($expected[2], $result->getUnit());
+        self::assertEquals($expected[0], $result->getSku());
+        self::assertEquals($expected[1], $result->getQuantity());
+        self::assertEquals($expected[2], $result->getUnit());
 
-        $this->assertEquals(1, $index);
+        self::assertEquals(1, $index);
     }
 
     /**
-     * @dataProvider exampleRow
+     * @dataProvider exampleRowFile
      */
-    public function testCreateFromPasteTextLine($input, $expected)
+    public function testCreateFromPasteTextLine($input, $expected): void
     {
-        $this->numberFormatter->expects($this->never())
-            ->method('parseFormattedDecimal');
+        $this->numberFormatter->expects(self::once())
+            ->method('parseFormattedDecimal')
+            ->willReturnCallback(function ($value) {
+                if (str_contains($value, ',')) {
+                    return (float)str_replace(',', '.', $value);
+                }
+
+                if (str_contains($value, '.')) {
+                    return false;
+                }
+
+                return $value;
+            });
 
         $index = 0;
         $input = array_values($input);
-
         if (!array_key_exists(2, $input)) {
             $this->assertProductRepository();
         }
 
         $result = $this->quickAddRowInputParser->createFromCopyPasteTextLine($input, $index++);
 
-        $this->assertEquals($expected[0], $result->getSku());
-        $this->assertEquals($expected[1], $result->getQuantity());
-        $this->assertEquals($expected[2], $result->getUnit());
+        self::assertEquals($expected[0], $result->getSku());
+        self::assertEquals($expected[1], $result->getQuantity());
+        self::assertEquals($expected[2], $result->getUnit());
 
-        $this->assertEquals(1, $index);
+        self::assertEquals(1, $index);
     }
 
-    /**
-     * @return array
-     */
-    public function exampleRow()
+    public function exampleRow(): array
     {
         return [
             [
@@ -238,7 +237,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'ss2',
                     6,
-                    null
+                    'liter'
                 ]
             ],
             [
@@ -279,24 +278,113 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    private function assertProductRepository()
+    private function assertProductRepository(): void
     {
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getOneOrNullResult')
             ->with(AbstractQuery::HYDRATE_SINGLE_SCALAR)
             ->willReturn('item');
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->productRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getPrimaryUnitPrecisionCodeQueryBuilder')
             ->willReturn($queryBuilder);
 
         $this->aclHelper
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
+    }
+
+    /**
+     * @dataProvider createFromArrayDataProvider
+     */
+    public function testCreateFromArray($input, $expected): void
+    {
+        $this->numberFormatter
+            ->expects(self::never())
+            ->method('parseFormattedDecimal');
+
+        $index = 0;
+
+        if (!array_key_exists('unit', $input)) {
+            $this->assertProductRepository();
+        }
+
+        $result = $this->quickAddRowInputParser->createFromArray($input, $index++);
+
+        self::assertEquals($expected[0], $result->getSku());
+        self::assertEquals($expected[1], $result->getQuantity());
+        self::assertEquals($expected[2], $result->getUnit());
+
+        self::assertEquals(1, $index);
+    }
+
+    public function createFromArrayDataProvider(): array
+    {
+        return [
+            [
+                'input' => [
+                    QuickAddRow::SKU => ' SKU5  ',
+                    QuickAddRow::QUANTITY => ' 4.5',
+                    QuickAddRow::UNIT => 'item '
+                ],
+                'expected' => [
+                    'SKU5',
+                    4.5,
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => 'ss2',
+                    QuickAddRow::QUANTITY => '   6 ',
+                    QuickAddRow::UNIT => 'liter'
+                ],
+                'expected' => [
+                    'ss2',
+                    6,
+                    'liter'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => 'ss2',
+                    QuickAddRow::QUANTITY => '   6 ',
+                ],
+                'expected' => [
+                    'ss2',
+                    '6',
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => ' SKU5  ',
+                    QuickAddRow::QUANTITY => ' 4.5',
+                    QuickAddRow::UNIT => 'Stunde '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'hour'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => ' SKU5  ',
+                    QuickAddRow::QUANTITY => ' 4.5',
+                    QuickAddRow::UNIT => 'ELEMENT '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'item'
+                ]
+            ],
+        ];
     }
 }

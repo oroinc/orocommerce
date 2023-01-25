@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
 use Oro\Bundle\ImportExportBundle\Event\Events;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
@@ -105,6 +106,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $this->assertContains($price, $actualPricesIds);
         }
 
+        $body['process'] = ProcessorRegistry::TYPE_IMPORT;
         $body['processorAlias'] = 'oro_pricing_product_price.reset';
         $body['options']['price_list_id'] = $priceList->getId();
 

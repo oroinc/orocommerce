@@ -8,8 +8,11 @@
 {% endblock %}
 
 {% block _quick_add_import_form_start_widget %}
+    {% if form.vars.is_optimized %}
+        {% set componentModuleName = 'oroproduct/js/app/views/quick-add-import-form-view-optimized' %}
+    {% endif %}
     {% set attr = {
-        'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view',
+        'data-page-component-view': componentModuleName|default('oroproduct/js/app/views/quick-add-import-form-view')
     }|merge(attr) %}
     {{ block('form_start_widget') }}
 {% endblock %}

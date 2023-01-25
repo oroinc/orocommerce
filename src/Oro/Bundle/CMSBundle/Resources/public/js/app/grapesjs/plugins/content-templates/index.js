@@ -1,4 +1,4 @@
-import {escape, sortBy} from 'underscore';
+import {escape, sortBy, uniqueId} from 'underscore';
 import __ from 'orotranslation/js/translator';
 import GrapesJS from 'grapesjs';
 import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
@@ -29,7 +29,7 @@ const getFlatBlocksData = data => {
 
         item.tags.forEach(tag => {
             items.push({
-                id: item.id,
+                id: uniqueId(item.id),
                 category: {
                     id: tag.toLowerCase().replace(/\s/g, '_'),
                     label: tag,

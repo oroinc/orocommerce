@@ -53,7 +53,7 @@ oro_behat_extension:
       selector: 'tr.order-line-item:first-child table.applied_discounts-result-grid'
 
     Backend Order Add Product Button:
-      selector: 'div.order-line-items a.add-list-item'
+      selector: 'div.order-line-items button.add-list-item'
 
     BackendOrderLineItems:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItems
@@ -86,6 +86,14 @@ oro_behat_extension:
 
     Order Payment Transaction Grid:
       selector: "div[id^='grid-order-payment-transactions-grid']"
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    First Sub Order Payment Transaction Grid:
+      selector: "div[data-page-component-name='order-payment-transactions-grid:2']"
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Second Sub Order Payment Transaction Grid:
+      selector: "div[data-page-component-name='order-payment-transactions-grid:3']"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Calculate Shipping Button:
@@ -122,6 +130,7 @@ oro_behat_extension:
           Billing Address State:
             locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type_billingAddress_region-uid")]/input'
             type: xpath
+          Billing Address Label: 'oro_order_type[billingAddress][label]'
           Billing Address First name: 'oro_order_type[billingAddress][firstName]'
           Billing Address Last name: 'oro_order_type[billingAddress][lastName]'
           Billing Address Organization: 'oro_order_type[billingAddress][organization]'

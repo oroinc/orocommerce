@@ -211,6 +211,7 @@ services:
             - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - ['setNativeQueryExecutorHelper', ['@oro_entity.orm.native_query_executor_helper']]
+            - ['setLogger', ['@logger']]
 
     oro_pricing.builder.abstract_combined_price_list_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\AbstractCombinedPriceListBuilder'
@@ -1291,7 +1292,6 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.rounding.price_rounding_service'
-        public: false
 
     oro_pricing.provider.website_currency_provider:
         class: Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider
@@ -1304,9 +1304,10 @@ services:
         arguments:
             - '@oro_pricing.provider.quick_add_collection_price_provider'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+        calls:
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: kernel.event_listener, event: oro_product.quick_add_rows_collection_ready, method: onQuickAddRowsCollectionReady }
-
 
     oro_pricing.form.autocomplete.product_with_prices.search_handler:
         class: Oro\Bundle\PricingBundle\Autocomplete\ProductWithPricesSearchHandler
@@ -1732,3 +1733,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_pricing.default_price_list, method: beforeSave}
             - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.datagrid.export.category_filter.price_attribute_product_price:
+        class: Oro\Bundle\PricingBundle\ImportExport\Datagrid\PriceAttributeProductPriceCategoryFilter

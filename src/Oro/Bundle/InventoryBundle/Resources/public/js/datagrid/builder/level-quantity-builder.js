@@ -1,17 +1,13 @@
-define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/number'
-], function($, _, mediator, NumberFormatter) {
+define(function(require) {
     'use strict';
 
-    const LevelQuantity = function(options) {
-        this.initialize(options);
-    };
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const InputCellValidationEditor = require('orodatagrid/js/datagrid/editor/input-cell-validation-editor').default;
+    const DecimalFormatter = require('orodatagrid/js/datagrid/formatter/decimal-formatter').default;
+    const numberFormatter = require('orolocale/js/formatter/number');
 
-    _.extend(LevelQuantity.prototype, {
-        /**
-         * @property {Grid}
-         */
-        grid: null,
-
+    const defaultsParams = {
         /**
          * @property {Object}
          */
@@ -29,109 +25,75 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
             unitColumnName: 'code',
             unitPrecisions: {},
             quantityConstraints: {}
-        },
+        }
+    };
 
-        /**
-         * @param {Object} [options.grid] grid instance
-         * @param {Object} [options.options] grid initialization options
-         */
-        initialize: function(options) {
-            this.grid = options.grid;
-            this.grid.refreshAction.execute();
-
-            const inputSelector = options.options.metadata.options.cellSelection.selector;
-            const quantityValidationOptions = $(inputSelector).first().data('level-quantity-options');
-            this.options = _.defaults(quantityValidationOptions || {}, this.options);
-
-            this._formatInitialQuantity();
-            this._applyValidationToGrid();
-
-            this.grid.collection.on('sync', this._formatInitialQuantity.bind(this));
-            this.grid.collection.on('sync', this._applyValidationToGrid.bind(this));
-            this.grid.collection.on('reset', this._applyValidationToGrid.bind(this));
-        },
-
-        /**
-         * Format quantity to emulate number cell behaviour and value
-         */
-        _formatInitialQuantity: function() {
-            const quantityColumn = this.options.quantityColumnName;
-            // apply rounding
-            _.each(this.grid.collection.fullCollection.models, function(model) {
-                model.on('change:' + quantityColumn, function(model, value) {
-                    // convert to numeric value to support correct grid sorting
-                    if (!isNaN(value)) {
-                        model.set(quantityColumn, NumberFormatter.unformat(value), {silent: true});
-                    }
-                });
-                model.set(quantityColumn, NumberFormatter.formatDecimal(model.get(quantityColumn), {
-                    grouping_used: false
-                }));
-            }, this);
-
-            // render editable cells again to refresh data
-            _.each(this.grid.body.rows, function(row) {
-                _.each(row.cells, function(cell) {
-                    if (cell.column.get('name') === quantityColumn) {
-                        cell.render();
-                    }
-                }, this);
-            }, this);
-        },
-
-        /**
-         * Set validation to all rows and apply it to defined values
-         */
-        _applyValidationToGrid: function() {
-            _.each(this.grid.body.rows, function(row) {
-                _.each(row.cells, function(cell) {
-                    if (cell.column.get('name') === this.options.quantityColumnName) {
-                        this._applyValidationToCell(cell);
-                    }
-                }, this);
-            }, this);
-        },
-
-        /**
-         * @param {Backgrid.Cell} cell
-         */
-        _applyValidationToCell: function(cell) {
-            const quantityConstraints = this.options.quantityConstraints;
-            const constraintNames = this.constraintNames;
-            const unitCode = cell.model.get(this.options.unitColumnName);
-            const precision = this.options.unitPrecisions[unitCode] || 0;
-
+    return {
+        processDatagridOptions(deferred, options) {
+            const inputSelector = options.metadata.options.cellSelection.selector;
+            const params = _.defaults(
+                $(inputSelector).first().data('level-quantity-options') || {},
+                defaultsParams.options
+            );
+            const {constraintNames} = defaultsParams;
+            const {quantityConstraints, quantityColumnName, unitColumnName} = params;
+            const precision = params.unitPrecisions[unitColumnName] || 0;
             const constraints = {};
+
             if (quantityConstraints[constraintNames.range]) {
                 constraints[constraintNames.range] = quantityConstraints[constraintNames.range];
             }
             if (precision > 0 && quantityConstraints[constraintNames.decimal]) {
                 constraints[constraintNames.decimal] = quantityConstraints[constraintNames.decimal];
-            } else if (quantityConstraints[this.constraintNames.integer]) {
+            } else if (quantityConstraints[constraintNames.integer]) {
                 constraints[constraintNames.integer] = quantityConstraints[constraintNames.integer];
             }
 
-            const editorInput = cell.$el.find(':input').first();
-            editorInput.parent().addClass('controls').removeClass('editable');
-            editorInput.attr('name', 'quantity_' + cell.model.cid);
-            editorInput.data('validation', constraints);
-            editorInput.valid();
-        }
-    });
+            const updateData = data => {
+                return data.map(item => {
+                    const quantityValue = item[quantityColumnName];
 
-    return {
+                    if (quantityValue) {
+                        item[quantityColumnName] = numberFormatter.formatDecimal(quantityValue, {
+                            grouping_used: false
+                        });
+                    }
+                    item.constraints = constraints;
+                    return item;
+                });
+            };
+            const updateColumns = columns => {
+                return columns.map(colum => {
+                    if (colum.name === quantityColumnName && colum.editable && Object.keys(constraints).length) {
+                        colum.editor = InputCellValidationEditor;
+                        colum.formatter = DecimalFormatter;
+                    }
+
+                    return colum;
+                });
+            };
+
+            options.data.data = updateData(options.data.data);
+            options.metadata.columns = updateColumns(options.metadata.columns);
+            Object.assign(options.metadata.options, {
+                parseResponseModels: resp => {
+                    return 'data' in resp ? updateData(resp.data) : resp;
+                }
+            });
+            deferred.resolve();
+            return deferred;
+        },
+
         /**
+         * Init() function is required
          * @param {jQuery.Deferred} deferred
          * @param {Object} options
          */
         init: function(deferred, options) {
-            options.gridPromise.done(function(grid) {
-                const validation = new LevelQuantity({
-                    grid: grid,
-                    options: options
-                });
-                deferred.resolve(validation);
-            }).fail(function() {
+            options.gridPromise.done(grid => {
+                grid.collection.models.forEach(model => model.trigger('gridIsReady'));
+                deferred.resolve();
+            }).fail(() => {
                 deferred.reject();
             });
         }

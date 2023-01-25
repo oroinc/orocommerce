@@ -3,12 +3,15 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DomCrawler\Crawler;
@@ -109,16 +112,12 @@ class OrderControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses',
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            ]
-        );
-
-        $this->formatter = $this->getContainer()->get('oro_locale.formatter.name');
+        $this->loadFixtures([
+            LoadOrders::class,
+            LoadCustomerUserData::class,
+            LoadCustomerAddresses::class,
+            LoadProductUnitPrecisions::class,
+        ]);
     }
 
     public function testIndex()
@@ -184,6 +183,7 @@ class OrderControllerTest extends WebTestCase
         ];
         $discountItems = $this->getDiscountItems();
         $submittedData = $this->getSubmittedData($form, $orderCustomer, $lineItems, $discountItems);
+        $submittedData['input_action'] = '{"route":"oro_order_update","params":{"id":"$id"}}';
 
         $this->client->followRedirects(true);
 
@@ -230,8 +230,7 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Order $order */
         $order = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroOrderBundle:Order')
-            ->getRepository('OroOrderBundle:Order')
+            ->getRepository(Order::class)
             ->findOneBy(['poNumber' => self::ORDER_PO_NUMBER]);
         $this->assertNotEmpty($order);
 
@@ -315,10 +314,8 @@ class OrderControllerTest extends WebTestCase
         $this->assertEquals($expectedDiscountItems, $actualDiscountItems);
 
         /** @var Order $order */
-        $order = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroOrderBundle:Order')
-            ->getRepository('OroOrderBundle:Order')
+        $order = $this->getContainer()->get('doctrine')
+            ->getRepository(Order::class)
             ->find($id);
 
         static::assertSame(
@@ -418,6 +415,8 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form['input_action'] = $redirectAction;
         $form['oro_order_type[overriddenShippingCostAmount]'] = [
             'value' => self::$overriddenShippingCostAmount,
             'currency' => 'USD',
@@ -451,6 +450,8 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form['input_action'] = $redirectAction;
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = '';
 
         $this->client->followRedirects(true);
@@ -481,6 +482,8 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
+        $form['input_action'] = $redirectAction;
         $form['oro_order_type[overriddenShippingCostAmount][value]'] = 0;
 
         $this->client->followRedirects(true);

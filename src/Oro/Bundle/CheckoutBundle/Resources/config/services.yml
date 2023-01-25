@@ -11,6 +11,7 @@ services:
             - '@oro_checkout.payment_methods_provider'
         calls:
             - [setMemoryCacheProvider, ['@oro_checkout.data_provider.converter.checkout_to_order.memory_cache']]
+            - [setSplitCheckoutProvider, ['@oro_checkout.provider.multi_shipping.promotion.split_checkout']]
 
     oro_checkout.data_provider.converter.checkout_to_order.memory_cache:
         parent: oro.cache.provider.memory_cache
@@ -664,6 +665,8 @@ services:
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'
         public: true
+        calls:
+            - [setCheckoutLineItemsManager, ['@oro_checkout.data_provider.manager.checkout_line_items']]
 
     oro_checkout.event_listener.login_on_checkout:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener'

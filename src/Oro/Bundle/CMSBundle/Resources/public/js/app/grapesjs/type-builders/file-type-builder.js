@@ -47,7 +47,8 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-file-o'
-        }
+        },
+        activate: true
     },
 
     modelMixin: {
@@ -65,7 +66,7 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
         },
 
         initialize: function(...args) {
-            this.constructor.__super__.initialize.apply(this, args);
+            FileTypeBuilder.TypeModel.__super__.initialize.apply(this, args);
 
             const toolbar = this.get('toolbar');
             if (!toolbar.find(toolbar => toolbar.id === 'file-settings')) {
@@ -94,7 +95,7 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
          * @private
          */
         getAttrToHTML: function(...args) {
-            const attr = this.constructor.__super__.getAttrToHTML.apply(this, args);
+            const attr = FileTypeBuilder.TypeModel.__super__.getAttrToHTML.apply(this, args);
 
             _.each(['href', 'title'], (function(attributeName) {
                 const attributeValue = this.get(attributeName);
@@ -181,15 +182,9 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent: function(el) {
-        let result = null;
-
-        if (el.tagName === 'A' && el.classList.contains('digital-asset-file')) {
-            result = {
-                type: 'file'
-            };
-        }
-
-        return result;
+        return el.nodeType === el.ELEMENT_NODE &&
+            el.tagName === 'A' &&
+            el.classList.contains('digital-asset-file');
     }
 });
 

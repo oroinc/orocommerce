@@ -9,17 +9,11 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
 
     button: {
         label: __('oro.cms.wysiwyg.component.text.label'),
-        content: {
-            type: 'text',
-            components: [{
-                type: 'textnode',
-                content: __('oro.cms.wysiwyg.component.text.content')
-            }],
-            content: __('oro.cms.wysiwyg.component.text.content'),
-            style: {
-                'min-height': '18px'
-            }
-        }
+        category: 'Basic',
+        attributes: {
+            'class': 'gjs-fonts gjs-f-text'
+        },
+        order: 5
     },
 
     constructor: function TextTypeBuilder(options) {
@@ -43,18 +37,22 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
 
     modelMixin: {
         init() {
-            this.on('sync:content', this.syncContent.bind(this));
+            const components = this.get('components');
 
-            if (this.get('content')) {
-                this.components(this.get('content'));
-                this.set('content', '');
+            if (!components.length && !this.get('wrapping')) {
+                components.add([{
+                    type: 'textnode',
+                    content: __('oro.cms.wysiwyg.component.text.content')
+                }]);
             }
+
+            this.on('sync:content', this.syncContent.bind(this));
         },
 
         replaceWith(el, updateStyle = true) {
             const styles = this.getStyle();
             const classes = this.getClasses();
-            const newModels = this.constructor.__super__.replaceWith.call(this, el);
+            const newModels = TextTypeBuilder.TypeModel.__super__.replaceWith.call(this, el);
 
             if (updateStyle) {
                 newModels.forEach(model => {
@@ -204,7 +202,8 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             } = this.editor.Canvas.getWindow().getComputedStyle(this.el);
 
             const newModel = collection.add({
-                type: 'text'
+                type: 'text',
+                wrapping: true
             }, {
                 at: index
             });
@@ -236,9 +235,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 at: index
             });
 
-            model.remove({
-                silent: true
-            });
+            model.remove();
             model.getView().$el.remove();
         },
 
@@ -280,7 +277,7 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 return this.wrapComponent('div');
             }
 
-            await this.constructor.__super__.onActive.call(this, event);
+            await TextTypeBuilder.TypeView.__super__.onActive.call(this, event);
             const {activeRte, $el, cid} = this;
 
             if (activeRte) {
@@ -292,11 +289,11 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
          * Disable element content editing
          */
         async disableEditing(opts) {
-            const {model, $el, cid} = this;
+            const {$el, cid} = this;
 
             $el.off(`keypress.${cid}`);
 
-            await this.constructor.__super__.disableEditing.call(this, opts);
+            await TextTypeBuilder.TypeView.__super__.disableEditing.call(this, opts);
 
             if (this.willRemoved) {
                 return;
@@ -305,18 +302,11 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
             if (this.isSingleLine()) {
                 this.removeWrapper();
             }
-
-            if (model.get('tagName') && !model.components().length) {
-                model.append({
-                    type: 'textnode',
-                    content: __('oro.cms.wysiwyg.component.text.content')
-                });
-            }
         },
 
         remove(...args) {
             this.willRemoved = true;
-            this.constructor.__super__.remove.apply(this, args);
+            return TextTypeBuilder.TypeView.__super__.remove.apply(this, args);
         },
 
         /**
@@ -329,8 +319,10 @@ const TextTypeBuilder = BaseTypeBuilder.extend({
                 return;
             }
 
+            const content = this.getContent() || __('oro.cms.wysiwyg.component.text.content');
+
             model.components().resetFromString(
-                `<div data-type="temporary-container">${this.getContent()}</div>`,
+                `<div data-type="temporary-container">${content}</div>`,
                 opts
             );
         }

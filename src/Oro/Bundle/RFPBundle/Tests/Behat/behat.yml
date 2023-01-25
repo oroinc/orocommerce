@@ -119,6 +119,16 @@ oro_behat_extension:
                 locator: '//div[@data-role="line-item"][1]//div[@data-role="lineitems"]/div[last()]//input[@data-name="field__quantity"]'
                 type: xpath
 
+        Assigned To Tooltip Icon:
+            selector:
+                type: xpath
+                locator: '//label[contains(., "Assigned To")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+
+        Assigned Customer Users Tooltip Icon:
+            selector:
+                type: xpath
+                locator: '//label[contains(., "Assigned Customer Users")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+
     pages:
         RequestViewBackendPage:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage

@@ -1,0 +1,27 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/grouped_line_items.html.twig'
+
+        - '@add':
+            id: multiple_shipping_methods
+            parentId: checkout_order_summary_content
+            blockType: container
+            options:
+                vars:
+                    groupedLineItems: '=data["oro_checkout_group_line_items"].getGroupedLineItems(data["workflowItem"], data["checkout"])'
+                    groupedLineItemsTitles: '=data["oro_checkout_group_line_items"].getGroupedLineItemsTitles(data["workflowItem"], data["checkout"])'
+        - '@setOption':
+            id: checkout_order_summary_line_items_datagrid
+            optionName: grid_name
+            optionValue: frontend-checkout-line-items-grid
+        - '@move':
+            id: checkout_order_summary_line_items_container
+            parentId: multiple_shipping_methods
+            prepend: true
+        - '@setOption':
+            id: checkout_order_summary_line_items_datagrid_toolbar
+            optionName: hidden
+            optionValue: true
+
+    conditions: 'context["grouped_line_items_enabled"] && context["workflowName"]=="b2b_flow_checkout"'

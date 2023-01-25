@@ -4,7 +4,9 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
@@ -30,7 +32,10 @@ class ProductFormProvider extends AbstractFormProvider
     private const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'oro_product_frontend_ajax_product_variant_get_available';
 
     private ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
+
     private ManagerRegistry $doctrine;
+
+    private ?ConfigManager $configManager = null;
 
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -43,9 +48,15 @@ class ProductFormProvider extends AbstractFormProvider
         $this->doctrine = $doctrine;
     }
 
+    public function setConfigManager(?ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
+    }
+
     public function getQuickAddFormView(): FormView
     {
-        $options = ['action' => $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME)];
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
         return $this->getFormView(QuickAddType::class, null, $options, $cacheKeyOptions);
@@ -54,6 +65,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddForm(array $data = null, array $options = []): FormInterface
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
         return $this->getForm(QuickAddType::class, $data, $options, $cacheKeyOptions);
@@ -62,6 +74,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddCopyPasteFormView(): FormView
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getFormView(QuickAddCopyPasteType::class, null, $options);
     }
@@ -69,6 +82,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddCopyPasteForm(): FormInterface
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getForm(QuickAddCopyPasteType::class, null, $options);
     }
@@ -76,6 +90,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddImportFormView(): FormView
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getFormView(QuickAddImportFromFileType::class, null, $options);
     }
@@ -83,6 +98,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddImportForm(): FormInterface
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getForm(QuickAddImportFromFileType::class, null, $options);
     }
@@ -168,5 +184,16 @@ class ProductFormProvider extends AbstractFormProvider
         $em = $this->doctrine->getManagerForClass(Product::class);
 
         return $em->getReference(Product::class, $productId);
+    }
+
+    private function isOptimizedFormEnabled(): bool
+    {
+        if ($this->configManager) {
+            return (bool)($this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED)
+            ) ?? false);
+        }
+
+        return false;
     }
 }

@@ -29,6 +29,10 @@
                 display: block;
             }
         }
+
+        &.stale {
+            display: none;
+        }
     }
 
     &__row-content {
@@ -65,8 +69,6 @@
     }
 
     &__remove-row {
-        display: none;
-
         position: absolute;
         bottom: 11px;
         right: -20px;

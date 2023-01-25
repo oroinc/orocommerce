@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
 class LoadPriceAttributeProductPrices extends AbstractFixture implements DependentFixtureInterface
 {
+    public const REFERENCE = 'price_attribute_product_price.';
     /**
      * @var array
      */

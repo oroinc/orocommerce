@@ -8,6 +8,9 @@ define(function(require) {
     const BaseComponent = require('oroui/js/app/components/base/component');
     const mediator = require('oroui/js/mediator');
 
+    /**
+     * @deprecated component
+     */
     const QuickAddImportValidationComponent = BaseComponent.extend({
         /**
          * @property {Object}

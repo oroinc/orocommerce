@@ -50,6 +50,7 @@ oro:
             product_variants: 'Product Variants'
             messages:
                 delete_title: Delete Confirmation
+                line_items_not_available: 'Some of the items in this shopping list are no longer available and have been removed ({{ skus }}).'
             matrix_grid_order:
                 item_number: 'Item #'
             dropdown:
@@ -86,6 +87,7 @@ oro:
             actions:
                 update_all: Update All
             lineitem:
+                updated.label: 'Product has been updated in "<a href="{{ shoppinglistPath }}">{{ shoppinglistLabel }}</a>"'
                 dialog:
                     add.title: 'Add note to "{{ productName }}" product'
                     edit.title: 'Edit note for "{{ productName }}" product'

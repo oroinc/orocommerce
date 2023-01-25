@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Handler;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -18,11 +19,12 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Handles batch adding products to a shopping list.
  */
-class ShoppingListLineItemHandler
+class ShoppingListLineItemHandler implements ResetInterface
 {
     const FLUSH_BATCH_SIZE = 100;
 
@@ -59,6 +61,8 @@ class ShoppingListLineItemHandler
     /** @var AclHelper */
     private $aclHelper;
 
+    private array $productUnits = [];
+
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
@@ -94,22 +98,23 @@ class ShoppingListLineItemHandler
             throw new AccessDeniedException();
         }
 
-        /** @var ProductRepository $productsRepo */
-        $productsRepo = $this->managerRegistry->getManagerForClass($this->productClass)
-            ->getRepository($this->productClass);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->managerRegistry->getManagerForClass($this->productClass);
+        $productsRepo = $entityManager->getRepository($this->productClass);
+        $unitOfWork = $entityManager->getUnitOfWork();
 
         $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
         $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, []);
-        $iterableResult = $this->aclHelper->apply($queryBuilder)->iterate();
-        $lineItems = [];
+        $iterableResult = $this->aclHelper->apply($queryBuilder)->toIterable();
+        $lineItems = [[]];
 
         $skus = array_map('mb_strtoupper', array_keys($productUnitsWithQuantities));
         $values = array_values($productUnitsWithQuantities);
         $productUnitsWithQuantities = array_combine($skus, $values);
 
-        foreach ($iterableResult as $entityArray) {
-            /** @var Product $product */
-            $product = reset($entityArray);
+        /** @var Product $product */
+        foreach ($iterableResult as $product) {
+            $unitOfWork->markReadOnly($product);
             $upperSku = mb_strtoupper($product->getSku());
             if (isset($productUnitsWithQuantities[$upperSku])) {
                 $productLineItems = $this->createLineItemsWithQuantityAndUnit(
@@ -119,7 +124,7 @@ class ShoppingListLineItemHandler
                 );
 
                 if ($productLineItems) {
-                    $lineItems = array_merge($lineItems, $productLineItems);
+                    $lineItems[] = $productLineItems;
                 }
 
                 continue;
@@ -131,10 +136,14 @@ class ShoppingListLineItemHandler
                 ->setProduct($product)
                 ->setUnit($product->getPrimaryUnitPrecision()->getUnit());
 
-            $lineItems[] = $lineItem;
+            $lineItems[] = [$lineItem];
         }
 
-        return $this->shoppingListManager->bulkAddLineItems($lineItems, $shoppingList, self::FLUSH_BATCH_SIZE);
+        return $this->shoppingListManager->bulkAddLineItems(
+            array_merge(...$lineItems),
+            $shoppingList,
+            self::FLUSH_BATCH_SIZE
+        );
     }
 
     /**
@@ -150,25 +159,29 @@ class ShoppingListLineItemHandler
     ) {
         $lineItems = [];
 
-        $productUnitRepo = $this->managerRegistry->getManagerForClass($this->productUnitClass)
-            ->getRepository($this->productUnitClass);
+        foreach ($unitsWithQuantities as $unitCode => $quantity) {
+            $lineItem = (new LineItem())
+                ->setCustomerUser($shoppingList->getCustomerUser())
+                ->setOrganization($shoppingList->getOrganization())
+                ->setQuantity($quantity)
+                ->setProduct($product);
 
-        foreach ($unitsWithQuantities as $unit => $quantity) {
-            $unitEntity = $productUnitRepo->findOneBy(['code' => $unit]);
-
-            if ($unitEntity !== null) {
-                $lineItem = (new LineItem())
-                    ->setCustomerUser($shoppingList->getCustomerUser())
-                    ->setOrganization($shoppingList->getOrganization())
-                    ->setQuantity($quantity)
-                    ->setProduct($product);
-
-                $lineItem->setUnit($unitEntity);
-                $lineItems[] = $lineItem;
-            }
+            $lineItem->setUnit($this->getProductUnit($unitCode));
+            $lineItems[] = $lineItem;
         }
 
         return $lineItems;
+    }
+
+    private function getProductUnit(string $unitCode): ProductUnit
+    {
+        if (!isset($this->productUnits[$unitCode])) {
+            /** @var EntityManager $entityManager */
+            $entityManager = $this->managerRegistry->getManagerForClass($this->productUnitClass);
+            $this->productUnits[$unitCode] = $entityManager->getReference(ProductUnit::class, $unitCode);
+        }
+
+        return $this->productUnits[$unitCode];
     }
 
     /**
@@ -197,7 +210,6 @@ class ShoppingListLineItemHandler
         $shoppingList = $form->get('lineItem')->get('shoppingList')->getData();
 
         if (!$shoppingList) {
-            /* @var $form Form */
             $name = $form->get('lineItem')->get('shoppingListLabel')->getData();
 
             $shoppingList = $this->currentShoppingListManager->createCurrent($name);
@@ -272,5 +284,10 @@ class ShoppingListLineItemHandler
         }
 
         return $isAllowed;
+    }
+
+    public function reset(): void
+    {
+        $this->productUnits = [];
     }
 }

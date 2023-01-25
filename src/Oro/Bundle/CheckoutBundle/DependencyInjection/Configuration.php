@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\DependencyInjection;
 
+use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\FieldsOptionsProvider;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -12,6 +13,12 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     const DEFAULT_GUEST_CHECKOUT_OWNER = 'default_guest_checkout_owner';
+    const ENABLE_LINE_ITEMS_GROUPING = 'enable_line_item_grouping';
+    const GROUP_LINE_ITEMS_BY = 'group_line_items_by';
+    const CREATE_SUBORDERS_FOR_EACH_GROUP = 'create_suborders_for_each_group';
+    const SHOW_SUBORDERS_IN_ORDER_HISTORY = 'show_suborders_in_order_history';
+    const SHOW_MAIN_ORDERS_IN_ORDER_HISTORY = 'show_main_orders_in_order_history';
+    const ENABLE_SHIPPING_METHOD_SELECTION_PER_LINE_ITEM = 'enable_shipping_method_selection_per_line_item';
 
     /**
      * {@inheritDoc}
@@ -60,6 +67,30 @@ class Configuration implements ConfigurationInterface
                 'new_checkout_shopping_list_item_changed' => [
                     'type' => 'boolean',
                     'value' => false,
+                ],
+                self::ENABLE_LINE_ITEMS_GROUPING => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                self::GROUP_LINE_ITEMS_BY => [
+                    'type' => 'string',
+                    'value' => FieldsOptionsProvider::DEFAULT_VALUE
+                ],
+                self::CREATE_SUBORDERS_FOR_EACH_GROUP => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                self::ENABLE_SHIPPING_METHOD_SELECTION_PER_LINE_ITEM => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                self::SHOW_SUBORDERS_IN_ORDER_HISTORY => [
+                    'type' => 'boolean',
+                    'value' => true
+                ],
+                self::SHOW_MAIN_ORDERS_IN_ORDER_HISTORY => [
+                    'type' => 'boolean',
+                    'value' => true
                 ],
             ]
         );

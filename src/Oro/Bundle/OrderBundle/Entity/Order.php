@@ -43,7 +43,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-briefcase",
+ *              "icon"="fa-usd",
  *              "contact_information"={
  *                  "email"={
  *                      {"fieldName"="contactInformation"}
@@ -470,6 +470,21 @@ class Order extends ExtendOrder implements
     protected $shippingTrackings;
 
     /**
+     * @var Order
+     *
+     * @ORM\ManyToOne(targetEntity="Order", inversedBy="subOrders")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $parent;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Order", mappedBy="parent", orphanRemoval=true, cascade={"all"})
+     */
+    protected $subOrders;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -479,6 +494,7 @@ class Order extends ExtendOrder implements
         $this->lineItems = new ArrayCollection();
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();
+        $this->subOrders = new ArrayCollection();
         $this->loadMultiCurrencyFields();
     }
 
@@ -1360,5 +1376,45 @@ class Order extends ExtendOrder implements
         }
 
         return $products;
+    }
+
+    public function getParent(): ?Order
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Order $order): self
+    {
+        $this->parent = $order;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getSubOrders(): iterable
+    {
+        return $this->subOrders;
+    }
+
+    public function addSubOrder(Order $order): self
+    {
+        if (!$this->subOrders->contains($order)) {
+            $this->subOrders->add($order);
+            $order->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubOrder(Order $order): self
+    {
+        if ($this->subOrders->contains($order)) {
+            $this->subOrders->removeElement($order);
+            $order->setParent(null);
+        }
+
+        return $this;
     }
 }

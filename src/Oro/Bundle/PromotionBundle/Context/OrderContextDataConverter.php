@@ -20,6 +20,8 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
  */
 class OrderContextDataConverter implements ContextDataConverterInterface
 {
+    public const SUB_ORDERS = 'subOrders';
+
     /**
      * @var CriteriaDataProvider
      */
@@ -113,7 +115,8 @@ class OrderContextDataConverter implements ContextDataConverterInterface
             self::SHIPPING_METHOD_TYPE => $entity->getShippingMethodType(),
             self::APPLIED_COUPONS => $this->getValidateCoupons($this->entityCouponsProvider->getCoupons($entity)),
             self::PAYMENT_METHOD => reset($paymentMethods),
-            self::PAYMENT_METHODS => $paymentMethods
+            self::PAYMENT_METHODS => $paymentMethods,
+            self::SUB_ORDERS => $entity->getSubOrders()->toArray(),
         ];
     }
 

@@ -4,10 +4,22 @@ namespace Oro\Bundle\PaymentBundle\Action;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 
+/**
+ * Create payment transaction and execute purchase.
+ */
 class PurchaseAction extends AbstractPaymentMethodAction
 {
     const SAVE_FOR_LATER_USE = 'saveForLaterUse';
+
+    private PaymentStatusProviderInterface $paymentStatusProvider;
+
+    public function setPaymentStatusProvider(PaymentStatusProviderInterface $paymentStatusProvider): void
+    {
+        $this->paymentStatusProvider = $paymentStatusProvider;
+    }
 
     /** {@inheritdoc} */
     protected function executeAction($context)
@@ -56,6 +68,10 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $this->handleSaveForLaterUse($paymentTransaction);
         }
 
+        if ($paymentTransaction->isSuccessful() && $this->isPaidPartially($options['object'])) {
+            $attributes['purchasePartial'] = true;
+        }
+
         $this->setAttributeValue(
             $context,
             array_merge(
@@ -67,12 +83,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
         );
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     *
-     * @return bool
-     */
-    protected function isPaymentMethodSupportsValidation(PaymentTransaction $paymentTransaction)
+    protected function isPaymentMethodSupportsValidation(PaymentTransaction $paymentTransaction): bool
     {
         $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
         if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
@@ -84,7 +95,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
         return false;
     }
 
-    protected function handleSaveForLaterUse(PaymentTransaction $paymentTransaction)
+    protected function handleSaveForLaterUse(PaymentTransaction $paymentTransaction): void
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
         $sourcePaymentTransactionOptions = $sourcePaymentTransaction->getTransactionOptions();
@@ -92,5 +103,17 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $sourcePaymentTransaction->setActive(false);
             $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
         }
+    }
+
+    private function isPaidPartially(object $object): bool
+    {
+        return in_array(
+            $this->paymentStatusProvider->getPaymentStatus($object),
+            [
+                PaymentStatusProvider::AUTHORIZED_PARTIALLY,
+                PaymentStatusProvider::PARTIALLY
+            ],
+            true
+        );
     }
 }

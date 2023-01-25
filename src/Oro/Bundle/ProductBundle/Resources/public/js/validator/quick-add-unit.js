@@ -1,5 +1,5 @@
 import $ from 'jquery';
-
+// @deprecated
 export default [
     'QuickAddUnit',
     (value, element) => {

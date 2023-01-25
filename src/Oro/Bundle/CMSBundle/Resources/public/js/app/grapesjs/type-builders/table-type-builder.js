@@ -56,15 +56,7 @@ const TableTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        let result = null;
-
-        if (el.tagName === 'TABLE') {
-            result = {
-                type: this.componentType
-            };
-        }
-
-        return result;
+        return el.nodeType === el.ELEMENT_NODE && el.tagName === 'TABLE';
     }
 });
 

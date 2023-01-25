@@ -145,3 +145,17 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation4:
         product: '@product4'
         priceList: '@priceListForExport'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    priceAttributeProductPrice{1..4}:
+        product: '@product<current()>'
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    priceAttributePriceList:
+        name: 'Price Attribute'
+        fieldName: 'priceAttribute'

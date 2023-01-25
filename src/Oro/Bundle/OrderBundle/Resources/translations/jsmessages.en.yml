@@ -25,3 +25,8 @@ oro:
                 title: Cancel Payment
                 message: The {{ amount }} payment will be canceled. Are you sure you want to continue?
                 button.okText: Yes, Cancel Payment
+
+            refund:
+                title: Refund Payment
+                message: The {{ amount }} payment will be refunded. Are you sure you want to continue?
+                button.okText: Yes, Refund Payment

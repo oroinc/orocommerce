@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -94,6 +95,22 @@ class QuickAddRowCollectionBuilder
         return $collection;
     }
 
+    public function buildFromArray(array $products): QuickAddRowCollection
+    {
+        $collection = new QuickAddRowCollection();
+        if ($products) {
+            foreach ($products as $index => $product) {
+                $collection->add(
+                    $this->quickAddRowInputParser->createFromArray($product, $product[QuickAddRow::INDEX] ?? $index)
+                );
+            }
+
+            $this->mapProducts($collection);
+        }
+
+        return $collection;
+    }
+
     /**
      * @param UploadedFile $file
      * @return QuickAddRowCollection
@@ -112,7 +129,7 @@ class QuickAddRowCollectionBuilder
             /** @var Row $row */
             foreach ($sheet->getRowIterator() as $row) {
                 $row = $row->toArray();
-                if (0 === $lineNumber || empty($row[0])) {
+                if (0 === $lineNumber) {
                     $lineNumber++;
                     continue;
                 }
@@ -140,8 +157,13 @@ class QuickAddRowCollectionBuilder
 
         $text = trim($text);
         if ($text) {
+            $delimiter = null;
             foreach (explode(PHP_EOL, $text) as $line) {
-                $data = preg_split('/(\t|\,|\ )+/', $line);
+                $line = trim($line);
+                if ($delimiter === null) {
+                    $delimiter = $this->detectDelimiter($line);
+                }
+                $data = preg_split('/' . preg_quote($delimiter, '/') . '+/', $line);
                 $collection->add(
                     $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
                 );
@@ -151,6 +173,18 @@ class QuickAddRowCollectionBuilder
         $this->mapProducts($collection);
 
         return $collection;
+    }
+
+    private function detectDelimiter(string $line): string
+    {
+        foreach (["\t", ';', ' ',  ','] as $delimiter) {
+            $data = preg_split('/' . preg_quote($delimiter, '/') . '+/', $line, 2);
+            if ($data[0] !== $line) {
+                break;
+            }
+        }
+
+        return $delimiter;
     }
 
     /**
@@ -199,9 +233,12 @@ class QuickAddRowCollectionBuilder
         throw new UnsupportedTypeException();
     }
 
-    private function mapProducts(QuickAddRowCollection $collection)
+    private function mapProducts(QuickAddRowCollection $collection): void
     {
-        $products = $this->getRestrictedProductsBySkus($collection->getSkus());
-        $collection->mapProducts($products);
+        $skus = $collection->getSkus();
+        if ($skus) {
+            $products = $this->getRestrictedProductsBySkus($skus);
+            $collection->mapProducts($products);
+        }
     }
 }

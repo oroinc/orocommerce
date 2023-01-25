@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
 const undoAutoPlay = url => url.replace(/(autoplay=).*?(&)/, '$1' + 0 + '$2');
@@ -18,13 +19,22 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
         const componentRestriction = this.editor.ComponentRestriction;
         const {BlockManager} = this.editor;
 
-        const video = BlockManager.get('video');
-        const content = video.get('content');
-
-        content.style = {
-            height: '400px',
-            width: '100%'
-        };
+        BlockManager.add(this.componentType, {
+            label: __('oro.cms.wysiwyg.component.video.label'),
+            category: 'Basic',
+            select: true,
+            attributes: {
+                'class': 'fa fa-youtube-play'
+            },
+            content: {
+                type: 'video',
+                src: 'img/video2.webm',
+                style: {
+                    height: '400px',
+                    width: '100%'
+                }
+            }
+        });
 
         this.editor.DomComponents.addType(this.componentType, {
             isComponent(el) {

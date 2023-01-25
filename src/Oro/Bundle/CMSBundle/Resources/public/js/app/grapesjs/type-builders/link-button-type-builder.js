@@ -10,7 +10,8 @@ const LinkButtonTypeBuilder = BaseTypeBuilder.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-hand-pointer-o'
-        }
+        },
+        order: 35
     },
 
     constructor: function LinkButtonTypeBuilder(options) {

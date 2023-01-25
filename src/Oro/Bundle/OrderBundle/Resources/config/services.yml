@@ -20,6 +20,11 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
 
+    oro_order.provider.payment_status_provider:
+        class: Oro\Bundle\OrderBundle\Provider\OrderPaymentStatusProvider
+        parent: oro_payment.provider.payment_status
+        decorates: oro_payment.provider.payment_status
+
     oro_order.provider.shipping_cost_subtotal:
         class: 'Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider'
         public: false
@@ -297,6 +302,30 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_order_frontend_payment_status_provider }
 
+    oro_order.layout.provider.order_multi_shipping_layout:
+        class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderMultiShippingLayoutProvider'
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+        tags:
+            - { name: layout.data_provider, alias: oro_order_frontend_multi_shipping_provider }
+
+    oro_order.acl.voter.sub_order_view:
+        class: 'Oro\Bundle\OrderBundle\Acl\Voter\SubOrderViewVoter'
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@request_stack'
+        tags:
+            - { name: security.voter }
+
+    oro_order.datagrid.sub_orders_frontend_datagrid_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\SubOrdersFrontendDatagridListener'
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-orders-grid, method: onBuildAfter }
+
     oro_order.event_listener.order_datagrid:
         class: 'Oro\Bundle\OrderBundle\EventListener\OrderDatagridListener'
         arguments:
@@ -430,6 +459,13 @@ services:
             - '@oro_locale.settings'
             - '@oro_search.formatter.datetime_formatter'
 
+    oro_order.order.listener.orm.payment_status_listener:
+        class: Oro\Bundle\OrderBundle\EventListener\ORM\PaymentStatusListener
+        arguments:
+            - '@oro_payment.manager.payment_status'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PaymentBundle\Entity\PaymentStatus', event: preUpdate, method: preUpdate }
+
     oro_order.order.listener.orm.reindex_product_line_item_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
         public: false
@@ -506,3 +542,19 @@ services:
             - '@oro_order.order.provider.order_address'
         tags:
             - { name: validator.constraint_validator, alias: oro_order_customer_or_user_address_granted }
+
+    oro_order.order_create_for_customer.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_button
+            - order_create_for_customer_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_order.order_create_for_customer_user.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_user_button
+            - order_create_for_customer_user_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }

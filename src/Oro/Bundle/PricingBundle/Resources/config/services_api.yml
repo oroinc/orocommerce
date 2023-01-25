@@ -192,6 +192,20 @@ services:
             - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
             - { name: oro.api.processor, action: update, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -20 }
 
+    oro_pricing.api.disable_process_persist_entity_for_product_price:
+        class: Oro\Bundle\PricingBundle\Api\Processor\Create\DisableProcessForPreventPersistEntity
+        arguments:
+            - '%enable_price_sharding%'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -7 }
+
+    oro_pricing.api.enable_process_product_price:
+        class: Oro\Bundle\PricingBundle\Api\Processor\Create\EnableProcess
+        arguments:
+            - '%enable_price_sharding%'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -9 }
+
     oro_pricing.api.handle_price_list_filter:
         class: Oro\Bundle\PricingBundle\Api\Processor\ProductPrice\HandlePriceListFilter
         tags:

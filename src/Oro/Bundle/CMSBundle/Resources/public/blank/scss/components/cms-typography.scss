@@ -107,17 +107,27 @@
     }
 
     figure {
-        display: flex;
+        display: $cms-typography-figure-display;
         margin: $cms-typography-figure-offset;
-        justify-content: center;
-        align-items: center;
 
-        position: relative;
+        picture {
+            grid-column: $cms-typography-figure-picture-grid-column;
+            grid-row: $cms-typography-figure-picture-grid-row;
+        }
+
+        img {
+            width: $cms-typography-figure-img-width;
+            height: $cms-typography-figure-img-height;
+            object-fit: $cms-typography-figure-img-object-fit;
+        }
     }
 
     figcaption {
-        display: flex;
+        grid-column: $cms-typography-figcaption-grid-column;
+        grid-row: $cms-typography-figcaption-grid-row;
+        display: $cms-typography-figcaption-display;
         margin: $cms-typography-figcaption-offset;
+        padding: $cms-typography-figcaption-padding;
 
         font-size: $cms-typography-figcaption-font-size;
         text-align: $cms-typography-figcaption-text-align;
@@ -125,8 +135,6 @@
 
         align-items: $cms-typography-figcaption-align-items;
         justify-content: $cms-typography-figcaption-justify-content;
-
-        position: $cms-typography-figcaption-position;
 
         color: $cms-typography-figcaption-color;
 

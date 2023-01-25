@@ -3,17 +3,28 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
+class CheckoutLineItemsProviderTest extends TestCase
 {
-    /** @var CheckoutLineItemsProvider */
-    protected $provider;
+    use EntityTrait;
+
+    private CheckoutLineItemsManager|MockObject $checkoutLineItemsManager;
+    private CheckoutLineItemsProvider $provider;
 
     protected function setUp(): void
     {
+        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
         $this->provider = new CheckoutLineItemsProvider();
+        $this->provider->setCheckoutLineItemsManager($this->checkoutLineItemsManager);
     }
 
     public function testGetProductSkusWithDifferences()
@@ -42,7 +53,7 @@ class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
      * @param string $productSku
      * @param string $productUnitCode
      * @param int $quantity
-     * @return ProductLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return ProductLineItemInterface|MockObject
      */
     protected function getCheckoutLineItem($productSku, $productUnitCode, $quantity)
     {
@@ -53,7 +64,7 @@ class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
      * @param string $productSku
      * @param string $productUnitCode
      * @param int $quantity
-     * @return ProductLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return ProductLineItemInterface|MockObject
      */
     protected function getProductLineItem($productSku, $productUnitCode, $quantity)
     {
@@ -65,7 +76,7 @@ class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
      * @param string $productSku
      * @param string $productUnitCode
      * @param int $quantity
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getLineItem($class, $productSku, $productUnitCode, $quantity)
     {
@@ -81,5 +92,37 @@ class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($quantity);
 
         return $item;
+    }
+
+    public function testGetCheckoutLineItems()
+    {
+        $checkoutLineItem1 = $this->getLineItem(CheckoutLineItem::class, 'SKU-1', 'item', 1);
+        $checkoutLineItem2 = $this->getLineItem(CheckoutLineItem::class, 'SKU-2', 'item', 1);
+        $checkoutLineItem3 = $this->getLineItem(CheckoutLineItem::class, 'SKU-2', 'set', 1);
+
+        $orderLineItem1 = $this->getLineItem(OrderLineItem::class, 'SKU-2', 'item', 1);
+        $orderLineItem2 = $this->getLineItem(OrderLineItem::class, 'SKU-1', 'item', 1);
+
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn(new ArrayCollection([$checkoutLineItem1, $checkoutLineItem2, $checkoutLineItem3]));
+
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
+            ->with($checkout)
+            ->willReturn(new ArrayCollection([$orderLineItem1, $orderLineItem2]));
+
+
+        $result = $this->provider->getCheckoutLineItems($checkout);
+
+        $this->assertCount(2, $result);
+        $lineItem1 = $result->first();
+        $this->assertEquals('SKU-1', $lineItem1->getProductSku());
+        $this->assertEquals('item', $lineItem1->getProductUnitCode());
+
+        $lineItem2 = $result->last();
+        $this->assertEquals('SKU-2', $lineItem2->getProductSku());
+        $this->assertEquals('item', $lineItem2->getProductUnitCode());
     }
 }

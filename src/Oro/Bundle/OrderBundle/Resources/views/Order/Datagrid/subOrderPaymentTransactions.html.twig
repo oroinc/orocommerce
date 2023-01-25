@@ -1,0 +1,36 @@
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+<div class="row-fluid form-horizontal">
+    <div class="responsive-block">
+        <div class="oro-tabs">
+            <div class="oro-tabs__head">
+                <ul class="nav nav-tabs" role="tablist">
+                    {% for subOrder in entity.subOrders %}
+                        {% set subOrderId = subOrder.id %}
+                        <li class="nav-item">
+                            <a id="sub-order-{{ subOrderId }}-tab"
+                               href="#suborder{{ subOrderId }}" class="nav-link{% if subOrderId == entity.subOrders|first.id %} active{% endif %}"
+                               data-toggle="tab"
+                               role="tab"
+                               aria-controls="website{{ subOrderId }}"
+                               aria-selected="{% if subOrderId == entity.subOrders|first.id %}true{% else %}false{% endif %}"
+                            >
+                                {{ 'oro.order.order_type.sub_order'|trans }} #{{ subOrder.identifier }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="oro-tabs__content">
+                <div class="tab-content">
+                    {% for subOrder in entity.subOrders %}
+                        {% set subOrderId = subOrder.id %}
+                        <div class="tab-pane{% if subOrderId == entity.subOrders|first.id %} active{% endif %}" id="suborder{{ subOrderId }}">
+                            {{ dataGrid.renderGrid(oro_datagrid_build_fullname('order-payment-transactions-grid', subOrderId), { order_id: subOrderId }) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -42,6 +42,8 @@ class CustomerGroupControllerTest extends WebTestCase
                 'oro_customer_group_type[taxCode]' => $customerTaxCode->getId(),
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

@@ -188,3 +188,9 @@ services:
                 permission: VIEW
                 entityClass: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
                 loggedUserClass: Oro\Bundle\UserBundle\Entity\User
+
+    Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrderValidator:
+        arguments:
+            - '@oro_inventory.validator.quantity_to_order_validator'
+        tags:
+            - { name: validator.constraint_validator }

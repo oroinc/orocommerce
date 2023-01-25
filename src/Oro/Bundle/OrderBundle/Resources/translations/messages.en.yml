@@ -30,9 +30,23 @@ oro:
         customer:
             label:                        Customer
             description:                  Customers are companies who buy products using OroCommerce store frontend. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
+            quick_access_button:
+                new_order:
+                    label: New Order
+                create_order:
+                    label: Create Order
+                    widget:
+                        title: Create Order
         customer_user:
             label:                        Customer User
             description:                  Customer User represents a person who acts on behalf of the company to buy products using OroCommerce store frontend.
+            quick_access_button:
+                new_order:
+                    label: New Order
+                create_order:
+                    label: Create Order
+                    widget:
+                        title: Create Order
         organization.label:               Organization
         currency:
             label:                        Currency
@@ -85,6 +99,16 @@ oro:
         contact_information.label:        'Contact Information'
         internal_status.label:            'Internal Status'
         recency.label:                    'Recency'
+        parent:
+            label:                        'Parent Order'
+            description:                  Related parent order assigned to current order.
+        sub_orders:
+            label:                        'Sub-Orders'
+            description:                  Represents collection of child orders assigned to order.
+        order_type:
+            label: 'Order Type'
+            primary_order: 'Primary Order'
+            sub_order: 'Sub-Order'
 
         subtotal:
             label: Subtotal
@@ -347,6 +371,15 @@ oro:
             warehouse:
                 label:                Warehouse
                 description:          The warehouse that the order should be shipped from.
+            shipping_method:
+                label:                Line item shipping method
+                description:          Represents assigned shipping method.
+            shipping_method_type:
+                label:                Line item shipping method type
+                description:          Represents assigned shipping method type.
+            shipping_estimate_amount:
+                label:                Line item shipping cost
+                description:          Shipping const value calculated according to configured shipping rules and assigned line items shipping methods.
 
         order_discount:
             add_label: Add Special Discount
@@ -396,10 +429,12 @@ oro:
             additional: Additional
             subtotals: Order Totals
             payment_history: Payment History
+            sub_orders_payment_history: Sub-Orders Payment History
             order_line_items: 'Line Items'
             order_totals: Totals
             shipping_information: Shipping Information
             discounts: Special Discounts
+            sub_orders: Sub-Orders
 
         security:
             permission:
@@ -465,6 +500,7 @@ oro:
             view_payment_history.label: 'View Payment History'
             charge_authorized_payments.label: 'Charge Authorized Payments'
             cancel_payments.label: 'Cancel Payments'
+            refund_payments.label: 'Refund Payments'
 
         payment_transaction:
             capture:
@@ -473,10 +509,22 @@ oro:
                 button.okText: 'Yes, Charge'
                 result.success: 'The payment of %amount% has been captured successfully.'
             cancel:
-                title: 'Cancel Payment'
-                message: 'The {{ amount }} payment will be canceled. Are you sure you want to continue?'
-                button.okText: 'Yes, Cancel Payment'
+                title: 'Cancel Authorization'
+                message: 'The %amount% payment will be cancelled. Are you sure you want to continue?'
+                button.okText: 'Yes, Cancel Authorization'
+                button.resetText: 'Back'
                 result.success: 'The payment of %amount% has been canceled successfully.'
+            refund:
+                title: 'Refund Payment'
+                message: 'The %amount% payment will be refunded. Are you sure you want to continue?'
+                button.okText: 'Yes, Refund Payment'
+                button.resetText: 'Back'
+                result.success: 'The payment of %amount% has been refunded successfully.'
+            note:
+                cancel_authorization:
+                    default_message: '<p>Payment authorization hold was cancelled. </p><strong>Notes: </strong>'
+                refund:
+                    default_message: '<p>Payment refund was initiated. </p><strong>Notes: </strong>'
 
         action:
             order:
@@ -490,10 +538,17 @@ oro:
                     close.success: 'Order #%id% has been closed.'
                     archive.success: 'Order #%id% has been archived.'
                     mark_as_shipped.success: 'Order #%id% has been marked as shipped.'
+            note_message:
+                label: Notes
 
         datagrid:
             view:
                 open_orders: 'Open Orders'
+            orderlineitems:
+                shipping_cost:
+                    label:      Shipping Cost
+                shipping_method:
+                    label:      Shipping Method
 
     frontend:
         order:

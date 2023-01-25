@@ -132,7 +132,7 @@ Feature: Add Product to Customer User's Own Shopping List
     Then I should not see "Add to Shopping List"
     When I type "4" in "Product Quantity"
     And I click "Update Shopping List 3"
-    Then I should see "Record has been successfully updated" flash message
+    Then I should see 'Product has been updated in "Shopping List 3"' flash message
     When I open page with shopping list "Shopping List 3"
     Then I should see following grid:
       | SKU  | Item                               | Qty Update All |
