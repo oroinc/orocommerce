@@ -842,6 +842,9 @@ oro_behat_extension:
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'
 
+    ProductFrontendSelectRowCell:
+      selector: '[data-role="select-row-cell"]'
+
     ProductFrontendGridMassActionSearch:
       selector: '[data-role="search-container"] .input'
 

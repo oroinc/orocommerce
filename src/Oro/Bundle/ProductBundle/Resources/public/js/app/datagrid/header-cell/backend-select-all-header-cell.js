@@ -125,6 +125,7 @@ define(function(require) {
             this.collection.trigger('backgrid:selectNone');
             this.collection.trigger('backgrid:visible-changed');
             this.canSelect(false);
+            this.collection.trigger('backgrid:setVisibleState', false);
         },
 
         canSelect: function(flag) {
@@ -164,7 +165,6 @@ define(function(require) {
                 this.updateVisibleState(false);
             } else {
                 this.updateVisibleState();
-                this.onSelectUnbind();
             }
 
             return this;
