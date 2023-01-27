@@ -1,0 +1,52 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    MultiShippingOrderDiscountPromotionName:
+        string: 'Multishipping Order Discount Promotion'
+    MultiShippingOrderDiscountPromotionDesc:
+        string: 'Multishipping Order Discount Promotion Description'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    lineItemCoupon10percentAllProductsSubtotalLessThen15:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'multi-shipping-coupon'
+        promotion: '@MultishippingOrderDiscountPromotion'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    multishippingOrderDiscountPromotionSegmentAllProducts:
+        name: 'Promotion Matching All Products Test'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":2}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    MultishippingOrderDiscountPromotionDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    MultishippingOrderDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'MultiShippingOrderDiscountPromotionRule'
+        stopProcessing: false
+        expression: 'subtotal > 15.00'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    MultishippingOrderDiscountPromotion:
+        __calls:
+          - addLabel: ['@MultiShippingOrderDiscountPromotionName']
+          - addDescription: ['@MultiShippingOrderDiscountPromotionDesc']
+          - addScope: ['@default_scope']
+        productsSegment: '@multishippingOrderDiscountPromotionSegmentAllProducts'
+        rule: '@MultishippingOrderDiscountPromotionRule'
+        discountConfiguration: '@MultishippingOrderDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true

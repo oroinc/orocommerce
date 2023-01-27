@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\ImportExport\EventListener;
 
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -33,21 +34,24 @@ class BeforeImportChunksListener
     {
         $body = $event->getBody();
 
-        if ($this->isResetStrategyApplicable($body)) {
-            if (!isset($body['options']['price_list_id'])) {
-                return;
-            }
-
+        if ($this->isSupported($body)) {
             $priceListId = (int)$body['options']['price_list_id'];
             /** @var PriceList $priceList */
             $priceList = $this->getPriceListById($priceListId);
             if ($priceList) {
                 $this->registry->getRepository(ProductPrice::class)
                     ->deleteByPriceList($this->shardManager, $priceList);
-            } else {
-                return;
             }
         }
+    }
+
+    private function isSupported(array $body): bool
+    {
+        return
+            $this->isResetStrategyApplicable($body)
+            &&isset($body['options']['price_list_id'])
+            && isset($body['process'])
+            && $body['process'] === ProcessorRegistry::TYPE_IMPORT;
     }
 
     /**

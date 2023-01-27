@@ -228,15 +228,15 @@ Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits:
-            groups: [Default, ProductPriceCollection]
+            groups: [Default, ProductPriceCollection, ProductPriceResetAndAddImport]
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency:
-            groups: [Default, ProductPriceCollection]
+            groups: [Default, ProductPriceCollection, ProductPriceResetAndAddImport]
         - Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity:
             groups: [Default]
             fields: [ product, priceList, quantity, unit, currency ]
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
             path: quantity
-            groups: [Default, ProductPriceCollection]
+            groups: [Default, ProductPriceCollection, ProductPriceResetAndAddImport]
     properties:
         product:
             - NotBlank:

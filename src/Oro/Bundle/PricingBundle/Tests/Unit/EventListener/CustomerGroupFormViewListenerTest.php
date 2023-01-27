@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -62,18 +63,12 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
         $fallbackEntity->setCustomerGroup($customerGroup);
         $fallbackEntity->setFallback(PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY);
 
-        $priceToCustomerGroupRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceToCustomerGroupRepository = $this->createMock(PriceListToCustomerGroupRepository::class);
         $priceToCustomerGroupRepository->expects($this->once())
             ->method('findBy')
             ->with(['customerGroup' => $customerGroup, 'website' => $websites])
             ->willReturn($priceListsToCustomerGroup);
-        $fallbackRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fallbackRepository = $this->createMock(PriceListToCustomerGroupRepository::class);
         $fallbackRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['customerGroup' => $customerGroup, 'website' => $websites])
@@ -83,14 +78,10 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
             ->willReturn($customerGroup);
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['OroPricingBundle:PriceListToCustomerGroup', $priceToCustomerGroupRepository],
-                        ['OroPricingBundle:PriceListCustomerGroupFallback', $fallbackRepository]
-                    ]
-                )
-            );
+            ->willReturnMap([
+                ['OroPricingBundle:PriceListToCustomerGroup', $priceToCustomerGroupRepository],
+                ['OroPricingBundle:PriceListCustomerGroupFallback', $fallbackRepository]
+            ]);
 
         return [$priceListToCustomerGroup1, $priceListToCustomerGroup2];
     }

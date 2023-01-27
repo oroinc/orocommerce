@@ -79,7 +79,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $formValues = $form->getValues();
 
         $params = $this->setSubmittedValues($submittedData, $formValues);
-        $params['input_action'] = 'save_and_stay';
+        $params['input_action'] = $this->urlToRouteJson($this->getUpdateUrl());
 
         $this->client->followRedirects();
         $crawler = $this->client->request(
@@ -415,5 +415,16 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         preg_match_all('#/update/(.+?)\"#is', $crawler->html(), $arr);
 
         return max($arr[1]);
+    }
+
+    private function urlToRouteJson(string $url): string
+    {
+        $route = $this->client->getContainer()->get('router')->match($url);
+        $oroRoute = [
+            'route' => $route['_route'],
+            'params' => ['id' => '$id']
+        ];
+
+        return \json_encode($oroRoute);
     }
 }

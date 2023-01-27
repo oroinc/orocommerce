@@ -321,6 +321,7 @@ oro:
                 multishipping_general_options:
                     title: 'General Options'
                 multishipping_line_items_grouping_options.title: 'Line Items Grouping Options'
+                multishipping_order_history_options.title: 'Order History Options'
 
         privilege:
             category.checkout.label: 'Checkout'

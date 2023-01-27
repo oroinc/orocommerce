@@ -52,6 +52,9 @@ class CheckoutWorkflowHelper
     /** @var CheckoutLineItemsManager  */
     private $lineItemsManager;
 
+    /** @var CheckoutLineItemGroupingInvalidationHelper */
+    private $checkoutLineItemGroupingInvalidationHelper;
+
     /** @var CustomerRegistrationHandler  */
     private $registrationHandler;
 
@@ -91,6 +94,12 @@ class CheckoutWorkflowHelper
         $this->translator = $translator;
     }
 
+    public function setCheckoutLineItemGroupingInvalidationHelper(
+        CheckoutLineItemGroupingInvalidationHelper $checkoutLineItemGroupingInvalidationHelper
+    ) {
+        $this->checkoutLineItemGroupingInvalidationHelper = $checkoutLineItemGroupingInvalidationHelper;
+    }
+
     /**
      * @param Request  $request
      * @param Checkout $checkout
@@ -107,6 +116,10 @@ class CheckoutWorkflowHelper
         $stopPropagation = $this->stopPropagation($workflowItem);
         if ($stopPropagation) {
             return $workflowItem->getCurrentStep();
+        }
+
+        if ($this->checkoutLineItemGroupingInvalidationHelper->shouldInvalidateLineItemGrouping($workflowItem)) {
+            $this->checkoutLineItemGroupingInvalidationHelper->invalidateLineItemGrouping($checkout, $workflowItem);
         }
 
         if ($request->isMethod(Request::METHOD_POST) &&

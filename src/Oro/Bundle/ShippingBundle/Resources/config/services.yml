@@ -603,11 +603,8 @@ services:
             - '@doctrine'
             - '@oro_security.token_accessor'
             - '@security.authorization_checker'
-
-    oro_shipping.form.type.create_multishipping_integration_button:
-        class: Oro\Bundle\ShippingBundle\Form\Type\CreateMultiShippingIntegrationButtonType
-        tags:
-            - { name: form.type, alias: oro_checkout_create_multishipping_integration_button }
+        calls:
+            - ['setTranslator', ['@translator']]
 
     oro_shipping.twig.multi_shipping_extension:
         class: Oro\Bundle\ShippingBundle\Twig\MultiShippingExtension
