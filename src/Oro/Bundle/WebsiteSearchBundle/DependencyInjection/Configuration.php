@@ -13,6 +13,8 @@ class Configuration implements ConfigurationInterface
     public const INDEXER_BATCH_SIZE = 'indexer_batch_size';
 
     public const INDEXER_BATCH_SIZE_DEFAULT = 100;
+    public const INDEXER_BATCH_SIZE_MIN = 1;
+    public const INDEXER_BATCH_SIZE_MAX = 100;
 
     /**
      * {@inheritdoc}
@@ -30,20 +32,10 @@ class Configuration implements ConfigurationInterface
             ->arrayNode(self::ENGINE_PARAMETERS_KEY)
                 ->prototype('variable')->end()
             ->end()
-            ->scalarNode(self::INDEXER_BATCH_SIZE)
+            ->integerNode(self::INDEXER_BATCH_SIZE)
                 ->defaultValue(self::INDEXER_BATCH_SIZE_DEFAULT)
-                ->validate()
-                    ->always(
-                        function ($v) {
-                            if (!is_int($v) || $v < 1 || $v > 100) {
-                                throw new \InvalidArgumentException(
-                                    'Expected an integer between 1 and 100.'
-                                );
-                            }
-
-                            return $v;
-                        }
-                    )
+                ->min(self::INDEXER_BATCH_SIZE_MIN)
+                ->max(self::INDEXER_BATCH_SIZE_MAX)
             ->end()
         ;
 
