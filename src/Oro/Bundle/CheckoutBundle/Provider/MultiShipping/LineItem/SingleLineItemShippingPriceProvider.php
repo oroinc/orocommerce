@@ -9,7 +9,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
 /**
- * Calculate shipping price for single line item according to shipping methods and checkout data.
+ * Calculates a shipping price for a checkout line item.
  */
 class SingleLineItemShippingPriceProvider implements LineItemShippingPriceProviderInterface
 {
@@ -29,24 +29,21 @@ class SingleLineItemShippingPriceProvider implements LineItemShippingPriceProvid
 
     public function getPrice(CheckoutLineItem $lineItem): Price
     {
-        $checkout = $lineItem->getCheckout();
-
         // Create new checkout for each line item to use it for line item shipping price calculation.
-        $shippingCheckout = $this->checkoutFactory->createCheckout($checkout, [$lineItem]);
+        $shippingCheckout = $this->checkoutFactory->createCheckout($lineItem->getCheckout(), [$lineItem]);
 
         // Update checkout shipping method. Shipping cost should be calculated as shipping cost of checkout with
         // single line item and line item's shipping method and types should be used.
-        $shippingCheckout->setShippingMethod($lineItem->getShippingMethod())
+        $shippingCheckout
+            ->setShippingMethod($lineItem->getShippingMethod())
             ->setShippingMethodType($lineItem->getShippingMethodType());
 
-        $singleLineItemContext = $this->checkoutShippingContextProvider->getContext($shippingCheckout);
-
         $lineItemShippingCost = $this->shippingPriceProvider->getPrice(
-            $singleLineItemContext,
+            $this->checkoutShippingContextProvider->getContext($shippingCheckout),
             $lineItem->getShippingMethod(),
             $lineItem->getShippingMethodType()
         );
 
-        return $lineItemShippingCost ?: $lineItemShippingCost = Price::create(0, $lineItem->getCurrency());
+        return $lineItemShippingCost ?? Price::create(0, $lineItem->getCurrency());
     }
 }

@@ -5,7 +5,7 @@ define(function(require) {
     const $ = require('jquery');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
     const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
-    const viewportManager = require('oroui/js/viewport-manager');
+    const viewportManager = require('oroui/js/viewport-manager').default;
 
     const modes = {
         DROPDOWN: 'Dropdown',
@@ -25,8 +25,10 @@ define(function(require) {
         /** @property */
         template: template,
 
-        listen: {
-            'viewport:change mediator': 'defineRenderingStrategy'
+        listen() {
+            return {
+                [`viewport:${this.optimizedScreenSize} mediator`]: 'defineRenderingStrategy'
+            };
         },
 
         /**
@@ -123,6 +125,7 @@ define(function(require) {
             this.collection.trigger('backgrid:selectNone');
             this.collection.trigger('backgrid:visible-changed');
             this.canSelect(false);
+            this.collection.trigger('backgrid:setVisibleState', false);
         },
 
         canSelect: function(flag) {
@@ -139,7 +142,7 @@ define(function(require) {
         },
 
         _isSimple() {
-            return viewportManager.isApplicable({maxScreenType: this.optimizedScreenSize});
+            return viewportManager.isApplicable(this.optimizedScreenSize);
         },
 
         /**
@@ -162,7 +165,6 @@ define(function(require) {
                 this.updateVisibleState(false);
             } else {
                 this.updateVisibleState();
-                this.onSelectUnbind();
             }
 
             return this;

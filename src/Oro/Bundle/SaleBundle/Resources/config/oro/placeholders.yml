@@ -1,0 +1,18 @@
+placeholders:
+    items:
+        quote_create_for_customer_link:
+            template: '@@OroSale/Customer/createQuoteLink.html.twig'
+            applicable: '@oro_ui.placeholder.filter->isInstanceOf($entity$, Oro\Bundle\CustomerBundle\Entity\Customer)'
+            acl: [ oro_sale_quote_create ]
+        quote_create_for_customer_button:
+            template: '@@OroSale/Customer/createQuoteButton.html.twig'
+            applicable: '@oro_ui.placeholder.filter->isInstanceOf($entity$, Oro\Bundle\CustomerBundle\Entity\Customer)'
+            acl: [ oro_sale_quote_create ]
+        quote_create_for_customer_user_link:
+            template: '@@OroSale/CustomerUser/createQuoteLink.html.twig'
+            applicable: '@oro_ui.placeholder.filter->isInstanceOf($entity$, Oro\Bundle\CustomerBundle\Entity\CustomerUser)'
+            acl: [ oro_sale_quote_create ]
+        quote_create_for_customer_user_button:
+            template: '@@OroSale/CustomerUser/createQuoteButton.html.twig'
+            applicable: '@oro_ui.placeholder.filter->isInstanceOf($entity$, Oro\Bundle\CustomerBundle\Entity\CustomerUser)'
+            acl: [ oro_sale_quote_create ]

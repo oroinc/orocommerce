@@ -7,15 +7,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-/**
- * This is the class that loads and manages CheckoutBundle service configuration
- */
 class OroCheckoutExtension extends Extension
 {
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
@@ -27,10 +24,6 @@ class OroCheckoutExtension extends Extension
         $loader->load('controllers.yml');
         $loader->load('mq_topics.yml');
         $loader->load('multiple_shipping.yml');
-
-        if (\array_key_exists('OroSaleBundle', $container->getParameter('kernel.bundles'))) {
-            $loader->load('sale_services.yml');
-        }
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

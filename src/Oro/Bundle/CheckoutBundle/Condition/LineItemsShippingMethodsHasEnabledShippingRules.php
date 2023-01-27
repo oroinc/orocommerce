@@ -21,12 +21,9 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
     private const OPTION_ENTITY = 'entity';
     private const CONDITION_NAME = 'line_items_shipping_methods_has_enabled_shipping_rules';
 
-    /**
-     * @var mixed
-     */
-    private $entity;
     private ShippingMethodsConfigsRuleRepository $repository;
     private CheckoutLineItemsProvider $checkoutLineItemsProvider;
+    private mixed $entity = null;
 
     public function __construct(
         ShippingMethodsConfigsRuleRepository $repository,
@@ -36,28 +33,33 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function isConditionAllowed($context)
     {
-        $entity = $this->resolveValue($context, $this->entity);
         $valid = true;
-
+        $entity = $this->resolveValue($context, $this->entity);
         if ($entity instanceof Checkout) {
-            $lineItems = $this->checkoutLineItemsProvider->getCheckoutLineItems($entity);
-
             $checkedMethods = [];
-
+            $lineItems = $this->checkoutLineItemsProvider->getCheckoutLineItems($entity);
             foreach ($lineItems as $lineItem) {
                 $shippingMethod = $lineItem->getShippingMethod();
+                if (!$shippingMethod) {
+                    $valid = false;
+                    break;
+                }
 
-                if (in_array($shippingMethod, $checkedMethods)) {
+                if (isset($checkedMethods[$shippingMethod])) {
                     continue;
                 }
 
                 $ruleExists = $this->repository->getEnabledRulesByMethod($shippingMethod);
                 if ($ruleExists) {
-                    array_push($checkedMethods, $shippingMethod);
+                    $checkedMethods[$shippingMethod] = true;
                 } else {
                     $valid = false;
+                    break;
                 }
             }
         }
@@ -65,18 +67,24 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         return $valid;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getName()
     {
         return self::CONDITION_NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function initialize(array $options)
     {
-        if (array_key_exists(self::OPTION_ENTITY, $options)) {
+        if (\array_key_exists(self::OPTION_ENTITY, $options)) {
             $this->entity = $options[self::OPTION_ENTITY];
         }
 
-        if (array_key_exists(0, $options)) {
+        if (\array_key_exists(0, $options)) {
             $this->entity = $options[0];
         }
 
@@ -87,11 +95,17 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function toArray()
     {
         return $this->convertToArray([$this->entity]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->entity], $factoryAccessor);

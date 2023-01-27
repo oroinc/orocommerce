@@ -126,7 +126,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
         public: true
         arguments:
-            - "@doctrine"
+            - '@doctrine'
 
     oro_order.event_listener.form_view:
         class: 'Oro\Bundle\OrderBundle\EventListener\FormViewListener'
@@ -199,7 +199,7 @@ services:
         arguments:
             - '@oro_order.factory.shipping_context'
             - '@oro_order.converter.shipping_prices'
-            - '@?oro_shipping.shipping_price.provider'
+            - '@oro_shipping.shipping_price.provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onEvent }
 
@@ -245,7 +245,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
         public: false
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -257,7 +257,7 @@ services:
     oro_order.formatter.shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
         arguments:
-            - "@?oro_shipping.tracking_aware_shipping_methods_provider"
+            - '@oro_shipping.tracking_aware_shipping_methods_provider'
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
@@ -338,27 +338,27 @@ services:
     oro_order.factory.shipping_context:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_order.shipping_line_item.converter_basic'
-            - '@?oro_shipping.context.builder_factory_basic'
+            - '@oro_shipping.context.builder_factory_basic'
 
     oro_order.factory.payment_context:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory'
         arguments:
             - '@oro_order.payment_line_item.converter_basic'
-            - '@?oro_payment.context.builder_factory_basic'
+            - '@oro_payment.context.builder_factory_basic'
 
     oro_order.shipping_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
         arguments:
-            - '@?oro_shipping.context.line_item_collection_factory.set_shipping_options_if_null'
-            - '@?oro_shipping.line_item.factory_basic'
+            - '@oro_shipping.context.line_item_collection_factory.set_shipping_options_if_null'
+            - '@oro_shipping.line_item.factory_basic'
 
     oro_order.payment_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderPaymentLineItemConverter'
         arguments:
-            - '@?oro_payment.context.doctrine_line_item_collection_factory'
-            - '@?oro_payment.line_item.builder_factory_basic'
+            - '@oro_payment.context.doctrine_line_item_collection_factory'
+            - '@oro_payment.line_item.builder_factory_basic'
 
     oro_order.provider.order_currency_checker:
         class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
@@ -526,3 +526,19 @@ services:
             - '@oro_order.order.provider.order_address'
         tags:
             - { name: validator.constraint_validator, alias: oro_order_customer_or_user_address_granted }
+
+    oro_order.order_create_for_customer.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_button
+            - order_create_for_customer_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_order.order_create_for_customer_user.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_user_button
+            - order_create_for_customer_user_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }

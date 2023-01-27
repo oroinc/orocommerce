@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
+/**
+ * Provides tracking aware shipping methods.
+ */
 class TrackingAwareShippingMethodsProvider implements TrackingAwareShippingMethodsProviderInterface
 {
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    private $shippingMethodProvider;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
 
     public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
@@ -17,14 +17,16 @@ class TrackingAwareShippingMethodsProvider implements TrackingAwareShippingMetho
     /**
      * {@inheritDoc}
      */
-    public function getTrackingAwareShippingMethods()
+    public function getTrackingAwareShippingMethods(): array
     {
         $result = [];
-        foreach ($this->shippingMethodProvider->getShippingMethods() as $shippingMethod) {
+        $shippingMethods = $this->shippingMethodProvider->getShippingMethods();
+        foreach ($shippingMethods as $shippingMethod) {
             if ($shippingMethod instanceof ShippingTrackingAwareInterface) {
                 $result[$shippingMethod->getIdentifier()] = $shippingMethod;
             }
         }
+
         return $result;
     }
 }

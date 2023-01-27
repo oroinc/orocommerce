@@ -7,7 +7,7 @@ define(function(require, exports, module) {
     const routing = require('routing');
     const __ = require('orotranslation/js/translator');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-action-header-cell.html');
-    const viewportManager = require('oroui/js/viewport-manager');
+    const viewportManager = require('oroui/js/viewport-manager').default;
     const ActionHeaderCell = require('orodatagrid/js/datagrid/header-cell/action-header-cell');
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
@@ -100,7 +100,7 @@ define(function(require, exports, module) {
             this.listenTo(this.selectState, 'change', _.debounce(this._doActivate.bind(this), 50));
             this.listenTo(mediator, {
                 'sticky-panel:toggle-state': this.onStickyPanelToggle.bind(this),
-                'viewport:change': this.defineRenderingStrategy.bind(this)
+                [`viewport:${this.optimizedScreenSize}`]: this.defineRenderingStrategy.bind(this)
             });
             this.listenTo(this, 'render-mode:changed', state => this.onRenderModeIsChanged());
 
@@ -108,7 +108,7 @@ define(function(require, exports, module) {
         },
 
         _isOptimizedScreen() {
-            return viewportManager.isApplicable({maxScreenType: this.optimizedScreenSize});
+            return viewportManager.isApplicable(this.optimizedScreenSize);
         },
 
         _showMassActionsInFullscreen() {

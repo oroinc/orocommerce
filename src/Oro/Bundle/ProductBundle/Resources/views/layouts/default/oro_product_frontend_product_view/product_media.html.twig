@@ -36,9 +36,7 @@
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set zoomOptions = {
-        viewport: {
-            minScreenType: 'desktop'
-        },
+        viewport: 'desktop',
         component: 'oroui/js/app/components/jquery-widget-component',
         widgetModule: 'oroproduct/js/widget/zoom-widget'
     } %}

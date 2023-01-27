@@ -22,7 +22,7 @@
         right: $shoppinglist-popover-loader-right;
         bottom: $shoppinglist-popover-loader-bottom;
 
-        @extend .fa-spinner;
-        @extend .fa-pulse;
+        @extend %fa-spinner;
+        @extend %fa-pulse;
     }
 }

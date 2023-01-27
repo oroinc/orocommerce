@@ -6,9 +6,7 @@
     {% set dom_relocation_options =  {
         responsive: [
             {
-                viewport: {
-                    maxScreenType: 'tablet',
-                },
+                viewport: 'tablet',
                 moveTo: '[data-main-menu-extra-container]'
             }
         ]
@@ -33,9 +31,7 @@
     {% set dom_relocation_options =  {
         responsive: [
             {
-                viewport: {
-                    maxScreenType: 'tablet',
-                },
+                viewport: 'tablet',
                 moveTo: '[data-main-menu-extra-container]'
             }
         ]
@@ -68,9 +64,7 @@
             >
                 <div data-page-component-module="oroui/js/app/components/viewport-component"
                      data-page-component-options="{{ {
-                         viewport: {
-                             maxScreenType: 'tablet',
-                         },
+                         viewport: 'tablet',
                          component: 'oroui/js/app/components/view-component',
                          view: 'orocommercemenu/js/app/widgets/menu-traveling-widget'
                      }|json_encode() }}"

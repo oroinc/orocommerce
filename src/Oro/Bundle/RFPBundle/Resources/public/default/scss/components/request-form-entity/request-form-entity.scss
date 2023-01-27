@@ -1,7 +1,7 @@
 /* @theme: default; */
 
 .request-form-editline__product .input-append {
-    @extend .flexible-container;
+    display: flex;
 
     .select2-choice {
         // stylelint-disable-next-line declaration-no-important
@@ -9,13 +9,14 @@
     }
 
     .entity-select-btn {
-        @extend .flexible-container__side;
+        flex: 0 0 auto;
 
         margin-left: 5px;
     }
 
     .select2-container {
-        @extend .flexible-container__base;
+        flex: 1 0 auto;
+        width: 0;
 
         border-radius: $input-border-radius;
     }

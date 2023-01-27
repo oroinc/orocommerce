@@ -4,7 +4,8 @@ define(function(require) {
     const BaseClass = require('oroui/js/base-class');
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
-    const viewportManager = require('oroui/js/viewport-manager');
+    const _ = require('underscore');
+    const viewportManager = require('oroui/js/viewport-manager').default;
     const __ = require('orotranslation/js/translator');
 
     /**
@@ -137,9 +138,9 @@ define(function(require) {
                 return;
             }
 
-            const breakpoints = mediator.execute('fetch:head:computedVars', contentDocument.head);
+            const breakpoints = viewportManager.getBreakpoints(contentDocument.documentElement);
 
-            this.breakpoints = viewportManager._collectCSSBreakpoints(breakpoints)
+            this.breakpoints = this._collectCSSBreakpoints(breakpoints)
                 .filter(({name}) => !allowBreakpoints.length || allowBreakpoints.includes(name))
                 .map(breakpoint => {
                     breakpoint = {...breakpoint};
@@ -161,6 +162,38 @@ define(function(require) {
             return this.breakpoints;
         },
 
+        /**
+         * Collect and resolve CSS variables by breakpoint prefix
+         * @param cssVariables
+         * @returns {*}
+         * @private
+         * See [documentation](https://github.com/oroinc/platform/tree/master/src/Oro/Bundle/UIBundle/Resources/doc/reference/client-side/css-variables.md)
+         */
+        _collectCSSBreakpoints(cssVariables) {
+            const regexpMax = /(max-width:\s?)([(\d+)]*)/g;
+            const regexpMin = /(min-width:\s?)([(\d+)]*)/g;
+
+            return _.reduce(cssVariables, function(collection, cssVar, varName) {
+                let _result;
+
+                const matchMax = cssVar.match(regexpMax);
+                const matchMin = cssVar.match(regexpMin);
+
+                if (matchMax || matchMin) {
+                    _result = {
+                        name: varName
+                    };
+
+                    matchMax ? _result['max'] = parseInt(matchMax[0].replace('max-width:', '')) : null;
+                    matchMin ? _result['min'] = parseInt(matchMin[0].replace('min-width:', '')) : null;
+
+                    collection.push(_result);
+                }
+
+                return collection;
+            }, [], this);
+        },
+
         collectBreakpoints() {
             const contentDocument = this.$builderIframe[0].contentDocument;
 
@@ -169,9 +202,9 @@ define(function(require) {
                 return;
             }
 
-            const breakpoints = mediator.execute('fetch:head:computedVars', contentDocument.head);
+            const breakpoints = viewportManager.getBreakpoints(contentDocument.documentElement);
 
-            return viewportManager._collectCSSBreakpoints(breakpoints);
+            return this._collectCSSBreakpoints(breakpoints);
         },
 
         getBreakpoints() {

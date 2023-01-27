@@ -14,11 +14,8 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class RequiredConsentsValidator extends ConstraintValidator
 {
-    /** @var EnabledConsentProvider */
-    private $enabledConsentProvider;
-
-    /** @var LocalizationHelper */
-    private $localizationHelper;
+    protected EnabledConsentProvider $enabledConsentProvider;
+    protected LocalizationHelper $localizationHelper;
 
     public function __construct(
         EnabledConsentProvider $enabledConsentProvider,
@@ -51,12 +48,7 @@ class RequiredConsentsValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param Consent $consent
-     *
-     * @return string
-     */
-    private function getConsentsLabels(Consent $consent)
+    private function getConsentsLabels(Consent $consent): string
     {
         return (string) $this->localizationHelper->getLocalizedValue(
             $consent->getNames()

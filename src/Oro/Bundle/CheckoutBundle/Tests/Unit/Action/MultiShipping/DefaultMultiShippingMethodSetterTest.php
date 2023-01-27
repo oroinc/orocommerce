@@ -19,7 +19,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject  */
-    private $shippingProvider;
+    private $multiShippingMethodProvider;
 
     /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject  */
     private $shippingPriceProvider;
@@ -37,13 +37,13 @@ class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
-        $this->shippingProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
+        $this->multiShippingMethodProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
         $this->shippingPriceProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
         $this->lineItemsShippingManager = $this->createMock(CheckoutLineItemsShippingManager::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->defaultMultiShippingMethodSetter = new DefaultMultiShippingMethodSetter(
-            $this->shippingProvider,
+            $this->multiShippingMethodProvider,
             $this->shippingPriceProvider,
             $this->doctrine,
             $this->lineItemsShippingManager
@@ -83,7 +83,7 @@ class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
             ->method('getIdentifier')
             ->willReturn('multi_shipping');
 
-        $this->shippingProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($multiShippingMethod);
 
@@ -149,7 +149,7 @@ class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
             ->method('getIdentifier')
             ->willReturn('multi_shipping');
 
-        $this->shippingProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($multiShippingMethod);
 

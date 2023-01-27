@@ -7,19 +7,14 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
 class ApplicableMethodsEventTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ApplicableMethodsEvent
-     */
-    protected $applicableMethodsEvent;
-
-    public function testGetters()
+    public function testGetters(): void
     {
         $methodCollection = new ShippingMethodViewCollection();
         $sourceEntity = new \stdClass();
 
-        $this->applicableMethodsEvent = new ApplicableMethodsEvent($methodCollection, $sourceEntity);
+        $event = new ApplicableMethodsEvent($methodCollection, $sourceEntity);
 
-        $this->assertSame($methodCollection, $this->applicableMethodsEvent->getMethodCollection());
-        $this->assertSame($sourceEntity, $this->applicableMethodsEvent->getSourceEntity());
+        $this->assertSame($methodCollection, $event->getMethodCollection());
+        $this->assertSame($sourceEntity, $event->getSourceEntity());
     }
 }

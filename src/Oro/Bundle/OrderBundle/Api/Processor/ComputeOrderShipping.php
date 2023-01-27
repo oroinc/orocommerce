@@ -13,12 +13,11 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class ComputeOrderShipping implements ProcessorInterface
 {
     private const SHIPPING_METHOD_FIELD_NAME = 'shippingMethod';
-    private const SHIPPING_COST_FIELD_NAME   = 'shippingCostAmount';
+    private const SHIPPING_COST_FIELD_NAME = 'shippingCostAmount';
 
-    /** @var ShippingMethodLabelTranslator|null */
-    private $shippingMethodLabelTranslator;
+    private ShippingMethodLabelTranslator $shippingMethodLabelTranslator;
 
-    public function __construct(ShippingMethodLabelTranslator $shippingMethodLabelTranslator = null)
+    public function __construct(ShippingMethodLabelTranslator $shippingMethodLabelTranslator)
     {
         $this->shippingMethodLabelTranslator = $shippingMethodLabelTranslator;
     }
@@ -59,10 +58,6 @@ class ComputeOrderShipping implements ProcessorInterface
     {
         if (null === $code || null === $type) {
             return null;
-        }
-
-        if (null === $this->shippingMethodLabelTranslator) {
-            return $code . ', ' . $type;
         }
 
         return $this->shippingMethodLabelTranslator->getShippingMethodWithTypeLabel($code, $type);

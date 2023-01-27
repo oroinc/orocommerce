@@ -1,0 +1,17 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{{ UI.quickAccessButton({
+    'dataUrl': path('oro_sale_quote_create_for_customer_user', { customerUser: entity.id }),
+    'title': 'oro.sale.quote.customer_user.quick_access_button.create_quote.label'|trans,
+    'label': 'oro.sale.quote.customer_user.quick_access_button.create_quote.label'|trans,
+    'iCss': 'fa-file-text',
+    'widget': {
+        'reload-grid-name': 'customer-user-view-quote-grid',
+        'options': {
+            'alias': 'oro_sale_quote_create_for_customer_user_dialog',
+            'dialogOptions': {
+                'title': 'oro.sale.quote.customer_user.quick_access_button.create_quote.widget.title'|trans,
+            }
+        }
+    }
+}) }}

@@ -12,15 +12,8 @@ use Oro\Bundle\ConsentBundle\Model\ConsentData;
  */
 class ConsentDataProvider
 {
-    /**
-     * @var EnabledConsentProvider
-     */
-    private $provider;
-
-    /**
-     * @var ConsentDataBuilder
-     */
-    private $consentDataBuilder;
+    private EnabledConsentProvider $provider;
+    private ConsentDataBuilder $consentDataBuilder;
 
     public function __construct(
         EnabledConsentProvider $provider,
@@ -33,7 +26,7 @@ class ConsentDataProvider
     /**
      * @return ConsentData[]
      */
-    public function getAllConsentData()
+    public function getAllConsentData(): array
     {
         return $this->getFilteredConsents([
             FrontendConsentContentNodeValidFilter::NAME
@@ -43,7 +36,7 @@ class ConsentDataProvider
     /**
      * @return ConsentData[]
      */
-    public function getNotAcceptedRequiredConsentData()
+    public function getNotAcceptedRequiredConsentData(): array
     {
         $consents = $this->getRequiredConsentData();
 
@@ -57,7 +50,7 @@ class ConsentDataProvider
     /**
      * @return ConsentData[]
      */
-    public function getRequiredConsentData()
+    public function getRequiredConsentData(): array
     {
         $consents = $this->getFilteredConsents([
             FrontendConsentContentNodeValidFilter::NAME,
@@ -68,11 +61,11 @@ class ConsentDataProvider
     }
 
     /**
-     * @param array $filters
+     * @param string[] $filters
      *
      * @return ConsentData[]
      */
-    private function getFilteredConsents(array $filters = [])
+    private function getFilteredConsents(array $filters = []): array
     {
         $consents = $this->provider->getConsents($filters);
 

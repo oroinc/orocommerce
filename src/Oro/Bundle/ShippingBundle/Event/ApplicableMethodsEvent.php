@@ -11,23 +11,12 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ApplicableMethodsEvent extends Event
 {
-    const NAME = 'oro_shipping.applicable_methods';
+    public const NAME = 'oro_shipping.applicable_methods';
 
-    /**
-     * @var ShippingMethodViewCollection
-     */
-    private $methodCollection;
+    private ShippingMethodViewCollection $methodCollection;
+    private object $sourceEntity;
 
-    /**
-     * @var object
-     */
-    private $sourceEntity;
-
-    /**
-     * @param ShippingMethodViewCollection $methodCollection
-     * @param object $sourceEntity
-     */
-    public function __construct(ShippingMethodViewCollection $methodCollection, $sourceEntity)
+    public function __construct(ShippingMethodViewCollection $methodCollection, object $sourceEntity)
     {
         $this->methodCollection = $methodCollection;
         $this->sourceEntity = $sourceEntity;
@@ -38,10 +27,7 @@ class ApplicableMethodsEvent extends Event
         return $this->methodCollection;
     }
 
-    /**
-     * @return object
-     */
-    public function getSourceEntity()
+    public function getSourceEntity(): object
     {
         return $this->sourceEntity;
     }

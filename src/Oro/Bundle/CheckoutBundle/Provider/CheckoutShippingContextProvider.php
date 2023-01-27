@@ -2,32 +2,33 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider;
 
-use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 /**
- * Provides shipping context for given checkout entity.
+ * Provides shipping context for a specific checkout entity.
  */
 class CheckoutShippingContextProvider
 {
-    use MemoryCacheProviderAwareTrait;
+    private CheckoutShippingContextFactory $shippingContextFactory;
+    private MemoryCacheProviderInterface $memoryCacheProvider;
 
-    /** @var CheckoutShippingContextFactory */
-    private $checkoutShippingContextFactory;
-
-    public function __construct(CheckoutShippingContextFactory $checkoutShippingContextFactory)
-    {
-        $this->checkoutShippingContextFactory = $checkoutShippingContextFactory;
+    public function __construct(
+        CheckoutShippingContextFactory $shippingContextFactory,
+        MemoryCacheProviderInterface $memoryCacheProvider
+    ) {
+        $this->shippingContextFactory = $shippingContextFactory;
+        $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
     public function getContext(Checkout $entity): ?ShippingContextInterface
     {
-        return $this->getMemoryCacheProvider()->get(
+        return $this->memoryCacheProvider->get(
             ['checkout' => $entity],
             function () use ($entity) {
-                return $this->checkoutShippingContextFactory->create($entity);
+                return $this->shippingContextFactory->create($entity);
             }
         );
     }
