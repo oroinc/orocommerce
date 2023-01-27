@@ -1,1 +1,16 @@
 "oro.catalog.jstree.add_new_root_warning": "You can not create new root category."
+oro.catalog:
+    datagrid:
+        action:
+            sort_products:
+                label: Manage sort order
+                aria_label: Sort products in {{ category }} category
+    sort_products:
+        dialog:
+            title: Sort products in {{ category }} category
+            waning: All changes made in this dialog window will be applied immediately. You may close this dialog at any time, no additional actions required before closing.
+        confirm:
+            title: Save all changes?
+            content: All unsaved changes must be submitted before proceeding to manage products sort order
+            ok: Submit and continue
+            cancel: Cancel

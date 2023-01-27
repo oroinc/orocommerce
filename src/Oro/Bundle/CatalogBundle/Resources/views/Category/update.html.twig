@@ -87,6 +87,7 @@
     {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.catalog.sections.additional'|trans)) %}
 
     {% if is_granted('oro_product_update') %}
+        {% set categoryId = entityId ? entityId : 0 %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.entity_plural_label'|trans,
             'subblocks':
@@ -94,7 +95,28 @@
                 {
                     'title' : null,
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('category-products-grid', { category_id: entityId ? entityId : 0 }, { cssClass: 'inner-grid' })]
+                    'data' : [
+                        dataGrid.renderGrid('category-products-grid', {
+                            category_id: categoryId
+                        }, {
+                            cssClass: 'inner-grid',
+                            jsmodules: ['orocatalog/js/datagrid/builder/sort-products-action-builder'],
+                            gridBuildersOptions: {
+                                sortProductsAction: {
+                                    sortOrderUID: id ~ '_' ~ categoryId,
+                                    autoExecute: false,
+                                    formSelector: '#' ~ form.vars.id,
+                                    route: 'oro_datagrid_widget',
+                                    route_parameters: {
+                                        gridName: 'category-products-widget-grid',
+                                        params: {category_id: categoryId}
+                                    },
+                                    categoryTitle: entity.defaultTitle.string|default('N/A'|trans),
+                                    categoryId: categoryId
+                                }
+                            }
+                        })
+                    ]
                 }
             ]
         }]) %}
