@@ -3,9 +3,9 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
@@ -220,7 +220,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(LifecycleEventArgs::class);
         $event->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
 
         $this->contentNodeListener->postRemove($contentNode, $event);
@@ -272,7 +272,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(LifecycleEventArgs::class);
         $event->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
 
         $this->contentNodeListener->postRemove($contentNode, $event);

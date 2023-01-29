@@ -3,8 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\ORM\OrderListener;
@@ -35,7 +35,7 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
         $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);
         $em = $this->createMock(EntityManager::class);
         $lifecycleEventArgs->expects($this->once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
         $unitOfWork = $this->createMock(UnitOfWork::class);
         $em->expects($this->once())
@@ -62,7 +62,7 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
 
         $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);
         $lifecycleEventArgs->expects($this->never())
-            ->method('getEntityManager');
+            ->method('getObjectManager');
 
         $this->listener->postPersist($orderMock, $lifecycleEventArgs);
     }

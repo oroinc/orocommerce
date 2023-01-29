@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\EntityListener\LineIte
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -71,7 +71,7 @@ class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
         $event = $this->createMock(LifecycleEventArgs::class);
         $event
             ->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($entityManager);
 
         (new RemoveParentProductsFromShoppingListLineItemListener())->prePersist($lineItem, $event);

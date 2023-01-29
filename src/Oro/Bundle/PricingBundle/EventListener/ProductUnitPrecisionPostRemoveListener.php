@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
@@ -36,7 +36,7 @@ class ProductUnitPrecisionPostRemoveListener implements FeatureToggleableInterfa
         }
 
         /** @var PriceAttributeProductPriceRepository $repository */
-        $repository = $args->getEntityManager()->getRepository(PriceAttributeProductPrice::class);
+        $repository = $args->getObjectManager()->getRepository(PriceAttributeProductPrice::class);
         $repository->deleteByProductUnit($this->shardManager, $product, $productUnitPrecision->getUnit());
     }
 }

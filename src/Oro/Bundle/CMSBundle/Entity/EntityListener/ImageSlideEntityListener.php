@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Entity\EntityListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 
 /**
@@ -12,7 +12,7 @@ class ImageSlideEntityListener
 {
     public function preRemove(ImageSlide $imageSlide, LifecycleEventArgs $args): void
     {
-        $manager = $args->getEntityManager();
+        $manager = $args->getObjectManager();
 
         if ($imageSlide->getMainImage()) {
             $manager->remove($imageSlide->getMainImage());

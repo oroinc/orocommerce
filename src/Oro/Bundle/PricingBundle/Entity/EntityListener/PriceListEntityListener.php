@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -76,7 +76,7 @@ class PriceListEntityListener
         $this->scheduleDependentPriceListsUpdate($priceList);
 
         // Remove Combined Price Lists that lost PL from the chain
-        $em = $args->getEntityManager();
+        $em = $args->getObjectManager();
         $cplRepo = $em->getRepository(CombinedPriceList::class);
         foreach ($cplRepo->getCombinedPriceListsByPriceList($priceList) as $affectedCpl) {
             $em->remove($affectedCpl);
