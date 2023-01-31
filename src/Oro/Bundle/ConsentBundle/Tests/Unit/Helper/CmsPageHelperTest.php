@@ -102,7 +102,7 @@ class CmsPageHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNodeTreeResolver->expects($this->once())
             ->method('getResolvedContentNode')
-            ->with($contentNode, $scope)
+            ->with($contentNode, $scope, ['tree_depth' => 0])
             ->willReturn(null);
 
         $this->assertNull($this->helper->getCmsPage($consent));
@@ -124,7 +124,7 @@ class CmsPageHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNodeTreeResolver->expects($this->once())
             ->method('getResolvedContentNode')
-            ->with($contentNode, $scope)
+            ->with($contentNode, $scope, ['tree_depth' => 0])
             ->willReturn($resolvedContentNode);
 
         $resolvedContentNode->expects($this->once())
@@ -155,7 +155,7 @@ class CmsPageHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNodeTreeResolver->expects($this->once())
             ->method('getResolvedContentNode')
-            ->with($contentNode, $scope)
+            ->with($contentNode, $scope, ['tree_depth' => 0])
             ->willReturn($resolvedContentNode);
 
         $resolvedContentNode->expects($this->once())

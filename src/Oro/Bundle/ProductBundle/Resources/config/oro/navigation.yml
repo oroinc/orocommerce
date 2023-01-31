@@ -11,7 +11,7 @@ navigation:
             product_list:
                 label:           'oro.product.entity_plural_label'
                 route:           'oro_product_index'
-                position:        200
+                position:        20
                 extras:
                     routes:      ['/^oro_product(?!_brand\w+)\w+/']
                     description: 'oro.product.menu.product_list.description'
@@ -39,6 +39,7 @@ navigation:
                 route: 'oro_attribute_index'
                 route_parameters:
                     alias: 'product'
+                position: 40
                 extras:
                     routes: ['oro_attribute_*']
 
@@ -47,11 +48,14 @@ navigation:
                 route: 'oro_attribute_family_index'
                 route_parameters:
                     alias: 'product'
+                position: 30
                 extras:
                     routes: ['oro_attribute_family_*']
+
             brand_list:
                 label: 'oro.product.brand.menu.entity_plural_label'
                 route: 'oro_product_brand_index'
+                position: 50
                 extras:
                     routes: ['oro_product_brand_*']
                     description: 'oro.product.brand.menu.description'

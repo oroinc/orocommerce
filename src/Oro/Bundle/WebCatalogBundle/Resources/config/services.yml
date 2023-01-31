@@ -127,6 +127,21 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
 
+    oro_web_catalog.event_listener.webcatalog_cache_config:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogCacheConfigChangeListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
+
+    oro_web_catalog.migration.demo_data_fixtures_listener.disable_webcatalog_cache_config_listener:
+        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
+        calls:
+            - [disableListener, ['oro_web_catalog.event_listener.webcatalog_cache_config']]
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
     oro_web_catalog.request_web_content_variant_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider
         arguments:
@@ -273,12 +288,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
 
-    oro_web_catalog.cacheable_content_node_tree_resolver:
-        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver
-        decorates: oro_web_catalog.content_node_tree_resolver
-        arguments:
-            - '@.inner'
-            - '@oro_web_catalog.content_node_tree_cache'
+    oro_web_catalog.resolved_content_nodes_merger:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodesMerger
+
+    Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface:
+        alias: oro_web_catalog.content_node_tree_resolver
 
     oro_web_catalog.content_node_tree_resolver:
         class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolver
@@ -286,14 +300,64 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_web_catalog.content_node_provider'
             - '@oro_scope.scope_manager'
+            - '@oro_web_catalog.resolved_content_nodes_loader'
 
-    Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface:
-        alias: oro_web_catalog.content_node_tree_resolver
+    oro_web_catalog.content_node_tree_resolver.caching:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCachingResolver
+        decorates: oro_web_catalog.content_node_tree_resolver
+        decoration_priority: 20
+        arguments:
+            - '@.inner'
+            - '@doctrine'
+            - '@oro_web_catalog.content_node_tree_cache.root'
 
-    oro_web_catalog.cache:
+    oro_web_catalog.content_node_tree_resolver.merging:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver
+        decorates: oro_web_catalog.content_node_tree_resolver
+        decoration_priority: 10
+        arguments:
+            - '@.inner'
+            - '@oro_web_catalog.resolved_content_nodes_merger'
+            - '@oro_web_catalog.content_node_tree_cache.merged'
+
+    oro_web_catalog.cache.root:
         parent: oro.data.cache
         tags:
-            - { name: 'cache.pool', namespace: 'oro_web_catalog' }
+            - { name: 'cache.pool', namespace: 'oro_web_catalog_root' }
+
+    oro_web_catalog.cache.merged:
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_web_catalog_merged' }
+
+    oro_web_catalog.resolved_content_variants_loader:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentVariantsLoader
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.resolved_content_variant_factory'
+
+    oro_web_catalog.resolved_content_nodes_loader:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.resolved_content_variants_loader'
+            - '@oro_web_catalog.resolved_content_node_factory'
+
+    oro_web_catalog.resolved_content_variant_factory:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentVariantFactory
+        arguments:
+            - '@doctrine'
+            - '@oro_locale.cache.normalizer.localized_fallback_value'
+
+    oro_web_catalog.resolved_content_node_factory:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory
+        arguments:
+            - '@oro_web_catalog.resolved_content_identifier_generator'
+            - '@oro_web_catalog.resolved_content_variant_factory'
+            - '@oro_locale.cache.normalizer.localized_fallback_value_collection'
+
+    oro_web_catalog.resolved_content_identifier_generator:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeIdentifierGenerator
 
     oro_web_catalog.cache.content_node_tree_cache_warmer:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer
@@ -304,38 +368,26 @@ services:
         tags:
             - { name: 'kernel.cache_warmer' }
 
-    oro_web_catalog.content_node_tree_cache:
+    oro_web_catalog.content_node_tree_cache.root:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache
         arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_web_catalog.cache'
+            - '@oro_web_catalog.cache.root'
+            - '@oro_web_catalog.cache.resolved_content_node_normalizer'
+
+    oro_web_catalog.content_node_tree_cache.merged:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache
+        arguments:
+            - '@oro_web_catalog.cache.merged'
+            - '@oro_web_catalog.cache.resolved_content_node_normalizer'
 
     oro_web_catalog.content_node_tree_cache_dumper:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper
         public: true
         arguments:
-            - '@oro_web_catalog.content_node_tree_resolver'
-            - '@oro_web_catalog.content_node_tree_cache'
             - '@doctrine'
-
-    oro_web_catalog.layout.data_provider.menu_data:
-        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider
-        arguments:
-            - '@oro_web_catalog.web_catalog_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
-            - '@oro_locale.helper.localization'
-            - '@oro_web_catalog.request_web_content_scope_provider'
-            - '@oro_website.manager'
-        calls:
-            - [setCache, ['@oro_web_catalog.layout.data_provider.menu_data.cache']]
-        tags:
-            - { name: layout.data_provider, alias: web_catalog_menu }
-
-    oro_web_catalog.layout.data_provider.menu_data.cache:
-        public: false
-        parent: oro.data.cache
-        tags:
-            - { name: 'cache.pool', namespace: 'oro_web_catalog_layout_provider' }
+            - '@oro_web_catalog.content_node_tree_cache.root'
+            - '@oro_web_catalog.content_node_tree_cache.merged'
 
     oro_web_catalog.layout.data_provider.content_variant:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\ContentVariantDataProvider
@@ -422,22 +474,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
 
-    oro_web_catalog.event_listener.navigation_root:
-        class: 'Oro\Bundle\WebCatalogBundle\EventListener\NavigationRootConfigChangeListener'
-        arguments:
-            - '@oro_web_catalog.layout.data_provider.menu_data.cache'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }
-
-    oro_web_catalog.migration.demo_data_fixtures_listener.disable_navigation_root_listener:
-        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
-        calls:
-            - [disableListener, ['oro_web_catalog.event_listener.navigation_root']]
-        tags:
-            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
-            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
-
     oro_web_catalog.form.type.content_node_from_web_catalog_select:
         class: 'Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeFromWebCatalogSelectType'
         arguments:
@@ -467,3 +503,29 @@ services:
         tags:
             - { name: oro_redirect.slug_source_entity_provider, priority: 100 }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
+
+    oro_web_catalog.cache.resolved_content_node_normalizer:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_locale.cache.normalizer.localized_fallback_value'
+            - '@oro_web_catalog.resolved_content_node_factory'
+
+    oro_web_catalog.menu.content_nodes_provider:
+        class: Oro\Bundle\WebCatalogBundle\Menu\CompositeMenuContentNodesProvider
+        arguments:
+            - '@oro_web_catalog.menu.content_nodes_provider.backoffice'
+            - '@oro_web_catalog.menu.content_nodes_provider.storefront'
+            - '@oro_frontend.request.frontend_helper'
+
+    oro_web_catalog.menu.content_nodes_provider.backoffice:
+        class: Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.resolved_content_nodes_loader'
+
+    oro_web_catalog.menu.content_nodes_provider.storefront:
+        class: Oro\Bundle\WebCatalogBundle\Menu\StorefrontMenuContentNodesProvider
+        arguments:
+            - '@oro_web_catalog.request_web_content_scope_provider'
+            - '@oro_web_catalog.content_node_tree_resolver'

@@ -1,11 +1,11 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " main-menu__item main-menu__item--nested"
+        '~class': " cart-widget"
     }) %}
 
-    <span {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </span>
+    </div>
 {% endblock %}
 
 {% block _header_row_shopping_toggle_widget %}
@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
-    <span class="cart-widget__content">
+    <div class="cart-widget__content">
         <span class="cart-widget__icon" aria-hidden="true">
             {% if not is_one_shopping_list_enabled() %}
                 <span class="fa-clipboard"></span>
@@ -58,7 +58,7 @@
                 <span class="fa-angle-down" aria-hidden="true"></span>
             {% endif %}
         </span>
-    </span>
+    </div>
     {{ block_widget(block) }}
 {% endblock %}
 

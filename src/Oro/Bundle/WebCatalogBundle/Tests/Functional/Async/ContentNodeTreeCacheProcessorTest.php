@@ -62,8 +62,8 @@ class ContentNodeTreeCacheProcessorTest extends WebTestCase
         /** @var Scope $scope */
         $scope = $this->getReference(LoadWebCatalogScopes::SCOPE1);
 
-        $contentNodeTreeCache = self::getContainer()->get('oro_web_catalog.content_node_tree_cache');
-        self::assertEmpty($contentNodeTreeCache->fetch($contentNode->getId(), $scope->getId()));
+        $contentNodeTreeCache = self::getContainer()->get('oro_web_catalog.content_node_tree_cache.root');
+        self::assertEmpty($contentNodeTreeCache->fetch($contentNode->getId(), [$scope->getId()]));
 
         $childJob = $this->createDelayedJob();
         $sentMessage = self::sendMessage(
@@ -85,7 +85,7 @@ class ContentNodeTreeCacheProcessorTest extends WebTestCase
             $this->getJobProcessor()->findJobById($childJob->getId())?->getStatus()
         );
 
-        $contentNodeTreeCache = self::getContainer()->get('oro_web_catalog.content_node_tree_cache');
-        self::assertNotEmpty($contentNodeTreeCache->fetch($contentNode->getId(), $scope->getId()));
+        $contentNodeTreeCache = self::getContainer()->get('oro_web_catalog.content_node_tree_cache.root');
+        self::assertNotEmpty($contentNodeTreeCache->fetch($contentNode->getId(), [$scope->getId()]));
     }
 }

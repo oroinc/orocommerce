@@ -156,7 +156,7 @@ oro_behat_extension:
         Clearance menu item:
             selector:
                 type: xpath
-                locator: '//span[@class="main-menu__text"][text()="Clearance"]'
+                locator: '//span[contains(@class, "main-menu__text-label")][text()="Clearance"]'
 
         Inherit Parent:
             selector: '[name="oro_web_catalog_content_node[parentScopeUsed]"]'

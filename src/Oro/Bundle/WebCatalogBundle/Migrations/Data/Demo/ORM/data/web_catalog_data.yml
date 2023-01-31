@@ -29,6 +29,7 @@
                     isDefault: true
             children:
                 Products:
+                    setReference: "navigation_root__products"
                     defaultTitle: Products
                     defaultSlugPrototype: products
                     contentVariants:
@@ -40,6 +41,7 @@
                     parentScopeUsed: true
                     children:
                         "By Category":
+                            setReference: "navigation_root__products__by_category"
                             defaultTitle: "By Category"
                             defaultSlugPrototype: "by-category"
                             contentVariants:
@@ -265,6 +267,7 @@
                                             isDefault: true
                                     children: ~
                 "New Arrivals":
+                    setReference: "navigation_root__new_arrivals"
                     defaultTitle: "New Arrivals"
                     defaultSlugPrototype: "new-arrivals"
                     contentVariants:
@@ -331,6 +334,7 @@
                                     isDefault: true
                             children: ~
                 "Clearance":
+                    setReference: "navigation_root__clearance"
                     defaultTitle: "Clearance"
                     defaultSlugPrototype: "clearance"
                     contentVariants:

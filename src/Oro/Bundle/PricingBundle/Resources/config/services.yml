@@ -1507,7 +1507,7 @@ services:
             - '@oro_frontend.request.frontend_helper'
             - '@oro_locale.provider.current_localization'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_layout.layout_context_holder'
+            - '@oro_layout.layout_context_stack'
             - '@oro_layout.theme_manager'
 
     oro_pricing.datagrid.extension.price:

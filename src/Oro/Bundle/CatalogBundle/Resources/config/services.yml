@@ -379,3 +379,24 @@ services:
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteQueryEvent, method: onProcessAutocompleteQuery }
             - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
+
+    oro_catalog.menu.menu_categories_provider:
+        class: Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProvider
+        arguments:
+            - '@oro_catalog.provider.category_tree_provider'
+
+    oro_catalog.menu.menu_categories_caching_provider:
+        class: Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider
+        decorates: oro_catalog.menu.menu_categories_provider
+        arguments:
+            - '@.inner'
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_security.token_accessor'
+        calls:
+            - [setCache, ['@oro_catalog.menu.menu_categories_cache', 3600]]
+
+    oro_catalog.menu.menu_categories_cache:
+        class: Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCache
+        arguments:
+            - '@oro_catalog.layout.data_provider.category.cache'
+            - '@oro_locale.cache.normalizer.localized_fallback_value_collection'

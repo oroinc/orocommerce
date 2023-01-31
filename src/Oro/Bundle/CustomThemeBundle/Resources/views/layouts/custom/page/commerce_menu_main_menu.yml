@@ -6,21 +6,22 @@ layout:
             id: main_menu_shopping_lists_wrapper
             optionName: attr.class
             optionValue: middlebar__shopping-list
+        - '@setOption':
+            id: main_menu_container
+            optionName: vars.hoverPriority
+            optionValue: false
         - '@addTree':
             items:
                 sidebar_quick_access_menu_container:
-                    blockType: container
-                sidebar_product_categories_container:
                     blockType: container
                 sidebar_main_menu_container:
                     blockType: container
             tree:
                 page_sidebar:
                     sidebar_quick_access_menu_container: ~
-                    sidebar_product_categories_container: ~
                     sidebar_main_menu_container: ~
         - '@move':
-            id: main_menu
+            id: main_menu_container
             parentId: sidebar_main_menu_container
         - '@move':
             id: quick_access_menu

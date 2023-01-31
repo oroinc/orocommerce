@@ -10,15 +10,11 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\LayoutBundle\Layout\LayoutManager;
-use Oro\Bundle\LayoutBundle\Layout\TwigLayoutRenderer;
 use Oro\Component\Layout\Layout;
 use Oro\Component\Layout\LayoutBuilderInterface;
 use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Layout\LayoutFactoryInterface;
-use Oro\Component\Layout\LayoutRendererInterface;
-use Oro\Component\Layout\LayoutRendererRegistryInterface;
 use Psr\Log\LoggerInterface;
-use Twig\Environment;
 
 class ContentWidgetRendererTest extends \PHPUnit\Framework\TestCase
 {
@@ -43,8 +39,6 @@ HTML;
 
     private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    private LayoutRendererRegistryInterface|\PHPUnit\Framework\MockObject\MockObject $layoutRendererRegistry;
-
     private LayoutBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $layoutBuilder;
 
     protected function setUp(): void
@@ -60,12 +54,6 @@ HTML;
             ->expects(self::any())
             ->method('getLayoutFactory')
             ->willReturn($layoutFactory);
-
-        $this->layoutRendererRegistry = $this->createMock(LayoutRendererRegistryInterface::class);
-        $layoutFactory
-            ->expects(self::any())
-            ->method('getRendererRegistry')
-            ->willReturn($this->layoutRendererRegistry);
 
         $this->layoutBuilder = $this->createMock(LayoutBuilderInterface::class);
         $layoutFactory
@@ -141,11 +129,6 @@ HTML;
         $this->frontendEmulator->expects(self::never())
             ->method(self::anything());
 
-        $this->layoutRendererRegistry
-            ->expects(self::once())
-            ->method('getRenderer')
-            ->willReturn($this->createMock(LayoutRendererInterface::class));
-
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
             ->with(self::SAMPLE_WIDGET)
@@ -172,11 +155,6 @@ HTML;
             ->willReturn(true);
         $this->frontendEmulator->expects(self::never())
             ->method(self::anything());
-
-        $this->layoutRendererRegistry
-            ->expects(self::once())
-            ->method('getRenderer')
-            ->willReturn($this->createMock(LayoutRendererInterface::class));
 
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
@@ -227,11 +205,6 @@ HTML;
         $this->frontendEmulator->expects(self::never())
             ->method(self::anything());
 
-        $this->layoutRendererRegistry
-            ->expects(self::once())
-            ->method('getRenderer')
-            ->willReturn($this->createMock(LayoutRendererInterface::class));
-
         $this->contentWidgetProvider
             ->expects(self::once())
             ->method('getContentWidget')
@@ -255,12 +228,7 @@ HTML;
         self::assertSame($expectedResult, $this->getRenderer($debug)->render(self::SAMPLE_WIDGET));
     }
 
-    /**
-     * @dataProvider layoutRendererDataProvider
-     *
-     * @param LayoutRendererInterface $layoutRendererMock
-     */
-    public function testRender(LayoutRendererInterface $layoutRendererMock): void
+    public function testRender(): void
     {
         $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
 
@@ -269,11 +237,6 @@ HTML;
             ->willReturn(true);
         $this->frontendEmulator->expects(self::never())
             ->method(self::anything());
-
-        $this->layoutRendererRegistry
-            ->expects(self::once())
-            ->method('getRenderer')
-            ->willReturn($layoutRendererMock);
 
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
@@ -307,44 +270,7 @@ HTML;
         self::assertEquals(self::SAMPLE_RESULT, $this->getRenderer(false)->render(self::SAMPLE_WIDGET));
     }
 
-    public function layoutRendererDataProvider(): array
-    {
-        $simpleRenderer = $this->createMock(LayoutRendererInterface::class);
-        $simpleRenderer
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $twigEnvAwareRenderer = $this->createMock(TwigLayoutRenderer::class);
-        $environment = $this->createMock(Environment::class);
-        $twigEnvAwareRenderer
-            ->expects(self::once())
-            ->method('getEnvironment')
-            ->willReturn($environment);
-
-        $twigEnvAwareRenderer
-            ->expects(self::exactly(2))
-            ->method('setEnvironment')
-            ->withConsecutive(
-                [
-                    self::logicalAnd(
-                        self::logicalNot(self::identicalTo($environment)),
-                        self::equalTo($environment)
-                    ),
-                ],
-                [self::identicalTo($environment)]
-            );
-        return [
-            ['layoutRendererMock' => $simpleRenderer],
-            ['layoutRendererMock' => $twigEnvAwareRenderer],
-        ];
-    }
-
-    /**
-     * @dataProvider layoutRendererDataProvider
-     *
-     * @param LayoutRendererInterface $layoutRendererMock
-     */
-    public function testRenderInBackoffice(LayoutRendererInterface $layoutRendererMock): void
+    public function testRenderInBackoffice(): void
     {
         $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
 
@@ -355,11 +281,6 @@ HTML;
             ->method('startFrontendRequestEmulation');
         $this->frontendEmulator->expects(self::once())
             ->method('stopFrontendRequestEmulation');
-
-        $this->layoutRendererRegistry
-            ->expects(self::once())
-            ->method('getRenderer')
-            ->willReturn($layoutRendererMock);
 
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
@@ -392,14 +313,8 @@ HTML;
         self::assertEquals(self::SAMPLE_RESULT, $this->getRenderer(false)->render(self::SAMPLE_WIDGET));
     }
 
-    /**
-     * @dataProvider layoutRendererDataProvider
-     *
-     * @param LayoutRendererInterface $layoutRendererMock
-     */
-    public function testRenderInBackofficeWhenExceptionDuringRendering(
-        LayoutRendererInterface $layoutRendererMock
-    ): void {
+    public function testRenderInBackofficeWhenExceptionDuringRendering(): void
+    {
         $exception = new \Exception('some error');
         $contentWidget = $this->getContentWidget(self::SAMPLE_SETTINGS);
 
@@ -410,11 +325,6 @@ HTML;
             ->method('startFrontendRequestEmulation');
         $this->frontendEmulator->expects(self::once())
             ->method('stopFrontendRequestEmulation');
-
-        $this->layoutRendererRegistry
-            ->expects(self::once())
-            ->method('getRenderer')
-            ->willReturn($layoutRendererMock);
 
         $this->contentWidgetProvider->expects(self::once())
             ->method('getContentWidget')
