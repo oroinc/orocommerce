@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-17908
 @fixture-OroCMSBundle:AclDraftsUsers.yml
 Feature: ACL Drafts
