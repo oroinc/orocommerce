@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler;
@@ -82,7 +82,7 @@ class ContentNodeListener
     public function postRemove(ContentNode $contentNode, LifecycleEventArgs $args)
     {
         if ($contentNode->getParentNode() && $contentNode->getParentNode()->getId()) {
-            if (!$args->getEntityManager()->getUnitOfWork()->isScheduledForDelete($contentNode->getParentNode())) {
+            if (!$args->getObjectManager()->getUnitOfWork()->isScheduledForDelete($contentNode->getParentNode())) {
                 $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
             }
         } else {

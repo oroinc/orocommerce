@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
+/**
+ * Listens to Order save event and set identifier for Order if identifier is empty
+ */
 class OrderListener
 {
     /**
@@ -25,7 +28,7 @@ class OrderListener
                 'identifier' => [null, $this->idGenerator->generate($entity)],
             ];
 
-            $args->getEntityManager()->getUnitOfWork()->scheduleExtraUpdate($entity, $changeSet);
+            $args->getObjectManager()->getUnitOfWork()->scheduleExtraUpdate($entity, $changeSet);
         }
     }
 }

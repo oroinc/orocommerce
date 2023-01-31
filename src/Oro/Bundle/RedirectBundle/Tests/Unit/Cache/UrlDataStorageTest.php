@@ -37,7 +37,7 @@ class UrlDataStorageTest extends \PHPUnit\Framework\TestCase
         $storage->setUrl(['someParameter' => 'someValue'], '/test/some_url-en', 'some_url-en', 3);
 
         $export = <<<EOT
-Oro\Bundle\RedirectBundle\Cache\UrlDataStorage::__set_state(array(
+\Oro\Bundle\RedirectBundle\Cache\UrlDataStorage::__set_state(array(
    'data' => 
   array (
     'ae49506996071bccf2163b287491f8c2' => 

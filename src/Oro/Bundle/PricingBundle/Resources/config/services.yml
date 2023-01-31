@@ -1,3 +1,6 @@
+parameters:
+    enable_price_sharding: false
+
 services:
     oro_pricing.acl.voter.product_list:
         class: 'Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter'

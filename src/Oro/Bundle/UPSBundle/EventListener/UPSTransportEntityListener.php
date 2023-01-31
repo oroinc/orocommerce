@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\UPSBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEventDispatcherInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
+/**
+ * Listens to UPSTransport Entity update event and removes connected services
+ */
 class UPSTransportEntityListener
 {
     /**

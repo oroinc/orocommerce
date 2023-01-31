@@ -4,9 +4,9 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CMSBundle\Entity\EntityListener\PageEntityListener;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
