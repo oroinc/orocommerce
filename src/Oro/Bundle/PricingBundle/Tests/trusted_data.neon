@@ -92,6 +92,7 @@ trusted_data:
         Oro\Bundle\PricingBundle\Sharding\ShardManager:
             getEnabledShardName: true
             getEntityBaseTable: true
+            getBaseTableName: true
         Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension:
             getJoinAlias: true
         Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension:

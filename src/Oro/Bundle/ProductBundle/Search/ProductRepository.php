@@ -174,7 +174,7 @@ class ProductRepository extends WebsiteSearchRepository
                     Criteria::expr()->$operator('names_LOCALIZATION_ID', $search)
                 )
             )
-            ->setFirstResult($firstResult);
+            ->setFirstResult((int)$firstResult);
 
         if ($maxResults !== null) {
             $query->setMaxResults($maxResults);

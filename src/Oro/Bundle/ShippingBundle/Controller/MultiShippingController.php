@@ -33,7 +33,9 @@ class MultiShippingController extends AbstractController
         try {
             $multiShippingIntegrationManager->createIntegration();
         } catch (AccessDeniedException $e) {
-            $error = $translator->trans('oro.multi_shipping_method.settings.create_integration.not_authorized.error');
+            $error = $translator->trans(
+                'oro.shipping.multi_shipping_method.settings.create_integration.not_authorized.error'
+            );
         }
 
         return new JsonResponse($error ?? '');

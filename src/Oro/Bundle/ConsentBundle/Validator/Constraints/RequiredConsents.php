@@ -9,14 +9,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class RequiredConsents extends Constraint
 {
-    /** @var string */
-    public $message = 'oro.consent.validators.consent.required_consents.message';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validatedBy()
-    {
-        return 'oro_consent.validator.required_consents';
-    }
+    public string $message = 'oro.consent.validators.consent.required_consents.message';
 }

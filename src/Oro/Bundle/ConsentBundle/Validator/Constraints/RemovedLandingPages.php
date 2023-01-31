@@ -9,14 +9,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class RemovedLandingPages extends Constraint
 {
-    /** @var string */
-    public $message = 'oro.consent.validators.consent.removed_landing_pages.message';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validatedBy()
-    {
-        return 'oro_consent_removed_landing_pages_validator';
-    }
+    public string $message = 'oro.consent.validators.consent.removed_landing_pages.message';
 }

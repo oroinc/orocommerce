@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\EventListener\Cache;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
@@ -10,6 +10,9 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 
+/**
+ * Listens to Rule Entity save, delete events and invalidates cache
+ */
 class ShippingRuleChangeListener
 {
     /**
@@ -62,7 +65,7 @@ class ShippingRuleChangeListener
      */
     protected function isShippingRule(RuleInterface $rule, LifecycleEventArgs $args)
     {
-        $repository = $args->getEntityManager()->getRepository(ShippingMethodsConfigsRule::class);
+        $repository = $args->getObjectManager()->getRepository(ShippingMethodsConfigsRule::class);
         if ($repository->findOneBy(['rule' => $rule])) {
             return true;
         }
