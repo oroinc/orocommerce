@@ -8,16 +8,12 @@ use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const LABEL = 'Flat Rate';
 
-    /** @var FlatRateMethodType */
-    private $flatRateType;
+    private FlatRateMethodType $flatRateType;
 
     protected function setUp(): void
     {

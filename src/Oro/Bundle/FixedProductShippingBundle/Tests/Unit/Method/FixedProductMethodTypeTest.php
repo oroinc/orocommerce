@@ -9,14 +9,10 @@ use Oro\Bundle\FixedProductShippingBundle\Method\FixedProductMethodType;
 use Oro\Bundle\FixedProductShippingBundle\Provider\ShippingCostProvider;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\TestCase;
 
-class FixedProductMethodTypeTest extends TestCase
+class FixedProductMethodTypeTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    public const LABEL = 'Fixed Product';
+    private const LABEL = 'Fixed Product';
 
     /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $roundingService;
@@ -30,14 +26,14 @@ class FixedProductMethodTypeTest extends TestCase
     protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
+        $this->shippingCostProvider = $this->createMock(ShippingCostProvider::class);
+
         $this->roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);
         $this->roundingService->expects($this->any())
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
-
-        $this->shippingCostProvider = $this->createMock(ShippingCostProvider::class);
 
         $this->fixedProductType = new FixedProductMethodType(
             self::LABEL,

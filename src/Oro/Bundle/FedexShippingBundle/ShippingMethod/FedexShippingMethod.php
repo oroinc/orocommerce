@@ -3,7 +3,6 @@
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
 // @codingStandardsIgnoreStart
-use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
@@ -22,7 +21,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 // @codingStandardsIgnoreEnd
 
 /**
- * Fedex shipping method implementation.
+ * Represents FedEx shipping method.
  */
 class FedexShippingMethod implements
     ShippingMethodInterface,
@@ -30,59 +29,20 @@ class FedexShippingMethod implements
     PricesAwareShippingMethodInterface,
     ShippingTrackingAwareInterface
 {
-    const OPTION_SURCHARGE = 'surcharge';
+    public const OPTION_SURCHARGE = 'surcharge';
 
-    const TRACKING_URL = 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=';
+    private const TRACKING_URL = 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=';
 
-    /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface
-     */
-    private $rateServiceRequestSettingsFactory;
-
-    /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface
-     */
-    private $rateServiceRequestFactory;
-
-    /**
-     * @var FedexRateServiceBySettingsClientInterface
-     */
-    private $rateServiceClient;
-
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @var string
-     */
+    private FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory;
+    private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory;
+    private FedexRateServiceBySettingsClientInterface $rateServiceClient;
+    private string $identifier;
     private string $label;
-
-    /**
-     * @var string|null
-     */
-    private $iconPath;
-
-    /**
-     * @var ShippingMethodTypeInterface[]
-     */
-    private $types;
-
-    /**
-     * @var Collection|FedexShippingService[]
-     */
-    private $shippingServices;
-
-    /**
-     * @var FedexIntegrationSettings
-     */
-    private $settings;
-
-    /**
-     * @var bool
-     */
-    private $enabled;
+    private ?string $iconPath;
+    private bool $enabled;
+    private FedexIntegrationSettings $settings;
+    /** @var ShippingMethodTypeInterface[] */
+    private array $types;
 
     /**
      * @param FedexRateServiceRequestSettingsFactoryInterface   $rateServiceRequestSettingsFactory
@@ -101,7 +61,7 @@ class FedexShippingMethod implements
         FedexRateServiceBySettingsClientInterface $rateServiceClient,
         string $identifier,
         string $label,
-        $iconPath,
+        ?string $iconPath,
         bool $enabled,
         FedexIntegrationSettings $settings,
         array $types
@@ -115,13 +75,12 @@ class FedexShippingMethod implements
         $this->enabled = $enabled;
         $this->settings = $settings;
         $this->types = $types;
-        $this->shippingServices = $settings->getShippingServices();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function isGrouped()
+    public function isGrouped(): bool
     {
         return true;
     }
@@ -129,7 +88,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -137,7 +96,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -153,7 +112,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return $this->iconPath;
     }
@@ -161,7 +120,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->types;
     }
@@ -169,10 +128,10 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getType($identifier)
+    public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
         foreach ($this->getTypes() as $methodType) {
-            if ($methodType->getIdentifier() === (string)$identifier) {
+            if ($methodType->getIdentifier() === $identifier) {
                 return $methodType;
             }
         }
@@ -180,14 +139,10 @@ class FedexShippingMethod implements
         return null;
     }
 
-    /**
-     * @param string $code
-     *
-     * @return FedexShippingService|null
-     */
-    public function getShippingService(string $code)
+    public function getShippingService(string $code): ?FedexShippingService
     {
-        foreach ($this->shippingServices as $service) {
+        $services = $this->settings->getShippingServices();
+        foreach ($services as $service) {
             if ($code === $service->getCode()) {
                 return $service;
             }
@@ -199,7 +154,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType()
+    public function getOptionsConfigurationFormType(): ?string
     {
         return FedexShippingMethodOptionsType::class;
     }
@@ -207,7 +162,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getSortOrder()
+    public function getSortOrder(): int
     {
         return 20;
     }
@@ -215,15 +170,18 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
-    {
+    public function calculatePrices(
+        ShippingContextInterface $context,
+        array $methodOptions,
+        array $optionsByTypes
+    ): array {
         $shippingServices = $this->getShippingServicesFromOptions($optionsByTypes);
         $prices = $this->getPricesForShippingServices($shippingServices, $context);
 
         $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
         $result = [];
         foreach ($optionsByTypes as $typeId => $option) {
-            if (!array_key_exists($typeId, $prices)) {
+            if (!\array_key_exists($typeId, $prices)) {
                 continue;
             }
 
@@ -241,7 +199,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getTrackingLink($number)
+    public function getTrackingLink(string $number): ?string
     {
         foreach ($this->getTrackingRegexList() as $regex) {
             if (preg_match($regex, $number)) {
@@ -263,7 +221,7 @@ class FedexShippingMethod implements
 
     private function getSurchargeFromOptions(array $option): float
     {
-        return (float)$option[static::OPTION_SURCHARGE];
+        return (float)$option[self::OPTION_SURCHARGE];
     }
 
     /**
@@ -299,11 +257,11 @@ class FedexShippingMethod implements
         foreach ($shippingServices as $service) {
             $ruleId = $service->getRule()->getId();
 
-            if (!array_key_exists($ruleId, $rulePrices)) {
+            if (!\array_key_exists($ruleId, $rulePrices)) {
                 $rulePrices[$ruleId] = $this->getPricesForRule($context, $service->getRule());
             }
 
-            if (array_key_exists($service->getCode(), $rulePrices[$ruleId])) {
+            if (\array_key_exists($service->getCode(), $rulePrices[$ruleId])) {
                 $prices[$service->getCode()] = $rulePrices[$ruleId][$service->getCode()];
             }
         }

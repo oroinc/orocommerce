@@ -43,11 +43,21 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### ShippingBundle
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface` and all classes that implement this interface. 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface. 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and all classes that implement this interface.
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface` and all classes that implement this interface.
+* Removed unneeded classes that implement `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and replace them with `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider`.
+
 #### WebCatalogBundle
 * Changed `\Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor` so it builds cache starting always from the root content node.
 * Changed `\Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider::getContentVariantIds` so the ordering of the loaded data follows the order of specified ids.
 
 ### Removed
+
+#### ShippingBundle
+* Removed unneeded `Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface`.
 
 #### WebCatalogBundle
 * Removed block type `menu_item`; It was updated and moved to `CommerceMenuBundle`

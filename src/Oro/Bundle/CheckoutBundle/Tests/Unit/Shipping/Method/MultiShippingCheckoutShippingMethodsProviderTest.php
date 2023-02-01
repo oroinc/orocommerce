@@ -45,31 +45,32 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
             ->method('hasShippingMethods')
             ->willReturn(true);
 
-        $shippingMethodMock = $this->createMock(MultiShippingMethod::class);
-        $shippingMethodMock->expects($this->once())
-            ->method('getIdentifier')
-            ->willReturn('multi_shipping');
-
-        $shippingMethodTypeMock = $this->createMock(MultiShippingMethodType::class);
-        $shippingMethodMock->expects($this->once())
-            ->method('getType')
-            ->willReturn($shippingMethodTypeMock);
-
-        $shippingMethodTypeMock->expects($this->once())
+        $shippingMethodType = $this->createMock(MultiShippingMethodType::class);
+        $shippingMethodType->expects($this->once())
             ->method('calculatePrice')
             ->willReturn(Price::create(15.00, 'USD'));
 
+        $shippingMethod = $this->createMock(MultiShippingMethod::class);
+        $shippingMethod->expects($this->once())
+            ->method('getIdentifier')
+            ->willReturn('multi_shipping');
+        $shippingMethod->expects($this->once())
+            ->method('getType')
+            ->with('primary')
+            ->willReturn($shippingMethodType);
+
         $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
-            ->willReturn($shippingMethodMock);
+            ->willReturn($shippingMethod);
 
-        $shippingContextMock = $this->createMock(ShippingContextInterface::class);
+        $shippingContext = $this->createMock(ShippingContextInterface::class);
         $this->checkoutShippingContextProvider->expects($this->once())
             ->method('getContext')
-            ->willReturn($shippingContextMock);
+            ->willReturn($shippingContext);
 
         $checkout = new Checkout();
         $checkout->setShippingMethod('multi_shipping');
+        $checkout->setShippingMethodType('primary');
         $price = $this->provider->getPrice($checkout);
 
         $this->assertNotNull($price);
@@ -84,17 +85,16 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
             ->method('hasShippingMethods')
             ->willReturn(true);
 
-        $shippingMethodMock = $this->createMock(MultiShippingMethod::class);
-        $shippingMethodMock->expects($this->once())
+        $shippingMethod = $this->createMock(MultiShippingMethod::class);
+        $shippingMethod->expects($this->once())
             ->method('getIdentifier')
             ->willReturn('multi_shipping');
-
-        $shippingMethodMock->expects($this->never())
+        $shippingMethod->expects($this->never())
             ->method('getType');
 
         $this->multiShippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
-            ->willReturn($shippingMethodMock);
+            ->willReturn($shippingMethod);
 
         $this->checkoutShippingContextProvider->expects($this->never())
             ->method('getContext');

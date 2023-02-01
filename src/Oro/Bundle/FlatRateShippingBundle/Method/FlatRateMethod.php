@@ -4,57 +4,33 @@ namespace Oro\Bundle\FlatRateShippingBundle\Method;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
- * Flat rate shipping method implementation.
+ * Represents Flat Rate shipping method.
  */
 class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
-    /**
-     * @var FlatRateMethodType
-     */
-    protected $type;
+    private string $identifier;
+    private string $label;
+    private ?string $icon;
+    private bool $enabled;
+    private FlatRateMethodType $type;
 
-    /**
-     * @var string
-     */
-    protected string $label;
-
-    /**
-     * @var string|null
-     */
-    protected $icon;
-
-    /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var bool
-     */
-    private $enabled;
-
-    /**
-     * @param string      $identifier
-     * @param string      $label
-     * @param string|null $icon
-     * @param bool        $enabled
-     */
-    public function __construct($identifier, $label, $icon, $enabled)
+    public function __construct(string $identifier, string $label, ?string $icon, bool $enabled)
     {
         $this->identifier = $identifier;
-        $this->label = (string) $label;
+        $this->label = $label;
         $this->icon = $icon;
-        $this->type = new FlatRateMethodType($label);
         $this->enabled = $enabled;
+        $this->type = new FlatRateMethodType($label);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -62,7 +38,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function isGrouped()
+    public function isGrouped(): bool
     {
         return false;
     }
@@ -70,7 +46,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -86,7 +62,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
@@ -94,7 +70,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return [$this->type];
     }
@@ -102,9 +78,9 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function getType($type)
+    public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
-        if ($this->type->getIdentifier() === $type) {
+        if ($this->type->getIdentifier() === $identifier) {
             return $this->type;
         }
 
@@ -114,7 +90,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType()
+    public function getOptionsConfigurationFormType(): ?string
     {
         return HiddenType::class;
     }
@@ -122,15 +98,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     /**
      * {@inheritDoc}
      */
-    public function getOptions()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSortOrder()
+    public function getSortOrder(): int
     {
         return 10;
     }
