@@ -77,7 +77,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         $editor->setValue(stripslashes($text));
         $this->waitForAjax();
-        $editor->findButton('Import')->click();
+        $editor->findButton('Apply Changes')->click();
     }
 
     /**
@@ -110,7 +110,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $importedContent = str_replace("\n", "", $editor->getValue());
         self::assertEquals(stripslashes($text), $importedContent);
 
-        $editor->findButton('Import')->click();
+        $editor->findButton('Apply Changes')->click();
     }
 
     /**
@@ -280,7 +280,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: I add "Text content" to dialog code editor
      *
      * @When /^(?:|I )add "(?P<text>(?:[^"]|\\")*)" to dialog code editor$/
-     * @When /^(?:|I )add "(?P<text>(?:[^"]|\\")*)" to dialog code editor with (?P<save>(?:\w+))$/
+     * @When /^(?:|I )add "(?P<text>(?:[^"]|\\")*)" to dialog code editor with (?P<save>(?:[^"]|\\")*)$/
      *
      * @param string $text
      * @param string $save

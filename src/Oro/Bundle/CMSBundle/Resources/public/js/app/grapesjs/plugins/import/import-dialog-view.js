@@ -12,6 +12,7 @@ import __ from 'orotranslation/js/translator';
 import $ from 'jquery';
 import ApiAccessor from 'oroui/js/tools/api-accessor';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
+import StandartConfirmation from 'oroui/js/standart-confirmation';
 
 const REGEXP_TWIG_TAGS = /\{\{([\w\s\"\'\_\-\,\&\#\;\(\)]+)\}\}/gi;
 
@@ -145,6 +146,8 @@ const ImportDialogView = BaseView.extend({
 
     prevContent: '',
 
+    initialContent: '',
+
     listen: {
         'layout:reposition mediator': 'adjustHeight'
     },
@@ -193,7 +196,12 @@ const ImportDialogView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    render({content, dialogOptions = {}, renderProps = {}} = {}) {
+    render({
+        content,
+        dialogOptions = {},
+        renderProps = {},
+        exportButton = true
+    } = {}) {
         this.renderProps = renderProps;
         ImportDialogView.__super__.render.call(this);
 
@@ -201,6 +209,10 @@ const ImportDialogView = BaseView.extend({
 
         this.importButton = this.$el.find('[data-role="import"]');
         this.exportButton = this.$el.find('[data-role="export"]');
+
+        if (!exportButton) {
+            this.exportButton.hide();
+        }
 
         this.dialog = new DialogWidget({
             autoRender: false,
@@ -239,6 +251,8 @@ const ImportDialogView = BaseView.extend({
         this.adjustHeight();
         this.checkContent(this.viewerEditor);
         this.bindEvents();
+
+        this.initialContent = this.viewerEditor.getValue();
     },
 
     /**
@@ -306,6 +320,10 @@ const ImportDialogView = BaseView.extend({
         return this.prevContent !== this.viewerEditor.getValue();
     },
 
+    isInitialContentChanged() {
+        return this.initialContent !== this.viewerEditor.getValue();
+    },
+
     /**
      * Check content in editor
      * @param {Editor.Instance} codeEditor
@@ -325,6 +343,7 @@ const ImportDialogView = BaseView.extend({
 
         this.disabled = !success;
         this.importButton.attr('disabled', this.disabled);
+        this.exportButton.attr('disabled', this.disabled);
 
         this.markers.forEach(marker => marker.clear());
         errors.forEach(({line, message}) => {
@@ -355,6 +374,7 @@ const ImportDialogView = BaseView.extend({
         this.disabled = false;
         this.subview('loadingMask').show();
         this.importButton.attr('disabled', true);
+        this.exportButton.attr('disabled', true);
         return this.twigResolverAccessor.send({}, {
             content: twigContent
         }).then(({content, success}) => {
@@ -363,6 +383,7 @@ const ImportDialogView = BaseView.extend({
                 this.validationMessage(__('oro.cms.wysiwyg.import.message.twig_exp'));
             }
             this.importButton.attr('disabled', !success);
+            this.exportButton.attr('disabled', !success);
             return content;
         }).catch(() => {
             this.validationMessage(__('oro.cms.wysiwyg.import.message.twig_exp'));
@@ -382,6 +403,7 @@ const ImportDialogView = BaseView.extend({
         this.disabled = true;
         this.prevContent = content;
         this.importButton.attr('disabled', this.disabled);
+        this.exportButton.attr('disabled', this.disabled);
         const errors = this.editor.CodeValidator.validate(
             content,
             this.renderProps.codeValidationOptions ?? {
@@ -452,10 +474,35 @@ const ImportDialogView = BaseView.extend({
         this.adjustHeight();
     },
 
+    showExportConfirmation() {
+        this.removeSubview('exportConfirmation');
+        this.subview('exportConfirmation', new StandartConfirmation({
+            className: 'modal oro-modal-danger',
+            title: __('oro.cms.wysiwyg.export.confirmation.title'),
+            content: __('oro.cms.wysiwyg.export.confirmation.content'),
+            okText: __('oro.cms.wysiwyg.export.confirmation.okText')
+        }));
+
+        return this.subview('exportConfirmation').open();
+    },
+
     onExportCode() {
-        const {Commands} = this.editor;
-        if (Commands.has('gjs-export-zip')) {
-            Commands.run('gjs-export-zip');
+        const doExport = () => {
+            const {Commands} = this.editor;
+
+            if (Commands.has('gjs-export-zip')) {
+                Commands.run('gjs-export-zip');
+            }
+        };
+
+        if (this.isInitialContentChanged()) {
+            this.showExportConfirmation().on('ok', async () => {
+                await this.onImportCode();
+                doExport();
+            });
+        } else {
+            this.closeDialog();
+            doExport();
         }
     },
 
