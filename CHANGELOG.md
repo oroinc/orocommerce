@@ -71,7 +71,7 @@ The current file describes significant changes in the code that may affect the u
 
 ## 5.1.0-beta.2 (2022-11-30)
 
-[Show detailed list of changes](incompatibilities-5-1-beta-2.md)
+[Show detailed list of changes](incompatibilities-5-1-rc-1.md)
 
 ### Added
 
