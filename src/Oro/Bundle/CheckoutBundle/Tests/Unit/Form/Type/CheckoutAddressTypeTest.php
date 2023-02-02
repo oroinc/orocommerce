@@ -51,7 +51,8 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(CheckoutAddressType::class, null, [
             'object' => new Checkout(),
-            'addressType' => 'billing'
+            'addressType' => 'billing',
+            'disabled' => null,
         ]);
 
         $this->assertTrue($form->has('id'));
@@ -69,6 +70,8 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('postalCode'));
         $this->assertTrue($form->has('customerAddress'));
         $this->assertTrue($form->has('phone'));
+        $this->assertTrue($form->getConfig()->hasOption('disabled'));
+        $this->assertFalse($form->getConfig()->getOption('disabled'));
     }
 
     public function testGetParent()
