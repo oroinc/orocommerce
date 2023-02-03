@@ -61,7 +61,15 @@ class CheckoutAddressType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setAllowedTypes('object', Checkout::class);
+        $resolver
+            ->setAllowedTypes('object', Checkout::class)
+            ->addNormalizer('disabled', function ($options, $value) {
+                if (null === $value) {
+                    return false;
+                }
+
+                return $value;
+            });
     }
 
     /**

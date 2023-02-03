@@ -8,13 +8,18 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ENGINE_KEY = 'engine';
-    const ENGINE_PARAMETERS_KEY = 'engine_parameters';
+    public const ENGINE_KEY = 'engine';
+    public const ENGINE_PARAMETERS_KEY = 'engine_parameters';
+    public const INDEXER_BATCH_SIZE = 'indexer_batch_size';
+
+    public const INDEXER_BATCH_SIZE_DEFAULT = 100;
+    public const INDEXER_BATCH_SIZE_MIN = 1;
+    public const INDEXER_BATCH_SIZE_MAX = 100;
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(OroWebsiteSearchExtension::ALIAS);
         $rootNode = $treeBuilder->getRootNode();
@@ -26,7 +31,13 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->arrayNode(self::ENGINE_PARAMETERS_KEY)
                 ->prototype('variable')->end()
-            ->end();
+            ->end()
+            ->integerNode(self::INDEXER_BATCH_SIZE)
+                ->defaultValue(self::INDEXER_BATCH_SIZE_DEFAULT)
+                ->min(self::INDEXER_BATCH_SIZE_MIN)
+                ->max(self::INDEXER_BATCH_SIZE_MAX)
+            ->end()
+        ;
 
         return $treeBuilder;
     }

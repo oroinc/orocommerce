@@ -1,3 +1,4 @@
+@regression
 @ticket-BAP-17313
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 @fixture-OroProductBundle:related_products.yml

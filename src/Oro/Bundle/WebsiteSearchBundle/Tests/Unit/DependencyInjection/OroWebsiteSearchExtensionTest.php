@@ -32,7 +32,8 @@ class OroWebsiteSearchExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedParameters = [
-            'oro_website_search.engine'
+            'oro_website_search.engine',
+            'oro_website_search.indexer_batch_size'
         ];
         $this->assertParametersLoaded($expectedParameters);
 

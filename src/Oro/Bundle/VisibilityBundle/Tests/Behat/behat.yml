@@ -40,6 +40,10 @@ oro_behat_extension:
             locator: 'div.tab-pane.active select[name^="oro_scoped_data_type"]'
             type: css
 
+    Visibility Product To Customer First Group:
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
+      selector: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
+
     Short Description English (United States) fallback selector:
       selector: 'select[name="oro_catalog_category[shortDescriptions][values][localizations][1][fallback]"]'
 
