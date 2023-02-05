@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;

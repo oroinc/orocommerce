@@ -7,8 +7,8 @@ use Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermExtension;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
@@ -17,8 +17,6 @@ use Symfony\Component\Form\ResolvedFormTypeInterface;
 
 class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentTermProvider;
 
@@ -32,9 +30,12 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new PaymentTermExtension($this->paymentTermProvider);
     }
 
-    public function testGetExtendedTypes()
+    private function getPaymentTerm(int $id): PaymentTerm
     {
-        $this->assertSame([PaymentTermSelectType::class], PaymentTermExtension::getExtendedTypes());
+        $paymentTerm = new PaymentTerm();
+        ReflectionUtil::setId($paymentTerm, $id);
+
+        return $paymentTerm;
     }
 
     private function addCallbackAssert(
@@ -57,6 +58,11 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
                     })
                 )
             );
+    }
+
+    public function testGetExtendedTypes()
+    {
+        $this->assertSame([PaymentTermSelectType::class], PaymentTermExtension::getExtendedTypes());
     }
 
     public function testBuildWithoutParent()
@@ -140,7 +146,7 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
         $resolvedType = $this->createMock(ResolvedFormTypeInterface::class);
         $resolvedType->expects($this->any())
             ->method('getInnerType')
-            ->willReturn(new EntityType([]));
+            ->willReturn(new EntityTypeStub());
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->once())
@@ -168,7 +174,7 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('add')
             ->with(
                 $this->logicalAnd($this->isType('string'), $this->equalTo('paymentTerm')),
-                $this->logicalAnd($this->isType('string'), $this->equalTo(EntityType::class)),
+                $this->logicalAnd($this->isType('string'), $this->equalTo(EntityTypeStub::class)),
                 $this->logicalAnd($this->isType('array'), $this->equalTo($expected))
             );
 
@@ -184,7 +190,7 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'empty customer group payment term' => [
-                'customerPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
+                'customerPaymentTerm' => $this->getPaymentTerm(2),
                 'customerGroupPaymentTerm' => null,
                 'expected' => [
                     'attr' => [
@@ -195,7 +201,7 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
             ],
             'empty customer payment term' => [
                 'customerPaymentTerm' => null,
-                'customerGroupPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
+                'customerGroupPaymentTerm' => $this->getPaymentTerm(2),
                 'expected' => [
                     'attr' => [
                         'data-customer-payment-term' => null,
@@ -204,8 +210,8 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'all payment terms available' => [
-                'customerPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 5]),
-                'customerGroupPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
+                'customerPaymentTerm' => $this->getPaymentTerm(5),
+                'customerGroupPaymentTerm' => $this->getPaymentTerm(2),
                 'expected' => [
                     'attr' => [
                         'data-customer-payment-term' => 5,

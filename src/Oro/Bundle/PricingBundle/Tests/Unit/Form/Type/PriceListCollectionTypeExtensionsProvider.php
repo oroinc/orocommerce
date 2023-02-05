@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -30,7 +30,7 @@ class PriceListCollectionTypeExtensionsProvider extends \PHPUnit\Framework\TestC
             new PreloadedExtension(
                 [
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    EntityType::class => new EntityTypeStub([]),
+                    EntityType::class => new EntityTypeStub(),
                 ],
                 [
                     FormType::class => [new SortableExtension()],

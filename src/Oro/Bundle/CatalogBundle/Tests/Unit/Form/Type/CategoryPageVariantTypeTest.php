@@ -10,8 +10,8 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValueValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
@@ -19,8 +19,6 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
     /** @var Category[] */
     private static $categories = [];
 
@@ -32,28 +30,16 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         $treeHandler = $this->createMock(AbstractTreeHandler::class);
         $treeHandler->expects($this->any())
             ->method('createTree')
-            ->willReturn(
-                [
-                    [
-                        'id' => 1001,
-                        'parent' => '#',
-                        'text' => 'Parent category',
-                        'state' => []
-                    ],
-                    [
-                        'id' => 2002,
-                        'parent' => 1001,
-                        'text' => 'Sub category',
-                        'state' => []
-                    ]
-                ]
-            );
+            ->willReturn([
+                ['id' => 1001, 'parent' => '#', 'text' => 'Parent category', 'state' => []],
+                ['id' => 2002, 'parent' => 1001, 'text' => 'Sub category', 'state' => []]
+            ]);
 
         return [
             new PreloadedExtension(
                 [
                     new CategoryTreeType($treeHandler),
-                    EntityIdentifierType::class => new EntityType([
+                    EntityIdentifierType::class => new EntityTypeStub([
                         1001 => $this->getCategory(1001),
                         2002 => $this->getCategory(2002),
                     ])
@@ -104,8 +90,8 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
     private function getCategory(int $id): Category
     {
         if (!array_key_exists($id, self::$categories)) {
-            /** @var Category $category */
-            $category = $this->getEntity(Category::class, ['id' => $id]);
+            $category = new Category();
+            ReflectionUtil::setId($category, $id);
             $category->addTitle((new CategoryTitle())->setString('Category ' . $id));
             self::$categories[$id] = $category;
         }

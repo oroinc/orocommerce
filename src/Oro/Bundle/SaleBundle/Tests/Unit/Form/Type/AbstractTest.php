@@ -7,7 +7,6 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -25,9 +24,8 @@ use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
 use Oro\Bundle\SecurityBundle\Model\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Form\FormTypeInterface;
@@ -126,46 +124,32 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return $priceType;
     }
 
-    protected function prepareProductEntityType(): EntityType
+    protected function prepareProductEntityType(): EntityTypeStub
     {
-        return new EntityType(
-            [
-                2 => $this->getEntity(Product::class, 2),
-                3 => $this->getEntity(Product::class, 3),
-            ]
+        return new EntityTypeStub([
+            2 => $this->getEntity(Product::class, 2),
+            3 => $this->getEntity(Product::class, 3),
+        ]);
+    }
+
+    protected function prepareUserMultiSelectType(): EntityTypeStub
+    {
+        return new EntityTypeStub(
+            [1 => $this->getUser(1), 2 => $this->getUser(2)],
+            ['multiple' => true]
         );
     }
 
-    protected function prepareUserMultiSelectType(): EntityType
+    protected function prepareCustomerUserMultiSelectType(): EntityTypeStub
     {
-        return new EntityType(
-            [
-                1 => $this->getUser(1),
-                2 => $this->getUser(2),
-            ],
-            UserMultiSelectType::NAME,
-            [
-                'multiple' => true
-            ]
-        );
-    }
-
-    protected function prepareCustomerUserMultiSelectType(): EntityType
-    {
-        return new EntityType(
-            [
-                10 => $this->getCustomerUser(10),
-                11 => $this->getCustomerUser(11),
-            ],
-            CustomerUserMultiSelectType::NAME,
-            [
-                'multiple' => true
-            ]
+        return new EntityTypeStub(
+            [10 => $this->getCustomerUser(10), 11 => $this->getCustomerUser(11)],
+            ['multiple' => true]
         );
     }
 
     /**
-     * @param array $codes
+     * @param string[] $codes
      *
      * @return ProductUnit[]
      */
@@ -190,14 +174,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function prepareProductUnitSelectionType(): EntityType
+    protected function prepareProductUnitSelectionType(): EntityTypeStub
     {
-        return new ProductUnitSelectionTypeStub(
-            [
-                'kg' => $this->getEntity(ProductUnit::class, 'kg', 'code'),
-                'item' => $this->getEntity(ProductUnit::class, 'item', 'code'),
-            ]
-        );
+        return new ProductUnitSelectionTypeStub([
+            'kg' => $this->getEntity(ProductUnit::class, 'kg', 'code'),
+            'item' => $this->getEntity(ProductUnit::class, 'item', 'code'),
+        ]);
     }
 
     protected function getEntity(string $className, int|string $id, string $primaryKey = 'id'): object

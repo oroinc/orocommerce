@@ -16,11 +16,10 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
@@ -32,8 +31,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var ProductPriceType */
-    private $formType;
+    private ProductPriceType $formType;
 
     private array $priceLists = ['Test', 'Test 01'];
     private array $units = ['item', 'kg' ];
@@ -58,18 +56,6 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions(): array
     {
-        $entityType = new EntityType(
-            [
-                1 => $this->getPriceList(1),
-                2 => $this->getPriceList(2)
-            ]
-        );
-
-        $productUnitSelection = new ProductUnitSelectionTypeStub(
-            $this->prepareProductUnitSelectionChoices(),
-            ProductPriceUnitSelectorType::NAME
-        );
-
         $priceType = new PriceType();
         $priceType->setDataClass(Price::class);
 
@@ -77,12 +63,14 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->formType,
-                    $entityType->getName() => $entityType,
+                    new EntityTypeStub([1 => $this->getPriceList(1), 2 => $this->getPriceList(2)]),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    ProductPriceUnitSelectorType::class => $productUnitSelection,
-                    PriceType::class => $priceType,
+                    ProductPriceUnitSelectorType::class => new ProductUnitSelectionTypeStub(
+                        $this->prepareProductUnitSelectionChoices()
+                    ),
+                    $priceType,
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    QuantityType::class => $this->getQuantityType(),
+                    $this->getQuantityType(),
                 ],
                 []
             ),

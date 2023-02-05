@@ -6,14 +6,13 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightType;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use Oro\Bundle\ShippingBundle\Model\Weight;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class WeightTypeTest extends FormIntegrationTestCase
 {
-    /** @var WeightType */
-    private $formType;
+    private WeightType $formType;
 
     protected function setUp(): void
     {
@@ -84,14 +83,11 @@ class WeightTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    WeightType::class => $this->formType,
-                    WeightUnitSelectType::class => new EntityType(
-                        [
-                            'kg' => $this->getWeightUnit('kg'),
-                            'lbs' => $this->getWeightUnit('lbs')
-                        ],
-                        WeightUnitSelectType::NAME
-                    )
+                    $this->formType,
+                    WeightUnitSelectType::class => new EntityTypeStub([
+                        'kg' => $this->getWeightUnit('kg'),
+                        'lbs' => $this->getWeightUnit('lbs')
+                    ])
                 ],
                 []
             ),

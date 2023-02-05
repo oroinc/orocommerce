@@ -27,7 +27,7 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilder;
@@ -189,16 +189,14 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     $this->type,
                     CategorySortOrderGridType::class => new CategorySortOrderGridTypeStub(),
                     ImageType::class => new ImageTypeStub(),
-                    EntityIdentifierType::class => new EntityType([
+                    EntityIdentifierType::class => new EntityTypeStub([
                         1 => $this->getCategory(1)
                     ]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
-                    CategoryDefaultProductOptionsType::class => new CategoryDefaultProductOptionsType(),
+                    new CategoryDefaultProductOptionsType(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::class => new LocalizedSlugWithRedirectType(
-                        $this->createMock(ConfirmSlugChangeFormHelper::class)
-                    ),
-                    CategoryUnitPrecisionType::class => new CategoryUnitPrecisionType(
+                    new LocalizedSlugWithRedirectType($this->createMock(ConfirmSlugChangeFormHelper::class)),
+                    new CategoryUnitPrecisionType(
                         $this->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class)
                     )
                 ],

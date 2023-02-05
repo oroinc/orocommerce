@@ -6,7 +6,6 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -15,7 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormInterface;
@@ -53,25 +52,24 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         parent::setUp();
     }
 
-    protected function getExtensions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub(
-            [
-                1 => $this->getShoppingList(1, 'Shopping List 1'),
-                2 => $this->getShoppingList(2, 'Shopping List 2'),
-            ]
-        );
-
-        $productUnitSelection = new ProductUnitSelectionTypeStub($this->prepareProductUnitSelectionChoices());
-
         return [
             new PreloadedExtension(
                 [
-                    FrontendLineItemWidgetType::class => $this->type,
-                    FrontendLineItemType::class       => new FrontendLineItemType(),
-                    EntityType::class                 => $entityType,
-                    ProductUnitSelectionType::class   => $productUnitSelection,
-                    QuantityType::class               => $this->getQuantityType(),
+                    $this->type,
+                    new FrontendLineItemType(),
+                    EntityType::class => new EntityTypeStub([
+                        1 => $this->getShoppingList(1, 'Shopping List 1'),
+                        2 => $this->getShoppingList(2, 'Shopping List 2'),
+                    ]),
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
+                        $this->prepareProductUnitSelectionChoices()
+                    ),
+                    $this->getQuantityType(),
                 ],
                 []
             )

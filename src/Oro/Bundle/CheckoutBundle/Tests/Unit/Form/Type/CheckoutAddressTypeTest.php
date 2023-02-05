@@ -21,7 +21,7 @@ use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -178,39 +178,32 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         $orderAddressSecurityProvider->expects($this->any())
             ->method('isManualEditGranted')
             ->willReturn(true);
-        $orderAddressType = new OrderAddressType($orderAddressSecurityProvider);
-        $addressTypeStub = new AddressTypeStub();
+
         $addressManager = $this->createMock(OrderAddressManager::class);
         $addressManager->expects($this->any())
             ->method('getGroupedAddresses')
             ->willReturn(new TypedOrderAddressCollection(null, 'billing', []));
-        $addressFormatter = $this->createMock(AddressFormatter::class);
-        $serializer = $this->createMock(Serializer::class);
-        $addressType = new EntityType(
-            [
-                AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
-                AddressType::TYPE_SHIPPING => new AddressType(AddressType::TYPE_SHIPPING),
-            ],
-            TranslatableEntityType::NAME
-        );
 
         return [
             new PreloadedExtension(
                 [
-                    CheckoutAddressType::class => new CheckoutAddressType(),
-                    OrderAddressType::class => $orderAddressType,
-                    AddressFormType::class => $addressTypeStub,
-                    CheckoutAddressSelectType::class => new CheckoutAddressSelectType(
+                    new CheckoutAddressType(),
+                    new OrderAddressType($orderAddressSecurityProvider),
+                    AddressFormType::class => new AddressTypeStub(),
+                    new CheckoutAddressSelectType(
                         $addressManager,
                         $this->createMock(OrderAddressToAddressIdentifierViewTransformer::class)
                     ),
-                    OrderAddressSelectType::class => new OrderAddressSelectType(
+                    new OrderAddressSelectType(
                         $addressManager,
-                        $addressFormatter,
+                        $this->createMock(AddressFormatter::class),
                         $orderAddressSecurityProvider,
-                        $serializer
+                        $this->createMock(Serializer::class)
                     ),
-                    TranslatableEntityType::class => $addressType,
+                    TranslatableEntityType::class => new EntityTypeStub([
+                        AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
+                        AddressType::TYPE_SHIPPING => new AddressType(AddressType::TYPE_SHIPPING),
+                    ]),
                 ],
                 [
                     FormType::class => [new StripTagsExtensionStub($this)],

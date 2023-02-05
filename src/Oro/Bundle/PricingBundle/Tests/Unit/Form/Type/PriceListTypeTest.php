@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -29,9 +29,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
     protected function getExtensions(): array
     {
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
-        $localeSettings = $this->createMock(LocaleSettings::class);
-        $currencyNameHelper = $this->createMock(CurrencyNameHelper::class);
-
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD', 'EUR']);
@@ -39,31 +36,16 @@ class PriceListTypeTest extends FormIntegrationTestCase
             ->method('getDefaultCurrency')
             ->willReturn('USD');
 
-        $entityIdentifierType = new EntityTypeStub(
-            [
-                1 => $this->getCustomer(1),
-                2 => $this->getCustomer(2),
-                3 => $this->getCustomerGroup(3),
-                4 => $this->getCustomerGroup(4),
-                5 => $this->getWebsite(5),
-                6 => $this->getWebsite(6)
-            ]
-        );
-
         return [
             new PreloadedExtension(
-                array_merge(
-                    [
-                        $entityIdentifierType->getName() => $entityIdentifierType,
-                        CurrencySelectionType::class => new CurrencySelectionType(
-                            $currencyProvider,
-                            $localeSettings,
-                            $currencyNameHelper
-                        ),
-                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')])
-                    ],
-                    $this->getPriceRuleEditorExtension()
-                ),
+                array_merge([
+                    new CurrencySelectionType(
+                        $currencyProvider,
+                        $this->createMock(LocaleSettings::class),
+                        $this->createMock(CurrencyNameHelper::class)
+                    ),
+                    EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')])
+                ], $this->getPriceRuleEditorExtension()),
                 []
             )
         ];

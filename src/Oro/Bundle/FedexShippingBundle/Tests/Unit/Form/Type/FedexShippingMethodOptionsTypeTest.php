@@ -9,19 +9,15 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class FedexShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var FedexShippingMethodOptionsType
-     */
-    private $formType;
+    private FedexShippingMethodOptionsType $formType;
 
     protected function setUp(): void
     {
-        /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject $roundingService */
-        $roundingService = $this->getMockForAbstractClass(RoundingServiceInterface::class);
-        $roundingService->expects(static::any())
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService->expects(self::any())
             ->method('getPrecision')
             ->willReturn(4);
-        $roundingService->expects(static::any())
+        $roundingService->expects(self::any())
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
@@ -31,7 +27,7 @@ class FedexShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        static::assertEquals('oro_fedex_shipping_method_options', $this->formType->getBlockPrefix());
+        self::assertEquals('oro_fedex_shipping_method_options', $this->formType->getBlockPrefix());
     }
 
     public function testSubmit()
@@ -40,19 +36,19 @@ class FedexShippingMethodOptionsTypeTest extends FormIntegrationTestCase
         $submittedData = ['surcharge' => 5];
         $form = $this->factory->create(FedexShippingMethodOptionsType::class, $data);
 
-        static::assertEquals($data, $form->getData());
+        self::assertEquals($data, $form->getData());
 
         $form->submit($submittedData);
 
-        static::assertTrue($form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($submittedData, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($submittedData, $form->getData());
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->formType], [])

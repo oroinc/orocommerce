@@ -22,8 +22,8 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
 use Oro\Bundle\FormBundle\Form\Type\Select2Type;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -33,10 +33,7 @@ use Symfony\Component\Validator\Validation;
 
 class ConsentCollectionTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    /** @var ConsentCollectionType */
-    private $formType;
+    private ConsentCollectionType $formType;
 
     protected function setUp(): void
     {
@@ -99,10 +96,8 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityType([]);
-
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->expects($this->any())
             ->method('getSingleIdentifierFieldName')
@@ -112,7 +107,10 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
         $repository->expects($this->any())
             ->method('find')
             ->willReturnCallback(function ($id) {
-                return $this->getEntity(Consent::class, ['id' => $id]);
+                $consent = new Consent();
+                ReflectionUtil::setId($consent, $id);
+
+                return $consent;
             });
 
         $entityManager = $this->createMock(EntityManager::class);
@@ -137,24 +135,24 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ConsentCollectionTypeTest::class => $this->formType,
-                    CollectionType::class => new CollectionType(),
-                    ConsentSelectWithPriorityType::class => new ConsentSelectWithPriorityType(),
-                    ConsentSelectType::class => new ConsentSelectType(),
-                    OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
+                    $this->formType,
+                    new CollectionType(),
+                    new ConsentSelectWithPriorityType(),
+                    new ConsentSelectType(),
+                    new OroEntitySelectOrCreateInlineType(
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
                         $entityManager,
                         $searchRegistry
                     ),
-                    OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
+                    new OroJquerySelect2HiddenType(
                         $entityManager,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     ),
-                    'oro_select2_choice' => new Select2Type($this->formType, 'hidden'),
-                    EntityType::class => $entityType,
+                    new Select2Type($this->formType, 'hidden'),
+                    new EntityTypeStub(),
                 ],
                 [
                     FormType::class => [new SortableExtension()],
