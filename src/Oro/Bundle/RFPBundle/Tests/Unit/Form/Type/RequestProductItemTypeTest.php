@@ -4,14 +4,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -221,22 +219,18 @@ class RequestProductItemTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {
-        $priceType = $this->preparePriceType();
-        $currencySelectionType = new CurrencySelectionTypeStub();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-
         return [
             new PreloadedExtension(
                 [
-                    RequestProductItemType::class   => $this->formType,
-                    PriceType::class                => $priceType,
-                    CurrencySelectionType::class    => $currencySelectionType,
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
-                    QuantityType::class             => $this->getQuantityType(),
+                    $this->formType,
+                    $this->preparePriceType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    $this->getQuantityType(),
                 ],
                 []
             ),

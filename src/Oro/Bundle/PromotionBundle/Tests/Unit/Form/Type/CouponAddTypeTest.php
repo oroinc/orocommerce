@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAddType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -43,12 +43,9 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CouponAddType::class => $this->formType,
-                    CouponAutocompleteType::class => new EntityType(
-                        ['coupon1' => $coupon1],
-                        CouponAutocompleteType::NAME
-                    ),
-                    EntityIdentifierType::class => new EntityType([1 => $coupon1, 2 => $coupon2]),
+                    $this->formType,
+                    CouponAutocompleteType::class => new EntityTypeStub(['coupon1' => $coupon1]),
+                    EntityIdentifierType::class => new EntityTypeStub([1 => $coupon1, 2 => $coupon2]),
                 ],
                 []
             ),

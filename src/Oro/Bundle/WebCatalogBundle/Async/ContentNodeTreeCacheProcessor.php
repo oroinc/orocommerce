@@ -12,7 +12,6 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
-use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Dumps content node cache
@@ -26,16 +25,12 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
 
     private ContentNodeTreeCacheDumper $dumper;
 
-    private CacheInterface $layoutCacheProvider;
-
     public function __construct(
         JobRunner $jobRunner,
-        ContentNodeTreeCacheDumper $dumper,
-        CacheInterface $layoutCacheProvider
+        ContentNodeTreeCacheDumper $dumper
     ) {
         $this->jobRunner = $jobRunner;
         $this->dumper = $dumper;
-        $this->layoutCacheProvider = $layoutCacheProvider;
 
         $this->logger = new NullLogger();
     }
@@ -50,9 +45,6 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
                     $messageBody[Topic::CONTENT_NODE],
                     $messageBody[Topic::SCOPE]
                 );
-
-                // Remove all cached layout data provider web catalog node items
-                $this->layoutCacheProvider->clear();
 
                 return true;
             }

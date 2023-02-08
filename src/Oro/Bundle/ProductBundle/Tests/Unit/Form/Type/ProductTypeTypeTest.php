@@ -12,11 +12,11 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductTypeTypeTest extends FormIntegrationTestCase
 {
-    /** @var ProductTypeType */
-    protected $productTypeType;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductTypeProvider */
-    protected $productTypeProvider;
+    private $productTypeProvider;
+
+    /** @var ProductTypeType */
+    private $productTypeType;
 
     protected function setUp(): void
     {
@@ -26,9 +26,9 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->productTypeType], [])

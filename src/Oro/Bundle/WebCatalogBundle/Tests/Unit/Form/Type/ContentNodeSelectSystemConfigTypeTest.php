@@ -11,7 +11,7 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectSystemConfigType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectType;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -81,21 +81,18 @@ class ContentNodeSelectSystemConfigTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $contentNodeSelectType = new ContentNodeSelectType($this->treeHandler);
-        $entityIdentifierType = new EntityType([
-            1 => $this->getEntity(ContentNode::class, ['id' => 1])
-        ]);
-
         return [
             new PreloadedExtension(
                 [
-                    ContentNodeSelectSystemConfigType::class => $this->formType,
-                    ContentNodeSelectType::class => $contentNodeSelectType,
-                    EntityIdentifierType::class => $entityIdentifierType,
+                    $this->formType,
+                    new ContentNodeSelectType($this->treeHandler),
+                    EntityIdentifierType::class => new EntityTypeStub([
+                        1 => $this->getEntity(ContentNode::class, ['id' => 1])
+                    ]),
                 ],
                 []
             )

@@ -45,7 +45,7 @@ dynamic-imports:
     extra:
         - oro/product-shopping-lists-widget
         - oro/select2-component
-        - orocommercemenu/js/app/widgets/menu-traveling-widget
+        - orocommercemenu/js/app/views/menu-traveling-view
         - orocustomer/js/validator/unique-customer-user-name-and-email
         - oroform/js/app/views/form-validate-view
         - oroform/js/validator/callback

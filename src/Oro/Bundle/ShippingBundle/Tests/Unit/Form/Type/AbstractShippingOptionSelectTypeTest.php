@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -89,19 +89,12 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $inputOptions
-     * @param array $expectedOptions
-     * @param mixed $submittedData
-     * @param mixed $expectedData
-     * @param array $expectedLabels
-     * @param array $customChoices
      */
     public function testSubmit(
         array $inputOptions,
         array $expectedOptions,
-        $submittedData,
-        $expectedData,
+        mixed $submittedData,
+        mixed $expectedData,
         array $expectedLabels,
         array $customChoices = null
     ) {
@@ -191,9 +184,9 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -217,10 +210,6 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         return $choices;
     }
 
-    /**
-     * @param string $code
-     * @return MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
     protected function createUnit(string $code): MeasureUnitInterface
     {
         $unit = $this->createMock(MeasureUnitInterface::class);

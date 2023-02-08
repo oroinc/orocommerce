@@ -83,6 +83,7 @@ const CustomCodeType = BaseType.extend({
             if (Commands.has('gjs-open-import-webpage')) {
                 return Commands.run('gjs-open-import-webpage', {
                     content,
+                    exportButton: false,
                     dialogOptions: {
                         title: 'Source code'
                     },

@@ -91,4 +91,50 @@ class ContentVariantRepository extends EntityRepository
 
         return $ids;
     }
+
+    /**
+     * @param int[] $contentVariantIds
+     *
+     * @return array<array>
+     *  [
+     *      [
+     *          'id' => int,
+     *          'slugs' => [
+     *              [
+     *                  'id' => int,
+     *                  'url' => ?string,
+     *                  'localization' => ?array [
+     *                      'id' => int,
+     *                  ],
+     *              ]
+     *          ],
+     *          'default' => bool,
+     *          // ... Other scalar fields and to-one associations of the ContentVariant entity class
+     *      ],
+     *      // ...
+     *  ]
+     */
+    public function getContentVariantsData(array $contentVariantIds): array
+    {
+        $queryBuilder = $this->createQueryBuilder('variant');
+        $queryBuilder
+            ->where($queryBuilder->expr()->in('variant.id', $contentVariantIds))
+            ->leftJoin('variant.slugs', 'slug')
+            ->addSelect('PARTIAL slug.{id,url}')
+            ->leftJoin('slug.localization', 'slugLocalization')
+            ->addSelect('PARTIAL slugLocalization.{id}');
+
+        $classMetadata = $this->getClassMetadata();
+
+        foreach ($classMetadata->getAssociationNames() as $associationName) {
+            if ($classMetadata->isSingleValuedAssociation($associationName)) {
+                QueryBuilderUtil::checkField($associationName);
+                $queryBuilder
+                    ->leftJoin(QueryBuilderUtil::sprintf('variant.%s', $associationName), $associationName)
+                    ->addSelect(QueryBuilderUtil::sprintf('PARTIAL %s.{id}', $associationName));
+            }
+        }
+
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
 }

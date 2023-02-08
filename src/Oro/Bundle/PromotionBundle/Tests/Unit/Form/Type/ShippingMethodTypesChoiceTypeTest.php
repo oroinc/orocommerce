@@ -43,7 +43,8 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(?array $existingData, string $submittedData, array $expectedData)
     {
-        $flatRatePrimaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('primary');
+        $flatRatePrimaryShippingType = new ShippingMethodTypeStub();
+        $flatRatePrimaryShippingType->setIdentifier('primary');
 
         $flatRateShippingMethod = new ShippingMethodStub();
         $flatRateShippingMethod->setIdentifier('flat_rate_2');
@@ -133,12 +134,13 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 
     private function getUpsShippingMethod(): ShippingMethodStub
     {
-        $ups2DayAir = (new ShippingMethodTypeStub())
-            ->setIdentifier('02')
-            ->setLabel('UPS 2 Day Air');
-        $ups3DaySelect = (new ShippingMethodTypeStub())
-            ->setIdentifier('12')
-            ->setLabel('UPS 3 Day Select');
+        $ups2DayAir = new ShippingMethodTypeStub();
+        $ups2DayAir->setIdentifier('02');
+        $ups2DayAir->setLabel('UPS 2 Day Air');
+
+        $ups3DaySelect = new ShippingMethodTypeStub();
+        $ups3DaySelect->setIdentifier('12');
+        $ups3DaySelect->setLabel('UPS 3 Day Select');
 
         $upsShippingMethod = new ShippingMethodStub();
         $upsShippingMethod->setIdentifier('ups_4');

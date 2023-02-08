@@ -5,21 +5,18 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\Type\AddressFormExtensionTestCase;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
-    /** @var PaymentMethodsConfigsRuleDestinationType */
-    private $formType;
-
-    /** @var AddressCountryAndRegionSubscriber */
-    private $subscriber;
+    private PaymentMethodsConfigsRuleDestinationType $formType;
+    private AddressCountryAndRegionSubscriber $subscriber;
 
     protected function setUp(): void
     {

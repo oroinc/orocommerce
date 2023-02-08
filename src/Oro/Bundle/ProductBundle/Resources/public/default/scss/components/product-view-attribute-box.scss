@@ -18,17 +18,14 @@
         &-related-items {
             columns: $product-view-attributes-box-related-items-columns;
             display: $product-view-attributes-box-related-items-display;
+            grid-template-columns: $product-view-attributes-box-related-items-grid-template-columns;
+            gap: $product-view-attributes-box-related-items-gap;
 
             > .embedded-products {
-                width: $product-view-attributes-box-embedded-products-width;
-                margin: 0 $product-view-attributes-box-embedded-products-offset;
+                margin: $product-view-attributes-box-embedded-products-offset;
 
-                &:first-child {
-                    margin-left: 0;
-                }
-
-                &:last-child {
-                    margin-right: 0;
+                .tab-content__wrapper {
+                    width: $product-view-attributes-box-tab-content-width;
                 }
             }
         }

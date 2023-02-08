@@ -76,7 +76,11 @@ class CmsPageHelper
 
         $scope = $this->consentContextProvider->getScope();
         if ($scope instanceof Scope) {
-            $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($contentNode, $scope);
+            $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode(
+                $contentNode,
+                $scope,
+                ['tree_depth' => 0]
+            );
 
             if (!$resolvedNode instanceof ResolvedContentNode) {
                 return null;

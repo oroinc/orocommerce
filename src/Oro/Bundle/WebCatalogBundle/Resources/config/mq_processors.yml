@@ -16,7 +16,6 @@ services:
             - '@oro_message_queue.job.runner'
             - '@oro_message_queue.client.message_producer'
             - '@doctrine'
-            - '@oro_config.manager'
 
     oro_web_catalog.async.content_node_cache_processor:
         class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeCacheProcessor
@@ -30,7 +29,6 @@ services:
         arguments:
             - '@oro_message_queue.job.runner'
             - '@oro_web_catalog.content_node_tree_cache_dumper'
-            - '@oro_web_catalog.layout.data_provider.menu_data.cache'
 
     oro_web_catalog.async.content_node_slug_processor:
         class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor
@@ -40,4 +38,4 @@ services:
             - '@oro_web_catalog.generator.slug_generator'
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
-            - '@oro_web_catalog.content_node_tree_cache'
+            - '@oro_web_catalog.content_node_tree_cache.root'

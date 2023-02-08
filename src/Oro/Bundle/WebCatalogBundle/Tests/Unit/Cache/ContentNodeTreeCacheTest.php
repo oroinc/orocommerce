@@ -3,16 +3,13 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Cache;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
+use Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
@@ -22,47 +19,48 @@ class ContentNodeTreeCacheTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
+    private CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject $cache;
 
-    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $cache;
+    private ResolvedContentNodeNormalizer|\PHPUnit\Framework\MockObject\MockObject $normalizer;
 
-    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $cacheItem;
+    private CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject $cacheItem;
 
-    /** @var ContentNodeTreeCache */
-    private $contentNodeTreeCache;
+    private ContentNodeTreeCache $contentNodeTreeCache;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->normalizer = $this->createMock(ResolvedContentNodeNormalizer::class);
         $this->cacheItem = $this->createMock(CacheItemInterface::class);
 
         $this->contentNodeTreeCache = new ContentNodeTreeCache(
-            $this->doctrineHelper,
-            $this->cache
+            $this->cache,
+            $this->normalizer
         );
     }
 
-    public function testFetchWhenNoCachedData()
+    public function testFetchWhenNoCachedData(): void
     {
-        $this->cache->expects($this->once())
+        $this->cache->expects(self::once())
             ->method('getItem')
             ->with('node_2_scope_5')
             ->willReturn($this->cacheItem);
+
         $this->cacheItem->expects(self::once())
             ->method('isHit')
             ->willReturn(false);
 
-        $this->assertFalse($this->contentNodeTreeCache->fetch(2, 5));
+        $this->normalizer
+            ->expects(self::never())
+            ->method(self::anything());
+
+        self::assertFalse($this->contentNodeTreeCache->fetch(2, [5]));
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testFetchWhenCachedDataExist()
+    public function testFetchWhenCachedDataExist(): void
     {
         $cacheData = [
             'id' => 1,
@@ -74,14 +72,14 @@ class ContentNodeTreeCacheTest extends TestCase
                 [
                     'string' => 'Title 1 EN',
                     'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                    'fallback' => FallbackType::PARENT_LOCALIZATION
-                ]
+                    'fallback' => FallbackType::PARENT_LOCALIZATION,
+                ],
             ],
             'contentVariant' => [
                 'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
                 'localizedUrls' => [
-                    ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE]
-                ]
+                    ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE],
+                ],
             ],
             'childNodes' => [
                 [
@@ -90,17 +88,17 @@ class ContentNodeTreeCacheTest extends TestCase
                     'identifier' => 'root__second',
                     'resolveVariantTitle' => false,
                     'titles' => [
-                        ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE]
+                        ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
                     ],
                     'contentVariant' => [
                         'data' => ['id' => 7, 'type' => 'test_type', 'test' => 2],
                         'localizedUrls' => [
-                            ['string' => '/test/content', 'localization' => null, 'fallback' => FallbackType::NONE]
-                        ]
+                            ['string' => '/test/content', 'localization' => null, 'fallback' => FallbackType::NONE],
+                        ],
                     ],
-                    'childNodes' => []
-                ]
-            ]
+                    'childNodes' => [],
+                ],
+            ],
         ];
         $expected = new ResolvedContentNode(
             1,
@@ -127,7 +125,7 @@ class ContentNodeTreeCacheTest extends TestCase
             2,
             new ArrayCollection(
                 [
-                    (new LocalizedFallbackValue())->setString('Child Title 1')
+                    (new LocalizedFallbackValue())->setString('Child Title 1'),
                 ]
             ),
             (new ResolvedContentVariant())
@@ -138,49 +136,53 @@ class ContentNodeTreeCacheTest extends TestCase
 
         $expected->addChildNode($childResolvedNode);
 
-        $this->cache->expects($this->once())
+        $this->cache->expects(self::once())
             ->method('getItem')
             ->with('node_2_scope_5')
             ->willReturn($this->cacheItem);
         $this->cacheItem->expects(self::once())
             ->method('isHit')
             ->willReturn(true);
-        $this->cacheItem->expects(self::exactly(2))
+        $this->cacheItem->expects(self::once())
             ->method('get')
             ->willReturn($cacheData);
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnCallback(
-                function ($className, $id) {
-                    return $this->getEntity($className, ['id' => $id]);
-                }
-            );
+        $this->normalizer
+            ->expects(self::once())
+            ->method('denormalize')
+            ->with($cacheData, ['tree_depth' => 4])
+            ->willReturn($expected);
 
-        $this->assertEquals($expected, $this->contentNodeTreeCache->fetch(2, 5));
+        self::assertEquals($expected, $this->contentNodeTreeCache->fetch(2, [5], 4));
     }
 
-    public function testShouldSaveEmptyCacheIfNodeNotResolved()
+    public function testShouldSaveEmptyCacheIfNodeNotResolved(): void
     {
         $this->cache->expects(self::once())
             ->method('getItem')
             ->with('node_2_scope_5')
             ->willReturn($this->cacheItem);
+
+        $this->normalizer
+            ->expects(self::never())
+            ->method(self::anything());
+
         $this->cacheItem->expects(self::once())
             ->method('set')
             ->with([]);
+
         $this->cache->expects(self::once())
             ->method('save')
-            ->with($this->cacheItem);
+            ->with($this->cacheItem)
+            ->willReturn(true);
 
-
-        $this->contentNodeTreeCache->save(2, 5, null);
+        $this->contentNodeTreeCache->save(2, [5], null);
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testShouldSaveCacheIfNodeResolved()
+    public function testShouldSaveCacheIfNodeResolved(): void
     {
         $resolvedNode = new ResolvedContentNode(
             1,
@@ -212,7 +214,7 @@ class ContentNodeTreeCacheTest extends TestCase
                     'sub_array' => ['a' => 'b'],
                     'sub_iterator' => new ArrayCollection(
                         ['c' => $this->getEntity(Localization::class, ['id' => 3])]
-                    )
+                    ),
                 ]),
             false
         );
@@ -232,7 +234,7 @@ class ContentNodeTreeCacheTest extends TestCase
             ],
             'contentVariant' => [
                 'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
-                'localizedUrls' => [['string' => '/test', 'localization' => null, 'fallback' => null]]
+                'localizedUrls' => [['string' => '/test', 'localization' => null, 'fallback' => null]],
             ],
             'childNodes' => [
                 [
@@ -246,29 +248,20 @@ class ContentNodeTreeCacheTest extends TestCase
                             'id' => 7,
                             'type' => 'test_type',
                             'sub_array' => ['a' => 'b'],
-                            'sub_iterator' => ['c' => ['entity_class' => Localization::class, 'entity_id' => 3]]
+                            'sub_iterator' => ['c' => ['entity_class' => Localization::class, 'entity_id' => 3]],
                         ],
-                        'localizedUrls' => [['string' => '/test/c', 'localization' => null, 'fallback' => null]]
+                        'localizedUrls' => [['string' => '/test/c', 'localization' => null, 'fallback' => null]],
                     ],
                     'childNodes' => [],
                 ],
             ],
         ];
 
-        $this->doctrineHelper->expects($this->any())->method('isManageableEntity')->willReturn(true);
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->willReturnCallback(
-                function ($object) {
-                    return get_class($object);
-                }
-            );
-        $this->doctrineHelper->expects($this->any())->method('getSingleEntityIdentifier')
-            ->willReturnCallback(
-                function ($object) {
-                    return $object->getId();
-                }
-            );
+        $this->normalizer
+            ->expects(self::once())
+            ->method('normalize')
+            ->with($resolvedNode)
+            ->willReturn($convertedNode);
 
         $this->cache->expects(self::once())
             ->method('getItem')
@@ -279,40 +272,9 @@ class ContentNodeTreeCacheTest extends TestCase
             ->with($convertedNode);
         $this->cache->expects(self::once())
             ->method('save')
-            ->with($this->cacheItem);
+            ->with($this->cacheItem)
+            ->willReturn(true);
 
-        $this->contentNodeTreeCache->save(2, 5, $resolvedNode);
-    }
-
-    public function testDeleteForNode()
-    {
-        $contentNodeId = 15;
-        $node = $this->getEntity(ContentNode::class, ['id' => $contentNodeId]);
-
-        $webCatalog = new WebCatalog();
-        $node->setWebCatalog($webCatalog);
-
-        $fooScopeIds = 42;
-        $barScopeIds = 2;
-
-        $webCatalogRepository = $this->createMock(WebCatalogRepository::class);
-        $webCatalogRepository->expects($this->once())
-            ->method('getUsedScopesIds')
-            ->with($webCatalog)
-            ->willReturn([$fooScopeIds, $barScopeIds]);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(WebCatalog::class)
-            ->willReturn($webCatalogRepository);
-
-        $fooScopeCacheKey = "node_{$contentNodeId}_scope_{$fooScopeIds}";
-        $barScopeCacheKey = "node_{$contentNodeId}_scope_{$barScopeIds}";
-
-        $this->cache->expects($this->once())
-            ->method('deleteItems')
-            ->with([$fooScopeCacheKey, $barScopeCacheKey]);
-
-        $this->contentNodeTreeCache->deleteForNode($node);
+        $this->contentNodeTreeCache->save(2, [5], $resolvedNode);
     }
 }

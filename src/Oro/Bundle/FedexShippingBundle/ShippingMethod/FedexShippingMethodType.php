@@ -16,48 +16,17 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 // @codingStandardsIgnoreEnd
 
 /**
- * Fedex shipping method type implementation.
+ * Represents FedEx shipping method type.
  */
 class FedexShippingMethodType implements ShippingMethodTypeInterface
 {
-    /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface
-     */
-    private $rateServiceRequestSettingsFactory;
+    private FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory;
+    private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory;
+    private FedexRateServiceBySettingsClientInterface $rateServiceClient;
+    private string $identifier;
+    private FedexShippingService $shippingService;
+    private FedexIntegrationSettings $settings;
 
-    /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface
-     */
-    private $rateServiceRequestFactory;
-
-    /**
-     * @var FedexRateServiceBySettingsClientInterface
-     */
-    private $rateServiceClient;
-
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @var FedexShippingService
-     */
-    private $shippingService;
-
-    /**
-     * @var FedexIntegrationSettings
-     */
-    private $settings;
-
-    /**
-     * @param FedexRateServiceRequestSettingsFactoryInterface   $rateServiceRequestSettingsFactory
-     * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
-     * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
-     * @param string                                            $identifier
-     * @param FedexShippingService                              $shippingService ,
-     * @param FedexIntegrationSettings                          $settings
-     */
     public function __construct(
         FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
         FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory,
@@ -77,7 +46,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -87,13 +56,13 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel(): string
     {
-        return (string) $this->shippingService->getDescription();
+        return (string)$this->shippingService->getDescription();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getSortOrder()
+    public function getSortOrder(): int
     {
         return 0;
     }
@@ -101,7 +70,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType()
+    public function getOptionsConfigurationFormType(): ?string
     {
         return FedexShippingMethodOptionsType::class;
     }
@@ -109,8 +78,11 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritDoc}
      */
-    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
-    {
+    public function calculatePrice(
+        ShippingContextInterface $context,
+        array $methodOptions,
+        array $typeOptions
+    ): ?Price {
         $rule = $this->shippingService->getRule();
         $request = $this->rateServiceRequestFactory->create(
             $this->rateServiceRequestSettingsFactory->create($this->settings, $context, $rule)
@@ -120,7 +92,7 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
         }
 
         $prices = $this->rateServiceClient->send($request, $this->settings)->getPrices();
-        if (!array_key_exists($this->shippingService->getCode(), $prices)) {
+        if (!\array_key_exists($this->shippingService->getCode(), $prices)) {
             return null;
         }
 

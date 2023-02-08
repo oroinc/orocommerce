@@ -3,21 +3,20 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 {
-    /** @var TaxJurisdictionType */
-    private $formType;
+    private TaxJurisdictionType $formType;
 
     protected function setUp(): void
     {
@@ -40,18 +39,13 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param bool $isValid
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(
-        $isValid,
-        $defaultData,
-        $viewData,
+        bool $isValid,
+        mixed $defaultData,
+        mixed $viewData,
         array $submittedData,
-        $expectedData
+        array $expectedData
     ) {
         $form = $this->factory->create(TaxJurisdictionType::class, $defaultData);
 
@@ -72,6 +66,9 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function submitDataProvider(): array
     {
         $taxJurisdiction = new TaxJurisdiction();
@@ -145,9 +142,9 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getFormTypeClass()
+    protected function getFormTypeClass(): string
     {
         return TaxJurisdictionType::class;
     }

@@ -2,43 +2,18 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
-use Symfony\Component\Form\AbstractType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TagSelectTypeStub extends EntityTypeStub
 {
-    /** @var AbstractType|null */
-    protected $formType;
-
     /**
-     * @param array $choices
-     * @param string $name
-     * @param AbstractType|null $formType
+     * {@inheritDoc}
      */
-    public function __construct(array $choices, $name, $formType = null)
-    {
-        parent::__construct($choices, $name);
-
-        $this->formType = $formType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
-
-        $resolver->setDefaults(
-            [
-                'checkEmptyFile' => false,
-                'allowDelete' => true
-            ]
-        );
-
-        if ($this->formType) {
-            $this->formType->configureOptions($resolver);
-        }
+        $resolver->setDefault('checkEmptyFile', false);
+        $resolver->setDefault('allowDelete', true);
     }
 }

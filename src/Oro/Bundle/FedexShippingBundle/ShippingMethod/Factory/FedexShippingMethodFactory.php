@@ -9,51 +9,26 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\F
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
 // @codingStandardsIgnoreEnd
 
+/**
+ * The factory to create FedEx shipping method.
+ */
 class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInterface
 {
-    /**
-     * @var IntegrationIdentifierGeneratorInterface
-     */
-    private $identifierGenerator;
-
-    /**
-     * @var LocalizationHelper
-     */
-    private $localizationHelper;
-
-    /**
-     * @var IntegrationIconProviderInterface
-     */
-    private $iconProvider;
-
-    /**
-     * @var FedexShippingMethodTypeFactoryInterface
-     */
-    private $typeFactory;
-
-    /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface
-     */
-    private $rateServiceRequestSettingsFactory;
-
-    /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface
-     */
-    private $rateServiceRequestFactory;
-
-    /**
-     * @var FedexRateServiceBySettingsClientInterface
-     */
-    private $rateServiceClient;
+    private IntegrationIdentifierGeneratorInterface $identifierGenerator;
+    private LocalizationHelper $localizationHelper;
+    private IntegrationIconProviderInterface $iconProvider;
+    private FedexShippingMethodTypeFactoryInterface $typeFactory;
+    private FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory;
+    private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory;
+    private FedexRateServiceBySettingsClientInterface $rateServiceClient;
 
     public function __construct(
         IntegrationIdentifierGeneratorInterface $identifierGenerator,
@@ -76,50 +51,26 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
     /**
      * {@inheritDoc}
      */
-    public function create(Channel $channel): FedexShippingMethod
+    public function create(Channel $channel): ShippingMethodInterface
     {
+        /** @var FedexIntegrationSettings $transport */
+        $transport = $channel->getTransport();
+        $types = [];
+        $shippingServices = $transport->getShippingServices();
+        foreach ($shippingServices as $shippingService) {
+            $types[] = $this->typeFactory->create($channel, $shippingService);
+        }
+
         return new FedexShippingMethod(
             $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
             $this->rateServiceClient,
             $this->identifierGenerator->generateIdentifier($channel),
-            $this->getLabel($channel),
+            (string)$this->localizationHelper->getLocalizedValue($transport->getLabels()),
             $this->iconProvider->getIcon($channel),
             $channel->isEnabled(),
-            $this->getSettings($channel),
-            $this->createTypes($channel)
+            $transport,
+            $types
         );
-    }
-
-    private function getLabel(Channel $channel): string
-    {
-        return (string)$this->localizationHelper->getLocalizedValue(
-            $this->getSettings($channel)->getLabels()
-        );
-    }
-
-    /**
-     * @param Channel $channel
-     *
-     * @return Transport|FedexIntegrationSettings
-     */
-    private function getSettings(Channel $channel)
-    {
-        return $channel->getTransport();
-    }
-
-    /**
-     * @param Channel $channel
-     *
-     * @return ShippingMethodTypeInterface[]
-     */
-    private function createTypes(Channel $channel): array
-    {
-        $types = [];
-        foreach ($this->getSettings($channel)->getShippingServices() as $service) {
-            $types[] = $this->typeFactory->create($channel, $service);
-        }
-
-        return $types;
     }
 }

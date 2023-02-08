@@ -30,6 +30,11 @@
                 </div>
                 <% } %>
             </div>
+            <% if (obj.subTitle) { %>
+                <div class="grid-line-items__sub-title shift-mobile-row mobile-row">
+                    <%= obj.subTitle %>
+                </div>
+            <% } %>
             <% if (obj.sku || obj.inventoryStatus) { %>
             <div class="grid-line-items__row-entry shift-mobile-row mobile-row show-in-tablet">
                 <% if (obj.sku) { %>

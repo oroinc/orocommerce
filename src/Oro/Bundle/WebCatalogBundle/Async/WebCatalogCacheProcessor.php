@@ -3,12 +3,9 @@
 namespace Oro\Bundle\WebCatalogBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic as Topic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -20,7 +17,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 /**
- * Initiates web catalog cache calculation.
+ * Initiates web catalog cache calculation always starting from the root content node.
  */
 class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
@@ -32,18 +29,14 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
 
     private ManagerRegistry $registry;
 
-    private ConfigManager $configManager;
-
     public function __construct(
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
-        ManagerRegistry $registry,
-        ConfigManager $configManager
+        ManagerRegistry $registry
     ) {
         $this->jobRunner = $jobRunner;
         $this->producer = $producer;
         $this->registry = $registry;
-        $this->configManager = $configManager;
 
         $this->logger = new NullLogger();
     }
@@ -57,83 +50,25 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
             $message->getMessageId(),
             $jobName,
             function () use ($messageBody) {
-                $webCatalog = $this->getWebCatalog($messageBody[Topic::WEB_CATALOG_ID]);
-                if (!$webCatalog) {
-                    $this->logger->error('Web catalog #{webCatalogId} is not found', $messageBody);
+                $rootNodeId = $this->registry
+                    ->getRepository(ContentNode::class)
+                    ->getRootNodeIdByWebCatalog($messageBody[Topic::WEB_CATALOG_ID]);
+
+                if (!$rootNodeId) {
+                    $this->logger->error('Root node for the web catalog #{webCatalogId} is not found', $messageBody);
                     return false;
                 }
 
-                $nodes = $this->getRootNodesByWebCatalog($webCatalog);
-                foreach ($nodes as $node) {
-                    $this->producer->send(
-                        WebCatalogCalculateContentNodeCacheTopic::getName(),
-                        [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => $node->getId()]
-                    );
-                }
+                $this->producer->send(
+                    WebCatalogCalculateContentNodeCacheTopic::getName(),
+                    [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => $rootNodeId]
+                );
 
                 return true;
             }
         );
 
         return $result ? self::ACK : self::REJECT;
-    }
-
-    /**
-     * @param WebCatalog $webCatalog
-     *
-     * @return ContentNode[]
-     */
-    private function getRootNodesByWebCatalog(WebCatalog $webCatalog): array
-    {
-        $websites = $this->getWebsites($webCatalog);
-        $webCatalogValues = $this->configManager->getValues('oro_web_catalog.web_catalog', $websites);
-        $navigationRootValues = [];
-        foreach ($webCatalogValues as $websiteId => $value) {
-            if ((int)$value !== $webCatalog->getId()) {
-                continue;
-            }
-
-            // CE application has scope resolved website ID equal to 0
-            $website = $websiteId ? $websites[$websiteId] : null;
-            $navigationRootValue = $this->configManager
-                ->get('oro_web_catalog.navigation_root', false, false, $website);
-            $contentNode = $this->getContentNode($webCatalog, $navigationRootValue);
-            if (!$contentNode) {
-                continue;
-            }
-
-            $navigationRootValues[] = $contentNode->getId();
-        }
-
-        return $this->registry
-            ->getRepository(ContentNode::class)
-            ->findBy(['id' => array_unique($navigationRootValues)]);
-    }
-
-    private function getWebsites(WebCatalog $webCatalog): array
-    {
-        return $this->registry
-            ->getRepository(Website::class)
-            ->getAllWebsites($webCatalog->getOrganization());
-    }
-
-    private function getContentNode(WebCatalog $webCatalog, ?int $contentNodeId): ?ContentNode
-    {
-        $repository = $this->registry->getRepository(ContentNode::class);
-
-        $contentNode = $repository->findOneBy(['id' => $contentNodeId]);
-        if (!$contentNode) {
-            $contentNode = $repository->findOneBy(['webCatalog' => $webCatalog, 'parentNode' => null]);
-        }
-
-        return $contentNode;
-    }
-
-    private function getWebCatalog(int $webCatalogId): ?WebCatalog
-    {
-        return $this->registry
-            ->getRepository(WebCatalog::class)
-            ->findOneBy(['id' => $webCatalogId]);
     }
 
     public static function getSubscribedTopics(): array

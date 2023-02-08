@@ -3,7 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Search;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigChangeSet;

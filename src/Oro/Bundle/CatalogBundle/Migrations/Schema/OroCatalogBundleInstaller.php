@@ -7,6 +7,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\CommerceMenuBundle\Migrations\Schema\OroCommerceMenuBundleInstaller;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -66,7 +67,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_20';
+        return 'v1_21';
     }
 
     /**
@@ -117,6 +118,7 @@ class OroCatalogBundleInstaller implements
         $this->addCategoryImageAssociation($schema, 'smallImage', self::MIME_TYPES);
 
         $this->addCategoryProductRelation($schema);
+        $this->addCategoryMenuUpdateRelation($schema);
 
         $this->addContentVariantTypes($schema);
 
@@ -491,5 +493,28 @@ class OroCatalogBundleInstaller implements
                 ],
             ]);
         }
+    }
+
+    protected function addCategoryMenuUpdateRelation(Schema $schema): void
+    {
+        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $targetTable = $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $targetTable,
+            'category',
+            $table,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'on_delete' => 'CASCADE',
+                ],
+                'form' => ['is_enabled' => false],
+            ]
+        );
     }
 }

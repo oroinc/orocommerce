@@ -12,35 +12,25 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList';
-
-    /**
-     * @var PriceAttributePriceListType
-     */
-    protected $priceAttributePriceListType;
+    private PriceAttributePriceListType $priceAttributePriceListType;
 
     protected function setUp(): void
     {
         $this->priceAttributePriceListType = new PriceAttributePriceListType();
-        $this->priceAttributePriceListType->setDataClass(self::DATA_CLASS);
+        $this->priceAttributePriceListType->setDataClass(PriceAttributePriceList::class);
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $currencySelectType = new CurrencySelectionTypeStub();
-
         return [
-            new PreloadedExtension(
-                [
-                    $this->priceAttributePriceListType,
-                    CurrencySelectionType::class => $currencySelectType,
-                ],
-                []
-            ),
+            new PreloadedExtension([
+                $this->priceAttributePriceListType,
+                CurrencySelectionType::class => new CurrencySelectionTypeStub()
+            ], [])
         ];
     }
 

@@ -140,8 +140,8 @@ oro.cms:
         import:
             label: 'Paste here your HTML/CSS and click Import'
             title: 'Source Code'
-            button: 'Import'
-            export_button: 'Export to ZIP'
+            button: 'Apply Changes'
+            export_button: 'Download'
             message:
                 twig_exp: 'An unexpected error occurred while converting wysiwyg content'
         code:
@@ -151,6 +151,10 @@ oro.cms:
         export:
             title: 'Code'
             btn_label: 'Export to ZIP'
+            confirmation:
+                title: 'Apply Changes?'
+                content: 'The downloaded file will include only the changes that have already been applied'
+                okText: 'Apply and Download'
         toolbar:
             selectParent: 'Select Parent'
             move: 'Move'

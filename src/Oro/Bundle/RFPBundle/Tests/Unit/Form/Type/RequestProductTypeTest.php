@@ -4,14 +4,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -283,26 +281,20 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {
-        $priceType = $this->preparePriceType();
-        $productSelectType = $this->prepareProductSelectType();
-        $currencySelectionType = new CurrencySelectionTypeStub();
-        $requestProductItemType = $this->prepareRequestProductItemType();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    PriceType::class                => $priceType,
-                    ProductSelectType::class        => $productSelectType,
-                    RequestProductItemType::class   => $requestProductItemType,
-                    CurrencySelectionType::class    => $currencySelectionType,
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
-                    QuantityType::class             => $this->getQuantityType()
+                    $this->preparePriceType(),
+                    ProductSelectType::class => $this->prepareProductSelectType(),
+                    RequestProductItemType::class => $this->prepareRequestProductItemType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    $this->getQuantityType()
                 ],
                 [FormType::class => [new StripTagsExtensionStub($this)]]
             ),

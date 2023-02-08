@@ -90,7 +90,8 @@ const CodeValidator = BaseClass.extend({
 
         if (Commands.has('gjs-open-import-webpage')) {
             Commands.run('gjs-open-import-webpage', {
-                content: this.getRawContent()
+                content: this.getRawContent(),
+                exportButton: false
             });
         }
     },

@@ -8,18 +8,24 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\ShippingBundle\Factory\MultiShippingMethodFromChannelFactory;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethod;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
-use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class MultiShippingMethodFromChannelFactoryTest extends TestCase
+class MultiShippingMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    private IntegrationIdentifierGeneratorInterface|MockObject $identifierGenerator;
-    private TranslatorInterface|MockObject $translator;
-    private RoundingServiceInterface|MockObject $roundingService;
-    private MultiShippingCostProvider|MockObject $shippingCostProvider;
-    private MultiShippingMethodFromChannelFactory $factory;
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $identifierGenerator;
+
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $roundingService;
+
+    /** @var MultiShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingCostProvider;
+
+    /** @var MultiShippingMethodFromChannelFactory */
+    private $factory;
 
     protected function setUp(): void
     {
@@ -36,27 +42,33 @@ class MultiShippingMethodFromChannelFactoryTest extends TestCase
         );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $channel = new Channel();
-        ReflectionUtil::setId($channel, 7);
-        $channel->setEnabled(true);
+        $identifier = 'test_type_1';
+        $enabled = true;
+        $label = 'label';
 
-        $this->identifierGenerator->expects($this->once())
+        $channel = new Channel();
+        $channel->setEnabled($enabled);
+
+        $this->identifierGenerator->expects(self::once())
             ->method('generateIdentifier')
             ->with($channel)
-            ->willReturn('test_type_1');
+            ->willReturn($identifier);
 
-        $this->translator->expects($this->once())
+        $this->translator->expects(self::once())
             ->method('trans')
-            ->willReturn('oro.shipping.multi_shipping_method.label');
+            ->with('oro.shipping.multi_shipping_method.label')
+            ->willReturn($label);
 
-        $method = $this->factory->create($channel);
-
-        $this->assertInstanceOf(MultiShippingMethod::class, $method);
-        $this->assertEquals('test_type_1', $method->getIdentifier());
-        $this->assertEquals('oro.shipping.multi_shipping_method.label', $method->getLabel());
-        $this->assertEquals('bundles/oroshipping/img/multi-shipping-logo.png', $method->getIcon());
-        $this->assertTrue($method->isEnabled());
+        $expected = new MultiShippingMethod(
+            $identifier,
+            $label,
+            'bundles/oroshipping/img/multi-shipping-logo.png',
+            $enabled,
+            $this->roundingService,
+            $this->shippingCostProvider
+        );
+        self::assertEquals($expected, $this->factory->create($channel));
     }
 }

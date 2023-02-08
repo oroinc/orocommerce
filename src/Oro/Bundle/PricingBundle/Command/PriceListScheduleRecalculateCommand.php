@@ -83,7 +83,7 @@ class PriceListScheduleRecalculateCommand extends Command
             )
             ->setDescription('Recalculates combined price lists and product prices.')
             ->setHelp(
-            // @codingStandardsIgnoreStart
+                // @codingStandardsIgnoreStart
                 <<<'HELP'
 The <info>%command.name%</info> command recalculates combined price lists and product prices.
 
@@ -110,7 +110,7 @@ This command can also be used with the <info>--all</info> option to recalculate 
 
   <info>php %command.full_name% --all</info>
 HELP
-            // @codingStandardsIgnoreEnd
+                // @codingStandardsIgnoreEnd
             )
             ->addUsage('--customer=<ID1> --customer=<ID2> --customer=<IDN>')
             ->addUsage('--customer-group=<ID1> --customer-group=<ID2> --customer-group=<IDN>')

@@ -7,11 +7,12 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Factory that creates shipping method from the channel.
+ * The factory to create Multi Shipping method.
  */
 class MultiShippingMethodFromChannelFactory implements IntegrationShippingMethodFactoryInterface
 {
@@ -32,29 +33,18 @@ class MultiShippingMethodFromChannelFactory implements IntegrationShippingMethod
         $this->shippingCostProvider = $shippingCostProvider;
     }
 
-    public function create(Channel $channel): MultiShippingMethod
+    /**
+     * {@inheritDoc}
+     */
+    public function create(Channel $channel): ShippingMethodInterface
     {
-        $id = $this->identifierGenerator->generateIdentifier($channel);
-        $label = $this->getChannelLabel();
-        $icon = $this->getIcon();
-
         return new MultiShippingMethod(
-            $id,
-            $label,
-            $icon,
+            $this->identifierGenerator->generateIdentifier($channel),
+            $this->translator->trans('oro.shipping.multi_shipping_method.label'),
+            'bundles/oroshipping/img/multi-shipping-logo.png',
             $channel->isEnabled(),
             $this->roundingService,
             $this->shippingCostProvider
         );
-    }
-
-    protected function getChannelLabel(): string
-    {
-        return $this->translator->trans('oro.shipping.multi_shipping_method.label');
-    }
-
-    protected function getIcon(): string
-    {
-        return 'bundles/oroshipping/img/multi-shipping-logo.png';
     }
 }

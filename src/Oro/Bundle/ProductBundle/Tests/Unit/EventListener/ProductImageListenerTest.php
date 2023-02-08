@@ -5,8 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -45,7 +45,7 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->lifecycleArgs = $this->createMock(LifecycleEventArgs::class);
         $this->lifecycleArgs->expects(self::any())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($this->productImageEntityManager);
 
         $this->productRepository = $this->createMock(ProductRepository::class);

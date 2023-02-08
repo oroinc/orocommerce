@@ -11,7 +11,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -27,12 +27,11 @@ class CouponTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    PromotionSelectType::class => new EntityType(
+                    PromotionSelectType::class => new EntityTypeStub(
                         [
                             'promotion1' => $this->getPromotion(1),
-                            'promotion2' => $this->getPromotion(2),
+                            'promotion2' => $this->getPromotion(2)
                         ],
-                        PromotionSelectType::NAME,
                         [
                             'autocomplete_alias' => PromotionType::class,
                             'grid_name' => 'promotion-for-coupons-select-grid',

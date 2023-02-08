@@ -22,10 +22,56 @@ The current file describes significant changes in the code that may affect the u
 - [1.1.0](#110-2017-03-31)
 
 
-
 ## 5.1.0 (UNRELEASED)
 
-[Show detailed list of changes](incompatibilities-5-1-beta-2.md)
+### Added
+
+#### WebCatalogBundle
+* Added `\Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader`, `\Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentVariantsLoader` to easily get resolved content nodes for specified content node ids.
+* Added `\Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory`, `\Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentVariantFactory` to easily create `\Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode` and `\Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant` models.
+* Added `\Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer` to decrease the complexity of `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache`.
+* Added `\Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader` to decrease the complexity of `\Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolver`.
+* Added the ability to specify multiple scopes in `\Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface::getResolvedContentNode`.
+* Added `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver` that merges resolved content nodes from multiple scopes.
+* Added `\Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodesMerger` to decrease the complexity of `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver`.
+* Added `\Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProviderInterface`, `\Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProvider`, `\Oro\Bundle\WebCatalogBundle\Menu\StorefrontMenuContentNodesProvider` and `\Oro\Bundle\WebCatalogBundle\Menu\CompositeMenuContentNodesProvider` to provide an ability of getting resolved content nodes for showing in menu.
+
+#### CatalogBundle
+* Added `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProviderInterface`, `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProvider`, `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider` to provide an ability of getting categories data for showing in menu.
+* Added `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCache` that encapsulates the normalization logic of categories data.
+* Added "category" field to `\Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate`.
+
+### Changed
+
+#### ShippingBundle
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface` and all classes that implement this interface. 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface. 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and all classes that implement this interface.
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface` and all classes that implement this interface.
+* Removed unneeded classes that implement `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and replace them with `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider`.
+
+#### WebCatalogBundle
+* Changed `\Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor` so it builds cache starting always from the root content node.
+* Changed `\Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider::getContentVariantIds` so the ordering of the loaded data follows the order of specified ids.
+
+### Removed
+
+#### ShippingBundle
+* Removed unneeded `Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface`.
+
+#### WebCatalogBundle
+* Removed block type `menu_item`; It was updated and moved to `CommerceMenuBundle`
+* Removed `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache::deleteForNode`, the method is moved to `\Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor`. 
+* Removed `Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver`. New resolvers are used instead - `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCachingResolver` and `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver`.
+
+#### CatalogBundle
+* Removed block type `category_list`
+* Removed `\Oro\Bundle\CatalogBundle\Layout\DataProvider\DTO\Category`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getCategoryTree`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getCategoryTreeArray`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getRootCategory` as not needed for building a menu anymore. Instead, the `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider` is used.
+
+
+## 5.1.0-beta.2 (2022-11-30)
+
+[Show detailed list of changes](incompatibilities-5-1-rc-1.md)
 
 ### Added
 

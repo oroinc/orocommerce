@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Entity\Repository;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
@@ -42,21 +43,30 @@ class ContentNodeRepository extends NestedTreeRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function getRootNodeIdByWebCatalog(WebCatalog|int $webCatalog): ?int
+    {
+        $qb = $this->getRootNodesQueryBuilder();
+        $qb
+            ->select('node.id')
+            ->andWhere($qb->expr()->eq('node.webCatalog', ':webCatalog'))
+            ->setParameter('webCatalog', $webCatalog);
+
+        return $qb->getQuery()->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+    }
+
     /**
      * @param WebCatalog $webCatalog
      * @return QueryBuilder
      */
     public function getContentVariantQueryBuilder(WebCatalog $webCatalog)
     {
-        $qb = $this->getEntityManager()
+        return $this->getEntityManager()
             ->createQueryBuilder()
             ->select('node.id as nodeId', 'variant.id as variantId')
             ->from(ContentVariant::class, 'variant')
             ->innerJoin(ContentNode::class, 'node', Join::WITH, 'variant.node = node')
             ->andWhere('node.webCatalog = :webCatalog')
             ->setParameter('webCatalog', $webCatalog);
-
-        return $qb;
     }
 
     /**
@@ -111,5 +121,89 @@ class ContentNodeRepository extends NestedTreeRepository
         }
 
         return array_column($qb->getQuery()->getArrayResult(), 'slug_prototype');
+    }
+
+    public function getContentNodePlainTreeQueryBuilder(ContentNode $contentNode, int $treeDepth = -1): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('node');
+        $queryBuilder
+            ->where($queryBuilder->expr()->eq('node.webCatalog', ':webCatalog'))
+            ->setParameter('webCatalog', $contentNode->getWebCatalog()->getId())
+            ->andWhere($queryBuilder->expr()->eq('node.root', ':root'))
+            ->setParameter('root', $contentNode->getRoot())
+            ->andWhere($queryBuilder->expr()->gte('node.left', ':left'))
+            ->setParameter('left', $contentNode->getLeft())
+            ->andWhere($queryBuilder->expr()->lte('node.right', ':right'))
+            ->setParameter('right', $contentNode->getRight())
+            ->orderBy('node.left');
+
+        if ($treeDepth > -1) {
+            $queryBuilder
+                ->andWhere('node.level <= :max_level')
+                ->setParameter('max_level', $contentNode->getLevel() + $treeDepth);
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @param int[] $contentNodeIds
+     *
+     * @return array<array>
+     *  [
+     *      [
+     *          'id' => int,
+     *          'parentNode' => ?array [
+     *              'id' => int,
+     *          ],
+     *          'titles' => [
+     *              [
+     *                  'id' => int,
+     *                  'string' => ?string,
+     *                  'fallback' => ?string,
+     *                  'localization' => ?array [
+     *                      'id' => int,
+     *                  ],
+     *              ]
+     *          ],
+     *          'localizedUrls' => [
+     *              [
+     *                  'id' => int,
+     *                  'text' => ?string,
+     *                  'fallback' => ?string,
+     *                  'localization' => ?array [
+     *                      'id' => int,
+     *                  ],
+     *              ]
+     *          ],
+     *          'rewriteVariantTitle' => bool,
+     *          'left' => int,
+     *          'right' => int,
+     *          'root' => int,
+     *          'level' => int,
+     *          // ... Other scalar fields of the ContentNode entity class
+     *      ],
+     *      // ...
+     *  ]
+     */
+    public function getContentNodesData(array $contentNodeIds): array
+    {
+        $queryBuilder = $this->createQueryBuilder('node');
+
+        return $queryBuilder
+            ->where($queryBuilder->expr()->in('node.id', $contentNodeIds))
+            ->leftJoin('node.parentNode', 'parentNode')
+            ->addSelect('PARTIAL parentNode.{id}')
+            ->innerJoin('node.titles', 'title')
+            ->addSelect('PARTIAL title.{id,string,fallback}')
+            ->leftJoin('title.localization', 'titleLocalization')
+            ->addSelect('PARTIAL titleLocalization.{id}')
+            ->leftJoin('node.localizedUrls', 'localizedUrl')
+            ->addSelect('PARTIAL localizedUrl.{id,text,fallback}')
+            ->leftJoin('localizedUrl.localization', 'urlLocalization')
+            ->addSelect('PARTIAL urlLocalization.{id}')
+            ->orderBy('node.left')
+            ->getQuery()
+            ->getArrayResult();
     }
 }

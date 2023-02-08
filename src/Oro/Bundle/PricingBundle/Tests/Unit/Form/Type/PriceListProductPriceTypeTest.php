@@ -16,11 +16,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -47,28 +46,12 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub(
-            [
-                1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
-                2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
-            ]
-        );
-
-        $productUnitSelection = new EntityTypeStub(
-            $this->prepareProductUnitSelectionChoices(),
-            ProductUnitSelectionType::NAME
-        );
-
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD', 'EUR']);
-
-        $localeSettings = $this->createMock(LocaleSettings::class);
-        $currencyNameHelper = $this->createMock(CurrencyNameHelper::class);
-        $productSelect = new ProductSelectTypeStub();
 
         $priceType = new PriceType();
         $priceType->setDataClass(Price::class);
@@ -77,16 +60,19 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->formType,
-                    EntityType::class => $entityType,
-                    ProductSelectType::class => $productSelect,
-                    ProductUnitSelectionType::class => $productUnitSelection,
-                    PriceType::class => $priceType,
+                    EntityType::class => new EntityTypeStub([
+                        1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
+                        2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
+                    ]),
+                    ProductSelectType::class => new ProductSelectTypeStub(),
+                    ProductUnitSelectionType::class => new EntityTypeStub($this->prepareProductUnitSelectionChoices()),
+                    $priceType,
                     CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
-                        $localeSettings,
-                        $currencyNameHelper
+                        $this->createMock(LocaleSettings::class),
+                        $this->createMock(CurrencyNameHelper::class)
                     ),
-                    QuantityType::class => $this->getQuantityType()
+                    $this->getQuantityType()
                 ],
                 []
             ),

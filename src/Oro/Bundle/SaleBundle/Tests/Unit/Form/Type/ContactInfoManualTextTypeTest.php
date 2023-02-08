@@ -9,19 +9,12 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ContactInfoManualTextTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ContactInfoManualTextType
-     */
-    private $formType;
-
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var ContactInfoManualTextType */
+    private $formType;
+
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -30,23 +23,18 @@ class ContactInfoManualTextTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
-            new PreloadedExtension(
-                [
-                    ContactInfoManualTextType::class => $this->formType
-                ],
-                []
-            ),
+            new PreloadedExtension([$this->formType], [])
         ];
     }
 
     public function testConfigOptions()
     {
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->willReturn(false);
 
@@ -57,7 +45,7 @@ class ContactInfoManualTextTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(ContactInfoManualTextType::class, null, []);
         $formConfig = $form->getConfig();
 
-        static::assertTrue($formConfig->hasOption('disabled'));
-        static::assertEquals($expectedOptions['disabled'], $form->createView()->vars['disabled']);
+        self::assertTrue($formConfig->hasOption('disabled'));
+        self::assertEquals($expectedOptions['disabled'], $form->createView()->vars['disabled']);
     }
 }

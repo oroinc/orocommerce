@@ -33,9 +33,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     /** @var SlugifyFormHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $slugifyFormHelper;
 
-    /** @var SlugGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $slugGenerator;
-
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
@@ -45,31 +42,37 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     /** @var LocalizedSlugType */
     private $formType;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getExtensions()
+    protected function setUp(): void
     {
         $this->slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
-        $this->slugGenerator = $this->createMock(SlugGenerator::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->formType = new LocalizedSlugType(
-            $this->slugifyFormHelper,
-            new SlugifyEntityHelper($this->slugGenerator, $this->configManager, $this->doctrine)
-        );
 
-        $this->slugGenerator->expects($this->any())
+        $slugGenerator = $this->createMock(SlugGenerator::class);
+        $slugGenerator->expects($this->any())
             ->method('slugify')
             ->willReturnCallback(static function (string $string) {
                 return $string . '-slug';
             });
 
+        $this->formType = new LocalizedSlugType(
+            $this->slugifyFormHelper,
+            new SlugifyEntityHelper($slugGenerator, $this->configManager, $this->doctrine)
+        );
+
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
+    {
         return [
             new PreloadedExtension(
                 [
-                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     $this->formType,
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                 ],
                 [FormType::class => []]
             ),

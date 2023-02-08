@@ -7,7 +7,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class SearchIndexContext extends OroFeatureContext
 {
-
     /**
      * Given should be 30 items in "oro_product" website search index
      *

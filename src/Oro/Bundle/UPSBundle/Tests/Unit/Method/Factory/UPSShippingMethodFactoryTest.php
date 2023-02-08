@@ -64,76 +64,70 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $iconUri = 'bundles/icon-uri.png';
         $identifier = 'ups_1';
-        $labelsCollection = $this->createMock(Collection::class);
+        $enabled = true;
+        $label = 'label';
+        $iconUri = 'bundles/icon-uri.png';
 
-        $settings = $this->createMock(UPSSettings::class);
-        $settings->expects($this->once())
-            ->method('getLabels')
-            ->willReturn($labelsCollection);
+        $transport = $this->createMock(UPSSettings::class);
 
-        $channel = $this->createMock(Channel::class);
-        $channel->expects($this->any())
-            ->method('getTransport')
-            ->willReturn($settings);
-        $channel->expects($this->any())
-            ->method('isEnabled')
-            ->willReturn(true);
+        $channel = new Channel();
+        $channel->setTransport($transport);
+        $channel->setEnabled($enabled);
 
         $this->integrationIconProvider->expects(self::once())
             ->method('getIcon')
             ->with($channel)
             ->willReturn($iconUri);
 
-        $type1 = $this->createMock(UPSShippingMethodType::class);
-        $type2 = $this->createMock(UPSShippingMethodType::class);
-
         $service1 = $this->createMock(ShippingService::class);
         $service2 = $this->createMock(ShippingService::class);
 
-        $this->methodTypeFactory->expects($this->exactly(2))
-            ->method('create')
-            ->withConsecutive(
-                [$channel, $service1],
-                [$channel, $service2]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $type1,
-                $type2
-            );
-
         $serviceCollection = $this->createMock(Collection::class);
-        $serviceCollection->expects($this->once())
+        $serviceCollection->expects(self::once())
             ->method('toArray')
             ->willReturn([$service1, $service2]);
 
-        $settings->expects($this->once())
+        $type1 = $this->createMock(UPSShippingMethodType::class);
+        $type2 = $this->createMock(UPSShippingMethodType::class);
+
+        $this->methodTypeFactory->expects(self::exactly(2))
+            ->method('create')
+            ->withConsecutive([$channel, $service1], [$channel, $service2])
+            ->willReturnOnConsecutiveCalls($type1, $type2);
+
+        $transport->expects(self::once())
             ->method('getApplicableShippingServices')
             ->willReturn($serviceCollection);
 
-        $this->integrationIdentifierGenerator->expects($this->once())
+        $this->integrationIdentifierGenerator->expects(self::once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn($identifier);
 
-        $this->localizationHelper->expects($this->once())
+        $labelsCollection = $this->createMock(Collection::class);
+        $transport->expects(self::once())
+            ->method('getLabels')
+            ->willReturn($labelsCollection);
+
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
             ->with($labelsCollection)
-            ->willReturn('en');
+            ->willReturn($label);
 
-        $this->assertEquals(new UPSShippingMethod(
+        $expected = new UPSShippingMethod(
             $identifier,
-            'en',
+            $label,
             $iconUri,
             [$type1, $type2],
-            $settings,
+            $transport,
             $this->transport,
             $this->priceRequestFactory,
             $this->shippingPriceCache,
-            true
-        ), $this->factory->create($channel));
+            $enabled
+        );
+        self::assertEquals($expected, $this->factory->create($channel));
     }
 }

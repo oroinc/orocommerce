@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Cache;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
@@ -103,7 +103,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
             ->with(ShippingMethodsConfigsRule::class)
             ->willReturn($this->repository);
         $this->args->expects(self::exactly($quantity))
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($this->em);
         $this->priceCache
             ->expects(self::exactly($clearCacheCnt))

@@ -120,8 +120,10 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
         $assetHelper = $this->createMock(Packages::class);
 
-        $flatRatePrimaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('primary');
-        $flatRateSecondaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('secondary');
+        $flatRatePrimaryShippingType = new ShippingMethodTypeStub();
+        $flatRatePrimaryShippingType->setIdentifier('primary');
+        $flatRateSecondaryShippingType = new ShippingMethodTypeStub();
+        $flatRateSecondaryShippingType->setIdentifier('secondary');
 
         $flatRateShippingMethod = new ShippingMethodStub();
         $flatRateShippingMethod->setIdentifier('flat_rate_2');

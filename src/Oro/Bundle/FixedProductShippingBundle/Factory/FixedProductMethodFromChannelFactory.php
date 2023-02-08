@@ -11,17 +11,18 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
 /**
- * Factory that creates shipping method from the channel.
+ * The factory to create Fixed Product shipping method.
  */
 class FixedProductMethodFromChannelFactory implements IntegrationShippingMethodFactoryInterface
 {
-    protected IntegrationIdentifierGeneratorInterface $identifierGenerator;
-    protected LocalizationHelper $localizationHelper;
-    protected IntegrationIconProviderInterface $integrationIconProvider;
-    protected RoundingServiceInterface $roundingService;
-    protected ShippingCostProvider $shippingCostProvider;
+    private IntegrationIdentifierGeneratorInterface $identifierGenerator;
+    private LocalizationHelper $localizationHelper;
+    private IntegrationIconProviderInterface $integrationIconProvider;
+    private RoundingServiceInterface $roundingService;
+    private ShippingCostProvider $shippingCostProvider;
 
     public function __construct(
         IntegrationIdentifierGeneratorInterface $identifierGenerator,
@@ -38,33 +39,20 @@ class FixedProductMethodFromChannelFactory implements IntegrationShippingMethodF
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function create(Channel $channel): FixedProductMethod
+    public function create(Channel $channel): ShippingMethodInterface
     {
-        $id = $this->identifierGenerator->generateIdentifier($channel);
-        $label = $this->getChannelLabel($channel);
-        $icon = $this->getIcon($channel);
+        /** @var FixedProductSettings $transport */
+        $transport = $channel->getTransport();
 
         return new FixedProductMethod(
-            $id,
-            $label,
-            $icon,
+            $this->identifierGenerator->generateIdentifier($channel),
+            (string)$this->localizationHelper->getLocalizedValue($transport->getLabels()),
+            $this->integrationIconProvider->getIcon($channel),
             $channel->isEnabled(),
             $this->roundingService,
             $this->shippingCostProvider
         );
-    }
-
-    protected function getChannelLabel(Channel $channel): string
-    {
-        /** @var FixedProductSettings $transport */
-        $transport = $channel->getTransport();
-        return (string) $this->localizationHelper->getLocalizedValue($transport->getLabels());
-    }
-
-    protected function getIcon(Channel $channel): string
-    {
-        return $this->integrationIconProvider->getIcon($channel);
     }
 }

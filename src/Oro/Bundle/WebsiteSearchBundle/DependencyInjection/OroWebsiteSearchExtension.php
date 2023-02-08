@@ -18,6 +18,7 @@ class OroWebsiteSearchExtension extends Extension
 
         $container->setParameter('oro_website_search.engine_dsn', $config['engine_dsn']);
         $container->setParameter('oro_website_search.engine_parameters', $config['engine_parameters']);
+        $container->setParameter('oro_website_search.indexer_batch_size', $config['indexer_batch_size']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');

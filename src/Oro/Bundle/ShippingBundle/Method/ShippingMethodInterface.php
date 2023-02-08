@@ -3,48 +3,26 @@
 namespace Oro\Bundle\ShippingBundle\Method;
 
 /**
- * An interface for shipping method type.
+ * Represents a shipping method.
  */
 interface ShippingMethodInterface
 {
-    /**
-     * @return bool
-     */
-    public function isGrouped();
+    public function isGrouped(): bool;
 
-    /**
-     * @return bool
-     */
-    public function isEnabled();
+    public function isEnabled(): bool;
 
-    /**
-     * @return string
-     */
-    public function getIdentifier();
+    public function getIdentifier(): string;
 
-    /**
-     * @return string
-     */
     public function getLabel(): string;
 
     /**
      * @return ShippingMethodTypeInterface[]
      */
-    public function getTypes();
+    public function getTypes(): array;
 
-    /**
-     * @param string $identifier
-     * @return ShippingMethodTypeInterface|null
-     */
-    public function getType($identifier);
+    public function getType(string $identifier): ?ShippingMethodTypeInterface;
 
-    /**
-     * @return string
-     */
-    public function getOptionsConfigurationFormType();
+    public function getOptionsConfigurationFormType(): ?string;
 
-    /**
-     * @return int
-     */
-    public function getSortOrder();
+    public function getSortOrder(): int;
 }

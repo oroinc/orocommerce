@@ -23,7 +23,7 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -40,13 +40,11 @@ class PromotionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions(): array
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->with(Product::class, false)
-            ->willReturn($em);
+            ->willReturn($this->createMock(EntityManagerInterface::class));
 
         return [
             new PreloadedExtension(
@@ -55,10 +53,9 @@ class PromotionTypeTest extends FormIntegrationTestCase
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     ProductCollectionSegmentType::class => new ProductCollectionSegmentTypeStub(),
-                    DiscountConfigurationType::class => new EntityType(
-                        ['order' => $this->getEntity(DiscountConfiguration::class, ['type' => 'order'])],
-                        DiscountConfigurationType::NAME
-                    ),
+                    DiscountConfigurationType::class => new EntityTypeStub([
+                        'order' => $this->getEntity(DiscountConfiguration::class, ['type' => 'order'])
+                    ]),
                 ],
                 [
                     FormType::class => [new TooltipFormExtensionStub($this)]

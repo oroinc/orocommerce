@@ -18,7 +18,7 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -65,19 +65,14 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    EntityType::class => new EntityTypeStub(
-                        [
-                            1 => $this->getShippingService(1, '01', 'UPS Next Day Air', $country),
-                            2 => $this->getShippingService(2, '03', 'UPS Ground', $country)
-                        ],
-                        'entity'
-                    ),
-                    UPSTransportSettingsType::class => $this->formType,
-                    CountryType::class => new EntityTypeStub(['US' => $country], 'oro_country'),
+                    $this->formType,
+                    EntityType::class => new EntityTypeStub([
+                        1 => $this->getShippingService(1, '01', 'UPS Next Day Air', $country),
+                        2 => $this->getShippingService(2, '03', 'UPS Ground', $country)
+                    ]),
+                    CountryType::class => new EntityTypeStub(['US' => $country]),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
-                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType(
-                        $this->createMock(ManagerRegistry::class)
-                    ),
+                    new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
                     new OroEncodedPlaceholderPasswordType($this->crypter),
                 ],
                 []
