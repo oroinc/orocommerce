@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendLocalizationBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -27,6 +28,8 @@ class UserLocalizationManagerSlugDetectDecorator implements UserLocalizationMana
 
     private WebsiteManager $websiteManager;
 
+    private ?CurrentLocalizationProvider $currentLocalizationProvider = null;
+
     /** @var Localization|null|bool */
     private $slugLocalization = false;
 
@@ -42,6 +45,11 @@ class UserLocalizationManagerSlugDetectDecorator implements UserLocalizationMana
         $this->registry = $registry;
         $this->configManager = $configManager;
         $this->websiteManager = $websiteManager;
+    }
+
+    public function setCurrentLocalizationProvider(CurrentLocalizationProvider $currentLocalizationProvider): void
+    {
+        $this->currentLocalizationProvider = $currentLocalizationProvider;
     }
 
     /**
@@ -75,6 +83,11 @@ class UserLocalizationManagerSlugDetectDecorator implements UserLocalizationMana
                     // save slug's localization after refresh to avoid the repeating of refresh query.
                     $this->slugLocalization = $usedSlug->getLocalization();
                     $this->assertLocalizationEnabled();
+
+                    if ($this->slugLocalization) {
+                        $this->currentLocalizationProvider->setCurrentLocalization($this->slugLocalization);
+                        $this->setCurrentLocalization($this->slugLocalization);
+                    }
                 }
             }
         }
@@ -116,7 +129,7 @@ class UserLocalizationManagerSlugDetectDecorator implements UserLocalizationMana
         if ($this->slugLocalization) {
             $localizationId = $this->slugLocalization->getId();
             if (!array_key_exists($localizationId, $this->innerManager->getEnabledLocalizations())) {
-                $this->slugLocalization = null;
+                $this->slugLocalization = false;
             }
         }
     }

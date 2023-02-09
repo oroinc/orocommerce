@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Routing\Router;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher;
 use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RouteCollection;
@@ -23,6 +27,9 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     /** @var SlugUrlMatcher|\PHPUnit\Framework\MockObject\MockObject */
     private $slugUrlMatcher;
 
+    /** @var CurrentLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $currentLocalizationProvider;
+
     /** @var Router|\PHPUnit\Framework\MockObject\MockObject */
     private $router;
 
@@ -31,6 +38,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->urlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
         $this->sluggableUrlGenerator = $this->createMock(SluggableUrlGenerator::class);
         $this->slugUrlMatcher = $this->createMock(SlugUrlMatcher::class);
+        $this->currentLocalizationProvider = $this->createMock(CurrentLocalizationProvider::class);
 
         $loader = $this->createMock(LoaderInterface::class);
         $loader->expects($this->any())
@@ -43,6 +51,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->add('routing.loader', $loader)
             ->add('oro_redirect.routing.sluggable_url_generator', $this->sluggableUrlGenerator)
             ->add('oro_redirect.routing.slug_url_matcher', $this->slugUrlMatcher)
+            ->add('oro_locale.provider.current_localization', $this->currentLocalizationProvider)
             ->getContainer($this);
 
         $this->router = new Router($container, 'some_resource');
@@ -102,5 +111,62 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $generator = $this->router->getGenerator();
 
         $this->assertSame($this->sluggableUrlGenerator, $generator);
+    }
+
+    public function testMatchRequestWithoutUsedSlugAttribute()
+    {
+        $request = Request::createFromGlobals();
+        $this->urlDecisionMaker->expects($this->exactly(2))
+            ->method('matches')
+            ->willReturn(true);
+
+        $this->slugUrlMatcher->expects($this->once())
+            ->method('setBaseMatcher')
+            ->with($this->isInstanceOf(UrlMatcherInterface::class));
+
+        $this->slugUrlMatcher->expects($this->once())
+            ->method('matchRequest')
+            ->with($request)
+            ->willReturn([]);
+
+        $this->currentLocalizationProvider->expects($this->never())
+            ->method('setCurrentLocalization');
+
+        $matcher = $this->router->getMatcher();
+
+        $this->assertSame($this->slugUrlMatcher, $matcher);
+        $this->router->matchRequest($request);
+    }
+
+    public function testMatchRequestWithUsedSlugAttribute()
+    {
+        $request = Request::createFromGlobals();
+        $localization = new Localization();
+        $slug = $this->createMock(Slug::class);
+        $slug->expects($this->once())
+            ->method('getLocalization')
+            ->willReturn($localization);
+
+        $this->urlDecisionMaker->expects($this->exactly(2))
+            ->method('matches')
+            ->willReturn(true);
+
+        $this->slugUrlMatcher->expects($this->once())
+            ->method('setBaseMatcher')
+            ->with($this->isInstanceOf(UrlMatcherInterface::class));
+
+        $this->slugUrlMatcher->expects($this->once())
+            ->method('matchRequest')
+            ->with($request)
+            ->willReturn(['_used_slug' => $slug]);
+
+        $this->currentLocalizationProvider->expects($this->once())
+            ->method('setCurrentLocalization')
+            ->with($localization);
+
+        $matcher = $this->router->getMatcher();
+
+        $this->assertSame($this->slugUrlMatcher, $matcher);
+        $this->router->matchRequest($request);
     }
 }

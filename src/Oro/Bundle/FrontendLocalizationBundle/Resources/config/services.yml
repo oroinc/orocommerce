@@ -67,3 +67,5 @@ services:
             - '@doctrine'
             - '@oro_config.manager'
             - '@oro_website.manager'
+        calls:
+            - ['setCurrentLocalizationProvider', ['@oro_locale.provider.current_localization']]

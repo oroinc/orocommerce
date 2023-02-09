@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router as BaseRouter;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Extends the router to work with the storefront slugs.
@@ -20,7 +22,8 @@ class Router extends BaseRouter
     {
         return array_merge(parent::getSubscribedServices(), [
             'oro_redirect.routing.sluggable_url_generator' => SluggableUrlGenerator::class,
-            'oro_redirect.routing.slug_url_matcher' => SlugUrlMatcher::class
+            'oro_redirect.routing.slug_url_matcher' => SlugUrlMatcher::class,
+            'oro_locale.provider.current_localization' => CurrentLocalizationProvider::class,
         ]);
     }
 
@@ -68,5 +71,17 @@ class Router extends BaseRouter
         }
 
         return $this->matcher;
+    }
+
+    public function matchRequest(Request $request)
+    {
+        $attributes = parent::matchRequest($request);
+
+        if ($attributes && ($usedSlug = $attributes['_used_slug'] ?? null)) {
+            $currentLocalizationProvider = $this->container->get('oro_locale.provider.current_localization');
+            $currentLocalizationProvider->setCurrentLocalization($usedSlug->getLocalization());
+        }
+
+        return $attributes;
     }
 }

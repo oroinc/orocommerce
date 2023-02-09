@@ -290,6 +290,7 @@ services:
             - { name: container.service_subscriber, id: routing.loader }
             - { name: container.service_subscriber, id: oro_redirect.routing.sluggable_url_generator }
             - { name: container.service_subscriber, id: oro_redirect.routing.slug_url_matcher }
+            - { name: container.service_subscriber, id: oro_locale.provider.current_localization }
             - { name: monolog.logger, channel: router }
 
     # This cache is optimised to work with file system and should not be reconfigured to use oro.cache.abstract

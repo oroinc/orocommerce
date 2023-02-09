@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\FrontendLocalizationBundle\DependencyInjection\Configuration;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerSlugDetectDecorator;
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -33,6 +34,8 @@ class UserLocalizationManagerSlugDetectDecoratorTest extends TestCase
 
     private UserLocalizationManagerSlugDetectDecorator $manager;
 
+    private CurrentLocalizationProvider|MockObject $currentLocalizationProvider;
+
     protected function setUp(): void
     {
         $this->innerManager = $this->createMock(UserLocalizationManagerInterface::class);
@@ -40,6 +43,7 @@ class UserLocalizationManagerSlugDetectDecoratorTest extends TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->currentLocalizationProvider = $this->createMock(CurrentLocalizationProvider::class);
 
         $this->manager = new UserLocalizationManagerSlugDetectDecorator(
             $this->innerManager,
@@ -48,6 +52,7 @@ class UserLocalizationManagerSlugDetectDecoratorTest extends TestCase
             $this->configManager,
             $this->websiteManager
         );
+        $this->manager->setCurrentLocalizationProvider($this->currentLocalizationProvider);
     }
 
     public function testGetEnabledLocalizations(): void
