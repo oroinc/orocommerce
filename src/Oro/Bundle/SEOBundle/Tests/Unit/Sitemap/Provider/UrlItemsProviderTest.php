@@ -35,16 +35,14 @@ class UrlItemsProviderTest extends OrmTestCase
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $entityManager = $this->getTestEntityManager();
-        $entityManager->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
-            'Oro\Bundle\BatchBundle\Tests\Unit\ORM\Query\Stub'
-        ));
+        $em = $this->getTestEntityManager();
+        $em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
+
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(Product::class)
-            ->willReturn($entityManager);
+            ->willReturn($em);
 
         $this->urlItemsProvider = new UrlItemsProvider(
             $this->canonicalUrlGenerator,

@@ -38,10 +38,7 @@ class SegmentProductsProviderTest extends OrmTestCase
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
-            'Oro\Bundle\ProductBundle\Entity'
-        ));
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
 
         $this->segmentProductsQueryProvider = $this->createMock(SegmentProductsQueryProvider::class);
         $this->productListBuilder = $this->createMock(ProductListBuilder::class);
