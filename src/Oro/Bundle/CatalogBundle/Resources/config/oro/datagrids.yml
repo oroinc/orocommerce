@@ -162,7 +162,11 @@ datagrids:
                     items: [ 1000 ]
                     default_per_page: 1000
             jsmodules:
-                - oroproduct/datagrid/builder/sort-order-builder
+                - orodatagrid/js/sort-rows-drag-n-drop/builder
+            gridBuildersOptions:
+                sortRowsDragNDropBuilder:
+                    sortOrderColumnName: 'categorySortOrder'
+                    renderIconColumn: true
             cellSelection:
                 dataField: id
                 columnName:
@@ -211,7 +215,9 @@ datagrids:
         columns:
             categorySortOrder:
                 label: oro.catalog.product.category_sort_order.label
-                editable: true
+                editable: false
+                renderable: false
+                manageable: false
                 cellClassName: 'editing-cell'
                 frontend_type: string # can't use decimal because of inappropriate formatter
                 data_name: categorySortOrder
