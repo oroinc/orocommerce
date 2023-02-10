@@ -7,9 +7,8 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Factory\MultiShipping\CheckoutFactoryDecorator;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\TestCase;
 
-class CheckoutFactoryDecoratorTest extends TestCase
+class CheckoutFactoryDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CheckoutFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutFactory;

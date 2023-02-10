@@ -13,50 +13,40 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class LineItemGroupTitleProvider
 {
-    private const OTHER_ITEMS_TITLE = 'oro.checkout.line_items_grouping.other_items_group.title';
-    protected const TITLE_PATH_MAPPING = [
-        'product.id' => 'product.sku',
-    ];
-
+    private array $titlePathMapping;
     private PropertyAccessorInterface $propertyAccessor;
     private EntityNameResolver $entityNameResolver;
     private TranslatorInterface $translator;
 
     public function __construct(
+        array $titlePathMapping,
         PropertyAccessorInterface $propertyAccessor,
         EntityNameResolver $entityNameResolver,
         TranslatorInterface $translator
     ) {
+        $this->titlePathMapping = $titlePathMapping;
         $this->propertyAccessor = $propertyAccessor;
         $this->entityNameResolver = $entityNameResolver;
         $this->translator = $translator;
     }
 
-    public function getTitle(string $path, CheckoutLineItem $lineItem): string
+    public function getTitle(string $groupingPath, CheckoutLineItem $lineItem): string
     {
-        if ($path === GroupLineItemsByConfiguredFields::OTHER_ITEMS_KEY) {
-            return $this->translator->trans(self::OTHER_ITEMS_TITLE);
+        if (GroupLineItemsByConfiguredFields::OTHER_ITEMS_KEY === $groupingPath) {
+            return $this->translator->trans('oro.checkout.line_items_grouping.other_items_group.title');
         }
 
-        // Extract value path
-        $paths = explode(':', $path);
-
+        $paths = explode(':', $groupingPath);
         $propertyPath = $paths[0];
-        $this->applyPathMapping($propertyPath);
+        if (\array_key_exists($propertyPath, $this->titlePathMapping)) {
+            $propertyPath = $this->titlePathMapping[$propertyPath];
+        }
 
         $value = $this->propertyAccessor->getValue($lineItem, $propertyPath);
-
-        if (is_object($value)) {
+        if (\is_object($value)) {
             return $this->entityNameResolver->getName($value);
         }
 
         return (string)$value;
-    }
-
-    protected function applyPathMapping(string &$propertyPath)
-    {
-        if (array_key_exists($propertyPath, static::TITLE_PATH_MAPPING)) {
-            $propertyPath = static::TITLE_PATH_MAPPING[$propertyPath];
-        }
     }
 }

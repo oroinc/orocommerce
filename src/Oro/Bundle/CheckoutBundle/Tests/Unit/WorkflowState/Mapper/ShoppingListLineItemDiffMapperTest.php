@@ -222,7 +222,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getMapper(): ShoppingListLineItemDiffMapper|CheckoutStateDiffMapperInterface
     {

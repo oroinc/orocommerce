@@ -24,17 +24,21 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
+use Oro\Component\Testing\ReflectionUtil;
 
 class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var PricingLineItemDataListener|\PHPUnit\Framework\MockObject\MockObject */
+    private $pricingLineItemDataListener;
 
-    private PricingLineItemDataListener|MockObject $pricingLineItemDataListener;
-    private PromotionExecutor|MockObject $promotionExecutor;
-    private UserCurrencyManager|MockObject $currencyManager;
-    private SplitEntitiesProviderInterface|MockObject $splitEntitiesProvider;
+    /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
+    private $promotionExecutor;
+
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyManager;
+
+    /** @var SplitEntitiesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $splitEntitiesProvider;
 
     /** @var DatagridLineItemsDataPromotionsListener */
     private $listener;
@@ -47,8 +51,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         $this->splitEntitiesProvider = $this->createMock(SplitEntitiesProviderInterface::class);
 
         $numberFormatter = $this->createMock(NumberFormatter::class);
-        $numberFormatter
-            ->expects($this->any())
+        $numberFormatter->expects($this->any())
             ->method('formatCurrency')
             ->willReturnCallback(static fn (float $value, string $currency) => $currency . $value);
 
@@ -61,164 +64,182 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         );
     }
 
+    private function getLineItem(
+        int $id,
+        ?string $sku = null,
+        ?string $unitCode = null,
+        ?float $quantity = null
+    ): LineItem {
+        $lineItem = new LineItem();
+        ReflectionUtil::setId($lineItem, $id);
+        if (null !== $sku) {
+            $product = new Product();
+            $product->setSku($sku);
+            $lineItem->setProduct($product);
+        }
+        if (null !== $unitCode) {
+            $productUnit = new ProductUnit();
+            $productUnit->setCode($unitCode);
+            $lineItem->setUnit($productUnit);
+        }
+        if (null !== $quantity) {
+            $lineItem->setQuantity($quantity);
+        }
+
+        return $lineItem;
+    }
+
+    private function getCheckoutLineItem(int $id, string $sku, string $unitCode, float $quantity): CheckoutLineItem
+    {
+        $product = new Product();
+        $product->setSku($sku);
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($unitCode);
+
+        $lineItem = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem, $id);
+        $lineItem->setProduct($product);
+        $lineItem->setProductUnit($productUnit);
+        $lineItem->setQuantity($quantity);
+
+        return $lineItem;
+    }
+
+    private function getShoppingList(int $id): ShoppingList
+    {
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, $id);
+
+        return $shoppingList;
+    }
+
     public function testOnLineItemDataWhenNoLineItems(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-
-        $this->pricingLineItemDataListener
-            ->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getLineItems')
             ->willReturn([]);
-
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
+            ->method('addDataForLineItem');
+        $event->expects($this->never())
             ->method('addDataForLineItem');
 
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
+        $this->pricingLineItemDataListener->expects($this->once())
+            ->method('onLineItemData')
+            ->with($event);
 
         $this->listener->onLineItemData($event);
     }
 
     public function testOnLineItemDataWhenPromotionExecutorNotSupports(): void
     {
-        $event = $this->createMock(DatagridLineItemsDataEvent::class);
+        $shoppingList = $this->getShoppingList(1);
+        $lineItem1 = $this->getLineItem(11);
+        $lineItem1->setShoppingList($shoppingList);
+        $lineItem2 = $this->getLineItem(22);
 
-        $this->pricingLineItemDataListener
-            ->expects($this->once())
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
+        $event->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn([$lineItem1, $lineItem2]);
+        $event->expects($this->never())
+            ->method('addDataForLineItem');
+        $event->expects($this->never())
+            ->method('addDataForLineItem');
+
+        $this->pricingLineItemDataListener->expects($this->once())
             ->method('onLineItemData')
             ->with($event);
 
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $lineItem1 = $this->getEntity(LineItem::class, ['id' => 11, 'shoppingList' => $shoppingList]);
-        $lineItem2 = $this->getEntity(LineItem::class, ['id' => 22]);
-
-        $event
-            ->expects($this->once())
-            ->method('getLineItems')
-            ->willReturn([$lineItem1, $lineItem2]);
-
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($shoppingList)
             ->willReturn(false);
-
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
-
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
     }
 
     public function testOnLineItemDataWhenNoDiscountLineItems(): void
     {
+        $shoppingList = $this->getShoppingList(1);
+        $lineItem1 = $this->getLineItem(11);
+        $lineItem1->setShoppingList($shoppingList);
+        $lineItem2 = $this->getLineItem(22);
+
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-
-        $this->pricingLineItemDataListener
-            ->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
-
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $lineItem1 = $this->getEntity(LineItem::class, ['id' => 11, 'shoppingList' => $shoppingList]);
-        $lineItem2 = $this->getEntity(LineItem::class, ['id' => 22]);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getLineItems')
             ->willReturn([$lineItem1, $lineItem2]);
+        $event->expects($this->never())
+            ->method('addDataForLineItem');
+        $event->expects($this->never())
+            ->method('addDataForLineItem');
+
+        $this->pricingLineItemDataListener->expects($this->once())
+            ->method('onLineItemData')
+            ->with($event);
 
         $this->splitEntitiesProvider->expects($this->once())
             ->method('getSplitEntities')
             ->willReturn([]);
 
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($shoppingList)
             ->willReturn(true);
 
         $discountContext = $this->createMock(DiscountContextInterface::class);
-        $discountContext
-            ->expects($this->once())
+        $discountContext->expects($this->once())
             ->method('getLineItems')
             ->willReturn([]);
 
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($shoppingList)
             ->willReturn($discountContext);
-
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
-
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
     }
 
     public function testOnLineItemDataWhenNotSourceLineItemNotShoppingListLineItem(): void
     {
-        $event = $this->createMock(DatagridLineItemsDataEvent::class);
+        $shoppingList = $this->getShoppingList(1);
+        $lineItem1 = $this->getLineItem(11);
+        $lineItem1->setShoppingList($shoppingList);
+        $lineItem2 = $this->getLineItem(22);
 
-        $this->pricingLineItemDataListener
-            ->expects($this->once())
+        $event = $this->createMock(DatagridLineItemsDataEvent::class);
+        $event->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn([$lineItem1, $lineItem2]);
+        $event->expects($this->never())
+            ->method('addDataForLineItem');
+        $event->expects($this->never())
+            ->method('addDataForLineItem');
+
+        $this->pricingLineItemDataListener->expects($this->once())
             ->method('onLineItemData')
             ->with($event);
-
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $lineItem1 = $this->getEntity(LineItem::class, ['id' => 11, 'shoppingList' => $shoppingList]);
-        $lineItem2 = $this->getEntity(LineItem::class, ['id' => 22]);
 
         $this->splitEntitiesProvider->expects($this->once())
             ->method('getSplitEntities')
             ->willReturn([]);
 
-        $event
-            ->expects($this->once())
-            ->method('getLineItems')
-            ->willReturn([$lineItem1, $lineItem2]);
-
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($shoppingList)
             ->willReturn(true);
 
         $discountContext = $this->createMock(DiscountContextInterface::class);
-        $discountContext
-            ->expects($this->once())
+        $discountContext->expects($this->once())
             ->method('getLineItems')
             ->willReturn([]);
 
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($shoppingList)
             ->willReturn($discountContext);
-
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
-
-        $event
-            ->expects($this->never())
-            ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
     }
@@ -255,8 +276,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         $discountContext->addLineItem($discountLineItem1);
         $discountContext->addLineItem($discountLineItem2);
 
-        $this->currencyManager
-            ->expects($this->once())
+        $this->currencyManager->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn('USD');
 
@@ -270,13 +290,11 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->method('getSplitEntities')
             ->willReturn([]);
 
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($shoppingList)
             ->willReturn(true);
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($shoppingList)
             ->willReturn($discountContext);
@@ -287,8 +305,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             []
         );
 
-        $this->pricingLineItemDataListener
-            ->expects($this->once())
+        $this->pricingLineItemDataListener->expects($this->once())
             ->method('onLineItemData')
             ->with($event);
 
@@ -363,8 +380,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
 
         $discountContext2 = new DiscountContext();
 
-        $this->currencyManager
-            ->expects($this->once())
+        $this->currencyManager->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn('USD');
 
@@ -381,13 +397,11 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->method('getSplitEntities')
             ->willReturn([$splitCheckout1, $splitCheckout2]);
 
-        $this->promotionExecutor
-            ->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->willReturn(true);
 
-        $this->promotionExecutor
-            ->expects($this->exactly(2))
+        $this->promotionExecutor->expects($this->exactly(2))
             ->method('execute')
             ->willReturnMap([
                 [$splitCheckout1, $discountContext],
@@ -400,8 +414,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             []
         );
 
-        $this->pricingLineItemDataListener
-            ->expects($this->once())
+        $this->pricingLineItemDataListener->expects($this->once())
             ->method('onLineItemData')
             ->with($event);
 
@@ -439,34 +452,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
                 'subtotalValue' => 500,
             ],
             $event->getDataForLineItem($lineItem3->getId())
-        );
-    }
-
-    private function getLineItem(int $id, string $sku, string $unitCode, float $quantity): LineItem
-    {
-        $product = new Product();
-        $product->setSku($sku);
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($unitCode);
-
-        return $this->getEntity(
-            LineItem::class,
-            ['id' => $id, 'product' => $product, 'unit' => $productUnit, 'quantity' => $quantity]
-        );
-    }
-
-    private function getCheckoutLineItem(int $id, string $sku, string $unitCode, float $quantity): CheckoutLineItem
-    {
-        $product = new Product();
-        $product->setSku($sku);
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($unitCode);
-
-        return $this->getEntity(
-            CheckoutLineItem::class,
-            ['id' => $id, 'product' => $product, 'productUnit' => $productUnit, 'quantity' => $quantity]
         );
     }
 }

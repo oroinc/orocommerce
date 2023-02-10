@@ -19,12 +19,9 @@ class MainOrderPromotionDiscountsProviderDecorator implements PromotionDiscounts
     }
 
     /**
+     * {@inheritDoc}
      * Promotions should not be applied to orders with subOrders. For this cases return empty promotions set for such
      * orders.
-     *
-     * @param object $sourceEntity
-     * @param DiscountContextInterface $context
-     * @return array
      */
     public function getDiscounts($sourceEntity, DiscountContextInterface $context): array
     {

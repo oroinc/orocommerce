@@ -13,12 +13,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Represents form type for line items shipping method.
+ * The form type for line items shipping method.
  */
 class LineItemShippingMethodsType extends AbstractType
 {
-    const NAME = 'oro_checkout_line_items_shipping_methods';
-
     private CheckoutLineItemsShippingManager $shippingManager;
 
     public function __construct(CheckoutLineItemsShippingManager $shippingManager)
@@ -26,56 +24,47 @@ class LineItemShippingMethodsType extends AbstractType
         $this->shippingManager = $shippingManager;
     }
 
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    public function getBlockPrefix()
-    {
-        return self::NAME;
-    }
-
-    public function getParent()
-    {
-        return HiddenType::class;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver
-            ->setRequired(['checkout'])
-            ->setDefaults([
-                'data_class' => null,
-                'checkout' => null
-            ])
-            ->setAllowedTypes('checkout', Checkout::class);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
         $builder->addViewTransformer(new ArrayToJsonTransformer());
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            // update each checkout line item with selected shipping methods
+            $options = $event->getForm()->getConfig()->getOptions();
+            /** @var Checkout|null $checkout */
+            $checkout = $options['checkout'];
+            if (null !== $checkout) {
+                $this->shippingManager->updateLineItemsShippingMethods($event->getData(), $checkout);
+            }
+        });
     }
 
     /**
-     * Update each checkout line item with selected shipping methods.
-     *
-     * @param FormEvent $event
+     * {@inheritDoc}
      */
-    public function onSubmit(FormEvent $event)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $form = $event->getForm();
-        $data = $event->getData();
+        $resolver->setRequired(['checkout']);
+        $resolver->setDefault('data_class', null);
+        $resolver->setDefault('checkout', null);
+        $resolver->setAllowedTypes('checkout', Checkout::class);
+    }
 
-        $options = $form->getConfig()->getOptions();
-        /** @var Checkout $checkout */
-        $checkout = $options['checkout'];
+    /**
+     * {@inheritDoc}
+     */
+    public function getBlockPrefix(): string
+    {
+        return 'oro_checkout_line_items_shipping_methods';
+    }
 
-        if (!$checkout) {
-            return;
-        }
-
-        $this->shippingManager->updateLineItemsShippingMethods($data, $checkout);
+    /**
+     * {@inheritDoc}
+     */
+    public function getParent(): string
+    {
+        return HiddenType::class;
     }
 }

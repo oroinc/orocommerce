@@ -23,7 +23,7 @@ class CheckoutShippingContextProvider
         $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
-    public function getContext(Checkout $entity): ?ShippingContextInterface
+    public function getContext(Checkout $entity): ShippingContextInterface
     {
         return $this->memoryCacheProvider->get(
             ['checkout' => $entity],

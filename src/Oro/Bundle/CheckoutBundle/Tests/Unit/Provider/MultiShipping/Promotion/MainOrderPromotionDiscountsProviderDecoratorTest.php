@@ -7,16 +7,19 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\Promotion\MainOrderPromotio
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
-use PHPUnit\Framework\TestCase;
 
-class MainOrderPromotionDiscountsProviderDecoratorTest extends TestCase
+class MainOrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    private PromotionDiscountsProviderInterface $baseDiscountsProvider;
-    private MainOrderPromotionDiscountsProviderDecorator $discountProvider;
+    /** @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $baseDiscountsProvider;
+
+    /** @var MainOrderPromotionDiscountsProviderDecorator */
+    private $discountProvider;
 
     protected function setUp(): void
     {
         $this->baseDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
+
         $this->discountProvider = new MainOrderPromotionDiscountsProviderDecorator($this->baseDiscountsProvider);
     }
 
@@ -41,7 +44,6 @@ class MainOrderPromotionDiscountsProviderDecoratorTest extends TestCase
     }
 
     /**
-     * @param object $entity
      * @dataProvider getTestGetDiscountsWithoutSubOrdersData
      */
     public function testGetDiscountsWithoutSubOrders(object $entity)
@@ -56,7 +58,7 @@ class MainOrderPromotionDiscountsProviderDecoratorTest extends TestCase
         $this->assertEmpty($discounts);
     }
 
-    public function getTestGetDiscountsWithoutSubOrdersData()
+    public function getTestGetDiscountsWithoutSubOrdersData(): array
     {
         return [
             'Entity is not Order' => [

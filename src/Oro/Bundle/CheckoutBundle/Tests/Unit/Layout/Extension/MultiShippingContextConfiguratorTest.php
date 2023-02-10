@@ -5,16 +5,19 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\Extension;
 use Oro\Bundle\CheckoutBundle\Layout\Extension\MultiShippingContextConfigurator;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Component\Layout\LayoutContext;
-use PHPUnit\Framework\TestCase;
 
-class MultiShippingContextConfiguratorTest extends TestCase
+class MultiShippingContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigProvider $configProvider;
-    private MultiShippingContextConfigurator $contextConfigurator;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var MultiShippingContextConfigurator */
+    private $contextConfigurator;
 
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);
+
         $this->contextConfigurator = new MultiShippingContextConfigurator($this->configProvider);
     }
 

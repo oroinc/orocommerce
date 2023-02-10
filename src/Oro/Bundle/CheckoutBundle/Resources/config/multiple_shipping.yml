@@ -38,6 +38,7 @@ services:
     oro_checkout.provider.multi_shipping.line_item_group_title:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemGroupTitleProvider
         arguments:
+            - { 'product.id': 'product.sku' }
             - '@property_accessor'
             - '@oro_entity.entity_name_resolver'
             - '@translator'

@@ -8,43 +8,51 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 use Oro\Bundle\CheckoutBundle\Splitter\MultiShipping\CheckoutSplitter;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\TestCase;
 
-class CheckoutSplitterTest extends TestCase
+class CheckoutSplitterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var CheckoutFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutFactory;
 
-    private CheckoutFactoryInterface $checkoutFactory;
-    private CheckoutSplitter $checkoutSplitter;
+    /** @var CheckoutSplitter */
+    private $checkoutSplitter;
 
     protected function setUp(): void
     {
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);
+
         $this->checkoutSplitter = new CheckoutSplitter($this->checkoutFactory);
+    }
+
+    private function getCheckout(array $lineItems): Checkout
+    {
+        $checkout = new Checkout();
+        $checkout->setLineItems(new ArrayCollection($lineItems));
+
+        return $checkout;
+    }
+
+    private function getCheckoutLineItem(int $id): CheckoutLineItem
+    {
+        $lineItem = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem, $id);
+
+        return $lineItem;
     }
 
     public function testSplit()
     {
-        $lineItem1 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem1, 1);
-
-        $lineItem2 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem2, 2);
-
-        $lineItem3 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem3, 3);
+        $lineItem1 = $this->getCheckoutLineItem(1);
+        $lineItem2 = $this->getCheckoutLineItem(2);
+        $lineItem3 = $this->getCheckoutLineItem(3);
 
         $groupedLineItems = [
             'product.owner:1' => [$lineItem1, $lineItem3],
             'product.owner:2' => [$lineItem2]
         ];
 
-        $checkout1 = new Checkout();
-        $checkout1->setLineItems(new ArrayCollection([$lineItem1, $lineItem3]));
-
-        $checkout2 = new Checkout();
-        $checkout2->setLineItems(new ArrayCollection([$lineItem2]));
+        $checkout1 = $this->getCheckout([$lineItem1, $lineItem3]);
+        $checkout2 = $this->getCheckout([$lineItem2]);
 
         $this->checkoutFactory->expects($this->exactly(2))
             ->method('createCheckout')

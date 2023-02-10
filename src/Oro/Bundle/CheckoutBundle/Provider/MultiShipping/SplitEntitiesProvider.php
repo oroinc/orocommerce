@@ -18,6 +18,9 @@ class SplitEntitiesProvider implements SplitEntitiesProviderInterface
         $this->splitCheckoutProvider = $splitCheckoutProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getSplitEntities(ProductLineItemsHolderInterface $entity): array
     {
         if ($entity instanceof Checkout) {

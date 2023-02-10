@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Datagrid;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
@@ -11,10 +12,10 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
- * If {@link Configuration::SHOW_SUBORDERS_IN_ORDER_HISTORY} disabled:
+ * When showing suborders in order history is disabled:
  * - hide orderType column for frontend-orders-grid.
  * - hide sub-orders in frontend-orders-grid.
- * If {@link Configuration::SHOW_MAIN_ORDERS_IN_ORDER_HISTORY} disabled:
+ * When showing main orders in order history is disabled:
  * - hide orderType column for frontend-orders-grid.
  * - hide main orders in frontend-orders-grid.
  */
@@ -39,8 +40,7 @@ class SubOrdersFrontendDatagridListener
 
             $this->addOrderTypeColumnAndFilter($config);
 
-            $query = $config->getOrmQuery();
-            $query->addSelect(
+            $config->getOrmQuery()->addSelect(
                 "CASE WHEN IDENTITY(order1.parent) IS NULL THEN 'oro.order.order_type.primary_order' "
                 . "ELSE 'oro.order.order_type.sub_order' END AS orderType"
             );
@@ -54,30 +54,28 @@ class SubOrdersFrontendDatagridListener
 
     private function hideMainOrders(BuildAfter $event): void
     {
-        $dataGrid = $event->getDatagrid();
-
         /** @var QueryBuilder $qb */
-        $qb = $dataGrid->getDatasource()->getQueryBuilder();
+        $qb = $event->getDatagrid()->getDatasource()->getQueryBuilder();
 
         // Hide subOrders if show suborders config is disabled.
         if (!$this->multiShippingConfigProvider->isShowSubordersInOrderHistoryEnabled()) {
-            $qb->andWhere($qb->expr()->isNull('order1.parent'));
+            $qb->andWhere('order1.parent IS NULL');
         }
 
         // Hide main orders if config is disabled.
         if ($this->multiShippingConfigProvider->isShowMainOrderInOrderHistoryDisabled()) {
-            /** @var QueryBuilder $subQuery */
-            $subQuery = $this->doctrine->getManagerForClass(Order::class)
-                ->createQueryBuilder()
+            /** @var EntityManagerInterface $em */
+            $em = $this->doctrine->getManagerForClass(Order::class);
+            $subQuery = $em->createQueryBuilder()
                 ->select('IDENTITY(osub.parent)')
                 ->from(Order::class, 'osub')
-                ->where('IDENTITY(osub.parent) is not null');
+                ->where('IDENTITY(osub.parent) IS NOT NULL');
 
-            $qb->andWhere($qb->expr()->notIn('order1.id', $subQuery->getDQL()));
+            $qb->andWhere('order1.id NOT IN(' . $subQuery->getDQL() . ')');
         }
     }
 
-    private function addOrderTypeColumnAndFilter(DatagridConfiguration $config)
+    private function addOrderTypeColumnAndFilter(DatagridConfiguration $config): void
     {
         $config->addColumn(self::ORDER_TYPE, [
             'label' => 'oro.order.order_type.label',

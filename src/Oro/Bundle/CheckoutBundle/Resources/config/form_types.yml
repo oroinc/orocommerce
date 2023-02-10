@@ -54,4 +54,4 @@ services:
         arguments:
             - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
         tags:
-            - { name: form.type, alias: oro_checkout_line_items_shipping_methods }
+            - { name: form.type }

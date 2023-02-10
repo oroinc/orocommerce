@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Acl\Voter;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
@@ -11,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Forbids frontend order view page if {@link Configuration::SHOW_SUBORDERS_IN_ORDER_HISTORY} disabled.
+ * Forbids the storefront order view page when showing suborders in order history is disabled.
  */
 class SubOrderViewVoter extends Voter
 {

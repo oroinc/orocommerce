@@ -42,6 +42,30 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Frame
         $this->condition->setContextAccessor($this->contextAccessor);
     }
 
+    private function getCheckoutEntity(
+        ?string $shippingMethod1 = 'flat_rate_1',
+        ?string $shippingMethod2 = 'flat_rate_2'
+    ): Checkout {
+        $lineItem1 = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem1, 1);
+        $lineItem1->setShippingMethod($shippingMethod1);
+
+        $lineItem2 = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem2, 2);
+        $lineItem2->setShippingMethod($shippingMethod2);
+
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem1);
+        $checkout->addLineItem($lineItem2);
+
+        $this->checkoutLineItemsProvider->expects($this->once())
+            ->method('getCheckoutLineItems')
+            ->with($checkout)
+            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2]));
+
+        return $checkout;
+    }
+
     public function testExecuteReturnsTrue()
     {
         $checkout = $this->getCheckoutEntity();
@@ -52,10 +76,10 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Frame
 
         $this->repository->expects($this->exactly(2))
             ->method('getEnabledRulesByMethod')
-            ->will($this->onConsecutiveCalls(
+            ->willReturnOnConsecutiveCalls(
                 [new ShippingMethodsConfigsRule()],
                 [new ShippingMethodsConfigsRule()]
-            ));
+            );
 
         $this->condition->initialize(['entity' => new PropertyPath('entity')]);
         $this->assertTrue($this->condition->evaluate([]));
@@ -67,10 +91,10 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Frame
 
         $this->repository->expects($this->exactly(2))
             ->method('getEnabledRulesByMethod')
-            ->will($this->onConsecutiveCalls(
+            ->willReturnOnConsecutiveCalls(
                 [new ShippingMethodsConfigsRule()],
                 []
-            ));
+            );
 
         $this->condition->initialize(['entity' => $checkout]);
         $this->assertFalse($this->condition->evaluate([]));
@@ -86,9 +110,7 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Frame
 
         $this->repository->expects($this->once())
             ->method('getEnabledRulesByMethod')
-            ->will($this->onConsecutiveCalls(
-                [new ShippingMethodsConfigsRule()],
-            ));
+            ->willReturn([new ShippingMethodsConfigsRule()]);
 
         $this->condition->initialize(['entity' => new PropertyPath('entity')]);
         $this->assertTrue($this->condition->evaluate([]));
@@ -104,9 +126,7 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Frame
 
         $this->repository->expects($this->once())
             ->method('getEnabledRulesByMethod')
-            ->will($this->onConsecutiveCalls(
-                [new ShippingMethodsConfigsRule()],
-            ));
+            ->willReturn([new ShippingMethodsConfigsRule()]);
 
         $this->condition->initialize(['entity' => new PropertyPath('entity')]);
         $this->assertFalse($this->condition->evaluate([]));
@@ -175,29 +195,5 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Frame
             ),
             $result
         );
-    }
-
-    private function getCheckoutEntity(
-        ?string $shippingMethod1 = 'flat_rate_1',
-        ?string $shippingMethod2 = 'flat_rate_2'
-    ): Checkout {
-        $lineItem1 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem1, 1);
-        $lineItem1->setShippingMethod($shippingMethod1);
-
-        $lineItem2 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem2, 2);
-        $lineItem2->setShippingMethod($shippingMethod2);
-
-        $checkout = new Checkout();
-        $checkout->addLineItem($lineItem1);
-        $checkout->addLineItem($lineItem2);
-
-        $this->checkoutLineItemsProvider->expects($this->once())
-            ->method('getCheckoutLineItems')
-            ->with($checkout)
-            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2]));
-
-        return $checkout;
     }
 }

@@ -7,23 +7,23 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitCheckoutProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class SplitEntitiesProviderTest extends TestCase
+class SplitEntitiesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private SplitCheckoutProvider|MockObject $splitCheckoutProvider;
-    private SplitEntitiesProvider $provider;
+    /** @var SplitCheckoutProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $splitCheckoutProvider;
+
+    /** @var SplitEntitiesProvider */
+    private $provider;
 
     protected function setUp(): void
     {
         $this->splitCheckoutProvider = $this->createMock(SplitCheckoutProvider::class);
+
         $this->provider = new SplitEntitiesProvider($this->splitCheckoutProvider);
     }
 
     /**
-     * @param array $splitCheckouts
-     * @param int $expectedCount
      * @dataProvider getTestGetSplitEntitiesWithCheckoutEntityData
      */
     public function testGetSplitEntitiesWithCheckoutEntity(array $splitCheckouts, int $expectedCount)
@@ -36,7 +36,7 @@ class SplitEntitiesProviderTest extends TestCase
         $this->assertCount($expectedCount, $subCheckouts);
     }
 
-    private function getTestGetSplitEntitiesWithCheckoutEntityData()
+    private function getTestGetSplitEntitiesWithCheckoutEntityData(): array
     {
         return [
             [
@@ -51,8 +51,6 @@ class SplitEntitiesProviderTest extends TestCase
     }
 
     /**
-     * @param Order $order
-     * @param int $expectedCount
      * @dataProvider getTestGetSplitEntitiesWithOrderEntityData
      */
     public function testGetSplitEntitiesWithOrderEntity(Order $order, int $expectedCount)
@@ -64,7 +62,7 @@ class SplitEntitiesProviderTest extends TestCase
         $this->assertCount($expectedCount, $subEntities);
     }
 
-    private function getTestGetSplitEntitiesWithOrderEntityData()
+    private function getTestGetSplitEntitiesWithOrderEntityData(): array
     {
         $orderWithSuborders = new Order();
         $orderWithSuborders->addSubOrder(new Order());

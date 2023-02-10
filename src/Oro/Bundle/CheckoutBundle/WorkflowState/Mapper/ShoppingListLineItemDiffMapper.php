@@ -23,35 +23,36 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
     }
 
     /**
-     * {@inheritdoc}
-     * @param Checkout $entity
-     * @return array|null
+     * {@inheritDoc}
      */
     public function getCurrentState($entity): ?array
     {
+        /** @var Checkout $entity */
+
         $shoppingList = $entity->getSourceEntity();
         if (!($shoppingList instanceof ShoppingList) || !$shoppingList->getLineItems()->count()) {
             return null;
         }
 
         $state = [];
-        $shippingContext = $this->shipContextProvider->getContext($entity);
-        if ($shippingContext) {
-            foreach ($shippingContext->getLineItems() as $item) {
-                $state[] = $this->getCompareString($item);
-            }
+        $lineItems = $this->shipContextProvider->getContext($entity)->getLineItems();
+        foreach ($lineItems as $lineItem) {
+            $state[] = $this->getCompareString($lineItem);
         }
 
         return $state;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isEntitySupported($entity): bool
     {
         return $entity instanceof Checkout;
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * {@inheritDoc}
      */
     public function isStatesEqual($entity, $state1, $state2): bool
     {
@@ -66,7 +67,7 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
     private function getCompareString(ShippingLineItemInterface $item): string
     {
         return sprintf(
-            "s%s-u%s-q%d-p%s%d-w%d%s-d%dx%dx%d%s-i%s",
+            's%s-u%s-q%d-p%s%d-w%d%s-d%dx%dx%d%s-i%s',
             $item->getProduct()?->getSkuUppercase(),
             $item->getProductUnitCode(),
             $item->getQuantity(),
@@ -82,6 +83,9 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getName(): string
     {
         return self::DATA_NAME;

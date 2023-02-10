@@ -9,24 +9,28 @@ use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupedLineItemsProviderInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Oro\Component\Testing\ReflectionUtil;
 
-class GroupedCheckoutLineItemsProviderTest extends TestCase
+class GroupedCheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var GroupedLineItemsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $groupingService;
 
-    private GroupedLineItemsProviderInterface|MockObject $groupingService;
-    private CheckoutLineItemsProvider|MockObject $checkoutLineItemsProvider;
-    private CheckoutFactoryInterface|MockObject $checkoutFactory;
-    private GroupedCheckoutLineItemsProvider $provider;
+    /** @var CheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsProvider;
+
+    /** @var CheckoutFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutFactory;
+
+    /** @var GroupedCheckoutLineItemsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
         $this->groupingService = $this->createMock(GroupedLineItemsProviderInterface::class);
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);
+
         $this->provider = new GroupedCheckoutLineItemsProvider(
             $this->groupingService,
             $this->checkoutLineItemsProvider,
@@ -34,20 +38,40 @@ class GroupedCheckoutLineItemsProviderTest extends TestCase
         );
     }
 
+    private function getCheckout(array $lineItems): Checkout
+    {
+        $checkout = new Checkout();
+        $checkout->setLineItems(new ArrayCollection($lineItems));
+
+        return $checkout;
+    }
+
+    private function getCheckoutLineItem(int $id, ?string $sku = null, ?string $unitCode = null): CheckoutLineItem
+    {
+        $lineItem = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem, $id);
+        if (null !== $sku) {
+            $lineItem->setProductSku($sku);
+        }
+        if (null !== $unitCode) {
+            $lineItem->setProductUnitCode($unitCode);
+        }
+
+        return $lineItem;
+    }
+
     public function testGetGroupedLineItems()
     {
-        $checkoutLineItem1 = $this->getEntity(CheckoutLineItem::class, ['id' => 1]);
-        $checkoutLineItem2 = $this->getEntity(CheckoutLineItem::class, ['id' => 2]);
-        $checkoutLineItem3 = $this->getEntity(CheckoutLineItem::class, ['id' => 3]);
-        $checkoutLineItem4 = $this->getEntity(CheckoutLineItem::class, ['id' => 4]);
+        $checkoutLineItem1 = $this->getCheckoutLineItem(1);
+        $checkoutLineItem2 = $this->getCheckoutLineItem(2);
+        $checkoutLineItem3 = $this->getCheckoutLineItem(3);
+        $checkoutLineItem4 = $this->getCheckoutLineItem(4);
 
-        $checkoutSource = $this->getEntity(Checkout::class, [
-            'lineItems' => new ArrayCollection([
-                $checkoutLineItem1,
-                $checkoutLineItem2,
-                $checkoutLineItem3,
-                $checkoutLineItem4
-            ])
+        $checkoutSource = $this->getCheckout([
+            $checkoutLineItem1,
+            $checkoutLineItem2,
+            $checkoutLineItem3,
+            $checkoutLineItem4
         ]);
 
         $this->checkoutLineItemsProvider->expects($this->once())
@@ -77,45 +101,21 @@ class GroupedCheckoutLineItemsProviderTest extends TestCase
             ->willReturn($groupedLineItems);
 
         $result = $this->provider->getGroupedLineItems($checkoutSource);
-
-        $this->assertNotEmpty($result);
-        $this->assertCount(2, $result);
-        $this->assertArrayHasKey('product.owner:1', $result);
-        $this->assertArrayHasKey('product.owner:2', $result);
-
-        $this->assertCount(2, $result['product.owner:1']);
-        $this->assertCount(1, $result['product.owner:2']);
+        $this->assertEquals($groupedLineItems, $result);
     }
 
     public function testGetGroupedLineItemsIds()
     {
-        $checkoutLineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item'
-        ]);
+        $checkoutLineItem1 = $this->getCheckoutLineItem(1, 'sku-1', 'item');
+        $checkoutLineItem2 = $this->getCheckoutLineItem(2, 'sku-2', 'set');
+        $checkoutLineItem3 = $this->getCheckoutLineItem(3, 'sku-3', 'item');
+        $checkoutLineItem4 = $this->getCheckoutLineItem(4, 'sku-4', 'set');
 
-        $checkoutLineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-2',
-            'productUnitCode' => 'set'
-        ]);
-
-        $checkoutLineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-3',
-            'productUnitCode' => 'item'
-        ]);
-
-        $checkoutLineItem4 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-4',
-            'productUnitCode' => 'set'
-        ]);
-
-        $checkoutSource = $this->getEntity(Checkout::class, [
-            'lineItems' => new ArrayCollection([
-                $checkoutLineItem1,
-                $checkoutLineItem2,
-                $checkoutLineItem3,
-                $checkoutLineItem4
-            ])
+        $checkoutSource = $this->getCheckout([
+            $checkoutLineItem1,
+            $checkoutLineItem2,
+            $checkoutLineItem3,
+            $checkoutLineItem4
         ]);
 
         $this->checkoutLineItemsProvider->expects($this->once())
@@ -123,12 +123,10 @@ class GroupedCheckoutLineItemsProviderTest extends TestCase
             ->with($checkoutSource)
             ->willReturn(new ArrayCollection([$checkoutLineItem1, $checkoutLineItem2, $checkoutLineItem3]));
 
-        $checkout = $this->getEntity(Checkout::class, [
-            'lineItems' => new ArrayCollection([
-                $checkoutLineItem1,
-                $checkoutLineItem2,
-                $checkoutLineItem3
-            ])
+        $checkout = $this->getCheckout([
+            $checkoutLineItem1,
+            $checkoutLineItem2,
+            $checkoutLineItem3
         ]);
 
         $this->checkoutFactory->expects($this->once())
@@ -145,63 +143,42 @@ class GroupedCheckoutLineItemsProviderTest extends TestCase
             ->with($checkout)
             ->willReturn($groupedLineItems);
 
-        $expected = [
-            'product.owner:1' => ['sku-1:item','sku-3:item'],
-            'product.owner:2' => ['sku-2:set']
-        ];
-
         $result = $this->provider->getGroupedLineItemsIds($checkoutSource);
-
-        $this->assertEquals($expected, $result);
+        $this->assertEquals(
+            [
+                'product.owner:1' => ['sku-1:item', 'sku-3:item'],
+                'product.owner:2' => ['sku-2:set']
+            ],
+            $result
+        );
     }
 
     public function testGetGroupedLineItemsByIds()
     {
-        $checkoutLineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item'
-        ]);
+        $checkoutLineItem1 = $this->getCheckoutLineItem(1, 'sku-1', 'item');
+        $checkoutLineItem2 = $this->getCheckoutLineItem(2, 'sku-2', 'set');
+        $checkoutLineItem3 = $this->getCheckoutLineItem(3, 'sku-3', 'item');
+        $checkoutLineItem4 = $this->getCheckoutLineItem(4, 'sku-4', 'set');
 
-        $checkoutLineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-2',
-            'productUnitCode' => 'set'
-        ]);
-
-        $checkoutLineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-3',
-            'productUnitCode' => 'item'
-        ]);
-
-        $checkoutLineItem4 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-4',
-            'productUnitCode' => 'set'
-        ]);
-
-        $checkout = $this->getEntity(Checkout::class, [
-            'lineItems' => new ArrayCollection([
-                $checkoutLineItem1,
-                $checkoutLineItem2,
-                $checkoutLineItem3,
-                $checkoutLineItem4
-            ])
+        $checkout = $this->getCheckout([
+            $checkoutLineItem1,
+            $checkoutLineItem2,
+            $checkoutLineItem3,
+            $checkoutLineItem4
         ]);
 
         $groupedLineItemsIds = [
-            'product.owner:1' => ['sku-1:item','sku-3:item'],
+            'product.owner:1' => ['sku-1:item', 'sku-3:item'],
             'product.owner:2' => ['sku-2:set']
         ];
 
-        $expectedResult = [
-            'product.owner:1' => [
-                0 => $checkoutLineItem1,
-                2 => $checkoutLineItem3
-            ],
-            'product.owner:2' => [
-                1 => $checkoutLineItem2
-            ]
-        ];
-
         $result = $this->provider->getGroupedLineItemsByIds($checkout, $groupedLineItemsIds);
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals(
+            [
+                'product.owner:1' => [$checkoutLineItem1, $checkoutLineItem3],
+                'product.owner:2' => [$checkoutLineItem2]
+            ],
+            $result
+        );
     }
 }
