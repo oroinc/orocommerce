@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\VirtualFields;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -33,6 +34,8 @@ class VirtualFieldsProductDecoratorFactory
      */
     private $cacheProvider;
 
+    private ?ConfigProvider $attributeProvider = null;
+
     public function __construct(
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
@@ -45,6 +48,11 @@ class VirtualFieldsProductDecoratorFactory
         $this->cacheProvider = $cacheProvider;
     }
 
+    public function setAttributeProvider(ConfigProvider $attributeProvider): void
+    {
+        $this->attributeProvider = $attributeProvider;
+    }
+
     /**
      * @param Product[] $products
      * @param Product $product
@@ -53,7 +61,7 @@ class VirtualFieldsProductDecoratorFactory
      */
     public function createDecoratedProduct(array $products, Product $product)
     {
-        return new VirtualFieldsProductDecorator(
+        $decoratedProduct = new VirtualFieldsProductDecorator(
             $this->converter,
             $this->doctrine,
             $this->fieldHelper,
@@ -61,5 +69,7 @@ class VirtualFieldsProductDecoratorFactory
             $products,
             $product
         );
+        $decoratedProduct->setAttributeProvider($this->attributeProvider);
+        return $decoratedProduct;
     }
 }

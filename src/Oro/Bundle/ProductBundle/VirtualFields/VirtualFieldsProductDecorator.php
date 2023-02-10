@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
@@ -61,6 +62,8 @@ class VirtualFieldsProductDecorator
      */
     private $cacheProvider;
 
+    private ?ConfigProvider $attributeProvider = null;
+
     public function __construct(
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
@@ -77,6 +80,11 @@ class VirtualFieldsProductDecorator
         $this->product = $product;
     }
 
+    public function setAttributeProvider(ConfigProvider $attributeProvider): void
+    {
+        $this->attributeProvider = $attributeProvider;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -87,7 +95,7 @@ class VirtualFieldsProductDecorator
         //Check contains before fetch considering bool value can be returned
         if (!$this->cacheProvider->contains($cacheKey)) {
             if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
-                $propertyValue = $this->getPropertyAccessor()->getValue($this->product, $name);
+                $propertyValue = $this->getReadablePropertyValue($name);
             } else {
                 $field = $this->getRelationField($name);
                 if (!$field) {
@@ -106,6 +114,33 @@ class VirtualFieldsProductDecorator
         return $propertyValue;
     }
 
+    protected function getReadablePropertyValue(string $name)
+    {
+        $propertyValue = $this->getPropertyAccessor()->getValue($this->product, $name);
+
+        if ($propertyValue) {
+            return $propertyValue;
+        }
+
+        $field = $this->getRelationField($name);
+
+        /**
+         * If its dynamic attribute and its value is empty
+         * for expression language proper work we need to return attribute stub
+         */
+        if ($field && $this->fieldHelper->isSingleDynamicAttribute($field)) {
+            // AbstractEnumValue array equivalent
+            $propertyValue = [
+                'id'       => null,
+                'name'     => null,
+                'priority' => 0,
+                'default'  => false,
+            ];
+        }
+
+        return $propertyValue;
+    }
+
     /**
      * @param string $name
      * @return array|null
@@ -117,6 +152,11 @@ class VirtualFieldsProductDecorator
             EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS
         );
         foreach ($fields as $field) {
+            $originalField = $this->getOriginalFieldName($field['name']);
+            if ($originalField && $originalField === $name) {
+                return $field;
+            }
+
             if ($field['name'] === $name) {
                 return $field;
             }
@@ -288,5 +328,14 @@ class VirtualFieldsProductDecorator
         }
 
         return static::$propertyAccessor;
+    }
+
+    protected function getOriginalFieldName(string $fieldName): ?string
+    {
+        if ($this->attributeProvider?->hasConfig(Product::class, $fieldName)) {
+            return $this->attributeProvider->getConfig(Product::class, $fieldName)->get('field_name');
+        }
+
+        return null;
     }
 }
