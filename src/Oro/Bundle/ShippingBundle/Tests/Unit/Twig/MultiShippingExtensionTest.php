@@ -5,25 +5,29 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 use Oro\Bundle\ShippingBundle\Manager\MultiShippingIntegrationManager;
 use Oro\Bundle\ShippingBundle\Twig\MultiShippingExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class MultiShippingExtensionTest extends TestCase
+class MultiShippingExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private MultiShippingIntegrationManager|MockObject $multiShippingIntegrationManager;
-    private MultiShippingExtension $extension;
+    /** @var MultiShippingIntegrationManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $multiShippingIntegrationManager;
+
+    /** @var MultiShippingExtension */
+    private $extension;
 
     protected function setUp(): void
     {
         $this->multiShippingIntegrationManager = $this->createMock(MultiShippingIntegrationManager::class);
-        $this->extension = new MultiShippingExtension($this->multiShippingIntegrationManager);
+
+        $container = self::getContainerBuilder()
+            ->add('oro_shipping.manager.multi_shipping_integration', $this->multiShippingIntegrationManager)
+            ->getContainer($this);
+
+        $this->extension = new MultiShippingExtension($container);
     }
 
     /**
-     * @param bool $integrationExists
-     * @param bool $expected
      * @dataProvider getDataForTestIsMultiShippingIntegrationExists
      */
     public function testIsMultiShippingIntegrationExists(bool $integrationExists, bool $expected)
@@ -32,7 +36,7 @@ class MultiShippingExtensionTest extends TestCase
             ->method('integrationExists')
             ->willReturn($integrationExists);
 
-        $this->assertEquals(
+        $this->assertSame(
             $expected,
             $this->callTwigFunction($this->extension, 'multi_shipping_integration_exists', [])
         );

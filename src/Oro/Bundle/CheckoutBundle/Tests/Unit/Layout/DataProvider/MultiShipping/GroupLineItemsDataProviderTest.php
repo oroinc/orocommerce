@@ -11,19 +11,22 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsPro
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemGroupTitleProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-class GroupLineItemsDataProviderTest extends TestCase
+class GroupLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var LineItemGroupTitleProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $titleProvider;
 
-    private LineItemGroupTitleProvider|MockObject $titleProvider;
-    private ConfigProvider|MockObject $configProvider;
-    private GroupedCheckoutLineItemsProvider|MockObject $groupedLineItemsProvider;
-    private GroupLineItemsDataProvider $groupLineItemsDataProvider;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var GroupedCheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $groupedLineItemsProvider;
+
+    /** @var GroupLineItemsDataProvider */
+    private $groupLineItemsDataProvider;
 
     protected function setUp(): void
     {
@@ -36,6 +39,39 @@ class GroupLineItemsDataProviderTest extends TestCase
             $this->configProvider,
             $this->groupedLineItemsProvider
         );
+    }
+
+    private function getCheckoutLineItem(int $id, string $sku, string $unitCode): CheckoutLineItem
+    {
+        $lineItem = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem, $id);
+        $lineItem->setProductSku($sku);
+        $lineItem->setProductUnitCode($unitCode);
+
+        return $lineItem;
+    }
+
+    private function getGroupedLineItems(): array
+    {
+        return [
+            'product.owner:1' => [
+                $this->getCheckoutLineItem(1, 'sku-1', 'item'),
+                $this->getCheckoutLineItem(3, 'sku-3', 'item')
+            ],
+            'product.owner:2' => [
+                $this->getCheckoutLineItem(2, 'sku-2', 'item')
+            ]
+        ];
+    }
+
+    private function getWorkflowItem(array $groupedLineItems): WorkflowItem
+    {
+        $workflowItem = new WorkflowItem();
+        $workflowData = new WorkflowData();
+        $workflowData->set('grouped_line_items', $groupedLineItems);
+        $workflowItem->setData($workflowData);
+
+        return $workflowItem;
     }
 
     public function testGetGroupedLineItemsWithGroupedLineItemsInWorkflowData()
@@ -51,7 +87,7 @@ class GroupLineItemsDataProviderTest extends TestCase
             'product.owner:2' => ['sku-2:set']
         ];
 
-        $workflowItem = $this->createWorkflowItem($groupedLineItemsIds);
+        $workflowItem = $this->getWorkflowItem($groupedLineItemsIds);
 
         $this->groupedLineItemsProvider->expects($this->once())
             ->method('getGroupedLineItemsByIds')
@@ -106,7 +142,7 @@ class GroupLineItemsDataProviderTest extends TestCase
             'product.owner:2' => ['sku-2:set']
         ];
 
-        $workflowItem = $this->createWorkflowItem($groupedLineItemsIds);
+        $workflowItem = $this->getWorkflowItem($groupedLineItemsIds);
 
         $this->groupedLineItemsProvider->expects($this->once())
             ->method('getGroupedLineItemsByIds')
@@ -115,10 +151,10 @@ class GroupLineItemsDataProviderTest extends TestCase
 
         $this->titleProvider->expects($this->exactly(2))
             ->method('getTitle')
-            ->will($this->onConsecutiveCalls(
+            ->willReturnOnConsecutiveCalls(
                 'Owner Title 1',
                 'Owner Title 2'
-            ));
+            );
 
         $expectedResult = [
             'product.owner:1' => 'Owner Title 1',
@@ -142,7 +178,7 @@ class GroupLineItemsDataProviderTest extends TestCase
             'product.owner:2' => ['sku-2:set']
         ];
 
-        $workflowItem = $this->createWorkflowItem($groupedLineItemsIds);
+        $workflowItem = $this->getWorkflowItem($groupedLineItemsIds);
 
         $this->groupedLineItemsProvider->expects($this->once())
             ->method('getGroupedLineItemsByIds')
@@ -157,42 +193,5 @@ class GroupLineItemsDataProviderTest extends TestCase
         $this->expectExceptionMessage('Unable to get title for the checkout line items group');
 
         $this->groupLineItemsDataProvider->getGroupedLineItemsTitles($workflowItem, $checkout);
-    }
-
-    private function getGroupedLineItems(): array
-    {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'id' => 1,
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item'
-        ]);
-
-        $lineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'id' => 2,
-            'productSku' => 'sku-2',
-            'productUnitCode' => 'item'
-        ]);
-
-        $lineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'id' => 3,
-            'productSku' => 'sku-3',
-            'productUnitCode' => 'item'
-        ]);
-
-        return [
-            'product.owner:1' => [$lineItem1, $lineItem3],
-            'product.owner:2' => [$lineItem2]
-        ];
-    }
-
-    private function createWorkflowItem(array $groupedLineItems): WorkflowItem
-    {
-        $workflowItem = new WorkflowItem();
-        $workflowData = new WorkflowData();
-
-        $workflowData->set('grouped_line_items', $groupedLineItems);
-        $workflowItem->setData($workflowData);
-
-        return $workflowItem;
     }
 }

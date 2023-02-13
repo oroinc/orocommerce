@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
+/**
+ * This interface should be implemented by shipping methods that can have a tracking link.
+ */
 interface ShippingTrackingAwareInterface
 {
-    /**
-     * @param string $number
-     * @return string|null
-     */
-    public function getTrackingLink($number);
+    public function getTrackingLink(string $number): ?string;
 }

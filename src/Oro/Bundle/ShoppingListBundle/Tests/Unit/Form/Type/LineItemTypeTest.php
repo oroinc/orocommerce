@@ -6,7 +6,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
@@ -14,7 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormInterface;
@@ -42,28 +41,23 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub(
-            [
-                1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
-                2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
-            ]
-        );
-
-        $productUnitSelection = new ProductUnitSelectionTypeStub($this->prepareProductUnitSelectionChoices());
-        $productSelectType = new ProductSelectTypeStub();
-
         return [
             new PreloadedExtension(
                 [
-                    LineItemType::class => $this->type,
-                    EntityType::class => $entityType,
-                    ProductSelectType::class => $productSelectType,
-                    ProductUnitSelectionType::class => $productUnitSelection,
-                    QuantityType::class => $this->getQuantityType(),
+                    $this->type,
+                    EntityType::class => new EntityTypeStub([
+                        1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
+                        2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
+                    ]),
+                    ProductSelectType::class => new ProductSelectTypeStub(),
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
+                        $this->prepareProductUnitSelectionChoices()
+                    ),
+                    $this->getQuantityType(),
                 ],
                 []
             )
@@ -101,7 +95,6 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
     {
         $shoppingList = new ShoppingList();
 
-        /** @var Product $expectedProduct */
         $expectedProduct = $this->getProductEntityWithPrecision(1, 'kg', 3);
 
         $defaultLineItem = new LineItem();
@@ -177,7 +170,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         $lineItem2 = (new LineItemStub())->setId(1);
 
         self::assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
-        self::assertTrue($resolvedOptions["ownership_disabled"]);
+        self::assertTrue($resolvedOptions['ownership_disabled']);
         self::assertEquals(['create'], $resolvedOptions['validation_groups']($this->getForm($lineItem)));
         self::assertEquals(['update'], $resolvedOptions['validation_groups']($this->getForm($lineItem2)));
     }

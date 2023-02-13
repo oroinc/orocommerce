@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity\EntityListener\LineItem;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
@@ -19,7 +19,7 @@ class RemoveParentProductsFromShoppingListLineItemListener
         $shoppingList = $lineItem->getShoppingList();
 
         $parentLineItems = $event
-            ->getEntityManager()
+            ->getObjectManager()
             ->getRepository(LineItem::class)
             ->findBy([
                 'shoppingList' => $shoppingList->getId(),

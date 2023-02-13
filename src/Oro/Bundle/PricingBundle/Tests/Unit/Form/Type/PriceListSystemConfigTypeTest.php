@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -26,14 +26,9 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 {
     use ConfigsGeneratorTrait;
 
-    /** @var array */
-    private $testPriceLists = [];
-
-    /** @var array */
-    private $testPriceListConfigs = [];
-
-    /** @var PriceListSystemConfigType */
-    private $formType;
+    private PriceListSystemConfigType $formType;
+    private array $testPriceLists = [];
+    private array $testPriceListConfigs = [];
 
     protected function setUp(): void
     {
@@ -61,10 +56,10 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    PriceListSystemConfigType::class => $this->formType,
-                    CollectionType::class => new CollectionType(),
-                    PriceListCollectionType::class => new PriceListCollectionType(),
-                    PriceListSelectWithPriorityType::class => new PriceListSelectWithPriorityType(),
+                    $this->formType,
+                    new CollectionType(),
+                    new PriceListCollectionType(),
+                    new PriceListSelectWithPriorityType(),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
                     EntityType::class => new EntityTypeStub($this->testPriceLists),
                 ],

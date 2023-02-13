@@ -3,16 +3,15 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 {
-    /** @var TaxBaseExclusionType */
-    private $formType;
+    private TaxBaseExclusionType $formType;
 
     protected function setUp(): void
     {
@@ -32,6 +31,9 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         $this->assertEquals(\ArrayObject::class, $options['data_class']);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function submitDataProvider(): array
     {
         [$country, $region] = $this->getValidCountryAndRegion();
@@ -105,7 +107,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getFormTypeClass(): string
     {
@@ -113,7 +115,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {

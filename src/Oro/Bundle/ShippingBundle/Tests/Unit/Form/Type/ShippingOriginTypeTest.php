@@ -4,17 +4,16 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\Type\AddressFormExtensionTestCase;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 {
-    /** @var ShippingOriginType */
-    private $formType;
+    private ShippingOriginType $formType;
 
     protected function setUp(): void
     {

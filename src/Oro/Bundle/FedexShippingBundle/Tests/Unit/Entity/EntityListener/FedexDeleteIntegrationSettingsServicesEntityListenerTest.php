@@ -6,9 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\FedexShippingBundle\Entity\EntityListener\FedexDeleteIntegrationSettingsServicesEntityListener;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
@@ -66,7 +67,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
         $args = $this->createMock(LifecycleEventArgs::class);
         $args
             ->expects(static::never())
-            ->method('getEntityManager');
+            ->method('getObjectManager');
 
         $this->listener->postUpdate($settings, $args);
     }
@@ -123,8 +124,14 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
      */
     private function createSettings(array $deletedServices)
     {
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+
+        $entityManager->method('getUnitOfWork')->willReturn(
+            $this->createMock(UnitOfWork::class)
+        );
+
         $serviceCollection = new PersistentCollection(
-            $this->createMock(EntityManagerInterface::class),
+            $entityManager,
             $this->createMock(ClassMetadata::class),
             new ArrayCollection($deletedServices)
         );
@@ -171,7 +178,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
         $args = $this->createMock(LifecycleEventArgs::class);
         $args
             ->expects(static::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($entityManager);
 
         return $args;

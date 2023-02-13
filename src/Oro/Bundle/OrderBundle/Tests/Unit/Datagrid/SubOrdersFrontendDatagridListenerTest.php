@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Datagrid;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
@@ -14,19 +13,23 @@ use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\OrderBundle\Datagrid\SubOrdersFrontendDatagridListener;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class SubOrdersFrontendDatagridListenerTest extends TestCase
+class SubOrdersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigProvider|MockObject $multiShippingConfigProvider;
-    private ManagerRegistry|MockObject $doctrine;
-    private SubOrdersFrontendDatagridListener $listener;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $multiShippingConfigProvider;
+
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
+    /** @var SubOrdersFrontendDatagridListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->multiShippingConfigProvider = $this->createMock(ConfigProvider::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
+
         $this->listener = new SubOrdersFrontendDatagridListener(
             $this->multiShippingConfigProvider,
             $this->doctrine
@@ -105,7 +108,7 @@ class SubOrdersFrontendDatagridListenerTest extends TestCase
             ->method('getDatasource')
             ->willReturn($datasource);
 
-        $em = $this->createMock(EntityManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
 
         $datasource->expects($this->once())
@@ -118,11 +121,6 @@ class SubOrdersFrontendDatagridListenerTest extends TestCase
             ->willReturn($em);
 
         $subQb = new QueryBuilder($em);
-        $expr = new Expr();
-
-        $em->expects($this->once())
-            ->method('getExpressionBuilder')
-            ->willReturn($expr);
 
         $em->expects($this->once())
             ->method('createQueryBuilder')
@@ -131,8 +129,9 @@ class SubOrdersFrontendDatagridListenerTest extends TestCase
         $this->listener->onBuildAfter($event);
 
         $this->assertEquals(
-            'SELECT WHERE order1.id NOT IN(SELECT IDENTITY(osub.parent) FROM Oro\Bundle\OrderBundle\Entity\Order osub '
-            . 'WHERE IDENTITY(osub.parent) is not null)',
+            'SELECT WHERE order1.id NOT IN(SELECT IDENTITY(osub.parent)'
+            . ' FROM Oro\Bundle\OrderBundle\Entity\Order osub '
+            . 'WHERE IDENTITY(osub.parent) IS NOT NULL)',
             $qb->getDQL()
         );
     }
@@ -160,7 +159,7 @@ class SubOrdersFrontendDatagridListenerTest extends TestCase
             ->method('getDatasource')
             ->willReturn($datasource);
 
-        $em = $this->createMock(EntityManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
 
         $datasource->expects($this->once())
@@ -196,14 +195,8 @@ class SubOrdersFrontendDatagridListenerTest extends TestCase
             ->method('getDatasource')
             ->willReturn($datasource);
 
-        $em = $this->createMock(EntityManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
-
-        $expr = new Expr();
-
-        $em->expects($this->once())
-            ->method('getExpressionBuilder')
-            ->willReturn($expr);
 
         $datasource->expects($this->once())
             ->method('getQueryBuilder')

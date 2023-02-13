@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Entity\Listener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
+/**
+ * Listens to Quote Entity events and generates qid if qid is empty
+ */
 class QuoteListener
 {
     public function postPersist(Quote $quote, LifecycleEventArgs $event)

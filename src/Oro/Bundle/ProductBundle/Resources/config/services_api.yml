@@ -469,6 +469,11 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create|update, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -10 }
 
+    oro_product.api.build_product_query:
+        class: Oro\Bundle\ProductBundle\Api\Processor\BuildProductQuery
+        tags:
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\Product, priority: -255 }
+
     oro_product.api.set_product_kit_item_product_unit:
         class: Oro\Bundle\ProductBundle\Api\Processor\SetProductKitItemProductUnit
         arguments:

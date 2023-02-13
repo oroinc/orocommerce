@@ -9,7 +9,7 @@ use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * Group line items according to configured line items fields.
+ * Groups line items according to configured line items fields.
  */
 class GroupLineItemsByConfiguredFields implements GroupedLineItemsProviderInterface
 {
@@ -18,7 +18,6 @@ class GroupLineItemsByConfiguredFields implements GroupedLineItemsProviderInterf
     private ConfigProvider $configProvider;
     private PropertyAccessorInterface $propertyAccessor;
     private DoctrineHelper $doctrineHelper;
-
     private array $cachedGroupedLineItems = [];
 
     public function __construct(
@@ -31,47 +30,41 @@ class GroupLineItemsByConfiguredFields implements GroupedLineItemsProviderInterf
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getGroupedLineItems(ProductLineItemsHolderInterface $entity): array
     {
         $cacheKey = $this->getEntityKey($entity);
         if (!isset($this->cachedGroupedLineItems[$cacheKey])) {
             $groupedLineItems = [];
             $lineItems = $entity->getLineItems();
-            $groupedFieldPath = $this->configProvider->getGroupLineItemsByField();
-
+            $groupingFieldPath = $this->configProvider->getGroupLineItemsByField();
             foreach ($lineItems as $lineItem) {
                 try {
-                    $value = $this->propertyAccessor->getValue($lineItem, $groupedFieldPath);
-                    $groupFieldValue = $this->getGroupFieldValue($value);
-                    $key = $groupedFieldPath . ':' . $groupFieldValue;
-                } catch (UnexpectedTypeException $exception) {
-                    // Use other items default key if key value could not be obtained by property path.
+                    $value = $this->propertyAccessor->getValue($lineItem, $groupingFieldPath);
+                    $key = $groupingFieldPath . ':' . $this->getGroupFieldValue($value);
+                } catch (UnexpectedTypeException $e) {
+                    // Use "other items" predefined key if key value could not be obtained by the property path.
                     // This is case for free from product items.
-                    $key = static::OTHER_ITEMS_KEY;
+                    // Such line items are grouped in "Other Items" group.
+                    $key = self::OTHER_ITEMS_KEY;
                 }
-
                 $groupedLineItems[$key][] = $lineItem;
             }
-
             $this->cachedGroupedLineItems[$cacheKey] = $groupedLineItems;
         }
 
         return $this->cachedGroupedLineItems[$cacheKey];
     }
 
-    /**
-     * @param mixed $value
-     * @return mixed
-     */
-    private function getGroupFieldValue($value)
+    private function getGroupFieldValue(mixed $value): mixed
     {
-        if (is_object($value)) {
-            $value = $this->doctrineHelper->getSingleEntityIdentifier($value);
-        } elseif (null === $value) {
-            $value = 0;
+        if (\is_object($value)) {
+            return $this->doctrineHelper->getSingleEntityIdentifier($value);
         }
 
-        return $value;
+        return $value ?? 0;
     }
 
     private function getEntityKey(ProductLineItemsHolderInterface $entity): string

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Entity\EntityListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\FedexShippingBundle\Integration\FedexChannel;
@@ -12,6 +12,10 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEventDispatcherInterface;
 
+/**
+ * Listens to FedexIntegrationSettings Entity update event
+ * When some services are deleted, removes also connected services to them
+ */
 class FedexDeleteIntegrationSettingsServicesEntityListener
 {
     /**
@@ -49,7 +53,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListener
             return;
         }
 
-        $channel = $args->getEntityManager()
+        $channel = $args->getObjectManager()
             ->getRepository('OroIntegrationBundle:Channel')
             ->findOneBy([
                 'type' => FedexChannel::TYPE,

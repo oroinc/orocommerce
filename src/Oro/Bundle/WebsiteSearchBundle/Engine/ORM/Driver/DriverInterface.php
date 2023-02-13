@@ -15,7 +15,6 @@ use Oro\Bundle\SearchBundle\Query\Query;
  */
 interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterface
 {
-
     /**
      * Create a new QueryBuilder instance that is prepopulated for this entity name
      *

@@ -66,7 +66,7 @@ class BuildProductSearchQuery implements ProcessorInterface
             $context->setQuery(
                 $this->buildSearchQuery($criteria, $this->getSelectFieldNames($context->getConfig()))
             );
-            $context->setCriteria();
+            $context->setCriteria(null);
         } catch (InvalidSorterException $e) {
             $context->addError(
                 Error::createValidationError(Constraint::SORT, $e->getMessage())

@@ -19,7 +19,7 @@ class BuildAddShoppingListItemsFormBuilder extends BuildCollectionFormBuilder
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getEntryFormOptions(ChangeSubresourceContext $context): array
     {

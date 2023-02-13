@@ -1162,6 +1162,7 @@ services:
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
             - '@oro_product.virtual_fields.decorator_cache'
+            - '@oro_entity_config.provider.attribute'
 
     oro_product.virtual_fields.select_query_converter:
             class: 'Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter'
@@ -1663,24 +1664,6 @@ services:
             - '@oro_product.datagrid_theme_helper'
         tags:
             - { name: layout.data_provider, alias: oro_product_datagrid_row_view }
-
-    oro_product.event_listener.orm.new_arrival_index_listener:
-        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
-        public: false
-        arguments:
-            - 'oro_product'
-            - 'idx_oro_product_new_arrival'
-        tags:
-            - { name: doctrine.event_listener, event: loadClassMetadata }
-
-    oro_product.event_listener.orm.featured_index_listener:
-        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
-        public: false
-        arguments:
-            - 'oro_product'
-            - 'idx_oro_product_featured'
-        tags:
-            - { name: doctrine.event_listener, event: loadClassMetadata }
 
     oro_product.action.condition.at_least_one_available_product:
         class: Oro\Bundle\ProductBundle\Action\Condition\AtLeastOneAvailableProduct

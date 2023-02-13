@@ -43,7 +43,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-briefcase",
+ *              "icon"="fa-usd",
  *              "contact_information"={
  *                  "email"={
  *                      {"fieldName"="contactInformation"}

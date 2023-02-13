@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -29,7 +28,7 @@ class ShippingContextTest extends \PHPUnit\Framework\TestCase
             ShippingContext::FIELD_PAYMENT_METHOD => $paymentMethod,
             ShippingContext::FIELD_CURRENCY => $currency,
             ShippingContext::FIELD_SUBTOTAL => $this->createMock(Price::class),
-            ShippingContext::FIELD_SOURCE_ENTITY => $this->createMock(Checkout::class),
+            ShippingContext::FIELD_SOURCE_ENTITY => $this->createMock(\stdClass::class),
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
             ShippingContext::FIELD_WEBSITE => $this->createMock(Website::class),
         ];

@@ -11,7 +11,8 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
 /**
- * Add available line item shipping methods to the datagrid records and add new column to display these values.
+ * Adds available line item shipping methods to the datagrid records
+ * and adds new column to display these values.
  */
 class FrontendCheckoutLineItemsDatagridEventListener
 {
@@ -36,11 +37,9 @@ class FrontendCheckoutLineItemsDatagridEventListener
     }
 
     /**
-     * Attach new column to datagrid which is responsible for shipping methods selections rendering.
-     *
-     * @param BuildBefore $event
+     * Attaches new column to datagrid which is responsible for shipping methods selections rendering.
      */
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildBefore(BuildBefore $event): void
     {
         if (!$this->useLineItemsShippingMethods($event->getDatagrid())) {
             return;
@@ -57,11 +56,9 @@ class FrontendCheckoutLineItemsDatagridEventListener
     }
 
     /**
-     * Add shipping methods for line items to grid's result records.
-     *
-     * @param OrmResultAfter $event
+     * Adds shipping methods for line items to grid's result records.
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event): void
     {
         if (!$this->useLineItemsShippingMethods($event->getDatagrid())) {
             return;
@@ -94,16 +91,9 @@ class FrontendCheckoutLineItemsDatagridEventListener
         }
     }
 
-    /**
-     * Try to find line item by id.
-     *
-     * @param int $id
-     * @return object|null
-     */
     private function findLineItem(int $id): ?object
     {
-        return $this->managerRegistry->getRepository(CheckoutLineItem::class)
-            ->find($id);
+        return $this->managerRegistry->getRepository(CheckoutLineItem::class)->find($id);
     }
 
     private function useLineItemsShippingMethods(DatagridInterface $datagrid): bool

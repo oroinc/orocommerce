@@ -18,7 +18,7 @@ use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -26,7 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderAddressTypeTest extends FormIntegrationTestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressSecurityProvider */
+    /** @var OrderAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $orderAddressSecurityProvider;
 
     protected function setUp(): void
@@ -159,32 +159,24 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions(): array
     {
-        $formType = new OrderAddressType($this->orderAddressSecurityProvider);
         $addressManager = $this->createMock(OrderAddressManager::class);
         $addressManager->expects($this->any())
             ->method('getGroupedAddresses')
             ->willReturn(new TypedOrderAddressCollection(null, 'billing', []));
-        $addressFormatter = $this->createMock(AddressFormatter::class);
-        $serializer = $this->createMock(Serializer::class);
-        $addressType = new EntityType(
-            [
-                AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
-                AddressType::TYPE_SHIPPING => new AddressType(AddressType::TYPE_SHIPPING),
-            ],
-            TranslatableEntityType::NAME
-        );
-        $addressTypeStub = new AddressTypeStub();
 
         return [
             new PreloadedExtension([
-                OrderAddressType::class => $formType,
-                AddressFormType::class => $addressTypeStub,
-                TranslatableEntityType::class => $addressType,
-                OrderAddressSelectType::class => new OrderAddressSelectType(
+                new OrderAddressType($this->orderAddressSecurityProvider),
+                AddressFormType::class => new AddressTypeStub(),
+                TranslatableEntityType::class => new EntityTypeStub([
+                    AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
+                    AddressType::TYPE_SHIPPING => new AddressType(AddressType::TYPE_SHIPPING),
+                ]),
+                new OrderAddressSelectType(
                     $addressManager,
-                    $addressFormatter,
+                    $this->createMock(AddressFormatter::class),
                     $this->orderAddressSecurityProvider,
-                    $serializer
+                    $this->createMock(Serializer::class)
                 )
             ], [
                 FormType::class => [new StripTagsExtensionStub($this)]

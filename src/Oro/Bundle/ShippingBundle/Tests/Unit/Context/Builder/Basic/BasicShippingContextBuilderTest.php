@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\Builder\Basic;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -17,7 +16,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit\Framework\TestCase
 {
     public function testFullContextBuilding(): void
     {
-        $entity = $this->createMock(Checkout::class);
+        $entity = $this->createMock(\stdClass::class);
         $entityId = '12';
         $lineItemsCollection = $this->createMock(ShippingLineItemCollectionInterface::class);
         $billingAddress = $this->createMock(AddressInterface::class);
@@ -64,7 +63,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testOptionalFields(): void
     {
-        $entity = $this->createMock(Checkout::class);
+        $entity = $this->createMock(\stdClass::class);
         $entityId = '12';
 
         $builder = new BasicShippingContextBuilder($entity, $entityId);

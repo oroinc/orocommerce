@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -57,7 +57,7 @@ class ProductImageListener
 
     public function postPersist(ProductImage $newProductImage, LifecycleEventArgs $args)
     {
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $product = $newProductImage->getProduct();
         $productImages = $product->getImages();
         $imagesByTypeCounter = $this->productImageHelper->countImagesByType($productImages);
@@ -117,7 +117,7 @@ class ProductImageListener
     public function filePostUpdate(File $file, LifecycleEventArgs $args)
     {
         /** @var ProductImage $productImage */
-        $productImage = $args->getEntityManager()->getRepository(ProductImage::class)->findOneBy(['image' => $file]);
+        $productImage = $args->getObjectManager()->getRepository(ProductImage::class)->findOneBy(['image' => $file]);
         if ($productImage && !in_array($productImage->getId(), $this->updatedProductImageIds)) {
             $this->dispatchEvent($productImage);
             $this->updatedProductImageIds[] = $productImage->getId();

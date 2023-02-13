@@ -35,7 +35,6 @@ class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
         $this->formFactory->expects($this->once())
             ->method('createNamed')
             ->with($fieldName, ChoiceType::class, null, $this->callback(function (array $options) {
-
                 // will check choice_attr separately
                 $this->assertSame(['No' => false, 'Yes' => true], $options['choices']);
                 $this->assertFalse($options['auto_initialize']);

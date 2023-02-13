@@ -16,33 +16,38 @@ class SplitCheckoutProvider
 {
     public const GROUPED_LINE_ITEMS_ATTRIBUTE = 'grouped_line_items';
 
-    private ManagerRegistry $managerRegistry;
+    private ManagerRegistry $doctrine;
     private CheckoutSplitter $checkoutSplitter;
     private GroupedCheckoutLineItemsProvider $groupedLineItemsProvider;
     private ConfigProvider $configProvider;
-
     private array $subCheckouts = [];
 
     public function __construct(
-        ManagerRegistry $managerRegistry,
+        ManagerRegistry $doctrine,
         CheckoutSplitter $checkoutSplitter,
         GroupedCheckoutLineItemsProvider $groupedLineItemsProvider,
         ConfigProvider $configProvider
     ) {
-        $this->managerRegistry = $managerRegistry;
+        $this->doctrine = $doctrine;
         $this->checkoutSplitter = $checkoutSplitter;
         $this->groupedLineItemsProvider = $groupedLineItemsProvider;
         $this->configProvider = $configProvider;
     }
 
-    public function getSubCheckouts(Checkout $checkout, $useCache = true): array
+    /**
+     * @param Checkout $checkout
+     * @param bool     $useCache
+     *
+     * @return Checkout[] ['product.owner:1' => checkout, ...]
+     */
+    public function getSubCheckouts(Checkout $checkout, bool $useCache = true): array
     {
         if (!$useCache) {
             return $this->splitCheckout($checkout);
         }
 
         $cacheKey = $checkout->getId();
-        if (!array_key_exists($cacheKey, $this->subCheckouts)) {
+        if (!\array_key_exists($cacheKey, $this->subCheckouts)) {
             $this->subCheckouts[$cacheKey] = $this->splitCheckout($checkout);
         }
 
@@ -54,15 +59,21 @@ class SplitCheckoutProvider
         return $this->configProvider->isCreateSubOrdersForEachGroupEnabled();
     }
 
+    /**
+     * @param Checkout $checkout
+     *
+     * @return Checkout[] ['product.owner:1' => checkout, ...]
+     */
     private function splitCheckout(Checkout $checkout): array
     {
         if (!$this->isCreateSubOrdersEnabled()) {
             return [];
         }
 
-        $groupedLineItemsIds = $this->getGroupedLineItems($checkout);
-        $groupedLineItems = $this->groupedLineItemsProvider->getGroupedLineItemsByIds($checkout, $groupedLineItemsIds);
-
+        $groupedLineItems = $this->groupedLineItemsProvider->getGroupedLineItemsByIds(
+            $checkout,
+            $this->getGroupedLineItems($checkout)
+        );
         if (empty($groupedLineItems)) {
             return [];
         }
@@ -72,14 +83,10 @@ class SplitCheckoutProvider
 
     /**
      * Try to get grouped_line_items from workflow data attribute or use provider if attribute is empty.
-     *
-     * @param Checkout $checkout
-     * @return array
-     * @throws \Oro\Bundle\WorkflowBundle\Exception\WorkflowException
      */
     private function getGroupedLineItems(Checkout $checkout): array
     {
-        $workflowItems = $this->managerRegistry->getRepository(WorkflowItem::class)
+        $workflowItems = $this->doctrine->getRepository(WorkflowItem::class)
             ->findAllByEntityMetadata(ClassUtils::getClass($checkout), $checkout->getId());
 
         $workflowItem = $this->filterWorkflowItems($workflowItems);
@@ -97,8 +104,6 @@ class SplitCheckoutProvider
 
     /**
      * Check if there is a workflow which support line items grouping.
-     *
-     * @param array $workFlowItems
      */
     private function filterWorkflowItems(array $workFlowItems): ?WorkflowItem
     {
@@ -128,7 +133,8 @@ class SplitCheckoutProvider
 
     private function isCheckoutWorkflow(WorkflowDefinition $workflowDefinition): bool
     {
-        return $workflowDefinition->hasExclusiveRecordGroups()
-            && in_array('b2b_checkout_flow', $workflowDefinition->getExclusiveRecordGroups());
+        return
+            $workflowDefinition->hasExclusiveRecordGroups()
+            && \in_array('b2b_checkout_flow', $workflowDefinition->getExclusiveRecordGroups(), true);
     }
 }

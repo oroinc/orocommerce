@@ -9,39 +9,23 @@ use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactor
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 /**
- *  Gets parameters needed to create PaymentContext from Order and other sources
+ * Creates a payment context based on an order entity.
  */
 class OrderPaymentContextFactory
 {
-    /**
-     * @var OrderPaymentLineItemConverterInterface
-     */
-    private $paymentLineItemConverter;
-
-    /**
-     * @var PaymentContextBuilderFactoryInterface|null
-     */
-    private $paymentContextBuilderFactory;
+    private OrderPaymentLineItemConverterInterface $paymentLineItemConverter;
+    private PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory;
 
     public function __construct(
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
-        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null
+        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
     ) {
         $this->paymentLineItemConverter = $paymentLineItemConverter;
         $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return PaymentContextInterface
-     */
-    public function create(Order $order)
+    public function create(Order $order): PaymentContextInterface
     {
-        if (null === $this->paymentContextBuilderFactory) {
-            return null;
-        }
-
         $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
             $order,
             (string)$order->getId()
@@ -75,8 +59,7 @@ class OrderPaymentContextFactory
         }
 
         $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($order->getLineItems());
-
-        if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
+        if (!$convertedLineItems->isEmpty()) {
             $paymentContextBuilder->setLineItems($convertedLineItems);
         }
 

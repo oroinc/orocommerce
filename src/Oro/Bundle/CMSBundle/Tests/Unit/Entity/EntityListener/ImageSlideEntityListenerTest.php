@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ImageSlide;

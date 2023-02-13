@@ -9,45 +9,32 @@ use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadFlatRateIntegration extends AbstractFixture implements ContainerAwareInterface
+class LoadFlatRateIntegration extends AbstractFixture
 {
-    use ContainerAwareTrait;
-
-    const REFERENCE_FLAT_RATE = 'flat_rate_integration';
+    public const REFERENCE_FLAT_RATE = 'flat_rate_integration';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $label = (new LocalizedFallbackValue())->setString('Flat Rate');
+        $label = new LocalizedFallbackValue();
+        $label->setString('Flat Rate');
 
         $transport = new FlatRateSettings();
         $transport->addLabel($label);
 
         $channel = new Channel();
-        $channel->setType(FlatRateChannelType::TYPE)
-            ->setName('Flat Rate')
-            ->setEnabled(true)
-            ->setTransport($transport)
-            ->setOrganization($this->getOrganization());
+        $channel->setType(FlatRateChannelType::TYPE);
+        $channel->setName('Flat Rate');
+        $channel->setEnabled(true);
+        $channel->setTransport($transport);
+        $channel->setOrganization($manager->getRepository(Organization::class)->getFirst());
 
         $manager->persist($channel);
         $manager->flush();
 
         $this->setReference(self::REFERENCE_FLAT_RATE, $channel);
-    }
-
-    /**
-     * @return Organization
-     */
-    private function getOrganization()
-    {
-        return $this->container->get('doctrine')
-            ->getRepository(Organization::class)
-            ->getFirst();
     }
 }

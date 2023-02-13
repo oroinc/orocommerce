@@ -3,12 +3,14 @@
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProviderInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
@@ -17,31 +19,25 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
  */
 class DatagridLineItemsDataPromotionsListener
 {
-    /** @var PricingLineItemDataListener */
-    private $pricingLineItemDataListener;
-
-    /** @var PromotionExecutor */
-    private $promotionExecutor;
-
-    /** @var UserCurrencyManager */
-    private $currencyManager;
-
-    /** @var NumberFormatter */
-    private $numberFormatter;
-
-    /** @var array */
-    private $cache = [];
+    private PricingLineItemDataListener $pricingLineItemDataListener;
+    private PromotionExecutor $promotionExecutor;
+    private UserCurrencyManager $currencyManager;
+    private NumberFormatter $numberFormatter;
+    private SplitEntitiesProviderInterface $splitEntitiesProvider;
+    private array $cache = [];
 
     public function __construct(
         PricingLineItemDataListener $pricingLineItemDataListener,
         PromotionExecutor $promotionExecutor,
         UserCurrencyManager $currencyManager,
-        NumberFormatter $numberFormatter
+        NumberFormatter $numberFormatter,
+        SplitEntitiesProviderInterface $splitEntitiesProvider
     ) {
         $this->pricingLineItemDataListener = $pricingLineItemDataListener;
         $this->promotionExecutor = $promotionExecutor;
         $this->currencyManager = $currencyManager;
         $this->numberFormatter = $numberFormatter;
+        $this->splitEntitiesProvider = $splitEntitiesProvider;
     }
 
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
@@ -89,27 +85,53 @@ class DatagridLineItemsDataPromotionsListener
 
     private function getDiscountTotals(ProductLineItemsHolderInterface $lineItemsHolder): array
     {
-        $id = $lineItemsHolder->getId();
+        $id = $lineItemsHolder->getId() ?? spl_object_hash($lineItemsHolder);
         if (!isset($this->cache[$id]) && $this->promotionExecutor->supports($lineItemsHolder)) {
-            $discountContext = $this->promotionExecutor->execute($lineItemsHolder);
+            // Check if create split order functionality enabled and apply discounts for each potential suborder
+            // separately.
+            $splitEntities = $this->splitEntitiesProvider->getSplitEntities($lineItemsHolder);
 
-            $discounts = [];
-            foreach ($discountContext->getLineItems() as $item) {
-                $identifier = $this->getDataKey($item->getSourceLineItem());
-
-                $discounts[$identifier] = $item->getDiscountTotal();
-            }
-
-            foreach ($lineItemsHolder->getLineItems() as $item) {
-                $identifier = $this->getDataKey($item);
-
-                if (isset($discounts[$identifier])) {
-                    $this->cache[$id][$item->getId()] = $discounts[$identifier];
+            if (!empty($splitEntities)) {
+                $discounts = [];
+                foreach ($splitEntities as $entity) {
+                    $discount = $this->getLineItemsDiscounts($entity);
+                    // array_replace is used here just only to merge arrays with the integer keys. Its behaviour does
+                    // not impact the logic.
+                    $discounts = array_replace($discounts, $discount);
                 }
+
+                $this->cache[$id] = $discounts;
+            } else {
+                $this->cache[$id] = $this->getLineItemsDiscounts($lineItemsHolder);
             }
         }
 
         return $this->cache[$id] ?? [];
+    }
+
+    public function getLineItemsDiscounts(ProductLineItemsHolderInterface $lineItemsHolder): array
+    {
+        $discountContext = $this->promotionExecutor->execute($lineItemsHolder);
+
+        $discounts = [];
+        $lineItemsDiscounts = [];
+
+        /** @var DiscountLineItemInterface $item */
+        foreach ($discountContext->getLineItems() as $item) {
+            $identifier = $this->getDataKey($item->getSourceLineItem());
+
+            $discounts[$identifier] = $item->getDiscountTotal();
+        }
+
+        foreach ($lineItemsHolder->getLineItems() as $item) {
+            $identifier = $this->getDataKey($item);
+
+            if (isset($discounts[$identifier])) {
+                $lineItemsDiscounts[$item->getId()] = $discounts[$identifier];
+            }
+        }
+
+        return $lineItemsDiscounts;
     }
 
     private function getMainEntity(array $lineItems): ?object

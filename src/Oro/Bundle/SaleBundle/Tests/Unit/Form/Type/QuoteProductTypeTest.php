@@ -6,13 +6,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
@@ -496,28 +494,22 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $priceType = $this->preparePriceType();
-        $entityType = $this->prepareProductEntityType();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType = $this->prepareQuoteProductOfferType();
-        $quoteProductRequestType = $this->prepareQuoteProductRequestType();
-
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductSelectType::class        => new ProductSelectTypeStub(),
-                    CurrencySelectionType::class    => new CurrencySelectionTypeStub(),
-                    PriceType::class                => $priceType,
-                    EntityType::class               => $entityType,
-                    QuoteProductOfferType::class    => $quoteProductOfferType,
-                    QuoteProductRequestType::class  => $quoteProductRequestType,
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
-                    QuantityType::class             => $this->getQuantityType(),
+                    ProductSelectType::class => new ProductSelectTypeStub(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    $this->preparePriceType(),
+                    EntityType::class => $this->prepareProductEntityType(),
+                    QuoteProductOfferType::class => $this->prepareQuoteProductOfferType(),
+                    QuoteProductRequestType::class => $this->prepareQuoteProductRequestType(),
+                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    $this->getQuantityType(),
                 ],
                 []
             ),

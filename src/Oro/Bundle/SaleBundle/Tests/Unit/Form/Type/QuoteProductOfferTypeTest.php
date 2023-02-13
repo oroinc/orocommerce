@@ -7,7 +7,6 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
@@ -182,22 +181,18 @@ class QuoteProductOfferTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $priceType = $this->preparePriceType();
-        $currencySelectionType = new CurrencySelectionTypeStub();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-
         return [
             new PreloadedExtension(
                 [
-                    QuoteProductOfferType::class => $this->formType,
-                    PriceType::class => $priceType,
-                    CurrencySelectionType::class => $currencySelectionType,
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
-                    QuantityType::class => $this->getQuantityType()
+                    $this->formType,
+                    $this->preparePriceType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    $this->getQuantityType()
                 ],
                 []
             ),

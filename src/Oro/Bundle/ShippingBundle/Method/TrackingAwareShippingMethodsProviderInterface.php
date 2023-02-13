@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
+/**
+ * Represents a service to get tracking aware shipping methods.
+ */
 interface TrackingAwareShippingMethodsProviderInterface
 {
     /**
-     * @return ShippingMethodInterface[]
+     * @return ShippingMethodInterface[] [shipping method identifier => shipping method, ...]
      */
-    public function getTrackingAwareShippingMethods();
+    public function getTrackingAwareShippingMethods(): array;
 }

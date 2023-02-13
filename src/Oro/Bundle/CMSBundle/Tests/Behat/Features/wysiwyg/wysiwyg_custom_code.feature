@@ -11,11 +11,11 @@ Feature: WYSIWYG custom code
 
   Scenario: Add/update/delete custom code type
     When I add new component "Custom Code" from panel to editor area
-    And I add "Text content" to dialog code editor with Import
+    And I add "Text content" to dialog code editor with Apply Changes
     And I check wysiwyg content in "CMS Page Content":
       | 1 | <div data-type="custom-source-code">Text content |
     Then I click on "Edit custom code" action for selected component
-    And I add "<div class=\"test\"><blockquote>Test content</blockquote></div>" to dialog code editor with Import
+    And I add "<div class=\"test\"><blockquote>Test content</blockquote></div>" to dialog code editor with Apply Changes
     And I check wysiwyg content in "CMS Page Content":
       | 1 | <div data-type="custom-source-code"> |
       | 2 | <div class="test">                   |

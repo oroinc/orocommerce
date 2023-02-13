@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping\Total;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitCheckoutProvider;
+use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 
 /**
  * Calculate promotion totals for Orders with subOrders and Checkout with supported split checkout functionality.
@@ -16,16 +15,16 @@ class PromotionSubtotalProviderDecorator implements SubtotalProviderInterface
 {
     private SubtotalProviderInterface $subtotalProvider;
     private RoundingServiceInterface $rounding;
-    private SplitCheckoutProvider $splitCheckoutProvider;
+    private SplitEntitiesProviderInterface $splitEntitiesProvider;
 
     public function __construct(
         SubtotalProviderInterface $subtotalProvider,
         RoundingServiceInterface $rounding,
-        SplitCheckoutProvider $splitCheckoutProvider
+        SplitEntitiesProviderInterface $splitEntitiesProvider
     ) {
         $this->subtotalProvider = $subtotalProvider;
         $this->rounding = $rounding;
-        $this->splitCheckoutProvider = $splitCheckoutProvider;
+        $this->splitEntitiesProvider = $splitEntitiesProvider;
     }
 
     /**
@@ -35,15 +34,17 @@ class PromotionSubtotalProviderDecorator implements SubtotalProviderInterface
      */
     public function getSubtotal($entity)
     {
-        $subEntities = $this->getSubEntities($entity);
-        if (!empty($subEntities)) {
-            $totals = [];
-            foreach ($subEntities as $subEntity) {
-                $subOrderTotal = $this->subtotalProvider->getSubtotal($subEntity);
-                $totals = $this->calculateTotals($totals, $subOrderTotal);
-            }
+        if ($entity instanceof ProductLineItemsHolderInterface) {
+            $subEntities = $this->splitEntitiesProvider->getSplitEntities($entity);
+            if (!empty($subEntities)) {
+                $totals = [];
+                foreach ($subEntities as $subEntity) {
+                    $subOrderTotal = $this->subtotalProvider->getSubtotal($subEntity);
+                    $totals = $this->calculateTotals($totals, $subOrderTotal);
+                }
 
-            return $totals;
+                return $totals;
+            }
         }
 
         return $this->subtotalProvider->getSubtotal($entity);
@@ -69,19 +70,6 @@ class PromotionSubtotalProviderDecorator implements SubtotalProviderInterface
         }
 
         return $totals;
-    }
-
-    private function getSubEntities($entity): array
-    {
-        if ($entity instanceof Checkout) {
-            return $this->splitCheckoutProvider->getSubCheckouts($entity);
-        }
-
-        if ($entity instanceof Order) {
-            return $entity->getSubOrders()->toArray();
-        }
-
-        return [];
     }
 
     /**

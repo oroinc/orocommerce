@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductHolderTypeStub;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
@@ -17,8 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var ProductSelectType */
-    private $type;
+    private ProductSelectType $type;
 
     protected function setUp(): void
     {
@@ -153,18 +152,15 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
                     $this->type,
-                    OroEntitySelectOrCreateInlineType::class => new EntityType(
-                        ['1'],
-                        'oro_entity_create_or_select_inline'
-                    )
+                    OroEntitySelectOrCreateInlineType::class => new EntityTypeStub(['1'])
                 ],
                 []
             ),

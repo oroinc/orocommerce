@@ -31,7 +31,6 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
     public function testBuildView()
     {
         $view = new FormView();
-        /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
         $type = new ProductStepOneType();
         $type->buildView($view, $form, []);
@@ -41,14 +40,12 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $productTypeProvider = new ProductTypeProvider();
-
         return [
-            new PreloadedExtension([new ProductTypeType($productTypeProvider)], [])
+            new PreloadedExtension([new ProductTypeType(new ProductTypeProvider())], [])
         ];
     }
 }

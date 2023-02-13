@@ -16,8 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var BasicOrderPaymentLineItemConverter */
-    private $orderPaymentLineItemConverter;
+    private BasicOrderPaymentLineItemConverter $orderPaymentLineItemConverter;
 
     protected function setUp(): void
     {
@@ -27,16 +26,32 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+
+        return $productUnit;
+    }
+
+    private function getOrderLineItem(float $quantity, ?ProductUnit $productUnit): OrderLineItem
+    {
+        $lineItem = new OrderLineItem();
+        $lineItem->setQuantity($quantity);
+        $lineItem->setProductUnit($productUnit);
+
+        return $lineItem;
+    }
+
     /**
      * @dataProvider convertLineItemsDataProvider
      */
     public function testConvertLineItems(Collection $orderCollection, array $expectedLineItems)
     {
-        $expectedLineItemCollection = new DoctrinePaymentLineItemCollection($expectedLineItems);
-
-        $paymentLineItemCollection = $this->orderPaymentLineItemConverter->convertLineItems($orderCollection);
-
-        $this->assertEquals($expectedLineItemCollection, $paymentLineItemCollection);
+        $this->assertEquals(
+            new DoctrinePaymentLineItemCollection($expectedLineItems),
+            $this->orderPaymentLineItemConverter->convertLineItems($orderCollection)
+        );
     }
 
     public function convertLineItemsDataProvider(): array
@@ -47,10 +62,10 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
         $price = $this->createMock(Price::class);
 
         $normalOrderCollection = new ArrayCollection([
-            $this->getOrderLineItem(12, $productUnit),
-            $this->getOrderLineItem(5, $productUnit),
-            $this->getOrderLineItem(1, $productUnit),
-            $this->getOrderLineItem(3, $productUnit),
+            $this->getOrderLineItem(12.0, $productUnit),
+            $this->getOrderLineItem(5.0, $productUnit),
+            $this->getOrderLineItem(1.0, $productUnit),
+            $this->getOrderLineItem(3.0, $productUnit),
         ]);
 
         $normalExpectedLineItems = [];
@@ -70,10 +85,10 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
         ];
 
         $withPriceOrderCollection = new ArrayCollection([
-            $this->getOrderLineItem(12, $productUnit)->setPrice($price)->setProduct($product),
-            $this->getOrderLineItem(5, $productUnit)->setPrice($price)->setProduct($product),
-            $this->getOrderLineItem(1, $productUnit)->setPrice($price)->setProduct($product),
-            $this->getOrderLineItem(3, $productUnit)->setPrice($price)->setProduct($product),
+            $this->getOrderLineItem(12.0, $productUnit)->setPrice($price)->setProduct($product),
+            $this->getOrderLineItem(5.0, $productUnit)->setPrice($price)->setProduct($product),
+            $this->getOrderLineItem(1.0, $productUnit)->setPrice($price)->setProduct($product),
+            $this->getOrderLineItem(3.0, $productUnit)->setPrice($price)->setProduct($product),
         ]);
 
         $withPriceExpectedLineItems = [];
@@ -104,32 +119,16 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
             ->method('getCode');
 
         $orderCollection = new ArrayCollection([
-            (new OrderLineItem())->setQuantity(12),
-            (new OrderLineItem())->setQuantity(5),
-            (new OrderLineItem())->setQuantity(1),
-            (new OrderLineItem())->setQuantity(3),
-            (new OrderLineItem())->setQuantity(50),
+            $this->getOrderLineItem(12.0, null),
+            $this->getOrderLineItem(5.0, null),
+            $this->getOrderLineItem(1.0, null),
+            $this->getOrderLineItem(3.0, null),
+            $this->getOrderLineItem(50.0, null),
         ]);
 
-        $expectedLineItemCollection = new DoctrinePaymentLineItemCollection([]);
-
-        $paymentLineItemCollection = $this->orderPaymentLineItemConverter->convertLineItems($orderCollection);
-
-        $this->assertEquals($expectedLineItemCollection, $paymentLineItemCollection);
-    }
-
-    private function getOrderLineItem(int $quantity, ProductUnit $productUnit): OrderLineItem
-    {
-        return (new OrderLineItem())->setQuantity($quantity)->setProductUnit($productUnit);
-    }
-
-    private function getProductUnit(string $productUnitCode): ProductUnit
-    {
-        $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects($this->atLeastOnce())
-            ->method('getCode')
-            ->willReturn($productUnitCode);
-
-        return $productUnit;
+        $this->assertEquals(
+            new DoctrinePaymentLineItemCollection([]),
+            $this->orderPaymentLineItemConverter->convertLineItems($orderCollection)
+        );
     }
 }

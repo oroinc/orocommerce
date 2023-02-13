@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -46,7 +46,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => new EntityTypeStub($this->prepareChoices())
                 ],
                 [

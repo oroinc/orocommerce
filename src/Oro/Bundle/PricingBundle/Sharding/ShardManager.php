@@ -111,7 +111,7 @@ class ShardManager
             $sql = "INSERT INTO $shardName ($columnsStr) SELECT $columnsStr FROM $baseTableName WHERE $column = :value";
             $connection->executeStatement($sql, ["value" => $discriminationValue]);
         }
-        $connection->exec("DELETE FROM $baseTableName");
+        $connection->executeStatement("DELETE FROM $baseTableName");
     }
 
     /**

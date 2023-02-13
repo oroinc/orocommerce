@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -11,6 +10,7 @@ use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
@@ -48,22 +48,16 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType as EnumSelectTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    private const DATA_CLASS = \Oro\Bundle\ProductBundle\Entity\Product::class;
-
     /** @var ProductType */
     private $type;
 
@@ -99,7 +93,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
         $this->type = new ProductType($defaultProductUnitProvider, $this->urlGenerator, new ProductImageHelper());
-        $this->type->setDataClass(self::DATA_CLASS);
+        $this->type->setDataClass(\Oro\Bundle\ProductBundle\Entity\Product::class);
 
         $image1 = new StubProductImage();
         $image1->setImage(new File());
@@ -131,10 +125,9 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->willReturn([]);
 
         $variantFieldProvider = $this->createMock(VariantFieldProvider::class);
-        $variantFields = [new VariantField('size', 'Size'), new VariantField('color', 'Color')];
         $variantFieldProvider->expects($this->any())
             ->method('getVariantFields')
-            ->willReturn($variantFields);
+            ->willReturn([new VariantField('size', 'Size'), new VariantField('color', 'Color')]);
 
         $entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
         $entityFallbackResolver->expects($this->any())
@@ -164,7 +157,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new ProductCustomVariantFieldsCollectionType($variantFieldProvider),
-                    EntityIdentifierType::class => new EntityTypeStub([]),
+                    EntityIdentifierType::class => new EntityTypeStub(),
                     new ProductStatusType(new ProductStatusProvider()),
                     new ProductImageCollectionType($imageTypeProvider),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
@@ -435,7 +428,8 @@ class ProductTypeTest extends FormIntegrationTestCase
     private function getAttributeFamily(): AttributeFamily
     {
         if (!$this->attributeFamily) {
-            $this->attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 777]);
+            $this->attributeFamily = new AttributeFamily();
+            ReflectionUtil::setId($this->attributeFamily, 777);
         }
 
         return $this->attributeFamily;
@@ -474,16 +468,13 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->with('oro_product_get_changed_slugs', ['id' => 1])
             ->willReturn($generatedUrl);
 
-        /** @var Product $existingData */
-        $existingData = $this->getEntity(Product::class, [
-            'id' => 1,
-            'slugPrototypes' => new ArrayCollection([$this->getEntity(LocalizedFallbackValue::class)]),
-            'directlyPrimaryUnitPrecision' => $this->getEntity(ProductUnitPrecision::class)
-        ]);
+        $existingData = new Product();
+        $existingData->setId(1);
+        $existingData->addSlugPrototype(new LocalizedFallbackValue());
+        $existingData->setDirectlyPrimaryUnitPrecision(new ProductUnitPrecision());
 
         $existingData->setAttributeFamily($this->getAttributeFamily());
 
-        /** @var Form $form */
         $form = $this->factory->create(ProductType::class, $existingData);
 
         $formView = $form->createView();

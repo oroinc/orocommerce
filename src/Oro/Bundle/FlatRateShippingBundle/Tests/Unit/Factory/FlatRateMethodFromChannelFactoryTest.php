@@ -37,12 +37,16 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testBuildReturnsCorrectObjectWithLabel()
+    public function testCreate(): void
     {
         $label = 'test';
-        $channel = $this->getChannel();
         $identifier = 'flat_rate_1';
+        $enabled = true;
         $iconUri = 'bundles/icon-uri.png';
+
+        $channel = new Channel();
+        $channel->setTransport(new FlatRateSettings());
+        $channel->setEnabled($enabled);
 
         $this->integrationIconProvider->expects(self::once())
             ->method('getIcon')
@@ -53,26 +57,17 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getLocalizedValue')
             ->willReturn($label);
 
-        $this->identifierGenerator->expects($this->once())
+        $this->identifierGenerator->expects(self::once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn($identifier);
 
-        $method = $this->factory->create($channel);
-
-        self::assertInstanceOf(FlatRateMethod::class, $method);
-        self::assertSame($identifier, $method->getIdentifier());
-        self::assertSame($label, $method->getLabel());
-        self::assertTrue($method->isEnabled());
-        self::assertSame($iconUri, $method->getIcon());
-    }
-
-    private function getChannel(): Channel
-    {
-        $channel = new Channel();
-        $channel->setTransport(new FlatRateSettings());
-        $channel->setEnabled(true);
-
-        return $channel;
+        $expected = new FlatRateMethod(
+            $identifier,
+            $label,
+            $iconUri,
+            $enabled
+        );
+        self::assertEquals($expected, $this->factory->create($channel));
     }
 }

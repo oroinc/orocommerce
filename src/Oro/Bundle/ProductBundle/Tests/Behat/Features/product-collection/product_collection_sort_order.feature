@@ -53,6 +53,12 @@ Feature: Product collection sort order
       | PSKU3 | Product 3 |
       | PSKU5 | Product 5 |
 
+  Scenario: Using select row grid action has not affect on Product Collection's elements visibility
+    When I check PSKU4 record in "Active Grid" grid
+    Then I should see an "Product Collection Grid PSKU4 input" element
+    When I check PSKU4 record in "Active Grid" grid
+    Then I should see an "Product Collection Grid PSKU4 input" element
+
   Scenario: Product Collection correctly sorted in frontend
     Given I operate as the Buyer
     When I am on homepage

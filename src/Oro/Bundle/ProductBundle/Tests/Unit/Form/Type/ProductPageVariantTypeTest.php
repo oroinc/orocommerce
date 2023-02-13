@@ -25,7 +25,7 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $classMetadata = new ClassMetadata(Product::class);
         $classMetadata->setIdentifier(['id']);
@@ -51,15 +51,15 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductSelectType::class => new ProductSelectType($this->createMock(TranslatorInterface::class)),
-                    OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
+                    new ProductSelectType($this->createMock(TranslatorInterface::class)),
+                    new OroEntitySelectOrCreateInlineType(
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
                         $entityManager,
                         $searchRegistry
                     ),
-                    OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
+                    new OroJquerySelect2HiddenType(
                         $entityManager,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)

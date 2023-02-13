@@ -11,7 +11,7 @@ class MultiShippingChannelTypeTest extends TestCase
     {
         $channelType = new MultiShippingChannelType();
 
-        $this->assertEquals('oro.multi_shipping_method.channel_type.label', $channelType->getLabel());
+        $this->assertEquals('oro.shipping.multi_shipping_method.channel_type.label', $channelType->getLabel());
         $this->assertEquals('bundles/oroshipping/img/multi-shipping-logo.png', $channelType->getIcon());
     }
 }

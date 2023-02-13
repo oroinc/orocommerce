@@ -11,10 +11,9 @@ use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
@@ -42,28 +41,21 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $unitSelectType = new EntityType(
-            [
-                'kg' => $this->getEntity(ProductUnit::class, ['code' => 'kg']),
-                'item' => $this->getEntity(ProductUnit::class, ['code' => 'item']),
-            ],
-            ProductUnitSelectionType::NAME
-        );
-
         $priceType = new PriceType();
         $priceType->setDataClass(Price::class);
-
-        $orderPriceType = new PriceTypeSelectorType();
 
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::class => $unitSelectType,
-                    PriceType::class => $priceType,
-                    PriceTypeSelectorType::class => $orderPriceType,
-                    QuantityType::class => $this->getQuantityType(),
+                    ProductUnitSelectionType::class => new EntityTypeStub([
+                        'kg' => $this->getEntity(ProductUnit::class, ['code' => 'kg']),
+                        'item' => $this->getEntity(ProductUnit::class, ['code' => 'item']),
+                    ]),
+                    $priceType,
+                    PriceTypeSelectorType::class => new PriceTypeSelectorType(),
+                    $this->getQuantityType(),
                 ],
                 []
             ),
@@ -78,7 +70,6 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         $formType = $this->getFormType();
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $formType->finishView($view, $form, []);
     }

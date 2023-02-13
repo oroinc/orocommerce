@@ -20,17 +20,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class DefaultShoppingListEntityIdResolver implements EntityIdResolverInterface
 {
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var CurrentShoppingListStorage */
-    private $currentShoppingListStorage;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var AclHelper */
-    private $aclHelper;
+    private TokenStorageInterface $tokenStorage;
+    private CurrentShoppingListStorage $currentShoppingListStorage;
+    private DoctrineHelper $doctrineHelper;
+    private AclHelper $aclHelper;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
@@ -45,7 +38,7 @@ class DefaultShoppingListEntityIdResolver implements EntityIdResolverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDescription(): string
     {
@@ -55,9 +48,9 @@ MARKDOWN;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function resolve()
+    public function resolve(): mixed
     {
         $token = $this->tokenStorage->getToken();
         if (null === $token) {

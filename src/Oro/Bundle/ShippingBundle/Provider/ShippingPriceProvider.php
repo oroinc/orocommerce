@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
-use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
@@ -23,26 +23,27 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ShippingPriceProvider implements ShippingPriceProviderInterface
 {
-    use MemoryCacheProviderAwareTrait;
-
     private MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider;
     private ShippingMethodProviderInterface $shippingMethodProvider;
     private ShippingPriceCache $priceCache;
     private ShippingMethodViewFactory $shippingMethodViewFactory;
     private EventDispatcherInterface $eventDispatcher;
+    private MemoryCacheProviderInterface $memoryCacheProvider;
 
     public function __construct(
         MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider,
         ShippingMethodProviderInterface $shippingMethodProvider,
         ShippingPriceCache $priceCache,
         ShippingMethodViewFactory $shippingMethodViewFactory,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        MemoryCacheProviderInterface $memoryCacheProvider
     ) {
         $this->shippingRulesProvider = $shippingRulesProvider;
         $this->shippingMethodProvider = $shippingMethodProvider;
         $this->priceCache = $priceCache;
         $this->shippingMethodViewFactory = $shippingMethodViewFactory;
         $this->eventDispatcher = $eventDispatcher;
+        $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
     /**
@@ -50,7 +51,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
      */
     public function getApplicableMethodsViews(ShippingContextInterface $context): ShippingMethodViewCollection
     {
-        return $this->getMemoryCacheProvider()->get(
+        return $this->memoryCacheProvider->get(
             ['shipping_context' => $context],
             function () use ($context) {
                 return $this->getActualApplicableMethodsViews($context);

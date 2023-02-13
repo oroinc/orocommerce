@@ -1,0 +1,3 @@
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+  paymentTerm:
+    label: net 10

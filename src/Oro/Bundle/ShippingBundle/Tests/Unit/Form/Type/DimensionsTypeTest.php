@@ -8,14 +8,13 @@ use Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
 use Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class DimensionsTypeTest extends FormIntegrationTestCase
 {
-    /** @var DimensionsType */
-    private $formType;
+    private DimensionsType $formType;
 
     protected function setUp(): void
     {
@@ -97,16 +96,13 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    DimensionsType::class => $this->formType,
-                    LengthUnitSelectType::class => new EntityType(
-                        [
-                            'm' => $this->getLengthUnit('m'),
-                            'sm' => $this->getLengthUnit('sm'),
-                            'foot' => $this->getLengthUnit('foot')
-                        ],
-                        LengthUnitSelectType::NAME
-                    ),
-                    $valueType->getName() => $valueType
+                    $this->formType,
+                    LengthUnitSelectType::class => new EntityTypeStub([
+                        'm' => $this->getLengthUnit('m'),
+                        'sm' => $this->getLengthUnit('sm'),
+                        'foot' => $this->getLengthUnit('foot')
+                    ]),
+                    $valueType
                 ],
                 []
             ),

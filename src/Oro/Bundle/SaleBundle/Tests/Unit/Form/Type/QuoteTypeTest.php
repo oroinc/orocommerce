@@ -6,7 +6,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -19,7 +18,6 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
@@ -36,7 +34,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\Form\MutableFormEventSubscriber;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -366,64 +364,15 @@ class QuoteTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $translator = $this->createMock(TranslatorInterface::class);
-
-        $registry = $this->createMock(ManagerRegistry::class);
-
-        $productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
-
-        $userSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(User::class, 1),
-                2 => $this->getEntity(User::class, 2),
-            ],
-            'oro_user_select'
-        );
-
-        $customerSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(Customer::class, 1),
-                2 => $this->getEntity(Customer::class, 2),
-            ],
-            CustomerSelectType::NAME
-        );
-
-        $customerUserSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(CustomerUser::class, 1),
-                2 => $this->getEntity(CustomerUser::class, 2),
-            ],
-            CustomerUserSelectType::NAME
-        );
-
-        $priceListSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(PriceList::class, 1),
-                2 => $this->getEntity(PriceList::class, 2),
-            ],
-            PriceListSelectType::NAME
-        );
-
-        $priceType = $this->preparePriceType();
-        $entityType = $this->prepareProductEntityType();
-        $productSelectType = new ProductSelectTypeStub();
-        $userMultiSelectType = $this->prepareUserMultiSelectType();
-        $currencySelectionType = new CurrencySelectionTypeStub();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType = $this->prepareQuoteProductOfferType();
-        $quoteProductRequestType = $this->prepareQuoteProductRequestType();
-        $customerUserMultiSelectType = $this->prepareCustomerUserMultiSelectType();
-
         $quoteProductType = new QuoteProductType(
-            $translator,
-            $productUnitLabelFormatter,
+            $this->createMock(TranslatorInterface::class),
+            $this->createMock(UnitLabelFormatterInterface::class),
             $this->quoteProductFormatter,
-            $registry
+            $this->createMock(ManagerRegistry::class)
         );
         $quoteProductType->setDataClass(QuoteProduct::class);
 
@@ -431,21 +380,33 @@ class QuoteTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     $this->formType,
-                    PriceType::class => $priceType,
-                    EntityType::class => $entityType,
-                    UserSelectType::class => $userSelectType,
-                    QuoteProductType::class => $quoteProductType,
-                    ProductSelectType::class => $productSelectType,
-                    UserMultiSelectType::class => $userMultiSelectType,
-                    CurrencySelectionType::class => $currencySelectionType,
-                    QuoteProductOfferType::class => $quoteProductOfferType,
-                    QuoteProductRequestType::class => $quoteProductRequestType,
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
-                    CustomerUserMultiSelectType::class => $customerUserMultiSelectType,
-                    CustomerSelectType::class => $customerSelectType,
-                    CustomerUserSelectType::class => $customerUserSelectType,
-                    PriceListSelectType::class => $priceListSelectType,
-                    QuantityType::class => $this->getQuantityType(),
+                    $this->preparePriceType(),
+                    EntityType::class => $this->prepareProductEntityType(),
+                    UserSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(User::class, 1),
+                        2 => $this->getEntity(User::class, 2),
+                    ]),
+                    $quoteProductType,
+                    ProductSelectType::class => new ProductSelectTypeStub(),
+                    UserMultiSelectType::class => $this->prepareUserMultiSelectType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    QuoteProductOfferType::class => $this->prepareQuoteProductOfferType(),
+                    QuoteProductRequestType::class => $this->prepareQuoteProductRequestType(),
+                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    CustomerUserMultiSelectType::class => $this->prepareCustomerUserMultiSelectType(),
+                    CustomerSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(Customer::class, 1),
+                        2 => $this->getEntity(Customer::class, 2),
+                    ]),
+                    CustomerUserSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(CustomerUser::class, 1),
+                        2 => $this->getEntity(CustomerUser::class, 2),
+                    ]),
+                    PriceListSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(PriceList::class, 1),
+                        2 => $this->getEntity(PriceList::class, 2),
+                    ]),
+                    $this->getQuantityType(),
                 ],
                 []
             ),

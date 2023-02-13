@@ -13,36 +13,67 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class ActualizeLineItemsByUnpaidSubordersActionTest extends TestCase
+class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
 
-    private ContextAccessor|MockObject $contextAccessor;
-    private PaymentStatusProviderInterface|MockObject $paymentStatusProvider;
-    private CheckoutLineItemsProvider|MockObject $checkoutLineItemsProvider;
-    private EventDispatcher|MockObject $dispatcher;
+    /** @var PaymentStatusProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentStatusProvider;
 
-    private ActualizeLineItemsByUnpaidSubordersAction $action;
+    /** @var CheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsProvider;
+
+    /** @var ActualizeLineItemsByUnpaidSubordersAction */
+    private $action;
 
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);
-        $this->dispatcher = $this->createMock(EventDispatcher::class);
 
         $this->action = new ActualizeLineItemsByUnpaidSubordersAction(
             $this->contextAccessor,
             $this->paymentStatusProvider,
             $this->checkoutLineItemsProvider
         );
-        $this->action->setDispatcher($this->dispatcher);
+        $this->action->setDispatcher($this->createMock(EventDispatcher::class));
+    }
+
+    private function getCheckout(array $lineItems): Checkout
+    {
+        $checkout = new Checkout();
+        $checkout->setLineItems(new ArrayCollection($lineItems));
+
+        return $checkout;
+    }
+
+    private function getCheckoutLineItem(string $sku): CheckoutLineItem
+    {
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setProductSku($sku);
+
+        return $lineItem;
+    }
+
+    private function getOrder(array $lineItems = []): Order
+    {
+        $order = new Order();
+        $order->setLineItems(new ArrayCollection($lineItems));
+
+        return $order;
+    }
+
+    private function getOrderLineItem(string $sku): OrderLineItem
+    {
+        $lineItem = new OrderLineItem();
+        $lineItem->setProductSku($sku);
+
+        return $lineItem;
     }
 
     /**
@@ -78,26 +109,15 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends TestCase
         $checkoutOption = new PropertyPath('checkout');
         $orderOption = new PropertyPath('order');
 
-        $checkout = new Checkout();
-        $lineItem1 = new CheckoutLineItem();
-        $lineItem1->setProductSku('SKU1');
-        $lineItem2 = new CheckoutLineItem();
-        $lineItem2->setProductSku('SKU2');
-        $lineItem3 = new CheckoutLineItem();
-        $lineItem3->setProductSku('SKU3');
-        $checkout->setLineItems(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]));
+        $checkout = $this->getCheckout([
+            $this->getCheckoutLineItem('SKU1'),
+            $this->getCheckoutLineItem('SKU2'),
+            $this->getCheckoutLineItem('SKU3')
+        ]);
 
-        $order = $this->getEntity(Order::class, ['id' => 1]);
-        $subOrder1 = $this->getEntity(Order::class, ['id' => 2]);
-        $orderLineItem1 = new OrderLineItem();
-        $orderLineItem1->setProductSku('SKU1');
-        $orderLineItem2 = new OrderLineItem();
-        $orderLineItem2->setProductSku('SKU2');
-        $subOrder1->setLineItems(new ArrayCollection([$orderLineItem1, $orderLineItem2]));
-        $subOrder2 = $this->getEntity(Order::class, ['id' => 3]);
-        $orderLineItem3 = new OrderLineItem();
-        $orderLineItem3->setProductSku('SKU3');
-        $subOrder2->setLineItems(new ArrayCollection([$orderLineItem3]));
+        $subOrder1 = $this->getOrder([$this->getOrderLineItem('SKU1'), $this->getOrderLineItem('SKU2')]);
+        $subOrder2 = $this->getOrder([$this->getOrderLineItem('SKU3')]);
+        $order = new Order();
         $order->addSubOrder($subOrder1);
         $order->addSubOrder($subOrder2);
 
@@ -152,22 +172,14 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends TestCase
         $checkoutOption = new PropertyPath('checkout');
         $orderOption = new PropertyPath('order');
 
-        $checkout = new Checkout();
-        $lineItem1 = new CheckoutLineItem();
-        $lineItem1->setProductSku('SKU1');
-        $lineItem2 = new CheckoutLineItem();
-        $lineItem2->setProductSku('SKU2');
-        $checkout->setLineItems(new ArrayCollection([$lineItem1, $lineItem2]));
+        $checkout = $this->getCheckout([
+            $this->getCheckoutLineItem('SKU1'),
+            $this->getCheckoutLineItem('SKU2')
+        ]);
 
-        $order = $this->getEntity(Order::class, ['id' => 1]);
-        $subOrder1 = $this->getEntity(Order::class, ['id' => 2]);
-        $orderLineItem1 = new OrderLineItem();
-        $orderLineItem1->setProductSku('SKU1');
-        $subOrder1->setLineItems(new ArrayCollection([$orderLineItem1]));
-        $subOrder2 = $this->getEntity(Order::class, ['id' => 2]);
-        $orderLineItem2 = new OrderLineItem();
-        $orderLineItem2->setProductSku('SKU2');
-        $subOrder2->setLineItems(new ArrayCollection([$orderLineItem2]));
+        $subOrder1 = $this->getOrder([$this->getOrderLineItem('SKU1')]);
+        $subOrder2 = $this->getOrder([$this->getOrderLineItem('SKU2')]);
+        $order = new Order();
         $order->addSubOrder($subOrder1);
         $order->addSubOrder($subOrder2);
 

@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListWithProductPriceFixture.yml
 @fixture-OroLocaleBundle:LocalizationFixture.yml
 @ticket-BB-15482

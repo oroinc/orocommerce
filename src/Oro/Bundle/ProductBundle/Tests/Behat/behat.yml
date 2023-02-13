@@ -842,6 +842,9 @@ oro_behat_extension:
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'
 
+    ProductFrontendSelectRowCell:
+      selector: '[data-role="select-row-cell"]'
+
     ProductFrontendGridMassActionSearch:
       selector: '[data-role="search-container"] .input'
 
@@ -1195,6 +1198,11 @@ oro_behat_extension:
           PSKU5:
             locator: '//tbody/tr[.//td[contains(text(), "PSKU5")]]//input[contains (@name,"sortOrder_")]'
             type: xpath
+
+    Product Collection Grid PSKU4 input:
+      selector:
+        locator: '//tbody/tr[.//td[contains(text(), "PSKU4")]]//input[contains (@name,"sortOrder_")]'
+        type: xpath
 
     Product Item Preview:
       selector: '.product-item .product-item__preview'

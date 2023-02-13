@@ -23,30 +23,21 @@ const OrderInputValidationEditor = InputCellValidationEditor.extend({
      */
     initialize(options) {
         OrderInputValidationEditor.__super__.initialize.call(this, options);
-        this.listenTo(this.model.collection, 'backgrid:selected', (model, isActive) => {
+
+        const columnName = this.model.get('columnName');
+        this.listenTo(this.model, `change:${columnName}`, (model, isActive) => {
             if (this.model.cid === model.cid) {
                 this.onBackgridSelected(isActive);
             }
         });
+        this._toggleInput(this.model.get(columnName));
     },
 
     /**
      * @param {boolean} isActive
      */
     onBackgridSelected(isActive) {
-        if (isActive) {
-            this.$el.attr({
-                name: `${SORT_ORDER_PREFIX}${this.model.cid}`,
-                disabled: null
-            }).show();
-            this.validateElement();
-        } else {
-            this.resetValidation();
-            this.$el.attr({
-                name: `${SORT_ORDER_DISABLED_PREFIX}${this.model.cid}`,
-                disabled: true
-            }).hide();
-        }
+        this._toggleInput(isActive);
     },
 
     /**
@@ -59,6 +50,27 @@ const OrderInputValidationEditor = InputCellValidationEditor.extend({
         }
 
         return OrderInputValidationEditor.__super__.saveOrCancel.call(this, e);
+    },
+
+    /**
+     * Show or hide input editor
+     * @param {boolean} show = true
+     * @private
+     */
+    _toggleInput(show = true) {
+        if (show) {
+            this.$el.attr({
+                name: `${SORT_ORDER_PREFIX}${this.model.cid}`,
+                disabled: null
+            }).show();
+            this.validateElement();
+        } else {
+            this.resetValidation();
+            this.$el.attr({
+                name: `${SORT_ORDER_DISABLED_PREFIX}${this.model.cid}`,
+                disabled: true
+            }).hide();
+        }
     }
 });
 

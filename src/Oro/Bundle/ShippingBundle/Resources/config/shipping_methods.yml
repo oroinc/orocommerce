@@ -1,7 +1,6 @@
 services:
     oro_shipping.shipping_method_provider:
         class: 'Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider'
-        public: false
         arguments:
             - !tagged_iterator oro_shipping_method_provider
 

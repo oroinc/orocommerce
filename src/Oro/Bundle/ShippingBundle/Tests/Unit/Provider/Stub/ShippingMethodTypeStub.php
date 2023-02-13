@@ -2,108 +2,77 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 class ShippingMethodTypeStub implements ShippingMethodTypeInterface
 {
-    /**
-     * @var string
-     */
-    protected $identifier;
+    private string $identifier;
+    private string $label = '';
+    private int $sortOrder;
+    private ?string $optionsConfigurationFormType = ShippingMethodTypeConfigTypeOptionsStub::class;
 
     /**
-     * @var string
+     * {@inheritDoc}
      */
-    protected string $label = '';
-
-    /**
-     * @var int
-     */
-    protected $sortOrder;
-
-    /**
-     * @var string
-     */
-    protected $optionsConfigurationFormType = ShippingMethodTypeConfigTypeOptionsStub::class;
-
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @param string $identifier
-     * @return $this
-     */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
-        return $this;
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
     }
 
-    /**
-     * @param string $label
-     * @return $this
-     */
-    public function setLabel($label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
-        return $this;
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
-    public function getSortOrder()
+    public function getSortOrder(): int
     {
         return $this->sortOrder;
     }
 
-    /**
-     * @param int $sortOrder
-     * @return $this
-     */
-    public function setSortOrder($sortOrder)
+    public function setSortOrder(int $sortOrder): void
     {
         $this->sortOrder = $sortOrder;
-        return $this;
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType()
+    public function getOptionsConfigurationFormType(): ?string
     {
         return $this->optionsConfigurationFormType;
     }
 
-    /**
-     * @param string $optionsConfigurationFormType
-     * @return $this
-     */
-    public function setOptionsConfigurationFormType($optionsConfigurationFormType)
+    public function setOptionsConfigurationFormType(?string $optionsConfigurationFormType): void
     {
         $this->optionsConfigurationFormType = $optionsConfigurationFormType;
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
-    {
+    public function calculatePrice(
+        ShippingContextInterface $context,
+        array $methodOptions,
+        array $typeOptions
+    ): ?Price {
         return $typeOptions['price'];
     }
 }

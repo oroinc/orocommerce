@@ -75,7 +75,7 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
      */
     protected function findAllFlatRateIntegrations()
     {
-        return $this->repository->findByType(FlatRateChannelType::TYPE);
+        return $this->repository->findBy(['type' => FlatRateChannelType::TYPE]);
     }
 
     protected function dispatchFlatRateRenamingEvent(Channel $channel)

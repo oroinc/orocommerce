@@ -10,8 +10,11 @@ class PriceAwareShippingMethodStub extends ShippingMethodStub implements PricesA
     /**
      * {@inheritDoc}
      */
-    public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
-    {
+    public function calculatePrices(
+        ShippingContextInterface $context,
+        array $methodOptions,
+        array $optionsByTypes
+    ): array {
         return array_combine(array_keys($optionsByTypes), array_map(function ($options) {
             return $options['aware_price'];
         }, $optionsByTypes));

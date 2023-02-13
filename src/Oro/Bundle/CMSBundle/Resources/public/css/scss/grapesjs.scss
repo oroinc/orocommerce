@@ -288,7 +288,7 @@
     &sm-header {
         padding: 0;
 
-        @extend .no-data;
+        @extend %base-no-data;
     }
 
     &mdl-header {

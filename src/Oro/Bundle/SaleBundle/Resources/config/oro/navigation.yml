@@ -64,6 +64,8 @@ navigation:
         oro_sale_quote_view:   'oro.sale.navigation.view'
         oro_sale_quote_update: 'oro.sale.navigation.view - oro.ui.edit'
         oro_sale_quote_create: 'oro.ui.create_entity'
+        oro_sale_quote_create_for_customer: 'oro.ui.create_entity'
+        oro_sale_quote_create_for_customer_user: 'oro.ui.create_entity'
 
         oro_sale_quote_frontend_index: 'oro.frontend.sale.quote.entity_plural_label'
         oro_sale_quote_frontend_view:  'oro.sale.navigation.view'

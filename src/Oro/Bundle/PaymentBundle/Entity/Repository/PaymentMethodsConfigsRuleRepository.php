@@ -10,16 +10,13 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * Returns payment method config rules by destination, currency and website
+ * Doctrine repository for PaymentMethodsConfigsRule entity.
  */
 class PaymentMethodsConfigsRuleRepository extends ServiceEntityRepository
 {
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
+    private AclHelper $aclHelper;
 
-    public function setAclHelper(AclHelper $aclHelper)
+    public function setAclHelper(AclHelper $aclHelper): void
     {
         $this->aclHelper = $aclHelper;
     }
@@ -34,7 +31,7 @@ class PaymentMethodsConfigsRuleRepository extends ServiceEntityRepository
     public function getByDestinationAndCurrencyAndWebsite(
         AddressInterface $billingAddress,
         string $currency,
-        Website $website = null
+        ?Website $website = null
     ): array {
         $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
@@ -58,11 +55,11 @@ class PaymentMethodsConfigsRuleRepository extends ServiceEntityRepository
      *
      * @return PaymentMethodsConfigsRule[]
      */
-    public function getByCurrencyAndWebsite(string $currency, Website $website = null): array
+    public function getByCurrencyAndWebsite(string $currency, ?Website $website = null): array
     {
-        $query = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website);
+        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website);
 
-        return $this->aclHelper->apply($query)->getResult();
+        return $this->aclHelper->apply($queryBuilder)->getResult();
     }
 
     /**
@@ -71,32 +68,25 @@ class PaymentMethodsConfigsRuleRepository extends ServiceEntityRepository
      *
      * @return PaymentMethodsConfigsRule[]
      */
-    public function getByCurrencyAndWebsiteWithoutDestination(string $currency, Website $website = null): array
+    public function getByCurrencyAndWebsiteWithoutDestination(string $currency, ?Website $website = null): array
     {
-        $query = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
+        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
             ->andWhere('destination.id is null');
 
-        return $this->aclHelper->apply($query)->getResult();
+        return $this->aclHelper->apply($queryBuilder)->getResult();
     }
 
-    /**
-     * @param string $currency
-     *
-     * @return QueryBuilder
-     */
-    private function getByCurrencyQueryBuilder($currency): QueryBuilder
+    private function getByCurrencyQueryBuilder(string $currency): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder('methodsConfigsRule');
-
-        return $queryBuilder
+        return $this->createQueryBuilder('methodsConfigsRule')
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->where('methodsConfigsRule.currency = :currency')
-            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
+            ->orderBy('methodsConfigsRule.id')
             ->setParameter('currency', $currency);
     }
 
-    private function getByCurrencyAndWebsiteQueryBuilder(string $currency, Website $website = null): QueryBuilder
+    private function getByCurrencyAndWebsiteQueryBuilder(string $currency, ?Website $website): QueryBuilder
     {
         $queryBuilder = $this->getByCurrencyQueryBuilder($currency);
 
@@ -115,7 +105,7 @@ class PaymentMethodsConfigsRuleRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder
-            ->andWhere($queryBuilder->expr()->eq('methodsConfigsRule.organization', ':organization'))
+            ->andWhere('methodsConfigsRule.organization = :organization')
             ->setParameter('organization', $website->getOrganization());
     }
 }

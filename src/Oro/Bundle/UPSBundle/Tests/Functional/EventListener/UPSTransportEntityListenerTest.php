@@ -10,7 +10,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 
 class UPSTransportEntityListenerTest extends WebTestCase
@@ -48,7 +47,7 @@ class UPSTransportEntityListenerTest extends WebTestCase
         $toBeDeletedService = $applShipServices->first();
 
         $configuredMethods = $em->getRepository(ShippingMethodConfig::class)
-            ->findBy(['method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel->getId()]);
+            ->findBy(['method' => 'ups_' . $ups_channel->getId()]);
         $typesBefore = $em->getRepository(ShippingMethodTypeConfig::class)
             ->findBy(['methodConfig' => $configuredMethods, 'type' => $toBeDeletedService->getCode()]);
 

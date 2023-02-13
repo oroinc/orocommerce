@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledCheckerInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Symfony\Component\Validator\Constraint;
@@ -14,10 +15,14 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class ShippingRuleEnableValidator extends ConstraintValidator
 {
     private ShippingRuleEnabledCheckerInterface $ruleEnabledChecker;
+    private TokenAccessorInterface $tokenAccessor;
 
-    public function __construct(ShippingRuleEnabledCheckerInterface $ruleEnabledChecker)
-    {
+    public function __construct(
+        ShippingRuleEnabledCheckerInterface $ruleEnabledChecker,
+        TokenAccessorInterface $tokenAccessor
+    ) {
         $this->ruleEnabledChecker = $ruleEnabledChecker;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -31,6 +36,12 @@ class ShippingRuleEnableValidator extends ConstraintValidator
 
         if (!$value instanceof ShippingMethodsConfigsRule) {
             throw new UnexpectedTypeException($value, ShippingMethodsConfigsRule::class);
+        }
+
+        if (null === $this->tokenAccessor->getOrganization()) {
+            // this validation cannot be performed when there is no organization in the security context
+            // because shipping methods are related to integration channels that belong to organizations
+            return;
         }
 
         if (!$value->getRule()->isEnabled()) {
