@@ -408,6 +408,7 @@ services:
             - '@oro_redirect.helper.slugify_entity_helper'
         tags:
             - { name: kernel.event_listener, event: oro_importexport.strategy.process_before, method: onProcessBefore }
+            - { name: kernel.event_listener, event: oro_importexport.strategy.process_after, method: onProcessAfter }
 
     oro_redirect.helper.slugify_entity_helper:
         class: Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper

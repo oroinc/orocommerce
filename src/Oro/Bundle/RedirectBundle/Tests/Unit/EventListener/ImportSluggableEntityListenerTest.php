@@ -27,6 +27,17 @@ class ImportSluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new ImportSluggableEntityListener($this->slugifyEntityHelper);
     }
 
+    public function testOnProcessAfter(): void
+    {
+        $entity = new SluggableEntityStub();
+        $context = new Context([]);
+        $event = new StrategyEvent($this->createMock(StrategyInterface::class), $entity, $context);
+
+        $this->assertNull($entity->getUpdatedAt());
+        $this->listener->onProcessAfter($event);
+        $this->assertNotNull($entity->getUpdatedAt());
+    }
+
     public function testSluggableEntityWithoutItemData(): void
     {
         $entity = new SluggableEntityStub();
