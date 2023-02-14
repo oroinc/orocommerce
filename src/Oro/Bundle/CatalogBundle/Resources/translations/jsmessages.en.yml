@@ -14,3 +14,5 @@ oro.catalog:
             content: All unsaved changes must be submitted before proceeding to manage products sort order
             ok: Submit and continue
             cancel: Cancel
+    drop_zones:
+        excludeFromCategory: 'Exclude from Category'

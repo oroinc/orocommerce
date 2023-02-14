@@ -6,6 +6,7 @@ dynamic-imports:
     orodatagrid:
         - oro/datagrid/action/sort-products-action
         - orocatalog/js/datagrid/builder/sort-products-action-builder
+        - orocatalog/js/sort-rows-drag-n-drop/exclude-from-category
     jstree:
         - orocatalog/js/app/views/product-sidebar-view
         - orocatalog/js/app/views/tree-manage-view

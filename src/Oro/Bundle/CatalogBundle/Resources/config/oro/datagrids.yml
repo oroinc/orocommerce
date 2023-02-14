@@ -167,6 +167,8 @@ datagrids:
                 sortRowsDragNDropBuilder:
                     sortOrderColumnName: 'categorySortOrder'
                     renderIconColumn: true
+                    dropZones:
+                        excludeFromCategory: 'orocatalog/js/sort-rows-drag-n-drop/exclude-from-category'
             cellSelection:
                 dataField: id
                 columnName:
