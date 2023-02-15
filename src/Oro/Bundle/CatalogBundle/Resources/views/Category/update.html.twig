@@ -109,7 +109,10 @@
                                     route: 'oro_datagrid_widget',
                                     route_parameters: {
                                         gridName: 'category-products-widget-grid',
-                                        params: {category_id: categoryId}
+                                        params: {category_id: categoryId},
+                                        renderParams: {
+                                            enableFullScreenLayout: true
+                                        }
                                     },
                                     categoryTitle: entity.defaultTitle.string|default('N/A'|trans),
                                     categoryId: categoryId
