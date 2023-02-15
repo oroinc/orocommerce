@@ -1,0 +1,42 @@
+dependencies:
+    - '@OroProductBundle/Tests/Functional/DataFixtures/ProductCollectionContentVariantController/web_catalog.yml'
+    - '@OroProductBundle/Tests/Functional/DataFixtures/ProductCollectionContentVariantController/products.yml'
+    - '@OroProductBundle/Tests/Functional/DataFixtures/ProductCollectionContentVariantController/product_collection_segments.yml'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    contentNodeRoot:
+        __calls:
+            - setDefaultTitle: ['Root Node']
+            - addContentVariant: ['@systemPageContentVariant']
+            - addScope: ['@webCatalogScope']
+        webCatalog: '@webCatalog'
+
+    contentNode1:
+        __calls:
+            - setDefaultTitle: ['Node 1']
+            - addContentVariant: ['@productCollectionContentVariant1']
+            - addScope: ['@webCatalogScope']
+        webCatalog: '@webCatalog'
+
+    contentNode2:
+        __calls:
+            - setDefaultTitle: ['Node 2']
+            - addContentVariant: ['@productCollectionContentVariant2']
+            - addScope: ['@webCatalogScope']
+        webCatalog: '@webCatalog'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    systemPageContentVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_frontend_root'
+        scopes: ['@webCatalogScope']
+
+    productCollectionContentVariant1:
+        type: 'product_collection'
+        productCollectionSegment: '@productCollectionContentVariantSegment1'
+        scopes: ['@webCatalogScope']
+
+    productCollectionContentVariant2:
+        type: 'product_collection'
+        productCollectionSegment: '@productCollectionContentVariantSegment2'
+        scopes: ['@webCatalogScope']

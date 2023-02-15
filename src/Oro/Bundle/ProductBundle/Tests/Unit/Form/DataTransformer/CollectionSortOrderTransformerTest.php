@@ -3,9 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
+use Oro\Bundle\ProductBundle\Entity\Product as ProductEntity;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\CollectionSortOrderTransformer;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -58,11 +60,19 @@ class CollectionSortOrderTransformerTest extends \PHPUnit\Framework\TestCase
      */
     public function testReverseTransformData(mixed $expected, mixed $value)
     {
+        $entityManager = $this->createMock(EntityManager::class);
         $this->doctrineHelper->expects(empty($expected) ? $this->never() : $this->exactly(count($expected)))
-            ->method('getEntityReference')
+            ->method('getEntityManager')
+            ->with(ProductEntity::class)
+            ->willReturn($entityManager);
+
+        $entityManager
+            ->expects(self::any())
+            ->method('find')
             ->willReturnCallback(function () {
                 return $this->createProductObject(func_get_arg(1));
             });
+
         $repository = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects(empty($expected) ? $this->never() : $this->exactly(count($expected)))
             ->method('getEntityRepository')

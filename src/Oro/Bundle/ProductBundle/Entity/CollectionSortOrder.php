@@ -19,7 +19,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
  *          )
  *      }
  * )
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\CollectionSortOrderRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
