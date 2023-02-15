@@ -20,17 +20,10 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
 {
     private const WEBSITE_ID_PROPERTY_PATH = 'scope.website.id';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var AclHelper */
-    private $aclHelper;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
-
-    /** @var VisibilityIdHelper */
-    private $visibilityIdHelper;
+    private DoctrineHelper $doctrineHelper;
+    private AclHelper $aclHelper;
+    private WebsiteManager $websiteManager;
+    private VisibilityIdHelper $visibilityIdHelper;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -47,7 +40,7 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */
 

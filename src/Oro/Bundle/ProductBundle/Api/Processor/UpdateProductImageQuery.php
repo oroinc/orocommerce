@@ -16,8 +16,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class UpdateProductImageQuery implements ProcessorInterface
 {
-    /** @var QueryModifierRegistry */
-    private $queryModifier;
+    private QueryModifierRegistry $queryModifier;
 
     public function __construct(QueryModifierRegistry $queryModifier)
     {
@@ -27,7 +26,7 @@ class UpdateProductImageQuery implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

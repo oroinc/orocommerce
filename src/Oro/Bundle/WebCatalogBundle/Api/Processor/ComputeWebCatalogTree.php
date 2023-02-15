@@ -16,11 +16,8 @@ class ComputeWebCatalogTree implements ProcessorInterface
 {
     private const FIELD_NAME = 'tree';
 
-    /** @var ContentNodeTreeHandler */
-    private $treeHandler;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private ContentNodeTreeHandler $treeHandler;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(ContentNodeTreeHandler $treeHandler, DoctrineHelper $doctrineHelper)
     {
@@ -28,7 +25,7 @@ class ComputeWebCatalogTree implements ProcessorInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

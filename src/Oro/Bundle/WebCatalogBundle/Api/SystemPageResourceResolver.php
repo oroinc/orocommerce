@@ -17,17 +17,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class SystemPageResourceResolver implements ResourceTypeResolverInterface, ResourceApiUrlResolverInterface
 {
-    /** @var SystemPageRepository */
-    private $systemPageRepository;
-
-    /** @var UrlGeneratorInterface */
-    private $urlGenerator;
-
-    /** @var RestRoutesRegistry */
-    private $routesRegistry;
-
-    /** @var ValueNormalizer */
-    private $valueNormalizer;
+    private SystemPageRepository $systemPageRepository;
+    private UrlGeneratorInterface $urlGenerator;
+    private RestRoutesRegistry $routesRegistry;
+    private ValueNormalizer $valueNormalizer;
 
     public function __construct(
         SystemPageRepository $systemPageRepository,

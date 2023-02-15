@@ -15,14 +15,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ProductCollectionRestResourceApiUrlResolver implements ResourceApiUrlResolverInterface
 {
-    /** @var UrlGeneratorInterface */
-    private $urlGenerator;
-
-    /** @var RestRoutesRegistry */
-    private $routesRegistry;
-
-    /** @var ValueNormalizer */
-    private $valueNormalizer;
+    private UrlGeneratorInterface $urlGenerator;
+    private RestRoutesRegistry $routesRegistry;
+    private ValueNormalizer $valueNormalizer;
 
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
@@ -43,7 +38,7 @@ class ProductCollectionRestResourceApiUrlResolver implements ResourceApiUrlResol
         string $resourceType,
         RequestType $requestType
     ): ?string {
-        if (!array_key_exists('contentVariantId', $routeParameters)) {
+        if (!\array_key_exists('contentVariantId', $routeParameters)) {
             return null;
         }
 

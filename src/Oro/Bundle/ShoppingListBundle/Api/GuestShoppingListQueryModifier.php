@@ -20,11 +20,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class GuestShoppingListQueryModifier implements QueryModifierInterface
 {
-    /** @var EntityClassResolver */
-    private $entityClassResolver;
-
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
+    private EntityClassResolver $entityClassResolver;
+    private TokenStorageInterface $tokenStorage;
 
     public function __construct(
         EntityClassResolver $entityClassResolver,
@@ -35,7 +32,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {
@@ -59,10 +56,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         }
     }
 
-    /**
-     * @return CustomerUser|CustomerVisitor|null
-     */
-    private function getCurrentUser()
+    private function getCurrentUser(): CustomerUser|CustomerVisitor|null
     {
         $currentUser = null;
         $token = $this->tokenStorage->getToken();
@@ -133,7 +127,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         return $qb->getEntityManager()->createQueryBuilder()
             ->from(CustomerVisitor::class, 'customerVisitor')
             ->select('1')
-            ->where(\sprintf(
+            ->where(sprintf(
                 'customerVisitor = :%s AND %s MEMBER OF customerVisitor.shoppingLists',
                 $customerVisitorParamName,
                 $shoppingListAlias
@@ -163,7 +157,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
             if ($joinGroupAlias !== $rootAlias) {
                 continue;
             }
-            $expectedJoin = \sprintf('%s.shoppingList', $rootAlias);
+            $expectedJoin = sprintf('%s.shoppingList', $rootAlias);
             foreach ($joins as $key => $join) {
                 if ($join->getJoin() === $expectedJoin) {
                     if ($join->getJoinType() === Expr\Join::LEFT_JOIN) {

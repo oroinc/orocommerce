@@ -16,7 +16,7 @@ class MovePriceListsToUpdateCombinedPriceListsToContext implements ProcessorInte
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         if (!$context instanceof CustomizeFormDataContext || $context->isPrimaryEntityRequest()) {
             UpdateCombinedPriceLists::movePriceListsToUpdateToContext($context);

@@ -14,11 +14,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AddOrderPromotionDiscounts implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var TranslatorInterface */
-    private $translator;
+    private DoctrineHelper $doctrineHelper;
+    private TranslatorInterface $translator;
 
     public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator)
     {
@@ -29,7 +26,7 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -57,7 +54,7 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
         foreach ($data as $key => $item) {
             $orderId = $item[$orderIdFieldName];
             if (!empty($promotionDiscounts[$orderId])) {
-                foreach ($promotionDiscounts[$orderId] as list($type, $amount)) {
+                foreach ($promotionDiscounts[$orderId] as [$type, $amount]) {
                     $data[$key][$discountsFieldName][] = [
                         'type'        => 'promotion.' . $type,
                         'description' => $this->getPromotionDiscountDescription($type),

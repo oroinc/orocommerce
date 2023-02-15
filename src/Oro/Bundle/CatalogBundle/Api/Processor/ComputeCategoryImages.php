@@ -14,8 +14,7 @@ class ComputeCategoryImages implements ProcessorInterface
 {
     private const IMAGES_FIELD = 'images';
 
-    /** @var AttachmentManager */
-    private $attachmentManager;
+    private AttachmentManager $attachmentManager;
 
     public function __construct(AttachmentManager $attachmentManager)
     {
@@ -25,7 +24,7 @@ class ComputeCategoryImages implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

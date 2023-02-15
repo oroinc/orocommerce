@@ -20,7 +20,7 @@ class AddValidateUnitPrecisionsDuplicateFormListener implements ProcessorInterfa
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var FormContext $context */
 
@@ -71,7 +71,7 @@ class AddValidateUnitPrecisionsDuplicateFormListener implements ProcessorInterfa
             if (null !== $unitPrecision && null !== $unitPrecision->getUnit()) {
                 $unitPrecisionId = $unitPrecision->getId();
                 $unitCode = $unitPrecision->getUnit()->getCode();
-                if (array_key_exists($unitCode, $existingUnitCodes)
+                if (\array_key_exists($unitCode, $existingUnitCodes)
                     && (null === $unitPrecisionId || $unitPrecisionId !== $existingUnitCodes[$unitCode])
                 ) {
                     FormUtil::addFormError(

@@ -15,14 +15,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeProductAvailability implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var UpcomingProductProvider */
-    private $upcomingProductProvider;
-
-    /** @var ValueTransformer */
-    private $valueTransformer;
+    private DoctrineHelper $doctrineHelper;
+    private UpcomingProductProvider $upcomingProductProvider;
+    private ValueTransformer $valueTransformer;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -37,7 +32,7 @@ class ComputeProductAvailability implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

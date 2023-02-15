@@ -26,17 +26,10 @@ class ComputeProductAttributes implements ProcessorInterface
 {
     private const FIELD_NAME = 'productAttributes';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ConfigManager */
-    private $configManager;
-
-    /** @var FieldTypeHelper */
-    private $fieldTypeHelper;
-
-    /** @var ProductAttributeValueLoader */
-    private $productAttributeValueLoader;
+    private DoctrineHelper $doctrineHelper;
+    private ConfigManager $configManager;
+    private FieldTypeHelper $fieldTypeHelper;
+    private ProductAttributeValueLoader $productAttributeValueLoader;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -53,7 +46,7 @@ class ComputeProductAttributes implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -150,11 +143,11 @@ class ComputeProductAttributes implements ProcessorInterface
         $attributeNames = $this->getAttributeNamesPerFamily($familyIds, false);
         foreach ($attributeNames as $familyId => $fields) {
             $visibleAttributeNames = [];
-            foreach ($fields as $fieldName => list($fieldType, $visible, $targetFieldNames)) {
+            foreach ($fields as $fieldName => [$fieldType, $visible, $targetFieldNames]) {
                 if ($visible
                     || (
                         isset($variantFieldNamesPerFamily[$familyId])
-                        && in_array($fieldName, $variantFieldNamesPerFamily[$familyId], true)
+                        && \in_array($fieldName, $variantFieldNamesPerFamily[$familyId], true)
                     )
                 ) {
                     $visibleAttributeNames[$fieldName] = $targetFieldNames;
@@ -178,7 +171,7 @@ class ComputeProductAttributes implements ProcessorInterface
      */
     private function getAttributeNamesPerFamily(array $familyIds, bool $visibleOnly): array
     {
-        list($fieldIds, $attributeIds) = $this->getAttributeIdsPerFamily($familyIds, $visibleOnly);
+        [$fieldIds, $attributeIds] = $this->getAttributeIdsPerFamily($familyIds, $visibleOnly);
         $selectExpr = 'f.id, f.fieldName';
         if (!$visibleOnly) {
             $selectExpr .= ', f.type AS fieldType';
@@ -219,10 +212,10 @@ class ComputeProductAttributes implements ProcessorInterface
             foreach ($fieldIds as $fieldId => $groupVisible) {
                 if (isset($fields[$fieldId])) {
                     if ($visibleOnly) {
-                        list($fieldName, $targetFieldNames) = $fields[$fieldId];
+                        [$fieldName, $targetFieldNames] = $fields[$fieldId];
                         $result[$familyId][$fieldName] = $targetFieldNames;
                     } else {
-                        list($fieldName, $fieldType, $fieldVisible, $targetFieldNames) = $fields[$fieldId];
+                        [$fieldName, $fieldType, $fieldVisible, $targetFieldNames] = $fields[$fieldId];
                         $result[$familyId][$fieldName] = [
                             $fieldType,
                             $fieldVisible && $groupVisible,
@@ -280,9 +273,9 @@ class ComputeProductAttributes implements ProcessorInterface
     {
         $targetFields = null;
         $underlyingType = $this->fieldTypeHelper->getUnderlyingType($extendConfig->getId()->getFieldType());
-        if (in_array($underlyingType, RelationType::$toOneRelations, true)) {
+        if (\in_array($underlyingType, RelationType::$toOneRelations, true)) {
             $targetFields = [$extendConfig->get('target_field')];
-        } elseif (in_array($underlyingType, RelationType::$toManyRelations, true)) {
+        } elseif (\in_array($underlyingType, RelationType::$toManyRelations, true)) {
             $targetFields = $extendConfig->get('target_title');
         }
 

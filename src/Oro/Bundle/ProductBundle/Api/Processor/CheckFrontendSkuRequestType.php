@@ -11,14 +11,14 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class CheckFrontendSkuRequestType implements ProcessorInterface
 {
-    private const REQUEST_HEADER_NAME  = 'X-Product-ID';
+    private const REQUEST_HEADER_NAME = 'X-Product-ID';
     private const REQUEST_HEADER_VALUE = 'sku';
-    private const REQUEST_TYPE         = 'frontend_sku';
+    private const REQUEST_TYPE = 'frontend_sku';
 
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

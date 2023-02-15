@@ -23,11 +23,8 @@ class ComputeOrderTaxes implements ProcessorInterface
         OrderTaxesProvider::TOTAL_TAX_AMOUNT
     ];
 
-    /** @var OrderTaxesProvider */
-    private $orderTaxesProvider;
-
-    /** @var ValueTransformer */
-    private $valueTransformer;
+    private OrderTaxesProvider $orderTaxesProvider;
+    private ValueTransformer $valueTransformer;
 
     public function __construct(
         OrderTaxesProvider $orderTaxesProvider,
@@ -40,7 +37,7 @@ class ComputeOrderTaxes implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -67,7 +64,7 @@ class ComputeOrderTaxes implements ProcessorInterface
         foreach ($data as $key => $item) {
             $orderId = $item[$orderIdFieldName];
             $orderTaxes = [];
-            if (array_key_exists($orderId, $allTaxes)) {
+            if (\array_key_exists($orderId, $allTaxes)) {
                 $orderTaxes = $allTaxes[$orderId];
             }
             foreach (self::FIELD_NAMES as $fieldName) {
@@ -80,14 +77,7 @@ class ComputeOrderTaxes implements ProcessorInterface
         return $data;
     }
 
-    /**
-     * @param array  $orderTaxes
-     * @param string $fieldName
-     * @param array  $normalizationContext
-     *
-     * @return mixed
-     */
-    private function getFieldValue(array $orderTaxes, string $fieldName, array $normalizationContext)
+    private function getFieldValue(array $orderTaxes, string $fieldName, array $normalizationContext): mixed
     {
         return $this->valueTransformer->transformValue(
             $orderTaxes[$fieldName] ?? null,

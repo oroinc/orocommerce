@@ -14,14 +14,11 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class ComputeRouteResourceTypeAndApiUrl implements ProcessorInterface
 {
     private const RESOURCE_TYPE_FIELD_NAME = 'resourceType';
-    private const API_URL_FIELD_NAME       = 'apiUrl';
-    private const UNKNOWN_RESOURCE_TYPE    = 'unknown';
+    private const API_URL_FIELD_NAME = 'apiUrl';
+    private const UNKNOWN_RESOURCE_TYPE = 'unknown';
 
-    /** @var ResourceTypeResolverInterface */
-    private $resourceTypeResolver;
-
-    /** @var ResourceApiUrlResolverInterface */
-    private $apiUrlResolver;
+    private ResourceTypeResolverInterface $resourceTypeResolver;
+    private ResourceApiUrlResolverInterface $apiUrlResolver;
 
     public function __construct(
         ResourceTypeResolverInterface $resourceTypeResolver,
@@ -34,7 +31,7 @@ class ComputeRouteResourceTypeAndApiUrl implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

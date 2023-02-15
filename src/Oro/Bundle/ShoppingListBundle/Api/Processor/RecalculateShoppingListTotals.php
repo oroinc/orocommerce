@@ -17,8 +17,7 @@ class RecalculateShoppingListTotals implements ProcessorInterface
 {
     private const PROCESSED_SHOPPING_LISTS = 'recalculated_shopping_list_totals';
 
-    /** @var ShoppingListTotalManager */
-    private $totalManager;
+    private ShoppingListTotalManager $totalManager;
 
     public function __construct(ShoppingListTotalManager $totalManager)
     {
@@ -28,7 +27,7 @@ class RecalculateShoppingListTotals implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 

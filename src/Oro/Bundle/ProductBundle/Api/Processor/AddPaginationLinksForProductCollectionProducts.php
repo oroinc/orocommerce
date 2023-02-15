@@ -24,14 +24,9 @@ class AddPaginationLinksForProductCollectionProducts implements ProcessorInterfa
 {
     private const PRODUCTS_ASSOCIATION = 'products';
 
-    /** @var RestRoutesRegistry */
-    private $routesRegistry;
-
-    /** @var FilterNamesRegistry */
-    private $filterNamesRegistry;
-
-    /** @var UrlGeneratorInterface */
-    private $urlGenerator;
+    private RestRoutesRegistry $routesRegistry;
+    private FilterNamesRegistry $filterNamesRegistry;
+    private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
         RestRoutesRegistry $routesRegistry,
@@ -46,7 +41,7 @@ class AddPaginationLinksForProductCollectionProducts implements ProcessorInterfa
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

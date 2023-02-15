@@ -14,8 +14,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
  */
 class LoadProductVisibility extends AbstractLoadVisibility
 {
-    /** @var VisibilityScopeProvider */
-    private $visibilityScopeProvider;
+    private VisibilityScopeProvider $visibilityScopeProvider;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,

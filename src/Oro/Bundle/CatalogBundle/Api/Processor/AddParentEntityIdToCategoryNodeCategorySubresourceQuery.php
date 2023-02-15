@@ -16,8 +16,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class AddParentEntityIdToCategoryNodeCategorySubresourceQuery implements ProcessorInterface
 {
-    /** @var EntityIdHelper */
-    private $entityIdHelper;
+    private EntityIdHelper $entityIdHelper;
 
     public function __construct(EntityIdHelper $entityIdHelper)
     {
@@ -27,7 +26,7 @@ class AddParentEntityIdToCategoryNodeCategorySubresourceQuery implements Process
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */
 
