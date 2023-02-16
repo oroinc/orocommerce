@@ -26,7 +26,7 @@ class ShoppingListItemCollection extends ArrayCollection
     private string $entityClass;
     private EntityDefinitionConfig $entityConfig;
     /** @var Collection<int, LineItem> */
-    private $existingItems;
+    private Collection $existingItems;
     private ValidatorInterface $validator;
     /** @var LineItem[] */
     private array $submittedItems = [];

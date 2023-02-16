@@ -13,8 +13,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class SetSlugs implements ProcessorInterface
 {
-    /** @var SlugifyEntityHelper */
-    private $slugifyEntityHelper;
+    private SlugifyEntityHelper $slugifyEntityHelper;
 
     public function __construct(SlugifyEntityHelper $slugifyEntityHelper)
     {
