@@ -26,15 +26,13 @@ class MultiShippingCostProvider
         $lineItemsWithShipping = $lineItems->filter(
             fn (CheckoutLineItem $lineItem) => $lineItem->hasShippingMethodData()
         );
-
         foreach ($lineItemsWithShipping as $lineItem) {
             if ($lineItem->getShippingCost()) {
                 $shippingCost += $lineItem->getShippingCost()->getValue();
                 continue;
             }
 
-            $lineItemShippingCost = $this->lineItemShippingPriceProvider->getPrice($lineItem);
-            $shippingCost += $lineItemShippingCost->getValue();
+            $shippingCost += $this->lineItemShippingPriceProvider->getPrice($lineItem)->getValue();
         }
 
         return $shippingCost;

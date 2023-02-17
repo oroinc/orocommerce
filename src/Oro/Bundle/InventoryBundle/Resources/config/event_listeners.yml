@@ -164,7 +164,7 @@ services:
         arguments:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_inventory.handler.inventory_decrement_status_handler'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
@@ -181,7 +181,7 @@ services:
         class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener
         arguments:
             - '@oro_inventory.manager.inventory_quantity_manager'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@translator'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:

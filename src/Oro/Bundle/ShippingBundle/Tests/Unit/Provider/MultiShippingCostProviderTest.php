@@ -8,43 +8,56 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingPriceProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\TestCase;
 
-class MultiShippingCostProviderTest extends TestCase
+class MultiShippingCostProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var LineItemShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemShippingPriceProvider;
 
-    private LineItemShippingPriceProviderInterface $lineItemShippingPriceProvider;
-    private MultiShippingCostProvider $costProvider;
+    /** @var MultiShippingCostProvider */
+    private $costProvider;
 
     protected function setUp(): void
     {
         $this->lineItemShippingPriceProvider = $this->createMock(LineItemShippingPriceProviderInterface::class);
+
         $this->costProvider = new MultiShippingCostProvider($this->lineItemShippingPriceProvider);
+    }
+
+    private function getCheckout(array $lineItems): Checkout
+    {
+        $checkout = new Checkout();
+        $checkout->setLineItems(new ArrayCollection($lineItems));
+
+        return $checkout;
+    }
+
+    private function getCheckoutLineItem(
+        string $shippingMethod,
+        string $shippingMethodType,
+        ?string $currency = null,
+        ?float $shippingEstimateAmount = null
+    ): CheckoutLineItem {
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setShippingMethod($shippingMethod);
+        $lineItem->setShippingMethodType($shippingMethodType);
+        if (null !== $currency) {
+            $lineItem->setCurrency($currency);
+        }
+        if (null !== $shippingEstimateAmount) {
+            $lineItem->setShippingEstimateAmount($shippingEstimateAmount);
+        }
+
+        return $lineItem;
     }
 
     public function testGetCalculatedMultiShippingCost()
     {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'shippingMethod' => 'flat_rate_1',
-            'shippingMethodType' => 'primary'
+        $checkout = $this->getCheckout([
+            $this->getCheckoutLineItem('flat_rate_1', 'primary'),
+            $this->getCheckoutLineItem('flat_rate_1', 'primary', 'USD', 5.10),
+            $this->getCheckoutLineItem('flat_rate_2', 'primary')
         ]);
-
-        $lineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'shippingMethod' => 'flat_rate_1',
-            'shippingMethodType' => 'primary',
-            'currency' => 'USD',
-            'shippingEstimateAmount' => 5.10
-        ]);
-
-        $lineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'shippingMethod' => 'flat_rate_2',
-            'shippingMethodType' => 'primary',
-        ]);
-
-        $checkout = new Checkout();
-        $checkout->setLineItems(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]));
 
         $this->lineItemShippingPriceProvider->expects($this->exactly(2))
             ->method('getPrice')
