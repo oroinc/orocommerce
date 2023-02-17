@@ -28,14 +28,8 @@ Feature: Checkout With Multi Shipping
     And uncheck "Use default" for "Enable shipping method selection per line item" field
     And I fill form with:
       | Enable shipping method selection per line item | true |
-    Then I should see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
-    When I click "Create Multi Shipping Integration"
-    Then I should see "Multi shipping integration was created successfully" flash message
-    And I should not see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
     When I save form
     Then I should see "Configuration saved" flash message
-    When I go to System/Integrations/Manage Integrations
-    Then I should see "Multi Shipping"
 
   Scenario: Checkout with shipping method selection per line item
     Given I proceed as the Buyer

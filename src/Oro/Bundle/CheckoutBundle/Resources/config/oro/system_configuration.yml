@@ -176,18 +176,6 @@ system_configuration:
                 attr:
                     'data-dependee-id': 'enable_shipping_method_selection_per_line_item'
 
-        oro_checkout.create_multishipping_integration:
-            type: Symfony\Component\Form\Extension\Core\Type\ButtonType
-            ui_only: true
-            options:
-                label: false
-                required: false
-                resettable: false
-                attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
-                    'data-depend-on': 'enable_shipping_method_selection_per_line_item'
-                    'data-show-if': 'checked'
-
     tree:
         system_configuration:
             commerce:
@@ -220,7 +208,6 @@ system_configuration:
                                     multishipping_general_options:
                                         children:
                                             - oro_checkout.enable_shipping_method_selection_per_line_item
-                                            - oro_checkout.create_multishipping_integration
                                     multishipping_line_items_grouping_options:
                                         children:
                                             - oro_checkout.enable_line_item_grouping

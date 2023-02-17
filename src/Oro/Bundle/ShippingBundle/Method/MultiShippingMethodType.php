@@ -7,7 +7,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
  * Represents Multi Shipping method type.
@@ -59,7 +58,7 @@ class MultiShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getOptionsConfigurationFormType(): ?string
     {
-        return HiddenType::class;
+        return null;
     }
 
     /**

@@ -5,15 +5,12 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 
 class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingMethodProvider;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
 
     /** @var ShippingMethodChoicesProvider */
     private $choicesProvider;
@@ -21,12 +18,8 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
 
-        $this->choicesProvider = new ShippingMethodChoicesProvider(
-            $this->shippingMethodProvider,
-            $this->translator
-        );
+        $this->choicesProvider = new ShippingMethodChoicesProvider($this->shippingMethodProvider);
     }
 
     private function getShippingMethod(
@@ -44,53 +37,89 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
         return $shippingMethod;
     }
 
-    /**
-     * @dataProvider methodsProvider
-     */
-    public function testGetMethods(array $methods, array $result, bool $translate = false)
+    private function getShippingMethodType(
+        string $identifier,
+        int $sortOrder,
+        string $label
+    ): ShippingMethodTypeStub {
+        $shippingMethodType = new ShippingMethodTypeStub();
+        $shippingMethodType->setIdentifier($identifier);
+        $shippingMethodType->setSortOrder($sortOrder);
+        $shippingMethodType->setLabel($label);
+
+        return $shippingMethodType;
+    }
+
+    public function testGetMethods(): void
     {
-        $translation = [
-            ['flat rate', [], null, null, 'flat rate translated'],
-            ['ups', [], null, null, 'ups translated'],
-        ];
+        $this->shippingMethodProvider->expects($this->once())
+            ->method('getShippingMethods')
+            ->willReturn([
+                'flat_rate' => $this->getShippingMethod('flat_rate', 1, 'flat rate', true),
+                'disabled'  => $this->getShippingMethod('disabled', 2, 'disabled', false),
+                'ups'       => $this->getShippingMethod('ups', 3, 'ups', true)
+            ]);
+
+        $this->assertEquals(
+            [
+                'flat rate' => 'flat_rate',
+                'ups'       => 'ups'
+            ],
+            $this->choicesProvider->getMethods()
+        );
+    }
+
+    public function testGetMethodsWhenShippingMethodProviderDoesNotReturnShippingMethods(): void
+    {
+        $this->shippingMethodProvider->expects($this->once())
+            ->method('getShippingMethods')
+            ->willReturn([]);
+
+        $this->assertEquals([], $this->choicesProvider->getMethods());
+    }
+
+    public function testGetMethodsWhenNoOptionsConfigurationForm(): void
+    {
+        $method1 = $this->getShippingMethod('method1', 1, 'method 1', true);
+        $method1->setOptionsConfigurationFormType('');
+
+        $method2 = $this->getShippingMethod('method2', 2, 'method 2', true);
+
+        $method3 = $this->getShippingMethod('method3', 3, 'method 3', true);
+        $method3->setTypes([$this->getShippingMethodType('type1', 1, 'type 1')]);
+
+        $method4 = $this->getShippingMethod('method4', 4, 'method 4', true);
+        $method4->setTypes([
+            $this->getShippingMethodType('type1', 1, 'type 1'),
+            $this->getShippingMethodType('type2', 2, 'type 2')
+        ]);
+        $method4->getType('type1')->setOptionsConfigurationFormType('');
+        $method4->getType('type2')->setOptionsConfigurationFormType('');
+
+        $method5 = $this->getShippingMethod('method5', 5, 'method 5', true);
+        $method5->setTypes([
+            $this->getShippingMethodType('type1', 1, 'type 1'),
+            $this->getShippingMethodType('type2', 2, 'type 2')
+        ]);
+        $method5->getType('type2')->setOptionsConfigurationFormType('');
 
         $this->shippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
-            ->willReturn($methods);
+            ->willReturn([
+                'method1' => $method1,
+                'method2' => $method2,
+                'method3' => $method3,
+                'method4' => $method4,
+                'method5' => $method5
+            ]);
 
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnMap($translation);
-
-        $this->assertEquals($result, $this->choicesProvider->getMethods($translate));
-    }
-
-    public function methodsProvider(): array
-    {
-        return
+        $this->assertEquals(
             [
-                'some_methods' => [
-                    'methods' => [
-                        'flat_rate' => $this->getShippingMethod('flat_rate', 1, 'flat rate', true),
-                        'disabled' => $this->getShippingMethod('disabled', 2, 'disabled', false),
-                        'ups' => $this->getShippingMethod('ups', 3, 'ups', true)
-                    ],
-                    'result' => ['flat rate' => 'flat_rate', 'ups' => 'ups'],
-                    'translate' => false,
-                ],
-                'some_methods_with_translation' => [
-                    'methods' => [
-                        'flat_rate' => $this->getShippingMethod('flat_rate', 1, 'flat rate', true),
-                        'disabled' => $this->getShippingMethod('disabled', 2, 'disabled', false),
-                        'ups' => $this->getShippingMethod('ups', 3, 'ups', true)
-                    ],
-                    'result' => ['flat rate translated' => 'flat_rate', 'ups translated' => 'ups'],
-                    'translate' => true,
-                ],
-                'no_methods' => [
-                    'methods' => [],
-                    'result' => [],
-                ],
-            ];
+                'method 2' => 'method2',
+                'method 3' => 'method3',
+                'method 5' => 'method5'
+            ],
+            $this->choicesProvider->getMethods()
+        );
     }
 }

@@ -28,9 +28,6 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And uncheck "Use default" for "Enable shipping method selection per line item" field
     When I fill form with:
       | Enable shipping method selection per line item | true |
-    Then I should see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
-    When I click "Create Multi Shipping Integration"
-    Then I should see "Multi shipping integration was created successfully" flash message
     And uncheck "Use default" for "Enable grouping of line items during checkout" field
     And I fill form with:
       | Enable grouping of line items during checkout | true |

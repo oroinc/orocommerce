@@ -6,10 +6,8 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodType;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class MultiShippingMethodTest extends TestCase
+class MultiShippingMethodTest extends \PHPUnit\Framework\TestCase
 {
     private const IDENTIFIER = 'multishipping';
     private const LABEL = 'Multi Shipping';
@@ -19,15 +17,13 @@ class MultiShippingMethodTest extends TestCase
 
     protected function setUp(): void
     {
-        $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $multiShippingCostProvider = $this->createMock(MultiShippingCostProvider::class);
         $this->shippingMethod = new MultiShippingMethod(
             self::IDENTIFIER,
             self::LABEL,
             self::ICON,
             true,
-            $roundingService,
-            $multiShippingCostProvider
+            $this->createMock(RoundingServiceInterface::class),
+            $this->createMock(MultiShippingCostProvider::class)
         );
     }
 
@@ -54,19 +50,21 @@ class MultiShippingMethodTest extends TestCase
     public function testGetTypes()
     {
         $types = $this->shippingMethod->getTypes();
-        $this->assertIsArray($types);
         $this->assertCount(1, $types);
         $this->assertInstanceOf(MultiShippingMethodType::class, $types[0]);
     }
 
     public function testGetType()
     {
-        $this->assertInstanceOf(MultiShippingMethodType::class, $this->shippingMethod->getType('primary'));
+        $this->assertInstanceOf(
+            MultiShippingMethodType::class,
+            $this->shippingMethod->getType(MultiShippingMethodType::IDENTIFIER)
+        );
     }
 
     public function testGetOptionsConfigurationFormType()
     {
-        $this->assertEquals(HiddenType::class, $this->shippingMethod->getOptionsConfigurationFormType());
+        $this->assertNull($this->shippingMethod->getOptionsConfigurationFormType());
     }
 
     public function testGetSortOrder()

@@ -150,11 +150,6 @@ oro:
 
         multi_shipping_method:
             label: Multi Shipping
-            settings:
-                label: Multi Shipping Transport Settings
-                create_integration.not_authorized.error: Current user doesn't have permissions to create integration
-            channel_type:
-                label: Multi Shipping
 
     weight_unit.lbs:
         label:
