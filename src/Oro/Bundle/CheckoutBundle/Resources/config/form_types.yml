@@ -42,13 +42,6 @@ services:
         tags:
             - { name: form.type }
 
-    oro_checkout.form.type.available_grouping_fields:
-        class: Oro\Bundle\CheckoutBundle\Form\Type\AvailableGroupingFieldsConfigType
-        arguments:
-            - '@oro_checkout.provider.multishipping_field_options'
-        tags:
-            - { name: form.type }
-
     oro_checkout.form.type.line_items_shipping_methods:
         class: Oro\Bundle\CheckoutBundle\Form\Type\LineItemShippingMethodsType
         arguments:

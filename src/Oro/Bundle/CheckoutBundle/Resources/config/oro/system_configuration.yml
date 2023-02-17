@@ -114,10 +114,19 @@ system_configuration:
 
         oro_checkout.group_line_items_by:
             data_type: string
-            type: Oro\Bundle\CheckoutBundle\Form\Type\AvailableGroupingFieldsConfigType
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             priority: 20
             options:
                 label: oro.checkout.system_configuration.fields.group_line_items_by.label
+                choice_translation_domain: messages
+                choices:
+                    oro.product.entity_label:
+                        oro.product.id.label: product.id
+                        oro.product.owner.label: product.owner
+                        oro.product.category.label: product.category
+                        oro.product.brand.label: product.brand
+                    oro.checkout.checkoutlineitem.entity_label:
+                        oro.checkout.checkoutlineitem.parent_product.label: parentProduct
                 attr:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'enable_line_item_grouping'

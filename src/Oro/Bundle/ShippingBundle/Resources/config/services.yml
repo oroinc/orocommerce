@@ -48,7 +48,6 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
 
-    # formatters
     oro_shipping.formatter.length_unit_label:
         parent: oro_product.formatter.unit_label
         calls:
@@ -566,9 +565,9 @@ services:
             - '@oro_shipping.multi_shipping.method.identifier_generator.method'
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_shipping.multi_shipping.cost.provider'
+            - '@oro_shipping.multi_shipping.cost_provider'
 
-    oro_shipping.multi_shipping.method.provider:
+    oro_shipping.multi_shipping.method_provider:
         class: Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider
         arguments:
             - '%oro_shipping.multi_shipping.integration.channel.type%'
@@ -589,7 +588,7 @@ services:
         tags:
             - { name: oro_integration.channel, type: '%oro_shipping.multi_shipping.integration.channel.type%' }
 
-    oro_shipping.multi_shipping.cost.provider:
+    oro_shipping.multi_shipping.cost_provider:
         class: Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider
         public: false
         lazy: true
