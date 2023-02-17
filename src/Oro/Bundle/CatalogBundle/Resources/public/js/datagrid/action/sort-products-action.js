@@ -50,8 +50,7 @@ const SortProductsAction = AbstractAction.extend({
                 limitTo: '#container',
                 state: 'maximized',
                 modal: true
-            },
-            actionsEl: $(dialogActionsTemplate())
+            }
         };
         SortProductsAction.__super__.initialize.call(this, options);
     },
@@ -100,6 +99,8 @@ const SortProductsAction = AbstractAction.extend({
     },
 
     async _handleWidget() {
+        this.frontend_options.actionsEl = $(dialogActionsTemplate());
+
         const widget = await SortProductsAction.__super__._handleWidget.call(this);
         Promise.all([widget.loading, widget.deferredRender]).then(() => {
             mediator.execute('showMessage', 'warning',

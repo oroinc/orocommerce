@@ -169,11 +169,6 @@ datagrids:
                     renderIconColumn: true
                     dropZones:
                         excludeFromCategory: 'orocatalog/js/sort-rows-drag-n-drop/exclude-from-category'
-            cellSelection:
-                dataField: id
-                columnName:
-                    - categorySortOrder
-                selector: '#categorySortOrder'
         source:
             type: orm
             query:
