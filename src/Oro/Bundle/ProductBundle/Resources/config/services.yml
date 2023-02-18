@@ -1216,6 +1216,8 @@ services:
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
             - '@oro_product.virtual_fields.decorator_cache'
+        calls:
+            - ['setAttributeProvider', ['@oro_entity_config.provider.attribute']]
 
     oro_product.virtual_fields.select_query_converter:
             class: 'Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter'

@@ -1,4 +1,3 @@
-@skip
 @fixture-OroProductBundle:product_slug.yml
 
 Feature: Product redirect slug
@@ -10,11 +9,11 @@ Feature: Product redirect slug
     Given sessions active:
       | Admin | first_session  |
       | User  | second_session |
-    And I set "Default Web Catalog" as default web catalog
 
   Scenario: Set product slugs
     Given I proceed as the Admin
     And login as administrator
+    And I set "Default Web Catalog" as default web catalog
     When I go to Products/Products
     And click Edit "SKU1" in grid
     And click on "Product Form Slug Fallbacks"
@@ -100,3 +99,24 @@ Feature: Product redirect slug
     And should see "Product1"
     When I click "View Details" for "Product1" product
     Then the url should match "/acme-rp-18"
+
+  Scenario: Change product slug field using import
+    Given I proceed as the Admin
+    And login as administrator
+    And I go to Products/Products
+    And I open "Products" import tab
+    # Do not change or add other fields as this will break the test.
+    And fill import file with data:
+      | sku  | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.fallback | slugPrototypes.default.value | slugPrototypes.English (United States).fallback | slugPrototypes.English (United States).value |
+      | SKU1 | each                           | 1                              |                                 | product-1                    |                                                 | acme-rp-19                                   |
+    And I import file
+    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
+
+  Scenario: Check search result with new slug
+    Given I proceed as the User
+    And I am on the homepage
+    And I type "SKU1" in "search"
+    And click "Search Button"
+    And should see "Product1"
+    When I click "View Details" for "Product1" product
+    Then the url should match "/acme-rp-19"

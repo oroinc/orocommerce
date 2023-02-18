@@ -29,6 +29,7 @@ oro_behat_extension:
         - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
         - Oro\Bundle\SaleBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 

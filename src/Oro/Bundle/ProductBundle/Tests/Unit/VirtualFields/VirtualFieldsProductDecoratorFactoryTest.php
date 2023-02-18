@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\VirtualFields;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
@@ -37,19 +38,24 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
      */
     private $cacheProvider;
 
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject  */
+    private $attributeProvider;
+
     protected function setUp(): void
     {
         $this->converterMock = $this->createMock(VirtualFieldsSelectQueryConverter::class);
         $this->doctrineMock = $this->createMock(ManagerRegistry::class);
         $this->fieldHelperMock = $this->createMock(FieldHelper::class);
         $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->attributeProvider = $this->createMock(ConfigProvider::class);
 
         $this->testedVirtualFieldsProductDecoratorFactory = new VirtualFieldsProductDecoratorFactory(
             $this->converterMock,
             $this->doctrineMock,
             $this->fieldHelperMock,
-            $this->cacheProvider
+            $this->cacheProvider,
         );
+        $this->testedVirtualFieldsProductDecoratorFactory->setAttributeProvider($this->attributeProvider);
     }
 
     /**
@@ -60,7 +66,7 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
      */
     private function createExpectedProductDecorator(array $products, $product)
     {
-        return new VirtualFieldsProductDecorator(
+        $decorator = new VirtualFieldsProductDecorator(
             $this->converterMock,
             $this->doctrineMock,
             $this->fieldHelperMock,
@@ -68,6 +74,8 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
             $products,
             $product
         );
+        $decorator->setAttributeProvider($this->attributeProvider);
+        return $decorator;
     }
 
     public function testCreateDecoratedProduct()

@@ -31,6 +31,8 @@ import ColumnsItemTypeBuilder from 'orocms/js/app/grapesjs/type-builders/columns
 import ContainerTypeBuilder from 'orocms/js/app/grapesjs/type-builders/columns/container-type-builder';
 import TilesTypeBuilder from 'orocms/js/app/grapesjs/type-builders/tiles/tiles-type-builder';
 import TilesItemTypeBuilder from 'orocms/js/app/grapesjs/type-builders/tiles/tiles-item-type-builder';
+import FigureTypeBuilder from 'orocms/js/app/grapesjs/type-builders/figure/figure-type-builder';
+import FigcaptionTypeBuilder from 'orocms/js/app/grapesjs/type-builders/figure/figcaption-type-builder';
 
 ComponentManager.registerComponentTypes({
     'wrapper': {
@@ -130,5 +132,11 @@ ComponentManager.registerComponentTypes({
     },
     'tiles-item': {
         Constructor: TilesItemTypeBuilder
+    },
+    'figure': {
+        Constructor: FigureTypeBuilder
+    },
+    'figcaption': {
+        Constructor: FigcaptionTypeBuilder
     }
 });

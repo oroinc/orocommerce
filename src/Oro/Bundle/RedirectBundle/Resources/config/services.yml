@@ -290,6 +290,7 @@ services:
             - { name: container.service_subscriber, id: routing.loader }
             - { name: container.service_subscriber, id: oro_redirect.routing.sluggable_url_generator }
             - { name: container.service_subscriber, id: oro_redirect.routing.slug_url_matcher }
+            - { name: container.service_subscriber, id: oro_locale.provider.current_localization }
             - { name: monolog.logger, channel: router }
 
     # This cache is optimised to work with file system and should not be reconfigured to use oro.cache.abstract
@@ -407,6 +408,7 @@ services:
             - '@oro_redirect.helper.slugify_entity_helper'
         tags:
             - { name: kernel.event_listener, event: oro_importexport.strategy.process_before, method: onProcessBefore }
+            - { name: kernel.event_listener, event: oro_importexport.strategy.process_after, method: onProcessAfter }
 
     oro_redirect.helper.slugify_entity_helper:
         class: Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper
