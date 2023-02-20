@@ -15,8 +15,7 @@ use Oro\Component\EntitySerializer\DoctrineHelper;
  */
 class ProtectRelatedProductDeleteQueryByAcl extends ProtectRelatedProductQueryByAcl
 {
-    /** @var AclHelper */
-    private $aclHelper;
+    private AclHelper $aclHelper;
 
     public function __construct(DoctrineHelper $doctrineHelper, AclHelper $aclHelper)
     {
@@ -27,7 +26,7 @@ class ProtectRelatedProductDeleteQueryByAcl extends ProtectRelatedProductQueryBy
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

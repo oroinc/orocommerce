@@ -16,8 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class SetProductVisibilityScope extends AbstractSetVisibilityScope
 {
-    /** @var VisibilityScopeProvider */
-    private $visibilityProvider;
+    private VisibilityScopeProvider $visibilityProvider;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,

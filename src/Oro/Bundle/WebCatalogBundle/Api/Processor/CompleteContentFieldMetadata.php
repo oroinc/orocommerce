@@ -14,8 +14,7 @@ class CompleteContentFieldMetadata implements ProcessorInterface
 {
     private const CONTENT_FIELD_NAME = 'content';
 
-    /** @var ContentVariantTypeRegistry */
-    private $contentVariantTypeRegistry;
+    private ContentVariantTypeRegistry $contentVariantTypeRegistry;
 
     public function __construct(ContentVariantTypeRegistry $contentVariantTypeRegistry)
     {
@@ -25,7 +24,7 @@ class CompleteContentFieldMetadata implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var MetadataContext $context */
 

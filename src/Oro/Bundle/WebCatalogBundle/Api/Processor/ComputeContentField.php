@@ -16,11 +16,8 @@ class ComputeContentField implements ProcessorInterface
 {
     private const CONTENT_FIELD_NAME = 'content';
 
-    /** @var ContentVariantTypeRegistry */
-    private $contentVariantTypeRegistry;
-
-    /** @var ContentNodeProvider */
-    private $contentNodeProvider;
+    private ContentVariantTypeRegistry $contentVariantTypeRegistry;
+    private ContentNodeProvider $contentNodeProvider;
 
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
@@ -33,7 +30,7 @@ class ComputeContentField implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

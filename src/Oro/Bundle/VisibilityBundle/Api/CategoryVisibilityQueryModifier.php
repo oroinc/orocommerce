@@ -19,14 +19,9 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class CategoryVisibilityQueryModifier implements QueryModifierInterface
 {
-    /** @var EntityClassResolver */
-    private $entityClassResolver;
-
-    /** @var CategoryVisibilityProvider */
-    private $categoryVisibilityProvider;
-
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
+    private EntityClassResolver $entityClassResolver;
+    private CategoryVisibilityProvider $categoryVisibilityProvider;
+    private TokenAccessorInterface $tokenAccessor;
 
     public function __construct(
         EntityClassResolver $entityClassResolver,
@@ -39,7 +34,7 @@ class CategoryVisibilityQueryModifier implements QueryModifierInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {

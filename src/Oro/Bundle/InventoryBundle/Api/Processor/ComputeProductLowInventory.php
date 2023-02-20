@@ -14,11 +14,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeProductLowInventory implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var LowInventoryProvider */
-    private $lowInventoryProvider;
+    private DoctrineHelper $doctrineHelper;
+    private LowInventoryProvider $lowInventoryProvider;
 
     public function __construct(DoctrineHelper $doctrineHelper, LowInventoryProvider $lowInventoryProvider)
     {
@@ -29,7 +26,7 @@ class ComputeProductLowInventory implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

@@ -13,8 +13,7 @@ class OrderLineItemDiscountProvider
 {
     private const DISCOUNTS_CONTEXT_KEY = '_discounts';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\DependencyInjection;
 
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\FieldsOptionsProvider;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -71,7 +70,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::GROUP_LINE_ITEMS_BY => [
                     'type' => 'string',
-                    'value' => FieldsOptionsProvider::DEFAULT_VALUE
+                    'value' => 'product.owner'
                 ],
                 self::CREATE_SUBORDERS_FOR_EACH_GROUP => [
                     'type' => 'boolean',

@@ -16,14 +16,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class PlaceOrder implements ProcessorInterface
 {
-    /** @var ActionGroupExecutor */
-    private $actionGroupExecutor;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var string */
-    private $orderPurchaseActionGroupName;
+    private ActionGroupExecutor $actionGroupExecutor;
+    private DoctrineHelper $doctrineHelper;
+    private string $orderPurchaseActionGroupName;
 
     public function __construct(
         ActionGroupExecutor $actionGroupExecutor,
@@ -38,7 +33,7 @@ class PlaceOrder implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CreateContext $context */
 

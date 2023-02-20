@@ -20,14 +20,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class FillOrderLineItemPrice implements ProcessorInterface
 {
-    /** @var MatchingPriceProvider */
-    private $priceProvider;
-
-    /** @var ProductPriceScopeCriteriaFactoryInterface */
-    private $priceScopeCriteriaFactory;
-
-    /** @var TranslatorInterface */
-    private $translator;
+    private MatchingPriceProvider $priceProvider;
+    private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
+    private TranslatorInterface $translator;
 
     public function __construct(
         MatchingPriceProvider $priceProvider,
@@ -42,7 +37,7 @@ class FillOrderLineItemPrice implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 

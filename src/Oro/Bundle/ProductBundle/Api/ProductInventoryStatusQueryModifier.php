@@ -17,14 +17,9 @@ use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
  */
 class ProductInventoryStatusQueryModifier implements QueryModifierInterface
 {
-    /** @var EntityClassResolver */
-    private $entityClassResolver;
-
-    /** @var ProductVisibilityQueryBuilderModifier */
-    private $modifier;
-
-    /** @var ConfigManager */
-    private $configManager;
+    private EntityClassResolver $entityClassResolver;
+    private ProductVisibilityQueryBuilderModifier $modifier;
+    private ConfigManager $configManager;
 
     public function __construct(
         EntityClassResolver $entityClassResolver,
@@ -37,7 +32,7 @@ class ProductInventoryStatusQueryModifier implements QueryModifierInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {

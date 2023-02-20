@@ -5,12 +5,6 @@ services:
         arguments:
             - '@oro_config.manager'
 
-    oro_checkout.provider.multishipping_field_options:
-        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\FieldsOptionsProvider
-        arguments:
-            - '@oro_entity_config.config_manager'
-            - '@doctrine'
-
     oro_checkout.layout.provider.group_line_items:
         class: Oro\Bundle\CheckoutBundle\Layout\DataProvider\MultiShipping\GroupLineItemsDataProvider
         public: true
@@ -84,7 +78,7 @@ services:
     oro_checkout.provider.multi_shipping.default_shipping_method:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider
         arguments:
-            - '@oro_shipping.multi_shipping.method.provider'
+            - '@oro_shipping.multi_shipping.method_provider'
 
     oro_checkout.shipping_rule_filtration.multi_shipping_decorator:
         class: Oro\Bundle\CheckoutBundle\RuleFiltration\MultiShipping\MultiShippingMethodFiltrationService

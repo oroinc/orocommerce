@@ -20,11 +20,8 @@ use Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper;
  */
 class VisibilityIdFilter extends StandaloneFilter implements FieldFilterInterface, ConfigAwareFilterInterface
 {
-    /** @var VisibilityIdHelper */
-    private $visibilityIdHelper;
-
-    /** @var EntityDefinitionConfig */
-    private $config;
+    private VisibilityIdHelper $visibilityIdHelper;
+    private EntityDefinitionConfig $config;
 
     public function setVisibilityIdHelper(VisibilityIdHelper $visibilityIdHelper): void
     {
@@ -51,13 +48,7 @@ class VisibilityIdFilter extends StandaloneFilter implements FieldFilterInterfac
         }
     }
 
-    /**
-     * @param string|null $operator
-     * @param mixed       $value
-     *
-     * @return Expression
-     */
-    private function buildExpression(?string $operator, $value): Expression
+    private function buildExpression(?string $operator, mixed $value): Expression
     {
         if (null === $value) {
             throw new \InvalidArgumentException('The value must not be NULL.');

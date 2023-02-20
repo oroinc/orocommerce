@@ -19,25 +19,20 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeOrderLineItemDiscounts implements ProcessorInterface
 {
-    private const ROW_TOTAL_DISCOUNT_AMOUNT              = 'rowTotalDiscountAmount';
-    private const ROW_TOTAL_AFTER_DISCOUNT               = 'rowTotalAfterDiscount';
+    private const ROW_TOTAL_DISCOUNT_AMOUNT = 'rowTotalDiscountAmount';
+    private const ROW_TOTAL_AFTER_DISCOUNT = 'rowTotalAfterDiscount';
     private const ROW_TOTAL_AFTER_DISCOUNT_INCLUDING_TAX = 'rowTotalAfterDiscountIncludingTax';
     private const ROW_TOTAL_AFTER_DISCOUNT_EXCLUDING_TAX = 'rowTotalAfterDiscountExcludingTax';
-    private const FIELD_NAMES                            = [
+    private const FIELD_NAMES = [
         self::ROW_TOTAL_DISCOUNT_AMOUNT,
         self::ROW_TOTAL_AFTER_DISCOUNT,
         self::ROW_TOTAL_AFTER_DISCOUNT_INCLUDING_TAX,
         self::ROW_TOTAL_AFTER_DISCOUNT_EXCLUDING_TAX
     ];
 
-    /** @var OrderLineItemDiscountProvider */
-    private $lineItemDiscountProvider;
-
-    /** @var OrderLineItemTaxesProvider */
-    private $lineItemTaxesProvider;
-
-    /** @var ValueTransformer */
-    private $valueTransformer;
+    private OrderLineItemDiscountProvider $lineItemDiscountProvider;
+    private OrderLineItemTaxesProvider $lineItemTaxesProvider;
+    private ValueTransformer $valueTransformer;
 
     public function __construct(
         OrderLineItemDiscountProvider $lineItemDiscountProvider,
@@ -52,7 +47,7 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -120,15 +115,11 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
         return $data;
     }
 
-    /**
-     * @param CustomizeLoadedDataContext $context
-     * @param array                      $item
-     * @param string|float               $discountAmount
-     *
-     * @return string|float
-     */
-    private function getRowTotalAfterDiscount(CustomizeLoadedDataContext $context, array $item, $discountAmount)
-    {
+    private function getRowTotalAfterDiscount(
+        CustomizeLoadedDataContext $context,
+        array $item,
+        string|float $discountAmount
+    ): string|float {
         $price = $context->getResultFieldValue('value', $item);
         $quantity = $context->getResultFieldValue('quantity', $item);
         $result = ($price * $quantity) - $discountAmount;
@@ -139,15 +130,11 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param string       $amountFieldName
-     * @param string|float $discountAmount
-     * @param array        $lineItemTaxes
-     *
-     * @return string|float
-     */
-    private function getRowTotalAfterDiscountWithTax(string $amountFieldName, $discountAmount, array $lineItemTaxes)
-    {
+    private function getRowTotalAfterDiscountWithTax(
+        string $amountFieldName,
+        string|float $discountAmount,
+        array $lineItemTaxes
+    ): string|float {
         $result = 0.0;
         $amount = $lineItemTaxes[$amountFieldName] ?? null;
         if (null !== $amount) {
@@ -160,15 +147,9 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @param array    $appliedDiscounts
-     * @param int|null $lineItemId
-     *
-     * @return string|float
-     */
-    private function getLineItemDiscount(array $appliedDiscounts, ?int $lineItemId)
+    private function getLineItemDiscount(array $appliedDiscounts, ?int $lineItemId): string|float
     {
-        if (!array_key_exists($lineItemId, $appliedDiscounts)) {
+        if (!\array_key_exists($lineItemId, $appliedDiscounts)) {
             return 0.0;
         }
 
@@ -188,7 +169,7 @@ class ComputeOrderLineItemDiscounts implements ProcessorInterface
         int $lineItemId
     ): array {
         $allTaxes = $this->lineItemTaxesProvider->getTaxes($context, $lineItemIds);
-        if (!array_key_exists($lineItemId, $allTaxes)) {
+        if (!\array_key_exists($lineItemId, $allTaxes)) {
             return [];
         }
 

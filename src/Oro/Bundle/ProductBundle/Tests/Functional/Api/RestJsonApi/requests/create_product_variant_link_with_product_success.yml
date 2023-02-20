@@ -1,0 +1,73 @@
+data:
+    type: productvariantlinks
+    attributes:
+        visible: true
+    relationships:
+        parentProduct:
+            data:
+                type: 'products'
+                id: '<toString(@configurable_product5->id)>'
+        product:
+            data:
+                type: 'products'
+                id: 'p_id'
+included:
+    -
+        type: 'products'
+        id: 'p_id'
+        attributes:
+            sku: 'test-api-simple-product-1'
+            status: 'enabled'
+            variantFields: []
+            productType: 'simple'
+            featured: false
+            newArrival: false
+        relationships:
+            owner:
+                data:
+                    type: 'businessunits'
+                    id: '1'
+            organization:
+                data:
+                    type: 'organizations'
+                    id: '1'
+            inventory_status:
+                data:
+                    type: 'prodinventorystatuses'
+                    id: 'in_stock'
+            primaryUnitPrecision:
+                data:
+                    type: 'productunitprecisions'
+                    id: 'primary-unit-precision'
+            names:
+                data:
+                    -
+                        type: 'productnames'
+                        id: 'names-1'
+            attributeFamily:
+                data:
+                    type: 'attributefamilies'
+                    id: '<toString(@default_product_family->id)>'
+            testAttrEnum:
+                data:
+                    type: 'testprodattrenums'
+                    id: 'option1'
+
+    -
+        type: 'productnames'
+        id: 'names-1'
+        attributes:
+            fallback:
+            string: 'Test product API'
+    -
+        type: 'productunitprecisions'
+        id: 'primary-unit-precision'
+        attributes:
+            precision: 1
+            conversionRate: 1
+            sell: true
+        relationships:
+            unit:
+                data:
+                    type: 'productunits'
+                    id: '<toString(@product_unit.liter->code)>'

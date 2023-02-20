@@ -14,8 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class EnsureDefaultShoppingListExistsForParent implements ProcessorInterface
 {
-    /** @var DefaultShoppingListFactory */
-    private $defaultShoppingListFactory;
+    private DefaultShoppingListFactory $defaultShoppingListFactory;
 
     public function __construct(DefaultShoppingListFactory $defaultShoppingListFactory)
     {
@@ -25,7 +24,7 @@ class EnsureDefaultShoppingListExistsForParent implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ChangeRelationshipContext $context */
 

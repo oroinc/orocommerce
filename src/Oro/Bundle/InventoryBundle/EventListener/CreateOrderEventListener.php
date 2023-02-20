@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
@@ -20,61 +19,46 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
+/**
+ * Checks that there are enough products in the stock.
+ */
 class CreateOrderEventListener
 {
-    /**
-     * @var InventoryQuantityManager
-     */
-    protected $quantityManager;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var InventoryStatusHandler
-     */
-    protected $statusHandler;
-
-    /**
-     * @var CheckoutLineItemsManager
-     */
-    protected $checkoutLineItemsManager;
+    private InventoryQuantityManager $quantityManager;
+    private ManagerRegistry $doctrine;
+    private InventoryStatusHandler $statusHandler;
+    private CheckoutLineItemsManager $checkoutLineItemsManager;
 
     public function __construct(
         InventoryQuantityManager $quantityManager,
         InventoryStatusHandler $statusHandler,
-        DoctrineHelper $doctrineHelper,
+        ManagerRegistry $doctrine,
         CheckoutLineItemsManager $checkoutLineItemsManager
     ) {
         $this->quantityManager = $quantityManager;
         $this->statusHandler = $statusHandler;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
     }
 
-    /**
-     * @throws InventoryLevelNotFoundException
-     */
-    public function onCreateOrder(ExtendableActionEvent $event)
+    public function onCreateOrder(ExtendableActionEvent $event): void
     {
-        if (!$this->isCorrectOrderContext($event->getContext())) {
+        $context = $event->getContext();
+        if (!$context instanceof WorkflowItem || !$this->isCorrectOrderData($context->getData())) {
             return;
         }
 
-        $orderLineItems = $this->checkoutLineItemsManager->getData($event->getContext()->getEntity());
-
-        /** @var OrderLineItem $lineItem */
+        $orderLineItems = $this->checkoutLineItemsManager->getData($context->getEntity());
         foreach ($orderLineItems as $lineItem) {
             if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
             }
 
             $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
-            if (!$inventoryLevel) {
+            if (null === $inventoryLevel) {
                 throw new InventoryLevelNotFoundException();
             }
+
             if ($this->quantityManager->canDecrementInventory($inventoryLevel, $lineItem->getQuantity())) {
                 $this->quantityManager->decrementInventory($inventoryLevel, $lineItem->getQuantity());
                 $this->statusHandler->changeInventoryStatusWhenDecrement($inventoryLevel);
@@ -82,74 +66,54 @@ class CreateOrderEventListener
         }
     }
 
-    /**
-     * @throws InventoryLevelNotFoundException
-     */
-    public function onBeforeOrderCreate(ExtendableConditionEvent $event)
+    public function onBeforeOrderCreate(ExtendableConditionEvent $event): void
     {
-        if (!$this->isCorrectCheckoutContext($event->getContext())) {
+        $context = $event->getContext();
+        if (!$context instanceof WorkflowItem) {
+            return;
+        }
+        $entity = $context->getEntity();
+        if (!$entity instanceof Checkout || !$this->isCorrectCheckoutEntity($entity)) {
             return;
         }
 
-        $lineItems = $this->checkoutLineItemsManager->getData($event->getContext()->getEntity());
-        /** @var OrderLineItem $lineItem */
+        $lineItems = $this->checkoutLineItemsManager->getData($entity);
         foreach ($lineItems as $lineItem) {
-            $product = $lineItem->getProduct();
-            if (!$this->quantityManager->shouldDecrement($product)) {
+            if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
             }
 
-            $productUnit = $lineItem->getProductUnit();
-            $quantity = $lineItem->getQuantity();
-
-            $inventoryLevel = $this->getInventoryLevel($product, $productUnit);
-            if (!$inventoryLevel) {
+            $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
+            if (null === $inventoryLevel) {
                 throw new InventoryLevelNotFoundException();
             }
 
-            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $quantity)) {
+            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
                 $event->addError('');
+
                 return;
             }
         }
     }
 
-    /**
-     * @param Product $product
-     * @param ProductUnit $productUnit
-     * @return InventoryLevel
-     */
-    protected function getInventoryLevel(Product $product, ProductUnit $productUnit)
+    private function getInventoryLevel(Product $product, ProductUnit $productUnit): ?InventoryLevel
     {
-        return $this->doctrineHelper->getEntityRepository(InventoryLevel::class)->getLevelByProductAndProductUnit(
-            $product,
-            $productUnit
-        );
+        return $this->doctrine->getRepository(InventoryLevel::class)
+            ->getLevelByProductAndProductUnit($product, $productUnit);
     }
 
-    /**
-     * @param mixed $context
-     * @return bool
-     */
-    protected function isCorrectOrderContext($context)
+    private function isCorrectOrderData(mixed $data): bool
     {
-        return ($context instanceof WorkflowItem
-            && $context->getData() instanceof WorkflowData
-            && $context->getData()->has('order')
-            && $context->getData()->get('order') instanceof Order
-        );
+        return
+            $data instanceof WorkflowData
+            && $data->has('order')
+            && $data->get('order') instanceof Order;
     }
 
-    /**
-     * @param mixed $context
-     * @return bool
-     */
-    protected function isCorrectCheckoutContext($context)
+    private function isCorrectCheckoutEntity(Checkout $entity): bool
     {
-        return ($context instanceof WorkflowItem
-            && $context->getEntity() instanceof Checkout
-            && $context->getEntity()->getSource() instanceof CheckoutSource
-            && $context->getEntity()->getSource()->getEntity() instanceof ProductLineItemsHolderInterface
-        );
+        return
+            $entity->getSource() instanceof CheckoutSource
+            && $entity->getSource()->getEntity() instanceof ProductLineItemsHolderInterface;
     }
 }

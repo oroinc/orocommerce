@@ -19,7 +19,9 @@ services:
     oro_cms.api.wysiwyg_value_renderer:
         class: Oro\Bundle\CMSBundle\Api\WYSIWYGValueRenderer
         arguments:
-            - '@twig'
+            - '@Psr\Container\ContainerInterface'
+        tags:
+            - { name: container.service_subscriber }
 
     oro_cms.api.frontend.localized_fallback_value_extractor:
         class: Oro\Bundle\CMSBundle\Api\LocalizedFallbackValueExtractor

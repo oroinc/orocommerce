@@ -21,14 +21,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ConfigureProductSearchAttributes implements ProcessorInterface
 {
-    /** @var AttributeManager */
-    private $attributeManager;
-
-    /** @var AttributeTypeRegistry */
-    private $attributeTypeRegistry;
-
-    /** @var AttributeConfigurationProviderInterface */
-    private $configurationProvider;
+    private AttributeManager $attributeManager;
+    private AttributeTypeRegistry $attributeTypeRegistry;
+    private AttributeConfigurationProviderInterface $configurationProvider;
 
     public function __construct(
         AttributeManager $attributeManager,
@@ -44,7 +39,7 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 
@@ -130,11 +125,8 @@ class ConfigureProductSearchAttributes implements ProcessorInterface
         FieldConfigModel $attribute
     ): ?string {
         $names = $attributeType->getFilterableFieldNames($attribute);
-        if (!isset($names[SearchAttributeTypeInterface::VALUE_MAIN])) {
-            return null;
-        }
 
-        return $names[SearchAttributeTypeInterface::VALUE_MAIN];
+        return $names[SearchAttributeTypeInterface::VALUE_MAIN] ?? null;
     }
 
     private function getSearchFilterMapping(FilterFieldConfig $searchFilter): array

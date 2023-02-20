@@ -30,3 +30,5 @@ export {default as ColumnsItemType} from './columns/columns-item-type';
 export {default as ContainerType} from './columns/container-type';
 export {default as TilesType} from './tiles/tiles-type';
 export {default as TilesItemType} from './tiles/tiles-item-type';
+export {default as FigureType} from './figure/figure-type';
+export {default as FigcaptionType} from './figure/figcaption-type';

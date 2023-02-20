@@ -128,7 +128,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
-            ->will($this->onConsecutiveCalls(3, 5));
+            ->willReturnOnConsecutiveCalls(3, 5);
 
         $this->assertFalse($this->quantityToOrderValidatorService->isMaxLimitLowerThenMinLimit($product));
     }
@@ -138,7 +138,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
-            ->will($this->onConsecutiveCalls(5, 3));
+            ->willReturnOnConsecutiveCalls(5, 3);
 
         $this->assertTrue($this->quantityToOrderValidatorService->isMaxLimitLowerThenMinLimit($product));
     }
