@@ -4,13 +4,18 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 
 /**
  * @dbIsolationPerTest
  */
 class ProductVariantUniqueTest extends RestJsonApiTestCase
 {
+    use MessageQueueExtension;
+
     /**
      * {@inheritdoc}
      */
@@ -19,6 +24,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         parent::setUp();
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
+            LoadProductUnits::class,
             '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml',
         ]);
     }
@@ -147,6 +153,32 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         }
 
         $this->assertContains($productSimpleWhichWasAdd->getId(), $simpleProductIds);
+    }
+
+    public function testAddNewSimpleProductWithAnotherConfigureAttribute()
+    {
+        $this->post(
+            ['entity' => 'productvariantlinks'],
+            'create_product_variant_link_with_product_success.yml'
+        );
+
+        /** @var Product $productConf */
+        $productConf = $this->getReference('configurable_product5');
+        $website = $this->getReference('website');
+        $simpleProductIds = [];
+        foreach ($productConf->getVariantLinks() as $productVariantLink) {
+            $simpleProductIds[] = $productVariantLink->getProduct()->getId();
+        }
+
+        // Reindexing should only contain products affected by variant updates.
+        $this->assertMessageSent(WebsiteSearchReindexTopic::getName(), [
+            'class' => [Product::class],
+            'granulize' => true,
+            'context' => [
+                'websiteIds' => [$website->getId()],
+                'entityIds' => array_merge($simpleProductIds, [$productConf->getId()])
+            ]
+        ]);
     }
 
     public function testChangeSimpleProductToProductWithAnotherConfigureAttribute()
