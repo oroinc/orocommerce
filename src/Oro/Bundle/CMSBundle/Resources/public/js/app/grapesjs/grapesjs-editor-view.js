@@ -365,6 +365,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritdoc
      */
     render() {
+        this._deferredRender();
         this.renderStart = true;
         this.timeoutId = null;
 
@@ -469,7 +470,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {*}
      */
     initContainer() {
-        this.$container = $('<div class="grapesjs" data-skip-input-widgets />');
+        this.$container = $('<div class="grapesjs" data-skip-input-widgets data-ignore-form-state-change />');
         this.$container.appendTo(this.$el.parent());
     },
 
@@ -485,6 +486,10 @@ const GrapesjsEditorView = BaseView.extend({
 
     getState() {
         return this.state;
+    },
+
+    isStateChanged() {
+        return JSON.stringify(this.state.toJSON()) === this.$propertiesInputElement.val();
     },
 
     /**
@@ -859,7 +864,6 @@ const GrapesjsEditorView = BaseView.extend({
         this._addClassForFrameWrapper();
 
         mediator.trigger('grapesjs:loaded', this.builder);
-        mediator.trigger('page:afterChange');
 
         this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
 
@@ -877,6 +881,7 @@ const GrapesjsEditorView = BaseView.extend({
         _.delay(() => {
             this.renderStart = false;
             this.builder.trigger('editor:rendered');
+            this._resolveDeferredRender();
         }, 250);
     },
 
@@ -973,9 +978,15 @@ const GrapesjsEditorView = BaseView.extend({
                 this.$stylesInputElement.valid();
             }
         }
+
+        this.updatePropertyField();
     },
 
     updatePropertyField() {
+        if (this.isStateChanged() || this.renderStart) {
+            return;
+        }
+
         this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
     },
 
