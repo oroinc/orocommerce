@@ -106,13 +106,9 @@
                                     sortOrderUID: id ~ '_' ~ categoryId,
                                     autoExecute: false,
                                     formSelector: '#' ~ form.vars.id,
-                                    route: 'oro_datagrid_widget',
+                                    route: 'oro_catalog_category_products_manage_sort_order_widget',
                                     route_parameters: {
-                                        gridName: 'category-products-widget-grid',
-                                        params: {category_id: categoryId},
-                                        renderParams: {
-                                            enableFullScreenLayout: true
-                                        }
+                                        params: {category_id: categoryId}
                                     },
                                     categoryTitle: entity.defaultTitle.string|default('N/A'|trans),
                                     categoryId: categoryId

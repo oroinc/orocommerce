@@ -19,3 +19,8 @@ oro_catalog_frontend_product:
     prefix: /catalog
     options:
         frontend: true
+
+oro_catalog_category_product:
+    resource:     "@OroCatalogBundle/Controller/CategoryProductsController.php"
+    type:         annotation
+    prefix:       /catalog/category-product
