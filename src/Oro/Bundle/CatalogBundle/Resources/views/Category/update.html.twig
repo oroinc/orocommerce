@@ -88,6 +88,19 @@
 
     {% if is_granted('oro_product_update') %}
         {% set categoryId = entityId ? entityId : 0 %}
+        {% if categoryId %}
+            {% set categoryTitle = entity.defaultTitle.string|default('N/A'|trans) %}
+            {% set sortProductsAction = {
+                launcherOptions: {
+                    ariaLabel: 'oro.catalog.product.grid.action.sort_products.aria_label'|trans({'{{ category }}': categoryTitle}),
+                },
+                frontend_options: {
+                    title: 'oro.catalog.product.sort_products.dialog.title'|trans({'{{ category }}': categoryTitle}),
+                },
+                entityId: categoryId
+            } %}
+        {% endif %}
+
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.entity_plural_label'|trans,
             'subblocks':
@@ -100,19 +113,16 @@
                             category_id: categoryId
                         }, {
                             cssClass: 'inner-grid',
-                            jsmodules: ['orocatalog/js/datagrid/builder/sort-products-action-builder'],
+                            jsmodules: ['oroproduct/js/datagrid/builder/sort-products-action-builder'],
                             gridBuildersOptions: {
                                 sortProductsAction: {
-                                    sortOrderUID: id ~ '_' ~ categoryId,
+                                    inputAction: '',
                                     autoExecute: false,
-                                    formSelector: '#' ~ form.vars.id,
                                     route: 'oro_catalog_category_products_manage_sort_order_widget',
                                     route_parameters: {
                                         params: {category_id: categoryId}
-                                    },
-                                    categoryTitle: entity.defaultTitle.string|default('N/A'|trans),
-                                    categoryId: categoryId
-                                }
+                                    }
+                                }|merge(sortProductsAction|default({}))
                             }
                         })
                     ]

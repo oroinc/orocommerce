@@ -137,7 +137,7 @@ datagrids:
             entityHint: oro.product.entity_plural_label
             entity_pagination: true
             jsmodules:
-                - oroproduct/datagrid/builder/sort-order-builder
+                - oroproduct/js/datagrid/builder/sort-order-builder
             cellSelection:
                 dataField: id
                 columnName:

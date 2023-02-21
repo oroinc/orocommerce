@@ -1,11 +1,11 @@
 const sortProductsActionBuilder = {
     /**
-     * Prepares and preloads all required templates for html-template cell type
+     * Prepares Datagrid options for a sort order extra action
      *
      * @param {jQuery.Deferred} deferred
      * @param {Object} options
      * @param {Object} [options.metadata] configuration for the grid
-     * @param {Array<Object>} [options.metadata.columns] list of columns definition
+     * @param {Object} [options.metadata.extraActions] list of defined extra actions
      */
     processDatagridOptions(deferred, options) {
         const extraActions = options.metadata.extraActions || {};

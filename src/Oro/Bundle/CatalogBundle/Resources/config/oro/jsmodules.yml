@@ -1,11 +1,7 @@
-aliases:
-    oro/datagrid/action/sort-products-action$: orocatalog/js/datagrid/action/sort-products-action
 dynamic-imports:
     commons:
         - orocatalog/js/app/views/category-unit-limitations-view
     orodatagrid:
-        - oro/datagrid/action/sort-products-action
-        - orocatalog/js/datagrid/builder/sort-products-action-builder
         - orocatalog/js/sort-rows-drag-n-drop/exclude-from-category
     jstree:
         - orocatalog/js/app/views/product-sidebar-view

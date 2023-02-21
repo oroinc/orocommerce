@@ -446,6 +446,40 @@
                                             }
                                         }
                                     }) }}
+
+                                    {% if form.vars.value is not empty and form.vars.value.id is not empty %}
+                                        {% set entityId = form.vars.value.id %}
+                                        {% set segmentTitle = form.vars.value.name %}
+                                        {% set sortProductsAction = {
+                                            launcherOptions: {
+                                                ariaLabel: 'oro.webcatalog.product_segment.grid.action.sort_products.aria_label'|trans({'{{ segment }}': segmentTitle}),
+                                            },
+                                            frontend_options: {
+                                                title: 'oro.webcatalog.product_segment.sort_products.dialog.title'|trans({'{{ segment }}': segmentTitle}),
+                                            },
+                                            entityId: entityId
+                                        } %}
+                                    {% endif %}
+
+                                    {% set widgetRouteParameters = widgetRouteParameters|merge({
+                                        renderParams: {
+                                            jsmodules: ['oroproduct/js/datagrid/builder/sort-products-action-builder'],
+                                            gridBuildersOptions: {
+                                                sortProductsAction: {
+                                                    inputAction: '',
+                                                    autoExecute: false,
+                                                    route: 'oro_datagrid_widget',
+                                                    route_parameters: {
+                                                        gridName: widgetRouteParameters.gridName,
+                                                        params: widgetRouteParameters.params|default({}),
+                                                        renderParams: {
+                                                            enableFullScreenLayout: true
+                                                        }
+                                                    }
+                                                }|merge(sortProductsAction|default({}))
+                                            }
+                                        }
+                                    }) %}
                                 {% endif %}
                                 {{ oro_widget_render({
                                     'widgetType': 'block',
