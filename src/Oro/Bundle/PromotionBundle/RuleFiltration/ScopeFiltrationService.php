@@ -10,6 +10,11 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
+/**
+ * Filtration promotions by scopes.
+ *
+ * @deprecated This class will be removed in 5.1. Use PromotionRepository::getAvailablePromotions instead.
+ */
 class ScopeFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
