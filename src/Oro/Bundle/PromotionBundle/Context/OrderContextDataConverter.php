@@ -91,9 +91,10 @@ class OrderContextDataConverter implements ContextDataConverterInterface
         $customer = $this->criteriaDataProvider->getCustomer($entity);
         $customerGroup = $this->criteriaDataProvider->getCustomerGroup($entity);
 
+        // There may be cases when entities do not exist yet, so we ignore them.
         $scopeContext = [
-            'customer' => $customer,
-            'customerGroup' => $customerGroup,
+            'customer' => $customer?->getId() ? $customer : null,
+            'customerGroup' => $customerGroup?->getId() ? $customerGroup : null,
             'website' => $this->criteriaDataProvider->getWebsite($entity)
         ];
 

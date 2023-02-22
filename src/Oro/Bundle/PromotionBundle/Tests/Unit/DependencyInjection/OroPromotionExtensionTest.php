@@ -13,8 +13,6 @@ class OroPromotionExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_promotion.rule_filtration.service',
-            'oro_promotion.rule_filtration.scope_decorator',
-            'oro_promotion.rule_filtration.schedule_decorator',
             'oro_promotion.rule_filtration.matching_items',
             'oro_promotion.promotion.context_data_converter_registry',
             'oro_promotion.promotion_provider',
