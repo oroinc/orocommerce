@@ -1,0 +1,5 @@
+doctrine:
+    orm:
+        dql:
+            string_functions:
+                decode: Oro\Bundle\PromotionBundle\ORM\Query\AST\Functions\String\Decode

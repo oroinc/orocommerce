@@ -8,6 +8,11 @@ use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
+/**
+ * Filtration promotions with scheduled time of use.
+ *
+ * @deprecated This class will be removed in 5.1. Use PromotionRepository::getAvailablePromotions instead.
+ */
 class ScheduleFiltrationService extends AbstractSkippableFiltrationService
 {
     /**
