@@ -223,7 +223,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
             [
                 'localizedSources' => new ArrayCollection([(new LocalizedFallbackValue())]),
                 'localizedSlugs' => new ArrayCollection(),
-                'expectedLocalizedSlugs' => new ArrayCollection(),
+                'expectedLocalizedSlugs' => new ArrayCollection([(new LocalizedFallbackValue())]),
             ],
             [
                 'localizedSources' => new ArrayCollection([$this->createLocalizedFallbackValue('test')]),

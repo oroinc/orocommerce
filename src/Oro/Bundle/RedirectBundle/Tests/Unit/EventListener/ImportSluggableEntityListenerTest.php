@@ -12,14 +12,14 @@ use Oro\Bundle\RedirectBundle\EventListener\ImportSluggableEntityListener;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestActivity;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ImportSluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
+class ImportSluggableEntityListenerTest extends TestCase
 {
-    /** @var ImportSluggableEntityListener */
-    private $listener;
+    private ImportSluggableEntityListener $listener;
 
-    /** @var SlugifyEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $slugifyEntityHelper;
+    private SlugifyEntityHelper|MockObject $slugifyEntityHelper;
 
     protected function setUp(): void
     {
@@ -76,7 +76,7 @@ class ImportSluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($context->getValue('itemData'));
     }
 
-    public function testSluggableEntityWithEmptySlugPrototypes(): void
+    public function testSluggableEntityWithOnlyEmptySlugPrototypes(): void
     {
         $entity = new SluggableEntityStub();
         $context = new Context([]);
@@ -93,6 +93,41 @@ class ImportSluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
                     return true;
                 }
             );
+        $this->slugifyEntityHelper->expects(self::once())
+            ->method('getSourceFieldName')
+            ->with(SluggableEntityStub::class)
+            ->willReturn('sourceField');
+
+        $this->listener->onProcessBefore($event);
+
+        $this->assertArrayHasKey('slugPrototypes', $context->getValue('itemData'));
+        $this->assertEmpty($context->getValue('itemData')['slugPrototypes']);
+    }
+
+    public function testSluggableEntityWithSourceFieldItemDataEmptySlugPrototypes(): void
+    {
+        $entity = new SluggableEntityStub();
+        $context = new Context([]);
+        $context->setValue('itemData', [
+            'sourceField' => ['default' => ['string' => 'test', 'fallback' => null]],
+            'slugPrototypes' => []
+        ]);
+        $event = new StrategyEvent($this->createMock(StrategyInterface::class), $entity, $context);
+
+        $this->slugifyEntityHelper
+            ->expects($this->once())
+            ->method('fill')
+            ->willReturnCallback(
+                function (SluggableInterface $sluggable) {
+                    $sluggable->addSlugPrototype((new LocalizedFallbackValue())->setString('test'));
+
+                    return true;
+                }
+            );
+        $this->slugifyEntityHelper->expects(self::once())
+            ->method('getSourceFieldName')
+            ->with(SluggableEntityStub::class)
+            ->willReturn('sourceField');
 
         $this->listener->onProcessBefore($event);
 
@@ -106,24 +141,26 @@ class ImportSluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function testSluggableEntity(): void
     {
         $entity = new SluggableEntityStub();
+        $basicLocalizedData = [
+            'default' => ['string' => 'file'],
+            'en' => ['fallback' => 'system'],
+            'en_US' => [],
+            'fr' => ['string' => 'file', 'fallback' => 'parent_localization'],
+            'es' => ['string' => '', 'fallback' => ''],
+            'de' => ['string' => null, 'fallback' => null],
+            'xx1' => ['string' => '', 'fallback' => null],
+            'xx2' => ['string' => null, 'fallback' => ''],
+            'xx3' => ['string' => null],
+            'xx4' => ['string' => ''],
+            'xx5' => ['fallback' => null],
+            'xx6' => ['fallback' => ''],
+        ];
         $context = new Context([]);
         $context->setValue(
             'itemData',
             [
-                'slugPrototypes' => [
-                    'default' => ['string' => 'file'],
-                    'en' => ['fallback' => 'system'],
-                    'en_US' => [],
-                    'fr' => ['string' => 'file', 'fallback' => 'parent_localization'],
-                    'es' => ['string' => '', 'fallback' => ''],
-                    'de' => ['string' => null, 'fallback' => null],
-                    'xx1' => ['string' => '', 'fallback' => null],
-                    'xx2' => ['string' => null, 'fallback' => ''],
-                    'xx3' => ['string' => null],
-                    'xx4' => ['string' => ''],
-                    'xx5' => ['fallback' => null],
-                    'xx6' => ['fallback' => ''],
-                ],
+                'sourceField' => $basicLocalizedData + ['gb' => ['string' => 'testgb', 'fallback' => '']],
+                'slugPrototypes' => $basicLocalizedData,
             ]
         );
         $event = new StrategyEvent($this->createMock(StrategyInterface::class), $entity, $context);
@@ -148,27 +185,16 @@ class ImportSluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
                     return true;
                 }
             );
+        $this->slugifyEntityHelper->expects(self::once())
+            ->method('getSourceFieldName')
+            ->with(SluggableEntityStub::class)
+            ->willReturn('sourceField');
 
         $this->listener->onProcessBefore($event);
 
         $this->assertArrayHasKey('slugPrototypes', $context->getValue('itemData'));
         $this->assertEquals(
-            [
-                'default' => ['string' => 'file'],
-                'en' => ['fallback' => 'system'],
-                'en_US' => [],
-                'fr' => ['string' => 'file', 'fallback' => 'parent_localization'],
-                'es' => ['string' => '', 'fallback' => ''],
-                'de' => ['string' => null, 'fallback' => null],
-                'mx' => ['string' => 'testmx', 'fallback' => ''],
-                'gb' => ['string' => 'testgb', 'fallback' => ''],
-                'xx1' => ['string' => '', 'fallback' => null],
-                'xx2' => ['string' => null, 'fallback' => ''],
-                'xx3' => ['string' => null],
-                'xx4' => ['string' => ''],
-                'xx5' => ['fallback' => null],
-                'xx6' => ['fallback' => ''],
-            ],
+            $basicLocalizedData + ['gb' => ['string' => 'testgb', 'fallback' => '']],
             $context->getValue('itemData')['slugPrototypes']
         );
     }
