@@ -19,6 +19,14 @@ class StubContentWidgetType extends AbstractContentWidgetType
     /**
      * {@inheritdoc}
      */
+    public function getLabel(): string
+    {
+        return 'stub';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';

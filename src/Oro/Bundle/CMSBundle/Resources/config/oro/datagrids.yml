@@ -274,10 +274,12 @@ datagrids:
                     type: string
                     data_name: contentWidget.description
                 widgetType:
-                    type: choice-tree
+                    type: choice
                     data_name: contentWidget.widgetType
-                    autocomplete_alias: oro_cms_content_widget_types
-                    renderedPropertyName: 'label'
+                    options:
+                        field_options:
+                            choices: '@oro_cms.provider.content_widget_type->getAvailableContentWidgetTypes()'
+                            multiple: true
                 createdAt:
                     type: datetime
                     data_name: contentWidget.createdAt
