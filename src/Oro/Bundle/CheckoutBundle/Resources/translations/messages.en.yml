@@ -315,9 +315,6 @@ oro:
                 enable_shipping_method_selection_per_line_item:
                     label: 'Enable shipping method selection per line item'
                     tooltip: 'When enabled, customers are allowed to select different shipping methods per line item. Please note that the shipping rules are calculated and applied separately for each line item. For example, subtotal, shipment weight, etc., will represent a single line item for which the shipping rules are calculated.'
-                create_multi_shipping_integration:
-                    label: 'Create Multi Shipping Integration'
-                    description: 'Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'

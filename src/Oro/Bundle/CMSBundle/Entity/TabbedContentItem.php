@@ -115,7 +115,7 @@ class TabbedContentItem extends ExtendTabbedContentItem implements OrganizationA
     /**
      * @ORM\Column(name="content_properties", type="wysiwyg_properties", nullable=true)
      */
-    protected array $contentProperties = [];
+    protected ?array $contentProperties = null;
 
     public function getId(): ?int
     {
@@ -182,12 +182,12 @@ class TabbedContentItem extends ExtendTabbedContentItem implements OrganizationA
         return $this;
     }
 
-    public function getContentProperties(): array
+    public function getContentProperties(): ?array
     {
         return $this->contentProperties;
     }
 
-    public function setContentProperties(array $contentProperties): self
+    public function setContentProperties(?array $contentProperties): self
     {
         $this->contentProperties = $contentProperties;
 

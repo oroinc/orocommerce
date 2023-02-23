@@ -7,17 +7,18 @@ use Oro\Bundle\CheckoutBundle\Helper\CheckoutLineItemGroupingInvalidationHelper;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Oro\Component\Testing\ReflectionUtil;
 
-class CheckoutLineItemGroupingInvalidationHelperTest extends TestCase
+class CheckoutLineItemGroupingInvalidationHelperTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $multiShippingConfigProvider;
 
-    private ConfigProvider|MockObject $multiShippingConfigProvider;
-    private GroupedCheckoutLineItemsProvider|MockObject $groupedCheckoutLineItemsProvider;
-    private CheckoutLineItemGroupingInvalidationHelper $helper;
+    /** @var GroupedCheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $groupedCheckoutLineItemsProvider;
+
+    /** @var CheckoutLineItemGroupingInvalidationHelper */
+    private $helper;
 
     protected function setUp(): void
     {
@@ -30,17 +31,22 @@ class CheckoutLineItemGroupingInvalidationHelperTest extends TestCase
         );
     }
 
+    private function getWorkflowItem(int $id, \DateTime $updated): WorkflowItem
+    {
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setId($id);
+        ReflectionUtil::setPropertyValue($workflowItem, 'updated', $updated);
+
+        return $workflowItem;
+    }
+
     public function testShouldInvalidateLineItemGrouping(): void
     {
         $this->multiShippingConfigProvider->expects($this->once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(true);
 
-        /** @var WorkflowItem $workflowItem */
-        $workflowItem = $this->getEntity(WorkflowItem::class, [
-            'id' => 1,
-            'updated' => new \DateTime('-24 hours', new \DateTimeZone('UTC')),
-        ]);
+        $workflowItem = $this->getWorkflowItem(1, new \DateTime('-24 hours', new \DateTimeZone('UTC')));
 
         $this->assertTrue($this->helper->shouldInvalidateLineItemGrouping($workflowItem));
     }
@@ -51,11 +57,7 @@ class CheckoutLineItemGroupingInvalidationHelperTest extends TestCase
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(true);
 
-        /** @var WorkflowItem $workflowItem */
-        $workflowItem = $this->getEntity(WorkflowItem::class, [
-            'id' => 1,
-            'updated' => new \DateTime('-23 hours', new \DateTimeZone('UTC')),
-        ]);
+        $workflowItem = $this->getWorkflowItem(1, new \DateTime('-23 hours', new \DateTimeZone('UTC')));
 
         $this->assertFalse($this->helper->shouldInvalidateLineItemGrouping($workflowItem));
     }
@@ -66,11 +68,7 @@ class CheckoutLineItemGroupingInvalidationHelperTest extends TestCase
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(false);
 
-        /** @var WorkflowItem $workflowItem */
-        $workflowItem = $this->getEntity(WorkflowItem::class, [
-            'id' => 1,
-            'updated' => new \DateTime('-24 hours', new \DateTimeZone('UTC')),
-        ]);
+        $workflowItem = $this->getWorkflowItem(1, new \DateTime('-24 hours', new \DateTimeZone('UTC')));
 
         $this->assertFalse($this->helper->shouldInvalidateLineItemGrouping($workflowItem));
     }
@@ -99,8 +97,9 @@ class CheckoutLineItemGroupingInvalidationHelperTest extends TestCase
         );
 
         // Asserting that $workflowItem updated at date roughly equals to current time (with 60 seconds delta)
-        $dateDifference = $workflowItem->getUpdated()->getTimestamp() -
-            (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
+        $dateDifference =
+            $workflowItem->getUpdated()->getTimestamp()
+            - (new \DateTime('now', new \DateTimeZone('UTC')))->getTimestamp();
 
         $this->assertTrue(abs($dateDifference) < 60);
     }

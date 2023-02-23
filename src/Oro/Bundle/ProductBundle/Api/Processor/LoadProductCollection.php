@@ -24,17 +24,12 @@ use Oro\Component\EntitySerializer\SerializationHelper;
  */
 class LoadProductCollection implements ProcessorInterface
 {
-    private const ID_FIELD             = 'id';
+    private const ID_FIELD = 'id';
     private const PRODUCTS_ASSOCIATION = 'products';
 
-    /** @var ActionProcessorBagInterface */
-    private $processorBag;
-
-    /** @var SerializationHelper */
-    private $serializationHelper;
-
-    /** @var ValueNormalizer */
-    private $valueNormalizer;
+    private ActionProcessorBagInterface $processorBag;
+    private SerializationHelper $serializationHelper;
+    private ValueNormalizer $valueNormalizer;
 
     public function __construct(
         ActionProcessorBagInterface $processorBag,
@@ -49,7 +44,7 @@ class LoadProductCollection implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */
 

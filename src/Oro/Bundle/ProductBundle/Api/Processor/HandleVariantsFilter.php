@@ -17,8 +17,7 @@ class HandleVariantsFilter implements ProcessorInterface
 {
     private const FILTER_NAME = 'variants';
 
-    /** @var QueryBuilderModifierInterface */
-    private $modifier;
+    private QueryBuilderModifierInterface $modifier;
 
     public function __construct(QueryBuilderModifierInterface $modifier)
     {
@@ -28,7 +27,7 @@ class HandleVariantsFilter implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

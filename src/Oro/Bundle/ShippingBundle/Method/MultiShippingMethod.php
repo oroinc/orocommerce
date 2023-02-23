@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
  * Represents Multi Shipping method.
@@ -87,7 +86,7 @@ class MultiShippingMethod implements ShippingMethodInterface, ShippingMethodIcon
      */
     public function getOptionsConfigurationFormType(): ?string
     {
-        return HiddenType::class;
+        return null;
     }
 
     /**

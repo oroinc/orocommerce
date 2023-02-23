@@ -3,14 +3,13 @@
 namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupedLineItemsProviderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
- * Incapsulates logic to get grouped line items data.
+ * Provides grouped line items data.
  */
 class GroupedCheckoutLineItemsProvider
 {
@@ -29,19 +28,11 @@ class GroupedCheckoutLineItemsProvider
     }
 
     /**
-     * Group checkout line items by provided grouped line items ids.
+     * Groups checkout line items by provided grouped line items ids.
      *
      * @param Checkout $sourceCheckout
-     * @return array
-     *      [
-     *          product.owner:1 => [
-     *              <Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem>,
-     *              <Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem>
-     *          ],
-     *          product.owner:2 => [
-     *              <Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem>
-     *          ]
-     *      ]
+     *
+     * @return array [product.owner:1 => [checkout line item, ...], ...]
      */
     public function getGroupedLineItems(Checkout $sourceCheckout): array
     {
@@ -53,56 +44,47 @@ class GroupedCheckoutLineItemsProvider
     }
 
     /**
-     * Checkout Line items grouping and represent data as associative array of its ids.
+     * Groups checkout line items and represents data as associative array of its ids.
      *
      * @param Checkout $sourceCheckout
-     * @return array [
-     *                  'product.owner:1' => ['sku-1:item','sku-2:item'],
-     *                  'product.owner:2' => ['sku-4:set','sku-5:item']
-     *                  ...
-     *               ]
+     *
+     * @return array ['product.owner:1' => ['sku-1:item','sku-2:item'], ...]
      */
     public function getGroupedLineItemsIds(Checkout $sourceCheckout): array
     {
-        $groupedLineItems = $this->getGroupedLineItems($sourceCheckout);
         $result = [];
-
-        foreach ($groupedLineItems as $key => $lineItemsGroup) {
-            $result[$key] = array_map([$this, 'getLineItemKey'], $lineItemsGroup);
+        $groupedLineItems = $this->getGroupedLineItems($sourceCheckout);
+        foreach ($groupedLineItems as $groupingPath => $lineItems) {
+            $group = [];
+            foreach ($lineItems as $lineItem) {
+                $group[] = $this->getLineItemKey($lineItem);
+            }
+            $result[$groupingPath] = $group;
         }
 
         return $result;
     }
 
     /**
-     * Group checkout line items by provided grouped line items ids.
+     * Groups checkout line items by provided grouped line items ids.
      *
      * @param Checkout $checkout
-     * @param array $groupedItemsIds
-     * @return array
-     *      [
-     *          product.owner:1 => [
-     *              <Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem>,
-     *              <Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem>
-     *          ],
-     *          product.owner:2 => [
-     *              <Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem>
-     *          ]
-     *      ]
+     * @param array    $groupedItemsIds ['product.owner:1' => ['sku-1:item', ...], ...]
+     *
+     * @return array ['product.owner:1' => [checkout line item, ...], ...]
      */
     public function getGroupedLineItemsByIds(Checkout $checkout, array $groupedItemsIds): array
     {
-        $lineItems = $checkout->getLineItems();
         $splitItems = [];
-
-        foreach ($groupedItemsIds as $key => $lineItemsGroupIds) {
-            $splitItems[$key] = $lineItems->filter(
-                fn (CheckoutLineItem $lineItem) => in_array($this->getLineItemKey($lineItem), $lineItemsGroupIds)
-            )->toArray();
-
-            if (!empty($lineItemsGroup)) {
-                $splitItems[$key] = $lineItemsGroup;
+        $lineItems = $checkout->getLineItems();
+        foreach ($groupedItemsIds as $groupingPath => $lineItemsIds) {
+            $groupSplitItems = [];
+            foreach ($lineItems as $lineItem) {
+                if (\in_array($this->getLineItemKey($lineItem), $lineItemsIds, true)) {
+                    $groupSplitItems[] = $lineItem;
+                }
             }
+            $splitItems[$groupingPath] = $groupSplitItems;
         }
 
         return $splitItems;
@@ -110,6 +92,6 @@ class GroupedCheckoutLineItemsProvider
 
     private function getLineItemKey(ProductLineItemInterface $item): string
     {
-        return implode(':', [$item->getProductSku(), $item->getProductUnitCode()]);
+        return sprintf('%s:%s', $item->getProductSku(), $item->getProductUnitCode());
     }
 }

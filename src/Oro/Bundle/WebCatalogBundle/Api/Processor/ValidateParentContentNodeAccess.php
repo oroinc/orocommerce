@@ -15,8 +15,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ValidateParentContentNodeAccess implements ProcessorInterface
 {
-    /** @var ContentNodeRepository */
-    private $contentNodeRepository;
+    private ContentNodeRepository $contentNodeRepository;
 
     public function __construct(ContentNodeRepository $contentNodeRepository)
     {
@@ -26,7 +25,7 @@ class ValidateParentContentNodeAccess implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */
 

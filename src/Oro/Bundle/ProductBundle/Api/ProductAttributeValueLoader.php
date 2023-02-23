@@ -24,20 +24,11 @@ use Oro\Component\EntitySerializer\EntitySerializer;
  */
 class ProductAttributeValueLoader
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ActionProcessorInterface */
-    private $configProcessor;
-
-    /** @var EntitySerializer */
-    private $entitySerializer;
-
-    /** @var MetadataProvider */
-    private $metadataProvider;
-
-    /** @var EntityIdTransformerRegistry */
-    private $entityIdTransformerRegistry;
+    private DoctrineHelper $doctrineHelper;
+    private ActionProcessorInterface $configProcessor;
+    private EntitySerializer $entitySerializer;
+    private MetadataProvider $metadataProvider;
+    private EntityIdTransformerRegistry $entityIdTransformerRegistry;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -140,7 +131,7 @@ class ProductAttributeValueLoader
             if ($fieldConfig->hasCollapsed()) {
                 $fieldConfig->setCollapsed(false);
             }
-            $fieldConfig->setExcluded(!array_key_exists($fieldName, $fields));
+            $fieldConfig->setExcluded(!\array_key_exists($fieldName, $fields));
         }
 
         return $config;
@@ -271,7 +262,7 @@ class ProductAttributeValueLoader
         foreach ($idFieldNames as $fieldName) {
             $id[$fieldName] = $data[$fieldName];
         }
-        if (count($id) === 1) {
+        if (\count($id) === 1) {
             $id = reset($id);
         }
         $id = $idTransformer->transform($id, $metadata);

@@ -37,7 +37,7 @@ layout:
                 __header_wrapper:
                     blockType: container
                     options:
-                        visible: '=context["is_xml_http_request"] && context["route_name"]=="oro_shopping_list_frontend_matrix_grid_order" '
+                        visible: '=context["route_name"]=="oro_shopping_list_frontend_matrix_grid_order" && context["is_xml_http_request"] '
                         vars:
                             product: '=data.offsetExists("product") ? data["product"]'
                 __header_product_picture:

@@ -15,8 +15,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
  */
 class OrderAddressQueryModifier implements QueryModifierInterface
 {
-    /** @var EntityClassResolver */
-    private $entityClassResolver;
+    private EntityClassResolver $entityClassResolver;
 
     public function __construct(EntityClassResolver $entityClassResolver)
     {
@@ -24,7 +23,7 @@ class OrderAddressQueryModifier implements QueryModifierInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {
@@ -49,7 +48,7 @@ class OrderAddressQueryModifier implements QueryModifierInterface
         }
     }
 
-    private function addOrderSubquery(QueryBuilder $qb, string $addressAlias)
+    private function addOrderSubquery(QueryBuilder $qb, string $addressAlias): void
     {
         $subquery = sprintf(
             'SELECT 1 FROM %s ord WHERE (ord.billingAddress = %s or ord.shippingAddress = %s)',

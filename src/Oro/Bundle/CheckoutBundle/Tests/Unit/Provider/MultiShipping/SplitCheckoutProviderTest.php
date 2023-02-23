@@ -15,54 +15,85 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class SplitCheckoutProviderTest extends TestCase
+class SplitCheckoutProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    private ManagerRegistry|MockObject $managerRegistry;
-    private CheckoutSplitter|MockObject $checkoutSplitter;
-    private GroupedCheckoutLineItemsProvider|MockObject $groupedLineItemsProvider;
-    private ConfigProvider|MockObject $configProvider;
-    private SplitCheckoutProvider $provider;
+    /** @var CheckoutSplitter|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutSplitter;
+
+    /** @var GroupedCheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $groupedLineItemsProvider;
+
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var SplitCheckoutProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->checkoutSplitter = $this->createMock(CheckoutSplitter::class);
         $this->groupedLineItemsProvider = $this->createMock(GroupedCheckoutLineItemsProvider::class);
         $this->configProvider = $this->createMock(ConfigProvider::class);
 
         $this->provider = new SplitCheckoutProvider(
-            $this->managerRegistry,
+            $this->doctrine,
             $this->checkoutSplitter,
             $this->groupedLineItemsProvider,
             $this->configProvider
         );
     }
 
+    private function getCheckout(int $id): Checkout
+    {
+        $checkout = new Checkout();
+        ReflectionUtil::setId($checkout, $id);
+
+        return $checkout;
+    }
+
+    private function getCheckoutLineItem(string $sku, string $unitCode): CheckoutLineItem
+    {
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setProductSku($sku);
+        $lineItem->setProductUnitCode($unitCode);
+
+        return $lineItem;
+    }
+
+    private function getWorkflowItem(
+        bool $active,
+        ?array $groupedLineItems = null,
+        array $exclusiveGroups = ['b2b_checkout_flow']
+    ): WorkflowItem {
+        $workflowItem = new WorkflowItem();
+        $workflowDefinition = new WorkflowDefinition();
+
+        $workflowData = new WorkflowData();
+        $workflowItem->setDefinition($workflowDefinition);
+        $workflowItem->setData($workflowData);
+
+        $workflowDefinition->setExclusiveRecordGroups($exclusiveGroups);
+        $workflowDefinition->setActive($active);
+
+        if (null !== $groupedLineItems) {
+            $workflowData->set('grouped_line_items', $groupedLineItems);
+        }
+
+        return $workflowItem;
+    }
+
     public function testGetSubCheckouts()
     {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item'
-        ]);
+        $lineItem1 = $this->getCheckoutLineItem('sku-1', 'item');
+        $lineItem2 = $this->getCheckoutLineItem('sku-2', 'set');
+        $lineItem3 = $this->getCheckoutLineItem('sku-3', 'item');
 
-        $lineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-2',
-            'productUnitCode' => 'set'
-        ]);
-
-        $lineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-3',
-            'productUnitCode' => 'item'
-        ]);
-
-        $checkout = new Checkout();
-        ReflectionUtil::setId($checkout, 1);
+        $checkout = $this->getCheckout(1);
         $checkout->setLineItems(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]));
 
         $groupedLineItemsIds = [
@@ -75,10 +106,10 @@ class SplitCheckoutProviderTest extends TestCase
             'product.owner:2' => [$lineItem2]
         ];
 
-        $workflowItem = $this->createWorkflowItem(true, $groupedLineItemsIds);
+        $workflowItem = $this->getWorkflowItem(true, $groupedLineItemsIds);
         $repository = $this->createMock(WorkflowItemRepository::class);
 
-        $this->managerRegistry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
@@ -118,17 +149,15 @@ class SplitCheckoutProviderTest extends TestCase
     }
 
     /**
-     * @param array $workflowItems
      * @dataProvider getDataForTestGetSubCheckoutWithWorkflowDisabledOrNotExists
      */
     public function testGetSubCheckoutWithWorkflowDisabledOrNotExists(array $workflowItems)
     {
-        $checkout = new Checkout();
-        ReflectionUtil::setId($checkout, 1);
+        $checkout = $this->getCheckout(1);
 
         $repository = $this->createMock(WorkflowItemRepository::class);
 
-        $this->managerRegistry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
@@ -158,10 +187,10 @@ class SplitCheckoutProviderTest extends TestCase
 
     public function getDataForTestGetSubCheckoutWithWorkflowDisabledOrNotExists(): array
     {
-        $workflowItemWithDisabledDefinition = $this->createWorkflowItem(false, []);
-        $workflowItemNotSupportedGrouping = $this->createWorkflowItem(true);
-        $workflowIsNotCheckout = $this->createWorkflowItem(true, [], []);
-        $workflowWithNotCheckoutGroup = $this->createWorkflowItem(true, ['b2b_quote_backoffice_flow'], []);
+        $workflowItemWithDisabledDefinition = $this->getWorkflowItem(false, []);
+        $workflowItemNotSupportedGrouping = $this->getWorkflowItem(true);
+        $workflowIsNotCheckout = $this->getWorkflowItem(true, [], []);
+        $workflowWithNotCheckoutGroup = $this->getWorkflowItem(true, ['b2b_quote_backoffice_flow'], []);
 
         return [
             'WorkflowItem with disabled workflow' => [
@@ -184,23 +213,11 @@ class SplitCheckoutProviderTest extends TestCase
 
     public function testGetSubCheckoutsWithEmptyGroupedLineItemsWorkflowAttribute()
     {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item'
-        ]);
+        $lineItem1 = $this->getCheckoutLineItem('sku-1', 'item');
+        $lineItem2 = $this->getCheckoutLineItem('sku-2', 'set');
+        $lineItem3 = $this->getCheckoutLineItem('sku-3', 'item');
 
-        $lineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-2',
-            'productUnitCode' => 'set'
-        ]);
-
-        $lineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-3',
-            'productUnitCode' => 'item'
-        ]);
-
-        $checkout = new Checkout();
-        ReflectionUtil::setId($checkout, 1);
+        $checkout = $this->getCheckout(1);
         $checkout->setLineItems(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]));
 
         $groupedLineItemsIds = [
@@ -213,10 +230,10 @@ class SplitCheckoutProviderTest extends TestCase
             'product.owner:2' => [$lineItem2]
         ];
 
-        $workflowItem = $this->createWorkflowItem(true, []);
+        $workflowItem = $this->getWorkflowItem(true, []);
         $repository = $this->createMock(WorkflowItemRepository::class);
 
-        $this->managerRegistry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
@@ -258,20 +275,9 @@ class SplitCheckoutProviderTest extends TestCase
 
     public function testGetSubCheckoutsWithCachedValues()
     {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item'
-        ]);
-
-        $lineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-2',
-            'productUnitCode' => 'set'
-        ]);
-
-        $lineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-3',
-            'productUnitCode' => 'item'
-        ]);
+        $lineItem1 = $this->getCheckoutLineItem('sku-1', 'item');
+        $lineItem2 = $this->getCheckoutLineItem('sku-2', 'set');
+        $lineItem3 = $this->getCheckoutLineItem('sku-3', 'item');
 
         $cachedSubCheckouts = [
             1 => [
@@ -282,7 +288,7 @@ class SplitCheckoutProviderTest extends TestCase
 
         ReflectionUtil::setPropertyValue($this->provider, 'subCheckouts', $cachedSubCheckouts);
 
-        $this->managerRegistry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method('getRepository');
 
         $this->groupedLineItemsProvider->expects($this->never())
@@ -297,8 +303,7 @@ class SplitCheckoutProviderTest extends TestCase
         $this->configProvider->expects($this->never())
             ->method('isCreateSubOrdersForEachGroupEnabled');
 
-        $checkout = new Checkout();
-        ReflectionUtil::setId($checkout, 1);
+        $checkout = $this->getCheckout(1);
 
         $result = $this->provider->getSubCheckouts($checkout);
 
@@ -315,20 +320,9 @@ class SplitCheckoutProviderTest extends TestCase
 
     public function testGetSubCheckoutsWithCachedValuesSkip()
     {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item'
-        ]);
-
-        $lineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-2',
-            'productUnitCode' => 'set'
-        ]);
-
-        $lineItem3 = $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => 'sku-3',
-            'productUnitCode' => 'item'
-        ]);
+        $lineItem1 = $this->getCheckoutLineItem('sku-1', 'item');
+        $lineItem2 = $this->getCheckoutLineItem('sku-2', 'set');
+        $lineItem3 = $this->getCheckoutLineItem('sku-3', 'item');
 
         $cachedSubCheckouts = [
             1 => [
@@ -339,8 +333,7 @@ class SplitCheckoutProviderTest extends TestCase
 
         ReflectionUtil::setPropertyValue($this->provider, 'subCheckouts', $cachedSubCheckouts);
 
-        $checkout = new Checkout();
-        ReflectionUtil::setId($checkout, 1);
+        $checkout = $this->getCheckout(1);
         $checkout->setLineItems(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3]));
 
         $groupedLineItemsIds = [
@@ -353,10 +346,10 @@ class SplitCheckoutProviderTest extends TestCase
             'product.owner:2' => [$lineItem2]
         ];
 
-        $workflowItem = $this->createWorkflowItem(true, []);
+        $workflowItem = $this->getWorkflowItem(true, []);
         $repository = $this->createMock(WorkflowItemRepository::class);
 
-        $this->managerRegistry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
@@ -396,35 +389,13 @@ class SplitCheckoutProviderTest extends TestCase
         $this->assertCount(1, $subCheckout2->getLineItems());
     }
 
-    private function createWorkflowItem(
-        $active = true,
-        ?array $groupedLineItems = null,
-        array $exclusiveGroups = ['b2b_checkout_flow']
-    ): WorkflowItem {
-        $workflowItem = new WorkflowItem();
-        $workflowDefinition = new WorkflowDefinition();
-        $workflowData = new WorkflowData();
-
-        $workflowItem->setDefinition($workflowDefinition);
-        $workflowItem->setData($workflowData);
-
-        $workflowDefinition->setExclusiveRecordGroups($exclusiveGroups);
-
-        $workflowDefinition->setActive($active);
-        if (null !== $groupedLineItems) {
-            $workflowData->set('grouped_line_items', $groupedLineItems);
-        }
-
-        return $workflowItem;
-    }
-
     public function testGetSubCheckoutsWhenCreateSubOrdersDisabled()
     {
         $this->configProvider->expects($this->once())
             ->method('isCreateSubOrdersForEachGroupEnabled')
             ->willReturn(false);
 
-        $this->managerRegistry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method('getRepository');
 
         $this->groupedLineItemsProvider->expects($this->never())
@@ -440,7 +411,7 @@ class SplitCheckoutProviderTest extends TestCase
         $this->assertEmpty($result);
     }
 
-    public function getTestIsCreateSubOrdersEnabledData()
+    public function getTestIsCreateSubOrdersEnabledData(): array
     {
         return [
             [true, true],

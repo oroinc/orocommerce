@@ -16,14 +16,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeLineItemPrice implements ProcessorInterface
 {
-    /** @var MatchingPriceProvider */
-    private $matchingPriceProvider;
-
-    /** @var ProductPriceScopeCriteriaRequestHandler */
-    private $scopeCriteriaRequestHandler;
-
-    /** @var UserCurrencyManager */
-    private $userCurrencyManager;
+    private MatchingPriceProvider $matchingPriceProvider;
+    private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler;
+    private UserCurrencyManager $userCurrencyManager;
 
     public function __construct(
         MatchingPriceProvider $matchingPriceProvider,
@@ -38,7 +33,7 @@ class ComputeLineItemPrice implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -88,7 +83,7 @@ class ComputeLineItemPrice implements ProcessorInterface
         $productIdFieldName = $this->getAssociationIdFieldName($config, $productFieldName);
         $unitCodeFieldName = $this->getAssociationIdFieldName($config, $unitFieldName);
 
-        list($value, $currency) = $this->getPrice(
+        [$value, $currency] = $this->getPrice(
             $data[$productFieldName][$productIdFieldName],
             $data[$quantityFieldName],
             $data[$unitFieldName][$unitCodeFieldName]
@@ -121,7 +116,7 @@ class ComputeLineItemPrice implements ProcessorInterface
      *
      * @return array [value, currency]
      */
-    private function getPrice($productId, $quantity, $unitCode): array
+    private function getPrice(int $productId, float $quantity, string $unitCode): array
     {
         $prices = $this->matchingPriceProvider->getMatchingPrices(
             [
@@ -138,7 +133,7 @@ class ComputeLineItemPrice implements ProcessorInterface
         $value = null;
         $currency = null;
         if ($prices) {
-            $price = \reset($prices);
+            $price = reset($prices);
             $value = $price['value'];
             $currency = $price['currency'];
         }

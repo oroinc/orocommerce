@@ -16,8 +16,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeProductUnitLabel implements ProcessorInterface
 {
-    /** @var UnitLabelFormatterInterface */
-    private $formatter;
+    private UnitLabelFormatterInterface $formatter;
 
     public function __construct(UnitLabelFormatterInterface $formatter)
     {
@@ -27,7 +26,7 @@ class ComputeProductUnitLabel implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

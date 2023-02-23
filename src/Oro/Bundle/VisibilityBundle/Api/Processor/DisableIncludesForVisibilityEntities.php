@@ -15,7 +15,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class DisableIncludesForVisibilityEntities implements ProcessorInterface
 {
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var FormContext $context */
 

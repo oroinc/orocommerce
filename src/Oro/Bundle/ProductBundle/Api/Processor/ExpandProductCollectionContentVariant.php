@@ -24,14 +24,11 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ExpandProductCollectionContentVariant implements ProcessorInterface
 {
-    private const ID_FIELD             = 'id';
+    private const ID_FIELD = 'id';
     private const PRODUCTS_ASSOCIATION = 'products';
 
-    /** @var ActionProcessorBagInterface */
-    private $processorBag;
-
-    /** @var ValueNormalizer */
-    private $valueNormalizer;
+    private ActionProcessorBagInterface $processorBag;
+    private ValueNormalizer $valueNormalizer;
 
     public function __construct(
         ActionProcessorBagInterface $processorBag,
@@ -44,7 +41,7 @@ class ExpandProductCollectionContentVariant implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

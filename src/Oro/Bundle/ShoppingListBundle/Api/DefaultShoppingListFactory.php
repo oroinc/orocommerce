@@ -14,14 +14,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class DefaultShoppingListFactory
 {
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var ShoppingListManager */
-    private $shoppingListManager;
-
-    /** @var GuestShoppingListManager */
-    private $guestShoppingListManager;
+    private TokenStorageInterface $tokenStorage;
+    private ShoppingListManager $shoppingListManager;
+    private GuestShoppingListManager $guestShoppingListManager;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,

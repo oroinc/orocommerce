@@ -10,45 +10,34 @@ use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LineItemShippingMethodsTypeTest extends FormIntegrationTestCase
 {
-    private CheckoutLineItemsShippingManager $shippingManager;
+    /** @var CheckoutLineItemsShippingManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingManager;
+
+    /** @var LineItemShippingMethodsType */
+    private $formType;
 
     protected function setUp(): void
     {
         $this->shippingManager = $this->createMock(CheckoutLineItemsShippingManager::class);
+        $this->formType = new LineItemShippingMethodsType($this->shippingManager);
+
         parent::setUp();
     }
 
-    public function testConfigureOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
     {
-        $formType = new LineItemShippingMethodsType($this->shippingManager);
-
-        $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
-            ->method('setRequired')
-            ->with(['checkout'])
-            ->willReturnSelf();
-
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->with([
-                'data_class' => null,
-                'checkout' => null
-            ])
-            ->willReturnSelf();
-
-        $resolver->expects($this->once())
-            ->method('setAllowedTypes')
-            ->with('checkout', Checkout::class)
-            ->willReturnSelf();
-
-        $formType->configureOptions($resolver);
+        return [
+            new PreloadedExtension([$this->formType], [])
+        ];
     }
 
-    public function testOnSubmit()
+    public function testSubmit(): void
     {
         $checkout = new Checkout();
 
@@ -59,11 +48,6 @@ class LineItemShippingMethodsTypeTest extends FormIntegrationTestCase
         $lineItem2 = new CheckoutLineItem();
         ReflectionUtil::setId($lineItem2, 2);
         $checkout->addLineItem($lineItem2);
-
-        $formType = $this->factory->create(LineItemShippingMethodsType::class, null, [
-            'checkout' => $checkout,
-            'data' => []
-        ]);
 
         $submitData = [
             1 => [
@@ -80,39 +64,23 @@ class LineItemShippingMethodsTypeTest extends FormIntegrationTestCase
             ->method('updateLineItemsShippingMethods')
             ->with($submitData, $checkout);
 
-        $formType->submit(json_encode($submitData));
+        $form = $this->factory->create(LineItemShippingMethodsType::class, null, [
+            'checkout' => $checkout,
+            'data' => []
+        ]);
+        $form->submit(json_encode($submitData, JSON_THROW_ON_ERROR));
 
-        $this->assertTrue($formType->isValid());
-        $this->assertTrue($formType->isSynchronized());
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
     }
 
-    protected function getExtensions(): array
+    public function testGetBlockPrefix(): void
     {
-        $formTypeInstance = new LineItemShippingMethodsType($this->shippingManager);
-
-        return [
-            new PreloadedExtension(
-                [$formTypeInstance],
-                []
-            )
-        ];
+        $this->assertEquals('oro_checkout_line_items_shipping_methods', $this->formType->getBlockPrefix());
     }
 
-    public function testGetBlockPrefix()
+    public function testGetParent(): void
     {
-        $formType = new LineItemShippingMethodsType($this->shippingManager);
-        $this->assertEquals('oro_checkout_line_items_shipping_methods', $formType->getBlockPrefix());
-    }
-
-    public function testGetNamePrefix()
-    {
-        $formType = new LineItemShippingMethodsType($this->shippingManager);
-        $this->assertEquals('oro_checkout_line_items_shipping_methods', $formType->getName());
-    }
-
-    public function testGetParent()
-    {
-        $formType = new LineItemShippingMethodsType($this->shippingManager);
-        $this->assertEquals(HiddenType::class, $formType->getParent());
+        $this->assertEquals(HiddenType::class, $this->formType->getParent());
     }
 }

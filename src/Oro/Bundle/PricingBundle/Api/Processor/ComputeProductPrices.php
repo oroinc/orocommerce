@@ -27,29 +27,14 @@ class ComputeProductPrices implements ProcessorInterface
 {
     private const FIELD_NAME = 'prices';
 
-    /** @var ProductPriceStorageInterface */
-    private $priceStorage;
-
-    /** @var ProductPriceScopeCriteriaFactoryInterface */
-    private $priceScopeCriteriaFactory;
-
-    /** @var CustomerUserRelationsProvider */
-    private $relationsProvider;
-
-    /** @var UserCurrencyManager */
-    private $currencyManager;
-
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ValueTransformer */
-    private $valueTransformer;
+    private ProductPriceStorageInterface $priceStorage;
+    private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
+    private CustomerUserRelationsProvider $relationsProvider;
+    private UserCurrencyManager $currencyManager;
+    private TokenStorageInterface $tokenStorage;
+    private WebsiteManager $websiteManager;
+    private DoctrineHelper $doctrineHelper;
+    private ValueTransformer $valueTransformer;
 
     public function __construct(
         ProductPriceStorageInterface $priceStorage,
@@ -74,7 +59,7 @@ class ComputeProductPrices implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -143,10 +128,7 @@ class ComputeProductPrices implements ProcessorInterface
         return $result;
     }
 
-    /**
-     * @return ProductPriceScopeCriteriaInterface
-     */
-    private function getScopeCriteria()
+    private function getScopeCriteria(): ProductPriceScopeCriteriaInterface
     {
         return $this->priceScopeCriteriaFactory->create(
             $this->websiteManager->getCurrentWebsite(),
@@ -154,10 +136,7 @@ class ComputeProductPrices implements ProcessorInterface
         );
     }
 
-    /**
-     * @return CustomerUser|null
-     */
-    private function getCustomerUser()
+    private function getCustomerUser(): ?CustomerUser
     {
         $customerUser = null;
         $token = $this->tokenStorage->getToken();

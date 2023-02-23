@@ -14,11 +14,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ConfigureGuestCheckoutReadonlyFields implements ProcessorInterface
 {
-    /** @var GuestCheckoutChecker */
-    private $guestCheckoutChecker;
-
+    private GuestCheckoutChecker $guestCheckoutChecker;
     /** @var string[] */
-    private $fieldNames;
+    private array $fieldNames;
 
     public function __construct(
         GuestCheckoutChecker $guestCheckoutChecker,
@@ -31,7 +29,7 @@ class ConfigureGuestCheckoutReadonlyFields implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */
 
@@ -41,10 +39,7 @@ class ConfigureGuestCheckoutReadonlyFields implements ProcessorInterface
 
         $config = $context->getResult();
         foreach ($this->fieldNames as $fieldName) {
-            $field = $config->findField($fieldName, true);
-            if (null !== $field) {
-                $field->setFormOption('mapped', false);
-            }
+            $config->findField($fieldName, true)?->setFormOption('mapped', false);
         }
     }
 }

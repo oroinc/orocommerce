@@ -19,17 +19,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ValidateShoppingListLimit implements ProcessorInterface
 {
-    /** @var FeatureChecker */
-    private $featureChecker;
-
-    /** @var GuestShoppingListManager */
-    private $guestShoppingListManager;
-
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var TranslatorInterface */
-    private $translator;
+    private FeatureChecker $featureChecker;
+    private GuestShoppingListManager $guestShoppingListManager;
+    private TokenStorageInterface $tokenStorage;
+    private TranslatorInterface $translator;
 
     public function __construct(
         FeatureChecker $featureChecker,
@@ -46,7 +39,7 @@ class ValidateShoppingListLimit implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 
@@ -64,7 +57,7 @@ class ValidateShoppingListLimit implements ProcessorInterface
         }
     }
 
-    private function addCreateNotAllowedConstraint(FormInterface $form)
+    private function addCreateNotAllowedConstraint(FormInterface $form): void
     {
         FormUtil::addNamedFormError(
             $form,

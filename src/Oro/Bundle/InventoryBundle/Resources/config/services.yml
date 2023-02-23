@@ -72,9 +72,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
 
-    Oro\Bundle\InventoryBundle\Inventory\InventoryManager:
-        alias: 'oro_inventory.manager.inventory_manager'
-
     oro_inventory.provider.inventory_quantity:
         class: Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProvider
         arguments:
@@ -93,7 +90,7 @@ services:
         class: Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider
         arguments:
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
         tags:
             - { name: layout.data_provider, alias: low_inventory }
 
@@ -101,8 +98,9 @@ services:
         class: Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider
         arguments:
              - '@oro_entity.fallback.resolver.entity_fallback_resolver'
-             - '@oro_entity.doctrine_helper'
+             - '@doctrine'
              - '@oro_config.manager'
+             - '@property_accessor'
         tags:
             - { name: layout.data_provider, alias: upcoming_product }
 

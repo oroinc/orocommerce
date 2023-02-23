@@ -11,18 +11,25 @@ use Oro\Bundle\CheckoutBundle\Splitter\MultiShipping\CheckoutSplitter;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class SplitCheckoutActionTest extends TestCase
+class SplitCheckoutActionTest extends \PHPUnit\Framework\TestCase
 {
-    private CheckoutSplitter|MockObject $checkoutSplitter;
-    private ContextAccessor|MockObject $contextAccessor;
-    private EventDispatcher|MockObject $dispatcher;
-    private GroupedCheckoutLineItemsProvider $groupedLineItemsProvider;
-    private SplitCheckoutAction $action;
+    /** @var CheckoutSplitter|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutSplitter;
+
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
+
+    /** @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject */
+    private $dispatcher;
+
+    /** @var GroupedCheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $groupedLineItemsProvider;
+
+    /** @var SplitCheckoutAction */
+    private $action;
 
     protected function setUp(): void
     {
@@ -52,10 +59,10 @@ class SplitCheckoutActionTest extends TestCase
 
         $this->contextAccessor->expects($this->exactly(2))
             ->method('getValue')
-            ->will($this->onConsecutiveCalls($checkout, [
-                'product.owner:1' => [1],
-                'product.owner:2' => [2]
-            ]));
+            ->willReturnOnConsecutiveCalls(
+                $checkout,
+                ['product.owner:1' => [1], 'product.owner:2' => [2]]
+            );
 
         $groupedLineItems = [
             'product.owner:1' => [0 => $lineItem1],

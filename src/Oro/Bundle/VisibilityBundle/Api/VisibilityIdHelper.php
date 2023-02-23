@@ -90,9 +90,9 @@ class VisibilityIdHelper
         EntityDefinitionFieldConfig $idFieldConfig
     ): ?array {
         $propertyPaths = $idFieldConfig->getDependsOn() ?? [];
-        $count = count($propertyPaths);
+        $count = \count($propertyPaths);
         $values = explode(self::DELIMITER, $encodedVisibilityId);
-        if (count($values) !== $count) {
+        if (\count($values) !== $count) {
             return null;
         }
 

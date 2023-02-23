@@ -50,7 +50,7 @@ class UpdateCombinedPriceLists implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         $priceLists = $context->get(self::PRICE_LISTS);
         foreach ($priceLists as $priceList) {

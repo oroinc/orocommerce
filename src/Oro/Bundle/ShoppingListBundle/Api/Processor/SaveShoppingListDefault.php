@@ -17,11 +17,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class SaveShoppingListDefault implements ProcessorInterface
 {
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
-
-    /** @var CurrentShoppingListStorage */
-    private $currentShoppingListStorage;
+    private TokenAccessorInterface $tokenAccessor;
+    private CurrentShoppingListStorage $currentShoppingListStorage;
 
     public function __construct(
         TokenAccessorInterface $tokenAccessor,
@@ -34,7 +31,7 @@ class SaveShoppingListDefault implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var FormContext $context */
 

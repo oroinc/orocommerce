@@ -17,7 +17,7 @@ class HandleOrderLineItemEmptyPrice implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 
@@ -33,12 +33,6 @@ class HandleOrderLineItemEmptyPrice implements ProcessorInterface
         $context->setData($data);
     }
 
-    /**
-     * @param array              $data
-     * @param FormInterface|null $fieldForm
-     *
-     * @return bool
-     */
     private function isSubmittedAndNull(array $data, FormInterface $fieldForm): bool
     {
         return

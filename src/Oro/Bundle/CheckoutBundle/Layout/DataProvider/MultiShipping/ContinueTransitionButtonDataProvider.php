@@ -23,12 +23,8 @@ class ContinueTransitionButtonDataProvider
 
     /**
      * Replace js view component for "Continue" button.
-     *
-     * @param WorkflowItem $workflowItem
-     * @param null $transitionName
-     * @return TransitionData
      */
-    public function getContinueTransition(WorkflowItem $workflowItem, $transitionName = null): TransitionData
+    public function getContinueTransition(WorkflowItem $workflowItem, ?string $transitionName = null): TransitionData
     {
         $transitionData = $this->transitionProvider->getContinueTransition($workflowItem, $transitionName);
 

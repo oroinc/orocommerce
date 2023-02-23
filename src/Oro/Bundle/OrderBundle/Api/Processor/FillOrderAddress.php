@@ -19,11 +19,8 @@ class FillOrderAddress implements ProcessorInterface
 {
     private const SUBMITTED_DATA = 'submitted_data';
 
-    /** @var OrderAddressManager */
-    private $orderAddressManager;
-
-    /** @var TranslatorInterface */
-    private $translator;
+    private OrderAddressManager $orderAddressManager;
+    private TranslatorInterface $translator;
 
     public function __construct(OrderAddressManager $orderAddressManager, TranslatorInterface $translator)
     {
@@ -34,7 +31,7 @@ class FillOrderAddress implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 
@@ -101,7 +98,7 @@ class FillOrderAddress implements ProcessorInterface
     {
         return
             null !== $fieldName
-            && array_key_exists($fieldName, $submittedData)
+            && \array_key_exists($fieldName, $submittedData)
             && null !== $submittedData[$fieldName];
     }
 

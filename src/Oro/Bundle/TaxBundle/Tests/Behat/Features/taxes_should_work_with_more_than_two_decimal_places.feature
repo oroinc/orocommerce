@@ -52,10 +52,10 @@ Feature: Taxes should work with more than two decimal places
     And uncheck "Use default" for "Use as Base by Default" field
     And uncheck "Use default" for "Origin Address" field
     And I fill "Tax Calculation Form" with:
-      | Use As Base By Default | Shipping Origin |
-      | Origin Country         | Germany         |
-      | Origin Region          | Berlin          |
-      | Origin Zip Code        | 10115           |
+      | Use As Base By Default | Origin  |
+      | Origin Country         | Germany |
+      | Origin Region          | Berlin  |
+      | Origin Zip Code        | 10115   |
     And I save form
     Then I should see "Configuration saved" flash message
     Given There are products in the system available for order

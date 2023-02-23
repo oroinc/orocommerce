@@ -5,22 +5,23 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderMultiShippingLayoutProvider;
-use PHPUnit\Framework\TestCase;
 
-class OrderMultiShippingLayoutProviderTest extends TestCase
+class OrderMultiShippingLayoutProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigProvider $multiShippingConfigProvider;
-    private OrderMultiShippingLayoutProvider $layoutDataProvider;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $multiShippingConfigProvider;
+
+    /** @var OrderMultiShippingLayoutProvider */
+    private $layoutDataProvider;
 
     protected function setUp(): void
     {
         $this->multiShippingConfigProvider = $this->createMock(ConfigProvider::class);
+
         $this->layoutDataProvider = new OrderMultiShippingLayoutProvider($this->multiShippingConfigProvider);
     }
 
     /**
-     * @param Order $order
-     * @param bool $expected
      * @dataProvider getDisplaySubOrdersAvailableDataProvider
      */
     public function testGetDisplaySubOrdersAvailable(Order $order, bool $expected)

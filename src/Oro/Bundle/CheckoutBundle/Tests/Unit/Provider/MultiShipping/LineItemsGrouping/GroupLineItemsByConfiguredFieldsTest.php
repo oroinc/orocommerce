@@ -10,18 +10,23 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupLine
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
-class GroupLineItemsByConfiguredFieldsTest extends TestCase
+class GroupLineItemsByConfiguredFieldsTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigProvider|MockObject $configProvider;
-    private PropertyAccessorInterface|MockObject $propertyAccessor;
-    private DoctrineHelper|MockObject $doctrineHelper;
-    private GroupLineItemsByConfiguredFields $groupedLineItemsProvider;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $propertyAccessor;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var GroupLineItemsByConfiguredFields */
+    private $groupedLineItemsProvider;
 
     protected function setUp(): void
     {

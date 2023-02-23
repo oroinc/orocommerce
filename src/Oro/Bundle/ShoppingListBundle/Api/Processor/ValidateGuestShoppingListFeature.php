@@ -16,11 +16,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ValidateGuestShoppingListFeature implements ProcessorInterface
 {
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var GuestShoppingListManager */
-    private $shoppingListManager;
+    private TokenStorageInterface $tokenStorage;
+    private GuestShoppingListManager $shoppingListManager;
 
     public function __construct(TokenStorageInterface $tokenStorage, GuestShoppingListManager $shoppingListManager)
     {
@@ -31,7 +28,7 @@ class ValidateGuestShoppingListFeature implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

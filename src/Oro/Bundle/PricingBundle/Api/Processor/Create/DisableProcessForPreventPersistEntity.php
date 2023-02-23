@@ -22,7 +22,7 @@ class DisableProcessForPreventPersistEntity implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         if ($this->isEnablePriceSharding) {
             /** @var SingleItemContext $context */

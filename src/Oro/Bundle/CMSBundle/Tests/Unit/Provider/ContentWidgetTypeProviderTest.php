@@ -5,15 +5,11 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContentWidgetTypeProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContentWidgetTypeRegistry */
+    /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $contentWidgetTypeRegistry;
-
-    /** @var TranslatorInterface */
-    private $translator;
 
     /** @var ContentWidgetTypeProvider */
     private $provider;
@@ -22,16 +18,7 @@ class ContentWidgetTypeProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
 
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
-
-        $this->provider = new ContentWidgetTypeProvider($this->contentWidgetTypeRegistry, $this->translator);
+        $this->provider = new ContentWidgetTypeProvider($this->contentWidgetTypeRegistry);
     }
 
     public function testGetAvailableContentWidgetTypes(): void
@@ -43,7 +30,7 @@ class ContentWidgetTypeProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$type]);
 
         $this->assertEquals(
-            [$type->getLabel() . '.trans' => $type::getName()],
+            [$type->getLabel() => $type::getName()],
             $this->provider->getAvailableContentWidgetTypes()
         );
     }

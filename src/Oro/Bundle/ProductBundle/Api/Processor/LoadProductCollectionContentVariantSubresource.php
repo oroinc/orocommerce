@@ -18,8 +18,7 @@ class LoadProductCollectionContentVariantSubresource implements ProcessorInterfa
 {
     private const ID_FIELD = 'id';
 
-    /** @var SerializationHelper */
-    private $serializationHelper;
+    private SerializationHelper $serializationHelper;
 
     public function __construct(SerializationHelper $serializationHelper)
     {
@@ -29,7 +28,7 @@ class LoadProductCollectionContentVariantSubresource implements ProcessorInterfa
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */
 

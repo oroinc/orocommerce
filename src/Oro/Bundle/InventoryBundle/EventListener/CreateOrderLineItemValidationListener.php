@@ -2,84 +2,66 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Adds validation errors to LineItemValidateEvent.
+ * Validates that all products have enough quantity in the stock.
  */
 class CreateOrderLineItemValidationListener
 {
-    /**
-     * @var InventoryQuantityManager
-     */
-    protected $inventoryQuantityManager;
+    private const ALLOWED_STEPS = [
+        'order_review' => true,
+        'checkout' => true,
+        // additional steps for alternative checkout
+        'request_approval' => true,
+        'approve_request' => true,
+    ];
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var CheckoutLineItemsManager
-     */
-    protected $checkoutLineItemsManager;
-
-    /**
-     * @var array
-     */
-    protected static $allowedValidationSteps = ['order_review', 'checkout', 'request_approval', 'approve_request'];
+    private InventoryQuantityManager $quantityManager;
+    private ManagerRegistry $doctrine;
+    private TranslatorInterface $translator;
+    private CheckoutLineItemsManager $checkoutLineItemsManager;
 
     public function __construct(
-        InventoryQuantityManager $inventoryQuantityManager,
-        DoctrineHelper $doctrineHelper,
+        InventoryQuantityManager $quantityManager,
+        ManagerRegistry $doctrine,
         TranslatorInterface $translator,
         CheckoutLineItemsManager $checkoutLineItemsManager
     ) {
-        $this->inventoryQuantityManager = $inventoryQuantityManager;
+        $this->quantityManager = $quantityManager;
         $this->translator = $translator;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
     }
 
-    /**
-     * @throws InventoryLevelNotFoundException
-     */
-    public function onLineItemValidate(LineItemValidateEvent $event)
+    public function onLineItemValidate(LineItemValidateEvent $event): void
     {
-        if (!$this->isContextSupported($event->getContext())) {
+        $context = $event->getContext();
+        if (!$this->isContextSupported($context)) {
             return;
         }
 
-        $lineItems = $this->checkoutLineItemsManager->getData($event->getContext()->getEntity());
-        /** @var OrderLineItem $lineItem */
+        $lineItems = $this->checkoutLineItemsManager->getData($context->getEntity());
         foreach ($lineItems as $lineItem) {
-            if (!$this->inventoryQuantityManager->shouldDecrement($lineItem->getProduct())) {
+            if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
             }
 
-            $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
-            if (!$inventoryLevel) {
+            $inventoryLevel = $this->doctrine->getRepository(InventoryLevel::class)
+                ->getLevelByProductAndProductUnit($lineItem->getProduct(), $lineItem->getProductUnit());
+            if (null === $inventoryLevel) {
                 throw new InventoryLevelNotFoundException();
             }
 
-            if (!$this->inventoryQuantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
+            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
                 $event->addErrorByUnit(
                     $lineItem->getProductSku(),
                     $lineItem->getProductUnitCode(),
@@ -89,30 +71,11 @@ class CreateOrderLineItemValidationListener
         }
     }
 
-    /**
-     * @param mixed $context
-     * @return bool
-     */
-    protected function isContextSupported($context)
+    private function isContextSupported(mixed $context): bool
     {
-        return ($context instanceof WorkflowItem
-            && in_array($context->getCurrentStep()->getName(), self::$allowedValidationSteps)
+        return
+            $context instanceof WorkflowItem
             && $context->getEntity() instanceof Checkout
-        );
-    }
-
-    /**
-     * @param Product $product
-     * @param ProductUnit $productUnit
-     * @return InventoryLevel
-     */
-    protected function getInventoryLevel(Product $product, ProductUnit $productUnit)
-    {
-        /** @var InventoryLevelRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository(InventoryLevel::class);
-        return $repository->getLevelByProductAndProductUnit(
-            $product,
-            $productUnit
-        );
+            && isset(self::ALLOWED_STEPS[$context->getCurrentStep()->getName()]);
     }
 }

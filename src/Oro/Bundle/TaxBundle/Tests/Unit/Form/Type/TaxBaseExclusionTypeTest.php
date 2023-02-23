@@ -46,13 +46,13 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 'submittedData' => [
                     'country' => self::COUNTRY_WITH_REGION,
                     'region' => self::REGION_WITH_COUNTRY,
-                    'option' => 'shipping_origin',
+                    'option' => 'origin',
                 ],
                 'expectedData' => [
                     'country' => $country,
                     'region' => $region,
                     'region_text' => null,
-                    'option' => 'shipping_origin',
+                    'option' => 'origin',
                 ],
             ],
             'valid without region' => [
@@ -62,13 +62,13 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 'submittedData' => [
                     'country' => self::COUNTRY_WITHOUT_REGION,
                     'region' => null,
-                    'option' => 'shipping_origin',
+                    'option' => 'origin',
                 ],
                 'expectedData' => [
                     'country' => new Country(self::COUNTRY_WITHOUT_REGION),
                     'region' => null,
                     'region_text' => null,
-                    'option' => 'shipping_origin',
+                    'option' => 'origin',
                 ],
             ],
             'invalid without country' => [
@@ -78,13 +78,13 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 'submittedData' => [
                     'country' => null,
                     'region' => self::REGION_WITH_COUNTRY,
-                    'option' => 'shipping_origin',
+                    'option' => 'origin',
                 ],
                 'expectedData' => [
                     'country' => null,
                     'region' => $region,
                     'region_text' => null,
-                    'option' => 'shipping_origin',
+                    'option' => 'origin',
                 ],
             ],
             'invalid without option' => [

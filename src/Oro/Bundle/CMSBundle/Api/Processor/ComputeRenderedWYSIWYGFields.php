@@ -14,8 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeRenderedWYSIWYGFields implements ProcessorInterface
 {
-    /** @var WYSIWYGValueRenderer */
-    private $wysiwygValueRenderer;
+    private WYSIWYGValueRenderer $wysiwygValueRenderer;
 
     public function __construct(WYSIWYGValueRenderer $wysiwygValueRenderer)
     {
@@ -25,7 +24,7 @@ class ComputeRenderedWYSIWYGFields implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

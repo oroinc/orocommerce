@@ -28,8 +28,6 @@ Feature: Promotions calculations during checkout with grouping line items
     And uncheck "Use default" for "Enable shipping method selection per line item" field
     And I fill form with:
       | Enable shipping method selection per line item | true |
-    When I click "Create Multi Shipping Integration"
-    Then I should see "Multi shipping integration was created successfully" flash message
     And uncheck "Use default" for "Enable grouping of line items during checkout" field
     And I fill form with:
       | Enable grouping of line items during checkout | true |

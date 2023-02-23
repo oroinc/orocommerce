@@ -21,34 +21,23 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class ShoppingListItemCollection extends ArrayCollection
 {
-    /** @var ShoppingList */
-    private $shoppingList;
-
-    /** @var EntityInstantiator */
-    private $entityInstantiator;
-
-    /** @var string */
-    private $entityClass;
-
-    /** @var EntityDefinitionConfig */
-    private $entityConfig;
-
-    /** @var Collection|LineItem[] */
-    private $existingItems;
-
+    private ShoppingList $shoppingList;
+    private EntityInstantiator $entityInstantiator;
+    private string $entityClass;
+    private EntityDefinitionConfig $entityConfig;
+    /** @var Collection<int, LineItem> */
+    private Collection $existingItems;
+    private ValidatorInterface $validator;
     /** @var LineItem[] */
-    private $submittedItems = [];
-
-    /** @var ValidatorInterface */
-    private $validator;
+    private array $submittedItems = [];
 
     /**
-     * @param ShoppingList           $shoppingList
-     * @param EntityInstantiator     $entityInstantiator
-     * @param string                 $entityClass
-     * @param EntityDefinitionConfig $entityConfig
-     * @param Collection|LineItem[]  $existingItems
-     * @param ValidatorInterface     $validator
+     * @param ShoppingList              $shoppingList
+     * @param EntityInstantiator        $entityInstantiator
+     * @param string                    $entityClass
+     * @param EntityDefinitionConfig    $entityConfig
+     * @param Collection<int, LineItem> $existingItems
+     * @param ValidatorInterface        $validator
      */
     public function __construct(
         ShoppingList $shoppingList,
@@ -69,10 +58,8 @@ class ShoppingListItemCollection extends ArrayCollection
 
     /**
      * Gets an array contains all submitted line items.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->submittedItems;
     }
@@ -263,13 +250,7 @@ class ShoppingListItemCollection extends ArrayCollection
         return $form->get($name);
     }
 
-    /**
-     * @param FormInterface $form
-     * @param string        $fieldName
-     *
-     * @return mixed
-     */
-    protected function getFormValue(FormInterface $form, string $fieldName)
+    protected function getFormValue(FormInterface $form, string $fieldName): mixed
     {
         $field = $this->getForm($form, $fieldName);
         if (null === $field) {
@@ -279,11 +260,7 @@ class ShoppingListItemCollection extends ArrayCollection
         return $field->getData();
     }
 
-    /**
-     * @param FormInterface $form
-     * @param mixed         $value
-     */
-    protected function setFormData(FormInterface $form, $value): void
+    protected function setFormData(FormInterface $form, mixed $value): void
     {
         // the Form::setData() cannot be used because the form is already locked
         $updateQuantityFormClosure = \Closure::bind(

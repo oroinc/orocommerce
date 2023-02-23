@@ -38,9 +38,3 @@ oro:
                 message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">the following</a> shipping rules depend on the integration that is being deleted. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
                 title: Delete integration
                 button.okText: Delete
-
-    multi_shipping:
-        integration:
-            create:
-                success: Multi shipping integration was created successfully
-                error: Error creating multi shipping integration

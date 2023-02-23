@@ -12,61 +12,65 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateOrderCheckUpcomingListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $validator;
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $validator;
 
-    /**
-     * @var CreateOrderCheckUpcomingListener
-     */
-    protected $listener;
-
-    /**
-     * @var ConstraintViolationListInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $violations;
+    /** @var CreateOrderCheckUpcomingListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->violations = $this->createMock(ConstraintViolationListInterface::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
+
         $this->listener = new CreateOrderCheckUpcomingListener($this->validator);
     }
 
-    public function testOnBeforeOrderCreate()
+    public function testOnBeforeOrderCreate(): void
     {
         $checkout = new Checkout();
         $context = new WorkflowItem();
         $context->setEntity($checkout);
 
-        $this->validator->expects($this->once())
+        $violations = $this->createMock(ConstraintViolationListInterface::class);
+        $violations->expects(self::once())
+            ->method('count')
+            ->willReturn(0);
+
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout, new CheckoutShipUntil())
-            ->willReturn($this->violations);
-
-        $this->violations->expects($this->once())->method('count')->willReturn(0);
+            ->willReturn($violations);
 
         $event = new ExtendableConditionEvent($context);
         $this->listener->onBeforeOrderCreate($event);
-        $this->assertEmpty($event->getErrors());
+
+        self::assertCount(0, $event->getErrors());
     }
 
-    public function testOnBeforeOrderCreateError()
+    public function testOnBeforeOrderCreateError(): void
     {
         $checkout = new Checkout();
         $context = new WorkflowItem();
         $context->setEntity($checkout);
 
-        $this->validator->expects($this->once())
+        $violations = $this->createMock(ConstraintViolationListInterface::class);
+        $violations->expects(self::once())
+            ->method('count')
+            ->willReturn(1);
+
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout, new CheckoutShipUntil())
-            ->willReturn($this->violations);
-
-        $this->violations->expects($this->once())->method('count')->willReturn(1);
+            ->willReturn($violations);
 
         $event = new ExtendableConditionEvent($context);
         $this->listener->onBeforeOrderCreate($event);
-        $this->assertNotEmpty($event->getErrors());
+
+        self::assertEquals(
+            [
+                ['message' => '', 'context' => null]
+            ],
+            $event->getErrors()->toArray()
+        );
     }
 }

@@ -7,26 +7,13 @@ namespace Oro\Bundle\RedirectBundle\Api\Model;
  */
 class Route
 {
-    /** @var string */
-    private $id;
-
-    /** @var string */
-    private $url;
-
-    /** @var string */
-    private $routeName;
-
-    /** @var array */
-    private $routeParameters;
-
-    /** @var bool */
-    private $isSlug;
-
-    /** @var string|null */
-    private $redirectUrl;
-
-    /** @var int|null */
-    private $redirectStatusCode;
+    private string $id;
+    private string $url;
+    private string $routeName;
+    private array $routeParameters;
+    private bool $isSlug;
+    private ?string $redirectUrl = null;
+    private ?int $redirectStatusCode = null;
 
     public function __construct(
         string $id,

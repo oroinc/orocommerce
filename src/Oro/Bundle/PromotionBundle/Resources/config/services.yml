@@ -21,14 +21,6 @@ services:
         class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
         parent: oro_rule.rule_filtration.service
 
-    oro_promotion.rule_filtration.enabled_decorator:
-        class: Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator
-        public: false
-        decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 0
-        arguments:
-            - '@.inner'
-
     oro_promotion.rule_filtration.duplicate_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\DuplicateFiltrationService
         public: false
@@ -36,15 +28,6 @@ services:
         decoration_priority: 20
         arguments:
             - '@.inner'
-
-    oro_promotion.rule_filtration.scope_decorator:
-        class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
-        decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 50
-        public: false
-        arguments:
-            - '@.inner'
-            - '@oro_scope.scope_manager'
 
     oro_promotion.rule_filtration.expression_language_decorator:
         class: Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator
@@ -55,23 +38,6 @@ services:
             - '@oro_rule.expression_language'
             - '@.inner'
             - '@logger'
-
-    oro_promotion.rule_filtration.currency_decorator:
-        class: Oro\Bundle\PromotionBundle\RuleFiltration\CurrencyFiltrationService
-        decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 150
-        public: false
-        arguments:
-            - '@.inner'
-
-    oro_promotion.rule_filtration.schedule_decorator:
-        class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
-        decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 200
-        public: false
-        arguments:
-            - '@.inner'
-            - '@oro_cron.checker.schedule_interval_checker'
 
     oro_promotion.rule_filtration.coupon_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
@@ -125,6 +91,7 @@ services:
             - '@oro_promotion.promotion.context_data_converter_registry'
             - '@oro_promotion.mapper.applied_promotion'
             - '@oro_security.token_accessor'
+            - '@oro_promotion.promotion_provider.memory_cache'
 
     oro_promotion.shipping_promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
@@ -134,6 +101,10 @@ services:
             - '@oro_promotion.shipping_promotion.context_data_converter_registry'
             - '@oro_promotion.mapper.applied_promotion'
             - '@oro_security.token_accessor'
+            - '@oro_promotion.promotion_provider.memory_cache'
+
+    oro_promotion.promotion_provider.memory_cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory

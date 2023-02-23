@@ -464,6 +464,21 @@ Feature: WYSIWYG check RTE UI
     Then I enter to edit mode "SelectedComponent" component in canvas
     And I enter "Lorem ipsum, dolor sit amet consectetur adipisicing elit." text to "SelectedComponent" component
     And I clear canvas in WYSIWYG
+    When I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    Then I enter to edit mode "SelectedComponent" component in canvas
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I apply "indent" action in RTE
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <p style="padding-left: 40px;"> |
+      | 2 | <b>                             |
+      | 3 | <i>Insert your text here        |
+      | 4 | </i>                            |
+      | 5 | </b>                            |
+      | 6 | </p>                            |
+    And I clear canvas in WYSIWYG
     And I save form
 
   Scenario: Check indent in list

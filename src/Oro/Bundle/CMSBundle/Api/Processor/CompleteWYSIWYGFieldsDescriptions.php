@@ -19,14 +19,9 @@ use Symfony\Component\Config\FileLocatorInterface;
  */
 class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
 {
-    /** @var EntityDescriptionProvider */
-    private $entityDescriptionProvider;
-
-    /** @var FileLocatorInterface */
-    private $fileLocator;
-
-    /** @var array */
-    private $descriptions = [];
+    private EntityDescriptionProvider $entityDescriptionProvider;
+    private FileLocatorInterface $fileLocator;
+    private array $descriptions = [];
 
     public function __construct(
         EntityDescriptionProvider $entityDescriptionProvider,
@@ -39,7 +34,7 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */
 

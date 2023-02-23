@@ -11,10 +11,9 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class CheckoutFactoryTest extends TestCase
+class CheckoutFactoryTest extends \PHPUnit\Framework\TestCase
 {
     private CheckoutFactory $checkoutFactory;
 

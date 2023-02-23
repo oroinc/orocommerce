@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * The form type for {@see \Oro\Bundle\TaxBundle\Model\TaxBaseExclusion}.
+ */
 class TaxBaseExclusionType extends AbstractType
 {
     const NAME = 'oro_tax_base_exclusion';
@@ -68,8 +71,8 @@ class TaxBaseExclusionType extends AbstractType
                 [
                     'required' => true,
                     'choices' => [
-                        'oro.tax.system_configuration.fields.use_as_base.shipping_origin.label' =>
-                            TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                        'oro.tax.system_configuration.fields.use_as_base.origin.label' =>
+                            TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                         'oro.tax.system_configuration.fields.use_as_base.destination.label' =>
                             TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
                     ],

@@ -10,8 +10,7 @@ services:
             - '@oro_checkout.mapper.order_mapper'
             - '@oro_checkout.payment_methods_provider'
             - '@oro_checkout.provider.multi_shipping.promotion.split_checkout'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_checkout.data_provider.converter.checkout_to_order.memory_cache']]
+            - '@oro_checkout.data_provider.converter.checkout_to_order.memory_cache'
 
     oro_checkout.data_provider.converter.checkout_to_order.memory_cache:
         parent: oro.cache.provider.memory_cache

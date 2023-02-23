@@ -4,16 +4,17 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider\MultiShipping;
 
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ConfigProviderTest extends TestCase
+class ConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigManager|MockObject $configManager;
-    private ConfigProvider $configProvider;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
+    /** @var ConfigProvider */
+    private $configProvider;
 
     protected function setUp(): void
     {
@@ -25,10 +26,10 @@ class ConfigProviderTest extends TestCase
     {
         $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
                 ['oro_checkout.enable_line_item_grouping', false, false, null, true],
-            ]));
+            ]);
 
         $this->assertTrue($this->configProvider->isLineItemsGroupingEnabled());
     }
@@ -47,10 +48,10 @@ class ConfigProviderTest extends TestCase
     {
         $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
                 ['oro_checkout.enable_line_item_grouping', false, false, null, false],
-            ]));
+            ]);
 
 
         $this->assertFalse($this->configProvider->isLineItemsGroupingEnabled());
@@ -71,11 +72,11 @@ class ConfigProviderTest extends TestCase
     {
         $this->configManager->expects($this->exactly(3))
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
                 ['oro_checkout.enable_line_item_grouping', false, false, null, true],
                 ['oro_checkout.create_suborders_for_each_group', false, false, null, true]
-            ]));
+            ]);
 
         $this->assertTrue($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
     }
@@ -84,11 +85,11 @@ class ConfigProviderTest extends TestCase
     {
         $this->configManager->expects($this->exactly(3))
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
                 ['oro_checkout.enable_line_item_grouping', false, false, null, true],
                 ['oro_checkout.create_suborders_for_each_group', false, false, null, false]
-            ]));
+            ]);
 
         $this->assertFalse($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
     }
@@ -107,10 +108,10 @@ class ConfigProviderTest extends TestCase
     {
         $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
                 ['oro_checkout.enable_line_item_grouping', false, false, null, false],
-            ]));
+            ]);
 
         $this->assertFalse($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
     }

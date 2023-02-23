@@ -9,17 +9,19 @@ use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class ContinueTransitionButtonDataProviderTest extends TestCase
+class ContinueTransitionButtonDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private TransitionProvider|MockObject $transitionProvider;
-    private ContinueTransitionButtonDataProvider $provider;
+    /** @var TransitionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $transitionProvider;
+
+    /** @var ContinueTransitionButtonDataProvider */
+    private $provider;
 
     protected function setUp(): void
     {
         $this->transitionProvider = $this->createMock(TransitionProvider::class);
+
         $this->provider = new ContinueTransitionButtonDataProvider($this->transitionProvider);
     }
 
@@ -42,8 +44,8 @@ class ContinueTransitionButtonDataProviderTest extends TestCase
         $this->assertNotEmpty($expectedFrontendOptions);
         $this->arrayHasKey('page_component_module');
         $this->assertEquals(
-            $expectedFrontendOptions['page_component_module'],
-            'orocheckout/js/app/components/multi-shipping-transition-button-component'
+            'orocheckout/js/app/components/multi-shipping-transition-button-component',
+            $expectedFrontendOptions['page_component_module']
         );
     }
 }

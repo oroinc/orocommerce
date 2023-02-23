@@ -16,11 +16,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ConfigureGuestCheckoutOwnerAccess implements ProcessorInterface
 {
-    /** @var GuestCheckoutChecker */
-    private $guestCheckoutChecker;
-
-    /** @var OwnershipMetadataProviderInterface */
-    private $ownershipMetadataProvider;
+    private GuestCheckoutChecker $guestCheckoutChecker;
+    private OwnershipMetadataProviderInterface $ownershipMetadataProvider;
 
     public function __construct(
         GuestCheckoutChecker $guestCheckoutChecker,
@@ -33,7 +30,7 @@ class ConfigureGuestCheckoutOwnerAccess implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */
 

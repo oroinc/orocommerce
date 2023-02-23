@@ -15,7 +15,7 @@ class SearchFieldResolver extends BaseResolver
      */
     protected function guessFieldNames(string $fieldName): array
     {
-        return \array_merge(
+        return array_merge(
             parent::guessFieldNames($fieldName),
             [$fieldName . '_enum.' . EnumIdPlaceholder::NAME]
         );

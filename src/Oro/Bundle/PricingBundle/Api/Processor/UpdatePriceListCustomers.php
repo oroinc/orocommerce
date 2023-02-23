@@ -54,7 +54,7 @@ class UpdatePriceListCustomers implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         $customers = $context->get(self::CUSTOMERS);
         foreach ($customers as $items) {
