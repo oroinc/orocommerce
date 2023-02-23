@@ -156,13 +156,13 @@ class ProductCollectionSegmentManipulatorTest extends TestCase
                 'expectedIncluded' => [10, 20, 30],
                 'expectedExcluded' => [40],
             ],
-            'appended product is takes precedence over removed' => [
+            'remove product is takes precedence over added' => [
                 'existingIncluded' => [10, 20],
                 'existingExcluded' => [30, 40],
                 'appendProductsIds' => [30],
                 'removeProductsIds' => [30],
-                'expectedIncluded' => [10, 20, 30],
-                'expectedExcluded' => [40],
+                'expectedIncluded' => [10, 20],
+                'expectedExcluded' => [40, 30],
             ],
             'removed product is removed from included' => [
                 'existingIncluded' => [10, 20],

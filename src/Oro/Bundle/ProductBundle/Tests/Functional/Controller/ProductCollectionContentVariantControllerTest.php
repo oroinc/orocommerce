@@ -258,13 +258,13 @@ class ProductCollectionContentVariantControllerTest extends WebTestCase
                 'expectedExcluded' => ['@product3', '@product4'],
                 'expectedSortOrder' => [],
             ],
-            'empty product collection, append takes precedence when append and remove same products' => [
+            'empty product collection, remove takes precedence when append and remove same products' => [
                 'contentVariant' => 'productCollectionContentVariant1',
                 'append' => ['@product1', '@product2', '@product3'],
                 'remove' => ['@product2', '@product3', '@product4'],
                 'sortOrder' => [],
-                'expectedIncluded' => ['@product1', '@product2', '@product3'],
-                'expectedExcluded' => ['@product4'],
+                'expectedIncluded' => ['@product1'],
+                'expectedExcluded' => ['@product2', '@product3', '@product4'],
                 'expectedSortOrder' => [],
             ],
             'empty product collection, append products with sort order' => [
@@ -321,14 +321,14 @@ class ProductCollectionContentVariantControllerTest extends WebTestCase
                 'expectedExcluded' => ['@product4', '@product1'],
                 'expectedSortOrder' => ['@product2' => 22],
             ],
-            'not empty product collection, append takes precedence when append and remove same products' => [
+            'not empty product collection, remove takes precedence when append and remove same products' => [
                 'contentVariant' => 'productCollectionContentVariant2',
                 'append' => ['@product1', '@product3'],
                 'remove' => ['@product1', '@product3'],
                 'sortOrder' => [],
-                'expectedIncluded' => ['@product2', '@product1', '@product3'],
-                'expectedExcluded' => ['@product4'],
-                'expectedSortOrder' => ['@product1' => 11, '@product2' => 22],
+                'expectedIncluded' => ['@product2'],
+                'expectedExcluded' => ['@product4', '@product1', '@product3'],
+                'expectedSortOrder' => ['@product2' => 22],
             ],
             'not empty product collection, append products with sort order' => [
                 'contentVariant' => 'productCollectionContentVariant2',

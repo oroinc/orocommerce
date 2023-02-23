@@ -49,11 +49,11 @@ class ProductCollectionSegmentManipulator
         $excludedProductsIds = $this->getIdsFromString($definitionParts[Converter::EXCLUDED_FILTER_KEY] ?? '');
         $includedProductsIds = $this->getIdsFromString($definitionParts[Converter::INCLUDED_FILTER_KEY] ?? '');
 
-        $excludedProductsIds = array_merge($excludedProductsIds, $removeProductIds);
-        $includedProductsIds = array_diff($includedProductsIds, $removeProductIds);
-
         $includedProductsIds = array_merge($includedProductsIds, $appendProductIds);
         $excludedProductsIds = array_diff($excludedProductsIds, $appendProductIds);
+
+        $excludedProductsIds = array_merge($excludedProductsIds, $removeProductIds);
+        $includedProductsIds = array_diff($includedProductsIds, $removeProductIds);
 
         $excludedProductsIds = array_values(array_unique($excludedProductsIds));
         $includedProductsIds = array_values(array_unique($includedProductsIds));
