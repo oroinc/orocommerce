@@ -4,7 +4,9 @@ import {
     findClosestListType,
     saveCursor,
     getOffsetProp,
-    getParentsUntil
+    getParentsUntil,
+    findParentTag,
+    formatting
 } from './utils/utils';
 import ListMixin from './utils/list-mixins';
 
@@ -23,8 +25,9 @@ const increaseOffset = rte => {
 
     if (!block) {
         block = rte.doc.createElement('P');
-        container.parentNode.insertBefore(block, container);
-        block.append(container);
+        const containerToFormat = findParentTag(container, formatting);
+        containerToFormat.parentNode.insertBefore(block, containerToFormat);
+        block.append(containerToFormat);
         cursor();
     }
 
