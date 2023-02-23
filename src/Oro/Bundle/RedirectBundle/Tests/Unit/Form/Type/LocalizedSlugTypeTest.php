@@ -18,6 +18,7 @@ use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\SluggableEntityFormStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,12 +34,12 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var SlugifyFormHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var SlugifyFormHelper|MockObject
      */
     private $slugifyFormHelper;
 
     /**
-     * @var SlugifyEntityHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var SlugifyEntityHelper|MockObject
      */
     private $slugifyEntityHelper;
 
@@ -48,17 +49,17 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * @var SlugGenerator|\PHPUnit\Framework\MockObject\MockObject
+     * @var SlugGenerator|MockObject
      */
     private $slugGenerator;
 
     /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var ConfigManager|MockObject
      */
     private $configManager;
 
     /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|MockObject
      */
     private $managerRegistry;
 
@@ -105,7 +106,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
+        /** @var FormBuilderInterface|MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventListener')
@@ -223,7 +224,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
             ->method('getData')
             ->willReturn($localizedSlugs);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormEvent $event */
+        /** @var MockObject|FormEvent $event */
         $event = $this->createMock(FormEvent::class);
         $event->expects($this->exactly(3))
             ->method('getForm')
@@ -247,7 +248,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
             [
                 'localizedSources' => new ArrayCollection([(new LocalizedFallbackValue())]),
                 'localizedSlugs' => new ArrayCollection(),
-                'expectedLocalizedSlugs' => new ArrayCollection(),
+                'expectedLocalizedSlugs' => new ArrayCollection([(new LocalizedFallbackValue())]),
             ],
             [
                 'localizedSources' => new ArrayCollection([$this->createLocalizedFallbackValue('test')]),
@@ -301,7 +302,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
+        /** @var OptionsResolver|MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
@@ -321,7 +322,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildView()
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        /** @var FormInterface|MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $options = ['someOptionName' => 'someOptionValue'];

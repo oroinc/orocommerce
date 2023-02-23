@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\ImportExportBundle\Event\StrategyEvent;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
@@ -13,10 +14,7 @@ use Oro\Bundle\RedirectBundle\Helper\SlugifyEntityHelper;
  */
 class ImportSluggableEntityListener
 {
-    /**
-     * @var SlugifyEntityHelper
-     */
-    private $slugifyEntityHelper;
+    private SlugifyEntityHelper $slugifyEntityHelper;
 
     public function __construct(SlugifyEntityHelper $slugifyEntityHelper)
     {
@@ -44,8 +42,13 @@ class ImportSluggableEntityListener
                 return;
             }
 
+            $sourceField = $this->slugifyEntityHelper->getSourceFieldName(ClassUtils::getClass($entity));
             foreach ($entity->getSlugPrototypes() as $slugPrototype) {
                 $localizationCode = LocalizationCodeFormatter::formatName($slugPrototype->getLocalization());
+                if (!isset($itemData[$sourceField][$localizationCode])) {
+                    continue;
+                }
+
                 $slugPrototypes = $itemData['slugPrototypes'][$localizationCode] ?? [];
                 if (empty($slugPrototypes['string']) && empty($slugPrototypes['fallback'])) {
                     $slugPrototypes = [
