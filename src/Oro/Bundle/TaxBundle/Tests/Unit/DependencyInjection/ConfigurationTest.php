@@ -47,7 +47,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'scope' => 'app'
                 ],
                 'use_as_base_by_default' => [
-                    'value' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                    'value' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                     'scope' => 'app'
                 ],
                 'use_as_base_exclusions' => [
