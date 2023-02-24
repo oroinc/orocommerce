@@ -33,18 +33,7 @@ export default {
             defaultsParams.options
         );
         const {constraintNames} = defaultsParams;
-        const {quantityConstraints, quantityColumnName, unitColumnName} = params;
-        const precision = params.unitPrecisions[unitColumnName] || 0;
-        const constraints = {};
-
-        if (quantityConstraints[constraintNames.range]) {
-            constraints[constraintNames.range] = quantityConstraints[constraintNames.range];
-        }
-        if (precision > 0 && quantityConstraints[constraintNames.decimal]) {
-            constraints[constraintNames.decimal] = quantityConstraints[constraintNames.decimal];
-        } else if (quantityConstraints[constraintNames.integer]) {
-            constraints[constraintNames.integer] = quantityConstraints[constraintNames.integer];
-        }
+        const {quantityConstraints, quantityColumnName} = params;
 
         const updateData = data => {
             return data.map(item => {
@@ -55,19 +44,33 @@ export default {
                         grouping_used: false
                     });
                 }
+
+                const constraints = {};
+                const precision = params.unitPrecisions[item.unitCode] || 0;
+
+                if (quantityConstraints[constraintNames.range]) {
+                    constraints[constraintNames.range] = quantityConstraints[constraintNames.range];
+                }
+
+                if (precision > 0 && quantityConstraints[constraintNames.decimal]) {
+                    constraints[constraintNames.decimal] = quantityConstraints[constraintNames.decimal];
+                } else if (quantityConstraints[constraintNames.integer]) {
+                    constraints[constraintNames.integer] = quantityConstraints[constraintNames.integer];
+                }
+
                 item.constraints = constraints;
 
                 return item;
             });
         };
         const updateColumns = columns => {
-            return columns.map(colum => {
-                if (colum.name === quantityColumnName && colum.editable && Object.keys(constraints).length) {
-                    colum.editor = InputCellValidationEditor;
-                    colum.formatter = DecimalFormatter;
+            return columns.map(column => {
+                if (column.name === quantityColumnName && column.editable) {
+                    column.editor = InputCellValidationEditor;
+                    column.formatter = DecimalFormatter;
                 }
 
-                return colum;
+                return column;
             });
         };
 
