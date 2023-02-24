@@ -73,6 +73,7 @@ services:
         calls:
             - [setDigitalAssetTwigTagsEventSubscriber, ['@oro_cms.form.event_subscriber.digital_asset_twig_tags']]
             - [setAssetHelper, ['@assets.packages']]
+            - [setEntityProvider, ['@oro_entity.entity_provider']]
         tags:
             - { name: form.type }
 

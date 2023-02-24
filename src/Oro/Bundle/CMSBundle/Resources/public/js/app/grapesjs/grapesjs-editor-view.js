@@ -364,6 +364,11 @@ const GrapesjsEditorView = BaseView.extend({
             fieldName: this.$el.attr('data-grapesjs-field')
         };
 
+        this.builderPlugins['grapesjs-export'] = {
+            ...this.builderPlugins['grapesjs-export'],
+            entityLabels: options.entityLabels
+        };
+
         GrapesjsEditorView.__super__.initialize.call(this, options);
     },
 
