@@ -313,6 +313,7 @@ services:
         arguments:
             - '@oro_checkout.provider.multi_shipping_config'
             - '@doctrine'
+            - '@oro_order.provider.order_types'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-orders-grid, method: onBuildAfter }
@@ -377,6 +378,10 @@ services:
 
     Oro\Bundle\OrderBundle\Provider\TotalProvider:
         alias: 'oro_order.provider.total_processor'
+
+    oro_order.provider.order_types:
+        class: Oro\Bundle\OrderBundle\Provider\OrderTypeProvider
+        public: true
 
     oro_order.event_listener.unit_visibility.datagrid:
         parent: oro_product.event_listener.unit_visibility.datagrid_basic

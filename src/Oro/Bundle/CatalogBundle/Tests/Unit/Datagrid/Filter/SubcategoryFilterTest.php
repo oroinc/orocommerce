@@ -12,7 +12,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapte
 use Oro\Bundle\SearchBundle\Datagrid\Form\Type\SearchEntityFilterType;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Component\Exception\UnexpectedTypeException;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -20,8 +20,6 @@ use Symfony\Component\Form\FormView;
 
 class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
@@ -37,24 +35,28 @@ class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
 
     private function getCategory(int $id, string $path): Category
     {
-        return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);
+        $category = new Category();
+        ReflectionUtil::setId($category, $id);
+        $category->setMaterializedPath($path);
+
+        return $category;
     }
 
     public function testInit()
     {
+        $form = $this->createMock(FormInterface::class);
+
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
                 SearchEntityFilterType::class,
                 [],
-                [
-                    'class'           => Category::class,
-                    'csrf_protection' => false,
-                ]
-            );
+                ['csrf_protection' => false, 'class' => Category::class]
+            )
+            ->willReturn($form);
 
         $this->filter->init('filter', []);
-        $this->filter->getForm();
+        $this->assertSame($form, $this->filter->getForm());
     }
 
     public function testApplyExceptionForWrongFilterDatasourceAdapter()

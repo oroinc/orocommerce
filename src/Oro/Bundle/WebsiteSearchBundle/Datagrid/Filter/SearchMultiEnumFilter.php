@@ -16,7 +16,7 @@ class SearchMultiEnumFilter extends SearchEnumFilter
     /**
      * {@inheritDoc}
      */
-    protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data)
+    protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data): bool
     {
         $fieldName = $this->get(FilterUtility::DATA_NAME_KEY);
         $criteria = Criteria::create();

@@ -145,8 +145,8 @@ datagrids:
                 label: oro.cms.contentblock.enabled.label
                 frontend_type: select
                 choices:
-                    Disabled: 0
-                    Enabled: 1
+                    oro.cms.contentblock.filters.disabled: 0
+                    oro.cms.contentblock.filters.enabled: 1
             createdAt:
                 label: oro.cms.contentblock.createdat.label
                 frontend_type: datetime

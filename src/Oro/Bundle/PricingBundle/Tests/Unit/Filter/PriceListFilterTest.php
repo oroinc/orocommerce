@@ -54,7 +54,7 @@ class PriceListFilterTest extends \PHPUnit\Framework\TestCase
         $this->formFactory->expects(self::once())
             ->method('create')
             ->willReturn($form);
-        $form->expects(self::exactly(3))
+        $form->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 

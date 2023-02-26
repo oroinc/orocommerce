@@ -362,15 +362,10 @@ services:
             - '@oro_pricing.price_list_trigger_handler'
             - '@doctrine'
 
-    oro_pricing.event_listener.abstract_price_list_relation_data_grid_listener:
-        class: 'Oro\Bundle\PricingBundle\EventListener\AbstractPriceListRelationDataGridListener'
-        abstract: true
-        arguments:
-            - '@doctrine'
-
     oro_pricing.event_listener.customer_customers_grid:
         class: 'Oro\Bundle\PricingBundle\EventListener\CustomerDataGridListener'
-        parent: oro_pricing.event_listener.abstract_price_list_relation_data_grid_listener
+        arguments:
+            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.customer-customers-grid, method: onResultAfter }
@@ -378,7 +373,8 @@ services:
 
     oro_pricing.event_listener.customer_groups_grid:
         class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupDataGridListener'
-        parent: oro_pricing.event_listener.abstract_price_list_relation_data_grid_listener
+        arguments:
+            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.customer-groups-grid, method: onResultAfter }
