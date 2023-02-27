@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryProductsType;
+use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -57,43 +58,19 @@ class CategoryProductsController extends AbstractController
 
     /**
      * @Route(
-     *     "/manage-sort-order/widget",
+     *     "/manage-sort-order/{id}/widget",
      *     name="oro_catalog_category_products_manage_sort_order_widget",
+     *     requirements={"id"="\d+"},
      *     methods={"GET"}
      * )
-     * @AclAncestor("oro_catalog_category_update")
+     * @AclAncestor("oro_catalog_category_view")
      * @Template
      */
-    public function manageSortOrderWidgetAction(Request $request): array
+    public function manageSortOrderWidgetAction(Category $category, Request $request): array
     {
-        return [
-            'params' => $request->get('params', []),
-            'renderParams' => $this->getRenderParams($request),
-            'multiselect' => (bool)$request->get('multiselect', false),
-        ];
-    }
-
-    private function getRenderParams(Request $request): array
-    {
-        $renderParams = $request->get('renderParams', []);
-        $renderParamsTypes = $request->get('renderParamsTypes', []);
-
-        foreach ($renderParamsTypes as $param => $type) {
-            if (array_key_exists($param, $renderParams)) {
-                switch ($type) {
-                    case 'bool':
-                    case 'boolean':
-                        $renderParams[$param] = (bool)$renderParams[$param];
-                        break;
-                    case 'int':
-                    case 'integer':
-                        $renderParams[$param] = (int)$renderParams[$param];
-                        break;
-                }
-            }
-        }
-
-        return $renderParams;
+        return $this
+            ->get(GridController::class)
+            ->widgetAction($request, 'category-products-widget-grid');
     }
 
     public static function getSubscribedServices(): array
@@ -101,6 +78,7 @@ class CategoryProductsController extends AbstractController
         return array_merge(
             parent::getSubscribedServices(),
             [
+                GridController::class,
                 ManagerRegistry::class,
                 EventDispatcherInterface::class,
                 UpdateHandlerFacade::class

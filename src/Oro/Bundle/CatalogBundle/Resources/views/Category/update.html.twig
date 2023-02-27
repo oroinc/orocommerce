@@ -114,6 +114,7 @@
                             autoExecute: false,
                             route: 'oro_catalog_category_products_manage_sort_order_widget',
                             route_parameters: {
+                                id: categoryId,
                                 params: {category_id: categoryId}
                             }
                         }|merge(sortProductsAction|default({}))

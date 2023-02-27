@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
+use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductCollectionSegmentProductsFormHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentProductsType;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,11 +80,33 @@ class ProductCollectionContentVariantController extends AbstractController
         return new JsonResponse($responseData, $statusCode);
     }
 
+    /**
+     * @Route(
+     *     "/manage-sort-order/{id}/widget/{gridName}",
+     *     name="oro_product_collection_content_variant_manage_sort_order_widget",
+     *     requirements={"id"="\d+"},
+     *     methods={"GET"}
+     * )
+     * @Template
+     */
+    public function manageSortOrderWidgetAction(
+        ContentVariant $contentVariant,
+        string $gridName,
+        Request $request
+    ): array {
+        $contentNode = $contentVariant->getNode();
+        $this->denyAccessUnlessGranted('VIEW', $contentNode->getWebCatalog());
+        return $this->container
+            ->get(GridController::class)
+            ->widgetAction($request, $gridName);
+    }
+
     public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
+                GridController::class,
                 TranslatorInterface::class,
                 ProductCollectionSegmentProductsFormHandler::class
             ]

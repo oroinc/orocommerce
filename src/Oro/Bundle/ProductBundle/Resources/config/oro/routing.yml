@@ -73,7 +73,6 @@ oro_product_frontend_export:
     options:
         frontend: true
 
-
 #
 # OLD REST API ROUTES
 #

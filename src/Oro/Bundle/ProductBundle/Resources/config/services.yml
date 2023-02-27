@@ -1272,6 +1272,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-collection-content-variant-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-content-variant-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.content-node-product-collection-widget-grid, method: onBuildAfter }
 
     oro_product.event_listener.product_collection_datagrid:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener
@@ -1284,6 +1285,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-content-variant-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.content-node-product-collection-widget-grid, method: onBuildAfter }
 
     oro_product.provider.segment_with_relations_provider:
         class: Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider

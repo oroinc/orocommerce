@@ -468,14 +468,17 @@
                                                 sortProductsAction: {
                                                     inputAction: '',
                                                     autoExecute: '',
-                                                    route: 'oro_datagrid_widget',
+                                                    route: 'oro_product_collection_content_variant_manage_sort_order_widget',
                                                     route_parameters: {
-                                                        gridName: widgetRouteParameters.gridName,
-                                                        params: widgetRouteParameters.params|default({}),
-                                                        renderParams: {
-                                                            enableFullScreenLayout: true
-                                                        }
-                                                    }
+                                                        id: form.parent.vars.value.id|default(0),
+                                                        gridName: oro_datagrid_build_fullname('content-node-product-collection-widget-grid', scope),
+                                                        params: widgetRouteParameters|merge({
+                                                            params: {
+                                                                segmentId: segmentId,
+                                                                segmentDefinition: segmentDefinition
+                                                            }
+                                                        }),
+                                                    },
                                                 }|merge(sortProductsAction|default({}))
                                             }
                                         }

@@ -1034,3 +1034,24 @@ datagrids:
     attributes-grid:
         options:
             entityHint: oro.product.product_attributes.plural_label
+
+    content-node-product-collection-widget-grid:
+        extends: product-collection-base-grid
+        columns:
+            categorySortOrder:
+                order: -1
+                label: oro.catalog.product.category_sort_order.label
+                editable: true
+                cellClassName: 'editing-cell'
+                frontend_type: string
+        sorters:
+            columns:
+                categorySortOrder:
+                    data_name: categorySortOrder
+            default:
+                categorySortOrder: ASC
+        filters:
+            columns:
+                categorySortOrder:
+                    type: number-range
+                    data_name: categorySortOrder
