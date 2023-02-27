@@ -467,7 +467,7 @@
                                             gridBuildersOptions: {
                                                 sortProductsAction: {
                                                     inputAction: '',
-                                                    autoExecute: false,
+                                                    autoExecute: '',
                                                     route: 'oro_datagrid_widget',
                                                     route_parameters: {
                                                         gridName: widgetRouteParameters.gridName,
@@ -481,12 +481,14 @@
                                         }
                                     }) %}
                                 {% endif %}
-                                {{ oro_widget_render({
-                                    'widgetType': 'block',
-                                    'url': path('oro_datagrid_widget', widgetRouteParameters),
-                                    'title': '',
-                                    'alias': gridWidgetAlias
-                                }) }}
+                                <div data-ignore-form-state-change>
+                                    {{ oro_widget_render({
+                                        'widgetType': 'block',
+                                        'url': path('oro_datagrid_widget', widgetRouteParameters),
+                                        'title': '',
+                                        'alias': gridWidgetAlias
+                                    }) }}
+                                </div>
                             </div>
 
                             <div class="tab-pane"

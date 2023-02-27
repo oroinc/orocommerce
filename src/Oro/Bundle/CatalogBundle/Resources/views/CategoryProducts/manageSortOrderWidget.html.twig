@@ -12,7 +12,18 @@
         {{ dataGrid.renderGrid(
             'category-products-widget-grid',
             params,
-            {'enableFullScreenLayout': true}|merge(renderParams|default([]))
+            {
+                enableFullScreenLayout: true,
+                gridBuildersOptions: {
+                    sortRowsDragNDropBuilder: {
+                        formName: 'category_products',
+                        route: 'oro_catalog_category_products_update',
+                        route_parameters: {
+                            id: params.category_id
+                        }
+                    }
+                }
+            }
         ) }}
     {% endblock %}
 </div>

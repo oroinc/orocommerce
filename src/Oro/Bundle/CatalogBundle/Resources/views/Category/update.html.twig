@@ -101,6 +101,27 @@
             } %}
         {% endif %}
 
+        {% set categoryProductsGrid %}
+            <div data-ignore-form-state-change>
+                {{ dataGrid.renderGrid('category-products-grid', {
+                    category_id: categoryId
+                }, {
+                    cssClass: 'inner-grid',
+                    jsmodules: ['oroproduct/js/datagrid/builder/sort-products-action-builder'],
+                    gridBuildersOptions: {
+                        sortProductsAction: {
+                            inputAction: '',
+                            autoExecute: false,
+                            route: 'oro_catalog_category_products_manage_sort_order_widget',
+                            route_parameters: {
+                                params: {category_id: categoryId}
+                            }
+                        }|merge(sortProductsAction|default({}))
+                    }
+                }) }}
+            </div>
+        {% endset %}
+
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.entity_plural_label'|trans,
             'subblocks':
@@ -108,24 +129,7 @@
                 {
                     'title' : null,
                     'useSpan': false,
-                    'data' : [
-                        dataGrid.renderGrid('category-products-grid', {
-                            category_id: categoryId
-                        }, {
-                            cssClass: 'inner-grid',
-                            jsmodules: ['oroproduct/js/datagrid/builder/sort-products-action-builder'],
-                            gridBuildersOptions: {
-                                sortProductsAction: {
-                                    inputAction: '',
-                                    autoExecute: false,
-                                    route: 'oro_catalog_category_products_manage_sort_order_widget',
-                                    route_parameters: {
-                                        params: {category_id: categoryId}
-                                    }
-                                }|merge(sortProductsAction|default({}))
-                            }
-                        })
-                    ]
+                    'data' : [categoryProductsGrid]
                 }
             ]
         }]) %}

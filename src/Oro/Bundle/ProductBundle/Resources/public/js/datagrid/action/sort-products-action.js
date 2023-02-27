@@ -45,6 +45,7 @@ const SortProductsAction = AbstractAction.extend({
         this.frontend_handle = 'dialog';
         this.frontend_options = $.extend(true, {
             title: __('oro.product.sort_products.dialog.title'),
+            desktopLoadingBar: true,
             dialogOptions: {
                 limitTo: '#container',
                 state: 'maximized',
@@ -99,18 +100,30 @@ const SortProductsAction = AbstractAction.extend({
     async _handleWidget() {
         this.frontend_options.actionsEl = $(dialogActionsTemplate());
 
-        const widget = await SortProductsAction.__super__._handleWidget.call(this);
-        Promise.all([widget.loading, widget.deferredRender]).then(() => {
+        const dialog = await SortProductsAction.__super__._handleWidget.call(this);
+        Promise.all([dialog.loading, dialog.deferredRender]).then(() => {
             mediator.execute('showMessage', 'warning',
                 __('oro.product.sort_products.dialog.waning'),
                 {
                     dismissible: false,
                     showIcon: false,
                     animation: false,
-                    container: widget.$messengerContainer
+                    container: dialog.$messengerContainer
                 });
+
+            let isChanged = false;
+
+            dialog.widget.one(`ajaxStart${this.eventNamespace()}`, () => (isChanged = true));
+
+            this.listenToOnce(dialog, 'close', () => {
+                dialog.widget.off(this.eventNamespace());
+                if (isChanged) {
+                    this.datagrid.refreshAction.execute();
+                }
+            });
         });
-        return widget;
+
+        return dialog;
     }
 });
 
