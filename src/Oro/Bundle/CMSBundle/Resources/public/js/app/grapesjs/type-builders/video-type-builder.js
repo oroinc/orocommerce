@@ -3,6 +3,8 @@ import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
 const undoAutoPlay = url => url.replace(/(autoplay=).*?(&)/, '$1' + 0 + '$2');
+const VideoURLRegExp =
+    /^.*((youtu.be\/|vimeo.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?)|(live\/))\??v?=?([^#\&\?]*).*/;
 
 const VideoTypeBuilder = BaseTypeBuilder.extend({
     componentType: 'video',
@@ -51,7 +53,11 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                     };
 
                     if (el.src) {
-                        result.src = el.src;
+                        result.src = el.getAttribute('src');
+
+                        if (el.tagName === 'VIDEO') {
+                            result.source = el.getAttribute('src');
+                        }
                     }
 
                     if (isExtProv) {
@@ -76,6 +82,71 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
             },
 
             model: {
+                defaults: {
+                    src: '',
+                    fallback: '',
+                    attributes: {
+                        src: '',
+                        controls: true
+                    }
+                },
+
+                init() {
+                    this.listenTo(this, 'change:sourceSrc', this.updateSrc);
+                },
+
+                updateVideoId(model, value) {
+                    if (model.get('provider') !== 'so') {
+                        model.set('videoId', this.extractVideoID(value));
+                    }
+                },
+
+                extractVideoID(url) {
+                    const match = url.match(VideoURLRegExp);
+
+                    if (match && match[8]) {
+                        return match[8];
+                    }
+
+                    return url;
+                },
+
+                getSourceVideoSrc() {
+                    return this.get('sourceSrc') || '';
+                },
+
+                updateSrc() {
+                    const prov = this.get('provider');
+                    let src = '';
+
+                    if (prov !== 'so' && this.changed.videoId) {
+                        this.set('videoId', this.extractVideoID(this.get('videoId')));
+                    }
+
+                    switch (prov) {
+                        case 'yt':
+                            src = this.getYoutubeSrc();
+                            break;
+                        case 'ytnc':
+                            src = this.getYoutubeNoCookieSrc();
+                            break;
+                        case 'vi':
+                            src = this.getVimeoSrc();
+                            break;
+                        case 'so':
+                            src = this.getSourceVideoSrc();
+                            break;
+                    }
+
+                    this.set({
+                        src
+                    });
+
+                    this.setAttributes({
+                        src
+                    });
+                },
+
                 getProviderTrait() {
                     const providerTrait = this.constructor.__super__.getProviderTrait.call(this);
                     const options = providerTrait.options
@@ -121,6 +192,7 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                     // keep poster's trait value in properties,
                     // and to save values into attributes only common for all sources, e.g. src, id
                     sourceTrait.find(source => source.name === 'poster').changeProp = 1;
+                    sourceTrait.find(source => source.name === 'src').name = 'sourceSrc';
                     return sourceTrait;
                 },
 
@@ -147,6 +219,14 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                         if (this.get('controls')) {
                             attr.controls = 'controls';
                         }
+                    }
+
+                    if (tagName === 'iframe') {
+                        if (this.get('poster')) {
+                            delete attr.poster;
+                        }
+
+                        attr.allowfullscreen = 'allowfullscreen';
                     }
 
                     return attr;
@@ -199,8 +279,13 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                 renderByProvider(prov) {
                     const videoEl = this.constructor.__super__.renderByProvider.call(this, prov);
 
-                    videoEl.src = undoAutoPlay(videoEl.src);
+                    if (prov !== 'so') {
+                        videoEl.src = undoAutoPlay(videoEl.src);
+                    }
+
                     this.videoEl = videoEl;
+                    this.updateVideo();
+
                     return videoEl;
                 }
             }
