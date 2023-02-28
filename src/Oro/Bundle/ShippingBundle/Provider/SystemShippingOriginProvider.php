@@ -6,13 +6,13 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
-class ShippingOriginProvider
+/**
+ * Gets a shipping origin from system configuration.
+ */
+class SystemShippingOriginProvider
 {
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var ShippingOriginModelFactory */
-    protected $shippingOriginModelFactory;
+    private ConfigManager $configManager;
+    private ShippingOriginModelFactory $shippingOriginModelFactory;
 
     public function __construct(ConfigManager $configManager, ShippingOriginModelFactory $shippingOriginModelFactory)
     {
@@ -21,12 +21,12 @@ class ShippingOriginProvider
     }
 
     /**
-     * @return ShippingOrigin
+     * {@inheritDoc}
      */
-    public function getSystemShippingOrigin()
+    public function getSystemShippingOrigin(): ShippingOrigin
     {
-        $configData = $this->configManager->get('oro_shipping.shipping_origin') ?: [];
-
-        return $this->shippingOriginModelFactory->create($configData);
+        return $this->shippingOriginModelFactory->create(
+            $this->configManager->get('oro_shipping.shipping_origin') ?: []
+        );
     }
 }

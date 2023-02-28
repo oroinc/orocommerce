@@ -33,7 +33,7 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | Enable grouping of line items during checkout | true |
     And uncheck "Use default" for "Group line items by" field
     And I fill form with:
-      | Group line items by | Owner |
+      | Group line items by | Category |
     And uncheck "Use default" for "Create Sub-Orders for each group" field
     And I fill form with:
       | Create Sub-Orders for each group | true |
@@ -58,12 +58,12 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Shipping Information - Checkout"
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
-    And I should see an "Common Business Unit Name" element
+    And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Item                     | Qty | Price  | Subtotal | Shipping         |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate: $3.00 |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal | Shipping                            |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
@@ -80,7 +80,7 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | SKU  | Item                     | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
@@ -99,7 +99,7 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | SKU  | Item                     | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
@@ -127,12 +127,12 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Shipping Information - Checkout"
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
-    And I should see an "Common Business Unit Name" element
+    And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Item                     | Qty | Price  | Subtotal | Shipping                            |
       | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal | Shipping                            |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
@@ -149,7 +149,7 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | SKU  | Item                     | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
@@ -172,7 +172,7 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | SKU  | Item                     | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
@@ -195,10 +195,10 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     When I proceed as the Admin
     And I go to Sales/Orders
     Then I should see following grid:
-      | Order Number | Owner          |
-      | 1            | John Doe       |
-      | 1-1          | SubOrder Owner |
-      | 1-2          | SubOrder Owner |
+      | Order Number | Owner    |
+      | 1            | John Doe |
+      | 1-1          | John Doe |
+      | 1-2          | John Doe |
     And number of records should be 3
     When I click View "$58.00" in grid
     Then I should see "Sub-Orders"

@@ -233,6 +233,16 @@ services:
 #        tags:
 #            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
 
+    oro_order.event_listener.system_config.order_creation_new_order_owner:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\UserBundle\Entity\User'
+            - 'oro_order.order_creation_new_order_owner'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
     oro_order.twig.order:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
         public: false

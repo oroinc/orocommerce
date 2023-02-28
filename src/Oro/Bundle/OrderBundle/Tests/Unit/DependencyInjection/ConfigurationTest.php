@@ -36,6 +36,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
                         'scope' => 'app'
                     ],
+                    'order_creation_new_order_owner' => ['value' => null, 'scope' => 'app'],
                     'order_previously_purchased_period' => ['value' => 90, 'scope' => 'app'],
                     'enable_purchase_history' => ['value' => false, 'scope' => 'app'],
                 ]

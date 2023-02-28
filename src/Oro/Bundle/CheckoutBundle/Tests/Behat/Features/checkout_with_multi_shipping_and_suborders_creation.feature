@@ -32,7 +32,7 @@ Feature: Checkout With Multi Shipping And Suborders Creation
       | Enable grouping of line items during checkout | true |
     And uncheck "Use default" for "Group line items by" field
     And I fill form with:
-      | Group line items by | Owner |
+      | Group line items by | Category |
     And uncheck "Use default" for "Create Sub-Orders for each group" field
     And I fill form with:
       | Create Sub-Orders for each group | true |
@@ -58,7 +58,7 @@ Feature: Checkout With Multi Shipping And Suborders Creation
       | SKU  | Item                     | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
@@ -68,12 +68,12 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     Then Page title equals to "Shipping Information - Checkout"
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
-    And I should see an "Common Business Unit Name" element
+    And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Item                     | Qty | Price  | Subtotal | Shipping         |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate: $3.00 |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal | Shipping         |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate: $3.00 |
@@ -102,11 +102,11 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     When I proceed as the Admin
     And I go to Sales/Orders
     Then I should see following grid:
-      | Order Number | Owner          |
-      | SimpleOrder  | John Doe       |
-      | 2            | John Doe       |
-      | 2-1          | SubOrder Owner |
-      | 2-2          | SubOrder Owner |
+      | Order Number | Owner    |
+      | SimpleOrder  | John Doe |
+      | 2            | John Doe |
+      | 2-1          | John Doe |
+      | 2-2          | John Doe |
     And number of records should be 4
     # Click on order number 2
     When I click view "$59.00" in grid

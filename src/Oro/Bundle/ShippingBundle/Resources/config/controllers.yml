@@ -7,6 +7,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shipping.method.org_provider, key: Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider }
 
     Oro\Bundle\ShippingBundle\Controller\AjaxProductShippingOptionsController:
         calls:

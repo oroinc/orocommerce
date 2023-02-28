@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 use Oro\Bundle\ShippingBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
 
@@ -16,13 +17,16 @@ class RegardlessDestinationMethodsConfigsRulesByContextProvider implements Metho
 {
     private MethodsConfigsRulesFiltrationServiceInterface $filtrationService;
     private ManagerRegistry $doctrine;
+    private ShippingMethodOrganizationProvider $organizationProvider;
 
     public function __construct(
         MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,
+        ShippingMethodOrganizationProvider $organizationProvider
     ) {
         $this->filtrationService = $filtrationService;
         $this->doctrine = $doctrine;
+        $this->organizationProvider = $organizationProvider;
     }
 
     /**
@@ -34,12 +38,14 @@ class RegardlessDestinationMethodsConfigsRulesByContextProvider implements Metho
             $methodsConfigsRules = $this->getRepository()->getByDestinationAndCurrencyAndWebsite(
                 $context->getShippingAddress(),
                 $context->getCurrency(),
-                $context->getWebsite()
+                $context->getWebsite(),
+                $this->organizationProvider->getOrganization()
             );
         } else {
             $methodsConfigsRules = $this->getRepository()->getByCurrencyAndWebsite(
                 $context->getCurrency(),
-                $context->getWebsite()
+                $context->getWebsite(),
+                $this->organizationProvider->getOrganization()
             );
         }
 

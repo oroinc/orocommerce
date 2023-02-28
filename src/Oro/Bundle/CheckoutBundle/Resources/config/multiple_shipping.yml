@@ -80,15 +80,6 @@ services:
         arguments:
             - '@oro_shipping.multi_shipping.method_provider'
 
-    oro_checkout.shipping_rule_filtration.multi_shipping_decorator:
-        class: Oro\Bundle\CheckoutBundle\RuleFiltration\MultiShipping\MultiShippingMethodFiltrationService
-        decorates: oro_rule.rule_filtration.service
-        decoration_priority: 100
-        arguments:
-            - '@.inner'
-            - '@oro_checkout.provider.multi_shipping.default_shipping_method'
-            - '@oro_checkout.provider.multi_shipping_config'
-
     oro_checkout.action.multi_shipping.default_shipping_method_setter:
         class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingMethodSetter
         public: true
@@ -102,8 +93,15 @@ services:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProvider
         public: true
         arguments:
+            - '@oro_checkout.provider.multi_shipping.sub_order_organization'
+            - '@oro_config.manager'
             - '@property_accessor'
             - '@oro_security.owner.ownership_metadata_provider'
+            - '@doctrine'
+
+    oro_checkout.provider.multi_shipping.sub_order_organization:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProvider
+        public: true
 
     oro_checkout.provider.grouped_line_items:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider
@@ -137,6 +135,7 @@ services:
             - '@oro_shipping.shipping_price.provider'
             - '@oro_checkout.provider.shipping_context'
             - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.method.org_provider'
 
     oro_checkout.provider.multi_shipping.available_line_item_shipping_methods:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider
@@ -144,6 +143,7 @@ services:
             - '@oro_checkout.shipping_method.provider_main'
             - '@oro_checkout.provider.multi_shipping.default_shipping_method'
             - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.method.org_provider'
 
     oro_checkout.factory.multi_shipping.checkout_factory:
         class: Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactory

@@ -6,17 +6,20 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Doctrine repository for ShippingMethodsConfigsRule entity.
  */
-class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository
+class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository implements ResetInterface
 {
     private AclHelper $aclHelper;
+    private $memoryCache = [];
 
     public function setAclHelper(AclHelper $aclHelper): void
     {
@@ -24,18 +27,41 @@ class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param AddressInterface $address
-     * @param string           $currency
-     * @param Website|null     $website
+     * {@inheritDoc}
+     */
+    public function reset(): void
+    {
+        $this->memoryCache = [];
+    }
+
+    /**
+     * @param AddressInterface  $address
+     * @param string            $currency
+     * @param Website|null      $website
+     * @param Organization|null $organization
      *
      * @return ShippingMethodsConfigsRule[]
      */
     public function getByDestinationAndCurrencyAndWebsite(
         AddressInterface $address,
         string $currency,
-        ?Website $website = null
+        ?Website $website = null,
+        ?Organization $organization = null
     ): array {
-        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
+        $cacheKey = sprintf(
+            'getByDestinationAndCurrencyAndWebsite:%s,%s,%s,%s,%s,%s',
+            $organization?->getId(),
+            $website?->getId(),
+            $currency,
+            $address->getCountryIso2(),
+            $address->getRegionCode(),
+            $address->getPostalCode()
+        );
+        if (isset($this->memoryCache[$cacheKey])) {
+            return $this->memoryCache[$cacheKey];
+        }
+
+        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website, $organization)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
             ->leftJoin('methodsConfigsRule.rule', 'rule')
             ->addSelect('rule', 'destination', 'postalCode')
@@ -48,35 +74,72 @@ class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository
             ->setParameter('regionCode', $address->getRegionCode())
             ->setParameter('postalCodes', explode(',', $address->getPostalCode()));
 
-        return $this->aclHelper->apply($queryBuilder)->getResult();
+        $result = $this->aclHelper->apply($queryBuilder)->getResult();
+        $this->memoryCache[$cacheKey] = $result;
+
+        return $result;
     }
 
     /**
-     * @param string       $currency
-     * @param Website|null $website
+     * @param string            $currency
+     * @param Website|null      $website
+     * @param Organization|null $organization
      *
      * @return ShippingMethodsConfigsRule[]
      */
-    public function getByCurrencyAndWebsite(string $currency, ?Website $website = null): array
-    {
-        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website);
+    public function getByCurrencyAndWebsite(
+        string $currency,
+        ?Website $website = null,
+        ?Organization $organization = null
+    ): array {
+        $cacheKey = sprintf(
+            'getByCurrencyAndWebsite:%s,%s,%s',
+            $organization?->getId(),
+            $website?->getId(),
+            $currency
+        );
+        if (isset($this->memoryCache[$cacheKey])) {
+            return $this->memoryCache[$cacheKey];
+        }
 
-        return $this->aclHelper->apply($queryBuilder)->getResult();
+        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website, $organization);
+
+        $result = $this->aclHelper->apply($queryBuilder)->getResult();
+        $this->memoryCache[$cacheKey] = $result;
+
+        return $result;
     }
 
     /**
-     * @param string       $currency
-     * @param Website|null $website
+     * @param string            $currency
+     * @param Website|null      $website
+     * @param Organization|null $organization
      *
      * @return ShippingMethodsConfigsRule[]
      */
-    public function getByCurrencyAndWebsiteWithoutDestination(string $currency, ?Website $website = null): array
-    {
-        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
+    public function getByCurrencyAndWebsiteWithoutDestination(
+        string $currency,
+        ?Website $website = null,
+        ?Organization $organization = null
+    ): array {
+        $cacheKey = sprintf(
+            'getByCurrencyAndWebsiteWithoutDestination:%s,%s,%s',
+            $organization?->getId(),
+            $website?->getId(),
+            $currency
+        );
+        if (isset($this->memoryCache[$cacheKey])) {
+            return $this->memoryCache[$cacheKey];
+        }
+
+        $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website, $organization)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
             ->andWhere('destination.id is null');
 
-        return $this->aclHelper->apply($queryBuilder)->getResult();
+        $result = $this->aclHelper->apply($queryBuilder)->getResult();
+        $this->memoryCache[$cacheKey] = $result;
+
+        return $result;
     }
 
     public function disableRulesWithoutShippingMethods(): void
@@ -139,8 +202,11 @@ class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository
             ->orderBy('methodsConfigsRule.id');
     }
 
-    private function getByCurrencyAndWebsiteQueryBuilder(string $currency, ?Website $website): QueryBuilder
-    {
+    private function getByCurrencyAndWebsiteQueryBuilder(
+        string $currency,
+        ?Website $website,
+        ?Organization $organization
+    ): QueryBuilder {
         $queryBuilder = $this->getByCurrencyQueryBuilder($currency);
 
         if (null !== $website) {
@@ -150,10 +216,13 @@ class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository
                 ->andWhere('websites.id is null or websites = :website')
                 ->setParameter('website', $website);
 
-            if (null !== $website->getOrganization()) {
+            if (null === $organization) {
+                $organization = $website->getOrganization();
+            }
+            if (null !== $organization) {
                 $queryBuilder
                     ->andWhere('methodsConfigsRule.organization = :organization')
-                    ->setParameter('organization', $website->getOrganization());
+                    ->setParameter('organization', $organization);
             }
         }
 

@@ -6,7 +6,7 @@ use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -27,14 +27,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class UPSTransportSettingsType extends AbstractType
 {
     private TransportInterface $transport;
-    private ShippingOriginProvider $shippingOriginProvider;
+    private SystemShippingOriginProvider $systemShippingOriginProvider;
 
     public function __construct(
         TransportInterface $transport,
-        ShippingOriginProvider $shippingOriginProvider
+        SystemShippingOriginProvider $systemShippingOriginProvider
     ) {
         $this->transport = $transport;
-        $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->systemShippingOriginProvider = $systemShippingOriginProvider;
     }
 
     /**
@@ -176,7 +176,7 @@ class UPSTransportSettingsType extends AbstractType
         }
 
         if (null === $transport->getUpsCountry()) {
-            $country = $this->shippingOriginProvider->getSystemShippingOrigin()->getCountry();
+            $country = $this->systemShippingOriginProvider->getSystemShippingOrigin()->getCountry();
             if (null !== $country) {
                 $transport->setUpsCountry($country);
             }

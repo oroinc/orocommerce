@@ -2,255 +2,566 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider\MultiShipping;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProviderInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProvider;
-use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\BusinessUnit;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadata;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProviderInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
+use Oro\Component\TestUtils\ORM\OrmTestCase;
+use PHPUnit\Framework\Constraint\Constraint;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class SubOrderOwnerProviderTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class SubOrderOwnerProviderTest extends OrmTestCase
 {
-    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $propertyAccessor;
+    /** @var SubOrderOrganizationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $subOrderOrganizationProvider;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /** @var OwnershipMetadataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $metadataProvider;
+
+    /** @var EntityManagerMock */
+    private $em;
 
     /** @var SubOrderOwnerProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->propertyAccessor = $this->createMock(PropertyAccessorInterface::class);
+        $this->subOrderOrganizationProvider = $this->createMock(SubOrderOrganizationProviderInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
         $this->metadataProvider = $this->createMock(OwnershipMetadataProviderInterface::class);
 
-        $this->provider = new SubOrderOwnerProvider($this->propertyAccessor, $this->metadataProvider);
-    }
+        $this->em = $this->getTestEntityManager();
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
+            new AnnotationReader(),
+            [dirname((new \ReflectionClass(User::class))->getFileName())]
+        ));
 
-    public function testGetOwnerWhenOwnerSourceIsObject()
-    {
-        $lineItems = new ArrayCollection([new CheckoutLineItem(), new CheckoutLineItem()]);
-        $organization = new Organization();
-        $user = new User();
-        $organization->addUser($user);
-        $category = new Category();
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(User::class)
+            ->willReturn($this->em);
 
-        $ownershipMetadata = new OwnershipMetadata(
-            'ORGANIZATION',
-            'organization',
-            'organization_id'
+        $this->provider = new SubOrderOwnerProvider(
+            $this->subOrderOrganizationProvider,
+            $this->configManager,
+            PropertyAccess::createPropertyAccessor(),
+            $this->metadataProvider,
+            $doctrine
         );
-
-        $this->metadataProvider->expects($this->once())
-            ->method('getMetadata')
-            ->willReturn($ownershipMetadata);
-
-        $this->propertyAccessor->expects($this->exactly(2))
-            ->method('getValue')
-            ->willReturnMap([
-                [$lineItems->first(), 'product.category', $category],
-                [$category, 'organization', $organization]
-            ]);
-
-        $owner = $this->provider->getOwner($lineItems, 'product.category:1');
-        $this->assertEquals($user, $owner);
     }
 
-    public function testGetOwnerWhenOwnerSourceIsScalarValue()
+    private function getProduct(int $organizationId, int $businessUnitId): Product
     {
-        $lineItem = new CheckoutLineItem();
+        $organization = new Organization();
+        $organization->setId($organizationId);
+
+        $businessUnit = new BusinessUnit();
+        $businessUnit->setId($businessUnitId);
+
         $product = new Product();
-        $lineItem->setProduct($product);
+        $product->setOrganization($organization);
+        $product->setOwner($businessUnit);
 
-        $lineItems = new ArrayCollection([$lineItem]);
-
-        $businessUnit = new BusinessUnit();
-        $user = new User();
-        $businessUnit->addUser($user);
-
-        $ownershipMetadata = new OwnershipMetadata(
-            'BUSINESS_UNIT',
-            'owner',
-            'business_unit_owner_id'
-        );
-
-        $this->metadataProvider->expects($this->once())
-            ->method('getMetadata')
-            ->willReturn($ownershipMetadata);
-
-        $this->propertyAccessor->expects($this->exactly(2))
-            ->method('getValue')
-            ->willReturnMap([
-                [$lineItem, 'product.sku', 'SKU-TEST'],
-                [$product, 'owner', $businessUnit]
-            ]);
-
-        $owner = $this->provider->getOwner($lineItems, 'product.sku:SKU-TEST');
-        $this->assertEquals($user, $owner);
+        return $product;
     }
 
-    public function testGetOwnerWhenOwnerSourceWithFreeFromProduct()
+    private function getLineItem(?Product $product = null): CheckoutLineItem
     {
         $lineItem = new CheckoutLineItem();
-        $checkout = new Checkout();
-        $lineItem->setCheckout($checkout);
+        if (null !== $product) {
+            $lineItem->setProduct($product);
+        }
 
-        $lineItems = new ArrayCollection([$lineItem]);
+        return $lineItem;
+    }
 
-        $user = new User();
-        $checkout->setOwner($user);
-
-        $ownershipMetadata = new OwnershipMetadata(
-            'USER',
-            'owner',
-            'user_owner_id'
+    private function getBusinessUnitEnabledUserQuery(): Constraint
+    {
+        return self::logicalAnd(
+            self::stringStartsWith('SELECT o0_.id AS id_0,'),
+            self::stringEndsWith(
+                'FROM oro_user o0_ WHERE EXISTS ('
+                . 'SELECT 1 FROM oro_user_business_unit o1_'
+                . ' WHERE o1_.user_id = o0_.id AND o1_.business_unit_id IN (?))'
+                . ' AND o0_.enabled = ? ORDER BY o0_.id ASC LIMIT 1'
+            )
         );
-
-        $this->metadataProvider->expects($this->once())
-            ->method('getMetadata')
-            ->willReturn($ownershipMetadata);
-
-        $this->propertyAccessor->expects($this->once())
-            ->method('getValue')
-            ->with($checkout, 'owner')
-            ->willReturn($user);
-
-        $owner = $this->provider->getOwner($lineItems, 'other-items');
-        $this->assertEquals($user, $owner);
     }
 
-    public function testGetOwnerWhenOwnerSourceHasUserOwnership()
+    private function getBusinessUnitUserQuery(): Constraint
     {
-        $lineItems = new ArrayCollection([new CheckoutLineItem(), new CheckoutLineItem()]);
-        $ownerSource = new \stdClass();
-        $user = new User();
-
-        $ownershipMetadata = new OwnershipMetadata(
-            'USER',
-            'owner',
-            'user_owner_id'
+        return self::logicalAnd(
+            self::stringStartsWith('SELECT o0_.id AS id_0,'),
+            self::stringEndsWith(
+                'FROM oro_user o0_ WHERE EXISTS ('
+                . 'SELECT 1 FROM oro_user_business_unit o1_'
+                . ' WHERE o1_.user_id = o0_.id AND o1_.business_unit_id IN (?))'
+                . ' ORDER BY o0_.id ASC LIMIT 1'
+            )
         );
-
-        $this->metadataProvider->expects($this->once())
-            ->method('getMetadata')
-            ->willReturn($ownershipMetadata);
-
-        $this->propertyAccessor->expects($this->exactly(2))
-            ->method('getValue')
-            ->willReturnMap([
-                [$lineItems->first(), 'dummyField', $ownerSource],
-                [$ownerSource, 'owner', $user]
-            ]);
-
-        $owner = $this->provider->getOwner($lineItems, 'dummyField:1');
-        $this->assertEquals($user, $owner);
     }
 
-    public function testGetOwnerWhenOwnerSourceHasNoneOwnership()
+    private function getOrganizationEnabledUserQuery(): Constraint
     {
-        $lineItems = new ArrayCollection([new CheckoutLineItem(), new CheckoutLineItem()]);
-        $ownerSource = new \stdClass();
-
-        $ownershipMetadata = new OwnershipMetadata('NONE');
-
-        $this->metadataProvider->expects($this->once())
-            ->method('getMetadata')
-            ->willReturn($ownershipMetadata);
-
-        $this->propertyAccessor->expects($this->once())
-            ->method('getValue')
-            ->willReturn($ownerSource);
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unable to determine order owner');
-
-        $this->provider->getOwner($lineItems, 'dummyField:1');
+        return self::logicalAnd(
+            self::stringStartsWith('SELECT o0_.id AS id_0,'),
+            self::stringEndsWith(
+                'FROM oro_user o0_ WHERE EXISTS ('
+                . 'SELECT 1 FROM oro_user_organization o1_'
+                . ' WHERE o1_.user_id = o0_.id AND o1_.organization_id IN (?))'
+                . ' AND o0_.enabled = ? ORDER BY o0_.id ASC LIMIT 1'
+            )
+        );
     }
 
-    public function testGetOwnerWhenOwnerSourceHasEmptyOwner()
+    private function getOrganizationUserQuery(): Constraint
     {
-        $lineItems = new ArrayCollection([new CheckoutLineItem(), new CheckoutLineItem()]);
+        return self::logicalAnd(
+            self::stringStartsWith('SELECT o0_.id AS id_0,'),
+            self::stringEndsWith(
+                'FROM oro_user o0_ WHERE EXISTS ('
+                . 'SELECT 1 FROM oro_user_organization o1_'
+                . ' WHERE o1_.user_id = o0_.id AND o1_.organization_id IN (?))'
+                . ' ORDER BY o0_.id ASC LIMIT 1'
+            )
+        );
+    }
+
+    private function expectsGetConfiguredOwner(
+        ArrayCollection $lineItems,
+        string $groupingPath,
+        ?int $configuredOwnerId
+    ): ?User {
+        $organization = $this->createMock(Organization::class);
+        $configuredOwner = null;
+        if (null !== $configuredOwnerId) {
+            $configuredOwner = $this->em->getReference(User::class, $configuredOwnerId);
+        }
+
+        $this->subOrderOrganizationProvider->expects(self::once())
+            ->method('getOrganization')
+            ->with(self::identicalTo($lineItems), $groupingPath)
+            ->willReturn($organization);
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with(
+                'oro_order.order_creation_new_order_owner',
+                self::isFalse(),
+                self::isFalse(),
+                self::identicalTo($organization)
+            )
+            ->willReturn($configuredOwnerId);
+
+        return $configuredOwner;
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsObject(): void
+    {
+        $userId = 123;
         $category = new Category();
+        $product = $this->getProduct(1, 1);
+        $product->setCategory($category);
+        $category->setOrganization($product->getOrganization());
+        $lineItems = new ArrayCollection([$this->getLineItem($product)]);
+        $groupingPath = 'product.category:1';
 
-        $ownershipMetadata = new OwnershipMetadata(
-            'ORGANIZATION',
-            'organization',
-            'organization_id'
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::once())
+            ->method('getMetadata')
+            ->willReturn(new OwnershipMetadata('ORGANIZATION', 'organization', 'organization_id'));
+
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            $this->getOrganizationEnabledUserQuery(),
+            [['id_0' => $userId]],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
         );
 
-        $this->metadataProvider->expects($this->once())
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($userId, $owner->getId());
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsObjectAndOwnerIsConfiguredForOrganization(): void
+    {
+        $configuredOwnerId = 100;
+        $category = new Category();
+        $product = $this->getProduct(1, 1);
+        $product->setCategory($category);
+        $category->setOrganization($product->getOrganization());
+        $lineItems = new ArrayCollection([$this->getLineItem($product)]);
+        $groupingPath = 'product.category:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, $configuredOwnerId);
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($configuredOwnerId, $owner->getId());
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsScalarValue(): void
+    {
+        $userId = 123;
+        $product = $this->getProduct(1, 1);
+        $product->setSku('sku');
+        $lineItems = new ArrayCollection([$this->getLineItem($product)]);
+        $groupingPath = 'product.sku:SKU-TEST';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::once())
             ->method('getMetadata')
-            ->willReturn($ownershipMetadata);
+            ->willReturn(new OwnershipMetadata('BUSINESS_UNIT', 'owner', 'business_unit_owner_id'));
 
-        $this->propertyAccessor->expects($this->exactly(2))
-            ->method('getValue')
-            ->willReturnMap([
-                [$lineItems->first(), 'product.category', $category],
-                [$category, 'organization', null]
-            ]);
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            $this->getBusinessUnitEnabledUserQuery(),
+            [['id_0' => $userId]],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+        );
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unable to determine order owner');
-
-        $this->provider->getOwner($lineItems, 'product.category:1');
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($userId, $owner->getId());
     }
 
-    /**
-     * @dataProvider getOwnerEntitiesData
-     */
-    public function testGetOwnerWhenOwnerSourceIsOwnerEntity(object $ownerSource)
+    public function testGetOwnerWhenOwnerSourceIsScalarValueAndOwnerIsConfiguredForOrganization(): void
     {
-        $lineItems = new ArrayCollection([new CheckoutLineItem(), new CheckoutLineItem()]);
+        $configuredOwnerId = 100;
+        $product = $this->getProduct(1, 1);
+        $product->setSku('sku');
+        $lineItems = new ArrayCollection([$this->getLineItem($product)]);
+        $groupingPath = 'product.sku:SKU-TEST';
 
-        $this->metadataProvider->expects($this->never())
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, $configuredOwnerId);
+
+        $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
 
-        $this->propertyAccessor->expects($this->once())
-            ->method('getValue')
-            ->with()
-            ->willReturn($ownerSource);
-
-        $owner = $this->provider->getOwner($lineItems, 'product.testField:1');
-        $this->assertInstanceOf(User::class, $owner);
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($configuredOwnerId, $owner->getId());
     }
 
-    public function testGetOwnerNoLineItems()
-    {
-        $lineItems = new ArrayCollection([]);
-
-        $this->metadataProvider->expects($this->never())
-            ->method('getMetadata');
-
-        $this->propertyAccessor->expects($this->never())
-            ->method('getValue');
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unable to determine order owner');
-
-        $this->provider->getOwner($lineItems, 'product.testField:1');
-    }
-
-    public function getOwnerEntitiesData(): array
+    public function testGetOwnerWhenOwnerSourceWithFreeFromProduct(): void
     {
         $user = new User();
+        $checkout = new Checkout();
+        $checkout->setOwner($user);
+        $lineItem = $this->getLineItem();
+        $lineItem->setCheckout($checkout);
+        $lineItems = new ArrayCollection([$lineItem]);
+        $groupingPath = 'other-items';
 
-        $organization = new Organization();
-        $organization->addUser($user);
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
 
-        $businessUnit = new BusinessUnit();
-        $businessUnit->addUser($user);
+        $this->metadataProvider->expects(self::once())
+            ->method('getMetadata')
+            ->willReturn(new OwnershipMetadata('USER', 'owner', 'user_owner_id'));
 
-        return [
-            ['ownerSource' => $user],
-            ['ownerSource' => $organization],
-            ['ownerSource' => $businessUnit]
-        ];
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertSame($user, $owner);
+    }
+
+    public function testGetOwnerWhenOwnerSourceHasUserOwnership(): void
+    {
+        $user = new User();
+        $checkout = new Checkout();
+        $checkout->setOwner($user);
+        $lineItem = $this->getLineItem($this->getProduct(1, 1));
+        $lineItem->setCheckout($checkout);
+        $lineItems = new ArrayCollection([$lineItem]);
+        $groupingPath = 'checkout:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::once())
+            ->method('getMetadata')
+            ->willReturn(new OwnershipMetadata('USER', 'owner', 'user_owner_id'));
+
+        $owner = $this->provider->getOwner($lineItems, 'checkout:1');
+        self::assertSame($user, $owner);
+    }
+
+    public function testGetOwnerWhenOwnerSourceHasNoneOwnership(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unable to determine order owner.');
+
+        $user = new User();
+        $checkout = new Checkout();
+        $checkout->setOwner($user);
+        $lineItem1 = $this->getLineItem($this->getProduct(1, 1));
+        $lineItem1->setCheckout($checkout);
+        $lineItem2 = $this->getLineItem($this->getProduct(1, 2));
+        $lineItem2->setCheckout($checkout);
+        $lineItems = new ArrayCollection([$lineItem1, $lineItem2]);
+        $groupingPath = 'checkout:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::once())
+            ->method('getMetadata')
+            ->willReturn(new OwnershipMetadata('NONE'));
+
+        $this->provider->getOwner($lineItems, $groupingPath);
+    }
+
+    public function testGetOwnerWhenOwnerSourceHasEmptyOwner(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unable to determine order owner.');
+
+        $category = new Category();
+        $product1 = $this->getProduct(1, 1);
+        $product1->setCategory($category);
+        $product2 = $this->getProduct(1, 2);
+        $product1->setCategory($category);
+        $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
+        $groupingPath = 'product.category:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::once())
+            ->method('getMetadata')
+            ->willReturn(new OwnershipMetadata('ORGANIZATION', 'organization', 'organization_id'));
+
+        $this->provider->getOwner($lineItems, $groupingPath);
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsUser(): void
+    {
+        $user = new User();
+        $checkout = new Checkout();
+        $checkout->setOwner($user);
+        $lineItem1 = $this->getLineItem($this->getProduct(1, 1));
+        $lineItem1->setCheckout($checkout);
+        $lineItem2 = $this->getLineItem($this->getProduct(1, 2));
+        $lineItem2->setCheckout($checkout);
+        $lineItems = new ArrayCollection([$lineItem1, $lineItem2]);
+
+        $this->subOrderOrganizationProvider->expects(self::never())
+            ->method('getOrganization');
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $owner = $this->provider->getOwner($lineItems, 'checkout.owner:1');
+        self::assertSame($user, $owner);
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsBusinessUnit(): void
+    {
+        $userId = 123;
+        $product1 = $this->getProduct(1, 1);
+        $product2 = $this->getProduct(1, 2);
+        $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
+        $groupingPath = 'product.owner:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            $this->getBusinessUnitEnabledUserQuery(),
+            [['id_0' => $userId]],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+        );
+
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($userId, $owner->getId());
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsOrganization(): void
+    {
+        $userId = 123;
+        $lineItems = new ArrayCollection([
+            $this->getLineItem($this->getProduct(1, 1)),
+            $this->getLineItem($this->getProduct(1, 2))
+        ]);
+        $groupingPath = 'product.organization:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $this->setQueryExpectation(
+            $this->getDriverConnectionMock($this->em),
+            $this->getOrganizationEnabledUserQuery(),
+            [['id_0' => $userId]],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+        );
+
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($userId, $owner->getId());
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsBusinessUnitThatDoesNotHaveEnabledUsers(): void
+    {
+        $userId = 123;
+        $product1 = $this->getProduct(1, 1);
+        $product2 = $this->getProduct(1, 2);
+        $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
+        $groupingPath = 'product.owner:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $this->addQueryExpectation(
+            $this->getBusinessUnitEnabledUserQuery(),
+            [],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+        );
+        $this->addQueryExpectation(
+            $this->getBusinessUnitUserQuery(),
+            [['id_0' => $userId]],
+            [1 => 1],
+            [1 => \PDO::PARAM_INT]
+        );
+        $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
+
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($userId, $owner->getId());
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsOrganizationThatDoesNotHaveEnabledUsers(): void
+    {
+        $userId = 123;
+        $lineItems = new ArrayCollection([
+            $this->getLineItem($this->getProduct(1, 1)),
+            $this->getLineItem($this->getProduct(1, 2))
+        ]);
+        $groupingPath = 'product.organization:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $this->addQueryExpectation(
+            $this->getOrganizationEnabledUserQuery(),
+            [],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+        );
+        $this->addQueryExpectation(
+            $this->getOrganizationUserQuery(),
+            [['id_0' => $userId]],
+            [1 => 1],
+            [1 => \PDO::PARAM_INT]
+        );
+        $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
+
+        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        self::assertEquals($userId, $owner->getId());
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsBusinessUnitThatDoesNotHaveUsers(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unable to determine order owner.');
+
+        $product1 = $this->getProduct(1, 1);
+        $product2 = $this->getProduct(1, 2);
+        $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
+        $groupingPath = 'product.owner:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $this->addQueryExpectation(
+            $this->getBusinessUnitEnabledUserQuery(),
+            [],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+        );
+        $this->addQueryExpectation(
+            $this->getBusinessUnitUserQuery(),
+            [],
+            [1 => 1],
+            [1 => \PDO::PARAM_INT]
+        );
+        $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
+
+        $this->provider->getOwner($lineItems, $groupingPath);
+    }
+
+    public function testGetOwnerWhenOwnerSourceIsOrganizationThatDoesNotHaveUsers(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unable to determine order owner.');
+
+        $lineItems = new ArrayCollection([
+            $this->getLineItem($this->getProduct(1, 1)),
+            $this->getLineItem($this->getProduct(1, 2))
+        ]);
+        $groupingPath = 'product.organization:1';
+
+        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $this->addQueryExpectation(
+            $this->getOrganizationEnabledUserQuery(),
+            [],
+            [1 => 1, 2 => true],
+            [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
+        );
+        $this->addQueryExpectation(
+            $this->getOrganizationUserQuery(),
+            [],
+            [1 => 1],
+            [1 => \PDO::PARAM_INT]
+        );
+        $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
+
+        $this->provider->getOwner($lineItems, $groupingPath);
+    }
+
+    public function testGetOwnerNoLineItems(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unable to determine order owner.');
+
+        $this->subOrderOrganizationProvider->expects(self::never())
+            ->method('getOrganization');
+
+        $this->metadataProvider->expects(self::never())
+            ->method('getMetadata');
+
+        $this->provider->getOwner(new ArrayCollection([]), 'product.testField:1');
     }
 }

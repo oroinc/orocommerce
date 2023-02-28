@@ -4,39 +4,36 @@ namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
-class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface, LoggerAwareInterface
+/**
+ * A service to get an icon for a shipping method.
+ */
+class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface
 {
-    use LoggerAwareTrait;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
+    private LoggerInterface $logger;
 
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    private $shippingMethodProvider;
-
-    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
-    {
+    public function __construct(
+        ShippingMethodProviderInterface $shippingMethodProvider,
+        LoggerInterface $logger
+    ) {
         $this->shippingMethodProvider = $shippingMethodProvider;
+        $this->logger = $logger;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getIcon($identifier)
+    public function getIcon(string $identifier): ?string
     {
         if ($this->shippingMethodProvider->hasShippingMethod($identifier)) {
             $method = $this->shippingMethodProvider->getShippingMethod($identifier);
-
             if ($method instanceof ShippingMethodIconAwareInterface) {
                 return $method->getIcon();
             }
         } else {
-            if ($this->logger) {
-                $msg = sprintf('Requested icon for non-existing shipping method "%s"', $identifier);
-                $this->logger->warning($msg);
-            }
+            $this->logger->warning(sprintf('Requested icon for non-existing shipping method "%s"', $identifier));
         }
 
         return null;
