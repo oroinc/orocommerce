@@ -20,6 +20,10 @@
         bottom: auto;
         box-sizing: content-box;
         transition: width 1s, height 1s;
+
+        &-wrapper {
+            transition: width 1s, height 1s;
+        }
     }
 
     &cv-canvas {

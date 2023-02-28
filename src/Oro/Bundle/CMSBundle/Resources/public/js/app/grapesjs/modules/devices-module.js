@@ -63,6 +63,46 @@ define(function(require) {
 
             this.canvasEl = Canvas.getElement();
             this.$builderIframe = $(Canvas.getFrameEl());
+            this.$framesArea = $(Canvas.canvasView.framesArea);
+
+            Commands.extend('core:component-select', {
+                updateBadge(el, pos, opts = {}) {
+                    const {canvas} = this;
+                    const frame = canvas.canvasView.framesArea.querySelector('.gjs-frame');
+                    const badge = this.getBadge(opts);
+
+                    const {y: badgeY} = badge.getBoundingClientRect();
+                    const {y: frameY} = frame.getBoundingClientRect();
+                    const {height: elHeight} = el.getBoundingClientRect();
+
+                    if (frameY - badgeY > 0) {
+                        badge.style.top = `${elHeight}px`;
+                    }
+                },
+
+                updateToolbarPos(pos) {
+                    const unit = 'px';
+                    const toolbarEl = this.canvas.getToolbarEl();
+                    const iframeEl = this.canvas.getFrameEl();
+                    const {el} = this.getElSelected();
+                    const {height: elHeight} = el.getBoundingClientRect();
+
+                    toolbarEl.style.top = `${pos.top}${unit}`;
+                    toolbarEl.style.left = `${pos.left}${unit}`;
+                    toolbarEl.style.opacity = '';
+
+                    const {left: iframeLeft, top: iframeTop} = iframeEl.getBoundingClientRect();
+                    const {left, top} = toolbarEl.getBoundingClientRect();
+
+                    if (iframeLeft > left) {
+                        toolbarEl.style.left = 0;
+                    }
+
+                    if (iframeTop - top > 0) {
+                        toolbarEl.style.top = `${elHeight}px`;
+                    }
+                }
+            });
 
             this.initButtons();
 
@@ -200,7 +240,8 @@ define(function(require) {
                 Devices.add({
                     id: breakpoint.name,
                     width: breakpoint.widthDevice,
-                    widthMedia: breakpoint.max ? breakpoint.max + 'px' : ''
+                    widthMedia: breakpoint.max ? breakpoint.max + 'px' : '',
+                    height: breakpoint.height
                 });
 
                 buttons.push({
@@ -280,14 +321,13 @@ define(function(require) {
         updateSelectedElement(model, deviceName) {
             const selected = this.builder.getSelected();
             const iframe = this.$builderIframe[0];
-            const deviceManager = this.builder.DeviceManager;
-            const device = deviceManager.get(deviceName);
+            const iframeWrapper = this.$framesArea.find('.gjs-frame-wrapper');
             const editorConf = this.builder.getConfig();
 
             editorConf.el.style.height = editorConf.height;
 
-            this.$builderIframe.one('transitionend.' + this.cid, () => {
-                if (iframe.offsetHeight >= (parseInt(editorConf.height) - this.canvasEl.offsetTop)) {
+            iframeWrapper.one('transitionend.' + this.cid, () => {
+                if (iframeWrapper[0].offsetHeight >= (parseInt(editorConf.height) - this.canvasEl.offsetTop)) {
                     const styleEditor = getComputedStyle(editorConf.el);
                     const styleCanvas = getComputedStyle(this.canvasEl);
                     const height = [iframe.offsetHeight, this.canvasEl.offsetTop, styleEditor['padding-top'],
@@ -299,16 +339,19 @@ define(function(require) {
                     editorConf.el.style.height = editorConf.height;
                 }
 
-                const leftOffset = parseInt($(iframe).css('margin-left')) +
-                    parseInt($(iframe).css('border-left-width'));
+                const leftOffset = parseInt(iframeWrapper.css('margin-left')) +
+                    parseInt(iframeWrapper.css('border-left-width'));
+                const topOffset = parseInt(iframeWrapper.css('margin-top')) +
+                    parseInt(iframeWrapper.css('border-top-width'));
 
                 $(this.canvasEl).find('#gjs-cv-tools').css({
-                    width: device.get('width'),
-                    height: device.get('height'),
+                    width: iframe.clientWidth,
+                    height: iframe.clientHeight,
                     marginLeft: leftOffset
                 });
 
-                $(this.canvasEl).find('#gjs-tools').css({
+                $(this.canvasEl).find('#gjs-tools, .gjs-tools:not(.gjs-tools-gl)').css({
+                    marginTop: -topOffset,
                     marginLeft: -leftOffset
                 });
 
@@ -326,7 +369,8 @@ define(function(require) {
 
             clearInterval(this._intervalId);
 
-            this.$builderIframe.off('.' + this.cid);
+            this.$builderIframe.off(`.${this.cid}`);
+            this.$framesArea.off(`.${this.cid}`);
 
             delete this.builder;
             delete this.breakpoints;
