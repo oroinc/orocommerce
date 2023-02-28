@@ -1,9 +1,61 @@
 export default (BaseTypeModel, {editor}) => {
+    const VideoURLRegExp = /^.*((youtu.be\/|vimeo.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?)|(live\/))\??v?=?([^#\&\?]*).*/;
+
     const VideoTypeModel = BaseTypeModel.extend({
         editor,
 
         constructor: function VideoTypeModel(...args) {
             return VideoTypeModel.__super__.constructor.apply(this, args);
+        },
+
+        init() {
+            this.listenTo(this, 'change:source', this.updateSrc);
+        },
+
+        extractVideoID(url) {
+            const match = url.match(VideoURLRegExp);
+
+            if (match && match[8]) {
+                return match[8];
+            }
+
+            return url;
+        },
+
+        getSourceVideoSrc() {
+            return this.get('source') || '';
+        },
+
+        updateSrc() {
+            const prov = this.get('provider');
+            let src = '';
+
+            if (prov !== 'so' && this.changed.videoId) {
+                this.set('videoId', this.extractVideoID(this.get('videoId')));
+            }
+
+            switch (prov) {
+                case 'yt':
+                    src = this.getYoutubeSrc();
+                    break;
+                case 'ytnc':
+                    src = this.getYoutubeNoCookieSrc();
+                    break;
+                case 'vi':
+                    src = this.getVimeoSrc();
+                    break;
+                case 'so':
+                    src = this.getSourceVideoSrc();
+                    break;
+            }
+
+            this.set({
+                src
+            });
+
+            this.setAttributes({
+                src
+            });
         },
 
         getProviderTrait() {
@@ -51,6 +103,7 @@ export default (BaseTypeModel, {editor}) => {
             // keep poster's trait value in properties,
             // and to save values into attributes only common for all sources, e.g. src, id
             sourceTrait.find(source => source.name === 'poster').changeProp = 1;
+            sourceTrait.find(source => source.name === 'src').name = 'source';
             return sourceTrait;
         },
 
@@ -83,6 +136,8 @@ export default (BaseTypeModel, {editor}) => {
                 if (this.get('poster')) {
                     delete attr.poster;
                 }
+
+                attr.allowfullscreen = 'allowfullscreen';
             }
 
             return attr;
@@ -98,6 +153,18 @@ export default (BaseTypeModel, {editor}) => {
             let url = VideoTypeModel.__super__.getVimeoSrc.call(this);
             url += this.get('autoplay') ? '&muted=1' : '';
             return url;
+        }
+    });
+
+    Object.defineProperty(VideoTypeModel.prototype, 'defaults', {
+        value: {
+            ...VideoTypeModel.prototype.defaults,
+            src: '',
+            fallback: '',
+            attributes: {
+                src: '',
+                controls: true
+            }
         }
     });
 
