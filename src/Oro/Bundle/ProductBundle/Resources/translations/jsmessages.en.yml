@@ -28,6 +28,8 @@ oro:
                 content: All unsaved changes must be submitted before proceeding to manage products sort order
                 ok: Submit and continue
                 cancel: Cancel
+        drop_zones:
+            excludeFromCollection: 'Exclude from Collection'
 
         sidebar_filters:
             title: Filter By

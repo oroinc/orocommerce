@@ -1037,11 +1037,29 @@ datagrids:
 
     content-node-product-collection-widget-grid:
         extends: product-collection-base-grid
+        options:
+            entity_pagination: false
+            toolbarOptions:
+                hide: true
+                pageSize:
+                    items: [ 1000 ]
+                    default_per_page: 1000
+            jsmodules:
+                - orodatagrid/js/sort-rows-drag-n-drop/builder
+            gridBuildersOptions:
+                sortRowsDragNDropBuilder:
+                    sortOrderColumnName: 'categorySortOrder'
+                    renderDropZonesMenu: true
+                    renderDraggableSeparator: true
+                    dropZones:
+                        excludeFromCollection: 'oroproduct/js/sort-rows-drag-n-drop/exclude-from-collection'
         columns:
             categorySortOrder:
                 order: -1
                 label: oro.catalog.product.category_sort_order.label
-                editable: true
+                editable: false
+                renderable: false
+                manageable: false
                 cellClassName: 'editing-cell'
                 frontend_type: string
         sorters:

@@ -12,7 +12,18 @@
         {{ dataGrid.renderGrid(
             gridName,
             params,
-            {'enableFullScreenLayout': true}|merge(renderParams))
-        }}
+            {
+                enableFullScreenLayout: true,
+                gridBuildersOptions: {
+                    sortRowsDragNDropBuilder: {
+                        formName: 'product_collection_segment_products',
+                        route: 'oro_product_collection_content_variant_products_update',
+                        route_parameters: {
+                            id: params.content_variant_id
+                        }
+                    }
+                }
+            }|merge(renderParams)
+        ) }}
     {% endblock %}
 </div>

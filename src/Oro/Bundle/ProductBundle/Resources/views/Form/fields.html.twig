@@ -473,6 +473,7 @@
                                                         id: form.parent.vars.value.id|default(0),
                                                         gridName: oro_datagrid_build_fullname('content-node-product-collection-widget-grid', scope),
                                                         params: widgetRouteParameters|merge({
+                                                            content_variant_id: form.parent.vars.value.id|default(0),
                                                             params: {
                                                                 segmentId: segmentId,
                                                                 segmentDefinition: segmentDefinition

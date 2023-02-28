@@ -18,6 +18,7 @@ dynamic-imports:
         - oroproduct/js/datagrid/builder/sort-products-action-builder
         - oroproduct/js/app/components/product-name-popup-editor-component
         - oroproduct/js/app/datagrid/listener/related-product-listener
+        - oroproduct/js/sort-rows-drag-n-drop/exclude-from-collection
     orosale:
         - oro/product-collection-popup-add-products-widget
         - oro/related-items-widget

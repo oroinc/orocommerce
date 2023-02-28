@@ -89,12 +89,12 @@ const SortProductsAction = AbstractAction.extend({
     },
 
     _saveFormWithScheduledAction() {
-        const $from = this.datagrid.$el.closest('form');
+        const $form = this.datagrid.$el.closest('form');
 
-        // const actionInput = $form.find('input[name="input_action"]');
-        // actionInput.val(this.inputAction);
+        const actionInput = $form.find('input[name="input_action"]');
+        actionInput.val(this.inputAction);
 
-        $from.submit();
+        $form.submit();
     },
 
     async _handleWidget() {
