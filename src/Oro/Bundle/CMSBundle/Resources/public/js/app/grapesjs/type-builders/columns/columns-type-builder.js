@@ -23,7 +23,11 @@ const ColumnsTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             name: __('oro.cms.wysiwyg.component.columns.label'),
             classes: ['oro-css-grid'],
-            privateClasses: ['oro-css-grid', 'oro-css-grid-col']
+            privateClasses: ['oro-css-grid', 'oro-css-grid-col'],
+            unstylable: [
+                'float', 'display', 'label-parent-flex', 'flex-direction',
+                'justify-content', 'align-items', 'flex', 'align-self', 'order'
+            ]
         },
 
         init() {

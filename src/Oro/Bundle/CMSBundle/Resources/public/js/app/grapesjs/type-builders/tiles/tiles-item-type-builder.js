@@ -10,7 +10,11 @@ const TilesItemTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             name: __('oro.cms.wysiwyg.component.tiles_item.label'),
             classes: ['tiles-item'],
-            privateClasses: ['tiles-item']
+            privateClasses: ['tiles-item'],
+            unstylable: [
+                'float', 'display', 'label-parent-flex', 'flex-direction',
+                'justify-content', 'align-items', 'flex', 'align-self', 'order'
+            ]
         }
     },
 
