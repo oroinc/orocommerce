@@ -213,10 +213,10 @@ Feature: WYSIWYG check RTE UI
     And I apply "bold" action in RTE
     And I apply "italic" action in RTE
     And I check wysiwyg content in "CMS Page Content":
-      | 1 | <h1>Lorem      |
-      | 2 | <i>ipsum dolor |
-      | 3 | </i> sit amet  |
-      | 4 | </h1>          |
+      | 1 | <h1>Lorem            |
+      | 2 | <span><i>ipsum dolor |
+      | 3 | </i></span> sit amet |
+      | 4 | </h1>                |
     And I clear canvas in WYSIWYG
     And I save form
 
