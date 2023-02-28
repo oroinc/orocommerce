@@ -30,6 +30,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         productAssignmentRule: 'product.sku == "PSKU1"'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceRule:
     price_rule_1:
