@@ -1481,7 +1481,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.native_query_executor_helper'
-            - '@oro_pricing.orm.multi_insert_shard_query_executor'
+            - '@oro_pricing.orm.insert_from_select_query_executor'
             - '@oro_pricing.shard_manager'
 
     oro_pricing.orm.temp_table_manipulator.mysql:
