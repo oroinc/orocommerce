@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -118,7 +119,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     {
         return [
             'all products' => [[]],
-            'product-1' => [['product-1']]
+            'product-1' => [['product-1']],
         ];
     }
 
@@ -180,6 +181,10 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
      */
     public function testInsertPricesByPriceListWithTempTable($combinedPriceList, $product, $expectedExists)
     {
+        if ($this->getContainer()->get('doctrine')->getConnection()->getDatabasePlatform() instanceof MySqlPlatform) {
+            $this->markTestSkipped('Test skipped due to unsupported multiple temp table referencing on MySQL');
+        }
+
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
 
@@ -211,6 +216,25 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $products
             );
         }
+
+        // Move prices from temp to persistent CPL table
+        $this->tempTableManipulator->moveDataFromTemplateTableToEntityTable(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id',
+            ]
+        );
+
         /** @var CombinedProductPrice[] $prices */
         $prices = $combinedProductPriceRepository->findBy($findBy);
         if ($expectedExists) {
@@ -248,7 +272,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             'test getting price list 1f' => [
                 'combinedPriceList' => '1f',
                 'product' => null,
-                'expectedExists' => true
+                'expectedExists' => true,
             ],
         ];
     }
