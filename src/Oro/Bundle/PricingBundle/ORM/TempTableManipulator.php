@@ -60,6 +60,11 @@ class TempTableManipulator implements TempTableManipulatorInterface
         $this->getManipulator()->truncateTempTableForEntity($className, $identifier);
     }
 
+    public function copyDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
+    {
+        $this->getManipulator()->copyDataFromTemplateTableToEntityTable($className, $identifier, $fields);
+    }
+
     /**
      * {@inheritDoc}
      */

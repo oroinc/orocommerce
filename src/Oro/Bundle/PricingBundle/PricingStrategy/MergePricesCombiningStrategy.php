@@ -58,19 +58,23 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         array $priceListRelations,
         array $products = []
     ): void {
-        if (count($priceListRelations) > 0) {
+        if (count($priceListRelations) == 0) {
+            return;
+        }
+
+        if (count($priceListRelations) > 1 && $this->canUseTempTable($combinedPriceList)) {
+            $this->moveFirstPriceListPricesWithTempTable($combinedPriceList, $priceListRelations, $products);
+
+            $this->processPriceListsWithTempTable(
+                $combinedPriceList,
+                $priceListRelations,
+                $products
+            );
+        } else {
             $this->moveFirstPriceListPrices($combinedPriceList, $priceListRelations, $products);
 
-            if ($this->canUseTempTable($combinedPriceList)) {
-                $this->processPriceListsWithTempTable(
-                    $combinedPriceList,
-                    $priceListRelations,
-                    $products
-                );
-            } else {
-                foreach ($priceListRelations as $priceListRelation) {
-                    $this->processRelation($combinedPriceList, $priceListRelation, $products);
-                }
+            foreach ($priceListRelations as $priceListRelation) {
+                $this->processRelation($combinedPriceList, $priceListRelation, $products);
             }
         }
     }
@@ -84,6 +88,21 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
             $this->getInsertSelectExecutor(),
             $combinedPriceList,
             $fallbackCpl,
+            $products
+        );
+    }
+
+    private function moveFirstPriceListPricesWithTempTable(
+        CombinedPriceList $combinedPriceList,
+        array &$priceListRelations,
+        array $products
+    ): void {
+        $firstRelation = array_shift($priceListRelations);
+        $this->getCombinedProductPriceRepository()->copyPricesByPriceListWithTempTable(
+            $this->tempTableManipulator,
+            $combinedPriceList,
+            $firstRelation->getPriceList(),
+            $firstRelation->isMergeAllowed(),
             $products
         );
     }
@@ -134,6 +153,24 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         foreach ($priceListRelations as $priceListRelation) {
             $this->processRelationWithTempTable($combinedPriceList, $priceListRelation, $products);
         }
+
+        // Copy prepared prices from temp to persistent CPL table and Drop temp table
+        $this->tempTableManipulator->copyDataFromTemplateTableToEntityTable(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id',
+            ]
+        );
 
         $this->tempTableManipulator->dropTempTableForEntity(
             CombinedProductPrice::class,
