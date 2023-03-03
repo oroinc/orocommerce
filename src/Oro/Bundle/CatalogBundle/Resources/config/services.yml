@@ -400,3 +400,19 @@ services:
         arguments:
             - '@oro_catalog.layout.data_provider.category.cache'
             - '@oro_locale.cache.normalizer.localized_fallback_value_collection'
+
+    oro_catalog.provider.form_template_data.return_action:
+        class: Oro\Bundle\CatalogBundle\Provider\CategoryFormTemplateDataProvider
+        tags:
+            - { name: oro_form.form_template_data_provider, alias: category_form_template }
+
+    Oro\Bundle\CatalogBundle\Provider\CategoryFormTemplateDataProvider:
+        alias: oro_catalog.provider.form_template_data.return_action
+
+    oro_catalog.event_listener.form_handler.sort_order_dialog_trigger:
+        class: Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTriggerFormHandlerEventListener
+        arguments:
+            - '@request_stack'
+            - '@oro_ui.router'
+        tags:
+            - { name: kernel.event_listener, event: oro_catalog.category.edit, method: onFormAfterFlush }

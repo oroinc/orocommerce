@@ -110,8 +110,12 @@
                     jsmodules: ['oroproduct/js/datagrid/builder/sort-products-action-builder'],
                     gridBuildersOptions: {
                         sortProductsAction: {
-                            inputAction: '',
-                            autoExecute: false,
+                            inputAction: {
+                                route: 'oro_catalog_category_update',
+                                params: {id: '$id'},
+                                (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.vars.full_name
+                            }|json_encode,
+                            autoExecute: triggerSortOrderDialog|default(false),
                             route: 'oro_catalog_category_products_manage_sort_order_widget',
                             route_parameters: {
                                 id: categoryId,

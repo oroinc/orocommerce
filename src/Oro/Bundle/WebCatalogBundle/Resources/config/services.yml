@@ -531,3 +531,11 @@ services:
         arguments:
             - '@oro_web_catalog.request_web_content_scope_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
+
+    oro_web_catalog.event_listener.form_handler.sort_order_dialog_trigger:
+        class: Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTriggerFormHandlerEventListener
+        arguments:
+            - '@request_stack'
+            - '@oro_ui.router'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_web_catalog_content_node, method: onFormAfterFlush }

@@ -11,31 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ContentNodeHandler extends FormHandler
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function process($data, FormInterface $form, Request $request)
+    protected function submitPostPutRequest(FormInterface $form, Request $request, bool $clearMissing = true)
     {
-        $form->setData($data);
-
-        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $this->submitPostPutRequest($form, $request, false);
-
-            if ($form->isValid()) {
-                $manager = $this->doctrineHelper->getEntityManager($data);
-                $manager->beginTransaction();
-                try {
-                    $this->saveData($data, $form);
-                    $manager->commit();
-                } catch (\Exception $exception) {
-                    $manager->rollback();
-                    throw $exception;
-                }
-
-                return true;
-            }
-        }
-
-        return false;
+        parent::submitPostPutRequest($form, $request, false);
     }
 }

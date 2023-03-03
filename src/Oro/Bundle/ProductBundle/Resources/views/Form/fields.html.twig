@@ -461,24 +461,29 @@
                                         } %}
                                     {% endif %}
 
+                                    {% set productCollectionGridWidgetName = oro_datagrid_build_fullname('content-node-product-collection-widget-grid', scope) %}
                                     {% set widgetRouteParameters = widgetRouteParameters|merge({
                                         renderParams: {
                                             jsmodules: ['oroproduct/js/datagrid/builder/sort-products-collection-action-builder'],
                                             gridBuildersOptions: {
                                                 sortProductsAction: {
-                                                    inputAction: '',
-                                                    autoExecute: '',
+                                                    inputAction: {
+                                                        route: 'oro_content_node_update',
+                                                        params: {id: '$id'},
+                                                        (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.parent.vars.full_name|default('')
+                                                    }|json_encode,
+                                                    autoExecute: triggerSortOrderDialog|default(false),
                                                     route: 'oro_product_collection_content_variant_manage_sort_order_widget',
                                                     route_parameters: {
                                                         id: form.parent.vars.value.id|default(0),
-                                                        gridName: oro_datagrid_build_fullname('content-node-product-collection-widget-grid', scope),
-                                                        params: widgetRouteParameters|merge({
+                                                        gridName: productCollectionGridWidgetName,
+                                                        ('si_' ~ productCollectionGridWidgetName): segmentId,
+                                                        ('sd_' ~ productCollectionGridWidgetName): form.vars.segmentDefinition,
+                                                        ('sd_' ~ productCollectionGridWidgetName ~ ':incl'): form.includedProducts.vars.value,
+                                                        ('sd_' ~ productCollectionGridWidgetName ~ ':excl'): form.excludedProducts.vars.value,
+                                                        params: {
                                                             content_variant_id: form.parent.vars.value.id|default(0),
-                                                            params: {
-                                                                segmentId: segmentId,
-                                                                segmentDefinition: segmentDefinition
-                                                            }
-                                                        }),
+                                                        },
                                                     },
                                                     productCollectionSelectors: productCollectionApplyQueryComponentOptions.selectors,
                                                 }|merge(sortProductsAction|default({}))

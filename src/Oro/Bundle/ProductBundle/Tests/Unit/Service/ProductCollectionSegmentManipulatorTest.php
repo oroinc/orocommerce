@@ -15,8 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class ProductCollectionSegmentManipulatorTest extends TestCase
 {
-    private ManagerRegistry|MockObject $managerRegistry;
-
     private Converter|MockObject $definitionConverter;
 
     private ProductCollectionSegmentManipulator $manipulator;
@@ -25,16 +23,16 @@ class ProductCollectionSegmentManipulatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $this->definitionConverter = $this->createMock(Converter::class);
 
         $this->manipulator = new ProductCollectionSegmentManipulator(
-            $this->managerRegistry,
+            $managerRegistry,
             $this->definitionConverter
         );
 
         $this->sortOrderRepo = $this->createMock(CollectionSortOrderRepository::class);
-        $this->managerRegistry
+        $managerRegistry
             ->expects(self::any())
             ->method('getRepository')
             ->with(CollectionSortOrder::class)
