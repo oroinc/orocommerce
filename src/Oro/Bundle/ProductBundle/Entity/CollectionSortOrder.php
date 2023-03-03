@@ -5,7 +5,8 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\ProductBundle\Model\ExtendCollectionSortOrder;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
@@ -29,8 +30,10 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
  *      }
  * )
  */
-class CollectionSortOrder extends ExtendCollectionSortOrder
+class CollectionSortOrder implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")

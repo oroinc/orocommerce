@@ -121,8 +121,10 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
 
     public function testBuildFormWithWrongPropertiesInData()
     {
-        $this->entity->product = null;
-        $this->entity->anotherProperty = null;
+        if ($this->entity instanceof \stdClass) {
+            $this->entity->product = null;
+            $this->entity->anotherProperty = null;
+        }
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => ['product' => 1, 'notExistsProperty' => 'some_string'],

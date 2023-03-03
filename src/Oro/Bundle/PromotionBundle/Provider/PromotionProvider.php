@@ -5,11 +5,11 @@ namespace Oro\Bundle\PromotionBundle\Provider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -26,13 +26,15 @@ class PromotionProvider
         private AppliedPromotionMapper $promotionMapper,
         private TokenAccessorInterface $tokenAccessor,
         private MemoryCacheProviderInterface $memoryCacheProvider,
+        private PromotionAwareEntityHelper $promotionAwareHelper
     ) {
     }
 
     public function getPromotions(object $sourceEntity): array
     {
         $promotions = [];
-        if ($sourceEntity instanceof AppliedPromotionsAwareInterface) {
+
+        if ($this->promotionAwareHelper->isPromotionAware($sourceEntity)) {
             $promotions = $this->getAppliedPromotions($sourceEntity);
         }
         $contextData = $this->contextDataConverter->getContextData($sourceEntity);
@@ -100,7 +102,7 @@ class PromotionProvider
         return $this->ruleFiltrationService->getFilteredRuleOwners($promotions, $contextData);
     }
 
-    private function getAppliedPromotions(AppliedPromotionsAwareInterface $sourceEntity): array
+    private function getAppliedPromotions(object $sourceEntity): array
     {
         $appliedPromotions = [];
         foreach ($sourceEntity->getAppliedPromotions() as $appliedPromotionEntity) {

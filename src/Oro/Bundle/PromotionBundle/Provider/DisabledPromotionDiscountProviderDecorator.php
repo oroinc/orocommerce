@@ -5,21 +5,17 @@ namespace Oro\Bundle\PromotionBundle\Provider;
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
 /**
  * Decorates PromotionDiscountProvider to disable discounts with promotions for which disabled applied discount exists.
  */
 class DisabledPromotionDiscountProviderDecorator implements PromotionDiscountsProviderInterface
 {
-    /**
-     * @var PromotionDiscountsProviderInterface
-     */
-    private $promotionDiscountProvider;
-
-    public function __construct(PromotionDiscountsProviderInterface $promotionDiscountsProvider)
-    {
-        $this->promotionDiscountProvider = $promotionDiscountsProvider;
+    public function __construct(
+        private PromotionDiscountsProviderInterface $promotionDiscountProvider,
+        private PromotionAwareEntityHelper $promotionAwareHelper,
+    ) {
     }
 
     /**
@@ -31,7 +27,7 @@ class DisabledPromotionDiscountProviderDecorator implements PromotionDiscountsPr
     {
         $discounts = $this->promotionDiscountProvider->getDiscounts($sourceEntity, $context);
 
-        if ($sourceEntity instanceof AppliedPromotionsAwareInterface && !empty($discounts)) {
+        if ($this->promotionAwareHelper->isPromotionAware($sourceEntity) && !empty($discounts)) {
             $disabledPromotions = [];
 
             foreach ($sourceEntity->getAppliedPromotions() as $appliedPromotion) {

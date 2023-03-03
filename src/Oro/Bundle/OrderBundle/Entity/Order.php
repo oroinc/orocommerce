@@ -16,8 +16,10 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderNameInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
-use Oro\Bundle\OrderBundle\Model\ExtendOrder;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -69,7 +71,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="orders"
- *          }
+ *          },
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -80,8 +82,11 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
+ * @method AbstractEnumValue getInternalStatus()
+ * @method $this setInternalStatus(AbstractEnumValue $status)
  */
-class Order extends ExtendOrder implements
+class Order implements
     OrganizationAwareInterface,
     EmailHolderInterface,
     EmailHolderNameInterface,
@@ -95,11 +100,13 @@ class Order extends ExtendOrder implements
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface,
     ProductLineItemsHolderInterface,
-    PreConfiguredShippingMethodConfigurationInterface
+    PreConfiguredShippingMethodConfigurationInterface,
+    ExtendEntityInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     const INTERNAL_STATUS_CODE = 'order_internal_status';
 
@@ -489,8 +496,6 @@ class Order extends ExtendOrder implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->lineItems = new ArrayCollection();
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();

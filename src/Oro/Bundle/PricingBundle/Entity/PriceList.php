@@ -8,10 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
 
 /**
  * Entity holds price list data.
@@ -46,8 +47,13 @@ use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
  *      }
  * )
  */
-class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterface, OrganizationAwareInterface
+class PriceList extends BasePriceList implements
+    ScheduleIntervalsAwareInterface,
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var bool
      *
@@ -152,7 +158,6 @@ class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterfa
     {
         $this->schedules = new ArrayCollection();
         $this->priceRules = new ArrayCollection();
-
         parent::__construct();
     }
 

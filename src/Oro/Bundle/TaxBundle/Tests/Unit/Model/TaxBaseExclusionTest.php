@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Model;
 
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
 {

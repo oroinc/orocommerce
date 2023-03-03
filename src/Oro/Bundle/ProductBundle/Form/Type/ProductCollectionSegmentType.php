@@ -18,6 +18,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
@@ -50,7 +51,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
 
     public function __construct(
         ProductCollectionDefinitionConverter $definitionConverter,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->definitionConverter = $definitionConverter;
         $this->propertyAccessor = $propertyAccessor;

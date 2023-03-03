@@ -24,7 +24,7 @@ use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Contracts\Service\ResetInterface;
 
@@ -40,7 +40,7 @@ class TaxManagerTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
 
     private ConfigManager $configManager;
-    private PropertyAccessor $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
     private ManagerRegistry $doctrine;
     private LoaderInterface $loader;
     private TaxManager $taxManager;

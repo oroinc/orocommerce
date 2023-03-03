@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
@@ -40,7 +39,7 @@ class AppliedPromotionMapper
     /**
      * @param AppliedPromotion $appliedPromotion
      * @param PromotionDataInterface $promotion
-     * @param Order|AppliedCouponsAwareInterface $order
+     * @param Order|object $order
      */
     public function mapPromotionDataToAppliedPromotion(
         AppliedPromotion $appliedPromotion,

@@ -5,9 +5,9 @@ namespace Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class LoadTransportData extends AbstractFixture implements DependentFixtureInterface
 {

@@ -7,11 +7,12 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
@@ -53,12 +54,14 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      }
  * )
  */
-class LineItem extends ExtendLineItem implements
+class LineItem implements
     OrganizationAwareInterface,
     CustomerVisitorOwnerAwareInterface,
-    ProductLineItemInterface
+    ProductLineItemInterface,
+    ExtendEntityInterface
 {
     use UserAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var integer

@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -18,7 +19,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibilit
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityAwareTestTrait;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class CategoryControllerTest extends WebTestCase
 {

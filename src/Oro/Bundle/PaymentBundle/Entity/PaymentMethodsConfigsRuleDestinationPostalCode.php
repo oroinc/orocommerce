@@ -5,9 +5,12 @@ namespace Oro\Bundle\PaymentBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRuleDestinationPostalCode;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
+ * Store payment method config rule destination post code in database.
+ *
  * @ORM\Entity
  * @ORM\Table(name="oro_payment_mtdscfgsrl_dst_pc")
  * @ORM\HasLifecycleCallbacks
@@ -15,8 +18,10 @@ use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRuleDestinationPos
  *     mode="hidden",
  * )
  */
-class PaymentMethodsConfigsRuleDestinationPostalCode extends ExtendPaymentMethodsConfigsRuleDestinationPostalCode
+class PaymentMethodsConfigsRuleDestinationPostalCode implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var integer
      *

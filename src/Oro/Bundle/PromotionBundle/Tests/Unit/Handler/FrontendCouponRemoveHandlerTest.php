@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -32,11 +33,18 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->handler = new FrontendCouponRemoveHandler($this->authorizationChecker, $this->registry);
+        $this->promotionAwareHelper = $this->createMock(PromotionAwareEntityHelper::class);
+        $this->handler = new FrontendCouponRemoveHandler(
+            $this->authorizationChecker,
+            $this->registry,
+            $this->promotionAwareHelper
+        );
     }
 
     public function testHandleRemoveWhenOrderIsPassed()

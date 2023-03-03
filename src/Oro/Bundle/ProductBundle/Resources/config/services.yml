@@ -1926,8 +1926,7 @@ services:
     oro_product.data_provider.schema_org_product_full_description:
         class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider'
         arguments:
-            - !service
-                class: Oro\Component\PropertyAccess\PropertyAccessor
+            - '@oro_entity_extend.accessor.property_accessor_with_dot_array_syntax'
             - '@oro_ui.html_tag_helper'
             - '@oro_locale.helper.localization'
             - 'descriptions'
@@ -1937,8 +1936,7 @@ services:
     oro_product.data_provider.schema_org_product_short_description:
         class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider'
         arguments:
-            - !service
-                class: Oro\Component\PropertyAccess\PropertyAccessor
+            - '@oro_entity_extend.accessor.property_accessor_with_dot_array_syntax'
             - '@oro_ui.html_tag_helper'
             - '@oro_locale.helper.localization'
             - 'shortDescriptions'

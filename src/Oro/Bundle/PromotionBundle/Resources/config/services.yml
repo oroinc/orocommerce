@@ -1,12 +1,4 @@
 services:
-    oro_promotion.entity_generator_extension.order:
-        class: Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension
-        calls:
-            - ['registerSupportedEntity', ['Oro\Bundle\OrderBundle\Entity\Order']]
-            - ['registerSupportedEntity', ['Oro\Bundle\CheckoutBundle\Entity\Checkout']]
-        tags:
-            - { name: oro_entity_extend.entity_generator_extension }
-
     oro_promotion.security.acl.voter.promotion_matched_product_segment:
         class: Oro\Bundle\PromotionBundle\Acl\Voter\PromotionMatchedProductSegmentVoter
         public: false
@@ -92,6 +84,7 @@ services:
             - '@oro_promotion.mapper.applied_promotion'
             - '@oro_security.token_accessor'
             - '@oro_promotion.promotion_provider.memory_cache'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.shipping_promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
@@ -102,6 +95,7 @@ services:
             - '@oro_promotion.mapper.applied_promotion'
             - '@oro_security.token_accessor'
             - '@oro_promotion.promotion_provider.memory_cache'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.promotion_provider.memory_cache:
         parent: oro.cache.provider.memory_cache
@@ -340,6 +334,8 @@ services:
 
     oro_promotion.layout.extension.applied_coupons_aware_context_configurator:
         class: Oro\Bundle\PromotionBundle\Layout\Extension\AppliedCouponsAwareContextConfigurator
+        arguments:
+            - '@oro_promotion.entity_promotion_aware_helper'
         tags:
             - { name: layout.context_configurator }
 
@@ -401,6 +397,7 @@ services:
         public: true
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.provider.subtotal_provider:
         class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
@@ -650,6 +647,7 @@ services:
             - '@oro_promotion.validation_service.coupon_validation'
             - '@oro_promotion.promotion_provider'
             - '@oro_promotion.provider.entity_coupons_provider'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.rule_normalizer:
         public: false
@@ -681,6 +679,7 @@ services:
             - '@doctrine'
             - '@event_dispatcher'
             - '@security.authorization_checker'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler:
         alias: oro_promotion.handler.coupon_validation_handler
@@ -714,12 +713,14 @@ services:
         arguments:
             - '@security.authorization_checker'
             - '@doctrine'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.event_listener.actualize_coupons_state_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener
         arguments:
             - '@doctrine'
             - '@oro_promotion.provider.entity_coupons_provider'
+            - '@oro_promotion.entity_promotion_aware_helper'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 
@@ -744,6 +745,7 @@ services:
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
             - '@.inner'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.provider.order_promotion_discounts_provider_decorator:
         class: Oro\Bundle\PromotionBundle\Provider\OrderPromotionDiscountsProviderDecorator
@@ -751,6 +753,7 @@ services:
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
             - '@.inner'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.event_listener.order_applied_promotion_event_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener
@@ -775,6 +778,7 @@ services:
         decorates: oro_checkout.factory.multi_shipping.checkout_factory
         arguments:
             - '@.inner'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.mapper.order_mapper_decorator:
         class: Oro\Bundle\PromotionBundle\Mapper\OrderMapperDecorator
@@ -782,6 +786,7 @@ services:
         decorates: oro_checkout.mapper.order_mapper
         arguments:
             - '@.inner'
+            - '@oro_promotion.entity_promotion_aware_helper'
 
     oro_promotion.datagrid.extension.frontend_segment_datagrid:
         class: Oro\Bundle\PromotionBundle\Datagrid\Extension\FrontendSegmentDatagridExtension
@@ -839,3 +844,17 @@ services:
             - '@oro_tax.provider.taxation_settings_provider'
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent, method: onSkipOrderTaxRecalculation, priority: -250 }
+
+    oro_promotion.entity_promotion_aware_helper:
+        class: Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper
+        public: true
+        arguments:
+            - "@oro_entity_config.config_manager"
+
+    Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper:
+        alias: oro_promotion.entity_promotion_aware_helper
+
+    oro_promotion.aware_entity_configuration:
+        class: Oro\Bundle\PromotionBundle\EntityConfig\PromotionAwareEntityConfiguration
+        tags:
+            - oro_entity_config.validation.entity_config

@@ -8,7 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\PromotionBundle\Model\ExtendAppliedPromotion;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * Represents applied promotions to the order
@@ -16,10 +18,14 @@ use Oro\Bundle\PromotionBundle\Model\ExtendAppliedPromotion;
  * @Config()
  * @ORM\Table(name="oro_promotion_applied")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository")
+ *
+ * @method Order getOrder()
+ * @method setOrder(Order $order)
  */
-class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInterface
+class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
 {
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @ORM\Id
@@ -96,8 +102,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->appliedDiscounts = new ArrayCollection();
     }
 

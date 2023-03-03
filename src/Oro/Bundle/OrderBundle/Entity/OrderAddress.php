@@ -3,12 +3,14 @@
 namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Represents billing and shipping address for an order.
@@ -34,8 +36,12 @@ use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
  * )
  * @ORM\Entity
  */
-class OrderAddress extends ExtendOrderAddress implements AddressPhoneAwareInterface
+class OrderAddress extends AbstractAddress implements
+    AddressPhoneAwareInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var CustomerAddress
      *

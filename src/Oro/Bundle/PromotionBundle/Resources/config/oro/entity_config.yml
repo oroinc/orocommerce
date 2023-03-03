@@ -1,0 +1,6 @@
+entity_config:
+    promotion:
+        entity:
+            items:
+                is_promotion_aware: ~
+                is_coupon_aware: ~

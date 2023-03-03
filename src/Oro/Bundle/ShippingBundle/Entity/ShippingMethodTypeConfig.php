@@ -5,15 +5,20 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodTypeConfig;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
+ * Store shipping method type config.
+ *
  * @ORM\Table(name="oro_ship_method_type_config")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository")
  * @Config
  */
-class ShippingMethodTypeConfig extends ExtendShippingMethodTypeConfig
+class ShippingMethodTypeConfig implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="id")

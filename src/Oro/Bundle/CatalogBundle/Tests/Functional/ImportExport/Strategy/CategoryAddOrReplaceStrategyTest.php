@@ -223,7 +223,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $this->strategy->process($category);
 
         $this->assertEquals(
-            [(new LocalizedFallbackValue())->setString('test-category')],
+            [(new LocalizedFallbackValue())->setString('test-category')->setSerializedData(null)],
             $category->getSlugPrototypes()->toArray()
         );
     }
