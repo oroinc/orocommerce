@@ -105,7 +105,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     {
         return [
             'all products' => [[]],
-            'product-1' => [['product-1']]
+            'product-1' => [['product-1']],
         ];
     }
 
@@ -193,6 +193,25 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $products
             );
         }
+
+        // Move prices from temp to persistent CPL table
+        $this->tempTableManipulator->moveDataFromTemplateTableToEntityTable(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id',
+            ]
+        );
+
         /** @var CombinedProductPrice[] $prices */
         $prices = $combinedProductPriceRepository->findBy($findBy);
         if ($expectedExists) {
@@ -227,7 +246,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             'test getting price list 1f' => [
                 'combinedPriceList' => '1f',
                 'product' => null,
-                'expectedExists' => true
+                'expectedExists' => true,
             ],
         ];
     }

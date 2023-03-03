@@ -4,10 +4,12 @@ namespace Oro\Bundle\ConsentBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\ConsentBundle\Model\ExtendConsentAcceptance;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Entity represents accepted consents with certain landing page by CustomerUser
@@ -25,10 +27,16 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  * @Config()
+ *
+ * @method CustomerUser getCustomerUser()
+ * @method setCustomerUser(CustomerUser $customerUser)
  */
-class ConsentAcceptance extends ExtendConsentAcceptance implements CreatedAtAwareInterface
+class ConsentAcceptance implements
+    CreatedAtAwareInterface,
+    ExtendEntityInterface
 {
     use CreatedAtAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int

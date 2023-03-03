@@ -3,11 +3,13 @@
 namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Quote address entity
@@ -28,8 +30,10 @@ use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
  * )
  * @ORM\Entity
  */
-class QuoteAddress extends ExtendQuoteAddress
+class QuoteAddress extends AbstractAddress implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var CustomerAddress
      *

@@ -2,37 +2,47 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 
+/**
+ * Adds the following to customer grid:
+ * * price list column and filter.
+ * * price list data to selected records.
+ */
 class CustomerDataGridListener extends AbstractPriceListRelationDataGridListener
 {
-    const RELATION_CLASS_NAME = 'OroPricingBundle:PriceListToCustomer';
+    private ManagerRegistry $doctrine;
+
+    public function __construct(ManagerRegistry $doctrine)
+    {
+        $this->doctrine = $doctrine;
+    }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getRelations(array $priceListHolderIds)
+    protected function getRelations(array $priceListHolderIds): array
     {
-        return $this->registry->getManagerForClass('OroPricingBundle:PriceListToCustomer')
-            ->getRepository('OroPricingBundle:PriceListToCustomer')
+        return $this->doctrine->getRepository(PriceListToCustomer::class)
             ->getRelationsByHolders($priceListHolderIds);
     }
 
     /**
-     * {@inheritdoc}
-     * @param PriceListToCustomer $relation
+     * {@inheritDoc}
      */
-    protected function getObjectId(BasePriceListRelation $relation)
+    protected function getObjectId(BasePriceListRelation $relation): int
     {
+        /** @var PriceListToCustomer $relation */
         return $relation->getCustomer()->getId();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getRelationClassName()
+    protected function getRelationClassName(): string
     {
-        return self::RELATION_CLASS_NAME;
+        return PriceListToCustomer::class;
     }
 }

@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -196,7 +197,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             /** @var Product $product */
             $product = $this->getReference($data['product']);
             if ($data['priceList'] === 'default_price_list') {
-                $priceList = $manager->getRepository(PriceList::class)->getDefault();
+                $priceList = $manager->getRepository(PriceList::class)->getDefault($this->getReference('organization'));
             } else {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($data['priceList']);
@@ -230,6 +231,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         return [
             LoadProductUnitPrecisions::class,
             LoadPriceLists::class,
+            LoadOrganization::class
         ];
     }
 

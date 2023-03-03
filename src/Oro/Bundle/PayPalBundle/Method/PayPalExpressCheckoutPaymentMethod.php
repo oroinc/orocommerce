@@ -17,6 +17,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -63,7 +64,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         DoctrineHelper $doctrineHelper,
         OptionsProviderInterface $optionsProvider,
         SurchargeProvider $surchargeProvider,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->gateway = $gateway;
         $this->config = $config;

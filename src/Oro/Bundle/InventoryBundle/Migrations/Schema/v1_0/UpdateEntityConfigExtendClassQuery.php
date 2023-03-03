@@ -59,7 +59,6 @@ class UpdateEntityConfigExtendClassQuery extends ParametrizedMigrationQuery
         $id = $row['id'];
         $data = isset($row['data']) ? $this->connection->convertToPHPValue($row['data'], Types::ARRAY) : [];
 
-        $data['extend']['extend_class'] = $this->toExtendClass;
         $data['extend']['schema']['entity'] = $this->toExtendClass;
 
         $extendConfig = $data['extend']['schema']['doctrine'][$this->fromExtendClass];

@@ -5,18 +5,17 @@ namespace Oro\Bundle\PromotionBundle\Mapper;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
+/**
+ * Order mapper promotions decorator.
+ */
 class OrderMapperDecorator implements MapperInterface
 {
-    /**
-     * @var MapperInterface
-     */
-    private $orderMapper;
-
-    public function __construct(MapperInterface $orderMapper)
-    {
-        $this->orderMapper = $orderMapper;
+    public function __construct(
+        private MapperInterface            $orderMapper,
+        private PromotionAwareEntityHelper $promotionAwareHelper
+    ) {
     }
 
     /**
@@ -25,10 +24,8 @@ class OrderMapperDecorator implements MapperInterface
     public function map(Checkout $checkout, array $data = [], array $skipped = [])
     {
         $skipped['appliedCoupons'] = true;
-        /** @var AppliedCouponsAwareInterface $order */
         $order = $this->orderMapper->map($checkout, $data, $skipped);
-
-        if ($checkout instanceof AppliedCouponsAwareInterface) {
+        if ($this->promotionAwareHelper->isCouponAware($checkout)) {
             foreach ($checkout->getAppliedCoupons() as $appliedCoupon) {
                 $order->addAppliedCoupon($this->getAppliedCouponCopy($appliedCoupon));
             }

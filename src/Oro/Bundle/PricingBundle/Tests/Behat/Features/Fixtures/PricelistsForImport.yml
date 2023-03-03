@@ -103,3 +103,4 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         name: 'priceListForImport'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'

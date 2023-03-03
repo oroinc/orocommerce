@@ -9,7 +9,7 @@ use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 
 class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,8 +28,8 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
     /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $crypter;
 
-    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingOriginProvider;
+    /** @var SystemShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $systemShippingOriginProvider;
 
     /** @var FedexRateServiceValidateConnectionRequestFactory */
     private $factory;
@@ -37,11 +37,11 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
     protected function setUp(): void
     {
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
-        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
+        $this->systemShippingOriginProvider = $this->createMock(SystemShippingOriginProvider::class);
 
         $this->factory = new FedexRateServiceValidateConnectionRequestFactory(
             $this->crypter,
-            $this->shippingOriginProvider
+            $this->systemShippingOriginProvider
         );
     }
 
@@ -54,7 +54,7 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
             ->method('decryptData')
             ->willReturn(self::PASS);
 
-        $this->shippingOriginProvider->expects(self::once())
+        $this->systemShippingOriginProvider->expects(self::once())
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 

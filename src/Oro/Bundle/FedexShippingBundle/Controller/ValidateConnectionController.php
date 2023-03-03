@@ -10,7 +10,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -86,7 +86,7 @@ class ValidateConnectionController extends AbstractController
 
     private function isShippingOriginProvided(): bool
     {
-        $shippingOrigin = $this->get(ShippingOriginProvider::class)->getSystemShippingOrigin();
+        $shippingOrigin = $this->get(SystemShippingOriginProvider::class)->getSystemShippingOrigin();
 
         return $shippingOrigin->getCountry() !== null;
     }
@@ -101,7 +101,7 @@ class ValidateConnectionController extends AbstractController
             [
                 TranslatorInterface::class,
                 FedexRateServiceSoapClient::class,
-                ShippingOriginProvider::class,
+                SystemShippingOriginProvider::class,
                 FedexRateServiceValidateConnectionRequestFactory::class,
             ]
         );

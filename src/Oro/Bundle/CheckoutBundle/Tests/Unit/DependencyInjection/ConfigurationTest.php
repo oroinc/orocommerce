@@ -22,7 +22,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'frontend_show_open_orders' => ['value' => true, 'scope' => 'app'],
                     'checkout_max_line_items_per_page' => ['value' => 1000, 'scope' => 'app'],
                     'enable_line_item_grouping' => ['value' => false, 'scope' => 'app'],
-                    'group_line_items_by' => ['value' => 'product.owner', 'scope' => 'app'],
+                    'group_line_items_by' => ['value' => 'product.category', 'scope' => 'app'],
                     'create_suborders_for_each_group' => ['value' => false, 'scope' => 'app'],
                     'enable_shipping_method_selection_per_line_item' => ['value' => false, 'scope' => 'app'],
                     'show_suborders_in_order_history' => ['value' => true, 'scope' => 'app'],

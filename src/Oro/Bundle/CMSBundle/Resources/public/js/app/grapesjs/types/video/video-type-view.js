@@ -34,14 +34,21 @@ export default BaseTypeView => {
             // Disable autoplay for source
             if (prov !== 'so') {
                 videoEl.src = undoAutoPlay(videoEl.src);
+            } else {
+                videoEl.src = this.model.getSourceVideoSrc();
             }
         },
 
         renderByProvider(prov) {
             const videoEl = VideoTypeView.__super__.renderByProvider.call(this, prov);
 
-            videoEl.src = undoAutoPlay(videoEl.src);
+            if (prov !== 'so') {
+                videoEl.src = undoAutoPlay(videoEl.src);
+            }
+
             this.videoEl = videoEl;
+            this.updateVideo();
+
             return videoEl;
         }
     });

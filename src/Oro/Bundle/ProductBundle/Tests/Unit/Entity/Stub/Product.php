@@ -82,7 +82,7 @@ class Product extends BaseProduct
     /**
      * {@inheritdoc}
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (array_key_exists($name, $this->localizedFields)) {
             return $this->localizedFieldGet($this->localizedFields, $name);
@@ -98,7 +98,7 @@ class Product extends BaseProduct
     /**
      * {@inheritdoc}
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value): void
     {
         if (array_key_exists($name, $this->localizedFields)) {
             $this->localizedFieldSet($this->localizedFields, $name, $value);
@@ -118,7 +118,7 @@ class Product extends BaseProduct
     /**
      * {@inheritdoc}
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         if (array_key_exists($name, $this->localizedFields)) {
             return (bool)$this->localizedFieldGet($this->localizedFields, $name);

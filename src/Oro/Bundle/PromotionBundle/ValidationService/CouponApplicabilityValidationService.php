@@ -4,8 +4,8 @@ namespace Oro\Bundle\PromotionBundle\ValidationService;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 
@@ -19,29 +19,12 @@ class CouponApplicabilityValidationService
     const MESSAGE_PROMOTION_ALREADY_APPLIED = 'oro.promotion.coupon.violation.coupon_promotion_already_applied';
     const MESSAGE_PROMOTION_NOT_APPLICABLE = 'oro.promotion.coupon.violation.coupon_promotion_not_applicable';
 
-    /**
-     * @var CouponValidationService
-     */
-    private $couponValidationService;
-
-    /**
-     * @var PromotionProvider
-     */
-    private $promotionProvider;
-
-    /**
-     * @var EntityCouponsProvider
-     */
-    private $entityCouponsProvider;
-
     public function __construct(
-        CouponValidationService $couponValidationService,
-        PromotionProvider $promotionProvider,
-        EntityCouponsProvider $entityCouponsProvider
+        private CouponValidationService    $couponValidationService,
+        private PromotionProvider          $promotionProvider,
+        private EntityCouponsProvider      $entityCouponsProvider,
+        private PromotionAwareEntityHelper $promotionAwareHelper
     ) {
-        $this->couponValidationService = $couponValidationService;
-        $this->promotionProvider = $promotionProvider;
-        $this->entityCouponsProvider = $entityCouponsProvider;
     }
 
     /**
@@ -52,9 +35,11 @@ class CouponApplicabilityValidationService
      */
     public function getViolations(Coupon $coupon, $entity, array $skipFilters = []): array
     {
-        if (!$entity instanceof CustomerOwnerAwareInterface || !$entity instanceof AppliedCouponsAwareInterface) {
+        if (!$entity instanceof CustomerOwnerAwareInterface
+            || !$this->promotionAwareHelper->isCouponAware($entity)) {
             throw new \InvalidArgumentException(
-                'Argument $entity should implements CustomerOwnerAwareInterface and AppliedCouponsAwareInterface'
+                'Argument $entity should implement CustomerOwnerAwareInterface and ' .
+                'have is_promotion_aware entity config'
             );
         }
 

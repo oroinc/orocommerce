@@ -13,26 +13,30 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currentShoppingListManager;
 
-    private CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject $currentShoppingListManager;
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenStorage;
 
-    private TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject $tokenStorage;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    private FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    private AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
-
-    private AddLineItemMassActionProvider $provider;
+    /** @var AddLineItemMassActionProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -60,15 +64,21 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->addFeature('shopping_list_create');
     }
 
+    private function getShoppingList(int $id, bool $isCurrent = false): ShoppingList
+    {
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, $id);
+        $shoppingList->setLabel('shopping_list_' . $id);
+        $shoppingList->setOrganization(new Organization());
+        $shoppingList->setCustomer(new Customer());
+        $shoppingList->setCustomerUser(new CustomerUser());
+        $shoppingList->setCurrent($isCurrent);
+
+        return $shoppingList;
+    }
+
     /**
      * @dataProvider getActionsDataProvider
-     *
-     * @param array $shoppingLists
-     * @param array $expected
-     * @param bool  $isGuest
-     * @param bool  $isShoppingListCreateFeatureEnabled
-     * @param bool  $editAllowed
-     * @param bool  $createAllowed
      */
     public function testGetActions(
         array $shoppingLists,
@@ -91,11 +101,11 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                 ->willReturn(new CustomerUser());
         }
 
-        $this->tokenStorage
+        $this->tokenStorage->expects(self::any())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->authorizationChecker
+        $this->authorizationChecker->expects(self::any())
             ->method('isGranted')
             ->withConsecutive(
                 ['oro_shopping_list_frontend_update'],
@@ -130,7 +140,6 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getActionsDataProvider(): array
@@ -143,6 +152,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'is_current' => false,
                         'type' => 'window',
                         'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -184,14 +194,15 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
             ],
             'shopping lists, registered customer' => [
                 'shoppingLists' => [
-                    $this->createShoppingList(1),
-                    $this->createShoppingList(2, true),
+                    $this->getShoppingList(1),
+                    $this->getShoppingList(2, true),
                 ],
                 'expected' => [
                     'list1' => [
                         'is_current' => false,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -209,6 +220,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'is_current' => true,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -226,6 +238,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'is_current' => false,
                         'type' => 'window',
                         'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -259,14 +272,15 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
             ],
             'shopping lists, registered customer and feature disabled' => [
                 'shoppingLists' => [
-                    $this->createShoppingList(1),
-                    $this->createShoppingList(2, true),
+                    $this->getShoppingList(1),
+                    $this->getShoppingList(2, true),
                 ],
                 'expected' => [
                     'list1' => [
                         'is_current' => false,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -284,6 +298,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'is_current' => true,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -305,13 +320,14 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
             ],
             'shopping lists, guest customer' => [
                 'shoppingLists' => [
-                    $this->createShoppingList(42, true),
+                    $this->getShoppingList(42, true),
                 ],
                 'expected' => [
                     'current' => [
                         'is_current' => true,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_current_shopping_list',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -323,6 +339,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'is_current' => false,
                         'type' => 'window',
                         'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -356,13 +373,14 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
             ],
             'shopping lists, guest customer and feature disabled' => [
                 'shoppingLists' => [
-                    $this->createShoppingList(42, true),
+                    $this->getShoppingList(42, true),
                 ],
                 'expected' => [
                     'current' => [
                         'is_current' => true,
                         'type' => 'addproducts',
                         'label' => 'oro.shoppinglist.actions.add_to_current_shopping_list',
+                        'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
@@ -409,20 +427,5 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                 'createAllowed' => true,
             ]
         ];
-    }
-
-    protected function createShoppingList(int $id, bool $isCurrent = false): ShoppingList
-    {
-        return $this->getEntity(
-            ShoppingList::class,
-            [
-                'id' => $id,
-                'label' => 'shopping_list_' . $id,
-                'organization' => new Organization(),
-                'customer' => new Customer(),
-                'customerUser' => new CustomerUser(),
-                'current' => $isCurrent
-            ]
-        );
     }
 }

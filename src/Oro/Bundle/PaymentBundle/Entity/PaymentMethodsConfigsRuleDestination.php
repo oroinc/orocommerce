@@ -9,9 +9,12 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRuleDestination;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
+ * Store payment methods config rule destination in database.
+ *
  * @ORM\Entity
  * @ORM\Table("oro_payment_mtds_cfgs_rl_d")
  * @ORM\HasLifecycleCallbacks
@@ -19,8 +22,10 @@ use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRuleDestination;
  *     mode="hidden",
  * )
  */
-class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRuleDestination
+class PaymentMethodsConfigsRuleDestination implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var integer
      *
@@ -118,8 +123,6 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->postalCodes = new ArrayCollection();
     }
 

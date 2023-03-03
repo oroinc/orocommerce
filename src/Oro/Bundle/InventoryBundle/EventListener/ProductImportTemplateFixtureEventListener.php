@@ -4,10 +4,10 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ImportExportBundle\Event\LoadTemplateFixturesEvent;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /** This event listener is used to add data to product import template fixture */
 class ProductImportTemplateFixtureEventListener

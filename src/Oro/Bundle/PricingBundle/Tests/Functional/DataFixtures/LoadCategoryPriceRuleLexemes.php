@@ -86,6 +86,7 @@ class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentF
     {
         return [
             LoadCategoryData::class,
+            LoadPriceLists::class
         ];
     }
 }

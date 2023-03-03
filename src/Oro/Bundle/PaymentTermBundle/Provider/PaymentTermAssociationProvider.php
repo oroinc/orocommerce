@@ -7,8 +7,11 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * Payment term association provider.
+ */
 class PaymentTermAssociationProvider
 {
     /** @var DoctrineHelper */
@@ -17,7 +20,7 @@ class PaymentTermAssociationProvider
     /** @var ConfigProvider */
     private $configProvider;
 
-    /** @var PropertyAccessor */
+    /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
     /** @var string */
@@ -26,7 +29,7 @@ class PaymentTermAssociationProvider
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigProvider $configProvider,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configProvider = $configProvider;

@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Provider\OrderPromotionDiscountsProviderDecorator;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
@@ -28,11 +29,18 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
     /** @var PromotionDiscountsProviderInterface */
     private $discountsProvider;
 
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
     protected function setUp(): void
     {
         $this->discountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
+        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isPromotionAware'])
+            ->getMock();
         $this->orderPromotionDiscountsProviderDecorator = new OrderPromotionDiscountsProviderDecorator(
-            $this->discountsProvider
+            $this->discountsProvider,
+            $this->promotionAwareHelper
         );
     }
 
@@ -53,6 +61,7 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
         $discount = $this->getEntity(DiscountStub::class, ['promotion' => $promotion]);
         $this->assertDiscountProvider([$discount]);
 
+        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
         $discounts = $this->orderPromotionDiscountsProviderDecorator->getDiscounts($order, new DiscountContext());
         $this->assertEmpty($discounts);
     }

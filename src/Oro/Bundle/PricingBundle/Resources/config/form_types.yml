@@ -195,7 +195,6 @@ services:
 
     oro_pricing.form.type.product_attribute_price_collection:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType
-       public: true
        arguments:
            - '@translator'
        tags:
@@ -203,25 +202,20 @@ services:
 
     oro_pricing.form.type.product_attribute_price:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType
-       public: true
        tags:
            - { name: form.type, alias: oro_pricing_product_attribute_price }
 
     oro_pricing.form.type.oro_pricing_price_rule:
         class: Oro\Bundle\PricingBundle\Form\Type\PriceRuleType
-        public: true
         tags:
             - { name: form.type, alias: oro_pricing_price_rule }
 
-    oro_pricing.form.type.default_price_list:
-        class: Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType
+    oro_pricing.form.type.price_list_filter:
+        class: Oro\Bundle\PricingBundle\Form\Type\Filter\PriceListFilterType
         arguments:
-            - '@translator'
-            - '@oro_pricing.provider.price_list_provider'
             - '@oro_pricing.shard_manager'
-            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
         tags:
-            - { name: form.type, alias: oro_type_default_price_list_filter }
+            - { name: form.type, alias: oro_type_price_list_filter }
 
     oro_pricing.form.type.strategy_price_list:
         class: Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType

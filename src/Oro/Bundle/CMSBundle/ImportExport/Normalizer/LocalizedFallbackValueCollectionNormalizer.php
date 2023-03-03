@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\ImportExport\Normalizer;
 
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizationCodeFormatter;
 use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer as BaseNormalizer;
@@ -21,7 +22,9 @@ class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
         foreach ($object as $item) {
             $key = LocalizationCodeFormatter::formatName($item->getLocalization());
 
-            $result[$key]['wysiwyg'] = method_exists($item, 'getWysiwyg') ? $item->getWysiwyg() : null;
+            $result[$key]['wysiwyg'] = EntityPropertyInfo::methodExists($item, 'getWysiwyg')
+                ? $item->getWysiwyg()
+                : null;
         }
 
         return $result;
@@ -42,7 +45,7 @@ class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
                 /** @var LocalizedFallbackValue $object */
                 $object = $result->get($localizationName);
 
-                if (method_exists($object, 'getWysiwyg')) {
+                if (EntityPropertyInfo::methodExists($object, 'setWysiwyg')) {
                     $object->setWysiwyg((string)$item['wysiwyg']);
                 }
             }

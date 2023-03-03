@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Component\PropertyAccess\PropertyAccessor;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 
 /**
  * Manage shards for given class.
@@ -195,7 +195,7 @@ class ShardManager
         if (!is_object($discValue)) {
             return $discValue;
         }
-        $accessor = new PropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
         /** @var ClassMetadata $targetMetadata */
         $targetClassName = $metadata->getAssociationTargetClass($discFieldName);
         if (!is_a($discValue, $targetClassName)) {

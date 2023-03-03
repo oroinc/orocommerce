@@ -233,6 +233,16 @@ services:
 #        tags:
 #            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
 
+    oro_order.event_listener.system_config.order_creation_new_order_owner:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\UserBundle\Entity\User'
+            - 'oro_order.order_creation_new_order_owner'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
     oro_order.twig.order:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
         public: false
@@ -313,6 +323,7 @@ services:
         arguments:
             - '@oro_checkout.provider.multi_shipping_config'
             - '@doctrine'
+            - '@oro_order.provider.order_types'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-orders-grid, method: onBuildAfter }
@@ -377,6 +388,10 @@ services:
 
     Oro\Bundle\OrderBundle\Provider\TotalProvider:
         alias: 'oro_order.provider.total_processor'
+
+    oro_order.provider.order_types:
+        class: Oro\Bundle\OrderBundle\Provider\OrderTypeProvider
+        public: true
 
     oro_order.event_listener.unit_visibility.datagrid:
         parent: oro_product.event_listener.unit_visibility.datagrid_basic

@@ -3,13 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 
 /**
  * Get configurable product by given value and constraint with possibly configured path to configurable product.
  *
- * @property PropertyAccessor $propertyAccessor
+ * @property PropertyAccessorInterface $propertyAccessor
  */
 trait ConfigurableProductAccessorTrait
 {

@@ -8,13 +8,16 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * Store shipping method config rule in database.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository")
  * @ORM\Table(
  *     name="oro_ship_method_configs_rule"
@@ -40,8 +43,10 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implements RuleOwnerInterface
+class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *
@@ -148,8 +153,6 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->destinations = new ArrayCollection();
         $this->methodConfigs = new ArrayCollection();
         $this->websites = new ArrayCollection();

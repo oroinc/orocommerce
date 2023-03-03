@@ -41,6 +41,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCache` that encapsulates the normalization logic of categories data.
 * Added "category" field to `\Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate`.
 
+#### PricingBundle
+* Added Organization ownership type to the `Oro\Bundle\PricingBundle\Entity\PriceList` entity. All existing prices was moved to the first organization. 
+
 ### Changed
 
 #### ShippingBundle

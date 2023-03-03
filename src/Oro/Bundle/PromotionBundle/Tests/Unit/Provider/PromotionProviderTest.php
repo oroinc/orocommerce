@@ -7,14 +7,15 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\AppliedPromotionsAwareStub;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
@@ -41,6 +42,8 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PromotionProvider */
     private $provider;
 
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -49,6 +52,10 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
         $this->promotionMapper = $this->createMock(AppliedPromotionMapper::class);
 
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isPromotionAware'])
+            ->getMock();
         $this->tokenAccessor
             ->expects($this->any())
             ->method('getOrganizationId')
@@ -66,7 +73,8 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
             $this->contextDataConverter,
             $this->promotionMapper,
             $this->tokenAccessor,
-            $this->memoryCacheProvider
+            $this->memoryCacheProvider,
+            $this->promotionAwareHelper
         );
     }
 
@@ -89,7 +97,7 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
                 [$appliedPromotionEntity2, $appliedPromotion2]
             ]);
 
-        $sourceEntity = $this->createMock(AppliedPromotionsAwareInterface::class);
+        $sourceEntity = $this->createMock(AppliedPromotionsAwareStub::class);
         $sourceEntity
             ->expects($this->any())
             ->method('getAppliedPromotions')
@@ -115,6 +123,7 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
             ->with(array_merge([$appliedPromotion1, $appliedPromotion2], $promotions), [])
             ->willReturn([$appliedPromotion1, $appliedPromotion2, $filteredPromotion]);
 
+        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
         $result = $this->provider->getPromotions($sourceEntity);
         $this->assertSame([$appliedPromotion1, $appliedPromotion2, $filteredPromotion], $result);
     }
@@ -138,7 +147,7 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
                 [$appliedPromotionEntity2, $appliedPromotion2]
             ]);
 
-        $sourceEntity = $this->createMock(AppliedPromotionsAwareInterface::class);
+        $sourceEntity = $this->createMock(AppliedPromotionsAwareStub::class);
         $sourceEntity
             ->expects($this->any())
             ->method('getAppliedPromotions')
@@ -163,6 +172,7 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
             ->with([$appliedPromotion1, $appliedPromotion2], [])
             ->willReturn([$appliedPromotion1, $appliedPromotion2]);
 
+        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
         $result = $this->provider->getPromotions($sourceEntity);
         $this->assertSame([$appliedPromotion1, $appliedPromotion2], $result);
     }

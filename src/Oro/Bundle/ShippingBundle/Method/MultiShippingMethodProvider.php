@@ -12,6 +12,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class MultiShippingMethodProvider implements ShippingMethodProviderInterface
 {
+    public const MULTI_SHIPPING_METHOD_IDENTIFIER = 'multi_shipping';
+
     private MemoryCacheProviderInterface $memoryCacheProvider;
     private TranslatorInterface $translator;
     private RoundingServiceInterface $roundingService;
@@ -69,7 +71,7 @@ class MultiShippingMethodProvider implements ShippingMethodProviderInterface
     private function createMultiShippingMethod(): MultiShippingMethod
     {
         return new MultiShippingMethod(
-            'multi_shipping',
+            self::MULTI_SHIPPING_METHOD_IDENTIFIER,
             $this->translator->trans('oro.shipping.multi_shipping_method.label'),
             'bundles/oroshipping/img/multi-shipping-logo.png',
             true,

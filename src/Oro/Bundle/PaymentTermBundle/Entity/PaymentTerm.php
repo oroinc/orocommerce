@@ -5,9 +5,12 @@ namespace Oro\Bundle\PaymentTermBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
+ * Implements Payment Term payment method
+ *
  * @ORM\Table(name="oro_payment_term")
  * @ORM\Entity()
  * @Config(
@@ -32,8 +35,10 @@ use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
  *      }
  * )
  */
-class PaymentTerm extends ExtendPaymentTerm
+class PaymentTerm implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var integer
      * @ORM\Id

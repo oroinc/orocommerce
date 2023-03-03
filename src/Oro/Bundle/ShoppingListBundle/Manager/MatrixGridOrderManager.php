@@ -12,14 +12,14 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Provides matrix product collection which will used to update configurable products.
  */
 class MatrixGridOrderManager
 {
-    private PropertyAccessor $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
     private ProductVariantAvailabilityProvider $variantAvailability;
     private EmptyMatrixGridInterface $emptyMatrixGridManager;
     private ManagerRegistry $doctrine;
@@ -30,7 +30,7 @@ class MatrixGridOrderManager
     private array $collectionCache = [];
 
     public function __construct(
-        PropertyAccessor $propertyAccessor,
+        PropertyAccessorInterface $propertyAccessor,
         ProductVariantAvailabilityProvider $variantAvailability,
         EmptyMatrixGridInterface $emptyMatrixGridManager,
         ManagerRegistry $doctrine

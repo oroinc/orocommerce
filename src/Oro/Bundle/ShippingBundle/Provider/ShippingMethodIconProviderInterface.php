@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
+/**
+ * Represents a service to get an icon for a shipping method.
+ */
 interface ShippingMethodIconProviderInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return string|null
-     */
-    public function getIcon($identifier);
+    public function getIcon(string $identifier): ?string;
 }

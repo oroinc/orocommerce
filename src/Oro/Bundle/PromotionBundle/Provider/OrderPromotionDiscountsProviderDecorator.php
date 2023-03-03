@@ -8,21 +8,17 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
 /**
  * Blocks the automatic addition of discounts to the order if at least one item in the order has not been changed.
  */
 class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProviderInterface
 {
-    /**
-     * @var PromotionDiscountsProviderInterface
-     */
-    private $baseDiscountsProvider;
-
-    public function __construct(PromotionDiscountsProviderInterface $baseDiscountsProvider)
-    {
-        $this->baseDiscountsProvider = $baseDiscountsProvider;
+    public function __construct(
+        private PromotionDiscountsProviderInterface $baseDiscountsProvider,
+        private PromotionAwareEntityHelper $promotionAwareHelper,
+    ) {
     }
 
     /**
@@ -96,7 +92,7 @@ class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProv
     {
         return
             $sourceEntity instanceof Order
-            && $sourceEntity instanceof AppliedPromotionsAwareInterface
+            && $this->promotionAwareHelper->isPromotionAware($sourceEntity)
             && $sourceEntity->getId();
     }
 }

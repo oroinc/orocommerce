@@ -5,18 +5,17 @@ namespace Oro\Bundle\PromotionBundle\Factory\MultiShipping;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
 /**
  * Applies coupons for a created checkout from a specific checkout.
  */
 class CheckoutFactoryDecorator implements CheckoutFactoryInterface
 {
-    private CheckoutFactoryInterface $checkoutFactory;
-
-    public function __construct(CheckoutFactoryInterface $checkoutFactory)
-    {
-        $this->checkoutFactory = $checkoutFactory;
+    public function __construct(
+        private CheckoutFactoryInterface $checkoutFactory,
+        private PromotionAwareEntityHelper $promotionAwareEntityHelper,
+    ) {
     }
 
     /**
@@ -25,7 +24,7 @@ class CheckoutFactoryDecorator implements CheckoutFactoryInterface
     public function createCheckout(Checkout $source, iterable $lineItems): Checkout
     {
         $checkout = $this->checkoutFactory->createCheckout($source, $lineItems);
-        if ($source instanceof AppliedCouponsAwareInterface) {
+        if ($this->promotionAwareEntityHelper->isCouponAware($source)) {
             $appliedCoupons = $source->getAppliedCoupons();
             foreach ($appliedCoupons as $appliedCoupon) {
                 $checkout->addAppliedCoupon($this->getAppliedCouponCopy($appliedCoupon));

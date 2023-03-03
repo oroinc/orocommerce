@@ -10,6 +10,7 @@ use Oro\Component\WebCatalog\ContentVariantEntityProviderInterface;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -29,7 +30,7 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface, Con
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->authorizationChecker = $authorizationChecker;
         $this->propertyAccessor = $propertyAccessor;

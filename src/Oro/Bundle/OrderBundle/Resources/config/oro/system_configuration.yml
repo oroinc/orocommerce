@@ -72,6 +72,13 @@ system_configuration:
                 enum_code: order_internal_status
                 multiple: false
                 placeholder: false
+        oro_order.order_creation_new_order_owner:
+            data_type: integer
+            type: Oro\Bundle\UserBundle\Form\Type\UserSelectType
+            options:
+                label: oro.order.system_configuration.fields.order_creation_new_order_owner.label
+                tooltip: oro.order.system_configuration.fields.order_creation_new_order_owner.tooltip
+                resettable: false
         oro_order.enable_purchase_history:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox

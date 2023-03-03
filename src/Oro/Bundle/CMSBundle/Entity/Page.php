@@ -5,13 +5,15 @@ namespace Oro\Bundle\CMSBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CMSBundle\Model\ExtendPage;
 use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
 use Oro\Bundle\DraftBundle\Entity\DraftableTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
@@ -87,17 +89,26 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          }
  *      }
  * )
+ * @method LocalizedFallbackValue getTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultTitle()
+ * @method LocalizedFallbackValue getSlug(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultSlug()
+ * @method setDefaultTitle($title)
+ * @method setDefaultSlug($slug)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
-class Page extends ExtendPage implements
+class Page implements
     DatesAwareInterface,
     SluggableInterface,
     DraftableInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
     use AuditableOrganizationAwareTrait;
     use DatesAwareTrait;
     use SluggableTrait;
     use DraftableTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var integer
@@ -163,8 +174,6 @@ class Page extends ExtendPage implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
         $this->titles = new ArrayCollection();
@@ -245,7 +254,7 @@ class Page extends ExtendPage implements
     public function __clone()
     {
         if ($this->id) {
-            $this->cloneLocalizedFallbackValueAssociations();
+            $this->cloneExtendEntityStorage();
         }
     }
 }

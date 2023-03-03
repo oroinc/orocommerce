@@ -7,7 +7,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * Product handler listener.
+ */
 class ProductHandlerListener
 {
     /** @var PropertyAccessor */
@@ -19,7 +23,7 @@ class ProductHandlerListener
     /**
      * {@inheritdoc}
      */
-    public function __construct(PropertyAccessor $propertyAccessor, LoggerInterface $logger)
+    public function __construct(PropertyAccessorInterface $propertyAccessor, LoggerInterface $logger)
     {
         $this->propertyAccessor = $propertyAccessor;
         $this->logger = $logger;

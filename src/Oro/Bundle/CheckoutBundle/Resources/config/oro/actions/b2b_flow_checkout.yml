@@ -229,7 +229,7 @@ action_groups:
 
             - '@traverse':
                 array: $.splitCheckouts
-                key: $.groupedPath
+                key: $.groupingPath
                 value: $.splitCheckout
                 actions:
                     - '@increase_value': [$.loopIndex, 1]
@@ -243,7 +243,14 @@ action_groups:
                         attribute: $.childOrderOwner
                         method_parameters:
                             - $.splitCheckout.lineItems
-                            - $.groupedPath
+                            - $.groupingPath
+                    - '@call_service_method':
+                          service: oro_checkout.provider.multi_shipping.sub_order_organization
+                          method: getOrganization
+                          attribute: $.childOrderOrganization
+                          method_parameters:
+                              - $.splitCheckout.lineItems
+                              - $.groupingPath
 
                     - '@call_service_method':
                         service: oro_payment_term.provider.payment_term
@@ -297,6 +304,7 @@ action_groups:
 
                     - '@assign_value': [$.childOrder.parent, $.order]
                     - '@assign_value': [$.childOrder.owner, $.childOrderOwner]
+                    - '@assign_value': [$.childOrder.organization, $.childOrderOrganization]
                     - '@assign_value': [$.childOrder.identifier, $.childOrderIdentifier]
 
                     - '@call_service_method':

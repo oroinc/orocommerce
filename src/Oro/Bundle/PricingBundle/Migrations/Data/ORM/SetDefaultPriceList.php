@@ -39,13 +39,24 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
     {
         /** @var PriceListRepository $repository */
         $repository = $this->container->get('doctrine')->getRepository(PriceList::class);
-        $defaultPriceList = $repository->getDefault();
-
         $configManager = $this->container->get('oro_config.global');
-        $configManager->set(
-            'oro_pricing.default_price_lists',
-            [new PriceListConfig($defaultPriceList, 100, true)]
+
+        $configs = $this->container->get('oro_pricing.system_config_converter')->convertFromSaved(
+            $configManager->get('oro_pricing.default_price_lists')
         );
+
+        $priceListsConfig = [];
+        foreach ($configs as $config) {
+            $priceListsConfig[] = $config->getPriceList();
+        }
+
+        foreach ($repository->getAllDefaultPriceLists() as $defaultPriceList) {
+            if (!\in_array($defaultPriceList, $priceListsConfig, true)) {
+                $configs[] = new PriceListConfig($defaultPriceList, 100, true);
+            }
+        }
+
+        $configManager->set('oro_pricing.default_price_lists', $configs);
         $configManager->flush();
 
         $this->rebuildCombinedPrices();

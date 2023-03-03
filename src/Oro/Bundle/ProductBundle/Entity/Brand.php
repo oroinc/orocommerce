@@ -10,12 +10,14 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\ProductBundle\Model\ExtendBrand;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
@@ -100,15 +102,31 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyFields)
+ *
+ * @method LocalizedFallbackValue getName(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultName()
+ * @method setDefaultName(string $value)
+ * @method LocalizedFallbackValue getDefaultSlugPrototype()
+ * @method setDefaultSlugPrototype(string $value)
+ * @method LocalizedFallbackValue getDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultDescription()
+ * @method LocalizedFallbackValue getShortDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultShortDescription()
+ * @method LocalizedFallbackValue getMetaTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
-class Brand extends ExtendBrand implements
+class Brand implements
     OrganizationAwareInterface,
     SluggableInterface,
     DatesAwareInterface,
-    DenormalizedPropertyAwareInterface
+    DenormalizedPropertyAwareInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
     use SluggableTrait;
+    use ExtendEntityTrait;
 
     const STATUS_DISABLED = 'disabled';
     const STATUS_ENABLED = 'enabled';
@@ -304,8 +322,6 @@ class Brand extends ExtendBrand implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->names = new ArrayCollection();
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
@@ -548,6 +564,7 @@ class Brand extends ExtendBrand implements
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
 
+            $this->cloneExtendEntityStorage();
             $this->cloneLocalizedFallbackValueAssociations();
         }
     }

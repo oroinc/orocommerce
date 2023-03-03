@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SEOBundle\Layout\DataProvider\SeoDataProvider;
@@ -10,7 +11,6 @@ use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
 use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ProductStub;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
 {

@@ -117,7 +117,7 @@ services:
         public: true
         arguments:
             - '@oro_security.encoder.default'
-            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_shipping.system_shipping_origin_provider'
 
     oro_fedex_shipping.shipping_method.method_type_identifier_generator:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'

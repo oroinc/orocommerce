@@ -337,11 +337,9 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->willReturn($em);
+        $actual = $this->guestShoppingListManager->createAndGetShoppingListForCustomerVisitor();
 
-        $this->assertEquals(
-            $expectedShoppingList,
-            $this->guestShoppingListManager->createAndGetShoppingListForCustomerVisitor()
-        );
+        $this->assertEquals($expectedShoppingList, $actual);
     }
 
     public function createGuestShoppingListDataProvider(): array

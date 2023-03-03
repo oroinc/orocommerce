@@ -46,3 +46,4 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         name: 'Second Price List'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'

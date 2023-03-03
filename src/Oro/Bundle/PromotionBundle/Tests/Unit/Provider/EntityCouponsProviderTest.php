@@ -4,11 +4,10 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Entity\CouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\CouponsTrait;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
@@ -27,23 +26,25 @@ class EntityCouponsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
-        $this->provider = new EntityCouponsProvider(
-            $this->doctrineHelper
-        );
+        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isCouponAware'])
+            ->getMock();
+        $this->provider = new EntityCouponsProvider($this->doctrineHelper, $this->promotionAwareHelper);
     }
 
     public function testGetCouponsWithInvalidEntity()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf(
-            'Given entity must implement either %s or %s',
-            CouponsAwareInterface::class,
-            AppliedCouponsAwareInterface::class
-        ));
+        $this->expectExceptionMessage(
+            'Given entity must have is_coupon_aware entity config or ' .
+            'implement the Oro\Bundle\PromotionBundle\Entity\CouponsAwareInterface interface',
+        );
 
         $this->provider->getCoupons(new \stdClass());
     }
@@ -64,7 +65,7 @@ class EntityCouponsProviderTest extends \PHPUnit\Framework\TestCase
         $couponId2 = 2;
         $couponCode2 = 'second-code';
         /** @var Promotion $promotion */
-        $promotion = $this->getEntity(Promotion::class, ['id' => $promotionId]);
+        $promotion = $this->getEntity(Promotion::class, ['id' => $promotionId, 'extendEntityStorage' => null]);
 
         $coupons = new ArrayCollection([
             $this->createCoupon($couponId1, $couponCode1, $promotion)->setUsesPerPerson(null)->setUsesPerCoupon(null),
@@ -89,6 +90,7 @@ class EntityCouponsProviderTest extends \PHPUnit\Framework\TestCase
 
         $order = $this->getEntity(Order::class, ['appliedCoupons' => $appliedCoupons]);
 
+        $this->promotionAwareHelper->expects($this->once())->method('isCouponAware')->willReturn(true);
         $this->assertEquals($coupons, $this->provider->getCoupons($order));
     }
 

@@ -3,9 +3,11 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CMSBundle\Model\ExtendImageSlide;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 
@@ -30,10 +32,17 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  *          }
  *     }
  * )
+ * @method null|File getMainImage()
+ * @method ImageSlide setMainImage(File $image)
+ * @method null|File getMediumImage()
+ * @method ImageSlide setMediumImage(File $image)
+ * @method null|File getSmallImage()
+ * @method ImageSlide setSmallImage(File $image)
  */
-class ImageSlide extends ExtendImageSlide implements OrganizationAwareInterface
+class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
 {
     use OrganizationAwareTrait;
+    use ExtendEntityTrait;
 
     public const TEXT_ALIGNMENT_CENTER = 'center';
     public const TEXT_ALIGNMENT_LEFT = 'left';
