@@ -34,7 +34,7 @@ define(function(require) {
                 $el.prop('disabled', true);
             }
 
-            let value = model.get('unit_deferred') || model.get('unit') || oldValue;
+            let value = oldValue || model.get('unit');
             const wishfulLabel = model.get('unit_label');
             if (_.isEmpty(units) || wishfulLabel && !value) {
                 // no units loaded or there's wishful unit label, and it could not be resolved to a unit
