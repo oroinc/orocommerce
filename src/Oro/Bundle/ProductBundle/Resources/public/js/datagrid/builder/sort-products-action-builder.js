@@ -4,15 +4,26 @@ const sortProductsActionBuilder = {
      *
      * @param {jQuery.Deferred} deferred
      * @param {Object} options
+     * @param {Object} [options.gridBuildersOptions]
+     * @param {Object} [options.gridBuildersOptions.sortProductsAction]
      * @param {Object} [options.metadata] configuration for the grid
      * @param {Object} [options.metadata.extraActions] list of defined extra actions
      */
     processDatagridOptions(deferred, options) {
         const extraActions = options.metadata.extraActions || {};
         const buildersOptions = options.gridBuildersOptions?.sortProductsAction || {};
+
+        let datagrid;
+        options.gridPromise.done(grid => datagrid = grid);
+
         Object.assign(extraActions, {
             sortProducts: {
                 frontend_type: 'sort-products',
+                onSortingComplete: sequenceOfChanges => {
+                    if (datagrid && sequenceOfChanges.length) {
+                        datagrid.refreshAction.execute();
+                    }
+                },
                 ...buildersOptions
             }
         });
@@ -25,7 +36,7 @@ const sortProductsActionBuilder = {
     /**
      * Init() function is required
      */
-    init(deferred, options) {
+    init(deferred) {
         deferred.resolve();
     }
 };

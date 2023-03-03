@@ -463,7 +463,7 @@
 
                                     {% set widgetRouteParameters = widgetRouteParameters|merge({
                                         renderParams: {
-                                            jsmodules: ['oroproduct/js/datagrid/builder/sort-products-action-builder'],
+                                            jsmodules: ['oroproduct/js/datagrid/builder/sort-products-collection-action-builder'],
                                             gridBuildersOptions: {
                                                 sortProductsAction: {
                                                     inputAction: '',
@@ -480,6 +480,7 @@
                                                             }
                                                         }),
                                                     },
+                                                    productCollectionSelectors: productCollectionApplyQueryComponentOptions.selectors,
                                                 }|merge(sortProductsAction|default({}))
                                             }
                                         }

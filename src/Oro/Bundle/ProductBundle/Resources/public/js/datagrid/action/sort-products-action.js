@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import Backbone from 'backbone';
 import mediator from 'oroui/js/mediator';
 import __ from 'orotranslation/js/translator';
 import AbstractAction from 'oro/datagrid/action/abstract-action';
@@ -98,7 +99,16 @@ const SortProductsAction = AbstractAction.extend({
     },
 
     async _handleWidget() {
+        const eventBus = Object.create(Backbone.Events);
+
         this.frontend_options.actionsEl = $(dialogActionsTemplate());
+        this.frontend_options.initLayoutOptions = {
+            gridBuildersOptions: {
+                sortRowsDragNDropBuilder: {
+                    eventBus
+                }
+            }
+        };
 
         const dialog = await SortProductsAction.__super__._handleWidget.call(this);
         Promise.all([dialog.loading, dialog.deferredRender]).then(() => {
@@ -111,19 +121,27 @@ const SortProductsAction = AbstractAction.extend({
                     container: dialog.$messengerContainer
                 });
 
-            let isChanged = false;
-
-            dialog.widget.one(`ajaxStart${this.eventNamespace()}`, () => (isChanged = true));
+            const sequenceOfChanges = [];
+            // collect all changes that is done in sortOrder dialog
+            this.listenTo(eventBus, 'saveChanges', (xhr, data) => sequenceOfChanges.push(data));
 
             this.listenToOnce(dialog, 'close', () => {
+                this.onSortingComplete(sequenceOfChanges);
                 dialog.widget.off(this.eventNamespace());
-                if (isChanged) {
-                    this.datagrid.refreshAction.execute();
-                }
+                this.stopListening(eventBus);
             });
         });
 
         return dialog;
+    },
+
+    /**
+     * Handles sorting action completion, the handler can be overloaded through options
+     * @param {Array<{sortOrder: Object, removeProducts: Array<string>}>} sequenceOfChanges
+     */
+    onSortingComplete(sequenceOfChanges) {
+        // do nothing for now,
+        // the handler can be overloaded through the options
     }
 });
 

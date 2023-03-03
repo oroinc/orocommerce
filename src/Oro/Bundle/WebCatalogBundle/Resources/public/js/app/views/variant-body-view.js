@@ -83,7 +83,8 @@ const VariantBodyView = BaseView.extend({
         if (bodyPrototype) {
             this.$container
                 .append(bodyPrototype)
-                .trigger('content:changed');
+                .trigger('content:changed')
+                .trigger('patchInitialState');
 
             this.validate();
         }
