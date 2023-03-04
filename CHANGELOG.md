@@ -23,6 +23,7 @@ The current file describes significant changes in the code that may affect the u
 
 
 ## 5.1.0 (UNRELEASED)
+[Show detailed list of changes](incompatibilities-5-1-rc-2.md)
 
 ### Added
 
@@ -36,59 +37,24 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodesMerger` to decrease the complexity of `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver`.
 * Added `\Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProviderInterface`, `\Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProvider`, `\Oro\Bundle\WebCatalogBundle\Menu\StorefrontMenuContentNodesProvider` and `\Oro\Bundle\WebCatalogBundle\Menu\CompositeMenuContentNodesProvider` to provide an ability of getting resolved content nodes for showing in menu.
 
-#### CatalogBundle
-* Added `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProviderInterface`, `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProvider`, `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider` to provide an ability of getting categories data for showing in menu.
-* Added `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCache` that encapsulates the normalization logic of categories data.
-* Added "category" field to `\Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate`.
-
 #### PricingBundle
 * Added Organization ownership type to the `Oro\Bundle\PricingBundle\Entity\PriceList` entity. All existing prices was moved to the first organization. 
-
-### Changed
-
-#### ShippingBundle
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface` and all classes that implement this interface. 
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface. 
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and all classes that implement this interface.
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface` and all classes that implement this interface.
-* Removed unneeded classes that implement `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and replace them with `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider`.
-
-#### WebCatalogBundle
-* Changed `\Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor` so it builds cache starting always from the root content node.
-* Changed `\Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider::getContentVariantIds` so the ordering of the loaded data follows the order of specified ids.
-
-### Removed
-
-#### ShippingBundle
-* Removed unneeded `Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface`.
-
-#### WebCatalogBundle
-* Removed block type `menu_item`; It was updated and moved to `CommerceMenuBundle`
-* Removed `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache::deleteForNode`, the method is moved to `\Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor`. 
-* Removed `Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver`. New resolvers are used instead - `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCachingResolver` and `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver`.
-
-#### CatalogBundle
-* Removed block type `category_list`
-* Removed `\Oro\Bundle\CatalogBundle\Layout\DataProvider\DTO\Category`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getCategoryTree`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getCategoryTreeArray`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getRootCategory` as not needed for building a menu anymore. Instead, the `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider` is used.
-
-
-## 5.1.0-beta.2 (2022-11-30)
-
-[Show detailed list of changes](incompatibilities-5-1-rc-1.md)
-
-### Added
 
 #### CatalogBundle
 * Category. Added sort order management for Products in categories:
     - New field `category_sort_order` in Product entity & website search index to manage sort orders in Categories
     - New input fields in Category edition grid in backend
     - New default ordering behaviour for related frontend grids  (`frontend-product-search-grid` based on Category)
+* Added `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProviderInterface`, `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProvider`, `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider` to provide an ability of getting categories data for showing in menu.
+* Added `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCache` that encapsulates the normalization logic of categories data.
+* Added "category" field to `\Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate`.
+
 
 #### CMSBundle
-* WYSIWYG editor. 
-   - Added a new control option to add/remove cells and rows in the table.
-   - Added the `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on the storefront. See the [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/) article for more information.
-   
+* WYSIWYG editor.
+    - Added a new control option to add/remove cells and rows in the table.
+    - Added the `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on the storefront. See the [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/) article for more information.
+
 * Added entity name provider for the `Page` entity.
 
 #### ConsentBundle
@@ -97,13 +63,13 @@ The current file describes significant changes in the code that may affect the u
   See article [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/)
   for more information.
 * Updated WYSIWYG editor to v0.20.1.
-* Added the possibility to define a model and a view for WYSIWYG component types with a function and an object. 
+* Added the possibility to define a model and a view for WYSIWYG component types with a function and an object.
 
 #### ProductBundle
 * The `Brand` entity now has its own search result template for the backend search
 * Added the `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`.
   is disabled and `oro_product.original_file_names_enabled` is enabled.
-  
+
 * The `relevance_weight` field is added to the website search mapping for the Product entity.
 
 * Product Collections. Added sort order management for Products in Product Collections:
@@ -123,10 +89,21 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### ShippingBundle
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface` and all classes that implement this interface. 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface. 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and all classes that implement this interface.
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface` and all classes that implement this interface.
+* Removed unneeded classes that implement `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and replace them with `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider`.
+
+#### WebCatalogBundle
+* Changed `\Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor` so it builds cache starting always from the root content node.
+* Changed `\Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider::getContentVariantIds` so the ordering of the loaded data follows the order of specified ids.
+
 #### CMSBundle
 * Update Grapesjs to 0.19.5 version
 * Changed the base-type component. Changed `modelMixin` to `modelProps` and `viewMixin` to `viewProps`.  An object definition of the editor type model/view was passed.
-    Added `ModelType` and ViewType properties to pass the constructor function
+  Added `ModelType` and ViewType properties to pass the constructor function
 * Changed component types naming from `text-type-builder.js` to `text-type.js`. Removed `-builder` in file names
 
 #### InventoryBundle
@@ -143,11 +120,11 @@ The current file describes significant changes in the code that may affect the u
   `minimal_price_CPL_ID_CURRENCY` to `minimal_price.CPL_ID_CURRENCY`,
   `minimal_price_PRICE_LIST_ID_CURRENCY_UNIT` to `minimal_price.PRICE_LIST_ID_CURRENCY_UNIT`,
   `minimal_price_PRICE_LIST_ID_CURRENCY` to `minimal_price.PRICE_LIST_ID_CURRENCY`
-  
+
 #### ProductBundle
 * Product search index field `product_id` has been replaced with `system_entity_id`
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.
-* Storefront product autocomplete now includes list of categories with found products  
+* Storefront product autocomplete now includes list of categories with found products
 * ProcessAutocompleteDataEvent data format has been changed, now it includes full autocomplete data: products, categories, and total count
 
 #### SearchBundle
@@ -156,14 +133,25 @@ The current file describes significant changes in the code that may affect the u
 
 ### Removed
 
+#### ShippingBundle
+* Removed unneeded `Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface`.
+
+#### WebCatalogBundle
+* Removed block type `menu_item`; It was updated and moved to `CommerceMenuBundle`
+* Removed `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache::deleteForNode`, the method is moved to `\Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor`. 
+* Removed `Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver`. New resolvers are used instead - `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCachingResolver` and `\Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeMergingResolver`.
+
+#### CatalogBundle
+* Removed block type `category_list`
+* Removed `\Oro\Bundle\CatalogBundle\Layout\DataProvider\DTO\Category`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getCategoryTree`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getCategoryTreeArray`, `\Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider::getRootCategory` as not needed for building a menu anymore. Instead, the `\Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider` is used.
+
 #### CMSBundle
 * Removed `text_with_placeholders`, `wysiwyg_style` layout block types. Use `wysiwyg_content` instead.
 * Removed app module `grapesjs-module.js`.
 
 #### OrderBundle
-* Listener `oro_order.event_listener.frontend_order_datagrid` is removed. Its responsibility is merged 
+* Listener `oro_order.event_listener.frontend_order_datagrid` is removed. Its responsibility is merged
   into `oro_order.event_listener.order_datagrid`.
-
 
 
 ## 5.0.0 (2022-01-26)
