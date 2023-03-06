@@ -605,7 +605,6 @@ class ContentNode implements
     public function __clone()
     {
         if ($this->id) {
-            $this->cloneExtendEntityStorage();
             $this->cloneLocalizedFallbackValueAssociations();
         }
     }
