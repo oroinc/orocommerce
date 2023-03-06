@@ -1,102 +1,108 @@
 datagrids:
-    website_search_results_grid:
-        extended_entity_name: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+    oro-website-search-result-history-grid:
+        extended_entity_name: Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory
+        acl_resource: oro_website_search_result_history_view
         options:
-            entityHint: oro.website_search.searchresult.entity_plural_label
+            entityHint: oro.websitesearch.searchresulthistory.entity_plural_label
+        properties:
+            id: ~
         source:
             type: orm
             query:
                 select:
-                    - search_result.id
-                    - search_result.searchTerm as searchTerm
-                    - search_result.resultType as resultType
-                    - search_result.result as result
-                    - search_result.createdAt as createdAt
+                    - e.id
+                    - e.searchTerm
+                    - e.resultType
+                    - e.resultsCount
+                    - e.createdAt
                     - website.name as websiteName
                     - localization.name as localizationName
                     - customer.name as customerName
-                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - 'TRIM(CONCAT(COALESCE(CONCAT(CAST(customerUser.namePrefix as string), '' ''), ''''), COALESCE(CONCAT(CAST(customerUser.firstName as string), '' ''), ''''), COALESCE(CONCAT(CAST(customerUser.middleName as string), '' ''), ''''), COALESCE(CONCAT(CAST(customerUser.lastName as string), '' ''), ''''), COALESCE(CAST(customerUser.nameSuffix as string), ''''))) as customerUserTitle'
                 from:
-                    - { table: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult', alias: search_result }
+                    - { table: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory', alias: e }
                 join:
                     left:
-                        - { join: search_result.website, alias: website }
-                        - { join: search_result.localization, alias: localization }
-                        - { join: search_result.customer, alias: customer }
-                        - { join: search_result.customerUser, alias: customerUser }
+                        - { join: e.website, alias: website }
+                        - { join: e.localization, alias: localization }
+                        - { join: e.customer, alias: customer }
+                        - { join: e.customerUser, alias: customerUser }
         columns:
             searchTerm:
-                label:         oro.website_search.searchresult.search_term.label
+                label: oro.websitesearch.searchresulthistory.search_term.label
             resultType:
-                label:         oro.website_search.searchresult.result_type.label
-            result:
-                label:         oro.website_search.searchresult.result.label
-                type:          twig
+                label: oro.websitesearch.searchresulthistory.result_type.label
+            resultsCount:
+                label: oro.websitesearch.searchresulthistory.results_count.label
+                type: twig
                 frontend_type: html
-                template:      '@OroWebsiteSearch/Datagrid/searchResult.html.twig'
+                template: '@OroWebsiteSearch/Datagrid/searchResult.html.twig'
             createdAt:
-                label:         oro.website_search.searchresult.searched_at.label
+                label: oro.websitesearch.searchresulthistory.created_at.label
                 frontend_type: datetime
-            websiteName:
-                label:         oro.website_search.searchresult.website.label
-            localizationName:
-                label:         oro.website_search.searchresult.localization.label
-            customerName:
-                label:         oro.website_search.searchresult.customer.label
-            customerUserName:
-                label:         oro.website_search.searchresult.customer.label
-        properties:
-            id: ~
+            websiteTitle:
+                label: oro.websitesearch.searchresulthistory.website.label
+            localizationTitle:
+                label: oro.websitesearch.searchresulthistory.localization.label
+            customerTitle:
+                label: oro.websitesearch.searchresulthistory.customer.label
+            customerUserTitle:
+                label: oro.websitesearch.searchresulthistory.customer_user.label
         sorters:
             columns:
-                searchTerm:
-                    data_name: search_result.searchTerm
                 resultType:
-                    data_name: search_result.resultType
+                    data_name: e.resultType
+                resultsCount:
+                    data_name: e.resultsCount
+                websiteTitle:
+                    data_name: websiteTitle
+                localizationTitle:
+                    data_name: localizationTitle
+                customerTitle:
+                    data_name: customerTitle
+                customerUserTitle:
+                    data_name: customerUserTitle
+                searchTerm:
+                    data_name: e.searchTerm
                 createdAt:
-                    data_name: search_result.createdAt
-                localizationName:
-                    data_name: localization.name
-                websiteName:
-                    data_name: website.name
-                customerName:
-                    data_name: customer.name
-                customerUserName:
-                    data_name: customerUserName
+                    data_name: e.createdAt
             default:
                 createdAt: DESC
         filters:
             columns:
                 searchTerm:
-                    type:      string
-                    data_name: search_result.searchTerm
+                    data_name: e.searchTerm
+                    type: string
                     case_insensitive: false
                     value_conversion: mb_strtoupper
                 resultType:
-                    type:      string
-                    data_name: search_result.resultType
+                    data_name: e.resultType
+                    type: string
                     case_insensitive: false
                     value_conversion: mb_strtoupper
                 createdAt:
-                    type:      datetime
-                    data_name: search_result.createdAt
-                localizationName:
+                    data_name: e.createdAt
+                    type: datetime
+                resultsCount:
+                    data_name: e.resultsCount
+                    type: number-range
+                localizationTitle:
                     type: string
                     data_name: localization.name
-                websiteName:
+                websiteTitle:
                     type: string
                     data_name: website.name
-                customerName:
+                customerTitle:
                     type: string
                     data_name: customer.name
-                customerUserName:
+                customerUserTitle:
                     type: string
-                    data_name: customerUserName
+                    data_name: customerUserTitle
 
-    website-search-search-results-report:
+    website-search-results-report:
         entity_name: 'Oro\Bundle\ReportBundle\Entity\CalendarDate'
         options:
-            entityHint: oro.website_search.searchresult.entity_plural_label
+            entityHint: oro.websitesearch.searchresulthistory.entity_plural_label
             export: true
         source:
             type: orm
@@ -110,31 +116,31 @@ datagrids:
                     - { table: 'Oro\Bundle\ReportBundle\Entity\CalendarDate', alias: calendarDate }
                 join:
                     left:
-                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
                           alias: searchResult
                           conditionType: WITH
                           condition: CAST(calendarDate.date as DATE) = CAST(searchResult.createdAt as DATE)
-                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
                           alias: searchResult1
                           conditionType: WITH
                           condition: searchResult1.id = searchResult.id AND searchResult1.resultType = 'product'
-                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                        - join: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
                           alias: searchResult2
                           conditionType: WITH
                           condition: searchResult2.id = searchResult.id AND searchResult2.resultType = 'empty'
-                groupBy: searchResult.searchTerm
+                groupBy: searchResult.normalizedSearchTermHash
         columns:
             timePeriod:
-                label:         oro.report.datagrid.column.time_period.label
+                label: oro.report.datagrid.column.time_period.label
             searchTerm:
-                label:         oro.website_search.searchresult.search_term.label
+                label: oro.websitesearch.searchresulthistory.search_term.label
                 cellClassName: 'direction-ltr'
             searchNumbers:
-                label:         oro.website_search.searchresult.reports.number_of_times_searched.title
+                label: oro.websitesearch.searchresulthistory.reports.number_of_times_searched.title
             products:
-                label:         oro.website_search.searchresult.reports.number_of_products.title
+                label: oro.websitesearch.searchresulthistory.reports.number_of_products.title
             empty:
-                label:          oro.website_search.searchresult.reports.number_of_empty_results.title
+                label: oro.websitesearch.searchresulthistory.reports.number_of_empty_results.title
         sorters:
             columns:
                 timePeriod:
@@ -153,16 +159,16 @@ datagrids:
         filters:
             columns:
                 timePeriod:
-                    label:              oro.report.datagrid.column.time_period.label
-                    type:               datetime
-                    data_name:          searchResult.createdAt
+                    label: oro.report.datagrid.column.time_period.label
+                    type: datetime
+                    data_name: searchResult.createdAt
                 searchTerm:
-                    type:               string
-                    data_name:          searchTerm
+                    type: string
+                    data_name: searchTerm
                 skip_empty_periods:
-                    label:              oro.report.filter.skip_empty_periods.label
-                    type:               skip_empty_periods
-                    data_name:          searchTerm
+                    label: oro.report.filter.skip_empty_periods.label
+                    type: skip_empty_periods
+                    data_name: searchTerm
                     options:
                         field_options:
                             choices:
@@ -170,22 +176,22 @@ datagrids:
                                 Yes: 1
                         default_value: Yes
                 grouping:
-                    label:              oro.report.filter.grouping.label
-                    type:               date_grouping
-                    data_name:          calendarDate.date
-                    column_name:        timePeriod
-                    calendar_entity:    'Oro\Bundle\ReportBundle\Entity\CalendarDate'
-                    target_entity:      'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult'
+                    label: oro.report.filter.grouping.label
+                    type: date_grouping
+                    data_name: calendarDate.date
+                    column_name: timePeriod
+                    calendar_entity: 'Oro\Bundle\ReportBundle\Entity\CalendarDate'
+                    target_entity: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
                     not_nullable_field: searchResult.id
-                    joined_column:      createdAt
-                    joined_table:       joinedTableAlias
+                    joined_column: createdAt
+                    joined_table: joinedTableAlias
                     options:
                         field_options:
                             choices:
-                                Day:     day
-                                Month:   month
+                                Day: day
+                                Month: month
                                 Quarter: quarter
-                                Year:    year
+                                Year: year
                         default_value: Day
             default:
                 grouping:

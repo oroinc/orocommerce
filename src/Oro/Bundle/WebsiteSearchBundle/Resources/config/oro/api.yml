@@ -1,11 +1,11 @@
 api:
     entity_aliases:
-        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult:
-            alias: searchresult
-            plural_alias: searchresults
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory:
+            alias: searchresulthistory
+            plural_alias: searchresulthistories
     entities:
-        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult:
-            documentation_resource: '@OroWebsiteSearchBundle/Resources/doc/api/search_results.md'
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory:
+            documentation_resource: '@OroWebsiteSearchBundle/Resources/doc/api/search_results_history.md'
             actions:
                 create: false
                 update: false

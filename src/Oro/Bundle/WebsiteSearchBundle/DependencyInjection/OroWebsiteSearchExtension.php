@@ -29,6 +29,7 @@ class OroWebsiteSearchExtension extends Extension
         $loader->load('mq_topics.yml');
         $loader->load('mq_processors.yml');
         $loader->load('controllers.yml');
+        $loader->load('import_export.yml');
 
         if ($container->getParameter('kernel.environment') === 'test') {
             $loader->load('services_test.yml');

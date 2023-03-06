@@ -2,7 +2,7 @@ services:
     _defaults:
         public: true
 
-    Oro\Bundle\WebsiteSearchBundle\Controller\SearchResultController:
+    Oro\Bundle\WebsiteSearchBundle\Controller\SearchResultHistoryController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:

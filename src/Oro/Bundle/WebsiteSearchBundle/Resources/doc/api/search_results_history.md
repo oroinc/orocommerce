@@ -1,4 +1,4 @@
-# Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResult
+# Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory
 
 ## ACTIONS
 

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,15 +11,15 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Handle requests related to search results manipulation.
  */
-class SearchResultController extends AbstractController
+class SearchResultHistoryController extends AbstractController
 {
     /**
-     * @Route("/result-history", name="oro_website_search_search_history")
+     * @Route("/result-history", name="oro_website_search_result_history_index")
      * @Template
      * @Acl(
-     *      id="oro_website_search_search_history",
+     *      id="oro_website_search_result_history_view",
      *      type="entity",
-     *      class="OroWebsiteSearchBundle:SearchResult",
+     *      class="Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory",
      *      permission="VIEW"
      * )
      * @return array
@@ -26,7 +27,7 @@ class SearchResultController extends AbstractController
     public function indexAction()
     {
         return [
-            'gridName' => 'website_search_results_grid'
+            'entity_class' => SearchResultHistory::class,
         ];
     }
 }
