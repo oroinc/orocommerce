@@ -18,8 +18,8 @@ use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
 use Oro\Bundle\FormBundle\Form\Type\Select2Type;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -29,30 +29,24 @@ use Symfony\Component\Validator\Validation;
 
 class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    /** @var ConsentSelectWithPriorityType */
-    private $formType;
+    private ConsentSelectWithPriorityType $formType;
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->formType = new ConsentSelectWithPriorityType();
+        parent::setUp();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityType([]);
-
         $repository = $this->createMock(EntityRepository::class);
         $repository->expects($this->any())
             ->method('find')
             ->willReturnCallback(function ($id) {
-                return $this->getEntity(Consent::class, ['id' => $id]);
+                return $this->getConsent($id);
             });
 
         $metadata = $this->createMock(ClassMetadata::class);
@@ -82,22 +76,22 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ConsentSelectWithPriorityType::class => new ConsentSelectWithPriorityType(),
-                    $entityType->getName() => $entityType,
-                    ConsentSelectType::class => new ConsentSelectType(),
-                    OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
+                    $this->formType,
+                    new EntityTypeStub(),
+                    new ConsentSelectType(),
+                    new OroEntitySelectOrCreateInlineType(
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
                         $entityManager,
                         $searchRegistry
                     ),
-                    OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
+                    new OroJquerySelect2HiddenType(
                         $entityManager,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     ),
-                    'oro_select2_choice' => new Select2Type($this->formType, 'hidden'),
+                    new Select2Type($this->formType, 'hidden'),
                 ],
                 [
                     FormType::class => [new SortableExtension()],
@@ -107,15 +101,22 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    private function getConsent(int $id): Consent
+    {
+        $consent = new Consent();
+        ReflectionUtil::setId($consent, $id);
+
+        return $consent;
+    }
+
     /**
      * @dataProvider submitDataProvider
      */
     public function testSubmit(array $submittedData, ConsentConfig $expectedData)
     {
-        $options = [
+        $form = $this->factory->create(ConsentSelectWithPriorityType::class, new ConsentConfig(), [
             'data_class' => ConsentConfig::class,
-        ];
-        $form = $this->factory->create(ConsentSelectWithPriorityType::class, new ConsentConfig(), $options);
+        ]);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -125,7 +126,7 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
 
     public function submitDataProvider(): array
     {
-        $expectedConsent = $this->getEntity(Consent::class, ['id' => 2]);
+        $expectedConsent = $this->getConsent(2);
 
         return [
             'without default data' => [

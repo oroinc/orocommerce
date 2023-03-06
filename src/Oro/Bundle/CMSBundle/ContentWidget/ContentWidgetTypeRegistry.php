@@ -3,17 +3,17 @@
 namespace Oro\Bundle\CMSBundle\ContentWidget;
 
 /**
- * Registry of all content widgets registereg in the application.
+ * The registry for all content widget types registered in the application.
  */
 class ContentWidgetTypeRegistry
 {
-    /** @var \IteratorAggregate|ContentWidgetTypeInterface[] */
-    private $types;
+    /** @var iterable<ContentWidgetTypeInterface> */
+    private iterable $types;
 
     /**
-     * @param \IteratorAggregate|ContentWidgetTypeInterface[] $types
+     * @param iterable<ContentWidgetTypeInterface> $types
      */
-    public function __construct(\IteratorAggregate $types)
+    public function __construct(iterable $types)
     {
         $this->types = $types;
     }
@@ -34,6 +34,6 @@ class ContentWidgetTypeRegistry
      */
     public function getTypes(): array
     {
-        return iterator_to_array($this->types->getIterator());
+        return iterator_to_array($this->types);
     }
 }

@@ -16,7 +16,7 @@ class MovePriceListInitialStatusesToContext implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         if (!$context instanceof CustomizeFormDataContext || $context->isPrimaryEntityRequest()) {
             HandlePriceListStatusChange::movePriceListInitialStatusesToContext($context);

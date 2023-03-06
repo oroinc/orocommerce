@@ -4,13 +4,11 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -174,18 +172,13 @@ class RequestTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {
-        $priceType = $this->preparePriceType();
-        $entityType = $this->prepareProductSelectType();
-        $currencySelectionType = new CurrencySelectionTypeStub();
-        $requestProductItemType = $this->prepareRequestProductItemType();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-        $customerUserMultiSelectType = $this->prepareCustomerUserMultiSelectType();
         $requestProductType = new RequestProductType();
         $requestProductType->setDataClass(RequestProduct::class);
+
         $frontendRequestProductType = new FrontendRequestProductType();
         $frontendRequestProductType->setDataClass(RequestProduct::class);
 
@@ -193,15 +186,15 @@ class RequestTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     $this->formType,
-                    PriceType::class                   => $priceType,
-                    ProductSelectType::class           => $entityType,
-                    RequestProductType::class          => $requestProductType,
-                    CurrencySelectionType::class       => $currencySelectionType,
-                    RequestProductItemType::class      => $requestProductItemType,
-                    ProductUnitSelectionType::class    => $productUnitSelectionType,
-                    CustomerUserMultiSelectType::class => $customerUserMultiSelectType,
-                    FrontendRequestProductType::class  => $frontendRequestProductType,
-                    QuantityType::class                => $this->getQuantityType(),
+                    $this->preparePriceType(),
+                    ProductSelectType::class => $this->prepareProductSelectType(),
+                    $requestProductType,
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    RequestProductItemType::class => $this->prepareRequestProductItemType(),
+                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    CustomerUserMultiSelectType::class => $this->prepareCustomerUserMultiSelectType(),
+                    $frontendRequestProductType,
+                    $this->getQuantityType(),
                 ],
                 []
             ),

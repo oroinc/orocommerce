@@ -13,12 +13,12 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -28,8 +28,8 @@ use Symfony\Component\Validator\Validation;
 
 class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 {
-    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingOriginProvider;
+    /** @var SystemShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $systemShippingOriginProvider;
 
     /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $crypter;
@@ -39,7 +39,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
     protected function setUp(): void
     {
-        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
+        $this->systemShippingOriginProvider = $this->createMock(SystemShippingOriginProvider::class);
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
 
         $transport = $this->createMock(TransportInterface::class);
@@ -49,7 +49,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
         $this->formType = new UPSTransportSettingsType(
             $transport,
-            $this->shippingOriginProvider
+            $this->systemShippingOriginProvider
         );
 
         parent::setUp();
@@ -65,19 +65,14 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    EntityType::class => new EntityTypeStub(
-                        [
-                            1 => $this->getShippingService(1, '01', 'UPS Next Day Air', $country),
-                            2 => $this->getShippingService(2, '03', 'UPS Ground', $country)
-                        ],
-                        'entity'
-                    ),
-                    UPSTransportSettingsType::class => $this->formType,
-                    CountryType::class => new EntityTypeStub(['US' => $country], 'oro_country'),
+                    $this->formType,
+                    EntityType::class => new EntityTypeStub([
+                        1 => $this->getShippingService(1, '01', 'UPS Next Day Air', $country),
+                        2 => $this->getShippingService(2, '03', 'UPS Ground', $country)
+                    ]),
+                    CountryType::class => new EntityTypeStub(['US' => $country]),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
-                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType(
-                        $this->createMock(ManagerRegistry::class)
-                    ),
+                    new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
                     new OroEncodedPlaceholderPasswordType($this->crypter),
                 ],
                 []
@@ -129,7 +124,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $this->shippingOriginProvider->expects(self::once())
+        $this->systemShippingOriginProvider->expects(self::once())
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 

@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Clone inventory fields and link them with duplicate product
@@ -21,7 +22,7 @@ class ProductDuplicateListener
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    public function __construct(PropertyAccessor $propertyAccessor, array $fields = [])
+    public function __construct(PropertyAccessorInterface $propertyAccessor, array $fields = [])
     {
         $this->propertyAccessor = $propertyAccessor;
         $this->fields = $fields;

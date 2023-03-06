@@ -4,14 +4,25 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Layout\Extension;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Layout\Extension\AppliedCouponsAwareContextConfigurator;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\AppliedCouponsAwareStub;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Component\Layout\LayoutContext;
 
 class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
+    protected function setUp(): void
+    {
+        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isCouponAware'])
+            ->getMock();
+    }
+
     /**
      * @dataProvider contextDataProvider
      * @param string $key
@@ -22,8 +33,9 @@ class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\Test
     {
         $context = new LayoutContext();
         $context->data()->set($key, $value);
+        $this->promotionAwareHelper->expects($this->any())->method('isCouponAware')->willReturn($isAware);
 
-        $contextConfigurator = new AppliedCouponsAwareContextConfigurator();
+        $contextConfigurator = new AppliedCouponsAwareContextConfigurator($this->promotionAwareHelper);
         $contextConfigurator->configureContext($context);
 
         $this->assertTrue($context->has('isAppliedCouponsAware'));
@@ -49,7 +61,7 @@ class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\Test
                 'entity', new \stdClass(), false
             ],
             'entity is instanceof' => [
-                'entity', $this->createMock(AppliedCouponsAwareInterface::class), true
+                'entity', $this->createMock(AppliedCouponsAwareStub::class), true
             ],
             'checkout no checkout interface' => [
                 'checkout', new \stdClass(), false

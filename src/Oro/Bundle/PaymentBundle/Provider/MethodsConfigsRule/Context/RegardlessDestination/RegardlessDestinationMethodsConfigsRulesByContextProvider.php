@@ -2,44 +2,42 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\RegardlessDestination;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 use Oro\Bundle\PaymentBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
 
+/**
+ * Provides payment method config rules regardless of a payment destination.
+ */
 class RegardlessDestinationMethodsConfigsRulesByContextProvider implements MethodsConfigsRulesByContextProviderInterface
 {
-    /**
-     * @var MethodsConfigsRulesFiltrationServiceInterface
-     */
-    private $filtrationService;
-
-    /**
-     * @var PaymentMethodsConfigsRuleRepository
-     */
-    private $repository;
+    private MethodsConfigsRulesFiltrationServiceInterface $filtrationService;
+    private ManagerRegistry $doctrine;
 
     public function __construct(
         MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
-        PaymentMethodsConfigsRuleRepository $repository
+        ManagerRegistry $doctrine
     ) {
         $this->filtrationService = $filtrationService;
-        $this->repository = $repository;
+        $this->doctrine = $doctrine;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getPaymentMethodsConfigsRules(PaymentContextInterface $context)
+    public function getPaymentMethodsConfigsRules(PaymentContextInterface $context): array
     {
         if ($context->getBillingAddress()) {
-            $methodsConfigsRules = $this->repository->getByDestinationAndCurrencyAndWebsite(
+            $methodsConfigsRules = $this->getRepository()->getByDestinationAndCurrencyAndWebsite(
                 $context->getBillingAddress(),
                 $context->getCurrency(),
                 $context->getWebsite()
             );
         } else {
-            $methodsConfigsRules = $this->repository->getByCurrencyAndWebsite(
+            $methodsConfigsRules = $this->getRepository()->getByCurrencyAndWebsite(
                 $context->getCurrency(),
                 $context->getWebsite()
             );
@@ -49,5 +47,10 @@ class RegardlessDestinationMethodsConfigsRulesByContextProvider implements Metho
             $methodsConfigsRules,
             $context
         );
+    }
+
+    private function getRepository(): PaymentMethodsConfigsRuleRepository
+    {
+        return $this->doctrine->getRepository(PaymentMethodsConfigsRule::class);
     }
 }

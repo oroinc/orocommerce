@@ -30,7 +30,7 @@ export default {
             $(inputSelector).first().data('sort-order-options') || {},
             defaultsParams.options
         );
-        const {sortOrderColumnName, sortOrderConstraints} = params;
+        const {sortOrderColumnName, sortOrderConstraints, inCategoryColumnName} = params;
         const {constraintNames} = defaultsParams;
 
         const constraints = {};
@@ -51,7 +51,7 @@ export default {
                     });
                 }
                 item.constraints = constraints;
-
+                item.columnName = inCategoryColumnName;
                 return item;
             });
         };

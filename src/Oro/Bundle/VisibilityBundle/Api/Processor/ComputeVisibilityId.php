@@ -12,8 +12,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeVisibilityId implements ProcessorInterface
 {
-    /** @var VisibilityIdHelper */
-    private $visibilityIdHelper;
+    private VisibilityIdHelper $visibilityIdHelper;
 
     public function __construct(VisibilityIdHelper $visibilityIdHelper)
     {
@@ -23,7 +22,7 @@ class ComputeVisibilityId implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

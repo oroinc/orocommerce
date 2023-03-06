@@ -18,11 +18,8 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class AddParentEntityIdToCategoryNodeSubresourceQuery implements ProcessorInterface
 {
-    /** @var EntityIdHelper */
-    private $entityIdHelper;
-
-    /** @var string */
-    private $entityAssociationName;
+    private EntityIdHelper $entityIdHelper;
+    private string $entityAssociationName;
 
     public function __construct(EntityIdHelper $entityIdHelper, string $entityAssociationName)
     {
@@ -33,7 +30,7 @@ class AddParentEntityIdToCategoryNodeSubresourceQuery implements ProcessorInterf
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */
 

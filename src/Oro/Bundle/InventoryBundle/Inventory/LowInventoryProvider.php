@@ -2,50 +2,38 @@
 
 namespace Oro\Bundle\InventoryBundle\Inventory;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * Class LowInventoryProvider created to encapsulate Low Inventory flag logic.
+ * Encapsulate Low Inventory flag logic.
  * It should be used whenever we need to check if product or products in collection have low inventory
  */
 class LowInventoryProvider
 {
-    const LOW_INVENTORY_THRESHOLD_OPTION = 'lowInventoryThreshold';
-    const HIGHLIGHT_LOW_INVENTORY_OPTION = 'highlightLowInventory';
+    public const LOW_INVENTORY_THRESHOLD_OPTION = 'lowInventoryThreshold';
+    public const HIGHLIGHT_LOW_INVENTORY_OPTION = 'highlightLowInventory';
 
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var EntityFallbackResolver
-     */
-    protected $entityFallbackResolver;
+    protected EntityFallbackResolver $entityFallbackResolver;
+    protected ManagerRegistry $doctrine;
 
     public function __construct(
         EntityFallbackResolver $entityFallbackResolver,
-        DoctrineHelper $doctrineHelper
+        ManagerRegistry $doctrine
     ) {
         $this->entityFallbackResolver = $entityFallbackResolver;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
     }
 
     /**
      * Returns true if provided product has low inventory.
-     * Second parameter can specify in what units we are going to check quantity
-     *
-     * @param Product          $product
-     * @param ProductUnit|null $productUnit if not provided main product unit is used
-     *
-     * @return bool
+     * Second parameter can specify in what units we are going to check quantity,
+     * if it is not provided the main product unit is used.
      */
-    public function isLowInventoryProduct(Product $product, ProductUnit $productUnit = null)
+    public function isLowInventoryProduct(Product $product, ProductUnit $productUnit = null): bool
     {
         if ($productUnit === null) {
             $productUnit = $this->getDefaultProductUnit($product);
@@ -67,25 +55,17 @@ class LowInventoryProvider
         return false;
     }
 
-    /**
-     * @param Product     $product
-     * @param ProductUnit $productUnit
-     *
-     * @return mixed
-     */
-    protected function getQuantityByProductAndProductUnit(Product $product, ProductUnit $productUnit)
+    protected function getQuantityByProductAndProductUnit(Product $product, ProductUnit $productUnit): mixed
     {
-        /** @var InventoryLevelRepository $inventoryLevelRepository */
-        $inventoryLevelRepository = $this->doctrineHelper->getEntityRepositoryForClass(InventoryLevel::class);
-
-        $inventoryLevel = $inventoryLevelRepository->getLevelByProductAndProductUnit($product, $productUnit);
+        $inventoryLevel = $this->doctrine->getRepository(InventoryLevel::class)
+            ->getLevelByProductAndProductUnit($product, $productUnit);
 
         return $inventoryLevel ? $inventoryLevel->getQuantity() : 0;
     }
 
     /**
      * Returns low inventory flags for product collection.
-     * Will be useful for all product listing (Catalog, Checkout, Shopping list)
+     * Will be useful for all product listing (Catalog, Checkout, Shopping list).
      *
      * @param array $data products collection with optional ProductUnit's
      * [
@@ -130,12 +110,7 @@ class LowInventoryProvider
         return $response;
     }
 
-    /**
-     * @param Product $product
-     *
-     * @return mixed
-     */
-    protected function enabledHighlightLowInventory(Product $product)
+    protected function enabledHighlightLowInventory(Product $product): mixed
     {
         return $this->entityFallbackResolver->getFallbackValue(
             $product,
@@ -143,12 +118,7 @@ class LowInventoryProvider
         );
     }
 
-    /**
-     * @param Product $product
-     *
-     * @return mixed
-     */
-    protected function getLowInventoryThreshold(Product $product)
+    protected function getLowInventoryThreshold(Product $product): mixed
     {
         return $this->entityFallbackResolver->getFallbackValue(
             $product,
@@ -159,61 +129,33 @@ class LowInventoryProvider
     /**
      * @param Product[] $products
      *
-     * @return array
+     * @return array [product id => [product unit => quantity, ...], ...]
      */
-    protected function getProductLevelQuantities(array $products)
+    protected function getProductLevelQuantities(array $products): array
     {
-        /** @var InventoryLevelRepository $inventoryLevelRepository */
-        $inventoryLevelRepository = $this->doctrineHelper->getEntityRepositoryForClass(InventoryLevel::class);
-        $productLevelQuantities = $inventoryLevelRepository->getQuantityForProductCollection($products);
-
-        return $this->formatProductLevelQuantities($productLevelQuantities);
+        return $this->formatProductLevelQuantities(
+            $this->doctrine->getRepository(InventoryLevel::class)
+                ->getQuantityForProductCollection($products)
+        );
     }
 
-    /**
-     * @param $inventoryLevelRepository
-     *
-     * @return array
-     */
-    protected function formatProductLevelQuantities($inventoryLevelRepository)
+    protected function formatProductLevelQuantities(array $productLevelQuantities): array
     {
         $formattedQuantities = [];
-
-        foreach ($inventoryLevelRepository as $item) {
-            $productId = $item['product_id'];
-            $code = $item['code'];
-
-            $formattedQuantities[$productId][$code] = $item['quantity'];
+        foreach ($productLevelQuantities as $item) {
+            $formattedQuantities[$item['product_id']][$item['code']] = $item['quantity'];
         }
 
         return $formattedQuantities;
     }
 
-    /**
-     * @param $data
-     *
-     * @return array
-     */
-    protected function extractProducts($data)
+    protected function extractProducts(array $data): array
     {
         return array_column($data, 'product');
     }
 
-    /**
-     * Returns default Product Unit
-     *
-     * @param Product $product
-     *
-     * @return null|ProductUnit returns ProductUnit or null in exceptional case
-     */
-    protected function getDefaultProductUnit(Product $product)
+    protected function getDefaultProductUnit(Product $product): ?ProductUnit
     {
-        if ($product->getPrimaryUnitPrecision() !== null) {
-            $productUnit = $product->getPrimaryUnitPrecision()->getUnit();
-        } else {
-            $productUnit = null;
-        }
-
-        return $productUnit;
+        return $product->getPrimaryUnitPrecision()?->getUnit();
     }
 }

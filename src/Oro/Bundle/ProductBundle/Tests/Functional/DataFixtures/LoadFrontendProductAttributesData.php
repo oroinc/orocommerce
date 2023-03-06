@@ -52,7 +52,7 @@ class LoadFrontendProductAttributesData extends AbstractFixture implements
             $product = $this->getReference($item['product']);
             $product->setTestAttrEnum($this->findEnum($manager, 'test_prod_attr_enum', $item['testAttrEnumOption']));
             $product->setContactType($this->findEnum($manager, 'test_prod_attr_enum', 'enum_second_option'));
-            $product->setTypeCOntact($this->findEnum($manager, 'test_prod_attr_enum', 'enum_third_option'));
+            $product->setTypeContact($this->findEnum($manager, 'test_prod_attr_enum', 'enum_third_option'));
             foreach ($item['testAttrMultiEnumOptions'] as $option) {
                 $product->addTestAttrMultiEnum(
                     $this->findEnum($manager, 'test_prod_attr_m_enum', $option)

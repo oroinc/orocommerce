@@ -10,6 +10,18 @@ import {
     formatting
 } from './utils/utils';
 
+const isTagUnderWrapStyle = rte => {
+    const {anchorNode, focusNode} = rte.selection();
+    const parentAnchor = anchorNode?.parentNode;
+    const parentFocus = focusNode?.parentNode;
+
+    return isTagUnderSelection(rte, 'SPAN') &&
+        (
+            (parentAnchor.nodeType === Node.ELEMENT_NODE && parentAnchor.getAttribute('data-type') === 'text-style') ||
+            (parentFocus.nodeType === Node.ELEMENT_NODE && parentFocus.getAttribute('data-type') === 'text-style')
+        );
+};
+
 export default {
     name: 'wrap',
 
@@ -34,7 +46,7 @@ export default {
             unwrap(node);
         };
 
-        if (isTagUnderSelection(rte, 'SPAN')) {
+        if (isTagUnderWrapStyle(rte)) {
             if (selection.type === 'Caret') {
                 unwrapSpan(container);
             } else if (selection.type === 'Range') {
@@ -108,20 +120,20 @@ export default {
                 return -1;
             }
 
-            if (isTagUnderSelection(rte, 'SPAN')) {
+            if (isTagUnderWrapStyle(rte)) {
                 return 1;
             }
 
             return;
         }
 
-        if (!isTagUnderSelection(rte, 'SPAN') &&
+        if (!isTagUnderWrapStyle(rte) &&
             (selection.type !== 'Range' || range.commonAncestorContainer.nodeType !== Node.TEXT_NODE)
         ) {
             return -1;
         }
 
-        return selection && isTagUnderSelection(rte, 'SPAN') ? 1 : 0;
+        return selection && isTagUnderWrapStyle(rte) ? 1 : 0;
     },
 
     update({classes}, {$btn, attributes}) {

@@ -17,7 +17,7 @@ use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-list-alt"
+ *              "icon"="fa-file-text-o"
  *          },
  *          "security"={
  *              "type"="ACL",

@@ -6,20 +6,16 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FixedProductShippingBundle\Method\FixedProductMethod;
 use Oro\Bundle\FixedProductShippingBundle\Method\FixedProductMethodType;
 use Oro\Bundle\FixedProductShippingBundle\Provider\ShippingCostProvider;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class FixedProductMethodTest extends TestCase
+class FixedProductMethodTest extends \PHPUnit\Framework\TestCase
 {
-    public const LABEL = 'test';
-    public const IDENTIFIER = 'fixed_product';
-    public const ICON = 'bundles/icon-uri.png';
+    private const LABEL = 'test';
+    private const IDENTIFIER = 'fixed_product';
+    private const ICON = 'bundles/icon-uri.png';
 
-    protected FixedProductMethod $fixedProduct;
+    private FixedProductMethod $fixedProduct;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->fixedProduct = new FixedProductMethod(
@@ -59,15 +55,12 @@ class FixedProductMethodTest extends TestCase
         $this->assertInstanceOf(FixedProductMethodType::class, $types[0]);
     }
 
-    public function testGetTypeNull(): void
-    {
-        $this->assertNull($this->fixedProduct->getType(null));
-    }
-
     public function testGetType(): void
     {
-        $type = $this->fixedProduct->getType(FixedProductMethodType::IDENTIFIER);
-        $this->assertInstanceOf(FixedProductMethodType::class, $type);
+        $this->assertInstanceOf(
+            FixedProductMethodType::class,
+            $this->fixedProduct->getType(FixedProductMethodType::IDENTIFIER)
+        );
     }
 
     public function testGetOptionsConfigurationFormType(): void

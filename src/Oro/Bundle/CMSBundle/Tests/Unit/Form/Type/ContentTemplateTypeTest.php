@@ -6,20 +6,17 @@ use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\AttachmentBundle\Tests\Unit\Fixtures\TestFile;
 use Oro\Bundle\CMSBundle\Entity\ContentTemplate;
 use Oro\Bundle\CMSBundle\Form\Type\ContentTemplateType;
-use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ContentTemplateStub;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\Stub\TagSelectTypeStub;
 use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
-use Oro\Bundle\TagBundle\Entity\Tag;
 use Oro\Bundle\TagBundle\Form\Type\TagSelectType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Template;
@@ -29,23 +26,20 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
 {
     use WysiwygAwareTestTrait;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
-                    TagSelectType::class => new TagSelectTypeStub(
-                        [],
-                        Tag::class
-                    ),
-                    WYSIWYGType::class => $this->createWysiwygType(),
-                    ImageType::class => new ImageTypeStub(
-                        [
-                            1001 => (new TestFile())->setId(1001),
-                            1002 => (new TestFile())->setId(1002),
-                        ],
-                        'oro_image'
-                    ),
+                    TagSelectType::class => new TagSelectTypeStub([]),
+                    $this->createWysiwygType(),
+                    ImageType::class => new ImageTypeStub([
+                        1001 => (new TestFile())->setId(1001),
+                        1002 => (new TestFile())->setId(1002),
+                    ]),
                 ],
                 []
             ),
@@ -53,6 +47,9 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getValidators(): array
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
@@ -100,7 +97,6 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
         array $requestData,
         ?ContentTemplate $expectedData
     ): void {
-        /** @var Form $form */
         $form = $this->factory->create(ContentTemplateType::class, $existingData);
 
         self::assertEquals($existingData, $form->getData());
@@ -123,7 +119,6 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
             'enabled' => true,
             'content' => '',
         ];
-        /** @var Form $form */
         $form = $this->factory->create(ContentTemplateType::class, $existingData);
 
         self::assertEquals($existingData, $form->getData());

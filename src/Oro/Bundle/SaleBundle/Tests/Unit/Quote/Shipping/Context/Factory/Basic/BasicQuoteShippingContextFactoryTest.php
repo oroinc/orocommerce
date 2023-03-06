@@ -18,12 +18,10 @@ use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingContextBuilderFactory;
 
@@ -152,13 +150,13 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         Customer $customer,
         CustomerUser $customerUser
     ): Quote {
-        $quote = $this->getEntity(Quote::class, ['id' => $quoteId]);
-        $quote
-            ->setShippingAddress($shippingAddress)
-            ->setCurrency($currency)
-            ->setWebsite($website)
-            ->setCustomer($customer)
-            ->setCustomerUser($customerUser);
+        $quote = new Quote();
+        ReflectionUtil::setId($quote, $quoteId);
+        $quote->setShippingAddress($shippingAddress);
+        $quote->setCurrency($currency);
+        $quote->setWebsite($website);
+        $quote->setCustomer($customer);
+        $quote->setCustomerUser($customerUser);
 
         return $quote;
     }

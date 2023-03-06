@@ -1,0 +1,9 @@
+/* @theme: custom; */
+
+@include breakpoint('desktop') {
+    .main-menu-multi {
+        &__container {
+            display: block;
+        }
+    }
+}

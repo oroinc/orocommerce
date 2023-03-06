@@ -14,36 +14,24 @@ use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderI
 
 class InvalidateCacheActionHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const TRANSPORT_ID = 1;
+    private const TRANSPORT_ID = 1;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var TimeInTransitCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TimeInTransitCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $timeInTransitCacheProvider;
 
-    /**
-     * @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $timeInTransitCacheProviderFactory;
 
-    /**
-     * @var UPSShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
     private $upsPriceCache;
 
-    /**
-     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingPriceCache;
 
-    /**
-     * @var InvalidateCacheActionHandler
-     */
+    /** @var InvalidateCacheActionHandler */
     private $handler;
 
     protected function setUp(): void
@@ -70,43 +58,31 @@ class InvalidateCacheActionHandlerTest extends \PHPUnit\Framework\TestCase
 
         $repository = $this->createMock(ObjectRepository::class);
 
-        $this->doctrineHelper
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityRepository')
             ->willReturn($repository);
 
-        $settings = $this->createSettingsMock();
+        $settings = $this->createMock(UPSSettings::class);
 
-        $repository
+        $repository->expects(self::any())
             ->method('find')
             ->with(self::TRANSPORT_ID)
             ->willReturn($settings);
 
-        $this->upsPriceCache
-            ->expects(static::once())
+        $this->upsPriceCache->expects(self::once())
             ->method('deleteAll');
 
-        $this->shippingPriceCache
-            ->expects(static::once())
+        $this->shippingPriceCache->expects(self::once())
             ->method('deleteAllPrices');
 
-        $this->timeInTransitCacheProviderFactory
-            ->expects(static::once())
+        $this->timeInTransitCacheProviderFactory->expects(self::once())
             ->method('createCacheProviderForTransport')
             ->with($settings)
             ->willReturn($this->timeInTransitCacheProvider);
 
-        $this->timeInTransitCacheProvider
-            ->expects(static::once())
+        $this->timeInTransitCacheProvider->expects(self::once())
             ->method('deleteAll');
 
         $this->handler->handle($dataStorage);
-    }
-
-    /**
-     * @return UPSSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createSettingsMock()
-    {
-        return $this->createMock(UPSSettings::class);
     }
 }

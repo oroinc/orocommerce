@@ -4,20 +4,20 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\CheckoutBundle\Condition\IsMultiShippingEnabled;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class IsMultiShippingEnabledActionTest extends TestCase
+class IsMultiShippingEnabledActionTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigProvider|MockObject $configProvider;
-    private IsMultiShippingEnabled $condition;
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var IsMultiShippingEnabled */
+    private $condition;
 
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);
-        $this->condition = new IsMultiShippingEnabled(
-            $this->configProvider
-        );
+
+        $this->condition = new IsMultiShippingEnabled($this->configProvider);
     }
 
     public function testIsConditionAllowedIsTrue()

@@ -30,9 +30,23 @@ oro:
         customer:
             label:                        Customer
             description:                  Customers are companies who buy products using OroCommerce store frontend. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
+            quick_access_button:
+                new_order:
+                    label: New Order
+                create_order:
+                    label: Create Order
+                    widget:
+                        title: Create Order
         customer_user:
             label:                        Customer User
             description:                  Customer User represents a person who acts on behalf of the company to buy products using OroCommerce store frontend.
+            quick_access_button:
+                new_order:
+                    label: New Order
+                create_order:
+                    label: Create Order
+                    widget:
+                        title: Create Order
         organization.label:               Organization
         currency:
             label:                        Currency
@@ -466,19 +480,30 @@ oro:
 
         system_configuration:
             fields:
-                backend_product_visibility.title: 'Can Be Added to Orders'
-                frontend_product_visibility.title: 'Can Be Added to Orders'
-                order_automation_enable_cancellation.title: 'Enable Automatic Order Cancellation'
-                order_automation_enable_cancellation.tooltip: 'Enable the option to automatically cancel the orders with selected internal statuses when their "Do Not Ship Later Than" date expires.'
-                order_automation_applicable_statuses.title: 'Applicable Statuses'
-                order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses can be cancelled automatically.'
-                order_automation_target_status.title: 'Target Status'
-                order_automation_target_status.tooltip: 'Change the order status to modify the default behavior.'
-                enable_purchase_history.title: 'Enable Purchase History'
-                order_previously_purchased_period.title: 'Display products purchased within (days)'
-                order_previously_purchased_period.tooltip: 'Enter the number of days that the purchase history should cover.'
-                order_creation_new_internal_order_status.title: 'New Internal Order Status'
-                order_creation_new_internal_order_status.tooltip: 'Select the status to be assigned to new orders on creation.'
+                backend_product_visibility:
+                    title: 'Can Be Added to Orders'
+                frontend_product_visibility:
+                    title: 'Can Be Added to Orders'
+                order_automation_enable_cancellation:
+                    title: 'Enable Automatic Order Cancellation'
+                    tooltip: 'Enable the option to automatically cancel the orders with selected internal statuses when their "Do Not Ship Later Than" date expires.'
+                order_automation_applicable_statuses:
+                    title: 'Applicable Statuses'
+                    tooltip: 'Only the orders with the selected internal statuses can be cancelled automatically.'
+                order_automation_target_status:
+                    title: 'Target Status'
+                    tooltip: 'Change the order status to modify the default behavior.'
+                enable_purchase_history:
+                    title: 'Enable Purchase History'
+                order_previously_purchased_period:
+                    title: 'Display products purchased within (days)'
+                    tooltip: 'Enter the number of days that the purchase history should cover.'
+                order_creation_new_internal_order_status:
+                    title: 'New Internal Order Status'
+                    tooltip: 'Select the status to be assigned to new orders on creation.'
+                order_creation_new_order_owner:
+                    label: 'Default Owner for New Orders'
+                    tooltip: 'A user that should be used as an owner for newly created orders when the owner cannot be determined.'
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'

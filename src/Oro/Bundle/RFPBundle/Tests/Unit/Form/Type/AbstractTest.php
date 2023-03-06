@@ -5,23 +5,21 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
@@ -73,7 +71,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function checkDateTimeFields($expectedData, $formData)
     {
         foreach ($this->dateTimeFields as $fieldName) {
-            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+            if (EntityPropertyInfo::methodExists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
                 $expectedDateTimeFieldValue = $this->propertyAccessor->getValue($expectedData, $fieldName);
                 $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
                 $this->assertGreaterThanOrEqual($expectedDateTimeFieldValue, $actualDateTimeFieldValue);
@@ -85,7 +83,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $reflectionObj = new \ReflectionObject($expectedData);
         foreach ($this->dateTimeFields as $fieldName) {
-            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+            if (EntityPropertyInfo::methodExists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
                 $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
                 $reflectionProperty = $reflectionObj->getProperty($fieldName);
                 $reflectionProperty->setAccessible(true);
@@ -112,7 +110,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return $priceType;
     }
 
-    protected function prepareProductSelectType(): EntityType
+    protected function prepareProductSelectType(): EntityTypeStub
     {
         $products = [];
 
@@ -124,9 +122,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $products[3] = $this->getEntity(Product::class, 3);
 
-        return new EntityType(
+        return new EntityTypeStub(
             $products,
-            ProductSelectType::NAME,
             [
                 'data_parameters' => [],
                 'grid_name' => 'products-select-grid-frontend',
@@ -167,39 +164,25 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     protected function prepareProductUnitSelectionType(): ProductUnitSelectionTypeStub
     {
-        return new ProductUnitSelectionTypeStub(
-            [
-                'kg' => $this->getEntity(ProductUnit::class, 'kg', 'code'),
-                'item' => $this->getEntity(ProductUnit::class, 'item', 'code'),
-            ]
+        return new ProductUnitSelectionTypeStub([
+            'kg' => $this->getEntity(ProductUnit::class, 'kg', 'code'),
+            'item' => $this->getEntity(ProductUnit::class, 'item', 'code'),
+        ]);
+    }
+
+    protected function prepareUserMultiSelectType(): EntityTypeStub
+    {
+        return new EntityTypeStub(
+            [1 => $this->getUser(1), 2 => $this->getUser(2)],
+            ['multiple' => true]
         );
     }
 
-    protected function prepareUserMultiSelectType(): EntityType
+    protected function prepareCustomerUserMultiSelectType(): EntityTypeStub
     {
-        return new EntityType(
-            [
-                1 => $this->getUser(1),
-                2 => $this->getUser(2),
-            ],
-            UserMultiSelectType::NAME,
-            [
-                'multiple' => true
-            ]
-        );
-    }
-
-    protected function prepareCustomerUserMultiSelectType(): EntityType
-    {
-        return new EntityType(
-            [
-                10 => $this->getCustomerUser(10),
-                11 => $this->getCustomerUser(11),
-            ],
-            CustomerUserMultiSelectType::NAME,
-            [
-                'multiple' => true
-            ]
+        return new EntityTypeStub(
+            [10 => $this->getCustomerUser(10), 11 => $this->getCustomerUser(11)],
+            ['multiple' => true]
         );
     }
 

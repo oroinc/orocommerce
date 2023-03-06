@@ -13,32 +13,36 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
 {
+    private AppliedCouponCollectionType $formType;
+
+    protected function setUp(): void
+    {
+        $this->formType = new AppliedCouponCollectionType();
+        parent::setUp();
+    }
+
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
-            new PreloadedExtension(
-                [
-                    new AppliedCouponType(),
-                ],
-                []
-            ),
+            new PreloadedExtension([
+                $this->formType,
+                new AppliedCouponType()
+            ], [])
         ];
     }
 
     public function testFinishView()
     {
-        /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $entity = new \stdClass();
 
         $widgetAlias = 'alias';
         $componentView = 'component-view';
-        $formType = new AppliedCouponCollectionType();
-        $formType->finishView(
+        $this->formType->finishView(
             $view,
             $form,
             [
@@ -75,12 +79,12 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
         $this->assertSame('add-coupons-dialog', $options['dialog_widget_alias']);
         $this->assertSame('oropromotion/js/app/views/applied-coupon-collection-view', $options['page_component_view']);
         $this->assertSame([], $options['page_component_options']);
-        $this->assertSame(false, $options['error_bubbling']);
-        $this->assertSame(true, $options['prototype']);
-        $this->assertSame(true, $options['allow_add']);
-        $this->assertSame(true, $options['allow_delete']);
+        $this->assertFalse($options['error_bubbling']);
+        $this->assertTrue($options['prototype']);
+        $this->assertTrue($options['allow_add']);
+        $this->assertTrue($options['allow_delete']);
         $this->assertSame('__applied_coupon_collection_item__', $options['prototype_name']);
-        $this->assertSame(false, $options['by_reference']);
+        $this->assertFalse($options['by_reference']);
     }
 
     public function testWithoutRequiredOptions()
@@ -92,19 +96,11 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $formType = new AppliedCouponCollectionType();
-        $this->assertEquals(CollectionType::class, $formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $formType = new AppliedCouponCollectionType();
-        $this->assertEquals(AppliedCouponCollectionType::NAME, $formType->getName());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testGetBlockPrefix()
     {
-        $formType = new AppliedCouponCollectionType();
-        $this->assertEquals(AppliedCouponCollectionType::NAME, $formType->getBlockPrefix());
+        $this->assertEquals('oro_promotion_applied_coupon_collection', $this->formType->getBlockPrefix());
     }
 }

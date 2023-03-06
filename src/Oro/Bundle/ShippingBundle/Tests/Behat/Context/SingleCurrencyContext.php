@@ -6,7 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 
 class SingleCurrencyContext extends OroFeatureContext
 {
-
     /**
      * @Given There is :currency currency in the system configuration
      */

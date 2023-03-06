@@ -46,6 +46,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     configurable_product4_precision:
         unit: '@item'
         precision: 0
+    configurable_product5_precision:
+        unit: '@item'
+        precision: 0
     configurable_product1_variant1_precision:
         unit: '@item'
         precision: 0
@@ -88,6 +91,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Configurable Product 3'
     configurable_product4_name:
         string: 'Configurable Product 4'
+    configurable_product5_name:
+        string: 'Configurable Product 5'
     configurable_product1_variant1_name:
         string: 'Variant 1 for Configurable Product 1'
     configurable_product1_variant2_name:
@@ -123,6 +128,8 @@ Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
         string: 'Configurable Product 3 Short Description'
     configurable_product4_short_description:
         string: 'Configurable Product 4 Short Description'
+    configurable_product5_short_description:
+        string: 'Configurable Product 4 Short Description'
     configurable_product1_variant1_short_description:
         string: 'Variant 1 for Configurable Product 1 Short Description'
     configurable_product1_variant2_short_description:
@@ -157,6 +164,8 @@ Oro\Bundle\ProductBundle\Entity\ProductDescription:
     configurable_product3_description:
         wysiwyg: 'Configurable Product 3 Description'
     configurable_product4_description:
+        wysiwyg: 'Configurable Product 4 Description'
+    configurable_product5_description:
         wysiwyg: 'Configurable Product 4 Description'
     configurable_product1_variant1_description:
         wysiwyg: 'Variant 1 for Configurable Product 1 Description'
@@ -512,6 +521,27 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrEnum: '@productAttrEnum_option6'
         variantLinks:
             - '@configurable_product4_variant1_link'
+    configurable_product5:
+        sku: 'CPSKU5'
+        primaryUnitPrecision: '@configurable_product5_precision'
+        unitPrecisions: ['@configurable_product5_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            -   addName: ['@configurable_product5_name']
+            -   addShortDescription: ['@configurable_product5_short_description']
+            -   addDescription: ['@configurable_product5_description']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        testAttrBoolean: false
+        testAttrInteger: 3
+        testAttrFloat: 1.0
+        testAttrManyToOne: '@customer6'
+        organization: '@organization'
+        owner: '@business_unit'
+        type: 'configurable'
+        variantFields: ['testAttrEnum']
     configurable_product1_variant1:
         sku: 'CVPSKU1'
         primaryUnitPrecision: '@configurable_product1_variant1_precision'

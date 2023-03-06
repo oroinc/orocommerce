@@ -5,9 +5,11 @@ namespace Oro\Bundle\PromotionBundle\Layout\DataProvider;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
+/**
+ * Applied coupons data provider.
+ */
 class AppliedCouponsDataProvider
 {
     /**
@@ -21,19 +23,19 @@ class AppliedCouponsDataProvider
     }
 
     /**
-     * @param AppliedCouponsAwareInterface $entity
+     * @param object $entity
      * @return Collection|AppliedCoupon[]
      */
-    public function getAppliedCoupons(AppliedCouponsAwareInterface $entity)
+    public function getAppliedCoupons(object $entity)
     {
         return $entity->getAppliedCoupons();
     }
 
     /**
-     * @param AppliedCouponsAwareInterface $entity
+     * @param object $entity
      * @return array
      */
-    public function getPromotionsForAppliedCoupons(AppliedCouponsAwareInterface $entity)
+    public function getPromotionsForAppliedCoupons(object $entity)
     {
         $promotionIds = $entity->getAppliedCoupons()->map(function (AppliedCoupon $appliedCoupon) {
             return $appliedCoupon->getSourcePromotionId();
@@ -44,7 +46,7 @@ class AppliedCouponsDataProvider
             ->getPromotionsWithLabelsByIds($promotionIds);
     }
 
-    public function hasAppliedCoupons(AppliedCouponsAwareInterface $entity): bool
+    public function hasAppliedCoupons(object $entity): bool
     {
         return !$entity->getAppliedCoupons()->isEmpty();
     }

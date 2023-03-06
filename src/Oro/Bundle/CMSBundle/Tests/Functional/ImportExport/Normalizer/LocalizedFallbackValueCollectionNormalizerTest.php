@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\ImportExport\Normalizer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer;
+use Oro\Bundle\EntityExtendBundle\Model\ExtendEntityStorage;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -205,7 +206,8 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                         'testProperties' => [
                             'fallback' => null,
                             'wysiwyg' => null,
-                            'localization' => null
+                            'localization' => null,
+                            'extendEntityStorage' => null
                         ],
                     ],
                     'English' => [
@@ -223,14 +225,28 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
             ],
             'mixed' => [
                 [
-                    'default' => ['fallback' => 'system', 'string' => 'value', 'text' => null, 'wysiwyg' => null],
-                    'English' => ['string' => 'value', 'wysiwyg' => null],
-                    'English (Canada)' => ['fallback' => 'parent_localization', 'text' => 'value', 'wysiwyg' => null],
+                    'default' => [
+                        'fallback' => 'system',
+                        'string' => 'value', 'text' => null,
+                        'wysiwyg' => null,
+                        'extendEntityStorage' => null
+                    ],
+                    'English' => ['string' => 'value', 'wysiwyg' => null, 'extendEntityStorage' => null],
+                    'English (Canada)' => [
+                        'fallback' => 'parent_localization',
+                        'text' => 'value',
+                        'wysiwyg' => null,
+                        'extendEntityStorage' => null
+                    ],
                     'French (France)' => [
                         'fallback' => 'parent_localization',
                         'string' => null,
                         'text' => null,
-                        'wysiwyg' => 'value'
+                        'wysiwyg' => 'value',
+                        'extendEntityStorage' => new ExtendEntityStorage(
+                            [],
+                            \ArrayObject::STD_PROP_LIST | \ArrayObject::ARRAY_AS_PROPS
+                        )
                     ],
                 ],
                 'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
@@ -240,6 +256,10 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                         'testProperties' => [
                             'fallback' => 'system',
                             'string' => 'value',
+                            'extendEntityStorage' => new ExtendEntityStorage(
+                                [],
+                                \ArrayObject::STD_PROP_LIST | \ArrayObject::ARRAY_AS_PROPS
+                            )
                         ],
                     ],
                     'English' => [
@@ -250,6 +270,10 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                                 'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
                                 'testProperties' => ['name' => 'English']
                             ],
+                            'extendEntityStorage' => new ExtendEntityStorage(
+                                [],
+                                \ArrayObject::STD_PROP_LIST | \ArrayObject::ARRAY_AS_PROPS
+                            )
                         ],
                     ],
                     'English (Canada)' => [
@@ -261,6 +285,10 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                                 'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
                                 'testProperties' => ['name' => 'English (Canada)']
                             ],
+                            'extendEntityStorage' => new ExtendEntityStorage(
+                                [],
+                                \ArrayObject::STD_PROP_LIST | \ArrayObject::ARRAY_AS_PROPS
+                            )
                         ],
                     ],
                     'French (France)' => [
@@ -272,6 +300,10 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
                                 'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
                                 'testProperties' => ['name' => 'French (France)']
                             ],
+                            'extendEntityStorage' => new ExtendEntityStorage(
+                                [],
+                                \ArrayObject::STD_PROP_LIST | \ArrayObject::ARRAY_AS_PROPS
+                            )
                         ],
                     ],
                 ]

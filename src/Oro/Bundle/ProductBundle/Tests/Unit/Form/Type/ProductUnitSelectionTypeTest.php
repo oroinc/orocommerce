@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -60,8 +60,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    $this->formType,
                     EntityType::class => new EntityTypeStub($this->prepareChoices()),
-                    ProductUnitSelectionType::class => $this->formType
                 ],
                 []
             ),

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\BatchBundle\Tests\Unit\ORM\Query\Stub\BufferedQueryResultIteratorStub;
 use Oro\Bundle\PlatformBundle\Tests\Unit\EventListener\DemoDataFixturesListenerTestCase;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
@@ -102,9 +103,11 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->with(PriceList::class)
             ->willReturn($this->priceListRepository);
 
+        $iterator = new BufferedQueryResultIteratorStub();
+        $iterator->append($priceList);
         $this->priceListRepository->expects($this->once())
             ->method('getPriceListsWithRules')
-            ->willReturn([$priceList]);
+            ->willReturn($iterator);
 
         $this->assignmentBuilder->expects($this->once())
             ->method('buildByPriceListWithoutEventDispatch')

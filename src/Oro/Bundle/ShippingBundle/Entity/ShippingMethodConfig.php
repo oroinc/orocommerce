@@ -7,16 +7,21 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
-use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodConfig;
 
 /**
+ * Store shipping method config in database.
+ *
  * @ORM\Table(name="oro_ship_method_config")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository")
  * @Config
  */
-class ShippingMethodConfig extends ExtendShippingMethodConfig
+class ShippingMethodConfig implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="id")
@@ -85,7 +90,6 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
 
     public function __construct()
     {
-        parent::__construct();
         $this->typeConfigs = new ArrayCollection();
     }
 

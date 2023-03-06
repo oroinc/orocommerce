@@ -6,6 +6,7 @@ use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Provider\DisabledPromotionDiscountProviderDecorator;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
@@ -29,10 +30,20 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
      */
     private $providerDecorator;
 
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
     protected function setUp(): void
     {
         $this->promotionDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
-        $this->providerDecorator = new DisabledPromotionDiscountProviderDecorator($this->promotionDiscountsProvider);
+        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isPromotionAware'])
+            ->getMock();
+
+        $this->providerDecorator = new DisabledPromotionDiscountProviderDecorator(
+            $this->promotionDiscountsProvider,
+            $this->promotionAwareHelper
+        );
     }
 
     public function testGetDiscountsWithNotSupportedSourceEntity()
@@ -83,6 +94,7 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
             $discountWithEnabledPromotion
         ];
 
+        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
         $this->assertEquals($expectedDiscounts, $this->providerDecorator->getDiscounts($sourceEntity, $context));
     }
 }

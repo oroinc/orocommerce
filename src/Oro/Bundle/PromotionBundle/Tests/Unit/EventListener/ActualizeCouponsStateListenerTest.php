@@ -5,13 +5,14 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\CouponsTrait;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\AppliedCouponsAwareStub;
 use Symfony\Component\HttpFoundation\Request;
 
 class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
@@ -28,6 +29,8 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $entityCouponsProvider;
 
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
     /**
      * @var ActualizeCouponsStateListener
      */
@@ -37,7 +40,15 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->entityCouponsProvider = $this->createMock(EntityCouponsProvider::class);
-        $this->listener = new ActualizeCouponsStateListener($this->registry, $this->entityCouponsProvider);
+        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isCouponAware'])
+            ->getMock();
+        $this->listener = new ActualizeCouponsStateListener(
+            $this->registry,
+            $this->entityCouponsProvider,
+            $this->promotionAwareHelper
+        );
     }
 
     public function testOnBeforeTotalCalculateWhenEntityNotOrder()
@@ -52,7 +63,7 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->registry->expects($this->never())
             ->method('getManagerForClass');
-        $entity = $this->createMock(AppliedCouponsAwareInterface::class);
+        $entity = $this->createMock(AppliedCouponsAwareStub::class);
         $event = new TotalCalculateBeforeEvent($entity, $this->getRequest());
         $this->listener->onBeforeTotalCalculate($event);
     }
@@ -72,9 +83,11 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(Coupon::class)
             ->willReturn($objectManager);
-        $entity = $this->createMock(AppliedCouponsAwareInterface::class);
+        $entity = $this->createMock(AppliedCouponsAwareStub::class);
         $entity->expects($this->never())
             ->method('addAppliedCoupon');
+        $this->promotionAwareHelper->expects($this->once())->method('isCouponAware')->willReturn(true);
+
         $event = new TotalCalculateBeforeEvent($entity, $request);
         $this->listener->onBeforeTotalCalculate($event);
     }
@@ -123,13 +136,14 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
                 $this->createAppliedCoupon($couponId2, $couponCode2, $promotionId)
             );
 
-        $entity = $this->createMock(AppliedCouponsAwareInterface::class);
+        $entity = $this->createMock(AppliedCouponsAwareStub::class);
         $entity->expects($this->exactly(2))
             ->method('addAppliedCoupon')
             ->withConsecutive(
                 [$this->createAppliedCoupon($couponId1, $couponCode1, $promotionId)],
                 [$this->createAppliedCoupon($couponId2, $couponCode2, $promotionId)]
             );
+        $this->promotionAwareHelper->expects($this->once())->method('isCouponAware')->willReturn(true);
 
         $event = new TotalCalculateBeforeEvent($entity, $request);
         $this->listener->onBeforeTotalCalculate($event);

@@ -20,11 +20,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class SaveRelatedProduct implements ProcessorInterface
 {
-    /** @var AssignerStrategyInterface */
-    private $assignerStrategy;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private AssignerStrategyInterface $assignerStrategy;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(AssignerStrategyInterface $assignerStrategy, DoctrineHelper $doctrineHelper)
     {
@@ -35,7 +32,7 @@ class SaveRelatedProduct implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */
 
@@ -89,12 +86,7 @@ class SaveRelatedProduct implements ProcessorInterface
         return !$context->hasErrors();
     }
 
-    /**
-     * @param Label|string $detail
-     *
-     * @return Error
-     */
-    private function createValueValidationError($detail): Error
+    private function createValueValidationError(Label|string $detail): Error
     {
         return Error::createValidationError(Constraint::VALUE, $detail);
     }

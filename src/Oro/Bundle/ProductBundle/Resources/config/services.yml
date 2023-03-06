@@ -1162,6 +1162,7 @@ services:
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
             - '@oro_product.virtual_fields.decorator_cache'
+            - '@oro_entity_config.provider.attribute'
 
     oro_product.virtual_fields.select_query_converter:
             class: 'Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter'
@@ -1664,24 +1665,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_product_datagrid_row_view }
 
-    oro_product.event_listener.orm.new_arrival_index_listener:
-        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
-        public: false
-        arguments:
-            - 'oro_product'
-            - 'idx_oro_product_new_arrival'
-        tags:
-            - { name: doctrine.event_listener, event: loadClassMetadata }
-
-    oro_product.event_listener.orm.featured_index_listener:
-        class: Oro\Bundle\EntityBundle\EventListener\ORM\PartialIndexListener
-        public: false
-        arguments:
-            - 'oro_product'
-            - 'idx_oro_product_featured'
-        tags:
-            - { name: doctrine.event_listener, event: loadClassMetadata }
-
     oro_product.action.condition.at_least_one_available_product:
         class: Oro\Bundle\ProductBundle\Action\Condition\AtLeastOneAvailableProduct
         arguments:
@@ -1943,8 +1926,7 @@ services:
     oro_product.data_provider.schema_org_product_full_description:
         class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider'
         arguments:
-            - !service
-                class: Oro\Component\PropertyAccess\PropertyAccessor
+            - '@oro_entity_extend.accessor.property_accessor_with_dot_array_syntax'
             - '@oro_ui.html_tag_helper'
             - '@oro_locale.helper.localization'
             - 'descriptions'
@@ -1954,8 +1936,7 @@ services:
     oro_product.data_provider.schema_org_product_short_description:
         class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider'
         arguments:
-            - !service
-                class: Oro\Component\PropertyAccess\PropertyAccessor
+            - '@oro_entity_extend.accessor.property_accessor_with_dot_array_syntax'
             - '@oro_ui.html_tag_helper'
             - '@oro_locale.helper.localization'
             - 'shortDescriptions'
@@ -2065,3 +2046,17 @@ services:
         class: Oro\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionTransformer
         arguments:
             - '@oro_product.model.builder.quick_add_row_collection'
+
+    oro_product.event_listener.product_duplicate:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductDuplicateListener
+        arguments:
+            - '@oro_entity_config.config_manager'
+            - '@oro_entity_config.provider.attribute'
+            - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
+        tags:
+            -
+                name: kernel.event_listener
+                event: oro_product.product.duplicate.after
+                method: onDuplicateAfter
+                priority: -128

@@ -14,14 +14,9 @@ class LocalizedFallbackValueExtractor implements LocalizedFallbackValueExtractor
     private const WYSIWYG_FIELD_VALUE = 'wysiwyg';
     private const WYSIWYG_FIELD_STYLE = 'wysiwygStyle';
 
-    /** @var LocalizedFallbackValueExtractorInterface */
-    private $innerValueExtractor;
-
-    /** @var WYSIWYGValueRenderer */
-    private $wysiwygValueRenderer;
-
-    /** @var PropertyAccessorInterface */
-    private $propertyAccessor;
+    private LocalizedFallbackValueExtractorInterface $innerValueExtractor;
+    private WYSIWYGValueRenderer $wysiwygValueRenderer;
+    private PropertyAccessorInterface $propertyAccessor;
 
     public function __construct(
         LocalizedFallbackValueExtractorInterface $innerValueExtractor,

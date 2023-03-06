@@ -16,12 +16,11 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class DisableGuestCheckoutCustomerUserNameValidation implements ProcessorInterface
 {
     private const FIRST_NAME_FAKE_DATA_FLAG = '_guest_checkout_fake_data_first_name';
-    private const LAST_NAME_FAKE_DATA_FLAG  = '_guest_checkout_fake_data_last_name';
+    private const LAST_NAME_FAKE_DATA_FLAG = '_guest_checkout_fake_data_last_name';
 
     private const FAKE_NAME = '-';
 
-    /** @var GuestCheckoutChecker */
-    private $guestCheckoutChecker;
+    private GuestCheckoutChecker $guestCheckoutChecker;
 
     public function __construct(GuestCheckoutChecker $guestCheckoutChecker)
     {
@@ -31,7 +30,7 @@ class DisableGuestCheckoutCustomerUserNameValidation implements ProcessorInterfa
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 

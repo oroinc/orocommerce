@@ -5,11 +5,13 @@ namespace Oro\Bundle\ConsentBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\ConsentBundle\Model\ExtendConsent;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
@@ -49,13 +51,19 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @method LocalizedFallbackValue getName(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultName()
+ * @method setDefaultName(string $value)
  */
-class Consent extends ExtendConsent implements
+class Consent implements
     DatesAwareInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
     use AuditableUserAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int
@@ -148,8 +156,6 @@ class Consent extends ExtendConsent implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->names = new ArrayCollection();
         $this->acceptances = new ArrayCollection();
     }

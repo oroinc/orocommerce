@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener;
-use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
@@ -29,14 +27,11 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryQuantityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $quantityManager;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
     /** @var InventoryStatusHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $statusHandler;
 
-    /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityFallbackResolver;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
     /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutLineItemsManager;
@@ -46,269 +41,280 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
-        $this->statusHandler = $this->createMock(InventoryStatusHandler::class);
         $this->quantityManager = $this->createMock(InventoryQuantityManager::class);
+        $this->statusHandler = $this->createMock(InventoryStatusHandler::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
 
         $this->createOrderEventListener = new CreateOrderEventListener(
             $this->quantityManager,
             $this->statusHandler,
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->checkoutLineItemsManager
         );
     }
 
-    public function testOnCreateOrder()
+    private function getExtendableActionEvent(): ExtendableActionEvent
     {
-        $event = $this->prepareEvent();
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setData(new WorkflowData(['order' => $this->createMock(Order::class)]));
+        $workflowItem->setEntity($this->createMock(Checkout::class));
 
+        return new ExtendableActionEvent($workflowItem);
+    }
+
+    private function getExtendableConditionEvent(): ExtendableConditionEvent
+    {
+        $checkoutSource = $this->createMock(CheckoutSourceStub::class);
+        $checkoutSource->expects(self::any())
+            ->method('getEntity')
+            ->willReturn($this->createMock(ProductLineItemsHolderInterface::class));
+
+        $checkout = new Checkout();
+        $checkout->setSource($checkoutSource);
+
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setEntity($checkout);
+
+        return new ExtendableConditionEvent($workflowItem);
+    }
+
+    private function getOrderLineItem(): OrderLineItem
+    {
+        $product = new Product();
+        $product->setSku('TEST001');
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('item');
+
+        $lineItem = new OrderLineItem();
+        $lineItem->setProduct($product);
+        $lineItem->setProductUnit($productUnit);
+        $lineItem->setQuantity(10);
+        $lineItem->preSave();
+
+        return $lineItem;
+    }
+
+    private function getLineItem(): ProductLineItemInterface
+    {
+        $product = new Product();
+        $product->setSku('TEST001');
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('item');
+
+        $lineItem = $this->createMock(ProductLineItemInterface::class);
+        $lineItem->expects(self::any())
+            ->method('getProduct')
+            ->willReturn($product);
+        $lineItem->expects(self::any())
+            ->method('getProductUnit')
+            ->willReturn($productUnit);
+        $lineItem->expects(self::any())
+            ->method('getQuantity')
+            ->willReturn(10);
+
+        return $lineItem;
+    }
+
+    public function testOnCreateOrder(): void
+    {
         $inventoryLevel = $this->createMock(InventoryLevel::class);
 
+        $this->checkoutLineItemsManager->expects(self::once())
+            ->method('getData')
+            ->willReturn([$this->getOrderLineItem()]);
+
         $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
-        $inventoryLevelRepository->expects($this->once())
+        $inventoryLevelRepository->expects(self::once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
 
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('canDecrementInventory')
             ->willReturn(true);
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('decrementInventory');
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('shouldDecrement')
             ->willReturn(true);
 
-        $this->statusHandler->expects($this->once())
+        $this->statusHandler->expects(self::once())
             ->method('changeInventoryStatusWhenDecrement');
 
+        $event = $this->getExtendableActionEvent();
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
-    public function testWrongContext()
+    public function testWrongContext(): void
     {
         $workflowData = $this->createMock(WorkflowData::class);
         $event = $this->createMock(ExtendableActionEvent::class);
-        $event->expects($this->any())
+        $event->expects(self::any())
             ->method('getContext');
-        $workflowData->expects($this->never())
+        $workflowData->expects(self::never())
             ->method('get')
             ->with('order');
-        $this->quantityManager->expects($this->never())
+        $this->quantityManager->expects(self::never())
             ->method('shouldDecrement');
 
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
-    public function testCannotDecrement()
+    public function testCannotDecrement(): void
     {
-        $event = $this->prepareEvent();
-
         $inventoryLevel = $this->createMock(InventoryLevel::class);
+
+        $this->checkoutLineItemsManager->expects(self::once())
+            ->method('getData')
+            ->willReturn([$this->getOrderLineItem()]);
+
         $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
-        $inventoryLevelRepository->expects($this->once())
+        $inventoryLevelRepository->expects(self::once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
 
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('canDecrementInventory')
             ->willReturn(false);
-        $this->quantityManager->expects($this->never())
+        $this->quantityManager->expects(self::never())
             ->method('decrementInventory');
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('shouldDecrement')
             ->willReturn(true);
 
-        $this->statusHandler->expects($this->never())
+        $this->statusHandler->expects(self::never())
             ->method('changeInventoryStatusWhenDecrement');
 
+        $event = $this->getExtendableActionEvent();
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
-    public function testNoInventoryLevel()
+    public function testNoInventoryLevel(): void
     {
-        $this->expectException(InventoryLevelNotFoundException::class);
+        $this->checkoutLineItemsManager->expects(self::once())
+            ->method('getData')
+            ->willReturn([$this->getOrderLineItem()]);
 
-        $event = $this->prepareEvent();
         $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
-        $inventoryLevelRepository->expects($this->once())
+        $inventoryLevelRepository->expects(self::once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn(null);
-        $this->quantityManager->expects($this->once())
+
+        $this->quantityManager->expects(self::once())
             ->method('shouldDecrement')
             ->willReturn(true);
 
+        $this->quantityManager->expects(self::never())
+            ->method('decrementInventory');
+        $this->statusHandler->expects(self::never())
+            ->method('changeInventoryStatusWhenDecrement');
+
+        $event = $this->getExtendableActionEvent();
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
-    public function testBeforeCreateOrder()
+    public function testBeforeCreateOrder(): void
     {
-        $event = $this->prepareConditionEvent();
-
         $inventoryLevel = $this->createMock(InventoryLevel::class);
+
+        $this->checkoutLineItemsManager->expects(self::once())
+            ->method('getData')
+            ->willReturn([$this->getLineItem()]);
+
         $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
-        $inventoryLevelRepository->expects($this->once())
+        $inventoryLevelRepository->expects(self::once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
 
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('hasEnoughQuantity')
             ->willReturn(true);
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('shouldDecrement')
             ->willReturn(true);
 
-        $event->expects($this->never())
-            ->method('addError');
-
+        $event = $this->getExtendableConditionEvent();
         $this->createOrderEventListener->onBeforeOrderCreate($event);
+
+        self::assertCount(0, $event->getErrors());
     }
 
-    public function testBeforeCreateOrderLineItemError()
+    public function testBeforeCreateOrderLineItemError(): void
     {
-        $event = $this->prepareConditionEvent();
-
         $inventoryLevel = $this->createMock(InventoryLevel::class);
+
+        $this->checkoutLineItemsManager->expects(self::once())
+            ->method('getData')
+            ->willReturn([$this->getLineItem()]);
+
         $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
-        $inventoryLevelRepository->expects($this->once())
+        $inventoryLevelRepository->expects(self::once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
-        $this->quantityManager->expects($this->once())
+
+        $this->quantityManager->expects(self::once())
             ->method('hasEnoughQuantity')
             ->willReturn(false);
-        $this->quantityManager->expects($this->once())
+        $this->quantityManager->expects(self::once())
             ->method('shouldDecrement')
             ->willReturn(true);
-        $event->expects($this->once())
-            ->method('addError');
 
+        $event = $this->getExtendableConditionEvent();
         $this->createOrderEventListener->onBeforeOrderCreate($event);
+
+        self::assertEquals(
+            [
+                ['message' => '', 'context' => null]
+            ],
+            $event->getErrors()->toArray()
+        );
     }
 
-    public function testNoInventoryForBeforeCreate()
+    public function testNoInventoryForBeforeCreate(): void
     {
-        $this->expectException(InventoryLevelNotFoundException::class);
+        $this->checkoutLineItemsManager->expects(self::once())
+            ->method('getData')
+            ->willReturn([$this->getLineItem()]);
 
-        $event = $this->prepareConditionEvent();
         $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
-        $inventoryLevelRepository->expects($this->once())
+        $inventoryLevelRepository->expects(self::once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn(null);
-        $this->quantityManager->expects($this->once())
+
+        $this->quantityManager->expects(self::once())
             ->method('shouldDecrement')
             ->willReturn(true);
 
+        $this->quantityManager->expects(self::never())
+            ->method('decrementInventory');
+        $this->statusHandler->expects(self::never())
+            ->method('changeInventoryStatusWhenDecrement');
+
+        $event = $this->getExtendableConditionEvent();
         $this->createOrderEventListener->onBeforeOrderCreate($event);
-    }
-
-    private function prepareEvent(): ExtendableActionEvent
-    {
-        $numberOfItems = 5;
-        $event = $this->createMock(ExtendableActionEvent::class);
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowData = $this->createMock(WorkflowData::class);
-        $order = $this->createMock(Order::class);
-        $product = $this->createMock(Product::class);
-        $productUnit = $this->createMock(ProductUnit::class);
-        $lineItem = $this->createMock(OrderLineItem::class);
-        $checkout = $this->createMock(Checkout::class);
-        $lineItem->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
-        $lineItem->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $lineItem->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($numberOfItems);
-        $this->checkoutLineItemsManager->expects($this->once())
-            ->method('getData')
-            ->willReturn([$lineItem]);
-        $workflowData->expects($this->once())
-            ->method('has')
-            ->with('order')
-            ->willReturn(true);
-        $workflowData->expects($this->any())
-            ->method('get')
-            ->with('order')
-            ->willReturn($order);
-        $workflowItem->expects($this->any())
-            ->method('getData')
-            ->willReturn($workflowData);
-        $workflowItem->expects($this->any())
-            ->method('getEntity')
-            ->willReturn($checkout);
-        $event->expects($this->any())
-            ->method('getContext')
-            ->willReturn($workflowItem);
-
-        return $event;
-    }
-
-    private function prepareConditionEvent(): ExtendableConditionEvent|\PHPUnit\Framework\MockObject\MockObject
-    {
-        $numberOfItems = 5;
-        $event = $this->createMock(ExtendableConditionEvent::class);
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $checkout = $this->createMock(Checkout::class);
-        $checkoutSource = $this->createMock(CheckoutSourceStub::class);
-        $checkoutLineItemsHolder = $this->createMock(ProductLineItemsHolderInterface::class);
-        $product = $this->createMock(Product::class);
-        $productUnit = $this->createMock(ProductUnit::class);
-        $lineItem = $this->createMock(ProductLineItemInterface::class);
-        $lineItem->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
-        $lineItem->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $lineItem->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($numberOfItems);
-        $checkout->expects($this->any())
-            ->method('getSource')
-            ->willReturn($checkoutSource);
-        $checkoutSource->expects($this->any())
-            ->method('getEntity')
-            ->willReturn($checkoutLineItemsHolder);
-        $this->checkoutLineItemsManager->expects($this->once())
-            ->method('getData')
-            ->willReturn([$lineItem]);
-        $workflowItem->expects($this->any())
-            ->method('getEntity')
-            ->willReturn($checkout);
-        $event->expects($this->any())
-            ->method('getContext')
-            ->willReturn($workflowItem);
-
-        return $event;
     }
 }

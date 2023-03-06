@@ -103,4 +103,36 @@ class ContentVariantRepositoryTest extends WebTestCase
             ],
         ];
     }
+
+    public function testGetContentVariantsDataWhenEmpty(): void
+    {
+        self::assertEquals(
+            [],
+            $this->repository->getContentVariantsData([PHP_INT_MAX])
+        );
+    }
+
+    public function testGetContentVariantsData(): void
+    {
+        $contentVariant1 = $this->getReference(LoadContentVariantsData::CONTENT_VARIANT_SUBNODE_1);
+        $contentVariant2 = $this->getReference(LoadContentVariantsData::CONTENT_VARIANT_SUBNODE_2);
+
+        $result = $this->repository->getContentVariantsData([$contentVariant1->getId(), $contentVariant2->getId()]);
+        $result = array_column($result, null, 'id');
+
+        self::assertContentVariantData($contentVariant1, $result[$contentVariant1->getId()]);
+        self::assertContentVariantData($contentVariant2, $result[$contentVariant2->getId()]);
+    }
+
+    private static function assertContentVariantData(ContentVariant $contentVariant, array $data): void
+    {
+        self::assertSame($contentVariant->getId(), $data['id']);
+        self::assertEquals($contentVariant->getNode()->getId(), $data['node']['id']);
+
+        $slugsData = array_column($data['slugs'], null, 'id');
+        foreach ($contentVariant->getSlugs() as $slug) {
+            self::assertArrayHasKey($slug->getId(), $slugsData);
+            self::assertEquals($slug->getUrl(), $slugsData[$slug->getId()]['url']);
+        }
+    }
 }

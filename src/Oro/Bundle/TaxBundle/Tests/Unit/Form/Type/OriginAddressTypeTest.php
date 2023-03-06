@@ -3,9 +3,9 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Bundle\TaxBundle\Form\Type\OriginAddressType;
 use Oro\Bundle\TaxBundle\Model\Address;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -13,8 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OriginAddressTypeTest extends AbstractAddressTestCase
 {
-    /** @var OriginAddressType */
-    private $formType;
+    private OriginAddressType $formType;
 
     protected function setUp(): void
     {
@@ -114,7 +113,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getFormTypeClass(): string
     {
@@ -122,7 +121,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {

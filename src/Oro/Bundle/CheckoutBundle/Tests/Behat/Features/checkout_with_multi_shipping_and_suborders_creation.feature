@@ -18,30 +18,11 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-
-  Scenario: Enable shipping method selection per line item and grouping and suborders
-    Given I proceed as the Admin
-    And I login as administrator
-    And I go to System/Configuration
-    And I follow "Commerce/Sales/Multi Shipping Options" on configuration sidebar
-    And uncheck "Use default" for "Enable shipping method selection per line item" field
-    When I fill form with:
-      | Enable shipping method selection per line item | true |
-    Then I should see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
-    When I click "Create Multi Shipping Integration"
-    Then I should see "Multi shipping integration was created successfully" flash message
-    And I should not see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
-    And uncheck "Use default" for "Enable grouping of line items during checkout" field
-    And I fill form with:
-      | Enable grouping of line items during checkout | true |
-    And uncheck "Use default" for "Group line items by" field
-    And I fill form with:
-      | Group line items by | Owner |
-    And uncheck "Use default" for "Create Sub-Orders for each group" field
-    And I fill form with:
-      | Create Sub-Orders for each group | true |
-    When I save form
-    Then I should see "Configuration saved" flash message
+    And I change configuration options:
+      | oro_checkout.enable_shipping_method_selection_per_line_item | true             |
+      | oro_checkout.enable_line_item_grouping                      | true             |
+      | oro_checkout.group_line_items_by                            | product.category |
+      | oro_checkout.create_suborders_for_each_group                | true             |
 
   Scenario: Checkout with shipping method selection per line item
     Given I proceed as the Buyer
@@ -62,7 +43,7 @@ Feature: Checkout With Multi Shipping And Suborders Creation
       | SKU  | Item                     | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
@@ -72,12 +53,12 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     Then Page title equals to "Shipping Information - Checkout"
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
-    And I should see an "Common Business Unit Name" element
+    And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Item                     | Qty | Price  | Subtotal | Shipping         |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate: $3.00 |
     And records in "First Checkout Shipping Grid" should be 1
-    And I should see an "Second Business Unit" element
+    And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price  | Subtotal | Shipping         |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate: $3.00 |
@@ -104,13 +85,14 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     And records in "Past Orders Grid" should be 4
     Then I should see available "Order Type" filter in "Past Orders Grid" frontend grid
     When I proceed as the Admin
+    And I login as administrator
     And I go to Sales/Orders
     Then I should see following grid:
-      | Order Number | Owner          |
-      | SimpleOrder  | John Doe       |
-      | 2            | John Doe       |
-      | 2-1          | SubOrder Owner |
-      | 2-2          | SubOrder Owner |
+      | Order Number | Owner    |
+      | SimpleOrder  | John Doe |
+      | 2            | John Doe |
+      | 2-1          | John Doe |
+      | 2-2          | John Doe |
     And number of records should be 4
     # Click on order number 2
     When I click view "$59.00" in grid

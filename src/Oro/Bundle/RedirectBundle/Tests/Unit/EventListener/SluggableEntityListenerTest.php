@@ -5,10 +5,9 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -439,7 +438,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->with(GenerateDirectUrlForEntitiesTopic::getName(), $message);
 
         $this->sluggableEntityListener->postPersist(
-            new LifecycleEventArgs($entity, $this->createMock(ObjectManager::class))
+            new LifecycleEventArgs($entity, $this->createMock(EntityManagerInterface::class))
         );
         $this->sluggableEntityListener->postFlush();
     }
@@ -501,11 +500,15 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls($messageWithoutRedirect, $messageWithRedirect);
 
-        $this->sluggableEntityListener
-            ->postPersist(new LifecycleEventArgs($entityWithoutRedirect, $this->createMock(ObjectManager::class)));
+        $this->sluggableEntityListener->postPersist(new LifecycleEventArgs(
+            $entityWithoutRedirect,
+            $this->createMock(EntityManagerInterface::class)
+        ));
 
-        $this->sluggableEntityListener
-            ->postPersist(new LifecycleEventArgs($entityWithRedirect, $this->createMock(ObjectManager::class)));
+        $this->sluggableEntityListener->postPersist(new LifecycleEventArgs(
+            $entityWithRedirect,
+            $this->createMock(EntityManagerInterface::class)
+        ));
 
         $this->messageProducer->expects(self::exactly(2))
             ->method('send')

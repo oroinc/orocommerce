@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -13,17 +13,26 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitCheckoutProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
 {
-    use MemoryCacheProviderAwareTestTrait;
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
-    private CheckoutLineItemsManager|MockObject $checkoutLineItemsManager;
-    private MapperInterface|MockObject $mapper;
-    private EntityPaymentMethodsProvider|MockObject $paymentMethodsProvider;
-    private SplitCheckoutProvider|MockObject $splitCheckoutProvider;
-    private CheckoutToOrderConverter $converter;
+    /** @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $mapper;
+
+    /** @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodsProvider;
+
+    /** @var SplitCheckoutProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $splitCheckoutProvider;
+
+    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $memoryCacheProvider;
+
+    /** @var CheckoutToOrderConverter */
+    private $converter;
 
     protected function setUp(): void
     {
@@ -31,20 +40,31 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
         $this->mapper = $this->createMock(MapperInterface::class);
         $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
         $this->splitCheckoutProvider = $this->createMock(SplitCheckoutProvider::class);
+        $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
 
         $this->converter = new CheckoutToOrderConverter(
             $this->checkoutLineItemsManager,
             $this->mapper,
             $this->paymentMethodsProvider,
-            $this->splitCheckoutProvider
+            $this->splitCheckoutProvider,
+            $this->memoryCacheProvider
         );
-        $this->setMemoryCacheProvider($this->converter);
+    }
+
+    private function getCheckout(string $paymentMethod, ?int $id = null): Checkout
+    {
+        $checkout = new Checkout();
+        $checkout->setPaymentMethod($paymentMethod);
+        if (null !== $id) {
+            ReflectionUtil::setId($checkout, 1);
+        }
+
+        return $checkout;
     }
 
     public function testGetOrderWithMemoryCache(): void
     {
-        $checkout = new Checkout();
-        $checkout->setPaymentMethod('pm1');
+        $checkout = $this->getCheckout('pm1');
         $order = new Order();
 
         $lineItems = new ArrayCollection([new OrderLineItem()]);
@@ -66,15 +86,18 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
         $this->splitCheckoutProvider->expects($this->never())
             ->method('getSubCheckouts');
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function ($cacheKeyArguments, $callable) {
+                return $callable($cacheKeyArguments);
+            });
 
         $this->assertSame($order, $this->converter->getOrder($checkout));
     }
 
     public function testGetOrderWithMemoryCacheAndCachedData(): void
     {
-        $checkout = new Checkout();
-        $checkout->setPaymentMethod('pm1');
+        $checkout = $this->getCheckout('pm1');
         $order = new Order();
 
         $this->checkoutLineItemsManager->expects($this->never())
@@ -90,22 +113,20 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
         $this->splitCheckoutProvider->expects($this->never())
             ->method('getSubCheckouts');
 
-        $this->mockMemoryCacheProvider($order);
+        $this->memoryCacheProvider->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function () use ($order) {
+                return $order;
+            });
 
         $this->assertSame($order, $this->converter->getOrder($checkout));
     }
 
     public function testGetOrderWithCreateSubOrdersEnabled(): void
     {
-        $checkout = new Checkout();
-        $checkout->setPaymentMethod('pm1');
-        ReflectionUtil::setId($checkout, 1);
-
-        $subCheckout1 = new Checkout();
-        $subCheckout1->setPaymentMethod('pm1');
-
-        $subCheckout2 = new Checkout();
-        $subCheckout2->setPaymentMethod('pm1');
+        $checkout = $this->getCheckout('pm1', 1);
+        $subCheckout1 = $this->getCheckout('pm1');
+        $subCheckout2 = $this->getCheckout('pm1');
 
         $order = new Order();
         $subOrder1 = new Order();
@@ -143,7 +164,11 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
             ->method('getSubCheckouts')
             ->willReturn([$subCheckout1, $subCheckout2]);
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects($this->exactly(3))
+            ->method('get')
+            ->willReturnCallback(function ($cacheKeyArguments, $callable) {
+                return $callable($cacheKeyArguments);
+            });
 
         $this->assertSame($order, $this->converter->getOrder($checkout));
         $this->assertCount(2, $order->getSubOrders());
@@ -151,9 +176,7 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testGetOrderWithEmptySubCheckouts(): void
     {
-        $checkout = new Checkout();
-        $checkout->setPaymentMethod('pm1');
-        ReflectionUtil::setId($checkout, 1);
+        $checkout = $this->getCheckout('pm1', 1);
 
         $order = new Order();
 
@@ -177,7 +200,11 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
             ->method('getSubCheckouts')
             ->willReturn([]);
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function ($cacheKeyArguments, $callable) {
+                return $callable($cacheKeyArguments);
+            });
 
         $this->assertSame($order, $this->converter->getOrder($checkout));
         $this->assertCount(0, $order->getSubOrders());

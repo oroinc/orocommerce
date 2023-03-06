@@ -10,18 +10,24 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
 {
+    private AppliedPromotionCollectionTableType $formType;
+
+    protected function setUp(): void
+    {
+        $this->formType = new AppliedPromotionCollectionTableType();
+        parent::setUp();
+    }
+
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
-            new PreloadedExtension(
-                [
-                    new AppliedPromotionType(),
-                ],
-                []
-            ),
+            new PreloadedExtension([
+                $this->formType,
+                new AppliedPromotionType()
+            ], [])
         ];
     }
 
@@ -46,19 +52,11 @@ class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $formType = new AppliedPromotionCollectionTableType();
-        $this->assertEquals(OrderCollectionTableType::class, $formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $formType = new AppliedPromotionCollectionTableType();
-        $this->assertEquals(AppliedPromotionCollectionTableType::NAME, $formType->getName());
+        $this->assertEquals(OrderCollectionTableType::class, $this->formType->getParent());
     }
 
     public function testGetBlockPrefix()
     {
-        $formType = new AppliedPromotionCollectionTableType();
-        $this->assertEquals(AppliedPromotionCollectionTableType::NAME, $formType->getBlockPrefix());
+        $this->assertEquals('oro_promotion_applied_promotion_collection_table', $this->formType->getBlockPrefix());
     }
 }

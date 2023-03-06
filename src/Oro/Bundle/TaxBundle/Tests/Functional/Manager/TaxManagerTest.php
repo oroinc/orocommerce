@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -23,12 +24,14 @@ use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @dbIsolationPerTest
  */
 class TaxManagerTest extends WebTestCase
@@ -37,7 +40,7 @@ class TaxManagerTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
 
     private ConfigManager $configManager;
-    private PropertyAccessor $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
     private ManagerRegistry $doctrine;
     private LoaderInterface $loader;
     private TaxManager $taxManager;
@@ -66,12 +69,12 @@ class TaxManagerTest extends WebTestCase
     public function testMethods(
         string $method,
         string $reference,
-        array $configuration,
-        array $databaseBefore,
-        array $databaseBeforeSecondPart,
-        bool $disableTaxCalculation,
-        array $expectedResult = [],
-        array $databaseAfter = []
+        array  $configuration,
+        array  $databaseBefore,
+        array  $databaseBeforeSecondPart,
+        bool   $disableTaxCalculation,
+        array  $expectedResult = [],
+        array  $databaseAfter = []
     ) {
         $this->loadFixtures([LoadTaxRules::class]);
 
@@ -115,7 +118,7 @@ class TaxManagerTest extends WebTestCase
     private function prepareDatabase(
         array $databaseBefore,
         array $databaseBeforeSecondPart,
-        bool $disableTaxCalculation
+        bool  $disableTaxCalculation
     ): void {
         if ($disableTaxCalculation) {
             // Disable taxation for load fixtures
@@ -134,6 +137,7 @@ class TaxManagerTest extends WebTestCase
             $this->configManager->set('oro_tax.tax_enable', $previousTaxEnableState);
         }
         foreach ($objectsData as $reference => $object) {
+            $this->generateMetadataForClass(get_class($object));
             $this->getReferenceRepository()->setReference($reference, $object);
         }
     }
@@ -599,5 +603,25 @@ class TaxManagerTest extends WebTestCase
         return array_map(function (TaxResultElement $element) {
             return $element->getArrayCopy();
         }, $taxes);
+    }
+
+    private function generateMetadataForClass(string $class): void
+    {
+        $objectManager = $this->doctrine->getManagerForClass($class);
+
+        if (!$objectManager) {
+            $objectManager = $this->doctrine->getManager();
+        }
+
+        $metadataFactory = $objectManager->getMetadataFactory();
+
+        if ($metadataFactory->hasMetadataFor($class)) {
+            return;
+        }
+
+        $metadataFactory->setMetadataFor(
+            $class,
+            new ClassMetadata($class, $objectManager->getConfiguration()->getNamingStrategy())
+        );
     }
 }

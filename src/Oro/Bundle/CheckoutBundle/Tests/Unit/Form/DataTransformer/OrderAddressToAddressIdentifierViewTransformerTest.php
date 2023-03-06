@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\DataTransformer;
 use Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
@@ -20,7 +21,7 @@ class OrderAddressToAddressIdentifierViewTransformerTest extends \PHPUnit\Framew
 
     protected function setUp(): void
     {
-        $this->propertyAccessor = new PropertyAccessor();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->addressManager = $this->createMock(OrderAddressManager::class);
     }
 

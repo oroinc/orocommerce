@@ -7,9 +7,12 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\RuleBundle\Model\ExtendRule;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
+ * Store rule data in database.
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="oro_rule",
@@ -30,9 +33,10 @@ use Oro\Bundle\RuleBundle\Model\ExtendRule;
  *      }
  * )
  */
-class Rule extends ExtendRule implements DatesAwareInterface, RuleInterface
+class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
 {
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int

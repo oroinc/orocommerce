@@ -6,8 +6,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListRelationType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -16,16 +16,8 @@ use Symfony\Component\Validator\Validation;
 
 class PriceListRelationTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
+    private PriceListRelationType $formType;
 
-    /**
-     * @var PriceListRelationType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->formType = new PriceListRelationType();
@@ -34,16 +26,16 @@ class PriceListRelationTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    EntityType::class => new EntityTypeStub([])
+                    EntityType::class => new EntityTypeStub()
                 ],
                 []
             ),
@@ -60,9 +52,8 @@ class PriceListRelationTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
 
-        $expectedData = [
-            'priceList' => $this->getEntity(PriceList::class, ['id' => 1])
-        ];
-        $this->assertEquals($expectedData, $form->getData());
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, 1);
+        $this->assertEquals(['priceList' => $priceList], $form->getData());
     }
 }

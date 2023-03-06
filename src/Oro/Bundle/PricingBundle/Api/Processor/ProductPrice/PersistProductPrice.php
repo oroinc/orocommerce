@@ -13,8 +13,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class PersistProductPrice implements ProcessorInterface
 {
-    /** @var PriceManager */
-    private $priceManager;
+    private PriceManager $priceManager;
 
     public function __construct(PriceManager $priceManager)
     {
@@ -24,7 +23,7 @@ class PersistProductPrice implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 

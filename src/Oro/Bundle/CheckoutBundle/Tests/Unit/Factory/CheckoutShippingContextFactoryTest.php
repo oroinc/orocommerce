@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -19,7 +20,6 @@ use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
@@ -36,7 +36,7 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $contextBuilder;
 
-    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CheckoutShippingOriginProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingOriginProvider;
 
     /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -51,7 +51,7 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->checkoutSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
         $this->contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
         $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
-        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
+        $this->shippingOriginProvider = $this->createMock(CheckoutShippingOriginProviderInterface::class);
         $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);
 
         $this->factory = new CheckoutShippingContextFactory(
@@ -77,20 +77,6 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->contextBuilder->expects(self::once())
             ->method('setLineItems')
             ->with($convertedLineItems);
-
-        $this->factory->create($checkout);
-    }
-
-    public function testWithNullLineItems()
-    {
-        $checkout = $this->prepareCheckout();
-
-        $this->shippingLineItemConverter->expects(self::once())
-            ->method('convertLineItems')
-            ->willReturn(null);
-
-        $this->contextBuilder->expects(self::never())
-            ->method('setLineItems');
 
         $this->factory->create($checkout);
     }
@@ -175,7 +161,8 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
             ->willReturn($subtotal);
 
         $this->shippingOriginProvider->expects(self::once())
-            ->method('getSystemShippingOrigin')
+            ->method('getShippingOrigin')
+            ->with(self::identicalTo($checkout))
             ->willReturn($shippingOrigin);
 
         return $checkout;

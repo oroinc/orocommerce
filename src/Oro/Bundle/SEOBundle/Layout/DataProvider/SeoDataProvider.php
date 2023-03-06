@@ -7,7 +7,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * The provider for SEO data.
@@ -20,13 +20,13 @@ class SeoDataProvider
     /** @var RequestWebContentVariantProvider */
     private $requestWebContentVariantProvider;
 
-    /** @var PropertyAccessor */
+    /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
     public function __construct(
         LocalizationHelper $localizationHelper,
         RequestWebContentVariantProvider $requestWebContentVariantProvider,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->localizationHelper = $localizationHelper;
         $this->requestWebContentVariantProvider = $requestWebContentVariantProvider;

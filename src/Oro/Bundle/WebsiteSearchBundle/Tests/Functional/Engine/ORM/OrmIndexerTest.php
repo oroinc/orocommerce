@@ -87,7 +87,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $inputValidator = new IndexerInputValidator(
             $websiteProvider,
             $this->mappingProvider,
-            self::getContainer()->get('doctrine')
+            self::getContainer()->get('doctrine'),
+            $this->getContainer()->get('oro_website_search.reindexation_website_provider'),
+            $this->getContainer()->get('oro_security.token_accessor'),
         );
 
         $this->indexer = new OrmIndexer(

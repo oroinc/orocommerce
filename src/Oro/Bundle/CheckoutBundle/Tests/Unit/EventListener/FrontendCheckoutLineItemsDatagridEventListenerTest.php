@@ -14,18 +14,21 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Oro\Component\Testing\ReflectionUtil;
 
-class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
+class FrontendCheckoutLineItemsDatagridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $managerRegistry;
 
-    private ManagerRegistry|MockObject $managerRegistry;
-    private LineItemShippingMethodsProviderInterface|MockObject $shippingMethodProvider;
-    private CheckoutLineItemsShippingManager|MockObject $lineItemsShippingManager;
-    private FrontendCheckoutLineItemsDatagridEventListener $eventListener;
+    /** @var LineItemShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
+
+    /** @var CheckoutLineItemsShippingManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemsShippingManager;
+
+    /** @var FrontendCheckoutLineItemsDatagridEventListener */
+    private $eventListener;
 
     protected function setUp(): void
     {
@@ -40,16 +43,42 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
         );
     }
 
+    private function createDatagrid(array $parameters): DatagridInterface
+    {
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagrid->expects($this->once())
+            ->method('getParameters')
+            ->willReturn(new ParameterBag($parameters));
+
+        return $datagrid;
+    }
+
+    private function getCheckoutLineItem(
+        int $id,
+        string $sku,
+        string $unitCode,
+        string $shippingMethod,
+        string $shippingMethodType
+    ): CheckoutLineItem {
+        $lineItem = new CheckoutLineItem();
+        ReflectionUtil::setId($lineItem, $id);
+        $lineItem->setProductSku($sku);
+        $lineItem->setProductUnitCode($unitCode);
+        $lineItem->setShippingMethod($shippingMethod);
+        $lineItem->setShippingMethodType($shippingMethodType);
+
+        return $lineItem;
+    }
+
     public function testOnBuildBefore()
     {
         $datagrid = $this->createDatagrid([
             'use_line_items_shipping' => true
         ]);
 
-        $config = $config = DatagridConfiguration::create([]);
-        $event = new BuildBefore($datagrid, $config);
+        $config = DatagridConfiguration::create([]);
 
-        $this->eventListener->onBuildBefore($event);
+        $this->eventListener->onBuildBefore(new BuildBefore($datagrid, $config));
         $properties = $config->offsetGetByPath('[properties]');
         $this->assertNotEmpty($config->offsetGetByPath('[columns][shippingMethods]'));
         $this->assertNotEmpty($properties);
@@ -62,39 +91,19 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
     {
         $datagrid = $this->createDatagrid([]);
 
-        $config = $config = DatagridConfiguration::create([]);
-        $event = new BuildBefore($datagrid, $config);
+        $config = DatagridConfiguration::create([]);
 
-        $this->eventListener->onBuildBefore($event);
+        $this->eventListener->onBuildBefore(new BuildBefore($datagrid, $config));
         $this->assertEmpty($config->offsetGetByPath('[columns][shippingMethods]'));
         $this->assertEmpty($config->offsetGetByPath('[properties]'));
     }
 
     public function testOnResultAfter()
     {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'id' => 4,
-            'productSku' => 'sku-4',
-            'productUnitCode' => 'item',
-            'shippingMethod' => 'flat_rate_1',
-            'shippingMethodType' => 'primary',
-        ]);
+        $lineItem1 = $this->getCheckoutLineItem(4, 'sku-4', 'item', 'flat_rate_1', 'primary');
+        $lineItem2 = $this->getCheckoutLineItem(1, 'sku-1', 'item', 'flat_rate_2', 'primary');
 
-        $lineItem2 = $this->getEntity(CheckoutLineItem::class, [
-            'id' => 1,
-            'productSku' => 'sku-1',
-            'productUnitCode' => 'item',
-            'shippingMethod' => 'flat_rate_2',
-            'shippingMethodType' => 'primary',
-        ]);
-
-        $record = new ResultRecord([
-            'id' => 4,
-            'lineItemsByIds' => [
-                $lineItem1,
-                $lineItem2
-            ]
-        ]);
+        $record = new ResultRecord(['id' => 4, 'lineItemsByIds' => [$lineItem1, $lineItem2]]);
 
         $availableShippingMethods = [
             'flat_rate_1' => [
@@ -127,9 +136,8 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
             ->willReturn('sku-4:item');
 
         $datagrid = $this->createDatagrid(['use_line_items_shipping' => true]);
-        $event = new OrmResultAfter($datagrid, [$record]);
 
-        $this->eventListener->onResultAfter($event);
+        $this->eventListener->onResultAfter(new OrmResultAfter($datagrid, [$record]));
 
         $this->assertEquals($availableShippingMethods, $record->getValue('shippingMethods'));
         $this->assertEquals('flat_rate_1', $record->getValue('currentShippingMethod'));
@@ -139,17 +147,9 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
 
     public function testOnResultAfterIfLineItemsByIdsAreEmpty()
     {
-        $lineItem1 = $this->getEntity(CheckoutLineItem::class, [
-            'id' => 4,
-            'productSku' => 'sku-4',
-            'productUnitCode' => 'item',
-            'shippingMethod' => 'flat_rate_1',
-            'shippingMethodType' => 'primary',
-        ]);
+        $lineItem1 = $this->getCheckoutLineItem(4, 'sku-4', 'item', 'flat_rate_1', 'primary');
 
-        $record = new ResultRecord([
-            'id' => 4
-        ]);
+        $record = new ResultRecord(['id' => 4]);
 
         $availableShippingMethods = [
             'flat_rate_1' => [
@@ -191,9 +191,8 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
             ->willReturn('sku-4:item');
 
         $datagrid = $this->createDatagrid(['use_line_items_shipping' => true]);
-        $event = new OrmResultAfter($datagrid, [$record]);
 
-        $this->eventListener->onResultAfter($event);
+        $this->eventListener->onResultAfter(new OrmResultAfter($datagrid, [$record]));
 
         $this->assertEquals($availableShippingMethods, $record->getValue('shippingMethods'));
         $this->assertEquals('flat_rate_1', $record->getValue('currentShippingMethod'));
@@ -203,9 +202,7 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
 
     public function testOnResultAfterIfLineItemNotFound()
     {
-        $record = new ResultRecord([
-            'id' => 4
-        ]);
+        $record = new ResultRecord(['id' => 4]);
 
         $repository = $this->createMock(CheckoutLineItemRepository::class);
         $repository->expects($this->once())
@@ -220,9 +217,8 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
             ->method('getAvailableShippingMethods');
 
         $datagrid = $this->createDatagrid(['use_line_items_shipping' => true]);
-        $event = new OrmResultAfter($datagrid, [$record]);
 
-        $this->eventListener->onResultAfter($event);
+        $this->eventListener->onResultAfter(new OrmResultAfter($datagrid, [$record]));
 
         $this->assertNull($record->getValue('shippingMethods'));
         $this->assertNull($record->getValue('currentShippingMethod'));
@@ -232,9 +228,7 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
 
     public function testOnResultAfterIfShippingPerLineItemParameterEmpty()
     {
-        $record = new ResultRecord([
-            'id' => 4
-        ]);
+        $record = new ResultRecord(['id' => 4]);
 
         $this->managerRegistry->expects($this->never())
             ->method('getRepository');
@@ -243,25 +237,12 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends TestCase
             ->method('getAvailableShippingMethods');
 
         $datagrid = $this->createDatagrid([]);
-        $event = new OrmResultAfter($datagrid, [$record]);
 
-        $this->eventListener->onResultAfter($event);
+        $this->eventListener->onResultAfter(new OrmResultAfter($datagrid, [$record]));
 
         $this->assertNull($record->getValue('shippingMethods'));
         $this->assertNull($record->getValue('currentShippingMethod'));
         $this->assertNull($record->getValue('currentShippingMethodType'));
         $this->assertNull($record->getValue('lineItemId'));
-    }
-
-    private function createDatagrid(array $parameters)
-    {
-        $parameters = new ParameterBag($parameters);
-
-        $datagrid = $this->createMock(DatagridInterface::class);
-        $datagrid->expects($this->once())
-            ->method('getParameters')
-            ->willReturn($parameters);
-
-        return $datagrid;
     }
 }

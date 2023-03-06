@@ -6,86 +6,135 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FixedProductShippingBundle\Handler\ShippingCostAttributeDeleteHandler;
 use Oro\Bundle\FixedProductShippingBundle\Integration\FixedProductChannelType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelLoaderInterface;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ShippingCostAttributeDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /** @var ManagerRegistry $managerRegistry*/
-    private $managerRegistry;
+    /** @var ChannelLoaderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $channelLoader;
 
     /** @var ShippingCostAttributeDeleteHandler */
     private $handler;
 
     protected function setUp(): void
     {
-        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->channelLoader = $this->createMock(ChannelLoaderInterface::class);
 
-        $this->handler = new ShippingCostAttributeDeleteHandler($this->managerRegistry);
+        $this->handler = new ShippingCostAttributeDeleteHandler($this->doctrine, $this->channelLoader);
     }
 
-    public function testIsAttributeFixedWithAttribute(): void
-    {
-        $this->managerRegistry
-            ->expects($this->never())
-            ->method('getRepository');
-
-        $attribute = $this->getEntity(PriceAttributePriceList::class, ['fieldName' => 'fieldName']);
-        $this->assertFalse($this->handler->isAttributeFixed($attribute));
-    }
-
-    public function testIsAttributeFixedAndIntegrationEnabled(): void
+    private function getChannel(int $id, bool $enabled): Channel
     {
         $channel = new Channel();
-        $channelRepository = $this->createMock(ChannelRepository::class);
-        $channelRepository
-            ->expects($this->once())
-            ->method('findActiveByType')
-            ->with(FixedProductChannelType::TYPE)
-            ->willReturn([$channel]);
+        ReflectionUtil::setId($channel, $id);
+        $channel->setType(FixedProductChannelType::TYPE);
+        $channel->setEnabled($enabled);
 
-        $this->managerRegistry
-            ->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [Channel::class, null, $channelRepository]
-            ]);
-
-        $attribute = $this->getEntity(PriceAttributePriceList::class, ['fieldName' => 'shippingCost']);
-        $this->assertTrue($this->handler->isAttributeFixed($attribute));
+        return $channel;
     }
 
-    public function testIsAttributeFixedAndIntegrationMentionedInShippingRules(): void
+    private function getAttribute(string $fieldName): PriceAttributePriceList
     {
-        $channel = $this->getEntity(Channel::class, ['id' => 5, 'type' => FixedProductChannelType::TYPE]);
-        $channelRepository = $this->createMock(ChannelRepository::class);
-        $channelRepository
-            ->expects($this->once())
-            ->method('findByType')
-            ->with(FixedProductChannelType::TYPE)
+        $attribute = new PriceAttributePriceList();
+        $attribute->setFieldName($fieldName);
+        $attribute->setOrganization($this->createMock(Organization::class));
+
+        return $attribute;
+    }
+
+    public function testIsAttributeFixedForNotShippingCostAttribute(): void
+    {
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        self::assertFalse($this->handler->isAttributeFixed($this->getAttribute('notShippingCost')));
+    }
+
+    public function testIsAttributeFixedWhenNoIntegrations(): void
+    {
+        $attribute = $this->getAttribute('shippingCost');
+
+        $this->channelLoader->expects(self::once())
+            ->method('loadChannels')
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
+            ->willReturn([]);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        self::assertFalse($this->handler->isAttributeFixed($attribute));
+    }
+
+    public function testIsAttributeFixedWhenHasEnabledIntegrations(): void
+    {
+        $attribute = $this->getAttribute('shippingCost');
+        $channel = $this->getChannel(1, true);
+
+        $this->channelLoader->expects(self::once())
+            ->method('loadChannels')
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
+            ->willReturn([$channel]);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        self::assertTrue($this->handler->isAttributeFixed($attribute));
+    }
+
+    public function testIsAttributeFixedWhenNoEnabledIntegrationAndIntegrationMentionedInShippingRules(): void
+    {
+        $attribute = $this->getAttribute('shippingCost');
+        $channel = $this->getChannel(1, false);
+
+        $this->channelLoader->expects(self::once())
+            ->method('loadChannels')
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
             ->willReturn([$channel]);
 
         $shippingMethodConfigRepository = $this->createMock(ShippingMethodConfigRepository::class);
-        $shippingMethodConfigRepository
-            ->expects($this->once())
+        $shippingMethodConfigRepository->expects(self::once())
             ->method('configExistsByMethods')
-            ->with([sprintf('%s_%s', FixedProductChannelType::TYPE, 5)])
+            ->with([sprintf('%s_%s', FixedProductChannelType::TYPE, 1)])
             ->willReturn(true);
 
-        $this->managerRegistry
-            ->expects($this->any())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
-            ->willReturnMap([
-                [Channel::class, null, $channelRepository],
-                [ShippingMethodConfig::class, null, $shippingMethodConfigRepository],
-            ]);
+            ->with(ShippingMethodConfig::class)
+            ->willReturn($shippingMethodConfigRepository);
 
-        $attribute = $this->getEntity(PriceAttributePriceList::class, ['fieldName' => 'shippingCost']);
-        $this->assertTrue($this->handler->isAttributeFixed($attribute));
+        self::assertTrue($this->handler->isAttributeFixed($attribute));
+    }
+
+    public function testIsAttributeFixedWhenNoEnabledIntegrationAndIntegrationNotMentionedInShippingRules(): void
+    {
+        $attribute = $this->getAttribute('shippingCost');
+        $channel = $this->getChannel(1, false);
+
+        $this->channelLoader->expects(self::once())
+            ->method('loadChannels')
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
+            ->willReturn([$channel]);
+
+        $shippingMethodConfigRepository = $this->createMock(ShippingMethodConfigRepository::class);
+        $shippingMethodConfigRepository->expects(self::once())
+            ->method('configExistsByMethods')
+            ->with([sprintf('%s_%s', FixedProductChannelType::TYPE, 1)])
+            ->willReturn(false);
+
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
+            ->with(ShippingMethodConfig::class)
+            ->willReturn($shippingMethodConfigRepository);
+
+        self::assertFalse($this->handler->isAttributeFixed($attribute));
     }
 }

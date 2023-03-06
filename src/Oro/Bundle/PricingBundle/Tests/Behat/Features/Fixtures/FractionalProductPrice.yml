@@ -29,6 +29,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         name: 'priceListForWebsite'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:

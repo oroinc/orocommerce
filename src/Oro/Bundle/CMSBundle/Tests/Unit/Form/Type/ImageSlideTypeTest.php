@@ -21,7 +21,7 @@ use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\ContextInterface;
@@ -31,15 +31,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImageSlideTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
+    private function getFile(int $id): File
+    {
+        $file = new File();
+        ReflectionUtil::setId($file, $id);
+
+        return $file;
+    }
 
     /**
      * @dataProvider submitDataProviderNew
-     *
-     * @param array $submittedData
-     * @param object $expectedData
      */
-    public function testSubmitNew(array $submittedData, $expectedData): void
+    public function testSubmitNew(array $submittedData, object $expectedData): void
     {
         $defaultData = new ImageSlide();
 
@@ -57,9 +60,9 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
 
     public function submitDataProviderNew(): array
     {
-        $mainImage = $this->getEntity(File::class, ['id' => 1001]);
-        $mediumImage = $this->getEntity(File::class, ['id' => 2002]);
-        $smallImage = $this->getEntity(File::class, ['id' => 3003]);
+        $mainImage = $this->getFile(1001);
+        $mediumImage = $this->getFile(2002);
+        $smallImage = $this->getFile(3003);
 
         $expected = new ImageSlide();
         $expected->setContentWidget(new ContentWidget())
@@ -102,7 +105,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {
@@ -116,39 +119,31 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
         );
         $fileType->setEventSubscriber(new FileSubscriber($validator));
 
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
-
-        /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider */
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $htmlTagProvider->expects($this->any())
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
         $htmlTagHelper = new HtmlTagHelper($htmlTagProvider);
-
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $translator = $this->createMock(TranslatorInterface::class);
-        $htmlTagHelper->setTranslator($translator);
-
-        /** @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ContextInterface::class);
+        $htmlTagHelper->setTranslator($this->createMock(TranslatorInterface::class));
 
         return [
             new PreloadedExtension(
                 [
                     $fileType,
-                    ImageType::class => new ImageTypeStub(
-                        [
-                            1001 => $this->getEntity(File::class, ['id' => 1001]),
-                            2002 => $this->getEntity(File::class, ['id' => 2002]),
-                            3003 => $this->getEntity(File::class, ['id' => 3003]),
-                        ],
-                        'oro_image'
-                    ),
+                    ImageType::class => new ImageTypeStub([
+                        1001 => $this->getFile(1001),
+                        2002 => $this->getFile(2002),
+                        3003 => $this->getFile(3003),
+                    ]),
                     ImageSlideCollectionType::class => new ImageSlideCollectionTypeStub(),
                     ImageSlideType::class => new ImageSlideTypeStub(),
-                    new OroRichTextType($configManager, $htmlTagProvider, $context, $htmlTagHelper),
+                    new OroRichTextType(
+                        $this->createMock(ConfigManager::class),
+                        $htmlTagProvider,
+                        $this->createMock(ContextInterface::class),
+                        $htmlTagHelper
+                    ),
                 ],
                 [
                     FormType::class => [new DataBlockExtension()]

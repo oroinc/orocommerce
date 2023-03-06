@@ -13,38 +13,38 @@ Feature: WYSIWYG video type component
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
-      | Src      | http://test-url.com/video  |
+      | Source   | http://test-url.com/video  |
       | Poster   | http://test-url.com/poster |
       | Autoplay | true                       |
       | Loop     | true                       |
     And I save form
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <video allowfullscreen="allowfullscreen" src="http://test-url.com/video" poster="http://test-url.com/poster" loop="loop" autoplay="autoplay" controls="controls"> |
+      | 1 | <video src="http://test-url.com/video" poster="http://test-url.com/poster" loop="loop" autoplay="autoplay" controls="controls"> |
       | 2 | </video>                                                                                                                                                          |
       | 4 | height:400px;                                                                                                                                                     |
       | 5 | width:100%;                                                                                                                                                       |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
-      | Provider       | Youtube     |
-      | Video ID       | dQw4w9WgXcQ |
-      | Modestbranding | true        |
+      | Provider       | Youtube                      |
+      | Video ID       | https://youtu.be/dQw4w9WgXcQ |
+      | Modestbranding | true                         |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe allowfullscreen="allowfullscreen" src="https://www.youtube.com/embed/dQw4w9WgXcQ?&autoplay=1&loop=1&playlist=dQw4w9WgXcQ&modestbranding=1&mute=1"></iframe> |
+      | 1 | <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?&autoplay=1&loop=1&playlist=dQw4w9WgXcQ&modestbranding=1&mute=1" allowfullscreen="allowfullscreen"></iframe> |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
       | Provider | Youtube (no cookie) |
       | Video ID | dQw4w9WgXcQ         |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe allowfullscreen="allowfullscreen" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?&autoplay=1&loop=1&playlist=dQw4w9WgXcQ&modestbranding=1&mute=1"></iframe> |
+      | 1 | <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?&autoplay=1&loop=1&playlist=dQw4w9WgXcQ&modestbranding=1&mute=1" allowfullscreen="allowfullscreen"></iframe> |
     And I select component in canvas by tree:
       | video | 1 |
     And I update selected component settings:
       | Provider | Vimeo    |
       | Video ID | 38195013 |
     Then I check wysiwyg content in "CMS Page Content":
-      | 1 | <iframe allowfullscreen="allowfullscreen" src="https://player.vimeo.com/video/38195013?&autoplay=1&loop=1&muted=1"></iframe> |
+      | 1 | <iframe src="https://player.vimeo.com/video/38195013?&autoplay=1&loop=1&muted=1" allowfullscreen="allowfullscreen"></iframe> |
     And I add new component "2 Columns" from panel to editor area
     And I select component in canvas by tree:
       | video | 1 |
@@ -54,7 +54,7 @@ Feature: WYSIWYG video type component
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
     Then I check wysiwyg content in "CMS Page Content":
       | 3 | <div class="grid-cell">                                                                                                      |
-      | 4 | <iframe allowfullscreen="allowfullscreen" src="https://player.vimeo.com/video/38195013?&autoplay=1&loop=1&muted=1"></iframe> |
+      | 4 | <iframe src="https://player.vimeo.com/video/38195013?&autoplay=1&loop=1&muted=1" allowfullscreen="allowfullscreen"></iframe> |
       | 5 | </div>                                                                                                                       |
     And I select component in canvas by tree:
       | grid-row    | 1 |

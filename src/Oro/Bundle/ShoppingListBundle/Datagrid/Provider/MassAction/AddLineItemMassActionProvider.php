@@ -78,6 +78,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             if ($this->isGuestCustomerUser()) {
                 $actions['current'] = $this->getConfig([
                     'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_current_shopping_list'),
+                    'translatable' => false,
                     'is_current' => true
                 ]);
             } else {
@@ -93,12 +94,12 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
 
                 $currentShoppingList = $this->currentShoppingListManager->getCurrent();
 
-                /** @var ShoppingList $shoppingList */
                 foreach ($shoppingLists as $shoppingList) {
                     $name = 'list' . $shoppingList->getId();
 
                     $actions[$name] = $this->getConfig([
                         'label' => $this->getLabel($shoppingList),
+                        'translatable' => false,
                         'route_parameters' => [
                             'shoppingList' => $shoppingList->getId(),
                         ],
@@ -115,6 +116,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             $actions['new'] = $this->getConfig([
                 'type' => 'window',
                 'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
+                'translatable' => false,
                 'route' => 'oro_shopping_list_add_products_to_new_massaction',
                 'frontend_handle' => 'shopping-list-create',
                 'frontend_options' => [

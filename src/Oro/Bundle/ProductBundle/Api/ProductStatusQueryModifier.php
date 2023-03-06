@@ -16,8 +16,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class ProductStatusQueryModifier implements QueryModifierInterface
 {
-    /** @var EntityClassResolver */
-    private $entityClassResolver;
+    private EntityClassResolver $entityClassResolver;
 
     public function __construct(EntityClassResolver $entityClassResolver)
     {

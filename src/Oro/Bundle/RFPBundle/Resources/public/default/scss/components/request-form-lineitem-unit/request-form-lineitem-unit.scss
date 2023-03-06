@@ -46,9 +46,13 @@
     }
 
     &--remove {
-        @extend .request-form-lineitem-unit;
-
+        display: table-cell;
+        padding-bottom: 8px;
         text-align: right;
+
+        &:not(:first-child) {
+            padding-left: 5px;
+        }
     }
 
     &--prices {

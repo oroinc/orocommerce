@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LoadDependentPriceLists extends AbstractFixture implements DependentFixtureInterface
 {
@@ -45,6 +46,7 @@ class LoadDependentPriceLists extends AbstractFixture implements DependentFixtur
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)
                 ->setActive($priceListData['active'])
+                ->setOrganization($this->getReference('organization'))
                 ->setProductAssignmentRule(
                     sprintf($priceListData['assignmentRule'], $parentPriceListId)
                 );
@@ -69,6 +71,6 @@ class LoadDependentPriceLists extends AbstractFixture implements DependentFixtur
      */
     public function getDependencies()
     {
-        return [LoadPriceLists::class];
+        return [LoadOrganization::class, LoadPriceLists::class];
     }
 }

@@ -17,11 +17,8 @@ class ComputeOrderPaymentStatus implements ProcessorInterface
 {
     private const FIELD_NAME = 'paymentStatus';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var PaymentStatusLabelFormatter */
-    private $paymentStatusLabelFormatter;
+    private DoctrineHelper $doctrineHelper;
+    private PaymentStatusLabelFormatter $paymentStatusLabelFormatter;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -34,7 +31,7 @@ class ComputeOrderPaymentStatus implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

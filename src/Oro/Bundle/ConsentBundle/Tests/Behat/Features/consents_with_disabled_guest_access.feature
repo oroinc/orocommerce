@@ -1,3 +1,4 @@
+@regression
 @fix-BB-14887
 @fixture-OroConsentBundle:ConsentLandingPagesFixture.yml
 Feature: Consents with disabled Guest Access

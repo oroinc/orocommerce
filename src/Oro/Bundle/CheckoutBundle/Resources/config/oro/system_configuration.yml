@@ -28,6 +28,8 @@ system_configuration:
             title: oro.checkout.system_configuration.groups.multishipping_general_options.title
         multishipping_line_items_grouping_options:
             title: oro.checkout.system_configuration.groups.multishipping_line_items_grouping_options.title
+        multishipping_order_history_options:
+            title: oro.checkout.system_configuration.groups.multishipping_order_history_options.title
 
     fields:
         oro_checkout.frontend_show_open_orders:
@@ -112,10 +114,18 @@ system_configuration:
 
         oro_checkout.group_line_items_by:
             data_type: string
-            type: Oro\Bundle\CheckoutBundle\Form\Type\AvailableGroupingFieldsConfigType
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             priority: 20
             options:
                 label: oro.checkout.system_configuration.fields.group_line_items_by.label
+                choice_translation_domain: messages
+                choices:
+                    oro.product.entity_label:
+                        oro.product.id.label: product.id
+                        oro.product.category.label: product.category
+                        oro.product.brand.label: product.brand
+                    oro.checkout.checkoutlineitem.entity_label:
+                        oro.checkout.checkoutlineitem.parent_product.label: parentProduct
                 attr:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'enable_line_item_grouping'
@@ -142,9 +152,6 @@ system_configuration:
                 tooltip: oro.checkout.system_configuration.fields.show_suborders_in_order_history.tooltip
                 attr:
                     'data-dependee-id': 'show_suborders_in_order_history'
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
-                    'data-depend-on': 'enable_line_item_grouping'
-                    'data-show-if': 'checked'
 
         oro_checkout.show_main_orders_in_order_history:
             data_type: boolean
@@ -167,18 +174,6 @@ system_configuration:
                 tooltip: oro.checkout.system_configuration.fields.enable_shipping_method_selection_per_line_item.tooltip
                 attr:
                     'data-dependee-id': 'enable_shipping_method_selection_per_line_item'
-
-        oro_checkout.create_multishipping_integration:
-            type: Symfony\Component\Form\Extension\Core\Type\ButtonType
-            ui_only: true
-            options:
-                label: false
-                required: false
-                resettable: false
-                attr:
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
-                    'data-depend-on': 'enable_shipping_method_selection_per_line_item'
-                    'data-show-if': 'checked'
 
     tree:
         system_configuration:
@@ -212,11 +207,12 @@ system_configuration:
                                     multishipping_general_options:
                                         children:
                                             - oro_checkout.enable_shipping_method_selection_per_line_item
-                                            - oro_checkout.create_multishipping_integration
                                     multishipping_line_items_grouping_options:
                                         children:
                                             - oro_checkout.enable_line_item_grouping
                                             - oro_checkout.group_line_items_by
                                             - oro_checkout.create_suborders_for_each_group
+                                    multishipping_order_history_options:
+                                        children:
                                             - oro_checkout.show_suborders_in_order_history
                                             - oro_checkout.show_main_orders_in_order_history

@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingCollectionType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -16,8 +16,6 @@ use Symfony\Component\Validator\Validation;
 
 class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
     /** @var OrderShippingTrackingCollectionType */
     private $type;
 
@@ -83,12 +81,17 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions(): array
     {
+        $trackingAwareShippingMethodsProvider = $this->createMock(TrackingAwareShippingMethodsProviderInterface::class);
+        $trackingAwareShippingMethodsProvider->expects(self::any())
+            ->method('getTrackingAwareShippingMethods')
+            ->willReturn([]);
+
         return [
             new PreloadedExtension(
                 [
                     $this->type,
-                    CollectionType::class => new CollectionType(),
-                    OrderShippingTrackingType::class => new OrderShippingTrackingType(),
+                    new CollectionType(),
+                    new OrderShippingTrackingType($trackingAwareShippingMethodsProvider),
                 ],
                 []
             ),
@@ -103,7 +106,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        self::assertSame(OrderShippingTrackingCollectionType::NAME, $this->type->getBlockPrefix());
+        self::assertSame('oro_order_shipping_tracking_collection', $this->type->getBlockPrefix());
     }
 
     /**

@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -67,7 +68,7 @@ class CategoryControllerTest extends WebTestCase
     {
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        if (method_exists($category, 'setDefaultSlugPrototype')) {
+        if (EntityPropertyInfo::methodExists($category, 'setDefaultSlugPrototype')) {
             $category->setDefaultSlugPrototype('old-default-slug');
         }
 

@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
@@ -25,7 +24,9 @@ class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->propertyAccessor = $this->getMockBuilder(PropertyAccessor::class)
+            ->onlyMethods(['setValue'])
+            ->getMock();
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->listener = new ProductHandlerListener($this->propertyAccessor, $this->logger);
@@ -63,11 +64,13 @@ class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
         $entity->variantFieldProperty = 'value';
         $entity->notVariantFieldProperty = 'value';
         $entity->setVariantFields(['variantFieldProperty']);
+        $this->propertyAccessor->expects($this->once())
+            ->method('setValue')
+            ->with($entity, 'variantFieldProperty', null);
 
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
 
-        $this->assertNull($entity->variantFieldProperty);
         $this->assertNotNull($entity->notVariantFieldProperty);
     }
 }

@@ -9,15 +9,19 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\PromotionBundle\Model\ExtendPromotion;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
+ * Store promotion data in database.
+ *
  * @ORM\Table(name="oro_promotion")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository")
  * @Config(
@@ -49,14 +53,22 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @method LocalizedFallbackValue getLabel(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultLabel()
+ * @method LocalizedFallbackValue getDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultDescription()
+ * @method setDefaultLabel($title)
+ * @method setDefaultDescription($slug)
  */
-class Promotion extends ExtendPromotion implements
+class Promotion implements
     DatesAwareInterface,
     OrganizationAwareInterface,
-    PromotionDataInterface
+    PromotionDataInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var integer
@@ -246,8 +258,6 @@ class Promotion extends ExtendPromotion implements
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->labels = new ArrayCollection();
         $this->descriptions = new ArrayCollection();
         $this->scopes = new ArrayCollection();

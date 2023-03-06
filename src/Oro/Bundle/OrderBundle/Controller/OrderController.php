@@ -3,7 +3,12 @@
 namespace Oro\Bundle\OrderBundle\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
+use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderComposite;
+use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
+use Oro\Bundle\FormBundle\Provider\SaveAndReturnActionFormTemplateDataProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
@@ -12,7 +17,6 @@ use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -93,9 +97,91 @@ class OrderController extends AbstractController
     public function createAction(Request $request): array|RedirectResponse
     {
         $order = new Order();
-        $order->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
 
         return $this->update($order, $request);
+    }
+
+    /**
+     * Create order form for customer
+     *
+     * @Route(
+     *     "/create/customer/{customer}",
+     *     name="oro_order_create_for_customer",
+     *     requirements={"customer"="\d+"}
+     * )
+     * @Template("@OroOrder/Order/update.html.twig")
+     * @AclAncestor("oro_order_create")
+     */
+    public function createOrderForCustomerAction(
+        Request $request,
+        Customer $customer
+    ): array|RedirectResponse {
+        if (!$this->isGranted('VIEW', $customer)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $order = new Order();
+        $order->setCustomer($customer);
+
+        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider
+            ->setSaveFormActionRoute(
+                'oro_order_create_for_customer',
+                [
+                    'customer' => $customer->getId(),
+                ]
+            )
+            ->setReturnActionRoute(
+                'oro_customer_customer_view',
+                [
+                    'id' => $customer->getId(),
+                ],
+                'oro_customer_customer_view'
+            );
+
+        return $this->update($order, $request, $saveAndReturnActionFormTemplateDataProvider);
+    }
+
+    /**
+     * Create order form with defined customer user
+     *
+     * @Route(
+     *     "/create/customer-user/{customerUser}",
+     *     name="oro_order_create_for_customer_user",
+     *     requirements={"customerUser"="\d+"}
+     * )
+     * @Template("@OroOrder/Order/update.html.twig")
+     * @AclAncestor("oro_order_create")
+     */
+    public function createOrderForCustomerUserAction(
+        Request $request,
+        CustomerUser $customerUser
+    ): array|RedirectResponse {
+        if (!$this->isGranted('VIEW', $customerUser)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $order = new Order();
+        $order->setCustomerUser($customerUser);
+        $order->setCustomer($customerUser->getCustomer());
+
+        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider
+            ->setSaveFormActionRoute(
+                'oro_order_create_for_customer_user',
+                [
+                    'customerUser' => $customerUser->getId(),
+                ]
+            )
+            ->setReturnActionRoute(
+                'oro_customer_customer_user_view',
+                [
+                    'id' => $customerUser->getId(),
+                ],
+                'oro_customer_customer_user_view'
+            );
+
+        return $this->update($order, $request, $saveAndReturnActionFormTemplateDataProvider);
     }
 
     /**
@@ -116,8 +202,11 @@ class OrderController extends AbstractController
         return $this->update($order, $request);
     }
 
-    protected function update(Order $order, Request $request): array|RedirectResponse
-    {
+    protected function update(
+        Order $order,
+        Request $request,
+        FormTemplateDataProviderInterface|null $resultProvider = null
+    ): array|RedirectResponse {
         if (\in_array($request->getMethod(), ['POST', 'PUT'], true)) {
             $orderRequestHandler = $this->get(OrderRequestHandler::class);
             $order->setCustomer($orderRequestHandler->getCustomer());
@@ -126,30 +215,36 @@ class OrderController extends AbstractController
 
         $form = $this->createForm(OrderType::class, $order);
 
+        $formTemplateDataProviderComposite = $this->get(FormTemplateDataProviderComposite::class)
+            ->addFormTemplateDataProviders($resultProvider)
+            ->addFormTemplateDataProviders(
+                function (Order $order, FormInterface $form, Request $request) {
+                    $submittedData = $request->get($form->getName());
+                    $event = new OrderEvent($form, $form->getData(), $submittedData);
+                    $this->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
+                    $orderData = $event->getData()->getArrayCopy();
+                    $orderAddressSecurityProvider = $this->get(OrderAddressSecurityProvider::class);
+
+                    return [
+                        'form' => $form->createView(),
+                        'entity' => $order,
+                        'isWidgetContext' => (bool)$request->get('_wid', false),
+                        'isShippingAddressGranted' => $orderAddressSecurityProvider
+                            ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
+                        'isBillingAddressGranted' => $orderAddressSecurityProvider
+                            ->isAddressGranted($order, AddressType::TYPE_BILLING),
+                        'orderData' => $orderData,
+                    ];
+                }
+            );
+
         return $this->get(UpdateHandlerFacade::class)->update(
             $order,
             $form,
             $this->get(TranslatorInterface::class)->trans('oro.order.controller.order.saved.message'),
             $request,
             null,
-            function (Order $order, FormInterface $form, Request $request) {
-                $submittedData = $request->get($form->getName());
-                $event = new OrderEvent($form, $form->getData(), $submittedData);
-                $this->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
-                $orderData = $event->getData()->getArrayCopy();
-                $orderAddressSecurityProvider = $this->get(OrderAddressSecurityProvider::class);
-
-                return [
-                    'form' => $form->createView(),
-                    'entity' => $order,
-                    'isWidgetContext' => (bool)$request->get('_wid', false),
-                    'isShippingAddressGranted' => $orderAddressSecurityProvider
-                        ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
-                    'isBillingAddressGranted' => $orderAddressSecurityProvider
-                        ->isAddressGranted($order, AddressType::TYPE_BILLING),
-                    'orderData' => $orderData
-                ];
-            }
+            $formTemplateDataProviderComposite
         );
     }
 
@@ -159,13 +254,14 @@ class OrderController extends AbstractController
     public static function getSubscribedServices()
     {
         return array_merge(parent::getSubscribedServices(), [
-            WebsiteManager::class,
             OrderRequestHandler::class,
             TotalProvider::class,
             OrderAddressSecurityProvider::class,
             TranslatorInterface::class,
             EventDispatcherInterface::class,
-            UpdateHandlerFacade::class
+            UpdateHandlerFacade::class,
+            SaveAndReturnActionFormTemplateDataProvider::class,
+            FormTemplateDataProviderComposite::class,
         ]);
     }
 }

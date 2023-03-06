@@ -2,18 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class AddressExtractorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /** @var AddressExtractor */
-    private $extractor;
+    private AddressExtractor $extractor;
 
     protected function setUp(): void
     {
@@ -43,34 +38,31 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider extractFailedDataProvider
-     */
-    public function testExtractFailed(object|array $object, string $property)
+    public function testExtractFromEntityWithNullAddress()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Object does not contains billingAddress');
 
-        $this->expectExceptionMessage(sprintf('Object does not contains %s', $property));
-        $this->extractor->extractAddress($object, $property);
+        $entity = new \stdClass();
+        $entity->billingAddress = null;
+
+        $this->extractor->extractAddress($entity, 'billingAddress');
     }
 
-    public function extractFailedDataProvider(): array
+    public function testExtractFromEntityWithWrongAddressProperty()
     {
-        return [
-            'extract from checkout default billing address property' => [
-                $this->getEntity(Checkout::class),
-                'missingProperty',
-            ],
-            'extract from checkout returns null' => [
-                $this->getEntity(Checkout::class, ['billingAddress' => null]),
-                'billingAddress',
-            ],
-            'extract from array' => [
-                ['address' => new AddressStub()],
-                '[wrongKey]',
-            ],
-        ];
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Object does not contains missingProperty');
+
+        $this->extractor->extractAddress(new \stdClass(), 'missingProperty');
+    }
+
+    public function testExtractFromArrayWithWrongAddressKey()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Object does not contains [missingKey]');
+
+        $this->extractor->extractAddress(['address' => new AddressStub()], '[missingKey]');
     }
 
     public function testWrongType()

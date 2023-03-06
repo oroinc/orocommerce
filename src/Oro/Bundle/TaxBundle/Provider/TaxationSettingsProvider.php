@@ -26,7 +26,7 @@ class TaxationSettingsProvider
     public const START_CALCULATION_ON_TOTAL = 'total';
     public const START_CALCULATION_ON_ITEM = 'item';
 
-    public const USE_AS_BASE_SHIPPING_ORIGIN = 'shipping_origin';
+    public const USE_AS_BASE_ORIGIN = 'origin';
     public const USE_AS_BASE_DESTINATION = 'destination';
 
     public const SCALE = 2;
@@ -142,7 +142,7 @@ class TaxationSettingsProvider
 
     public function isOriginBaseByDefaultAddressType(): bool
     {
-        return $this->getBaseByDefaultAddressType() === self::USE_AS_BASE_SHIPPING_ORIGIN;
+        return $this->getBaseByDefaultAddressType() === self::USE_AS_BASE_ORIGIN;
     }
 
     public function isDestinationBaseByDefaultAddressType(): bool

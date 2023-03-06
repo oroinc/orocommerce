@@ -14,8 +14,7 @@ use Symfony\Component\Form\FormFactoryInterface;
  */
 class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
-    /** @var UnitLabelFormatterInterface */
-    private $formatter;
+    private UnitLabelFormatterInterface $formatter;
 
     public function __construct(
         FormFactoryInterface $factory,
@@ -27,23 +26,23 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getFieldName(array $data)
+    protected function getFieldName(array $data): string
     {
-        $unit = $data['unit'];
-        return 'decimal.' . str_replace(UnitPlaceholder::NAME, $unit, $this->get(FilterUtility::DATA_NAME_KEY));
+        return 'decimal.' . str_replace(UnitPlaceholder::NAME, $data['unit'], $this->get(FilterUtility::DATA_NAME_KEY));
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
 
         $metadata['unitChoices'] = [];
-        $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
+        $formView = $this->getFormView();
+        $unitChoices = $formView['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
             $metadata['unitChoices'][] = [
                 'data' => $choice->data,
@@ -57,9 +56,9 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getFormType()
+    protected function getFormType(): string
     {
         return ProductPriceFilterType::class;
     }

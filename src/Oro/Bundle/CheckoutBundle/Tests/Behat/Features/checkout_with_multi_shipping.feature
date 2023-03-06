@@ -19,23 +19,8 @@ Feature: Checkout With Multi Shipping
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-
-  Scenario: Enable shipping method selection per line item
-    Given I proceed as the Admin
-    And I login as administrator
-    And I go to System/Configuration
-    And I follow "Commerce/Sales/Multi Shipping Options" on configuration sidebar
-    And uncheck "Use default" for "Enable shipping method selection per line item" field
-    And I fill form with:
-      | Enable shipping method selection per line item | true |
-    Then I should see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
-    When I click "Create Multi Shipping Integration"
-    Then I should see "Multi shipping integration was created successfully" flash message
-    And I should not see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
-    When I save form
-    Then I should see "Configuration saved" flash message
-    When I go to System/Integrations/Manage Integrations
-    Then I should see "Multi Shipping"
+    And I change configuration options:
+      | oro_checkout.enable_shipping_method_selection_per_line_item | true |
 
   Scenario: Checkout with shipping method selection per line item
     Given I proceed as the Buyer
@@ -64,6 +49,7 @@ Feature: Checkout With Multi Shipping
 
   Scenario: Enable line items grouping by id
     Given I proceed as the Admin
+    And I login as administrator
     When I go to System/Configuration
     And I follow "Commerce/Sales/Multi Shipping Options" on configuration sidebar
     And uncheck "Use default" for "Enable grouping of line items during checkout" field

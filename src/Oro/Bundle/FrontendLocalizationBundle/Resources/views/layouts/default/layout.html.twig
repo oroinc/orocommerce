@@ -46,9 +46,7 @@
                      data-dom-relocation-options="{{ {
                          responsive: [
                              {
-                                 viewport: {
-                                     maxScreenType: 'tablet',
-                                 },
+                                 viewport: 'tablet',
                                  moveTo: '[data-switcher-localizations-target]'
                              }
                          ]
@@ -84,9 +82,7 @@
                 aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}"
                 data-page-component-module="oroui/js/app/components/viewport-component"
                 data-page-component-options="{{ {
-                    viewport: {
-                        maxScreenType: 'tablet',
-                    },
+                    viewport: 'tablet',
                     component: 'oroui/js/app/components/view-component',
                     view: 'orofrontend/default/js/app/views/fullscreen-popup-view',
                     popupIcon: 'fa-globe fa--gray fa--x-large',

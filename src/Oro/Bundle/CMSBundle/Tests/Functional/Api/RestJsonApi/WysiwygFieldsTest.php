@@ -22,6 +22,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testGet(): void
     {
+        $this->enableTwig();
+
         $response = $this->get(
             ['entity' => 'localizedfallbackvalues', 'id' => '<toString(@test_value_with_wysiwyg->id)>']
         );
@@ -97,6 +99,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testCreateWithWysiwygField(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -119,6 +123,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testCreateWithWysiwygFieldAndRenderedWysiwygFieldThatShouldBeIgnored(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -146,6 +152,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testCreateWithInvalidWysiwygField(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -175,6 +183,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testUpdateWysiwygField(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -198,6 +208,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testUpdateWysiwygFieldAndRenderedWysiwygFieldThatShouldBeIgnored(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -226,6 +238,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testUpdateWysiwygFieldWithNullValue(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -245,6 +259,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testUpdateWysiwygFieldWithEmptyValue(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -272,6 +288,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testUpdateWysiwygFieldWithEmptyValuesForProperties(): void
     {
+        $this->enableTwig();
+
         $id = $this->getReference('test_value_with_wysiwyg')->getId();
         $data = [
             'data' => [
@@ -304,6 +322,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testUpdateWysiwygFieldWithNotAllProperties(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',
@@ -328,6 +348,8 @@ class WysiwygFieldsTest extends RestJsonApiTestCase
 
     public function testUpdateWysiwygFieldWithInvalidValue(): void
     {
+        $this->enableTwig();
+
         $data = [
             'data' => [
                 'type'       => 'localizedfallbackvalues',

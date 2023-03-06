@@ -79,7 +79,7 @@ class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
             ->willReturn($products);
 
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())
+        $form->expects($this->exactly(2))
             ->method('offsetExists')
             ->with('products')
             ->willReturn(true);

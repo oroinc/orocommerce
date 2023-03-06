@@ -1,0 +1,36 @@
+Oro\Bundle\TranslationBundle\Entity\Translation:
+  translation_key_messages_oro_product_unit_item_value_full_german:
+    translationKey: '@translation_key_messages_oro_product_unit_item_value_full'
+    value: '{0} none|{1} %formattedCount% Element|]1,Inf] %formattedCount% Elemente'
+    language: '@german_language'
+    scope: 1
+
+  translation_key_messages_oro_product_unit_item_value_short_german:
+    translationKey: '@translation_key_messages_oro_product_unit_item_value_short'
+    value: '{0} none|{1} %formattedCount% Element|]1,Inf] %formattedCount% Elemente'
+    language: '@german_language'
+    scope: 1
+
+  translation_key_messages_oro_product_unit_item_label_full_german:
+    translationKey: '@translation_key_messages_oro_product_unit_item_label_full'
+    value: 'Element'
+    language: '@german_language'
+    scope: 1
+
+  translation_key_messages_oro_product_unit_item_label_short_german:
+    translationKey: '@translation_key_messages_oro_product_unit_item_label_short'
+    value: 'Elemente'
+    language: '@german_language'
+    scope: 1
+
+  translation_key_jsmessages_oro_product_product_unit_item_label_full_german:
+    translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_full'
+    value: 'Element'
+    language: '@german_language'
+    scope: 1
+
+  translation_key_jsmessages_oro_product_product_unit_item_label_short_german:
+    translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_short'
+    value: 'Elemente'
+    language: '@german_language'
+    scope: 1

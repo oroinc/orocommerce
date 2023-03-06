@@ -29,6 +29,7 @@ oro_behat_extension:
         - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
         - Oro\Bundle\SaleBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -458,16 +459,6 @@ oro_behat_extension:
     Phones Checkout Category Name:
       selector:
         locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Phones"]'
-        type: 'xpath'
-
-    Common Business Unit Name:
-      selector:
-        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Common Business Unit"]'
-        type: 'xpath'
-
-    Second Business Unit:
-      selector:
-        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Second Business Unit"]'
         type: 'xpath'
 
     SubOrders Grid:

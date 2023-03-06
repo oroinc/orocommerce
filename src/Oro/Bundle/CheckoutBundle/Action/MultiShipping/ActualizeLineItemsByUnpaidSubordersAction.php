@@ -19,11 +19,10 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  */
 class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
 {
-    private PropertyPath $order;
-    private PropertyPath $checkout;
-
     private PaymentStatusProviderInterface $paymentStatusProvider;
     private CheckoutLineItemsProvider $checkoutLineItemsProvider;
+    private PropertyPath $order;
+    private PropertyPath $checkout;
 
     public function __construct(
         ContextAccessor $contextAccessor,
@@ -35,6 +34,9 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function executeAction($context)
     {
         /** @var Checkout $checkout */
@@ -59,7 +61,7 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
             );
             $checkout->setLineItems(
                 $checkout->getLineItems()->filter(static function (CheckoutLineItem $lineItem) use ($paidSkus) {
-                    return !in_array($lineItem->getProductSku(), $paidSkus, true);
+                    return !\in_array($lineItem->getProductSku(), $paidSkus, true);
                 })
             );
         } else {
@@ -67,14 +69,17 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function initialize(array $options)
     {
-        if (!array_key_exists('order', $options)) {
+        if (!\array_key_exists('order', $options)) {
             throw new InvalidParameterException('"order" parameter is required');
         }
         $this->order = $options['order'];
 
-        if (!array_key_exists('checkout', $options)) {
+        if (!\array_key_exists('checkout', $options)) {
             throw new InvalidParameterException('"checkout" parameter is required');
         }
         $this->checkout = $options['checkout'];
@@ -84,7 +89,7 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
 
     private function isProcessed(Order $order): bool
     {
-        return in_array(
+        return \in_array(
             $this->paymentStatusProvider->getPaymentStatus($order),
             [
                 PaymentStatusProvider::AUTHORIZED,

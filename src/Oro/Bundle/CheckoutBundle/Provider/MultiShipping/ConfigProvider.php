@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 /**
- * Implements logic to get configured values related to multi shipping functionality.
+ * Provides configured values related to multi shipping functionality.
  */
 class ConfigProvider
 {
@@ -17,66 +16,55 @@ class ConfigProvider
         $this->configManager = $configManager;
     }
 
-    /**
-     * Grouping line items is not supported without multi shipping functionality.
-     *
-     * @return bool
-     */
     public function isLineItemsGroupingEnabled(): bool
     {
-        return $this->isShippingSelectionByLineItemEnabled()
-            && (bool)$this->configManager->get($this->buildConfigKey(Configuration::ENABLE_LINE_ITEMS_GROUPING));
+        return
+            $this->isShippingSelectionByLineItemEnabled()
+            && $this->configManager->get('oro_checkout.enable_line_item_grouping');
     }
 
     public function getGroupLineItemsByField(): ?string
     {
-        return $this->configManager->get($this->buildConfigKey(Configuration::GROUP_LINE_ITEMS_BY));
+        return $this->configManager->get('oro_checkout.group_line_items_by');
     }
 
     public function isCreateSubOrdersForEachGroupEnabled(): bool
     {
-        return $this->isLineItemsGroupingEnabled()
-            && $this->configManager->get($this->buildConfigKey(Configuration::CREATE_SUBORDERS_FOR_EACH_GROUP));
+        return
+            $this->isLineItemsGroupingEnabled()
+            && $this->configManager->get('oro_checkout.create_suborders_for_each_group');
     }
 
     public function isShowSubordersInOrderHistoryEnabled(): bool
     {
-        return $this->isLineItemsGroupingEnabled()
-            && $this->configManager->get($this->buildConfigKey(Configuration::SHOW_SUBORDERS_IN_ORDER_HISTORY));
+        return $this->configManager->get('oro_checkout.show_suborders_in_order_history');
     }
 
     public function isShowMainOrdersAndSubOrdersInOrderHistoryEnabled(): bool
     {
-        return $this->isShowSubordersInOrderHistoryEnabled() && $this->isShowMainOrderInOrderHistoryEnabled();
+        return
+            $this->isShowSubordersInOrderHistoryEnabled()
+            && $this->isShowMainOrderInOrderHistoryEnabled();
     }
 
     public function isShowMainOrderInOrderHistoryDisabled(): bool
     {
-        return $this->isShowSubordersInOrderHistoryEnabled() && !$this->isShowMainOrderInOrderHistoryEnabled();
+        return
+            $this->isShowSubordersInOrderHistoryEnabled()
+            && !$this->isShowMainOrderInOrderHistoryEnabled();
     }
 
     public function isShippingSelectionByLineItemEnabled(): bool
     {
-        return $this->configManager->get(
-            $this->buildConfigKey(Configuration::ENABLE_SHIPPING_METHOD_SELECTION_PER_LINE_ITEM)
-        );
+        return $this->configManager->get('oro_checkout.enable_shipping_method_selection_per_line_item');
     }
 
     /**
-     * Configuration depends on isShowSubordersInOrderHistoryEnabled config and should not be used without additional
-     * check of this config.
-     *
-     * @return bool
+     * This setting depends on the {@see isShowSubordersInOrderHistoryEnabled} setting
+     * and should not be used without additional check of this config.
      */
     private function isShowMainOrderInOrderHistoryEnabled(): bool
     {
-        return $this->configManager->get(
-            $this->buildConfigKey(Configuration::SHOW_MAIN_ORDERS_IN_ORDER_HISTORY)
-        );
-    }
-
-    private function buildConfigKey(string $key): string
-    {
-        return 'oro_checkout.' . $key;
+        return $this->configManager->get('oro_checkout.show_main_orders_in_order_history');
     }
 }

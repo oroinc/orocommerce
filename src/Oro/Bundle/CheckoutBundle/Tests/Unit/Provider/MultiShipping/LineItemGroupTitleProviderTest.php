@@ -6,17 +6,22 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemGroupTitleProvider;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class LineItemGroupTitleProviderTest extends TestCase
+class LineItemGroupTitleProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private PropertyAccessorInterface|MockObject $propertyAccessor;
-    private EntityNameResolver|MockObject $entityNameResolver;
-    private TranslatorInterface|MockObject $translator;
-    private LineItemGroupTitleProvider $titleProvider;
+    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $propertyAccessor;
+
+    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityNameResolver;
+
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
+    /** @var LineItemGroupTitleProvider */
+    private $titleProvider;
 
     protected function setUp(): void
     {
@@ -25,6 +30,7 @@ class LineItemGroupTitleProviderTest extends TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->titleProvider = new LineItemGroupTitleProvider(
+            ['product.id' => 'product.sku'],
             $this->propertyAccessor,
             $this->entityNameResolver,
             $this->translator

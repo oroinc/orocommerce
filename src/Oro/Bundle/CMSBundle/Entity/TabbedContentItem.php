@@ -3,11 +3,12 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CMSBundle\Model\ExtendTabbedContentItem;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 
@@ -33,10 +34,14 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  *     }
  * )
  */
-class TabbedContentItem extends ExtendTabbedContentItem implements OrganizationAwareInterface, DatesAwareInterface
+class TabbedContentItem implements
+    OrganizationAwareInterface,
+    DatesAwareInterface,
+    ExtendEntityInterface
 {
     use OrganizationAwareTrait;
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @ORM\Column(type="integer")
@@ -115,7 +120,7 @@ class TabbedContentItem extends ExtendTabbedContentItem implements OrganizationA
     /**
      * @ORM\Column(name="content_properties", type="wysiwyg_properties", nullable=true)
      */
-    protected array $contentProperties = [];
+    protected ?array $contentProperties = null;
 
     public function getId(): ?int
     {
@@ -182,12 +187,12 @@ class TabbedContentItem extends ExtendTabbedContentItem implements OrganizationA
         return $this;
     }
 
-    public function getContentProperties(): array
+    public function getContentProperties(): ?array
     {
         return $this->contentProperties;
     }
 
-    public function setContentProperties(array $contentProperties): self
+    public function setContentProperties(?array $contentProperties): self
     {
         $this->contentProperties = $contentProperties;
 

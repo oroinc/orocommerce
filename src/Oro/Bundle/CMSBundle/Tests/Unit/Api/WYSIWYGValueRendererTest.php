@@ -3,19 +3,26 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Api;
 
 use Oro\Bundle\CMSBundle\Api\WYSIWYGValueRenderer;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Twig\Environment;
 
 class WYSIWYGValueRendererTest extends \PHPUnit\Framework\TestCase
 {
-    private Environment|\PHPUnit\Framework\MockObject\MockObject $twig;
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    private $twig;
 
-    private WYSIWYGValueRenderer $wysiwygValueRenderer;
+    /** @var WYSIWYGValueRenderer */
+    private $wysiwygValueRenderer;
 
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);
 
-        $this->wysiwygValueRenderer = new WYSIWYGValueRenderer($this->twig);
+        $container = TestContainerBuilder::create()
+            ->add(Environment::class, $this->twig)
+            ->getContainer($this);
+
+        $this->wysiwygValueRenderer = new WYSIWYGValueRenderer($container);
     }
 
     public function testRender(): void

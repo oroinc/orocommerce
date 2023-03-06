@@ -9,23 +9,16 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
+/**
+ * The factory to create Flat Rate shipping method.
+ */
 class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFactoryInterface
 {
-    /**
-     * @var IntegrationIdentifierGeneratorInterface
-     */
-    private $identifierGenerator;
-
-    /**
-     * @var LocalizationHelper
-     */
-    private $localizationHelper;
-
-    /**
-     * @var IntegrationIconProviderInterface
-     */
-    private $integrationIconProvider;
+    private IntegrationIdentifierGeneratorInterface $identifierGenerator;
+    private LocalizationHelper $localizationHelper;
+    private IntegrationIconProviderInterface $integrationIconProvider;
 
     public function __construct(
         IntegrationIdentifierGeneratorInterface $identifierGenerator,
@@ -38,39 +31,18 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
     }
 
     /**
-     * @param Channel $channel
-     *
-     * @return FlatRateMethod
+     * {@inheritDoc}
      */
-    public function create(Channel $channel)
-    {
-        $id = $this->identifierGenerator->generateIdentifier($channel);
-        $label = $this->getChannelLabel($channel);
-        $icon = $this->getIcon($channel);
-
-        return new FlatRateMethod($id, $label, $icon, $channel->isEnabled());
-    }
-
-    /**
-     * @param Channel $channel
-     *
-     * @return string
-     */
-    private function getChannelLabel(Channel $channel)
+    public function create(Channel $channel): ShippingMethodInterface
     {
         /** @var FlatRateSettings $transport */
         $transport = $channel->getTransport();
 
-        return (string) $this->localizationHelper->getLocalizedValue($transport->getLabels());
-    }
-
-    /**
-     * @param Channel $channel
-     *
-     * @return string|null
-     */
-    private function getIcon(Channel $channel)
-    {
-        return $this->integrationIconProvider->getIcon($channel);
+        return new FlatRateMethod(
+            $this->identifierGenerator->generateIdentifier($channel),
+            (string)$this->localizationHelper->getLocalizedValue($transport->getLabels()),
+            $this->integrationIconProvider->getIcon($channel),
+            $channel->isEnabled()
+        );
     }
 }

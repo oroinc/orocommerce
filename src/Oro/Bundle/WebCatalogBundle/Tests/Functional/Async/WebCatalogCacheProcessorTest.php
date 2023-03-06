@@ -9,7 +9,6 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeCacheTopic;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadConfigValue;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
@@ -31,13 +30,6 @@ class WebCatalogCacheProcessorTest extends WebTestCase
         $this->initClient();
     }
 
-    protected function tearDown(): void
-    {
-        self::getConfigManager()->set('oro_web_catalog.navigation_root', null, self::getDefaultWebsite());
-
-        parent::tearDown();
-    }
-
     public function testProcessWhenNoContentNodeNoScope(): void
     {
         $sentMessage = self::sendMessage(
@@ -49,6 +41,10 @@ class WebCatalogCacheProcessorTest extends WebTestCase
 
         self::assertProcessedMessageStatus(MessageProcessorInterface::REJECT, $sentMessage);
         self::assertProcessedMessageProcessor('oro_web_catalog.async.web_catalog_cache_processor', $sentMessage);
+
+        self::assertTrue(
+            self::getLoggerTestHandler()->hasError('Root node for the web catalog #' . PHP_INT_MAX . ' is not found')
+        );
     }
 
     public function testProcess(): void
@@ -62,10 +58,6 @@ class WebCatalogCacheProcessorTest extends WebTestCase
         );
         /** @var WebCatalogInterface $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        /** @var ContentNode $webCatalog */
-        $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
-        self::getConfigManager()
-            ->set('oro_web_catalog.navigation_root', $contentNode->getId(), self::getDefaultWebsite());
 
         $sentMessage = self::sendMessage(
             WebCatalogCalculateCacheTopic::getName(),

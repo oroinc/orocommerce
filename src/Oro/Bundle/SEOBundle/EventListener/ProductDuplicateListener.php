@@ -6,14 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Clone meta fields and link them with duplicate product
  */
 class ProductDuplicateListener
 {
-    /** @var PropertyAccessor */
+    /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
     /** @var array */
@@ -22,7 +22,7 @@ class ProductDuplicateListener
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    public function __construct(PropertyAccessor $propertyAccessor, array $metaFields = [])
+    public function __construct(PropertyAccessorInterface $propertyAccessor, array $metaFields = [])
     {
         $this->propertyAccessor = $propertyAccessor;
         $this->metaFields = $metaFields;

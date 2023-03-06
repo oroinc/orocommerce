@@ -4,31 +4,31 @@ namespace Oro\Bundle\CheckoutBundle\Factory;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
 /**
- * The factory to create a shipping context for a specific checkout object.
+ * Creates a shipping context for a specific checkout object.
  */
 class CheckoutShippingContextFactory
 {
     private CheckoutLineItemsManager $checkoutLineItemsManager;
     private SubtotalProviderInterface $checkoutSubtotalProvider;
     private OrderShippingLineItemConverterInterface $shippingLineItemConverter;
-    private ShippingOriginProvider $shippingOriginProvider;
-    private ?ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory;
+    private CheckoutShippingOriginProviderInterface $shippingOriginProvider;
+    private ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory;
 
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         SubtotalProviderInterface $checkoutSubtotalProvider,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter,
-        ShippingOriginProvider $shippingOriginProvider,
-        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory = null
+        CheckoutShippingOriginProviderInterface $shippingOriginProvider,
+        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
         $this->checkoutSubtotalProvider = $checkoutSubtotalProvider;
@@ -37,12 +37,8 @@ class CheckoutShippingContextFactory
         $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
     }
 
-    public function create(Checkout $checkout): ?ShippingContextInterface
+    public function create(Checkout $checkout): ShippingContextInterface
     {
-        if (null === $this->shippingContextBuilderFactory) {
-            return null;
-        }
-
         $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
             $checkout,
             (string)$checkout->getId()
@@ -56,12 +52,9 @@ class CheckoutShippingContextFactory
             $shippingContextBuilder->setPaymentMethod($checkout->getPaymentMethod());
         }
 
-        $convertedLineItems = $this->shippingLineItemConverter->convertLineItems(
-            $this->checkoutLineItemsManager->getData($checkout)
+        $shippingContextBuilder->setLineItems(
+            $this->shippingLineItemConverter->convertLineItems($this->checkoutLineItemsManager->getData($checkout))
         );
-        if (null !== $convertedLineItems) {
-            $shippingContextBuilder->setLineItems($convertedLineItems);
-        }
 
         return $shippingContextBuilder->getResult();
     }
@@ -78,7 +71,7 @@ class CheckoutShippingContextFactory
             $shippingContextBuilder->setShippingAddress($checkout->getShippingAddress());
         }
 
-        $shippingContextBuilder->setShippingOrigin($this->shippingOriginProvider->getSystemShippingOrigin());
+        $shippingContextBuilder->setShippingOrigin($this->shippingOriginProvider->getShippingOrigin($checkout));
     }
 
     private function addCustomer(

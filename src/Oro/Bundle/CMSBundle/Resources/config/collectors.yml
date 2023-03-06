@@ -1,0 +1,5 @@
+services:
+    oro_cms.data_collector.layout_name_provider.content_widget:
+        class: Oro\Bundle\CMSBundle\DataCollector\DataCollectorContentWidgetLayoutNameProvider
+        tags:
+            - { name: oro_layout.data_collector.layout_name_provider }

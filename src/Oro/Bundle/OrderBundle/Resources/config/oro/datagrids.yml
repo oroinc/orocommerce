@@ -154,6 +154,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
+                            translatable_options: false
                 identifier:
                     type:      string
                     data_name: order1.identifier
@@ -163,6 +164,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
+                            translatable_options: false
                 subtotal:
                     type:      currency
                     data_name: subtotal
@@ -203,7 +205,7 @@ datagrids:
                     - SUM(appliedDiscount.amount) as promotionalDiscountsAmount
                     - internalStatus.name as internalStatusName
                     - internalStatus.id as internalStatusId
-                    - CASE WHEN IDENTITY(order1.parent) IS NULL THEN 'oro.order.order_type.primary_order' ELSE 'oro.order.order_type.sub_order' END as orderType
+                    - CASE WHEN IDENTITY(order1.parent) IS NULL THEN 1 ELSE 2 END as orderType
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
@@ -222,9 +224,8 @@ datagrids:
                 label:         oro.order.po_number.label
             orderType:
                 label: oro.order.order_type.label
-                type: twig
-                frontend_type: html
-                template: '@OroOrder/Order/Datagrid/orderType.html.twig'
+                frontend_type: select
+                choices: "@oro_order.provider.order_types->getOrderTypeChoices"
                 renderable: false
             shipUntil:
                 label:         oro.order.ship_until.label
@@ -339,9 +340,7 @@ datagrids:
                     enabled:   false
                     options:
                         field_options:
-                            choices:
-                                oro.order.order_type.primary_order: oro.order.order_type.primary_order
-                                oro.order.order_type.sub_order: oro.order.order_type.sub_order
+                            choices: "@oro_order.provider.order_types->getOrderTypeChoices"
                 shipUntil:
                     type:      date
                     data_name: order1.shipUntil
@@ -351,6 +350,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
+                            translatable_options: false
                 subtotal:
                     type:      currency
                     data_name: subtotal
@@ -377,6 +377,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
+                            translatable_options: false
                 totalDiscountsAmount:
                     type:      number
                     data_name: order1.totalDiscountsAmount
@@ -536,6 +537,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
+                            translatable_options: false
                 total:
                     type:      currency
                     data_name: total
@@ -556,6 +558,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
+                            translatable_options: false
                 totalDiscountsAmount:
                     type:      number
                     data_name: order1.totalDiscountsAmount

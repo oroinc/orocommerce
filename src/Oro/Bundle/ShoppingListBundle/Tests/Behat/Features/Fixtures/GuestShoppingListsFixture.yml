@@ -8,6 +8,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         __calls:
             - setCurrencies: [['USD']]
         active: true
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
     priceListToWebsite1:

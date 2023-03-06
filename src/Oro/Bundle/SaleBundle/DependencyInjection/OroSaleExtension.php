@@ -12,7 +12,7 @@ class OroSaleExtension extends Extension
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
@@ -21,20 +21,8 @@ class OroSaleExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
         $loader->load('controllers.yml');
-
-        $this->registerShippingBundleDependencies($loader, $container);
+        $loader->load('shipping_services.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
-    }
-
-    private function registerShippingBundleDependencies(Loader\YamlFileLoader $loader, ContainerBuilder $container)
-    {
-        $bundles = $container->getParameter('kernel.bundles');
-
-        if (false === array_key_exists('OroShippingBundle', $bundles)) {
-            return;
-        }
-
-        $loader->load('shipping_services.yml');
     }
 }

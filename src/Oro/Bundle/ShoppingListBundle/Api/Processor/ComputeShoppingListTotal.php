@@ -16,11 +16,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeShoppingListTotal implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var TotalProcessorProvider */
-    private $totalProvider;
+    private DoctrineHelper $doctrineHelper;
+    private TotalProcessorProvider $totalProvider;
 
     public function __construct(DoctrineHelper $doctrineHelper, TotalProcessorProvider $totalProvider)
     {
@@ -32,7 +29,7 @@ class ComputeShoppingListTotal implements ProcessorInterface
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

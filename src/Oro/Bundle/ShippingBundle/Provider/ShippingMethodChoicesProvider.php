@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Provides choices for form types to select shipping methods.
@@ -11,33 +11,42 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ShippingMethodChoicesProvider
 {
     private ShippingMethodProviderInterface $shippingMethodProvider;
-    private TranslatorInterface $translator;
 
-    public function __construct(
-        ShippingMethodProviderInterface $shippingMethodProvider,
-        TranslatorInterface $translator
-    ) {
+    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
+    {
         $this->shippingMethodProvider = $shippingMethodProvider;
-        $this->translator = $translator;
     }
 
-    public function getMethods(bool $translate = false): array
+    public function getMethods(): array
     {
         $result = [];
         $shippingMethods = $this->shippingMethodProvider->getShippingMethods();
         foreach ($shippingMethods as $shippingMethod) {
-            if (!$shippingMethod->isEnabled()) {
-                continue;
+            if ($shippingMethod->isEnabled() && $this->hasOptionsConfigurationForm($shippingMethod)) {
+                $result[$shippingMethod->getLabel()] = $shippingMethod->getIdentifier();
             }
-
-            $label = $shippingMethod->getLabel();
-            if ($translate) {
-                $label = $this->translator->trans($label);
-            }
-
-            $result[$label] = $shippingMethod->getIdentifier();
         }
 
         return $result;
+    }
+
+    private function hasOptionsConfigurationForm(ShippingMethodInterface $shippingMethod): bool
+    {
+        if (!$shippingMethod->getOptionsConfigurationFormType()) {
+            return false;
+        }
+
+        $types = $shippingMethod->getTypes();
+        if (!$types) {
+            return true;
+        }
+
+        foreach ($types as $type) {
+            if ($type->getOptionsConfigurationFormType()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

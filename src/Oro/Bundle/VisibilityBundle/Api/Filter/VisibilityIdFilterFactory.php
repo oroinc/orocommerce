@@ -9,8 +9,7 @@ use Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper;
  */
 class VisibilityIdFilterFactory
 {
-    /** @var VisibilityIdHelper */
-    private $visibilityIdHelper;
+    private VisibilityIdHelper $visibilityIdHelper;
 
     public function __construct(VisibilityIdHelper $visibilityIdHelper)
     {

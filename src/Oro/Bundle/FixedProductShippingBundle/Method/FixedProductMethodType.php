@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 /**
- * Fixed Product shipping method type implementation.
+ * Represents Fixed Product shipping method type.
  */
 class FixedProductMethodType implements ShippingMethodTypeInterface
 {
@@ -18,15 +18,15 @@ class FixedProductMethodType implements ShippingMethodTypeInterface
 
     // Fields
     public const SURCHARGE_AMOUNT = 'surcharge_amount';
-    public const SURCHARGE_TYPE   = 'surcharge_type';
-    public const SURCHARGE_ON     = 'surcharge_on';
+    public const SURCHARGE_TYPE = 'surcharge_type';
+    public const SURCHARGE_ON = 'surcharge_on';
 
     // Surcharge Type Options
-    public const PERCENT          = 'percent';
-    public const FIXED_AMOUNT     = 'fixed_amount';
+    public const PERCENT = 'percent';
+    public const FIXED_AMOUNT = 'fixed_amount';
 
     // Surcharge On Options
-    public const PRODUCT_PRICE         = 'product_price';
+    public const PRODUCT_PRICE = 'product_price';
     public const PRODUCT_SHIPPING_COST = 'product_shipping_cost';
 
     private string $label;
@@ -44,15 +44,15 @@ class FixedProductMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIdentifier(): string
     {
-        return static::IDENTIFIER;
+        return self::IDENTIFIER;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel(): string
     {
@@ -60,7 +60,7 @@ class FixedProductMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSortOrder(): int
     {
@@ -68,13 +68,16 @@ class FixedProductMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType(): string
+    public function getOptionsConfigurationFormType(): ?string
     {
         return FixedProductOptionsType::class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function calculatePrice(
         ShippingContextInterface $context,
         array $methodOptions,

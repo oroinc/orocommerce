@@ -17,19 +17,16 @@ class OrderLineItemTaxesProvider
 {
     public const UNIT_PRICE_INCLUDING_TAX = 'unitPriceIncludingTax';
     public const UNIT_PRICE_EXCLUDING_TAX = 'unitPriceExcludingTax';
-    public const UNIT_PRICE_TAX_AMOUNT    = 'unitPriceTaxAmount';
-    public const ROW_TOTAL_INCLUDING_TAX  = 'rowTotalIncludingTax';
-    public const ROW_TOTAL_EXCLUDING_TAX  = 'rowTotalExcludingTax';
-    public const ROW_TOTAL_TAX_AMOUNT     = 'rowTotalTaxAmount';
-    public const TAXES                    = 'taxes';
+    public const UNIT_PRICE_TAX_AMOUNT = 'unitPriceTaxAmount';
+    public const ROW_TOTAL_INCLUDING_TAX = 'rowTotalIncludingTax';
+    public const ROW_TOTAL_EXCLUDING_TAX = 'rowTotalExcludingTax';
+    public const ROW_TOTAL_TAX_AMOUNT = 'rowTotalTaxAmount';
+    public const TAXES = 'taxes';
 
     private const TAXES_CONTEXT_KEY = '_taxes';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var TaxationSettingsProvider */
-    private $taxationSettingsProvider;
+    private DoctrineHelper $doctrineHelper;
+    private TaxationSettingsProvider $taxationSettingsProvider;
 
     public function __construct(DoctrineHelper $doctrineHelper, TaxationSettingsProvider $taxationSettingsProvider)
     {
@@ -64,7 +61,7 @@ class OrderLineItemTaxesProvider
             $allTaxes = $this->loadTaxes($lineItemIds);
             foreach ($lineItemIds as $lineItemId) {
                 $taxes = [];
-                if (array_key_exists($lineItemId, $allTaxes)) {
+                if (\array_key_exists($lineItemId, $allTaxes)) {
                     $taxes = $allTaxes[$lineItemId];
                 }
 
@@ -107,29 +104,17 @@ class OrderLineItemTaxesProvider
         return $result;
     }
 
-    /**
-     * @param array  $taxes
-     * @param string $valueType
-     * @param string $valueName
-     *
-     * @return mixed
-     */
-    private function getTaxValue(array $taxes, string $valueType, string $valueName)
+    private function getTaxValue(array $taxes, string $valueType, string $valueName): mixed
     {
         $result = null;
-        if (!empty($taxes[$valueType]) && array_key_exists($valueName, $taxes[$valueType])) {
+        if (!empty($taxes[$valueType]) && \array_key_exists($valueName, $taxes[$valueType])) {
             $result = $taxes[$valueType][$valueName];
         }
 
         return $result;
     }
 
-    /**
-     * @param array $taxes
-     *
-     * @return mixed
-     */
-    private function getAppliedTaxes(array $taxes)
+    private function getAppliedTaxes(array $taxes): mixed
     {
         $result = [];
         if (!empty($taxes['taxes'])) {

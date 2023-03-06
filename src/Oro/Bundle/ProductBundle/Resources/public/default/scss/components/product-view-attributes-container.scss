@@ -24,7 +24,8 @@
             border: $product-view-attributes-container-border-radius-mobile-l;
 
             .tab-content {
-                display: $product-view-attributes-tab-content-display-mobile-l;
+                // stylelint-disable-next-line declaration-no-important
+                display: $product-view-attributes-tab-content-display-mobile-l !important;
             }
         }
     }

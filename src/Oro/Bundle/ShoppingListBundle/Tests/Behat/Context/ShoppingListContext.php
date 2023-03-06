@@ -69,6 +69,7 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
 
     /**
      * @Then /^(?:|I )see next subtotals for "(?P<elementName>[\w\s]+)":$/
+     * @Then /^(?:|I )see following subtotals for "(?P<elementName>[\w\s]+)":$/
      *
      * @param TableNode $expectedSubtotals
      * @param string $elementName

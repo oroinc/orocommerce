@@ -10,18 +10,20 @@ use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingPriceProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class CheckoutLineItemsShippingManagerTest extends TestCase
+class CheckoutLineItemsShippingManagerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var AvailableLineItemShippingMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemShippingMethodsProvider;
 
-    private AvailableLineItemShippingMethodsProvider|MockObject $lineItemShippingMethodsProvider;
-    private CheckoutLineItemsProvider|MockObject $lineItemsProvider;
-    private LineItemShippingPriceProviderInterface|MockObject $shippingPricePriceProvider;
-    private CheckoutLineItemsShippingManager $manager;
+    /** @var CheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemsProvider;
+
+    /** @var LineItemShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingPricePriceProvider;
+
+    /** @var CheckoutLineItemsShippingManager */
+    private $manager;
 
     protected function setUp(): void
     {
@@ -34,6 +36,21 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
             $this->lineItemsProvider,
             $this->shippingPricePriceProvider
         );
+    }
+
+    private function createLineItem(
+        string $sku,
+        string $unitCode,
+        ?string $shippingMethod = null,
+        ?string $shippingMethodType = null
+    ): CheckoutLineItem {
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setProductSku($sku);
+        $lineItem->setProductUnitCode($unitCode);
+        $lineItem->setShippingMethod($shippingMethod);
+        $lineItem->setShippingMethodType($shippingMethodType);
+
+        return $lineItem;
     }
 
     public function testUpdateLineItemsShippingMethods()
@@ -243,10 +260,10 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
 
         $this->shippingPricePriceProvider->expects($this->exactly(2))
             ->method('getPrice')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$lineItem1, Price::create(10.00, 'USD')],
                 [$lineItem2, Price::create(7.00, 'USD')]
-            ]));
+            ]);
 
         $this->manager->updateLineItemsShippingPrices($checkout);
 
@@ -256,19 +273,5 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
         $this->assertEquals(10.00, $lineItem1->getShippingEstimateAmount());
         $this->assertEquals(7.00, $lineItem2->getShippingEstimateAmount());
         $this->assertNull($lineItem3->getShippingEstimateAmount());
-    }
-
-    private function createLineItem(
-        string $sku,
-        string $uom,
-        ?string $shippingMethod = null,
-        ?string $shippingMethodType = null
-    ): CheckoutLineItem {
-        return $this->getEntity(CheckoutLineItem::class, [
-            'productSku' => $sku,
-            'productUnitCode' => $uom,
-            'shippingMethod' => $shippingMethod,
-            'shippingMethodType' => $shippingMethodType
-        ]);
     }
 }

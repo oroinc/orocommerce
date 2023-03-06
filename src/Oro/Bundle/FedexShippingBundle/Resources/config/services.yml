@@ -117,7 +117,7 @@ services:
         public: true
         arguments:
             - '@oro_security.encoder.default'
-            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_shipping.system_shipping_origin_provider'
 
     oro_fedex_shipping.shipping_method.method_type_identifier_generator:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'
@@ -145,15 +145,13 @@ services:
             - '@oro_fedex_shipping.client.rate_service_cached'
 
     oro_fedex_shipping.shipping_method.provider:
-        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Provider\FedexShippingMethodProvider'
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider'
         arguments:
             - '%oro_fedex_shipping.integration.channel.type%'
-            - '@oro_entity.doctrine_helper'
             - '@oro_fedex_shipping.shipping_method.factory.method'
+            - '@oro_shipping.method.loader'
         tags:
             - { name: oro_shipping_method_provider }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postLoad }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postPersist }
 
     oro_fedex_shipping.event_listener.remove_integration:
         parent: oro_shipping.remove_integration_listener

@@ -1,6 +1,6 @@
 method: saveTax
 reference: simple_order
-configuration: { use_as_base_by_default: origin, digital_products_us: ['TAX2'] }
+configuration: { use_as_base_by_default: destination, digital_products_us: ['TAX2'] }
 databaseBefore:
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         us_jurisdiction:

@@ -19,27 +19,17 @@ Feature: Checkout With Multi Shipping And Missing Shipping Method
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-
-  Scenario: Enable shipping method selection per line item
-    Given I proceed as the Admin
-    And I login as administrator
-    And I go to System/Configuration
-    And I follow "Commerce/Sales/Multi Shipping Options" on configuration sidebar
-    And uncheck "Use default" for "Enable shipping method selection per line item" field
-    When I fill form with:
-      | Enable shipping method selection per line item | true |
-    Then I should see "Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow."
-    When I click "Create Multi Shipping Integration"
-    Then I should see "Multi shipping integration was created successfully" flash message
-    When I save form
-    Then I should see "Configuration saved" flash message
+    And I change configuration options:
+      | oro_checkout.enable_shipping_method_selection_per_line_item | true |
 
   Scenario: Set stricter rule for the shipping method
-    Given I go to System/Shipping Rules
+    Given I proceed as the Admin
+    And I login as administrator
+    When I go to System/Shipping Rules
     And I click Edit "Default" in grid
     And fill "Shipping Rule" with:
       | Expression | subtotal.value >= 12 |
-    When I save and close form
+    And I save and close form
     Then I should see "Shipping rule has been saved" flash message
 
   Scenario: Checkout with shipping method selection per line item and missing shipping method

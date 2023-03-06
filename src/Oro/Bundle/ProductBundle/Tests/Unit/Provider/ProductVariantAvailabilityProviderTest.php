@@ -20,9 +20,9 @@ use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariant
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Component\Testing\Unit\PropertyAccess\PropertyAccessTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -34,6 +34,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use PropertyAccessTrait;
+
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
@@ -102,7 +104,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider = new ProductVariantAvailabilityProvider(
             $doctrine,
             $this->customFieldProvider,
-            PropertyAccess::createPropertyAccessor(),
+            $this->getPropertyAccessor(),
             $this->dispatcher,
             $variantFieldValueHandlerRegistry
         );

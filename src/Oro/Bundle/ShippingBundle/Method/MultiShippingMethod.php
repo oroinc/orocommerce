@@ -4,24 +4,22 @@ namespace Oro\Bundle\ShippingBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
- * Multi Shipping method implementation.
+ * Represents Multi Shipping method.
  */
 class MultiShippingMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
-    private MultiShippingMethodType $type;
+    private string $identifier;
     private string $label;
     private string $icon;
-    private string $identifier;
     private bool $enabled;
+    private MultiShippingMethodType $type;
 
     public function __construct(
         string $identifier,
         string $label,
-        string
-        $icon,
+        string $icon,
         bool $enabled,
         RoundingServiceInterface $roundingService,
         MultiShippingCostProvider $shippingCostProvider
@@ -29,57 +27,80 @@ class MultiShippingMethod implements ShippingMethodInterface, ShippingMethodIcon
         $this->identifier = $identifier;
         $this->label = $label;
         $this->icon = $icon;
-        $this->type = new MultiShippingMethodType($label, $roundingService, $shippingCostProvider);
         $this->enabled = $enabled;
+        $this->type = new MultiShippingMethodType($label, $roundingService, $shippingCostProvider);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isGrouped(): bool
     {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getLabel(): string
     {
         return $this->label;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTypes(): array
     {
         return [$this->type];
     }
 
-    public function getType($identifier): ?MultiShippingMethodType
+    /**
+     * {@inheritDoc}
+     */
+    public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
-        foreach ($this->getTypes() as $methodType) {
-            if ($methodType->getIdentifier() === (string)$identifier) {
-                return $methodType;
-            }
-        }
+        return $this->type->getIdentifier() === $identifier
+            ? $this->type
+            : null;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getOptionsConfigurationFormType(): ?string
+    {
         return null;
     }
 
-    public function getOptionsConfigurationFormType(): string
-    {
-        return HiddenType::class;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public function getSortOrder(): int
     {
         return 10;
     }
 
-    public function getIcon(): string
+    /**
+     * {@inheritDoc}
+     */
+    public function getIcon(): ?string
     {
         return $this->icon;
     }

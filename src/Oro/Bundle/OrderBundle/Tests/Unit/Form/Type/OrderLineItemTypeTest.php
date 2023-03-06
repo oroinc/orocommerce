@@ -19,32 +19,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider */
     private $productUnitsProvider;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        $productSelectType = new ProductSelectEntityTypeStub(
-            [
-                1 => $this->getEntity(Product::class, ['id' => 1]),
-                2 => $this->getEntity(Product::class, ['id' => 2]),
-            ]
-        );
-
-        return array_merge(
-            parent::getExtensions(),
-            [
-                new PreloadedExtension(
-                    [
-                        $this->formType,
-                        ProductSelectType::class => $productSelectType
-                    ],
-                    []
-                )
-            ]
-        );
-    }
-
     protected function setUp(): void
     {
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
@@ -59,6 +33,24 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         parent::setUp();
         $this->formType->setDataClass(OrderLineItem::class);
         $this->formType->setSectionProvider($this->sectionProvider);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions(): array
+    {
+        return array_merge(parent::getExtensions(), [
+            new PreloadedExtension(
+                [
+                    $this->formType,
+                    ProductSelectType::class => new ProductSelectEntityTypeStub([
+                        1 => $this->getEntity(Product::class, ['id' => 1]),
+                        2 => $this->getEntity(Product::class, ['id' => 2]),
+                    ])
+                ],
+                []
+            )]);
     }
 
     /**

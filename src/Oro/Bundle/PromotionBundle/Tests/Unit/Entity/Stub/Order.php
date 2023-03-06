@@ -5,11 +5,9 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\OrderBundle\Entity\Order as BaseOrder;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 
-class Order extends BaseOrder implements AppliedPromotionsAwareInterface, AppliedCouponsAwareInterface
+class Order extends BaseOrder
 {
     use AppliedCouponsTrait;
 

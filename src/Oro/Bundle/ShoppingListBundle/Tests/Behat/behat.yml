@@ -266,7 +266,7 @@ oro_behat_extension:
     Shopping Cart:
       selector:
         type: xpath
-        locator: '//span[@class="cart-widget__content"]'
+        locator: '//div[@class="cart-widget__content"]'
 
     Shopping List Limit Form:
       selector: 'form[name="shopping_list"]'

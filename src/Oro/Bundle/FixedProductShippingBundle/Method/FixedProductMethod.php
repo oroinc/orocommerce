@@ -6,24 +6,24 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FixedProductShippingBundle\Provider\ShippingCostProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
- * Fixed Product Shipping method implementation.
+ * Represents Fixed Product shipping method.
  */
 class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
-    private FixedProductMethodType $type;
+    private string $identifier;
     private string $label;
     private string $icon;
-    private string $identifier;
     private bool $enabled;
+    private FixedProductMethodType $type;
 
     public function __construct(
         string $identifier,
         string $label,
-        string
-        $icon,
+        string $icon,
         bool $enabled,
         RoundingServiceInterface $roundingService,
         ShippingCostProvider $shippingCostProvider
@@ -31,8 +31,8 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
         $this->identifier = $identifier;
         $this->label = $label;
         $this->icon = $icon;
-        $this->type = new FixedProductMethodType($label, $roundingService, $shippingCostProvider);
         $this->enabled = $enabled;
+        $this->type = new FixedProductMethodType($label, $roundingService, $shippingCostProvider);
     }
 
     /**
@@ -78,21 +78,17 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
     /**
      * {@inheritDoc}
      */
-    public function getType($identifier): ?FixedProductMethodType
+    public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
-        foreach ($this->getTypes() as $methodType) {
-            if ($methodType->getIdentifier() === (string)$identifier) {
-                return $methodType;
-            }
-        }
-
-        return null;
+        return $this->type->getIdentifier() === $identifier
+            ? $this->type
+            : null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType(): string
+    public function getOptionsConfigurationFormType(): ?string
     {
         return HiddenType::class;
     }
@@ -108,7 +104,7 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
     /**
      * {@inheritDoc}
      */
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return $this->icon;
     }

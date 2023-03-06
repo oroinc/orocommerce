@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -84,7 +84,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
 
         return [
             new PreloadedExtension([
-                QuantityParentTypeStub::class => $this->parentType,
+                $this->parentType,
                 EntityType::class => new EntityTypeStub([
                     1 => $product1,
                     2 => $product2,

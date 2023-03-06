@@ -25,6 +25,8 @@ oro_behat_extension:
         - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\PayPalBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\PaymentBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroPromotionBundle/Tests/Behat/Features'
 

@@ -71,6 +71,7 @@ services:
             - '@oro_cms.provider.html_purifier_scope_provider'
             - '@oro_cms.form.event_subscriber.digital_asset_twig_tags'
             - '@assets.packages'
+            - '@oro_entity.entity_provider'
         tags:
             - { name: form.type }
 

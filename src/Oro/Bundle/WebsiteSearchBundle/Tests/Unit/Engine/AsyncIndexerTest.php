@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Entity\Item;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchDeleteTopic;
@@ -14,6 +15,7 @@ use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchResetIndexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchSaveTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
@@ -32,7 +34,6 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
-
         $this->baseIndexer = $this->createMock(IndexerInterface::class);
 
         $websiteRepository = $this->createMock(WebsiteRepository::class);
@@ -51,7 +52,19 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
 
         $managerRegistry = $this->createMock(ManagerRegistry::class);
 
-        $inputValidator = new IndexerInputValidator($websiteProvider, $mappingProvider, $managerRegistry);
+        $reindexationWebsiteProvider = $this->createMock(ReindexationWebsiteProviderInterface::class);
+        $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $tokenAccessor->expects(self::any())
+            ->method('getOrganization')
+            ->willReturn(null);
+
+        $inputValidator = new IndexerInputValidator(
+            $websiteProvider,
+            $mappingProvider,
+            $managerRegistry,
+            $reindexationWebsiteProvider,
+            $tokenAccessor
+        );
 
         $this->indexer = new AsyncIndexer(
             $this->baseIndexer,

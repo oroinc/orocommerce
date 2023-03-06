@@ -21,10 +21,10 @@ Feature: Calculate taxes after promotions
     And uncheck "Use default" for "Use as Base by Default" field
     And uncheck "Use default" for "Origin Address" field
     And I fill "Tax Calculation Form" with:
-      | Use As Base By Default | Shipping Origin |
-      | Origin Country         | United States   |
-      | Origin Region          | Florida         |
-      | Origin Zip Code        | 90001           |
+      | Use As Base By Default | Origin        |
+      | Origin Country         | United States |
+      | Origin Region          | Florida       |
+      | Origin Zip Code        | 90001         |
     And I save form
     Then I should see "Configuration saved" flash message
 

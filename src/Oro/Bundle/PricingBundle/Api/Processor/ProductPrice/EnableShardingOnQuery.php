@@ -14,8 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class EnableShardingOnQuery implements ProcessorInterface
 {
-    /** @var ShardManager */
-    private $shardManager;
+    private ShardManager $shardManager;
 
     public function __construct(ShardManager $shardManager)
     {
@@ -25,7 +24,7 @@ class EnableShardingOnQuery implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

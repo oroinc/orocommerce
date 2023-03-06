@@ -7,6 +7,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
@@ -17,23 +18,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class PriceListRepository extends BasePriceListRepository
 {
-    protected function dropDefaults()
+    public function setDefault(PriceList $priceList): void
     {
-        $qb = $this->createQueryBuilder('pl');
-
-        $qb
-            ->update()
-            ->set('pl.default', ':defaultValue')
-            ->setParameter('defaultValue', false)
-            ->where($qb->expr()->eq('pl.default', ':oldValue'))
-            ->setParameter('oldValue', true)
-            ->getQuery()
-            ->execute();
-    }
-
-    public function setDefault(PriceList $priceList)
-    {
-        $this->dropDefaults();
+        $this->dropDefaults($priceList->getOrganization());
 
         $qb = $this->createQueryBuilder('pl');
 
@@ -47,19 +34,34 @@ class PriceListRepository extends BasePriceListRepository
             ->execute();
     }
 
-    /**
-     * @return PriceList
-     */
-    public function getDefault()
+    public function getDefault(?Organization $organization = null): ?PriceList
+    {
+        $qb = $this->createQueryBuilder('pl');
+
+        $qb->where($qb->expr()->eq('pl.default', ':default'))
+            ->setParameter('default', true)
+            ->orderBy('pl.id')
+            ->setMaxResults(1)
+            ->getQuery();
+
+        if ($organization) {
+            $qb->andWhere('pl.organization = :organization')
+                ->setParameter('organization', $organization);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function getAllDefaultPriceLists(): array
     {
         $qb = $this->createQueryBuilder('pl');
 
         return $qb
             ->where($qb->expr()->eq('pl.default', ':default'))
             ->setParameter('default', true)
-            ->setMaxResults(1)
+            ->orderBy('pl.id')
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 
     /**
@@ -70,7 +72,7 @@ class PriceListRepository extends BasePriceListRepository
      * ]
      * where keys 1 and 5 are pricelist ids to which currencies belong
      */
-    public function getCurrenciesIndexedByPricelistIds()
+    public function getCurrenciesIndexedByPricelistIds(): array
     {
         $qb = $this->createQueryBuilder('priceList');
 
@@ -89,10 +91,7 @@ class PriceListRepository extends BasePriceListRepository
         return $currencies;
     }
 
-    /**
-     * @return BufferedQueryResultIteratorInterface
-     */
-    public function getPriceListsWithRules()
+    public function getPriceListsWithRules(): BufferedQueryResultIteratorInterface
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb->select('priceList, priceRule')
@@ -108,13 +107,9 @@ class PriceListRepository extends BasePriceListRepository
         return new BufferedQueryResultIterator($qb);
     }
 
-    /**
-     * @param array|PriceList[] $priceLists
-     * @param bool $actual
-     */
-    public function updatePriceListsActuality(array $priceLists, $actual)
+    public function updatePriceListsActuality(array $priceLists, bool $actual): void
     {
-        if (count($priceLists)) {
+        if (\count($priceLists)) {
             $qb = $this->_em->createQueryBuilder();
             $qb->update($this->_entityName, 'priceList');
             $qb->set('priceList.actual', ':actual')
@@ -126,23 +121,15 @@ class PriceListRepository extends BasePriceListRepository
         }
     }
 
-    /**
-     * @param int $priceListId
-     * @return PriceList|null
-     */
-    public function getActivePriceListById(int $priceListId)
+    public function getActivePriceListById(int $priceListId): ?PriceList
     {
         return $this->findOneBy(['id' => $priceListId, 'active' => true]);
     }
 
     /**
-     * @param Customer $customer
-     * @param Website $website
-     * @param bool $isActive
-     * @return null|PriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByCustomer(Customer $customer, Website $website, $isActive = true)
+    public function getPriceListByCustomer(Customer $customer, Website $website, bool $isActive = true): ?PriceList
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -165,14 +152,13 @@ class PriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @param CustomerGroup $customerGroup
-     * @param Website $website
-     * @param bool $isActive
-     * @return null|PriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByCustomerGroup(CustomerGroup $customerGroup, Website $website, bool $isActive = true)
-    {
+    public function getPriceListByCustomerGroup(
+        CustomerGroup $customerGroup,
+        Website $website,
+        bool $isActive = true
+    ): ?PriceList {
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
@@ -191,5 +177,19 @@ class PriceListRepository extends BasePriceListRepository
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function dropDefaults(Organization $organization): void
+    {
+        $qb = $this->createQueryBuilder('pl');
+        $qb->update()
+            ->set('pl.default', ':defaultValue')
+            ->setParameter('defaultValue', false)
+            ->where($qb->expr()->eq('pl.default', ':oldValue'))
+            ->andWhere($qb->expr()->eq('pl.organization', ':organization'))
+            ->setParameter('oldValue', true)
+            ->setParameter('organization', $organization)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -5,9 +5,11 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\ProductBundle\Model\ExtendProductImage;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Represents different types of product image, such as a image is used in the product details view,
@@ -17,9 +19,14 @@ use Oro\Bundle\ProductBundle\Model\ExtendProductImage;
  * @ORM\Table(name="oro_product_image")
  * @ORM\HasLifecycleCallbacks
  * @Config
+ *
+ * @method File getImage()
+ * @method ProductImage setImage(File $image)
  */
-class ProductImage extends ExtendProductImage
+class ProductImage implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var integer
      * @ORM\Id
@@ -81,8 +88,6 @@ class ProductImage extends ExtendProductImage
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->types = new ArrayCollection();
     }
 
@@ -236,6 +241,7 @@ class ProductImage extends ExtendProductImage
             foreach ($types as $type) {
                 $this->addType($type->getType());
             }
+            $this->cloneExtendEntityStorage();
         }
     }
 }

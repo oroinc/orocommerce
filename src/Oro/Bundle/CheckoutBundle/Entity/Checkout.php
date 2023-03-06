@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
-use Oro\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -17,6 +16,8 @@ use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
@@ -57,7 +58,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *      }
  * )
  */
-class Checkout extends ExtendCheckout implements
+class Checkout implements
     CheckoutInterface,
     ProductLineItemsHolderInterface,
     OrganizationAwareInterface,
@@ -67,12 +68,14 @@ class Checkout extends ExtendCheckout implements
     ShippingAwareInterface,
     PaymentMethodAwareInterface,
     WebsiteAwareInterface,
-    CurrencyAwareInterface
+    CurrencyAwareInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
     use FrontendCustomerUserAwareTrait;
     use CheckoutAddressesTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int
@@ -225,7 +228,6 @@ class Checkout extends ExtendCheckout implements
 
     public function __construct()
     {
-        parent::__construct();
         $this->completedData = new CompletedCheckoutData();
         $this->lineItems = new ArrayCollection();
         $this->subtotals = new ArrayCollection();

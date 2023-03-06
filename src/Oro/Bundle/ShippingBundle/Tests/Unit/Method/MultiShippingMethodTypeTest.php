@@ -9,16 +9,19 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodType;
 use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class MultiShippingMethodTypeTest extends TestCase
+class MultiShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
 {
     private const LABEL = 'Multi Shipping Label';
 
-    private RoundingServiceInterface $roundingService;
-    private MultiShippingCostProvider $shippingCostProvider;
-    private MultiShippingMethodType $methodType;
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $roundingService;
+
+    /** @var MultiShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingCostProvider;
+
+    /** @var MultiShippingMethodType */
+    private $methodType;
 
     protected function setUp(): void
     {
@@ -49,7 +52,7 @@ class MultiShippingMethodTypeTest extends TestCase
 
     public function testGetOptionsConfigurationFormType()
     {
-        $this->assertEquals(HiddenType::class, $this->methodType->getOptionsConfigurationFormType());
+        $this->assertNull($this->methodType->getOptionsConfigurationFormType());
     }
 
     public function testCalculatePrice()

@@ -16,17 +16,12 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class UPSShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const IDENTIFIER = '02';
     private const LABEL = 'service_code_label';
-
-    /** @var string */
-    private $methodId = 'shipping_method';
+    private const METHOD_ID = 'shipping_method';
 
     /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
     private $transport;
@@ -48,20 +43,16 @@ class UPSShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->transport = $this->getEntity(
-            UPSTransport::class,
-            [
-                'upsApiUser' => 'some user',
-                'upsApiPassword' => 'some password',
-                'upsApiKey' => 'some key',
-                'upsShippingAccountNumber' => 'some number',
-                'upsShippingAccountName' => 'some name',
-                'upsPickupType' => '01',
-                'upsUnitOfWeight' => 'LPS',
-                'upsCountry' => new Country('US'),
-                'applicableShippingServices' => [new ShippingService()]
-            ]
-        );
+        $this->transport = new UPSTransport();
+        $this->transport->setUpsApiUser('some user');
+        $this->transport->setUpsApiPassword('some password');
+        $this->transport->setUpsApiKey('some key');
+        $this->transport->setUpsShippingAccountNumber('some number');
+        $this->transport->setUpsShippingAccountName('some name');
+        $this->transport->setUpsPickupType('01');
+        $this->transport->setUpsUnitOfWeight('LPS');
+        $this->transport->setUpsCountry(new Country('US'));
+        $this->transport->addApplicableShippingService(new ShippingService());
 
         $this->transportProvider = $this->createMock(UPSTransportProvider::class);
         $this->shippingService = $this->createMock(ShippingService::class);
@@ -71,7 +62,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
         $this->upsShippingMethodType = new UPSShippingMethodType(
             self::IDENTIFIER,
             self::LABEL,
-            $this->methodId,
+            self::METHOD_ID,
             $this->shippingService,
             $this->transport,
             $this->transportProvider,
@@ -127,11 +118,11 @@ class UPSShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
             ->willReturn($priceResponse);
 
         $cacheKey = (new ShippingPriceCacheKey())->setTransport($this->transport)->setPriceRequest($priceRequest)
-            ->setMethodId($this->methodId)->setTypeId($this->shippingService->getCode());
+            ->setMethodId(self::METHOD_ID)->setTypeId($this->shippingService->getCode());
 
         $this->cache->expects(self::once())
             ->method('createKey')
-            ->with($this->transport, $priceRequest, $this->methodId, $this->shippingService->getCode())
+            ->with($this->transport, $priceRequest, self::METHOD_ID, $this->shippingService->getCode())
             ->willReturn($cacheKey);
 
         $this->cache->expects(self::once())
@@ -197,11 +188,11 @@ class UPSShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceResponse');
 
         $cacheKey = (new ShippingPriceCacheKey())->setTransport($this->transport)->setPriceRequest($priceRequest)
-            ->setMethodId($this->methodId)->setTypeId($this->shippingService->getCode());
+            ->setMethodId(self::METHOD_ID)->setTypeId($this->shippingService->getCode());
 
         $this->cache->expects(self::once())
             ->method('createKey')
-            ->with($this->transport, $priceRequest, $this->methodId, $this->shippingService->getCode())
+            ->with($this->transport, $priceRequest, self::METHOD_ID, $this->shippingService->getCode())
             ->willReturn($cacheKey);
 
         $this->cache->expects(self::once())

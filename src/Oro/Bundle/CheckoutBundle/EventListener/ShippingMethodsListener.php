@@ -4,51 +4,31 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
+use Oro\Bundle\CheckoutBundle\Provider\AvailableShippingMethodCheckerInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
 /**
  * Checks if there available shipping methods when checkout starts.
  */
 class ShippingMethodsListener extends AbstractMethodsListener
 {
-    /**
-     * @var MethodsConfigsRulesByContextProviderInterface
-     */
-    private $shippingProvider;
-
-    /**
-     * @var CheckoutShippingContextProvider
-     */
-    private $checkoutShippingContextProvider;
-
-    /**
-     * @var OrderAddressProvider
-     */
-    private $addressProvider;
-
-    /**
-     * @var OrderAddressSecurityProvider
-     */
-    private $orderAddressSecurityProvider;
+    private OrderAddressProvider $addressProvider;
+    private OrderAddressSecurityProvider $orderAddressSecurityProvider;
+    private AvailableShippingMethodCheckerInterface $availableShippingMethodChecker;
 
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderAddressManager $orderAddressManager,
-        MethodsConfigsRulesByContextProviderInterface $shippingProvider,
-        CheckoutShippingContextProvider $checkoutShippingContextProvider
+        AvailableShippingMethodCheckerInterface $availableShippingMethodChecker
     ) {
         parent::__construct($orderAddressManager);
-
         $this->addressProvider = $addressProvider;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
-        $this->shippingProvider = $shippingProvider;
-        $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
+        $this->availableShippingMethodChecker = $availableShippingMethodChecker;
     }
 
     /**
@@ -57,10 +37,8 @@ class ShippingMethodsListener extends AbstractMethodsListener
     protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
     {
         $checkout->setShippingAddress($address);
-        $shippingContext = $this->checkoutShippingContextProvider->getContext($checkout);
-        $shippingMethodsConfigs = $this->shippingProvider->getShippingMethodsConfigsRules($shippingContext);
 
-        return count($shippingMethodsConfigs) > 0;
+        return $this->availableShippingMethodChecker->hasAvailableShippingMethods($checkout);
     }
 
     /**

@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 /**
  * Adds "widgets" section to the layout theme configuration.
  *
- * The widgets configuration can be loaded loaded from the following files:
+ * The widgets configuration can be loaded from the following files:
  * * Resources/views/layouts/{folder}/theme.yml
  * * Resources/views/layouts/{folder}/config/widgets.yml
  */

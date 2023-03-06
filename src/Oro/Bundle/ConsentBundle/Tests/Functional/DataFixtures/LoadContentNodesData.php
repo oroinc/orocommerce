@@ -33,6 +33,7 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
             self::CATALOG_1_ROOT => [
                 'parent' => null,
                 'parentScopeUsed' => false,
+                'contentVariantType' => SystemPageContentVariantType::TYPE,
                 'scope' => LoadScopeData::CATALOG_1_SCOPE
             ],
             self::CATALOG_1_ROOT_WITH_CMS_PAGE_VARIANT => [
@@ -52,6 +53,7 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
             self::CATALOG_2_ROOT => [
                 'parent' => null,
                 'parentScopeUsed' => false,
+                'contentVariantType' => SystemPageContentVariantType::TYPE,
                 'scope' => LoadScopeData::CATALOG_2_SCOPE
             ],
             self::CATALOG_2_ROOT_WITH_CMS_PAGE_VARIANT => [

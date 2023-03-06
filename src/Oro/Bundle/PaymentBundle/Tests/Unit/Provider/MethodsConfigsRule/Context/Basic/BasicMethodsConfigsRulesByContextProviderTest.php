@@ -2,77 +2,77 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider\MethodsConfigsRule\Context\Basic;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\Basic\BasicMethodsConfigsRulesByContextProvider;
 use Oro\Bundle\PaymentBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Context\PaymentContextMockTrait;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Entity\PaymentMethodsConfigsRuleMockTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use PaymentMethodsConfigsRuleMockTrait;
-    use PaymentContextMockTrait;
-
-    /**
-     * @var PaymentMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $repository;
-
-    /**
-     * @var MethodsConfigsRulesFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MethodsConfigsRulesFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
 
-    /**
-     * @var BasicMethodsConfigsRulesByContextProvider
-     */
+    /** @var PaymentMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
+
+    /** @var BasicMethodsConfigsRulesByContextProvider */
     private $provider;
 
     protected function setUp(): void
     {
+        $this->filtrationService = $this->createMock(MethodsConfigsRulesFiltrationServiceInterface::class);
         $this->repository = $this->createMock(PaymentMethodsConfigsRuleRepository::class);
 
-        $this->filtrationService = $this->createMock(MethodsConfigsRulesFiltrationServiceInterface::class);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(PaymentMethodsConfigsRule::class)
+            ->willReturn($this->repository);
 
         $this->provider = new BasicMethodsConfigsRulesByContextProvider(
             $this->filtrationService,
-            $this->repository
+            $doctrine
         );
     }
 
     public function testGetAllFilteredPaymentMethodsConfigsWithPaymentAddress()
     {
         $currency = 'USD';
-        $address = $this->createAddressMock();
-        $website = $this->createWebsiteMock();
-        $rulesFromDb = [$this->createPaymentMethodsConfigsRuleMock()];
+        $address = $this->createMock(AddressInterface::class);
+        $website = $this->createMock(Website::class);
+        $rulesFromDb = [$this->createMock(PaymentMethodsConfigsRule::class)];
 
-        $this->repository->expects(static::once())
+        $this->repository->expects(self::once())
             ->method('getByDestinationAndCurrencyAndWebsite')
             ->with($address, $currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createPaymentContextMock();
-        $context->method('getCurrency')
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::any())
+            ->method('getCurrency')
             ->willReturn($currency);
-        $context->method('getBillingAddress')
+        $context->expects(self::any())
+            ->method('getBillingAddress')
             ->willReturn($address);
-        $context->method('getWebsite')
+        $context->expects(self::any())
+            ->method('getWebsite')
             ->willReturn($website);
 
         $expectedRules = [
-            $this->createPaymentMethodsConfigsRuleMock(),
-            $this->createPaymentMethodsConfigsRuleMock(),
+            $this->createMock(PaymentMethodsConfigsRule::class),
+            $this->createMock(PaymentMethodsConfigsRule::class),
         ];
 
-        $this->filtrationService->expects(static::once())
+        $this->filtrationService->expects(self::once())
             ->method('getFilteredPaymentMethodsConfigsRules')
             ->with($rulesFromDb)
             ->willReturn($expectedRules);
 
-        static::assertSame(
+        self::assertSame(
             $expectedRules,
             $this->provider->getPaymentMethodsConfigsRules($context)
         );
@@ -81,46 +81,32 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
     public function testGetAllFilteredPaymentMethodsConfigsWithoutPaymentAddress()
     {
         $currency = 'USD';
-        $website = $this->createWebsiteMock();
-        $rulesFromDb = [$this->createPaymentMethodsConfigsRuleMock()];
+        $website = $this->createMock(Website::class);
+        $rulesFromDb = [$this->createMock(PaymentMethodsConfigsRule::class)];
 
-        $this->repository->expects(static::once())
+        $this->repository->expects(self::once())
             ->method('getByCurrencyAndWebsiteWithoutDestination')
             ->with($currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createPaymentContextMock();
-        $context->method('getCurrency')
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::any())
+            ->method('getCurrency')
             ->willReturn($currency);
-        $context->method('getWebsite')
+        $context->expects(self::any())
+            ->method('getWebsite')
             ->willReturn($website);
 
-        $expectedRules = [$this->createPaymentMethodsConfigsRuleMock()];
+        $expectedRules = [$this->createMock(PaymentMethodsConfigsRule::class)];
 
-        $this->filtrationService->expects(static::once())
+        $this->filtrationService->expects(self::once())
             ->method('getFilteredPaymentMethodsConfigsRules')
             ->with($rulesFromDb)
             ->willReturn($expectedRules);
 
-        static::assertSame(
+        self::assertSame(
             $expectedRules,
             $this->provider->getPaymentMethodsConfigsRules($context)
         );
-    }
-
-    /**
-     * @return AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createAddressMock()
-    {
-        return $this->createMock(AddressInterface::class);
-    }
-
-    /**
-     * @return Website|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createWebsiteMock()
-    {
-        return $this->createMock(Website::class);
     }
 }

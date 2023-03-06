@@ -33,6 +33,7 @@ Feature: Previously purchased products visibility
     And click "More actions"
     And click "Manage Visibility"
     And I select "Hidden" from "Visibility to All"
+    And I should see that option "Category" is selected in "Visibility Product To Customer First Group" select
     And I fill "Visibility Product Form" with:
       | Visibility To Customer First Group | Current Product |
       | Visibility To Customers First      | Current Product |

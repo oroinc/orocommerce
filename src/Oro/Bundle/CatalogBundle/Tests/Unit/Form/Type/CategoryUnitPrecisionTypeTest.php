@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -45,12 +45,12 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CategoryUnitPrecisionType::class => $this->formType,
+                    $this->formType,
                     ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub([
                         'item' => (new ProductUnit())->setCode('item'),
                         'kg' => (new ProductUnit())->setCode('kg'),
                     ]),
-                    EntityIdentifierType::class => new EntityType([
+                    EntityIdentifierType::class => new EntityTypeStub([
                         'kg' => (new ProductUnit())->setCode('kg'),
                     ]),
                 ],

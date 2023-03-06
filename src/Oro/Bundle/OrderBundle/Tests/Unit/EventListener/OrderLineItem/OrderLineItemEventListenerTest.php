@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\OrderLineItem;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\OrderLineItem\OrderLineItemEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;

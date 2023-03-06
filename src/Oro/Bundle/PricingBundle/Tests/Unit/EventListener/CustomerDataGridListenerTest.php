@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -10,6 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerDataGridListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
 
 class CustomerDataGridListenerTest extends AbstractPriceListRelationDataGridListenerTest
 {
@@ -19,16 +19,11 @@ class CustomerDataGridListenerTest extends AbstractPriceListRelationDataGridList
 
         $this->repository = $this->createMock(PriceListToCustomerRepository::class);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::any())
-            ->method('getRepository')
-            ->willReturnMap([
-                ['OroPricingBundle:PriceListToCustomer', $this->repository],
-            ]);
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects(self::any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+            ->method('getRepository')
+            ->with(PriceListToCustomer::class)
+            ->willReturn($this->repository);
 
         $this->listener = new CustomerDataGridListener($doctrine);
     }
@@ -36,18 +31,18 @@ class CustomerDataGridListenerTest extends AbstractPriceListRelationDataGridList
     /**
      * {@inheritDoc}
      */
-    protected function createRelation(): PriceListToCustomer
+    protected function createRelation(int $objectId): PriceListToCustomer
     {
-        $relation = new PriceListToCustomer();
         $customer = new Customer();
-        $priceList = $this->createMock(PriceList::class);
-        $website = $this->createMock(Website::class);
-        $website->expects(self::any())
-            ->method('getId')
-            ->willReturn(1);
+        ReflectionUtil::setId($customer, $objectId);
+
+        $website = new Website();
+        ReflectionUtil::setId($website, 1);
+
+        $relation = new PriceListToCustomer();
         $relation->setCustomer($customer);
         $relation->setWebsite($website);
-        $relation->setPriceList($priceList);
+        $relation->setPriceList($this->createMock(PriceList::class));
 
         return $relation;
     }

@@ -11,9 +11,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListRelationType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\CustomerTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,13 +20,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    public function testGetExtendedTypes()
-    {
-        $this->assertSame([CustomerType::class], CustomerFormFlatPricingExtension::getExtendedTypes());
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -39,21 +31,20 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
             ->with('feature1', null)
             ->willReturn(true);
 
-        $listener = $this->createMock(CustomerFlatPricingRelationFormListener::class);
-
-        $formExtension = new CustomerFormFlatPricingExtension($listener);
+        $formExtension = new CustomerFormFlatPricingExtension(
+            $this->createMock(CustomerFlatPricingRelationFormListener::class)
+        );
         $formExtension->setFeatureChecker($featureChecker);
         $formExtension->addFeature('feature1');
 
-        $websiteScopedDataType = (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType();
         return [
             new PreloadedExtension(
                 [
-                    PriceListRelationType::class => new PriceListRelationType(),
-                    WebsiteScopedDataType::class => $websiteScopedDataType,
+                    new PriceListRelationType(),
+                    (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType(),
                     CustomerType::class => new CustomerTypeStub(),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    EntityType::class => new EntityTypeStub([])
+                    EntityType::class => new EntityTypeStub()
                 ],
                 [
                     CustomerTypeStub::class => [$formExtension]
@@ -61,6 +52,19 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
             ),
             $this->getValidatorExtension()
         ];
+    }
+
+    private function getPriceList(int $id): PriceList
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
+
+        return $priceList;
+    }
+
+    public function testGetExtendedTypes()
+    {
+        $this->assertSame([CustomerType::class], CustomerFormFlatPricingExtension::getExtendedTypes());
     }
 
     public function testBuildFormFeatureDisabled()
@@ -106,7 +110,7 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
                 ],
                 'expected' => [
                     1 => [
-                        'priceList' => $this->getEntity(PriceList::class, ['id' => 1])
+                        'priceList' => $this->getPriceList(1)
                     ],
                 ]
             ]

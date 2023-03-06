@@ -96,7 +96,7 @@ class FixedProductOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    public function getExtensions(): array
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->formType], []),

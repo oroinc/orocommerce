@@ -16,8 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class NormalizeProductPriceId implements ProcessorInterface
 {
-    /** @var ValueNormalizer */
-    private $valueNormalizer;
+    private ValueNormalizer $valueNormalizer;
 
     public function __construct(ValueNormalizer $valueNormalizer)
     {
@@ -27,7 +26,7 @@ class NormalizeProductPriceId implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */
 
