@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\EntityExtendBundle\Decorator\OroPropertyAccessorBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -20,23 +21,14 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class DefaultVisibilityListenerTest extends WebTestCase
 {
-    use EntityTrait;
-
-    /** @var Product */
-    private $product;
-
-    /** @var Category */
-    private $category;
-
-    /** @var Customer */
-    private $customer;
-
-    /** @var CustomerGroup */
-    private $customerGroup;
+    private Product $product;
+    private Category $category;
+    private Customer $customer;
+    private CustomerGroup $customerGroup;
 
     protected function setUp(): void
     {
@@ -68,7 +60,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
         /** @var VisibilityInterface $entity */
         $entity = $this->findOneBy($entityClass, $properties);
         if (!$entity) {
-            $entity = $this->getEntity($entityClass, $properties);
+            $entity = $this->createEntity($entityClass, $properties);
         }
         $entity->setVisibility(VisibilityInterface::VISIBLE);
         $entityManager->persist($entity);
@@ -92,7 +84,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
         $properties = $this->getProperties($parameters);
 
         // persisted with default visibility
-        $entity = $this->getEntity($entityClass, $properties);
+        $entity = $this->createEntity($entityClass, $properties);
         $entity->setVisibility($entity::getDefault($entity->getTargetEntity()));
         $entityManager->persist($entity);
         $entityManager->flush();
@@ -179,6 +171,17 @@ class DefaultVisibilityListenerTest extends WebTestCase
         return $this->getManager($entityClass)->getRepository($entityClass)->findOneBy($criteria);
     }
 
+    private function createEntity(string $entityClass, array $properties): object
+    {
+        $entity = new $entityClass();
+        $propertyAccessor = $this->getPropertyAccessor();
+        foreach ($properties as $name => $val) {
+            $propertyAccessor->setValue($entity, $name, $val);
+        }
+
+        return $entity;
+    }
+
     private function assertEntitiesSame(object $expected, object $actual): void
     {
         $propertyAccessor = $this->getPropertyAccessor();
@@ -186,5 +189,10 @@ class DefaultVisibilityListenerTest extends WebTestCase
             $propertyAccessor->getValue($expected, 'id'),
             $propertyAccessor->getValue($actual, 'id')
         );
+    }
+
+    private function getPropertyAccessor(): PropertyAccessorInterface
+    {
+        return (new OroPropertyAccessorBuilder())->getPropertyAccessor();
     }
 }

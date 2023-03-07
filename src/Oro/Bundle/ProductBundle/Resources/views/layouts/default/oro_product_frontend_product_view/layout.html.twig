@@ -288,7 +288,7 @@
 {% block product_view_attribute_collection_widget %}
     {% if value|length > 0 %}
         {% if label|trans|first != '_' %}
-            <div class="product-view__attribute-title">{{ label|trans }}</div>
+            <div class="product-view-attribute">{{ label|trans }}:</div>
         {% endif %}
         {{ block('product_view_' ~ block_type ~ '_widget') }}
     {% endif %}
@@ -329,7 +329,9 @@
             </div>
             {%- endfor -%}
         </div>
-        <a href="#" class="btn-link show-more-link" role="button" data-role="show-more"></a>
+        <div class="product-view__attribute-panel">
+            <button type="button" class="btn btn--link btn--no-x-offset btn--no-y-offset" data-role="show-more"></button>
+        </div>
     </div>
 {% endblock %}
 
@@ -376,28 +378,30 @@
     <div class="product-view__attribute-files show-more-view show-less" {{ UI.attributes(filesAttr) }}>
         {% set collection = value %}
         <div class="table-responsive">
-            <table class="grid grid-main-container table">
-                <thead class="grid-header">
-                <tr class="grid-header-row">
-                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.file.label'|trans }}</th>
-                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.mime_type.label'|trans }}</th>
-                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.file_size.label'|trans }}</th>
-                    <th class="grid-cell">{{ 'oro.attachment.frontend.file.created_at.label'|trans }}</th>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>{{ 'oro.attachment.frontend.file.file.label'|trans }}</th>
+                    <th>{{ 'oro.attachment.frontend.file.mime_type.label'|trans }}</th>
+                    <th>{{ 'oro.attachment.frontend.file.file_size.label'|trans }}</th>
+                    <th>{{ 'oro.attachment.frontend.file.created_at.label'|trans }}</th>
                 </tr>
                 </thead>
-                <tbody class="grid-body">
+                <tbody>
                 {%- for item in collection -%}
-                    <tr class="grid-row">
-                        <td class="grid-cell">{{ oro_file_view(item.file) }}</td>
-                        <td class="grid-cell">{{ item.file.extension|upper }}</td>
-                        <td class="grid-cell">{{ file_size(item.file.fileSize) }}</td>
-                        <td class="grid-cell">{{ item.file.createdAt|oro_format_datetime() }}</td>
+                    <tr>
+                        <td>{{ oro_file_view(item.file) }}</td>
+                        <td>{{ item.file.extension|upper }}</td>
+                        <td>{{ file_size(item.file.fileSize) }}</td>
+                        <td>{{ item.file.createdAt|oro_format_datetime() }}</td>
                     </tr>
                 {%- endfor -%}
                 </tbody>
             </table>
         </div>
-        <a href="#" class="btn-link show-more-link" role="button" data-role="show-more"></a>
+        <div class="product-view__attribute-panel">
+            <button type="button" class="btn btn--link btn--no-x-offset btn--no-y-offset" data-role="show-more"></button>
+        </div>
     </div>
 {% endblock %}
 
