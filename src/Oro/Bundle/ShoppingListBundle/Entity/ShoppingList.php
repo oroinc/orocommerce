@@ -487,6 +487,7 @@ class ShoppingList implements
             $this->id = null;
             $this->lineItems = clone $this->lineItems;
             $this->totals = clone $this->totals;
+            $this->cloneExtendEntityStorage();
         }
     }
 }

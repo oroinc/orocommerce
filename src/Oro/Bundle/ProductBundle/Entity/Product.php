@@ -1441,6 +1441,7 @@ class Product implements
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
             $this->variantFields = [];
 
+            $this->cloneExtendEntityStorage();
             $this->cloneLocalizedFallbackValueAssociations();
         }
     }

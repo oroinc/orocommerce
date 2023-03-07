@@ -588,6 +588,7 @@ class Quote implements
     public function __clone()
     {
         $this->generateGuestAccessId();
+        $this->cloneExtendEntityStorage();
     }
 
     /**

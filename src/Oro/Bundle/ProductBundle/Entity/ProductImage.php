@@ -241,6 +241,7 @@ class ProductImage implements ExtendEntityInterface
             foreach ($types as $type) {
                 $this->addType($type->getType());
             }
+            $this->cloneExtendEntityStorage();
         }
     }
 }
