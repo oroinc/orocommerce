@@ -115,7 +115,7 @@
                                 params: {id: '$id'},
                                 (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.vars.full_name
                             }|json_encode,
-                            autoExecute: triggerSortOrderDialog|default(false),
+                            autoExecute: triggerSortOrderDialog|default(''),
                             warnings: {
                                 limit_warning: 'oro.catalog.product.sort_products.dialog.limit_warning'
                             },

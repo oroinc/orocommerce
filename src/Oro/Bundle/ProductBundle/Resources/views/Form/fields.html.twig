@@ -472,7 +472,7 @@
                                                         params: {id: '$id'},
                                                         (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.parent.vars.full_name|default('')
                                                     }|json_encode,
-                                                    autoExecute: triggerSortOrderDialog|default(false),
+                                                    autoExecute: triggerSortOrderDialog|default(''),
                                                     route: 'oro_product_collection_content_variant_manage_sort_order_widget',
                                                     route_parameters: {
                                                         id: form.parent.vars.value.id|default(0),
