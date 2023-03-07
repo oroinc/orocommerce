@@ -127,7 +127,7 @@ class OroProductBundleInstaller implements
 
         $this->createOroProductKitItemTable($schema);
         $this->createOroProductKitItemLabelTable($schema);
-        $this->createOroProductKitItemProductsTable($schema);
+        $this->createOroProductKitItemProductTable($schema);
         $this->createOroProductKitItemReferencedProductUnitPrecisionsTable($schema);
 
         $this->createOroProductWebsiteReindexRequestItem($schema);
@@ -149,7 +149,7 @@ class OroProductBundleInstaller implements
         $this->addCollectionSortOrderForeignKeys($schema);
         $this->addOroProductKitItemForeignKeys($schema);
         $this->addOroProductKitItemLabelForeignKeys($schema);
-        $this->addOroProductKitItemProductsForeignKeys($schema);
+        $this->addOroProductKitItemProductForeignKeys($schema);
         $this->addOroProductKitItemReferencedProductUnitPrecisionsForeignKeys($schema);
 
         $this->addProductToBrand($schema);
@@ -947,17 +947,19 @@ class OroProductBundleInstaller implements
         );
     }
 
-    protected function createOroProductKitItemProductsTable(Schema $schema): void
+    protected function createOroProductKitItemProductTable(Schema $schema): void
     {
-        $table = $schema->createTable('oro_product_kit_item_products');
+        $table = $schema->createTable('oro_product_kit_item_product');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_kit_item_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
-        $table->setPrimaryKey(['product_kit_item_id', 'product_id']);
+        $table->addColumn('sort_order', 'integer', ['default' => 0]);
+        $table->setPrimaryKey(['id']);
     }
 
-    protected function addOroProductKitItemProductsForeignKeys(Schema $schema): void
+    protected function addOroProductKitItemProductForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable('oro_product_kit_item_products');
+        $table = $schema->getTable('oro_product_kit_item_product');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_kit_item'),
             ['product_kit_item_id'],

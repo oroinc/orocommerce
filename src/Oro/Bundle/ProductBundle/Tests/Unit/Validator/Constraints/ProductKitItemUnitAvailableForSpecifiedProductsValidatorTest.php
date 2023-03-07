@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Service\ProductKitItemProductUnitChecker;
@@ -70,9 +71,9 @@ class ProductKitItemUnitAvailableForSpecifiedProductsValidatorTest extends Const
 
         $kitItem = (new ProductKitItemStub(42))
             ->setProductUnit($productUnitItem)
-            ->addProduct($productFoo)
-            ->addProduct($productBar)
-            ->addProduct($productBaz);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($productFoo))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($productBar))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($productBaz));
 
         $constraint = new ProductKitItemUnitAvailableForSpecifiedProducts();
         $this->validator->validate($kitItem, $constraint);
@@ -102,8 +103,8 @@ class ProductKitItemUnitAvailableForSpecifiedProductsValidatorTest extends Const
 
         $kitItem = (new ProductKitItemStub(42))
             ->setProductUnit($productUnitItem)
-            ->addProduct($productFoo)
-            ->addProduct($productBar);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($productFoo))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($productBar));
 
         $constraint = new ProductKitItemUnitAvailableForSpecifiedProducts();
         $this->validator->validate($kitItem, $constraint);

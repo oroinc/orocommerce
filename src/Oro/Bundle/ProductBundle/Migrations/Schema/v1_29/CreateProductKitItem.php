@@ -15,7 +15,7 @@ class CreateProductKitItem implements Migration
     {
         $this->createOroProductKitItemTable($schema);
         $this->createOroProductKitItemLabelTable($schema);
-        $this->createOroProductKitItemProductsTable($schema);
+        $this->createOroProductKitItemProductTable($schema);
         $this->createOroProductKitItemReferencedProductUnitPrecisionsTable($schema);
     }
 
@@ -95,23 +95,25 @@ class CreateProductKitItem implements Migration
         );
     }
 
-    protected function createOroProductKitItemProductsTable(Schema $schema): void
+    protected function createOroProductKitItemProductTable(Schema $schema): void
     {
-        if ($schema->hasTable('oro_product_kit_item_products')) {
+        if ($schema->hasTable('oro_product_kit_item_product')) {
             return;
         }
 
-        $table = $schema->createTable('oro_product_kit_item_products');
+        $table = $schema->createTable('oro_product_kit_item_product');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_kit_item_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
-        $table->setPrimaryKey(['product_kit_item_id', 'product_id']);
+        $table->addColumn('sort_order', 'integer', ['default' => 0]);
+        $table->setPrimaryKey(['id']);
 
-        $this->addOroProductKitItemProductsForeignKeys($schema);
+        $this->addOroProductKitItemProductForeignKeys($schema);
     }
 
-    protected function addOroProductKitItemProductsForeignKeys(Schema $schema): void
+    protected function addOroProductKitItemProductForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable('oro_product_kit_item_products');
+        $table = $schema->getTable('oro_product_kit_item_product');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_kit_item'),
             ['product_kit_item_id'],

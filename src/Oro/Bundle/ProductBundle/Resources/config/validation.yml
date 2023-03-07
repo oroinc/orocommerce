@@ -244,10 +244,14 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
                   groups: [api]
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductType:
                   allowedTypes: [kit]
-        products:
+        kitItemProducts:
+            - Valid: ~
             - Count:
                 min: 1
                 minMessage: oro.product.productkititem.products.not_empty
+                payload:
+                    jsValidation:
+                        type: NotBlank
         minimumQuantity:
             - Type: [float, null]
             - Range:
@@ -264,6 +268,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         sortOrder:
             - Type: integer
             - Range:
+                  # Minimum of 4-byte integer value.
+                  min: -2147483648
                   # Maximum of 4-byte integer value.
                   max: 2147483647
 
@@ -283,3 +289,17 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
         localization:
             - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
                   groups: [api]
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    properties:
+        sortOrder:
+            - Type: integer
+            - Range:
+                  # Minimum of 4-byte integer value.
+                  min: -2147483648
+                  # Maximum of 4-byte integer value.
+                  max: 2147483647
+        kitItem:
+            - NotNull: ~
+        product:
+            - NotNull: ~

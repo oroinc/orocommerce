@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Validator\Constraints\OnlySimpleProductsInProductKitItemProductsCollection;
@@ -66,19 +67,19 @@ class OnlySimpleProductsInProductKitItemProductsCollectionValidatorTest extends 
         $productBaz->setType($unsupportedProductType);
 
         $kitItem = new ProductKitItemStub(42);
-        $kitItem->addProduct($productFoo);
-        $kitItem->addProduct($productBar);
-        $kitItem->addProduct($productBaz);
+        $kitItem->addKitItemProduct((new ProductKitItemProduct())->setProduct($productFoo));
+        $kitItem->addKitItemProduct((new ProductKitItemProduct())->setProduct($productBar));
+        $kitItem->addKitItemProduct((new ProductKitItemProduct())->setProduct($productBaz));
 
         $constraint = new OnlySimpleProductsInProductKitItemProductsCollection();
         $this->validator->validate($kitItem, $constraint);
 
         $this->buildViolation($constraint->message)
-            ->atPath('property.path.products.0')
+            ->atPath('property.path.kitItemProducts.0')
             ->buildNextViolation($constraint->message)
-            ->atPath('property.path.products.1')
+            ->atPath('property.path.kitItemProducts.1')
             ->buildNextViolation($constraint->message)
-            ->atPath('property.path.products.2')
+            ->atPath('property.path.kitItemProducts.2')
             ->assertRaised();
     }
 
@@ -98,7 +99,7 @@ class OnlySimpleProductsInProductKitItemProductsCollectionValidatorTest extends 
         $product->setType(Product::TYPE_SIMPLE);
 
         $kitItem = new ProductKitItemStub(42);
-        $kitItem->addProduct($product);
+        $kitItem->addKitItemProduct((new ProductKitItemProduct())->setProduct($product));
 
         $constraint = new OnlySimpleProductsInProductKitItemProductsCollection();
         $this->validator->validate($kitItem, $constraint);

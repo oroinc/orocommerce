@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -62,25 +63,23 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
     protected ?Product $productKit = null;
 
     /**
-     * @var Collection<Product>
+     * @var Collection<ProductKitItemProduct>
      *
-     * @ORM\ManyToMany(targetEntity="Product")
-     * @ORM\JoinTable(
-     *     name="oro_product_kit_item_products",
-     *     joinColumns={
-     *          @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE")
-     *     },
-     *     inverseJoinColumns={
-     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     *     }
+     * @ORM\OneToMany(
+     *     targetEntity="ProductKitItemProduct",
+     *     mappedBy="kitItem",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
      * )
+     * @OrderBy({"sortOrder"="ASC"})
      */
-    protected Collection $products;
+    protected Collection $kitItemProducts;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="optional", type="boolean", options={"default"=false} )
+     * @ORM\Column(name="optional", type="boolean", options={"default"=false})
      */
     protected bool $optional = false;
 
@@ -125,7 +124,7 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
         parent::__construct();
 
         $this->labels = new ArrayCollection();
-        $this->products = new ArrayCollection();
+        $this->kitItemProducts = new ArrayCollection();
         $this->referencedUnitPrecisions = new ArrayCollection();
     }
 
@@ -230,29 +229,38 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
     }
 
     /**
+     * @return Collection<ProductKitItem>
+     */
+    public function getKitItemProducts(): Collection
+    {
+        return $this->kitItemProducts;
+    }
+
+    public function addKitItemProduct(ProductKitItemProduct $productKitItemProduct): self
+    {
+        if (!$this->kitItemProducts->contains($productKitItemProduct)) {
+            $productKitItemProduct->setKitItem($this);
+            $this->kitItemProducts->add($productKitItemProduct);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemProduct(ProductKitItemProduct $productKitItemProduct): self
+    {
+        $this->kitItemProducts->removeElement($productKitItemProduct);
+
+        return $this;
+    }
+
+    /**
      * @return Collection<Product>
      */
     public function getProducts(): Collection
     {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-        }
-
-        return $this;
+        return $this->kitItemProducts->map(
+            static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct()
+        );
     }
 
     public function setOptional(bool $optional): self

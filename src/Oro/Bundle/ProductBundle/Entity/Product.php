@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
@@ -654,6 +655,7 @@ class Product extends ExtendProduct implements
      *     orphanRemoval=true,
      *     fetch="EXTRA_LAZY"
      * )
+     * @OrderBy({"sortOrder"="ASC"})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

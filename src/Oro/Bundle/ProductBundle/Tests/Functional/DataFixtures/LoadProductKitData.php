@@ -13,6 +13,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -174,7 +175,10 @@ class LoadProductKitData extends AbstractFixture implements
                     ->setProductUnit($this->getProductUnit($manager, $kitItemData['unit']));
 
                 foreach ($kitItemData['products'] as $kitItemProductSku) {
-                    $kitItem->addProduct($this->getProduct($manager, $kitItemProductSku));
+                    $kitItem->addKitItemProduct(
+                        (new ProductKitItemProduct())
+                            ->setProduct($this->getProduct($manager, $kitItemProductSku))
+                    );
                 }
 
                 $productKit->addKitItem($kitItem);

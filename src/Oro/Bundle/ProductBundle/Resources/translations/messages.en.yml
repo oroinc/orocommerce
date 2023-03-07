@@ -369,8 +369,8 @@ oro:
             product_kit:
                 label: Product Kit
                 description: The product of type "kit" owning the product kit item.
-            products:
-                label: Products
+            kit_item_products:
+                label: Kit Item Products
                 description: The collection of one or more products. Customer will be offered a selection and will have to select one of the products from this collection before purchasing the kit (unless a kit item is marked optional).
             sort_order:
                 label: Sort Order
@@ -395,6 +395,22 @@ oro:
             product_kit_item:
                 label: 'Product Kit Item'
                 description: 'The related product kit item.'
+
+        productkititemproduct:
+            entity_label: 'Kit Item Product'
+            entity_plural_label: 'Kit Item Products'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Junction entity between a kit item and a product.'
+            id.label: 'ID'
+            kit_item:
+                label: 'Kit Item'
+                description: 'The related product kit item.'
+            product:
+                label: 'Product'
+                description: 'The related product.'
+            sort_order:
+                label: 'Sort Order'
+                description: 'Used to sort kit item products when displaying.'
 
         related_products:
             label: Related Products

@@ -61,8 +61,9 @@ class ProductKitItemRepository extends ServiceEntityRepository
         return $qb
             ->select('pk.sku')
             ->innerJoin('pki.productKit', 'pk')
+            ->innerJoin('pki.kitItemProducts', 'pip')
             ->innerJoin(
-                'pki.products',
+                'pip.product',
                 'p',
                 Join::WITH,
                 $qb->expr()->eq('p.id', ':product_id')

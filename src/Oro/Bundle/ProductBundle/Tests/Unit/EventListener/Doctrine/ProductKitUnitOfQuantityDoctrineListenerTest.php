@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Doctrine;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductKitUnitOfQuantityDoctrineListener;
@@ -59,7 +60,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
             ->expects(self::once())
             ->method('debug')
             ->with(
-                'It is not possible to create a ProductKitItem that has empty products collection',
+                'It is not possible to create a ProductKitItem with empty kitItemProducts collection',
                 ['product_kit_item' => $productKitItem]
             );
 
@@ -78,7 +79,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
             ->expects(self::once())
             ->method('debug')
             ->with(
-                'It is not possible to create a ProductKitItem that has empty products collection',
+                'It is not possible to create a ProductKitItem with empty kitItemProducts collection',
                 ['product_kit_item' => $productKitItem]
             );
 
@@ -91,7 +92,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
         $product1 = (new ProductStub())->setId(424242);
         $productKitItem = (new ProductKitItemStub(42))
             ->setProductKit($productKit)
-            ->addProduct($product1);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1));
 
         $this->expectExceptionObject(new ProductKitItemEmptyProductUnitException($productKitItem));
 
@@ -112,7 +113,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
         $product1 = (new ProductStub())->setId(424242);
         $productKitItem = (new ProductKitItemStub(42))
             ->setProductKit($productKit)
-            ->addProduct($product1);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1));
 
         $this->expectExceptionObject(new ProductKitItemEmptyProductUnitException($productKitItem));
 
@@ -135,7 +136,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
         $productKitItem = (new ProductKitItemStub(42))
             ->setProductKit($productKit)
             ->setProductUnit($productUnit)
-            ->addProduct($product1);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1));
 
         $this->expectExceptionObject(
             new ProductKitItemInvalidProductUnitException($productKitItem, $productUnit, $product1)
@@ -165,7 +166,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
         $productKitItem = (new ProductKitItemStub(42))
             ->setProductKit($productKit)
             ->setProductUnit($productUnit)
-            ->addProduct($product1);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1));
 
         $this->expectExceptionObject(
             new ProductKitItemInvalidProductUnitException($productKitItem, $productUnit)
@@ -203,7 +204,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
         $productKitItem = (new ProductKitItemStub(42))
             ->setProductKit($productKit)
             ->setProductUnit($productUnit)
-            ->addProduct($product1);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1));
 
         self::assertSame($productUnit, $productKitItem->getProductUnit());
         self::assertCount(0, $productKitItem->getReferencedUnitPrecisions());
@@ -230,7 +231,7 @@ class ProductKitUnitOfQuantityDoctrineListenerTest extends \PHPUnit\Framework\Te
         $productKitItem = (new ProductKitItemStub(42))
             ->setProductKit($productKit)
             ->setProductUnit($productUnit)
-            ->addProduct($product1);
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1));
 
         self::assertSame($productUnit, $productKitItem->getProductUnit());
         self::assertCount(0, $productKitItem->getReferencedUnitPrecisions());

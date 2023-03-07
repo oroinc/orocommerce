@@ -49,7 +49,7 @@ class ProductKitUnitOfQuantityDoctrineListener implements LoggerAwareInterface
         $products = $productKitItem->getProducts();
         if (!$products->count()) {
             $this->logger->debug(
-                'It is not possible to create a ProductKitItem that has empty products collection',
+                'It is not possible to create a ProductKitItem with empty kitItemProducts collection',
                 ['product_kit_item' => $productKitItem]
             );
 
@@ -67,7 +67,6 @@ class ProductKitUnitOfQuantityDoctrineListener implements LoggerAwareInterface
         }
 
         $unitCode = $productUnit->getCode();
-        $products = $productKitItem->getProducts();
         $unitPrecisions = $this->productUnitChecker->getEligibleProductUnitPrecisions($unitCode, $products);
 
         if (count($unitPrecisions) !== count($products)) {

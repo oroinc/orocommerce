@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
@@ -90,10 +91,12 @@ class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTe
         $unitPrecision1 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(1);
         $unitPrecision2 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(2);
 
+        $product1 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision1);
+        $product2 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision2);
         $kitItem = (new ProductKitItemStub(42))
             ->setProductUnit($productUnit)
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision1))
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision2))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product2))
             ->setMinimumQuantity(12.34)
             ->setMaximumQuantity(34.567);
 
@@ -127,10 +130,12 @@ class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTe
         $unitPrecision1 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(1);
         $unitPrecision2 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(2);
 
+        $product1 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision1);
+        $product2 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision2);
         $kitItem = (new ProductKitItemStub(42))
             ->setProductUnit($productUnit)
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision1))
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision2))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product2))
             ->setMinimumQuantity($invalidQuantity)
             ->setMaximumQuantity($validQuantity);
 
@@ -169,10 +174,12 @@ class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTe
         $unitPrecision1 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(1);
         $unitPrecision2 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(2);
 
+        $product1 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision1);
+        $product2 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision2);
         $kitItem = (new ProductKitItemStub(42))
             ->setProductUnit($productUnit)
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision1))
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision2))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product2))
             ->setMinimumQuantity($validQuantity)
             ->setMaximumQuantity($invalidQuantity);
 
@@ -201,10 +208,12 @@ class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTe
         $unitPrecision1 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(1);
         $unitPrecision2 = (new ProductUnitPrecision())->setUnit($productUnit)->setPrecision(2);
 
+        $product1 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision1);
+        $product2 = (new ProductStub())->setPrimaryUnitPrecision($unitPrecision2);
         $kitItem = (new ProductKitItemStub(42))
             ->setProductUnit($productUnit)
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision1))
-            ->addProduct((new ProductStub())->setPrimaryUnitPrecision($unitPrecision2))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product1))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($product2))
             ->setMinimumQuantity($minimumQuantity)
             ->setMaximumQuantity($maximumQuantity);
 
