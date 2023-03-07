@@ -198,7 +198,6 @@ oro:
                 dialog:
                     title: 'Sort products in {{ category }} category'
 
-
         controller:
             category:
                 saved.message:  'Category has been saved'

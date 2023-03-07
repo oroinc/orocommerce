@@ -26,6 +26,12 @@ const SortProductsAction = AbstractAction.extend({
     },
 
     initialize(options) {
+        this.warnings = {
+            save_warning: 'oro.product.sort_products.dialog.save_warning',
+            limit_warning: 'oro.product.sort_products.dialog.limit_warning',
+            ...this.warnings
+        };
+
         this.messages = {
             confirm_title: 'oro.product.sort_products.confirm.title',
             confirm_content: 'oro.product.sort_products.confirm.content',
@@ -100,6 +106,8 @@ const SortProductsAction = AbstractAction.extend({
 
     async _handleWidget() {
         const eventBus = Object.create(Backbone.Events);
+        let datagrid;
+        this.listenToOnce(eventBus, 'init', plugin => datagrid = plugin.main);
 
         this.frontend_options.actionsEl = $(dialogActionsTemplate());
         this.frontend_options.initLayoutOptions = {
@@ -113,13 +121,25 @@ const SortProductsAction = AbstractAction.extend({
         const dialog = await SortProductsAction.__super__._handleWidget.call(this);
         Promise.all([dialog.loading, dialog.deferredRender]).then(() => {
             mediator.execute('showMessage', 'warning',
-                __('oro.product.sort_products.dialog.waning'),
+                __(this.warnings.save_warning),
                 {
                     dismissible: false,
                     showIcon: false,
                     animation: false,
                     container: dialog.$messengerContainer
                 });
+
+            const {totalRecords, pageSize} = datagrid.collection.state;
+            if (totalRecords > pageSize) {
+                mediator.execute('showMessage', 'warning',
+                    __(this.warnings.limit_warning, {limit: pageSize}, pageSize),
+                    {
+                        dismissible: false,
+                        showIcon: false,
+                        animation: false,
+                        container: dialog.$messengerContainer
+                    });
+            }
 
             const sequenceOfChanges = [];
             // collect all changes that is done in sortOrder dialog

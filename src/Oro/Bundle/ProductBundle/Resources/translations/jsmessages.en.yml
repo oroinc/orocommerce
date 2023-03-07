@@ -22,7 +22,8 @@ oro:
         sort_products:
             dialog:
                 title: Sort products
-                waning: All changes made in this dialog window will be applied immediately. You may close this dialog at any time, no additional actions required before closing.
+                save_warning: All changes made in this dialog window will be applied immediately. You may close this dialog at any time, no additional actions required before closing.
+                limit_warning: There are more than {{ limit }} products included in this product collection. Only the first {{ limit }} products are shown here.
             confirm:
                 title: Save all changes?
                 content: All unsaved changes must be submitted before proceeding to manage products sort order
