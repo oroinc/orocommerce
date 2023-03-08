@@ -67,6 +67,7 @@ class NotEmptyProductKitItemsCollectionValidatorTest extends ConstraintValidator
         $this->validator->validate($product, $constraint);
 
         $this->buildViolation($constraint->message)
+            ->atPath('property.path.kitItems')
             ->assertRaised();
     }
 

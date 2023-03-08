@@ -123,9 +123,6 @@ api:
 
         Oro\Bundle\ProductBundle\Entity\ProductKitItem:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_kit_item.md'
-            fields:
-                referencedUnitPrecisions:
-                    exclude: true
             subresources:
                 labels:
                     actions:

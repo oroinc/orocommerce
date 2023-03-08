@@ -368,8 +368,6 @@ api:
         Oro\Bundle\ProductBundle\Entity\ProductKitItem:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_kit_item.md'
             fields:
-                referencedUnitPrecisions:
-                    exclude: true
                 label:
                     data_type: localizedFallbackValue:labels
                 productKit:

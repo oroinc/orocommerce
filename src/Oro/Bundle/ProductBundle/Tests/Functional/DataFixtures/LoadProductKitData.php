@@ -103,7 +103,7 @@ class LoadProductKitData extends AbstractFixture implements
                 'kitItems' => [
                     [
                         'label' => 'PKSKU3 - With Min and Max Quantity',
-                        'unit' => 'milliliter',
+                        'unit' => 'liter',
                         'optional' => false,
                         'sortOrder' => 1,
                         'minimumQuantity' => 1,

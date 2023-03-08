@@ -7,7 +7,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -40,7 +39,6 @@ class ProductKitItemTest extends \PHPUnit\Framework\TestCase
         $collections = [
             ['labels', new ProductKitItemLabel()],
             ['kitItemProducts', new ProductKitItemProduct()],
-            ['referencedUnitPrecisions', new ProductUnitPrecision()],
         ];
 
         self::assertPropertyCollections(new ProductKitItemStub(), $collections);
@@ -66,27 +64,5 @@ class ProductKitItemTest extends \PHPUnit\Framework\TestCase
         $kitItem->addKitItemProduct($productKitItemProduct2);
 
         self::assertEquals([$product1, $product2], $kitItem->getProducts()->toArray());
-    }
-
-    public function testSetReferencedUnitPrecisions(): void
-    {
-        $entity = new ProductKitItem();
-        $productUnitPrecision1 = new ProductUnitPrecision();
-        $productUnitPrecision2 = new ProductUnitPrecision();
-        $productUnitPrecision3 = new ProductUnitPrecision();
-
-        $entity->setReferencedUnitPrecisions([$productUnitPrecision1, $productUnitPrecision2]);
-
-        self::assertSame(
-            [$productUnitPrecision1, $productUnitPrecision2],
-            $entity->getReferencedUnitPrecisions()->toArray()
-        );
-
-        $entity->setReferencedUnitPrecisions([$productUnitPrecision2, $productUnitPrecision3]);
-
-        self::assertSame(
-            [$productUnitPrecision2, $productUnitPrecision3],
-            $entity->getReferencedUnitPrecisions()->toArray()
-        );
     }
 }

@@ -39,6 +39,12 @@ class ProductKitItemProduct extends ExtendProductKitItemProduct
      */
     protected int $sortOrder = 0;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="ProductUnitPrecision")
+     * @ORM\JoinColumn(name="product_unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected ?ProductUnitPrecision $productUnitPrecision = null;
+
     public function __toString(): string
     {
         return (string)$this->product;
@@ -54,9 +60,9 @@ class ProductKitItemProduct extends ExtendProductKitItemProduct
         return $this->kitItem;
     }
 
-    public function setKitItem(ProductKitItem $product): self
+    public function setKitItem(ProductKitItem $productKitItem): self
     {
-        $this->kitItem = $product;
+        $this->kitItem = $productKitItem;
 
         return $this;
     }
@@ -81,6 +87,26 @@ class ProductKitItemProduct extends ExtendProductKitItemProduct
     public function setSortOrder(int $sortOrder): self
     {
         $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
+
+    public function getProductUnitPrecision(): ?ProductUnitPrecision
+    {
+        return $this->productUnitPrecision;
+    }
+
+    public function setProductUnitPrecision(?ProductUnitPrecision $productUnitPrecision): self
+    {
+        $this->productUnitPrecision = $productUnitPrecision;
+
+        return $this;
+    }
+
+    public function updateProductUnitPrecision(?string $unitCode = null): self
+    {
+        $unitCode = $unitCode ?? $this->kitItem?->getProductUnit()?->getCode();
+        $this->setProductUnitPrecision($this->product?->getUnitPrecision((string) $unitCode));
 
         return $this;
     }

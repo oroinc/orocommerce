@@ -72,6 +72,8 @@ oro:
             products:
                 not_empty: 'Each kit option should have at least one product specified.'
                 only_simple: 'Only simple product can be used in kit options.'
+            kititemproducts:
+                invalid_message: 'Failed to process the kit item products data.'
             collection:
                 not_empty: 'Product kit should have at least one kit item fully specified.'
             unit.available_for_all_specified_products: 'Unit of quantity should be available for all specified products.'
@@ -79,6 +81,10 @@ oro:
                 invalid_precision: 'Minimum quantity {{ value }} does not match the allowed product unit precision {{ precision }}.'
             maximum_quantity:
                 invalid_precision: 'Maximum quantity {{ value }} does not match the allowed product unit precision {{ precision }}.'
+
+        productkititemproduct:
+            product:
+                not_found: 'Product #%product_id% is not found.'
 
         frontend:
             quick_add:

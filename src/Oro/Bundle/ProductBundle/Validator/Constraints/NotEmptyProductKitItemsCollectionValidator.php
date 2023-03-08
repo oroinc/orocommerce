@@ -35,7 +35,10 @@ class NotEmptyProductKitItemsCollectionValidator extends ConstraintValidator
         }
 
         if ($value->getKitItems()->count() < self::MIN_KIT_ITEMS_VALUE) {
-            $this->context->addViolation($constraint->message);
+            $this->context
+                ->buildViolation($constraint->message)
+                ->atPath('kitItems')
+                ->addViolation();
         }
     }
 }

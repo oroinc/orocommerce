@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitPrecisionLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Psr\Container\ContainerInterface;
@@ -29,6 +30,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
     private ?UnitLabelFormatterInterface $unitLabelFormatter = null;
     private ?UnitValueFormatterInterface $unitValueFormatter = null;
     private ?UnitVisibilityInterface $unitVisibility = null;
+    private ?UnitPrecisionLabelFormatter $unitPrecisionLabelFormatter = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -42,6 +44,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
     {
         return [
             new TwigFunction('oro_is_unit_code_visible', [$this, 'isUnitCodeVisible']),
+            new TwigFunction('oro_format_product_unit_precision_label', [$this, 'formatUnitPrecisionLabel']),
         ];
     }
 
@@ -124,6 +127,11 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return $this->getUnitVisibility()->isUnitCodeVisible($code);
     }
 
+    public function formatUnitPrecisionLabel(string $unitCode, int $precision): string
+    {
+        return $this->getUnitPrecisionLabelFormatter()->formatUnitPrecisionLabel($unitCode, $precision);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -132,7 +140,9 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return [
             'oro_product.formatter.product_unit_value' => UnitValueFormatterInterface::class,
             'oro_product.formatter.product_unit_label' => UnitLabelFormatterInterface::class,
+            'oro_product.formatter.product_unit_precision' => UnitLabelFormatterInterface::class,
             'oro_product.visibility.unit' => UnitVisibilityInterface::class,
+            'oro_product.formatter.unit_precision_label' => UnitPrecisionLabelFormatter::class,
         ];
     }
 
@@ -161,5 +171,14 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         }
 
         return $this->unitVisibility;
+    }
+
+    private function getUnitPrecisionLabelFormatter(): UnitPrecisionLabelFormatter
+    {
+        if (null === $this->unitPrecisionLabelFormatter) {
+            $this->unitPrecisionLabelFormatter = $this->container->get('oro_product.formatter.unit_precision_label');
+        }
+
+        return $this->unitPrecisionLabelFormatter;
     }
 }

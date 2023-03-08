@@ -128,7 +128,6 @@ class OroProductBundleInstaller implements
         $this->createOroProductKitItemTable($schema);
         $this->createOroProductKitItemLabelTable($schema);
         $this->createOroProductKitItemProductTable($schema);
-        $this->createOroProductKitItemReferencedProductUnitPrecisionsTable($schema);
 
         $this->createOroProductWebsiteReindexRequestItem($schema);
 
@@ -150,7 +149,6 @@ class OroProductBundleInstaller implements
         $this->addOroProductKitItemForeignKeys($schema);
         $this->addOroProductKitItemLabelForeignKeys($schema);
         $this->addOroProductKitItemProductForeignKeys($schema);
-        $this->addOroProductKitItemReferencedProductUnitPrecisionsForeignKeys($schema);
 
         $this->addProductToBrand($schema);
 
@@ -953,6 +951,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_kit_item_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('product_unit_precision_id', 'integer', ['notnull' => false]);
         $table->addColumn('sort_order', 'integer', ['default' => 0]);
         $table->setPrimaryKey(['id']);
     }
@@ -972,30 +971,11 @@ class OroProductBundleInstaller implements
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    protected function createOroProductKitItemReferencedProductUnitPrecisionsTable(Schema $schema): void
-    {
-        $table = $schema->createTable('oro_product_kit_unit_precisions');
-        $table->addColumn('product_kit_item_id', 'integer', []);
-        $table->addColumn('product_unit_precision_id', 'integer', []);
-        $table->setPrimaryKey(['product_kit_item_id', 'product_unit_precision_id']);
-    }
-
-    protected function addOroProductKitItemReferencedProductUnitPrecisionsForeignKeys(Schema $schema): void
-    {
-        $table = $schema->getTable('oro_product_kit_unit_precisions');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product_kit_item'),
-            ['product_kit_item_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_unit_precision'),
             ['product_unit_precision_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

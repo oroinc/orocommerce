@@ -287,3 +287,31 @@ services:
             - '@oro_product.provider.product_units_provider'
         tags:
             - { name: form.type }
+
+    oro_product.form.type.product_kit_item_collection:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemCollectionType
+        tags:
+            - { name: form.type }
+
+    oro_product.form.type.product_kit_item:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType
+        tags:
+            - { name: form.type }
+
+    oro_product.form.type.product_kit_item_products:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemProductsType
+        arguments:
+            - '@translator'
+            - '@oro_product.form.data_transformer.product_kit_item_products.view'
+            - '@oro_product.form.data_transformer.product_kit_item_products.model'
+        tags:
+            - { name: form.type }
+
+    oro_product.form.data_transformer.product_kit_item_products.view:
+        class: Oro\Bundle\MultiCurrencyBundle\Form\Transformer\ArrayToJsonTransformer
+
+    oro_product.form.data_transformer.product_kit_item_products.model:
+        class: Oro\Bundle\ProductBundle\Form\DataTransformer\ProductKitItemProductsDataTransformer
+        shared: false
+        arguments:
+            - '@doctrine'

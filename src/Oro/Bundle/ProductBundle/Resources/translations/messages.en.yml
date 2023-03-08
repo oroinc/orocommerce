@@ -366,16 +366,29 @@ oro:
             optional:
                 label: Optional
                 description: Indicates whether this kit item is required for purchase, or can be skipped by the customer.
+                choices:
+                    yes: Yes
+                    no: No
             product_kit:
                 label: Product Kit
                 description: The product of type "kit" owning the product kit item.
             kit_item_products:
-                label: Kit Item Products
+                label: Products
                 description: The collection of one or more products. Customer will be offered a selection and will have to select one of the products from this collection before purchasing the kit (unless a kit item is marked optional).
             sort_order:
                 label: Sort Order
                 description: Used to sort product kit item when displaying.
-            referenced_unit_precisions.label: Referenced Unit Precisions
+            form:
+                kit_item_collection:
+                    add: Add Kit Item
+                kit_item_products:
+                    add:
+                        button:
+                            label: Add Product
+                        dialog:
+                            title: Add Product
+                        datagrid:
+                            is_selected: Selected
 
         productkititemlabel:
             entity_label: 'Product Kit Item Label'
@@ -408,6 +421,9 @@ oro:
             product:
                 label: 'Product'
                 description: 'The related product.'
+            product_unit_precision:
+                label: 'Product unit precision.'
+                description: 'The product unit precision of the related product.'
             sort_order:
                 label: 'Sort Order'
                 description: 'Used to sort kit item products when displaying.'
@@ -477,6 +493,7 @@ oro:
             general: General
             additional: Additional
             productVariants: Product Variants
+            kit_items: Kit Items
             inventory: Inventory
             images: Images
             design: Design
@@ -767,6 +784,8 @@ oro:
                     gallery_view.aria_label: Gallery View
                     list_view.aria_label: List View
                     compact_view.aria_label: Compact View
+                kit_item_products:
+                    remove: Remove
             mass_action:
                 get_selected_product_ids:
                     response:

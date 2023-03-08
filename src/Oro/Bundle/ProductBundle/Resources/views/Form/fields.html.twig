@@ -602,3 +602,66 @@
     }) %}
     {{ form_widget(form, {'attr' : attr}) }}
 {% endblock %}
+
+{% block oro_product_kit_item_widget %}
+    <div data-role="kit-item">
+        <div data-role="kit-item-expanded">
+            {{ form_widget(form) }}
+        </div>
+        <div data-role="kit-item-collapsed">
+            {%- import '@OroUI/macros.html.twig' as UI %}
+            {{ UI.renderProperty('oro.product.productkititem.labels.label'|trans, value.defaultLabel) }}
+            {{ UI.renderProperty('oro.product.productkititem.optional.label'|trans, value.optional ? 'oro.product.productkititem.optional.choices.yes'|trans : 'oro.product.productkititem.optional.choices.no'|trans) }}
+            {{ UI.renderProperty('oro.product.productkititem.minimum_quantity.label'|trans, value.minimumQuantity) }}
+            {{ UI.renderProperty('oro.product.productkititem.maximum_quantity.label'|trans, value.maximumQuantity) }}
+            {{ UI.renderProperty('oro.product.productkititem.product_unit.label'|trans, value.productUnit ? oro_format_product_unit_precision_label(value.productUnit.code, value|oro_product_kit_item_unit_precision)) }}
+
+            {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+            {{ entityConfig.renderDynamicFields(value) }}
+
+            {%- set skus = selectedProductsSkus|join(', ') -%}
+            {{ UI.renderProperty('oro.product.productkititem.kit_item_products.label'|trans, skus|length > 50 ? skus[:50] ~ ', ...' : skus) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block oro_product_kit_item_products_widget %}
+    {{ form_errors(form) }}
+    {#  TODO: replace with {{ form_widget(form) }} when widget is ready #}
+    {{ form_widget(form, {type: 'text'}) }}
+
+    {% set widgetRouteParameters = {
+        'gridName': 'kit-item-products-edit-grid',
+        'params': {'kitItemId': kitItemId, 'selectedProductsIds': selectedProductsIds},
+        'renderParams': {'enableViews': false, 'enableFilters': false},
+        'renderParamsTypes': {'enableViews': 'bool', 'enableFilters': 'bool'}
+    } %}
+    {{ oro_widget_render({
+        'widgetType': 'block',
+        'url': path('oro_datagrid_widget', widgetRouteParameters),
+        'title': '',
+        'alias': 'widget-' ~ form.vars.id
+    }) }}
+
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <div class="btn-group">
+        {{ UI.clientLink({
+            'dataUrl': path('oro_datagrid_widget', {gridName: 'kit-item-products-add-grid'}),
+            'label': 'oro.product.productkititem.form.kit_item_products.add.button.label'|trans,
+            'class': 'btn',
+            'widget': {
+                'type': 'dialog',
+                'multiple': false,
+                'options': {
+                    'dialogOptions': {
+                        'title': 'oro.product.productkititem.form.kit_item_products.add.dialog.title'|trans,
+                        'dblclick': 'maximize',
+                        'maximizedHeightDecreaseBy': 'minimize-bar',
+                        'width': 1200,
+                        'modal': true
+                    }
+                }
+            }
+        }) }}
+    </div>
+{% endblock %}

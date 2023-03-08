@@ -20,6 +20,7 @@ class ProductTypeProviderTest extends \PHPUnit\Framework\TestCase
         $expected = [
             'oro.product.type.simple' => Product::TYPE_SIMPLE,
             'oro.product.type.configurable' => Product::TYPE_CONFIGURABLE,
+            'oro.product.type.kit' => Product::TYPE_KIT,
         ];
 
         $this->assertEquals($expected, $this->productTypeProvider->getAvailableProductTypes());

@@ -32,12 +32,8 @@ class ProductKitItemRepository extends ServiceEntityRepository
         return $qb
             ->select('pk.sku')
             ->innerJoin('pki.productKit', 'pk')
-            ->innerJoin(
-                'pki.referencedUnitPrecisions',
-                'pup',
-                Join::WITH,
-                $qb->expr()->eq('pup.id', ':product_unit_precision_id')
-            )
+            ->innerJoin('pki.kitItemProducts', 'pkip')
+            ->where($qb->expr()->eq('pkip.productUnitPrecision', ':product_unit_precision_id'))
             ->setParameter('product_unit_precision_id', $productUnitPrecision->getId(), Types::INTEGER)
             ->groupBy('pk.id')
             ->orderBy('pk.id', 'DESC')

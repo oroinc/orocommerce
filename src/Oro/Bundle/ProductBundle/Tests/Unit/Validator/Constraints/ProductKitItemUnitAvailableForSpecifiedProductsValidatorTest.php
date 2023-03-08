@@ -65,9 +65,11 @@ class ProductKitItemUnitAvailableForSpecifiedProductsValidatorTest extends Const
         $productBarUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnitSet);
         $productBar = (new ProductStub())
             ->setId(2)
+            ->setSku('SKU-FOO')
             ->addUnitPrecision($productBarUnitPrecision);
 
-        $productBaz = new ProductStub();
+        $productBaz = (new ProductStub())
+            ->setSku('SKU-BAR');
 
         $kitItem = (new ProductKitItemStub(42))
             ->setProductUnit($productUnitItem)
@@ -79,10 +81,11 @@ class ProductKitItemUnitAvailableForSpecifiedProductsValidatorTest extends Const
         $this->validator->validate($kitItem, $constraint);
 
         $this->buildViolation($constraint->message)
-            ->atPath('property.path.products.1')
-            ->setCode(ProductKitItemUnitAvailableForSpecifiedProducts::PRODUCT_UNIT_NOT_ALLOWED)
-            ->buildNextViolation($constraint->message)
-            ->atPath('property.path.products.2')
+            ->setParameters([
+                '%unit_code%' => '"' . $productUnitItem->getCode() . '"',
+                '%skus%' => '"' . $productBar->getSku() . '", "' . $productBaz->getSku() . '"'
+            ])
+            ->atPath('property.path.productUnit')
             ->setCode(ProductKitItemUnitAvailableForSpecifiedProducts::PRODUCT_UNIT_NOT_ALLOWED)
             ->assertRaised();
     }

@@ -103,29 +103,12 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
      */
     protected ?ProductUnit $productUnit = null;
 
-    /**
-     * @var Collection<ProductUnitPrecision>
-     *
-     * @ORM\ManyToMany(targetEntity="ProductUnitPrecision")
-     * @ORM\JoinTable(
-     *     name="oro_product_kit_unit_precisions",
-     *     joinColumns={
-     *          @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE")
-     *     },
-     *     inverseJoinColumns={
-     *          @ORM\JoinColumn(name="product_unit_precision_id", referencedColumnName="id", onDelete="CASCADE")
-     *     }
-     * )
-     */
-    protected Collection $referencedUnitPrecisions;
-
     public function __construct()
     {
         parent::__construct();
 
         $this->labels = new ArrayCollection();
         $this->kitItemProducts = new ArrayCollection();
-        $this->referencedUnitPrecisions = new ArrayCollection();
     }
 
     /**
@@ -163,8 +146,7 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
         if ($this->id) {
             $this->id = null;
             $this->labels = new ArrayCollection();
-            $this->products = new ArrayCollection();
-            $this->referencedUnitPrecisions = new ArrayCollection();
+            $this->kitItemProducts = new ArrayCollection();
         }
     }
 
@@ -229,7 +211,7 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
     }
 
     /**
-     * @return Collection<ProductKitItem>
+     * @return Collection<ProductKitItemProduct>
      */
     public function getKitItemProducts(): Collection
     {
@@ -321,42 +303,5 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
     public function getProductUnit(): ?ProductUnit
     {
         return $this->productUnit;
-    }
-
-    public function getReferencedUnitPrecisions(): Collection
-    {
-        return $this->referencedUnitPrecisions;
-    }
-
-    /**
-     * @param iterable<ProductUnitPrecision> $productUnitPrecisions
-     * @return self
-     */
-    public function setReferencedUnitPrecisions(iterable $productUnitPrecisions): self
-    {
-        $this->referencedUnitPrecisions->clear();
-        foreach ($productUnitPrecisions as $unitPrecision) {
-            $this->referencedUnitPrecisions->add($unitPrecision);
-        }
-
-        return $this;
-    }
-
-    public function addReferencedUnitPrecision(ProductUnitPrecision $productUnitPrecision): self
-    {
-        if (!$this->referencedUnitPrecisions->contains($productUnitPrecision)) {
-            $this->referencedUnitPrecisions->add($productUnitPrecision);
-        }
-
-        return $this;
-    }
-
-    public function removeReferencedUnitPrecision(ProductUnitPrecision $productUnitPrecision): self
-    {
-        if ($this->referencedUnitPrecisions->contains($productUnitPrecision)) {
-            $this->referencedUnitPrecisions->removeElement($productUnitPrecision);
-        }
-
-        return $this;
     }
 }

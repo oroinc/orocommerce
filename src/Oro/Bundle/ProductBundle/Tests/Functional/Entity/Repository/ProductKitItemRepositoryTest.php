@@ -47,7 +47,7 @@ class ProductKitItemRepositoryTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
         self::assertEqualsCanonicalizing(
-            [LoadProductKitData::PRODUCT_KIT_1, LoadProductKitData::PRODUCT_KIT_2, LoadProductKitData::PRODUCT_KIT_3],
+            [LoadProductKitData::PRODUCT_KIT_1, LoadProductKitData::PRODUCT_KIT_2],
             $this->repository->findProductKitsSkuByUnitPrecision($product->getPrimaryUnitPrecision())
         );
     }
@@ -58,7 +58,7 @@ class ProductKitItemRepositoryTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
         self::assertEqualsCanonicalizing(
-            [LoadProductKitData::PRODUCT_KIT_2, LoadProductKitData::PRODUCT_KIT_3],
+            [LoadProductKitData::PRODUCT_KIT_1, LoadProductKitData::PRODUCT_KIT_2],
             $this->repository->findProductKitsSkuByUnitPrecision($product->getPrimaryUnitPrecision(), 2)
         );
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Service\ProductKitItemProductUnitChecker;
 use Symfony\Component\Validator\Constraint;
@@ -43,9 +44,17 @@ class ProductKitItemUnitAvailableForSpecifiedProductsValidator extends Constrain
         $products = $value->getProducts();
 
         $conflictingProducts = $this->productUnitChecker->getConflictingProducts($productKitItemUnit, $products);
-        foreach ($conflictingProducts as $product) {
-            $this->context->buildViolation($constraint->message)
-                ->atPath('products.' . $products->indexOf($product))
+        if ($conflictingProducts) {
+            $this->context->buildViolation(
+                $constraint->message,
+                [
+                    '%unit_code%' => $this->formatValue($productKitItemUnit->getCode()),
+                    '%skus%' => $this->formatValues(
+                        array_map(static fn (Product $product) => $product->getSkuUppercase(), $conflictingProducts)
+                    )
+                ]
+            )
+                ->atPath('productUnit')
                 ->setCode(ProductKitItemUnitAvailableForSpecifiedProducts::PRODUCT_UNIT_NOT_ALLOWED)
                 ->addViolation();
         }
