@@ -21,7 +21,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @dbIsolationPerTest
@@ -29,8 +28,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
  */
 class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 {
-    use EntityTrait;
-
     private LocalizedFallbackValueAwareStrategy $strategy;
 
     protected function setUp(): void
@@ -38,10 +35,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $container = $this->getContainer();
-
         $this->loadFixtures([LoadProductData::class]);
 
+        $container = self::getContainer();
         $container->get('oro_importexport.field.database_helper')->onClear();
 
         $this->strategy = new LocalizedFallbackValueAwareStrategy(
@@ -59,254 +55,196 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
     }
 
-    /**
-     * @dataProvider processDataProvider
-     */
-    public function testProcess(
-        array $entityData = [],
-        array $expectedNames = [],
-        array $itemData = [],
-        array $expectedSlugPrototypes = []
-    ) {
-        $entityData = $this->convertArrayToEntities($entityData);
+    private function getProductUnitPrecision(ProductUnit $unit, int $precision): ProductUnitPrecision
+    {
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($unit);
+        $unitPrecision->setPrecision($precision);
 
-        $productClass = Product::class;
+        return $unitPrecision;
+    }
+
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($code);
+
+        return $unit;
+    }
+
+    private function getProductName(string $stringValue, ?string $localizationName = null): ProductName
+    {
+        $productName = new ProductName();
+        $productName->setString($stringValue);
+        if (null !== $localizationName) {
+            $productName->setLocalization($this->getLocalization($localizationName));
+        }
+
+        return $productName;
+    }
+
+    private function getProductShortDescription(
+        ?string $fallback,
+        ?string $textValue,
+        string $localizationReference
+    ): ProductShortDescription {
+        $description = new ProductShortDescription();
+        if (null !== $fallback) {
+            $description->setFallback($fallback);
+        }
+        if (null !== $textValue) {
+            $description->setText($textValue);
+        }
+        $description->setLocalization($this->getReference($localizationReference));
+
+        return $description;
+    }
+
+    private function getLocalizedValue(string $stringValue, ?string $localizationName = null): LocalizedFallbackValue
+    {
+        $localizedValue = new LocalizedFallbackValue();
+        $localizedValue->setString($stringValue);
+        if (null !== $localizationName) {
+            $localizedValue->setLocalization($this->getLocalization($localizationName));
+        }
+
+        return $localizedValue;
+    }
+
+    private function getLocalization(string $name): Localization
+    {
+        $localization = new Localization();
+        $localization->setName($name);
+
+        return $localization;
+    }
+
+    private function loadDefaultAttributeFamily(): AttributeFamily
+    {
+        return self::getContainer()->get('doctrine')
+            ->getRepository(AttributeFamily::class)
+            ->findOneBy(['code' => 'default_family']);
+    }
+
+    private function loadInventoryStatus(string $id): AbstractEnumValue
+    {
+        return self::getContainer()->get('doctrine')
+            ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
+            ->find($id);
+    }
+
+    private function loadFirstBusinessUnit(): BusinessUnit
+    {
+        return self::getContainer()->get('doctrine')->getRepository(BusinessUnit::class)->findOneBy([]);
+    }
+
+    public function testProcess(): void
+    {
+        $itemData = [
+            'sku' => 'product-1',
+            'names' => [
+                null => ['string' => 'product-1 Default Name'],
+                'English (Canada)' => ['string' => 'product-1 en_CA Name']
+            ],
+            'slugPrototypes' => [
+                null => ['string' => 'product-1-default-slug-prototype-updated'],
+                'English (Canada)' => ['string' => 'product-1-en-ca-slug-prototype-added']
+            ],
+        ];
 
         $context = new Context([]);
         $context->setValue('itemData', $itemData);
         $this->strategy->setImportExportContext($context);
-        $this->strategy->setEntityName($productClass);
-
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue $inventoryStatus */
-        $inventoryStatus = $this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
-            ->find('in_stock');
+        $this->strategy->setEntityName(Product::class);
 
         /** @var Product $existingEntity */
-        $existingEntity = $this->getReference($entityData['sku']);
+        $existingEntity = $this->getReference('product-1');
         $this->assertNotEmpty($existingEntity->getNames());
         $this->assertNotEmpty($existingEntity->getSlugPrototypes());
 
-        /** @var Product $entity */
-        $entity = $this->getEntity($productClass, $entityData);
-        $entity->setInventoryStatus($inventoryStatus);
+        $entity = new Product();
+        $entity->setSku('product-1');
+        $entity->setAttributeFamily($this->loadDefaultAttributeFamily());
+        $entity->setPrimaryUnitPrecision($this->getProductUnitPrecision($this->getProductUnit('kg'), 3));
+        $entity->addName($this->getProductName('product-1 Default Name'));
+        $entity->addName($this->getProductName('product-1 en_CA Name', 'English (Canada)'));
+        $entity->addSlugPrototype($this->getLocalizedValue('product-1-default-slug-prototype-updated'));
+        $entity->addSlugPrototype($this->getLocalizedValue('product-1-en-ca-slug-prototype-added', 'English (Canada)'));
+        $entity->setInventoryStatus($this->loadInventoryStatus('in_stock'));
 
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
-        $entity->setAttributeFamily($attributeFamily);
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
+        $expectedNames = [
+            'default' => [
+                'reference' => 'product-1.names.default',
+                'string' => 'product-1 Default Name',
+                'text' => null,
+                'fallback' => null,
+            ],
+            'English (Canada)' => [
+                'reference' => 'product-1.names.en_CA',
+                'string' => 'product-1 en_CA Name',
+                'text' => null,
+                'fallback' => null,
+            ],
+        ];
+        $expectedSlugPrototypes = [
+            'default' => [
+                'reference' => 'product-1.slugPrototypes.default',
+                'string' => 'product-1-default-slug-prototype-updated',
+                'text' => null,
+                'fallback' => null,
+            ],
+            'English (Canada)' => [
+                'reference' => 'product-1.slugPrototypes.en_CA',
+                'string' => 'product-1-en-ca-slug-prototype-added',
+                'text' => null,
+                'fallback' => null,
+            ],
+        ];
         $this->assertLocalizedFallbackValues($expectedNames, $result->getNames());
         $this->assertLocalizedFallbackValues($expectedSlugPrototypes, $result->getSlugPrototypes());
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function processDataProvider(): array
+    public function testProcessSkippedNewProductWillNotBeImportedIfNamesAreEmpty(): void
     {
-        return [
-            [
-                'entityData' => [
-                    'sku' => 'product-1',
-                    'primaryUnitPrecision' => [
-                        'testEntity' => ProductUnitPrecision::class,
-                        'testProperties' => [
-                            'unit' => $this->getEntity(
-                                ProductUnit::class,
-                                ['code' => 'kg']
-                            ),
-                            'precision' => 3,
-                        ]
-                    ],
-                    'names' => [
-                        [
-                            'testEntity' => ProductName::class,
-                            'testProperties' => [
-                                'string' => 'product-1 Default Name'
-                            ],
-                        ],
-                        [
-                            'testEntity' => ProductName::class,
-                            'testProperties' => [
-                                'string' => 'product-1 en_CA Name',
-                                'localization' => [
-                                    'testEntity' => Localization::class,
-                                    'testProperties' => [
-                                        'name' => 'English (Canada)',
-                                    ],
-                                ],
-                            ]
-                        ],
-                    ],
-                    'slugPrototypes' => [
-                        [
-                            'testEntity' => LocalizedFallbackValue::class,
-                            'testProperties' => [
-                                'string' => 'product-1-default-slug-prototype-updated'
-                            ]
-                        ],
-                        [
-                            'testEntity' => LocalizedFallbackValue::class,
-                            'testProperties' => [
-                                'string' => 'product-1-en-ca-slug-prototype-added',
-                                'localization' => [
-                                    'testEntity' => Localization::class,
-                                    'testProperties' => [
-                                        'name' => 'English (Canada)',
-                                    ],
-                                ],
-                            ]
-                        ],
-                    ]
-                ],
-                'expectedNames' => [
-                    'default' => [
-                        'reference' => 'product-1.names.default',
-                        'string' => 'product-1 Default Name',
-                        'text' => null,
-                        'fallback' => null,
-                    ],
-                    'English (Canada)' => [
-                        'reference' => 'product-1.names.en_CA',
-                        'string' => 'product-1 en_CA Name',
-                        'text' => null,
-                        'fallback' => null,
-                    ],
-                ],
-                'itemData' => [
-                    'sku' => 'product-1',
-                    'names' => [
-                        null => [
-                            'string' => 'product-1 Default Name'
-                        ],
-                        'English (Canada)' => [
-                            'string' => 'product-1 en_CA Name',
-                        ],
-                    ],
-                    'slugPrototypes' => [
-                        null => [
-                            'string' => 'product-1-default-slug-prototype-updated'
-                        ],
-                        'English (Canada)' => [
-                            'string' => 'product-1-en-ca-slug-prototype-added',
-                        ],
-                    ],
-                ],
-                'expectedSlugPrototypes' => [
-                    'default' => [
-                        'reference' => 'product-1.slugPrototypes.default',
-                        'string' => 'product-1-default-slug-prototype-updated',
-                        'text' => null,
-                        'fallback' => null,
-                    ],
-                    'English (Canada)' => [
-                        'reference' => 'product-1.slugPrototypes.en_CA',
-                        'string' => 'product-1-en-ca-slug-prototype-added',
-                        'text' => null,
-                        'fallback' => null,
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider skippedDataProvider
-     */
-    public function testProcessSkipped(array $entityData, callable $resultCallback)
-    {
-        $entityData = $this->convertArrayToEntities($entityData);
-
-        $entityData['attributeFamily'] = $this
-            ->getContainer()
-            ->get('doctrine')
-            ->getRepository(AttributeFamily::class)
-            ->findOneBy(['code' => $entityData['attributeFamily']]);
-
-        $productClass = Product::class;
-
         $this->strategy->setImportExportContext(new Context([]));
-        $this->strategy->setEntityName($productClass);
+        $this->strategy->setEntityName(Product::class);
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue $inventoryStatus */
-        $inventoryStatus = $this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
-            ->find('in_stock');
+        $entity = new Product();
+        $entity->setSku('new_sku');
+        $entity->setAttributeFamily($this->loadDefaultAttributeFamily());
+        $entity->setPrimaryUnitPrecision($this->getProductUnitPrecision($this->getProductUnit('kg'), 3));
+        $entity->setInventoryStatus($this->loadInventoryStatus('in_stock'));
+        $entity->setOwner($this->loadFirstBusinessUnit());
 
-        /** @var Product $entity */
-        $entity = $this->getEntity($productClass, $entityData);
-        $entity->setInventoryStatus($inventoryStatus);
-        $entity->setOwner(
-            $this->getContainer()->get('doctrine')->getRepository(BusinessUnit::class)->findOneBy([])
-        );
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
 
-        $resultCallback($this->strategy->process($entity));
+        $this->assertNull($result);
     }
 
-    public function skippedDataProvider(): array
+    public function testProcessSkippedExistingProductWithIdNotMappedForNewFallback(): void
     {
-        return [
-            'New product will not be imported if names is empty' => [
-                [
-                    'sku' => 'new_sku',
-                    'attributeFamily' => 'default_family',
-                    'primaryUnitPrecision' => [
-                        'testEntity' => ProductUnitPrecision::class,
-                        'testProperties' => [
-                            'unit' => $this->getEntity(
-                                ProductUnit::class,
-                                ['code' => 'kg']
-                            ),
-                            'precision' => 3,
-                        ]
-                    ],
-                ],
-                function ($product) {
-                    $this->assertNull($product);
-                },
-            ],
-            'existing product with, id not mapped for new fallback' => [
-                [
-                    'sku' => 'product-4',
-                    'attributeFamily' => 'default_family',
-                    'primaryUnitPrecision' => [
-                        'testEntity' => ProductUnitPrecision::class,
-                        'testProperties' => [
-                            'unit' => $this->getEntity(
-                                ProductUnit::class,
-                                ['code' => 'each']
-                            ),
-                            'precision' => 0,
-                        ]
-                    ],
-                    'names' => [
-                        [
-                            'testEntity' => ProductName::class,
-                            'testProperties' => ['string' => 'product-4 Default Name']
-                        ],
-                        [
-                            'testEntity' => ProductName::class,
-                            'testProperties' => [
-                                'string' => 'product-4 en_CA Name',
-                                'localization' => [
-                                    'testEntity' => Localization::class,
-                                    'testProperties' => [
-                                        'name' => 'English (United States)',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ]
-                ],
-                function (Product $product) {
-                    $this->assertNotNull($product->getId());
-                    $this->assertNotEmpty($product->getNames()->toArray());
-                    $this->assertNull($product->getNames()->last()->getId());
-                },
-            ],
-        ];
+        $this->strategy->setImportExportContext(new Context([]));
+        $this->strategy->setEntityName(Product::class);
+
+        $entity = new Product();
+        $entity->setSku('product-4');
+        $entity->setAttributeFamily($this->loadDefaultAttributeFamily());
+        $entity->setPrimaryUnitPrecision($this->getProductUnitPrecision($this->getProductUnit('each'), 0));
+        $entity->addName($this->getProductName('product-4 Default Name'));
+        $entity->addName($this->getProductName('product-4 en_CA Name', 'English (United States)'));
+        $entity->setInventoryStatus($this->loadInventoryStatus('in_stock'));
+        $entity->setOwner($this->loadFirstBusinessUnit());
+
+        /** @var Product $result */
+        $result = $this->strategy->process($entity);
+
+        $this->assertNotNull($result->getId());
+        $this->assertNotEmpty($result->getNames()->toArray());
+        $this->assertNull($result->getNames()->last()->getId());
     }
 
     private function assertLocalizedFallbackValues(array $expectedValues, Collection $actualValues): void
@@ -348,10 +286,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-1');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('es'));
-        $description->setText('new value');
-        $entity->addShortDescription($description);
+        $entity->addShortDescription($this->getProductShortDescription(null, 'new value', 'es'));
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
@@ -377,10 +312,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-1');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('es'));
-        $description->setFallback(FallbackType::PARENT_LOCALIZATION);
-        $entity->addShortDescription($description);
+        $entity->addShortDescription($this->getProductShortDescription(FallbackType::PARENT_LOCALIZATION, null, 'es'));
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
@@ -406,10 +338,9 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-1');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('en_CA'));
-        $description->setText('product-1.shortDescriptions.en_CA_new');
-        $entity->addShortDescription($description);
+        $entity->addShortDescription(
+            $this->getProductShortDescription(null, 'product-1.shortDescriptions.en_CA_new', 'en_CA')
+        );
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
@@ -438,10 +369,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-2');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('es'));
-        $description->setFallback(FallbackType::SYSTEM);
-        $entity->addShortDescription($description);
+        $entity->addShortDescription($this->getProductShortDescription(FallbackType::SYSTEM, null, 'es'));
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
@@ -470,10 +398,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-1');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('es'));
-        $description->setFallback(FallbackType::SYSTEM);
-        $entity->addShortDescription($description);
+        $entity->addShortDescription($this->getProductShortDescription(FallbackType::SYSTEM, null, 'es'));
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
@@ -502,10 +427,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-2');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('es'));
-        $description->setText('text');
-        $entity->addShortDescription($description);
+        $entity->addShortDescription($this->getProductShortDescription(null, 'text', 'es'));
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
@@ -534,11 +456,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-2');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('es'));
-        $description->setText('text');
-        $description->setFallback(FallbackType::SYSTEM);
-        $entity->addShortDescription($description);
+        $entity->addShortDescription($this->getProductShortDescription(FallbackType::SYSTEM, 'text', 'es'));
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
@@ -564,9 +482,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $entity = new Product();
         $entity->setSku('product-2');
-        $description = new ProductShortDescription();
-        $description->setLocalization($this->getReference('es'));
-        $entity->addShortDescription($description);
+        $entity->addShortDescription($this->getProductShortDescription(null, null, 'es'));
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);

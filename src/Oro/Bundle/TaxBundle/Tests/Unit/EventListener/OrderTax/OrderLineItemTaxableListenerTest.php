@@ -3,22 +3,22 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\OrderTax;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent;
 use Oro\Bundle\TaxBundle\EventListener\OrderTax\OrderLineItemTaxableListener;
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\TestUtils\ORM\Mocks\UnitOfWork;
+use Oro\Component\Testing\ReflectionUtil;
 
 class OrderLineItemTaxableListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
+    private $unitOfWork;
 
-    private UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork;
-
-    private OrderLineItemTaxableListener $listener;
+    /** @var OrderLineItemTaxableListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -87,8 +87,8 @@ class OrderLineItemTaxableListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnSkipOrderTaxRecalculationLineItemRequiredRecalculation(): void
     {
-        /** @var Order $order */
-        $order = $this->getEntity(Order::class, ['id' => 1]);
+        $order = new Order();
+        ReflectionUtil::setId($order, 1);
 
         $lineItem = new OrderLineItem();
         $lineItem->setOrder($order);
@@ -114,9 +114,12 @@ class OrderLineItemTaxableListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnSkipOrderTaxRecalculation(): void
     {
-        $order = $this->getEntity(Order::class, ['id' => 1]);
+        $order = new Order();
+        ReflectionUtil::setId($order, 1);
 
-        $lineItem = $this->getEntity(OrderLineItem::class, ['id' => 1, 'order' => $order]);
+        $lineItem = new OrderLineItem();
+        ReflectionUtil::setId($lineItem, 1);
+        $lineItem->setOrder($order);
 
         $taxable = new Taxable();
         $taxable->setClassName(OrderLineItem::class)

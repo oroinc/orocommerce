@@ -3,51 +3,32 @@
 .product-view {
     &-attribute {
         font-weight: $product-view-attribute-font-weight;
-    }
-
-    &__attribute-title {
-        margin: $product-view-attribute-title-offset;
-        font-weight: $product-view-attribute-title-font-weight;
-        font-size: $base-font-size--m;
+        display: inline-flex;
     }
 
     &__attribute-image {
-        width: 100%;
+        max-width: 100%;
         max-height: $desktop-product-view-attribute-image-size;
         border: $product-view-attribute-image-border;
-        transition: $product-view-attribute-image-transition;
     }
 
     &__attribute-images {
-        @include clearfix();
-
-        margin-bottom: $product-view-attribute-images-item-space;
-
         &-container {
-            @include clearfix();
-
-            margin-right: -$product-view-attribute-images-item-space;
-            margin-bottom: -$product-view-attribute-images-item-space;
+            display: flex;
+            flex-wrap: wrap;
+            gap: $product-view-attribute-images-item-space;
 
             &.show-less {
                 height: $desktop-product-view-attribute-image-size;
-                margin-bottom: 0;
                 overflow: hidden;
             }
         }
 
         &-item {
-            float: left;
+            display: flex;
             width: $desktop-product-view-attribute-image-size;
             height: $desktop-product-view-attribute-image-size;
-            margin-right: $product-view-attribute-images-item-space;
-            margin-bottom: $product-view-attribute-images-item-space;
             cursor: pointer;
-        }
-
-        .show-more-link {
-            margin-top: $product-view-attribute-images-show-more-link-margin-top;
-            float: right;
         }
     }
 
@@ -64,6 +45,7 @@
         &.show-less {
             .table-responsive table {
                 position: relative;
+                margin-bottom: 0;
 
                 &::after {
                     display: block;
@@ -77,10 +59,12 @@
                 }
             }
         }
+    }
 
-        .show-more-link {
-            float: right;
-        }
+    &__attribute-panel {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: $product-view-attribute-panel-offset-top;
     }
 }
 
@@ -167,20 +151,10 @@
                 width: $mobile-product-view-attribute-image-size;
                 height: $mobile-product-view-attribute-image-size;
             }
-
-            .show-more-link {
-                float: none;
-                display: block;
-                text-align: center;
-            }
         }
 
-        &__attribute-files {
-            .show-more-link {
-                float: none;
-                display: block;
-                text-align: center;
-            }
+        &__attribute-panel {
+            justify-content: center;
         }
     }
 }

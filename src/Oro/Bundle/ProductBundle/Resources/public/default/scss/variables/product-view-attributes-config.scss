@@ -5,12 +5,12 @@ $product-view-attribute-font-weight: font-weight('bold') !default;
 // Attributes containers
 $product-view-attributes-containers-border-color: get-color('additional', 'light') !default;
 $product-view-attributes-container-border-radius: 5px !default;
+
+// Attributes panel
+$product-view-attribute-panel-offset-top: $offset-y-m !default;
+
 // Attributes containers for mobile landscape
 $product-view-attributes-container-border-radius-mobile-l: 0 !default;
-
-// Attribute title
-$product-view-attribute-title-offset: $offset-y 0 !default;
-$product-view-attribute-title-font-weight: font-weight('bold') !default;
 
 // Attributes tabs
 $product-view-attributes-tabs: '.product-attributes-tabs' !default;
@@ -32,6 +32,7 @@ $product-view-attributes-tabs-link-after-margin-top-mobile-l: -2px !default;
 $product-view-attributes-tabs-link-after-font-size-mobile-l: $base-font-size--large !default;
 
 // Attributes tab content
+$product-view-attributes-tab-content-gap: $offset-y !default;
 $product-view-attributes-tab-content-offset-inner: 40px !default;
 $product-view-attributes-tab-content-attribute-weight: font-weight('bold') !default;
 
@@ -45,11 +46,9 @@ $mobile-product-view-attribute-image-size: 95px !default;
 
 // Image attribute
 $product-view-attribute-image-border: 1px solid get-color('additional', 'light') !default;
-$product-view-attribute-image-transition: border-color .5s !default;
 
 // Images attribute
 $product-view-attribute-images-item-space: 8px !default;
-$product-view-attribute-images-show-more-link-margin-top: 14px;
 
 // Files attribute
 $product-view-attribute-files-gradient-height: 48px !default;
