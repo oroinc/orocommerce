@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider\MultiShipping;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -18,7 +19,6 @@ use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\BusinessUnit;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadata;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProviderInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
 use PHPUnit\Framework\Constraint\Constraint;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -37,7 +37,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
     /** @var OwnershipMetadataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $metadataProvider;
 
-    /** @var EntityManagerMock */
+    /** @var EntityManagerInterface */
     private $em;
 
     /** @var SubOrderOwnerProvider */
@@ -151,12 +151,8 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         ArrayCollection $lineItems,
         string $groupingPath,
         ?int $configuredOwnerId
-    ): ?User {
+    ): void {
         $organization = $this->createMock(Organization::class);
-        $configuredOwner = null;
-        if (null !== $configuredOwnerId) {
-            $configuredOwner = $this->em->getReference(User::class, $configuredOwnerId);
-        }
 
         $this->subOrderOrganizationProvider->expects(self::once())
             ->method('getOrganization')
@@ -171,8 +167,6 @@ class SubOrderOwnerProviderTest extends OrmTestCase
                 self::identicalTo($organization)
             )
             ->willReturn($configuredOwnerId);
-
-        return $configuredOwner;
     }
 
     public function testGetOwnerWhenOwnerSourceIsObject(): void

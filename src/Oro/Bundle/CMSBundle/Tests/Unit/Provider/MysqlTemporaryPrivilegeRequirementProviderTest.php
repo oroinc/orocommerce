@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\CMSProBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
@@ -11,9 +11,8 @@ use Oro\Bundle\InstallerBundle\Enum\DatabasePlatform;
 use Oro\Component\TestUtils\ORM\Mocks\ConnectionMock;
 use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 use Oro\Component\TestUtils\ORM\Mocks\DriverMock;
-use PHPUnit\Framework\TestCase;
 
-class MysqlTemporaryPrivilegeRequirementProviderTest extends TestCase
+class MysqlTemporaryPrivilegeRequirementProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testCollectionSize()
     {
@@ -42,23 +41,24 @@ class MysqlTemporaryPrivilegeRequirementProviderTest extends TestCase
         $this->assertTrue($requirement->isFulfilled());
     }
 
-    protected function getManagerRegistryMock(): ManagerRegistry
+    protected function getDoctrine(): ManagerRegistry
     {
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->method('getConnectionNames')->willReturn(['default' => 'doctrine.dbal.default_connection']);
-        $registry->method('getConnections')->willReturn(['default' => $this->getConnectionMock()]);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getConnectionNames')
+            ->willReturn(['default' => 'doctrine.dbal.default_connection']);
+        $doctrine->expects(self::any())
+            ->method('getConnections')
+            ->willReturn(['default' => $this->getConnection()]);
 
-        return $registry;
+        return $doctrine;
     }
 
-    protected function getConnectionMock(): ConnectionMock
+    protected function getConnection(): ConnectionMock
     {
-        $platform = new class extends DatabasePlatformMock {
-            public function getName(): string
-            {
-                return DatabasePlatform::MYSQL;
-            }
-        };
+        $platform = new DatabasePlatformMock();
+        $platform->setName(DatabasePlatform::MYSQL);
+
         $connection = new ConnectionMock([], new DriverMock());
         $connection->setDatabasePlatform($platform);
 
@@ -67,7 +67,7 @@ class MysqlTemporaryPrivilegeRequirementProviderTest extends TestCase
 
     protected function getProviderWithoutPrivilege(): MysqlTemporaryPrivilegeRequirementProvider
     {
-        return new class($this->getManagerRegistryMock()) extends MysqlTemporaryPrivilegeRequirementProvider {
+        return new class($this->getDoctrine()) extends MysqlTemporaryPrivilegeRequirementProvider {
             protected function getGrantedPrivileges(Connection $connection): array
             {
                 return [];
@@ -77,7 +77,7 @@ class MysqlTemporaryPrivilegeRequirementProviderTest extends TestCase
 
     protected function getProviderWithPrivilege(): MysqlTemporaryPrivilegeRequirementProvider
     {
-        return new class($this->getManagerRegistryMock()) extends MysqlTemporaryPrivilegeRequirementProvider {
+        return new class($this->getDoctrine()) extends MysqlTemporaryPrivilegeRequirementProvider {
             protected function getGrantedPrivileges(Connection $connection): array
             {
                 return ['CREATE TEMPORARY TABLES'];
