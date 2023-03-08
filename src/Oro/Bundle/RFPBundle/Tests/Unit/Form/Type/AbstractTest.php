@@ -5,7 +5,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -71,7 +70,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function checkDateTimeFields($expectedData, $formData)
     {
         foreach ($this->dateTimeFields as $fieldName) {
-            if (EntityPropertyInfo::methodExists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
                 $expectedDateTimeFieldValue = $this->propertyAccessor->getValue($expectedData, $fieldName);
                 $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
                 $this->assertGreaterThanOrEqual($expectedDateTimeFieldValue, $actualDateTimeFieldValue);
@@ -83,7 +82,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $reflectionObj = new \ReflectionObject($expectedData);
         foreach ($this->dateTimeFields as $fieldName) {
-            if (EntityPropertyInfo::methodExists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
                 $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
                 $reflectionProperty = $reflectionObj->getProperty($fieldName);
                 $reflectionProperty->setAccessible(true);
