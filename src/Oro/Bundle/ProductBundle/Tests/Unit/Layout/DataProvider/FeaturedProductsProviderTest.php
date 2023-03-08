@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductSegmentProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\TestUtils\ORM\OrmTestCase;
+use Oro\Component\Testing\Unit\ORM\OrmTestCase;
 
 class FeaturedProductsProviderTest extends OrmTestCase
 {

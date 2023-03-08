@@ -16,7 +16,7 @@ use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserProfileType;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Component\TestUtils\ORM\Mocks\UnitOfWorkMock;
+use Oro\Component\Testing\Unit\ORM\Mocks\UnitOfWorkMock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;

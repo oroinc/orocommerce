@@ -8,9 +8,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Provider\MysqlTemporaryPrivilegeRequirementProvider;
 use Oro\Bundle\InstallerBundle\Enum\DatabasePlatform;
-use Oro\Component\TestUtils\ORM\Mocks\ConnectionMock;
-use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
-use Oro\Component\TestUtils\ORM\Mocks\DriverMock;
+use Oro\Component\Testing\Unit\ORM\Mocks\ConnectionMock;
+use Oro\Component\Testing\Unit\ORM\Mocks\DatabasePlatformMock;
+use Oro\Component\Testing\Unit\ORM\Mocks\DriverMock;
 
 class MysqlTemporaryPrivilegeRequirementProviderTest extends \PHPUnit\Framework\TestCase
 {
