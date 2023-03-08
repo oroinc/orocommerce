@@ -2,32 +2,21 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\DBAL\Types;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 use Oro\Bundle\SecurityBundle\Encoder\DefaultCrypter;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
 class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var SecureArrayType */
-    private $type;
-
-    /** @var SymmetricCrypterInterface */
-    private $crypter;
-
-    public static function setUpBeforeClass(): void
-    {
-        SecureArrayType::addType(
-            SecureArrayType::TYPE,
-            SecureArrayType::class
-        );
-    }
+    private SymmetricCrypterInterface $crypter;
+    private SecureArrayType $type;
 
     protected function setUp(): void
     {
-        $this->type = SecureArrayType::getType(SecureArrayType::TYPE);
-
         $this->crypter = new DefaultCrypter('key');
+
+        $this->type = new SecureArrayType();
     }
 
     public function testMcryptMissingError()
@@ -35,35 +24,28 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Crypter is not set');
 
-        $platform = new DatabasePlatformMock();
-
-        $this->type->convertToPHPValue('encoded_string', $platform);
+        $this->type->convertToPHPValue('encoded_string', $this->createMock(AbstractPlatform::class));
     }
 
     public function testConvertToPHPValue()
     {
-        /** @var SecureArrayType $secureArrayType */
-        $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setCrypter($this->crypter);
+        $this->type->setCrypter($this->crypter);
 
         $value = ['value' => 'value'];
-        $platform = new DatabasePlatformMock();
 
         $encrypted = $this->crypter->encryptData(json_encode($value, JSON_THROW_ON_ERROR));
 
         $this->assertEquals(
             $value,
-            $this->type->convertToPHPValue($encrypted, $platform)
+            $this->type->convertToPHPValue($encrypted, $this->createMock(AbstractPlatform::class))
         );
     }
 
     public function testConvertToPHPValueEmpty()
     {
-        /** @var SecureArrayType $secureArrayType */
-        $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setCrypter($this->crypter);
+        $this->type->setCrypter($this->crypter);
 
-        $platform = new DatabasePlatformMock();
+        $platform = $this->createMock(AbstractPlatform::class);
 
         $this->assertEquals([], $this->type->convertToPHPValue(null, $platform));
         $this->assertEquals([], $this->type->convertToPHPValue('', $platform));
@@ -71,25 +53,19 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertToPHPValueInvalidJson()
     {
-        /** @var SecureArrayType $secureArrayType */
-        $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setCrypter($this->crypter);
-
-        $platform = new DatabasePlatformMock();
+        $this->type->setCrypter($this->crypter);
 
         $encrypted = $this->crypter->encryptData('{"value":"value}');
 
-        $this->assertNull($this->type->convertToPHPValue($encrypted, $platform));
+        $this->assertNull($this->type->convertToPHPValue($encrypted, $this->createMock(AbstractPlatform::class)));
     }
 
     public function testConvertToDatabaseValue()
     {
-        /** @var SecureArrayType $secureArrayType */
-        $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setCrypter($this->crypter);
+        $this->type->setCrypter($this->crypter);
 
         $value = ['value' => 'value'];
-        $platform = new DatabasePlatformMock();
+        $platform = $this->createMock(AbstractPlatform::class);
 
         $this->assertNotEquals(
             $value,
@@ -104,18 +80,14 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertToDatabaseValueNull()
     {
-        /** @var SecureArrayType $secureArrayType */
-        $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setCrypter($this->crypter);
+        $this->type->setCrypter($this->crypter);
 
-        $platform = new DatabasePlatformMock();
-
-        $this->assertNull($this->type->convertToDatabaseValue(null, $platform));
+        $this->assertNull($this->type->convertToDatabaseValue(null, $this->createMock(AbstractPlatform::class)));
     }
 
     public function testTextIsUsedToStoreData()
     {
-        $platform = $this->createMock(DatabasePlatformMock::class);
+        $platform = $this->createMock(AbstractPlatform::class);
 
         $platform->expects($this->once())
             ->method('getClobTypeDeclarationSQL');
@@ -125,7 +97,6 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testRequiresSQLCommentHint()
     {
-        $platform = $this->createMock(DatabasePlatformMock::class);
-        $this->assertTrue($this->type->requiresSQLCommentHint($platform));
+        $this->assertTrue($this->type->requiresSQLCommentHint($this->createMock(AbstractPlatform::class)));
     }
 }
