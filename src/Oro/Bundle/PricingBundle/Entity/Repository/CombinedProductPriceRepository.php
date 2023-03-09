@@ -194,7 +194,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     public function hasDuplicatePrices(array $cpls = []): bool
     {
         $sql = <<<SQL
-            SELECT cpp1.id
+            SELECT 1
             FROM oro_price_product_combined cpp1 
             INNER JOIN oro_price_product_combined cpp2 ON 
                 cpp1.id < cpp2.id
@@ -222,7 +222,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             $sql = sprintf($sql, '');
         }
 
-        return $connection->executeQuery($sql, $parameters, $types)->fetchOne();
+        return (int)$connection->executeQuery($sql, $parameters, $types)->fetchOne();
     }
 
     /**
