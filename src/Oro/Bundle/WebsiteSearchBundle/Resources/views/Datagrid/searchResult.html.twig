@@ -1,8 +1,7 @@
 {% set result = record.getValue('resultsCount') %}
 {% set resultType = record.getValue('resultType') %}
 {% if resultType == 'products' %}
-    {{ oro.websitesearch.searchresulthistory.types.products.datagrid.result|trans({'%result%': result}) }}
-    {{ result ~ ' products' }}
+    {{ 'oro.websitesearch.searchresulthistory.types.products.datagrid.result'|trans({'%result%': result}) }}
 {% else %}
     {{ '' }}
 {% endif %}

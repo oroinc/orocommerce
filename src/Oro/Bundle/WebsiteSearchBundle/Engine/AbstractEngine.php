@@ -6,6 +6,7 @@ use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
+use Oro\Bundle\WebsiteSearchBundle\Event\AfterSearchEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -50,6 +51,11 @@ abstract class AbstractEngine implements EngineInterface
 
         $this->queryPlaceholderResolver->replace($query);
 
-        return $this->doSearch($query, $context);
+        $result = $this->doSearch($query, $context);
+
+        $afterEvent = new AfterSearchEvent($result, $query, $context);
+        $this->eventDispatcher->dispatch($afterEvent, AfterSearchEvent::EVENT_NAME);
+
+        return $result;
     }
 }

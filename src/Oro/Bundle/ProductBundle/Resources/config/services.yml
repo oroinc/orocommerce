@@ -2047,6 +2047,16 @@ services:
         arguments:
             - '@oro_product.model.builder.quick_add_row_collection'
 
+    oro_product.event_listener.frontend_product_search_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductSearchHistoryEventListener
+        parent: oro_website_search.event_listener.search_listener
+        calls:
+            - ['setSearchProductHandler', ['@oro_product.handler.search_product_handler']]
+            - ['addSupportedSearchQueryType', ['product_autocomplete']]
+            - ['addSupportedSearchQueryType', ['product_search']]
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.after_search, method: onSearchAfter }
+
     oro_product.event_listener.product_duplicate:
         class: Oro\Bundle\ProductBundle\EventListener\ProductDuplicateListener
         arguments:

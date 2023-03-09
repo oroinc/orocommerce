@@ -19,11 +19,16 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 /**
  * Stores search results history items.
  *
- * @ORM\Entity()
+ * @ORM\Entity(
+ *     repositoryClass="Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository"
+ * )
  * @ORM\Table(
  *     name="oro_website_search_result_history",
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="website_search_result_history_search_session_unq", columns={"search_session"})
+ *     },
  *     indexes={
- *         @ORM\Index(name="normalized_search_term_hash_idx", columns={"normalized_search_term_hash"})
+ *         @ORM\Index(name="website_search_result_history_sterm_hash_idx", columns={"normalized_search_term_hash"})
  *     }
  * )
  * @Config(
@@ -148,6 +153,28 @@ class SearchResultHistory implements
      * )
      */
     private $customerUser;
+
+    /**
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor"
+     * )
+     * @ORM\JoinColumn(
+     *     name="customer_visitor_id",
+     *     nullable=true,
+     *     onDelete="SET NULL"
+     * )
+     */
+    private $customerVisitor;
+
+    /**
+     * @ORM\Column(
+     *     name="search_session",
+     *     type="string",
+     *     length=36,
+     *     nullable=true
+     * )
+     */
+    private $searchSession;
 
     /**
      * @ORM\Column(

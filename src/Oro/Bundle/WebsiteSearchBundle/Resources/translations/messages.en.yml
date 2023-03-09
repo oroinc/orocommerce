@@ -9,30 +9,47 @@ oro:
                 label: 'Global Search Boost'
                 tooltip: 'Decimal value greater than zero. Empty value means no boosting. Any value (even 0.1) already applies boosting. Works only for searchable attributes.'
     websitesearch:
-        searchresulthistory:
-            entity_label: 'Search Result'
-            entity_plural_label: 'Search Results'
-            entity_grid_all_view_label: 'All %entity_plural_label%'
-            id.label: ID
-            normalized_search_term_hash.label: 'Normalized Search Term Hash'
-            result_type.label: 'Result Type'
-            results_count.label: 'Results Count'
-            website.label: Website
-            localization.label: Localization
-            customer.label: Customer
-            customer_user.label: 'Customer User'
-            search_term.label: 'Search Term'
-            owner.label: Owner
-            organization.label: Organization
-            created_at: Searched At
-            types:
-                products:
-                    datagrid:
-                        result: '%result% products'
-            reports:
-                number_of_times_searched.title: Number Of Times Searched
-                number_of_products.title: Times Returned Products
-                number_of_empty_results.title: Times Returned Empty Result
+        searchresult:
+            entity:
+                searchtermreport:
+                    entity_label: 'Search Term Report'
+                    entity_plural_label: 'Search Term Reports'
+                    entity_grid_all_view_label: 'All %entity_plural_label%'
+                    id.label: ID
+                    search_term.label: 'Search Term'
+                    times_searched.label: 'Number of Times Searched'
+                    times_returned_results.label: 'Times Returned Products'
+                    times_empty.label: 'Times Returned Empty Result'
+                    search_date.label: 'Search Date'
+                    owner.label: Owner
+                    organization.label: Organization
+                searchresulthistory:
+                    entity_label: 'Search Result'
+                    entity_plural_label: 'Search Results'
+                    entity_grid_all_view_label: 'All %entity_plural_label%'
+                    id.label: ID
+                    normalized_search_term_hash.label: 'Normalized Search Term Hash'
+                    result_type.label: 'Result Type'
+                    results_count.label: 'Results Count'
+                    website.label: Website
+                    localization.label: Localization
+                    customer.label: Customer
+                    customer_user.label: 'Customer User'
+                    customer_visitor.label: 'Customer Visitor'
+                    customer_visitor_id.label: 'Customer Visitor ID'
+                    search_session.label: 'Search Session ID'
+                    search_term.label: 'Search Term'
+                    owner.label: Owner
+                    organization.label: Organization
+                    created_at.label: Searched At
+                    types:
+                        products:
+                            datagrid:
+                                result: '%result% products'
+                    reports:
+                        number_of_times_searched.title: Number Of Times Searched
+                        number_of_products.title: Times Returned Products
+                        number_of_empty_results.title: Times Returned Empty Result
         menu:
             search_result_histories: 'Search Results'
         shortcut:

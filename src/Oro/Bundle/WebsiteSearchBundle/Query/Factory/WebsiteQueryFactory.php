@@ -22,10 +22,10 @@ class WebsiteQueryFactory implements QueryFactoryInterface
     {
         $builder = new YamlToSearchQueryConverter();
 
-        $queryConfig = [];
-        if (isset($config['query'])) {
-            $queryConfig = ['query' => $config['query']];
-        }
+        $queryConfig = [
+            'query' => $config['query'] ?? [],
+            'hints' => $config['hints'] ?? []
+        ];
 
         $builder->process($query, $queryConfig);
     }

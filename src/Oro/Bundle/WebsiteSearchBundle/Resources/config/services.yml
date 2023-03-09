@@ -348,3 +348,21 @@ services:
 
     oro_website_search.formatter.decimal_flat_value_formatter:
         class: 'Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter'
+
+    oro_website_search.search_result_history.manager:
+        class: Oro\Bundle\WebsiteSearchBundle\Manager\SearchResultHistoryManager
+        arguments:
+            - '@Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository'
+            - '@security.token_storage'
+            - '@oro_website.manager'
+            - '@oro_locale.helper.localization'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - {name: monolog.logger, channel: oro_website_search}
+
+    oro_website_search.event_listener.search_listener:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\SearchHistoryEventListener
+        abstract: true
+        arguments:
+            - '@oro_website_search.search_result_history.manager'
