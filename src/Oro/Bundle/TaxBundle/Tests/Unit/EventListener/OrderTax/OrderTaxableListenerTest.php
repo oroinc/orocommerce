@@ -3,22 +3,22 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\OrderTax;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent;
 use Oro\Bundle\TaxBundle\EventListener\OrderTax\OrderTaxableListener;
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\TestUtils\ORM\Mocks\UnitOfWork;
+use Oro\Component\Testing\ReflectionUtil;
 
 class OrderTaxableListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
+    private $unitOfWork;
 
-    private UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork;
-
-    private OrderTaxableListener $listener;
+    /** @var OrderTaxableListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -85,11 +85,13 @@ class OrderTaxableListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnSkipOrderTaxRecalculationNewLineItem(): void
     {
         $lineItem = new OrderLineItem();
-        $order = $this->getEntity(Order::class, ['id' => 1, 'lineItems' => [$lineItem]]);
+        $order = new Order();
+        ReflectionUtil::setId($order, 1);
+        $order->addLineItem($lineItem);
 
         $taxable = new Taxable();
-        $taxable->setClassName(Order::class)
-            ->setIdentifier(1);
+        $taxable->setClassName(Order::class);
+        $taxable->setIdentifier(1);
 
         $this->unitOfWork->expects(self::once())
             ->method('tryGetById')
@@ -108,11 +110,12 @@ class OrderTaxableListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnSkipOrderTaxRecalculation(): void
     {
-        $taxable = new Taxable();
-        $taxable->setClassName(Order::class)
-            ->setIdentifier(1);
+        $order = new Order();
+        ReflectionUtil::setId($order, 1);
 
-        $order = $this->getEntity(Order::class, ['id' => 1]);
+        $taxable = new Taxable();
+        $taxable->setClassName(Order::class);
+        $taxable->setIdentifier(1);
 
         $this->unitOfWork->expects(self::once())
             ->method('tryGetById')
