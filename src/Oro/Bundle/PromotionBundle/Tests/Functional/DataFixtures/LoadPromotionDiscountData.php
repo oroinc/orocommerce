@@ -5,6 +5,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\Repository\OrganizationRepository;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
@@ -44,6 +46,9 @@ class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwar
 
     public function load(ObjectManager $manager)
     {
+        /** @var OrganizationRepository $organizationRepository */
+        $organizationRepository = $manager->getRepository(Organization::class);
+        $organization = $organizationRepository->getFirst();
         $userRepository = $manager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL]);
 
@@ -61,6 +66,7 @@ class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwar
             $promotion->setOwner($user);
             $promotion->setRule($rule);
             $promotion->setUseCoupons(!empty($promotionData['useCoupons']) ? $promotionData['useCoupons'] : false);
+            $promotion->setOrganization($organization);
 
             if (array_key_exists('schedules', $promotionData)) {
                 foreach ($promotionData['schedules'] as $schedule) {

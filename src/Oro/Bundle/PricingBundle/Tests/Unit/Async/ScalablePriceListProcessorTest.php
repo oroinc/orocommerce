@@ -192,7 +192,10 @@ class ScalablePriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext = $this->createMock(DependentJobContext::class);
         $dependentContext->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+            ->with(
+                RunCombinedPriceListPostProcessingStepsTopic::getName(),
+                ['relatedJobId' => 10, 'cpls' => [$cpl1->getId()]]
+            );
         $this->dependentJob->expects($this->once())
             ->method('createDependentJobContext')
             ->with($rootJob)
@@ -276,7 +279,10 @@ class ScalablePriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext = $this->createMock(DependentJobContext::class);
         $dependentContext->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+            ->with(
+                RunCombinedPriceListPostProcessingStepsTopic::getName(),
+                ['relatedJobId' => 10, 'cpls' => [10]]
+            );
         $this->dependentJob->expects($this->once())
             ->method('createDependentJobContext')
             ->with($rootJob)

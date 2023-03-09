@@ -5,6 +5,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\Repository\OrganizationRepository;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -34,6 +36,9 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
 
     public function load(ObjectManager $manager)
     {
+        /** @var OrganizationRepository $organizationRepository */
+        $organizationRepository = $manager->getRepository(Organization::class);
+        $organization = $organizationRepository->getFirst();
         $userRepository = $manager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL]);
 
@@ -44,6 +49,7 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
             $rule->setEnabled($promotionData['rule']['enabled']);
 
             $promotion = new Promotion();
+            $promotion->setOrganization($organization);
             $promotion->setOwner($user);
             $promotion->setRule($rule);
             $promotion->setUseCoupons($promotionData['useCoupons']);

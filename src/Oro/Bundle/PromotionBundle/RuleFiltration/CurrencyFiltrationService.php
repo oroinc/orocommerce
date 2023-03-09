@@ -8,6 +8,11 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
+/**
+ * Filtration promotions by currencies.
+ *
+ * @deprecated This class will be removed in 5.1. Use PromotionRepository::getAvailablePromotions instead.
+ */
 class CurrencyFiltrationService extends AbstractSkippableFiltrationService
 {
     /**

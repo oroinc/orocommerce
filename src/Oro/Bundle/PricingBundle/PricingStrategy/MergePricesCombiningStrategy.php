@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\PricingStrategy;
 
 use Doctrine\DBAL\Driver\Exception;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -73,8 +74,28 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         array $products = [],
         ProgressBar $progressBar = null
     ) {
-        if (count($priceListRelations) > 0) {
-            $progress = 0;
+        if (count($priceListRelations) == 0) {
+            return;
+        }
+
+        $progress = 0;
+        if (count($priceListRelations) > 1 && $this->canUseTempTable($combinedPriceList)) {
+            $this->moveFirstPriceListPricesWithTempTable(
+                $combinedPriceList,
+                $priceListRelations,
+                $products,
+                $progress,
+                $progressBar
+            );
+
+            $this->processPriceListsWithTempTable(
+                $combinedPriceList,
+                $priceListRelations,
+                $products,
+                $progress,
+                $progressBar
+            );
+        } else {
             $this->moveFirstPriceListPrices(
                 $combinedPriceList,
                 $priceListRelations,
@@ -83,19 +104,9 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
                 $progressBar
             );
 
-            if ($this->canUseTempTable($combinedPriceList)) {
-                $this->processPriceListsWithTempTable(
-                    $combinedPriceList,
-                    $priceListRelations,
-                    $products,
-                    $progress,
-                    $progressBar
-                );
-            } else {
-                foreach ($priceListRelations as $priceListRelation) {
-                    $this->moveProgress($progressBar, $progress, $priceListRelation);
-                    $this->processRelation($combinedPriceList, $priceListRelation, $products);
-                }
+            foreach ($priceListRelations as $priceListRelation) {
+                $this->moveProgress($progressBar, $progress, $priceListRelation);
+                $this->processRelation($combinedPriceList, $priceListRelation, $products);
             }
         }
     }
@@ -127,6 +138,24 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         );
     }
 
+    private function moveFirstPriceListPricesWithTempTable(
+        CombinedPriceList $combinedPriceList,
+        array &$priceListRelations,
+        array $products,
+        int $progress,
+        ?ProgressBar $progressBar
+    ): void {
+        $firstRelation = array_shift($priceListRelations);
+        $this->moveProgress($progressBar, $progress, $firstRelation);
+        $this->getCombinedProductPriceRepository()->copyPricesByPriceListWithTempTable(
+            $this->tempTableManipulator,
+            $combinedPriceList,
+            $firstRelation->getPriceList(),
+            $firstRelation->isMergeAllowed(),
+            $products
+        );
+    }
+
     private function moveFirstPriceListPrices(
         CombinedPriceList $combinedPriceList,
         array &$priceListRelations,
@@ -151,7 +180,9 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
      */
     private function canUseTempTable(CombinedPriceList $combinedPriceList): bool
     {
-        if (!$this->getInsertSelectExecutor() instanceof ShardQueryExecutorNativeSqlInterface) {
+        if (!$this->getInsertSelectExecutor() instanceof ShardQueryExecutorNativeSqlInterface
+            || $this->registry->getConnection()->getDatabasePlatform() instanceof MySqlPlatform
+        ) {
             return false;
         }
 
@@ -179,6 +210,24 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
             $this->moveProgress($progressBar, $progress, $priceListRelation);
             $this->processRelationWithTempTable($combinedPriceList, $priceListRelation, $products);
         }
+
+        // Copy prepared prices from temp to persistent CPL table and Drop temp table
+        $this->tempTableManipulator->copyDataFromTemplateTableToEntityTable(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id',
+            ]
+        );
 
         $this->tempTableManipulator->dropTempTableForEntity(
             CombinedProductPrice::class,
