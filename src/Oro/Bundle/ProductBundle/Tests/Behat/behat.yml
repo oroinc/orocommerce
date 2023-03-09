@@ -1556,6 +1556,48 @@ oro_behat_extension:
     SchemaOrg Description:
       selector: 'meta[itemprop="description"]'
 
+    Draggable Product1 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU1")]/..'
+
+    Draggable Product2 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU2")]/..'
+
+    Draggable Product3 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU3")]/..'
+
+    Draggable Product4 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU4")]/..'
+
+    Draggable Product5 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU5")]/..'
+
+    Draggable Separator Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr[contains(@class, "draggable-separator")]'
+
+    Drop Zone Move to Top:
+      selector: '.drop-zones-menu [data-zone="toTop"]'
+
+    Drop Zone Move to Bottom:
+      selector: '.drop-zones-menu [data-zone="toBottom"]'
+
+    Drop Zone Remove from Sorted:
+      selector: '.drop-zones-menu [data-zone="removeSortOrder"]'
+
+    Drop Zone Exclude from Collection:
+      selector: '.drop-zones-menu [data-zone="excludeFromCollection"]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
