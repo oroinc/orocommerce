@@ -891,6 +891,47 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
     product_kit3_item1_label:
         string: 'Product Kit 3 Item 1'
 
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@product1'
+        sortOrder: 1
+
+    product_kit1_item1_product3:
+        kitItem: '@product_kit1_item1'
+        product: '@product3'
+        sortOrder: 2
+
+    product_kit1_item2_product3:
+        kitItem: '@product_kit1_item2'
+        product: '@product3'
+        sortOrder: 1
+
+    product_kit2_item1_product3:
+        kitItem: '@product_kit2_item1'
+        product: '@product3'
+        sortOrder: 1
+
+    product_kit2_item1_product4:
+        kitItem: '@product_kit2_item1'
+        product: '@product4'
+        sortOrder: 2
+
+    product_kit2_item2_product4:
+        kitItem: '@product_kit2_item2'
+        product: '@product4'
+        sortOrder: 1
+
+    product_kit2_item3_product1:
+        kitItem: '@product_kit2_item3'
+        product: '@product1'
+        sortOrder: 1
+
+    product_kit3_item1_product1:
+        kitItem: '@product_kit3_item1'
+        product: '@product1'
+        sortOrder: 1
+
 Oro\Bundle\ProductBundle\Entity\ProductKitItem:
     product_kit1_item1:
         optional: false
@@ -902,8 +943,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         __calls:
             - addLabel: ['@product_kit1_item1_label']
             - addLabel: ['@product_kit1_item1_label_es']
-            - addProduct: ['@product1']
-            - addProduct: ['@product3']
+            - addKitItemProduct: ['@product_kit1_item1_product1']
+            - addKitItemProduct: ['@product_kit1_item1_product3']
 
     product_kit1_item2:
         optional: true
@@ -915,7 +956,7 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         __calls:
             - addLabel: ['@product_kit1_item2_label']
             - addLabel: ['@product_kit1_item2_label_es']
-            - addProduct: ['@product3']
+            - addKitItemProduct: ['@product_kit1_item2_product3']
 
     product_kit2_item1:
         optional: false
@@ -926,8 +967,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         productUnit: '@item'
         __calls:
             - addLabel: ['@product_kit2_item1_label']
-            - addProduct: ['@product3']
-            - addProduct: ['@product4']
+            - addKitItemProduct: ['@product_kit2_item1_product3']
+            - addKitItemProduct: ['@product_kit2_item1_product4']
 
     product_kit2_item2:
         optional: false
@@ -938,7 +979,7 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         productUnit: '@item'
         __calls:
             - addLabel: ['@product_kit2_item2_label']
-            - addProduct: ['@product4']
+            - addKitItemProduct: ['@product_kit2_item2_product4']
 
     product_kit2_item3:
         optional: false
@@ -949,7 +990,7 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         productUnit: '@set'
         __calls:
             - addLabel: ['@product_kit2_item3_label']
-            - addProduct: ['@product1']
+            - addKitItemProduct: ['@product_kit2_item3_product1']
 
     product_kit3_item1:
         optional: false
@@ -960,4 +1001,4 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         productUnit: '@item'
         __calls:
             - addLabel: ['@product_kit3_item1_label']
-            - addProduct: ['@product1']
+            - addKitItemProduct: ['@product_kit3_item1_product1']

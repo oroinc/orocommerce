@@ -61,7 +61,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
             [
                 'title' => 'only simple products in product kit item products collection constraint',
                 'detail' => 'Only simple product can be used in kit options.',
-                'source' => ['pointer' => '/data/relationships/products/data/0'],
+                'source' => ['pointer' => '/data/relationships/kitItemProducts/data/0'],
             ],
             $response
         );
@@ -81,12 +81,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
                 [
                     'title' => 'product kit item unit available for specified products constraint',
                     'detail' => 'Unit of quantity should be available for all specified products.',
-                    'source' => ['pointer' => '/data/relationships/products/data/0'],
-                ],
-                [
-                    'title' => 'product kit item unit available for specified products constraint',
-                    'detail' => 'Unit of quantity should be available for all specified products.',
-                    'source' => ['pointer' => '/data/relationships/products/data/1'],
+                    'source' => ['pointer' => '/data/relationships/productUnit/data'],
                 ],
             ],
             $response
@@ -137,7 +132,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
     public function testCreateProductKitItemWithoutLabels(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
-        unset($content['data']['relationships']['labels'], $content['included']);
+        unset($content['data']['relationships']['labels'], $content['included'][0]);
         $response = $this->post(['entity' => 'productkititems'], $content, [], false);
 
         $this->assertResponseValidationError(
@@ -198,17 +193,17 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitItemWithoutProducts(): void
+    public function testCreateProductKitItemWithoutKitItemProducts(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
-        unset($content['data']['relationships']['products']);
+        unset($content['data']['relationships']['kitItemProducts']);
         $response = $this->post(['entity' => 'productkititems'], $content, [], false);
 
         $this->assertResponseValidationError(
             [
                 'title' => 'count constraint',
                 'detail' => 'Each kit option should have at least one product specified.',
-                'source' => ['pointer' => '/data/relationships/products/data'],
+                'source' => ['pointer' => '/data/relationships/kitItemProducts/data'],
             ],
             $response
         );
@@ -366,10 +361,10 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductKitItemWithEmptyCollection(): void
+    public function testUpdateProductKitItemWithEmptyKitItemProducts(): void
     {
         $content = $this->getRequestData('update_product_kit_item.yml');
-        $content['data']['relationships']['products'] = ['data' => []];
+        $content['data']['relationships']['kitItemProducts'] = ['data' => []];
 
         $response = $this->patch(
             ['entity' => 'productkititems', 'id' => '@product_kit1_item2->id'],
@@ -416,7 +411,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateProductsRelationshipWithEmptyCollection(): void
+    public function testTryToUpdateKitItemProductsRelationshipWithEmptyCollection(): void
     {
         /** @var Product $product */
         $productKit = $this->getReference('product_kit3');
@@ -424,7 +419,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         $productKitItem = $productKit->getKitItems()->first();
 
         $response = $this->patchRelationship(
-            ['entity' => 'productkititems', 'id' => $productKitItem->getId(), 'association' => 'products'],
+            ['entity' => 'productkititems', 'id' => $productKitItem->getId(), 'association' => 'kitItemProducts'],
             [
                 'data' => [],
             ],
@@ -441,21 +436,21 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryDeleteProductsRelationshipWhenItIsLast(): void
+    public function testTryDeleteKitItemProductRelationshipWhenItIsLast(): void
     {
         /** @var Product $product */
         $productKit = $this->getReference('product_kit3');
         /** @var ProductKitItem $productKitItem */
         $productKitItem = $productKit->getKitItems()->first();
-        $product = $productKitItem->getProducts()->first();
+        $kitItemProduct = $productKitItem->getKitItemProducts()->first();
 
         $response = $this->deleteRelationship(
-            ['entity' => 'productkititems', 'id' => $productKitItem->getId(), 'association' => 'products'],
+            ['entity' => 'productkititems', 'id' => $productKitItem->getId(), 'association' => 'kitItemProducts'],
             [
                 'data' => [
                     [
-                        'type' => 'products',
-                        'id' => $product->getId(),
+                        'type' => 'productkititemproducts',
+                        'id' => $kitItemProduct->getId(),
                     ],
                 ],
             ],

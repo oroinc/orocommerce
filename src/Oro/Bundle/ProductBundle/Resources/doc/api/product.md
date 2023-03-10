@@ -238,22 +238,108 @@ Example:
       }
 ```
 
-Also, a product kit must have at least one kit item that must be specified using "kitItems" key in the **relationships** section of the product.
+Add images definition in the **data** section. Example:
+Also, a product kit must have at least one kit item in the **data** section. Example:
 
 Example:
 
 ```JSON
-      "relationships": {
+      "data": {
+          ...
+          "relationships": {
+              ...
+              "kitItems": {
+                  "data": [
+                      {
+                          "type": "productkititems",
+                          "id": "productkititem-1"
+                      }
+                  ]
+              }
+          }
+      }
+```
+
+And the corresponding kit item with kit item label and kit item product in the **included** section. Example:
+
+```JSON
+    "included": [
         ...
-        "kitItems": {
-            "data": [
-                {
-                    "type": "productkititems",
-                    "id": "kit-item-1"
+        {
+            "type": "productkititems",
+            "id":"productkititem-1",
+            "attributes": {
+                "optional": false
+            },
+            "relationships": {
+                "productKit": {
+                    "data": {
+                        "type": "products",
+                        "id": "42"
+                    }
+                },
+                "labels": {
+                    "data": [
+                        {
+                            "type": "productkititemlabels",
+                            "id": "productkititemlabel-1"
+                        }
+                    ]
+                },
+                "kitItemProducts": {
+                    "data": [
+                        {
+                            "type": "productkititemproducts",
+                            "id": "productkititemproduct-1"
+                        }
+                    ]
+                },
+                "productUnit": {
+                    "data": {
+                        "type": "productunits",
+                        "id": "item"
+                    }
                 }
-            ]
+            }
+        },
+        {
+            "type": "productkititemlabels",
+            "id": "productkititemlabel-1",
+            "attributes": {
+                "fallback": null,
+                "string": "Product Kit Item 1 Label"
+            },
+            "relationships": {
+                "productKitItem": {
+                    "data": {
+                        "type": "productkititems",
+                        "id": "productkititem-1"
+                    }
+                }
+            }
+        },
+        {
+            "type": "productkititemproducts",
+            "id": "productkititemproduct-1",
+            "attributes":{
+                "sortOrder": "1"
+            },
+            "relationships": {
+                "kitItem": {
+                    "data": {
+                        "type": "productkititems",
+                        "id": "productkititem-1"
+                    }
+                },
+                "product": {
+                    "data": {
+                        "type": "products",
+                        "id": "4242"
+                    }
+                }
+            }
         }
-      },
+    ]
 ```
 
 #### 8. Using product images
@@ -1006,7 +1092,7 @@ Example:
           "id": "in_stock"
         }
       },
-      "pageTempalte": {
+      "pageTemplate": {
         "data": {
           "type": "entityfieldfallbackvalues",
           "id": "355"
@@ -2534,7 +2620,83 @@ Example:
   "data": [
     {
       "type": "productkititems",
-      "id": "1"
+      "id": "productkititem-1"
+    }
+  ],
+  "included": [
+    {
+      "type": "productkititems",
+      "id":"productkititem-1",
+      "attributes": {
+        "optional": false
+      },
+      "relationships": {
+        "productKit": {
+          "data": {
+            "type": "products",
+            "id": "42"
+          }
+        },
+        "labels": {
+          "data": [
+            {
+              "type": "productkititemlabels",
+              "id": "productkititemlabel-1"
+            }
+          ]
+        },
+        "kitItemProducts": {
+          "data": [
+            {
+              "type": "productkititemproducts",
+              "id": "productkititemproduct-1"
+            }
+          ]
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "item"
+          }
+        }
+      }
+    },
+    {
+      "type": "productkititemlabels",
+      "id": "productkititemlabel-1",
+      "attributes": {
+        "fallback": null,
+        "string": "Product Kit Item 1 Label"
+      },
+      "relationships": {
+        "productKitItem": {
+          "data": {
+            "type": "productkititems",
+            "id": "productkititem-1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-1",
+      "attributes":{
+        "sortOrder": "1"
+      },
+      "relationships": {
+        "kitItem": {
+          "data": {
+            "type": "productkititems",
+            "id": "productkititem-1"
+          }
+        },
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "4242"
+          }
+        }
+      }
     }
   ]
 }

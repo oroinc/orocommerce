@@ -42,11 +42,11 @@ Example:
             }
           ]
       },
-      "products": {
+      "kitItemProducts": {
           "data": [
             {
-              "type": "products",
-              "id": "4242"
+              "type": "productkititemproducts",
+              "id": "productkititemproduct-1"
             }
           ]
       },
@@ -60,17 +60,38 @@ Example:
   },
   "included": [
     {
-      "type":"productkititemlabels",
-      "id":"productkititemlabel-1",
-      "attributes":{
-        "fallback":null,
-        "string":"Product Kit Item 1 Label"
+      "type": "productkititemlabels",
+      "id": "productkititemlabel-1",
+      "attributes": {
+        "fallback": null,
+        "string": "Product Kit Item 1 Label"
       },
-      "relationships":{
-        "productKitItem":{
-          "data":{
-            "type":"productkititems",
-            "id":"productkititem-1"
+      "relationships": {
+        "productKitItem": {
+          "data": {
+            "type": "productkititems",
+            "id": "productkititem-1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-1",
+      "attributes":{
+        "sortOrder": "1"
+      },
+      "relationships": {
+        "kitItem": {
+          "data": {
+            "type": "productkititems",
+            "id": "productkititem-1"
+          }
+        },
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "4242"
           }
         }
       }
@@ -140,21 +161,17 @@ Cannot be changed once already set.
 
 **The read-only field.**
 
-### products
+### kitItemProducts
 
 #### create
 
 {@inheritdoc}
-
-Only the products of type "simple" are allowed.
 
 **The required field.**
 
 #### update
 
 {@inheritdoc}
-
-Only the products of type "simple" are allowed.
 
 ### productUnit
 
@@ -214,19 +231,19 @@ Retrieve the product of type "kit" owning the product kit item.
 
 Retrieve the ID of the product of type "kit" owning the product kit item.
 
-### products
+### kitItemProducts
 
 #### get_subresource
 
-Retrieve the records for the products of a specific product kit item record.
+Retrieve the kit item products records for a specific product kit item record.
 
 #### get_relationship
 
-Retrieve a list of IDs for the products of a specific product kit item record.
+Retrieve a list of IDs for the kit item products of a specific product kit item record.
 
 #### add_relationship
 
-Set the products of a specific product kit item record.
+Set the kit item products for a specific product kit item record.
 
 {@request:json_api}
 Example:
@@ -235,12 +252,44 @@ Example:
 {
   "data": [
     {
-      "type": "products",
-      "id": "1"
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-1"
     },
     {
-      "type": "products",
-      "id": "2"
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-2"
+    }
+  ],
+  "included": [
+    {
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-1",
+      "attributes":{
+        "sortOrder": "1"
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "4242"
+          }
+        }
+      }
+    },
+    {
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-2",
+      "attributes":{
+        "sortOrder": "2"
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "4343"
+          }
+        }
+      }
     }
   ]
 }
@@ -249,7 +298,7 @@ Example:
 
 #### update_relationship
 
-Replace the products for a specific product kit item. The products collection cannot be empty.
+Replace the kit item products for a specific product kit item. The collection cannot be empty.
 
 {@request:json_api}
 Example:
@@ -258,12 +307,44 @@ Example:
 {
   "data": [
     {
-      "type": "products",
-      "id": "3"
+      "type": "productkititemproducts",
+      "id": "productkititemproducts-3"
     },
     {
-      "type": "products",
-      "id": "4"
+      "type": "productkititemproducts",
+      "id": "productkititemproducts-4"
+    }
+  ],
+  "included": [
+    {
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-3",
+      "attributes":{
+        "sortOrder": "1"
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "4242"
+          }
+        }
+      }
+    },
+    {
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-4",
+      "attributes":{
+        "sortOrder": "2"
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "4343"
+          }
+        }
+      }
     }
   ]
 }
@@ -272,9 +353,9 @@ Example:
 
 #### delete_relationship
 
-Remove the products from a specific product kit item record.
+Remove the kit item products from a specific product kit item record.
 
-The last product cannot be deleted from the product kit item.
+The last kit item product cannot be deleted from the product kit item.
 
 {@request:json_api}
 Example:
@@ -283,12 +364,12 @@ Example:
 {
   "data": [
     {
-      "type": "products",
-      "id": "1"
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-1"
     },
     {
-      "type": "products",
-      "id": "2"
+      "type": "productkititemproducts",
+      "id": "productkititemproduct-2"
     }
   ]
 }

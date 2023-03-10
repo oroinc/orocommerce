@@ -2,6 +2,7 @@ data:
     type: products
     id: new
     attributes:
+        category_sort_order: null
         availability_date: null
         testAttrInvisible: null
         testAttrBoolean: null
@@ -70,16 +71,16 @@ data:
             data:
                 -
                     type: productshortdescriptions
-                    id: new
+                    id: 'new'
                 -
                     type: productshortdescriptions
-                    id: new
+                    id: 'new'
                 -
                     type: productshortdescriptions
-                    id: new
+                    id: 'new'
                 -
                     type: productshortdescriptions
-                    id: new
+                    id: 'new'
         images:
             data: []
         attributeFamily:
@@ -92,30 +93,30 @@ data:
             data:
                 -
                     type: productkititems
-                    id: new
+                    id: 'new'
                 -
                     type: productkititems
-                    id: new
+                    id: 'new'
         slugPrototypes:
             data:
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
         category:
             data: null
         pageTemplate:
             data:
                 type: entityfieldfallbackvalues
-                id: new
+                id: 'new'
         taxCode:
             data: null
         manageInventory:
@@ -132,6 +133,20 @@ data:
             data: null
         decrementQuantity:
             data: null
+        metaKeywords:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
         backOrder:
             data: null
         isUpcoming:
@@ -140,51 +155,37 @@ data:
             data:
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
         metaDescriptions:
             data:
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
-        metaKeywords:
-            data:
-                -
-                    type: localizedfallbackvalues
-                    id: new
-                -
-                    type: localizedfallbackvalues
-                    id: new
-                -
-                    type: localizedfallbackvalues
-                    id: new
-                -
-                    type: localizedfallbackvalues
-                    id: new
-        testAttrManyToMany:
-            data: []
-        default_testAttrManyToMany:
-            data: null
+                    id: 'new'
         testAttrManyToOne:
             data: null
         testToOneId:
+            data: null
+        testAttrManyToMany:
+            data: []
+        default_testAttrManyToMany:
             data: null
         testToManyId:
             data: []
@@ -194,16 +195,16 @@ data:
             data:
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
                 -
                     type: localizedfallbackvalues
-                    id: new
+                    id: 'new'
         default_contact:
             data: null
         inventory_status:
@@ -229,7 +230,7 @@ data:
 included:
     -
         type: entityfieldfallbackvalues
-        id: new
+        id: 'new'
         meta:
             includeId: products-kit1-page-template-short
         attributes:
@@ -239,7 +240,7 @@ included:
                 oro_product_frontend_product_view: short
     -
         type: productnames
-        id: new
+        id: 'new'
         meta:
             includeId: products-kit1-productnames-default
         attributes:
@@ -249,12 +250,12 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             localization:
                 data: null
     -
         type: productnames
-        id: new
+        id: 'new'
         meta:
             includeId: products-kit1-productnames-es
         attributes:
@@ -264,14 +265,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             localization:
                 data:
                     type: localizations
                     id: '<toString(@es->id)>'
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: products-kit1-productunitprecisions-item
         attributes:
@@ -282,14 +283,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@item->code)>'
     -
         type: productnames
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products1-productnames-default
         attributes:
@@ -299,12 +300,12 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             localization:
                 data: null
     -
         type: productnames
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products2-productnames-default
         attributes:
@@ -314,12 +315,12 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             localization:
                 data: null
     -
         type: productnames
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems2-products1-productnames-default
         attributes:
@@ -329,12 +330,12 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             localization:
                 data: null
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products1-productunitprecisions-each
         attributes:
@@ -345,14 +346,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@each->code)>'
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products1-productunitprecisions-piece
         attributes:
@@ -363,14 +364,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@piece->code)>'
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products1-productunitprecisions-item
         attributes:
@@ -381,14 +382,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@item->code)>'
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products2-productunitprecisions-each
         attributes:
@@ -399,14 +400,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@each->code)>'
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products2-productunitprecisions-item
         attributes:
@@ -417,14 +418,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@item->code)>'
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems2-products1-productunitprecisions-piece
         attributes:
@@ -435,14 +436,14 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@piece->code)>'
     -
         type: productunitprecisions
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems2-products1-productunitprecisions-item
         attributes:
@@ -453,17 +454,18 @@ included:
             product:
                 data:
                     type: products
-                    id: new
+                    id: 'new'
             unit:
                 data:
                     type: productunits
                     id: '<toString(@item->code)>'
     -
         type: products
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products1
         attributes:
+            category_sort_order: null
             availability_date: null
             testAttrInvisible: null
             testAttrBoolean: null
@@ -493,61 +495,61 @@ included:
                 data:
                     -
                         type: productunitprecisions
-                        id: new
+                        id: 'new'
                     -
                         type: productunitprecisions
-                        id: new
+                        id: 'new'
                     -
                         type: productunitprecisions
-                        id: new
+                        id: 'new'
             primaryUnitPrecision:
                 data:
                     type: productunitprecisions
-                    id: new
+                    id: 'new'
             names:
                 data:
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
             descriptions:
                 data:
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
             variantLinks:
                 data: []
             shortDescriptions:
                 data:
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
             images:
                 data: []
             attributeFamily:
@@ -562,16 +564,16 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             category:
                 data: null
             pageTemplate:
@@ -592,6 +594,20 @@ included:
                 data: null
             decrementQuantity:
                 data: null
+            metaKeywords:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
             backOrder:
                 data: null
             isUpcoming:
@@ -600,51 +616,37 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             metaDescriptions:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
-            metaKeywords:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-            testAttrManyToMany:
-                data: []
-            default_testAttrManyToMany:
-                data: null
+                        id: 'new'
             testAttrManyToOne:
                 data: null
             testToOneId:
+                data: null
+            testAttrManyToMany:
+                data: []
+            default_testAttrManyToMany:
                 data: null
             testToManyId:
                 data: []
@@ -654,16 +656,16 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             default_contact:
                 data: null
             inventory_status:
@@ -688,10 +690,11 @@ included:
                 data: []
     -
         type: products
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-products2
         attributes:
+            category_sort_order: null
             availability_date: null
             testAttrInvisible: null
             testAttrBoolean: null
@@ -721,58 +724,58 @@ included:
                 data:
                     -
                         type: productunitprecisions
-                        id: new
+                        id: 'new'
                     -
                         type: productunitprecisions
-                        id: new
+                        id: 'new'
             primaryUnitPrecision:
                 data:
                     type: productunitprecisions
-                    id: new
+                    id: 'new'
             names:
                 data:
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
             descriptions:
                 data:
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
             variantLinks:
                 data: []
             shortDescriptions:
                 data:
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
             images:
                 data: []
             attributeFamily:
@@ -787,16 +790,16 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             category:
                 data: null
             pageTemplate:
@@ -817,6 +820,20 @@ included:
                 data: null
             decrementQuantity:
                 data: null
+            metaKeywords:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
             backOrder:
                 data: null
             isUpcoming:
@@ -825,51 +842,37 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             metaDescriptions:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
-            metaKeywords:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-            testAttrManyToMany:
-                data: []
-            default_testAttrManyToMany:
-                data: null
+                        id: 'new'
             testAttrManyToOne:
                 data: null
             testToOneId:
+                data: null
+            testAttrManyToMany:
+                data: []
+            default_testAttrManyToMany:
                 data: null
             testToManyId:
                 data: []
@@ -879,16 +882,16 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             default_contact:
                 data: null
             inventory_status:
@@ -913,10 +916,11 @@ included:
                 data: []
     -
         type: products
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems2-products1
         attributes:
+            category_sort_order: null
             availability_date: null
             testAttrInvisible: null
             testAttrBoolean: null
@@ -946,58 +950,58 @@ included:
                 data:
                     -
                         type: productunitprecisions
-                        id: new
+                        id: 'new'
                     -
                         type: productunitprecisions
-                        id: new
+                        id: 'new'
             primaryUnitPrecision:
                 data:
                     type: productunitprecisions
-                    id: new
+                    id: 'new'
             names:
                 data:
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
                     -
                         type: productnames
-                        id: new
+                        id: 'new'
             descriptions:
                 data:
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productdescriptions
-                        id: new
+                        id: 'new'
             variantLinks:
                 data: []
             shortDescriptions:
                 data:
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
                     -
                         type: productshortdescriptions
-                        id: new
+                        id: 'new'
             images:
                 data: []
             attributeFamily:
@@ -1012,16 +1016,16 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             category:
                 data: null
             pageTemplate:
@@ -1042,6 +1046,20 @@ included:
                 data: null
             decrementQuantity:
                 data: null
+            metaKeywords:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
             backOrder:
                 data: null
             isUpcoming:
@@ -1050,51 +1068,37 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             metaDescriptions:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
-            metaKeywords:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-                    -
-                        type: localizedfallbackvalues
-                        id: new
-            testAttrManyToMany:
-                data: []
-            default_testAttrManyToMany:
-                data: null
+                        id: 'new'
             testAttrManyToOne:
                 data: null
             testToOneId:
+                data: null
+            testAttrManyToMany:
+                data: []
+            default_testAttrManyToMany:
                 data: null
             testToManyId:
                 data: []
@@ -1104,16 +1108,16 @@ included:
                 data:
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
                     -
                         type: localizedfallbackvalues
-                        id: new
+                        id: 'new'
             default_contact:
                 data: null
             inventory_status:
@@ -1138,7 +1142,7 @@ included:
                 data: []
     -
         type: productkititemlabels
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-productkititemlabels-default
         attributes:
@@ -1148,12 +1152,12 @@ included:
             productKitItem:
                 data:
                     type: productkititems
-                    id: new
+                    id: 'new'
             localization:
                 data: null
     -
         type: productkititemlabels
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1-productkititemlabels-es
         attributes:
@@ -1163,14 +1167,14 @@ included:
             productKitItem:
                 data:
                     type: productkititems
-                    id: new
+                    id: 'new'
             localization:
                 data:
                     type: localizations
                     id: '<toString(@es->id)>'
     -
         type: productkititemlabels
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems2-productkititemlabels-default
         attributes:
@@ -1180,12 +1184,72 @@ included:
             productKitItem:
                 data:
                     type: productkititems
-                    id: new
+                    id: 'new'
             localization:
                 data: null
     -
+        type: productkititemproducts
+        id: 'new'
+        meta:
+            includeId: productkititems1-productkititemproducts1-products1
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+    -
+        type: productkititemproducts
+        id: 'new'
+        meta:
+            includeId: productkititems1-productkititemproducts1-products2
+        attributes:
+            sortOrder: 2
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+    -
+        type: productkititemproducts
+        id: 'new'
+        meta:
+            includeId: productkititems2-productkititemproducts1-products1
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+    -
         type: productkititems
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems1
         attributes:
@@ -1198,35 +1262,35 @@ included:
                 data:
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
             productKit:
                 data:
                     type: products
-                    id: new
-            products:
+                    id: 'new'
+            kitItemProducts:
                 data:
                     -
-                        type: products
-                        id: new
+                        type: productkititemproducts
+                        id: 'new'
                     -
-                        type: products
-                        id: new
+                        type: productkititemproducts
+                        id: 'new'
             productUnit:
                 data:
                     type: productunits
                     id: '<toString(@item->code)>'
     -
         type: productkititems
-        id: new
+        id: 'new'
         meta:
             includeId: productkititems2
         attributes:
@@ -1239,25 +1303,25 @@ included:
                 data:
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
                     -
                         type: productkititemlabels
-                        id: new
+                        id: 'new'
             productKit:
                 data:
                     type: products
-                    id: new
-            products:
+                    id: 'new'
+            kitItemProducts:
                 data:
                     -
-                        type: products
-                        id: new
+                        type: productkititemproducts
+                        id: 'new'
             productUnit:
                 data:
                     type: productunits
