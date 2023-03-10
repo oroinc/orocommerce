@@ -1,0 +1,51 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+
+<div class="widget-content">
+    {% block widget_content %}
+        <div data-role="kit-item-info">
+            {%- if state in ['collapsed', 'both'] -%}
+                {%- block kitItemInfoCollapsed -%}
+                    <div data-role="kit-item-info-collapsed">
+                        {{ UI.renderProperty('oro.product.productkititem.labels.label'|trans, entity.defaultLabel) }}
+                        {{ UI.renderProperty('oro.product.productkititem.optional.label'|trans, entity.optional ? 'oro.product.productkititem.optional.choices.yes'|trans : 'oro.product.productkititem.optional.choices.no'|trans) }}
+                        {{ UI.renderProperty('oro.product.productkititem.minimum_quantity.label'|trans, entity.minimumQuantity) }}
+                        {{ UI.renderProperty('oro.product.productkititem.maximum_quantity.label'|trans, entity.maximumQuantity) }}
+                        {{ UI.renderProperty('oro.product.productkititem.product_unit.label'|trans, oro_format_product_unit_precision_label(entity.productUnit.code, entity|oro_product_kit_item_unit_precision)) }}
+
+                        {{ entityConfig.renderDynamicFields(entity) }}
+
+                        {%- set kitItemProductsLinks -%}
+                            {%- for product in entity.products|slice(0, 10) -%}
+                                <div data-role="kit-item-product-link">{{ UI.renderUrl(oro_entity_object_view_link(product), product.skuUppercase ~ ' - ' ~ product|oro_format_name) }}</div>
+                            {%- endfor -%}
+                        {%- endset -%}
+
+                        {{ UI.renderHtmlProperty('oro.product.productkititem.kit_item_products.label'|trans, kitItemProductsLinks) }}
+                    </div>
+                {%- endblock kitItemInfoCollapsed -%}
+            {%- endif -%}
+
+            {%- if state in ['expanded', 'both'] -%}
+                {%- block kitItemInfoExpanded -%}
+                    <div data-role="kit-item-info-expanded">
+                        {{ UI.renderProperty('oro.product.productkititem.labels.label'|trans, entity.defaultLabel) }}
+                        {{ UI.renderProperty('oro.product.productkititem.optional.label'|trans, entity.optional ? 'oro.product.productkititem.optional.choices.yes'|trans : 'oro.product.productkititem.optional.choices.no'|trans) }}
+                        {{ UI.renderProperty('oro.product.productkititem.minimum_quantity.label'|trans, entity.minimumQuantity) }}
+                        {{ UI.renderProperty('oro.product.productkititem.maximum_quantity.label'|trans, entity.maximumQuantity) }}
+                        {{ UI.renderProperty('oro.product.productkititem.product_unit.label'|trans, oro_format_product_unit_precision_label(entity.productUnit.code, entity|oro_product_kit_item_unit_precision)) }}
+
+                        {{ entityConfig.renderDynamicFields(entity) }}
+
+                        {{ UI.renderHtmlProperty('oro.product.productkititem.kit_item_products.label'|trans, dataGrid.renderGrid(
+                            'kit-item-products-view-grid',
+                            {'kitItemId': entity.id},
+                            {'enableViews': false, 'enableFilters': false}
+                        )) }}
+                    </div>
+                {% endblock kitItemInfoExpanded %}
+            {% endif %}
+        </div>
+    {% endblock %}
+</div>

@@ -1,0 +1,15 @@
+<div class="widget-content">
+    {%- block widget_content -%}
+        {%- if entity.kitItems|length -%}
+            {%- for kitItem in entity.kitItems %}
+                {{ oro_widget_render({
+                    'widgetType': 'block',
+                    'alias': 'widget-kit-item-' ~ kitItem.id ~ '-info',
+                    'url': path('oro_product_kit_item_info', {'id': kitItem.id, 'state': 'collapsed'}),
+                }) }}
+            {%- endfor %}
+        {%- else -%}
+            <div class="no-data">{{ 'N/A'|trans }}</div>
+        {%- endif -%}
+    {%- endblock -%}
+</div>

@@ -1131,3 +1131,29 @@ datagrids:
             bind_parameters:
                 selectedProductsIds:
                     default: 0
+
+    kit-item-products-view-grid:
+        extends: kit-item-products-base-grid
+        source:
+            query:
+                where:
+                    and:
+                        - product_kit_item_product.id IS NOT NULL
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_product_view
+                params: [ id ]
+        actions:
+            view:
+                type: navigate
+                acl_resource: oro_product_view
+                label: oro.grid.action.view
+                icon: eye
+                link: view_link
+                launcherOptions:
+                    className: 'no-hash hide'
+                    attributes:
+                        target: _blank
+                rowAction: true
