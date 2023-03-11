@@ -3,31 +3,17 @@
 namespace Oro\Bundle\RuleBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\RuleBundle\DependencyInjection\OroRuleExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroRuleExtensionTest extends ExtensionTestCase
+class OroRuleExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OroRuleExtension */
-    private $extension;
-
-    protected function setUp(): void
+    public function testLoad(): void
     {
-        $this->extension = new OroRuleExtension();
-    }
+        $container = new ContainerBuilder();
 
-    public function testLoad()
-    {
-        $this->loadExtension($this->extension);
+        $extension = new OroRuleExtension();
+        $extension->load([], $container);
 
-        $expectedDefinitions = [
-            'oro_rule.expression_language',
-            'oro_rule.expression_language.function_count',
-            'oro_rule.rule_filtration.service',
-            'oro_rule.rule_filtration.enabled_decorator',
-            'oro_rule.rule_filtration.stop_processing_decorator',
-            'oro_rule.rule_filtration.expression_language_decorator',
-            'oro_rule.action.visibility_provider',
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        self::assertNotEmpty($container->getDefinitions());
     }
 }

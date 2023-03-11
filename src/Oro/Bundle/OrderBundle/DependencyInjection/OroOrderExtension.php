@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -12,21 +13,20 @@ class OroOrderExtension extends Extension
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration(new Configuration(), $configs);
+        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        $container->prependExtensionConfig($this->getAlias(), SettingsBuilder::getSettings($config));
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('services_api.yml');
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
         $loader->load('controllers.yml');
 
-        if ($container->getParameter('kernel.environment') === 'test') {
+        if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');
         }
-
-        $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
 }

@@ -14,20 +14,21 @@ class OroPayPalExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration(new Configuration(), $configs);
+        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+
         $container->setParameter(
             Configuration::getConfigKey(Configuration::CONFIG_KEY_ALLOWED_IPS),
             $config[Configuration::CONFIG_KEY_ALLOWED_IPS]
         );
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('payflow.yml');
         $loader->load('method.yml');
         $loader->load('listeners.yml');
 
-        if ($container->getParameter('kernel.environment') === 'test') {
+        if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('payment_test.yml');
         }
     }
