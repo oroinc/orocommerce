@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\SecurityBundle\DependencyInjection\Extension\SecurityExtensionHelper;
 use Oro\Component\DependencyInjection\ExtendedContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -15,9 +16,10 @@ class OroVisibilityExtension extends Extension implements PrependExtensionInterf
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration(new Configuration(), $configs);
+        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        $container->prependExtensionConfig($this->getAlias(), SettingsBuilder::getSettings($config));
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
@@ -28,14 +30,12 @@ class OroVisibilityExtension extends Extension implements PrependExtensionInterf
         $loader->load('website_search.yml');
         $loader->load('mq_topics.yml');
         $loader->load('mq_processors.yml');
-
-        $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         /** @var ExtendedContainerBuilder $container */
         SecurityExtensionHelper::makeFirewallLatest($container, 'frontend_secure');

@@ -10,11 +10,11 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class OroWebsiteSearchExtension extends Extension
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration(new Configuration(), $configs);
+        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
 
         $container->setParameter('oro_website_search.engine_dsn', $config['engine_dsn']);
         $container->setParameter('oro_website_search.engine_parameters', $config['engine_parameters']);
@@ -32,7 +32,7 @@ class OroWebsiteSearchExtension extends Extension
         $loader->load('import_export.yml');
         $loader->load('repositories.yml');
 
-        if ($container->getParameter('kernel.environment') === 'test') {
+        if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');
         }
     }
