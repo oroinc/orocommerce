@@ -491,4 +491,4 @@ services:
     oro_product.api.disable_product_kit_item_product_creation:
         class: Oro\Bundle\ProductBundle\Api\Processor\DisableProductKitItemProductCreation
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, priority: 250 }

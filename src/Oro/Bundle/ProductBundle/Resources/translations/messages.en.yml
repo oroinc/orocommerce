@@ -420,7 +420,7 @@ oro:
                 description: 'The related product kit item.'
             product:
                 label: 'Product'
-                description: 'The related product.'
+                description: 'The related simple product.'
             product_unit_precision:
                 label: 'Product unit precision.'
                 description: 'The product unit precision of the related product.'

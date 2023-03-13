@@ -751,6 +751,22 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
         string: 'Product Kit 1 Item 2 ES'
         localization: '@es'
 
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@product1'
+        sortOrder: 1
+
+    product_kit1_item1_product3:
+        kitItem: '@product_kit1_item1'
+        product: '@product3'
+        sortOrder: 2
+
+    product_kit1_item2_product3:
+        kitItem: '@product_kit1_item2'
+        product: '@product3'
+        sortOrder: 1
+
 Oro\Bundle\ProductBundle\Entity\ProductKitItem:
     product_kit1_item1:
         optional: false
@@ -762,8 +778,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         __calls:
             - addLabel: ['@product_kit1_item1_label']
             - addLabel: ['@product_kit1_item1_label_es']
-            - addProduct: ['@product1']
-            - addProduct: ['@product3']
+            - addKitItemProduct: ['@product_kit1_item1_product1']
+            - addKitItemProduct: ['@product_kit1_item1_product3']
 
     product_kit1_item2:
         optional: true
@@ -775,4 +791,4 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         __calls:
             - addLabel: ['@product_kit1_item2_label']
             - addLabel: ['@product_kit1_item2_label_es']
-            - addProduct: ['@product3']
+            - addKitItemProduct: ['@product_kit1_item2_product3']

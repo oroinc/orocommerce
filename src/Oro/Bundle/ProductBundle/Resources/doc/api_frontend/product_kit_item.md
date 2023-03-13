@@ -20,7 +20,7 @@ The localized label of the product kit item.
 
 {@inheritdoc}
 
-### products
+### kitItemProducts
 
 {@inheritdoc}
 
@@ -56,15 +56,15 @@ Retrieve the product of type "kit" owning the product kit item.
 
 Retrieve the ID of the product of type "kit" owning the product kit item.
 
-### products
+### kitItemProducts
 
 #### get_subresource
 
-Retrieve the records for the products of a specific product kit item record.
+Retrieve the kit item products of a specific product kit item record.
 
 #### get_relationship
 
-Retrieve a list of IDs for the products of a specific product kit item record.
+Retrieve a list of IDs of the kit item products of a specific product kit item record.
 
 ### productUnit
 

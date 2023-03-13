@@ -373,8 +373,8 @@ api:
                 productKit:
                     target_class: Oro\Bundle\ProductBundle\Entity\Product
                     target_type: to-one
-                products:
-                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                kitItemProducts:
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct
                     target_type: to-many
                     max_results: -1
                 productUnit:
@@ -398,7 +398,7 @@ api:
                     actions:
                         get_subresource: true
                         get_relationship: true
-                products:
+                kitItemProducts:
                     actions:
                         get_subresource:
                             page_size: -1 # disable paging
@@ -408,3 +408,27 @@ api:
                     actions:
                         get_subresource: true
                         get_relationship: true
+
+        Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_kit_item_product.md'
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            fields:
+                productUnitPrecision:
+                    exclude: true
+            subresources:
+                kitItem:
+                    actions:
+                        get_subresource: true
+                        get_relationship: true
+                        update_relationship: false
+                        delete_relationship: false
+                product:
+                    actions:
+                        get_subresource: true
+                        get_relationship: true
+                        update_relationship: false
+                        delete_relationship: false

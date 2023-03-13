@@ -2,6 +2,7 @@ data:
     type: products
     id: '<toString(@product_kit1->id)>'
     attributes:
+        category_sort_order: null
         sku: PKSKU1
         variantAttributeNames: {  }
         createdAt: '@product_kit1->createdAt->format("Y-m-d\TH:i:s\Z")'
@@ -70,6 +71,7 @@ included:
         type: products
         id: '<toString(@product1->id)>'
         attributes:
+            category_sort_order: null
             sku: PSKU1
             variantAttributeNames: {  }
             createdAt: '@product1->createdAt->format("Y-m-d\TH:i:s\Z")'
@@ -108,11 +110,11 @@ included:
                         targetValue: 'Amanda Cole'
                 testToManyId:
                     -
-                        id: MX
-                        targetValue: MX
-                    -
                         id: DE
                         targetValue: DE
+                    -
+                        id: MX
+                        targetValue: MX
                 wysiwyg: '<style type="text/css">.test {color: red}</style>Product 1 WYSIWYG Text. Twig Expr: "test".'
                 wysiwygAttr: '<style type="text/css">.test {color: red}</style>Product 1 WYSIWYG Attr Text. Twig Expr: "test".'
             unitPrecisions:
@@ -177,9 +179,24 @@ included:
             parentProducts:
                 data: []
     -
+        type: productkititemproducts
+        id: '<toString(@product_kit1_item1_product1->id)>'
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+    -
         type: products
         id: '<toString(@product3->id)>'
         attributes:
+            category_sort_order: null
             sku: PSKU3
             variantAttributeNames: {  }
             createdAt: '@product3->createdAt->format("Y-m-d\TH:i:s\Z")'
@@ -245,6 +262,20 @@ included:
             parentProducts:
                 data: []
     -
+        type: productkititemproducts
+        id: '<toString(@product_kit1_item1_product3->id)>'
+        attributes:
+            sortOrder: 2
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+    -
         type: productkititems
         id: '<toString(@product_kit1_item1->id)>'
         attributes:
@@ -260,18 +291,32 @@ included:
                 data:
                     type: products
                     id: '<toString(@product_kit1->id)>'
-            products:
+            kitItemProducts:
                 data:
                     -
-                        type: products
-                        id: '<toString(@product1->id)>'
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product1->id)>'
                     -
-                        type: products
-                        id: '<toString(@product3->id)>'
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product3->id)>'
             productUnit:
                 data:
                     type: productunits
                     id: '<toString(@item->code)>'
+    -
+        type: productkititemproducts
+        id: '<toString(@product_kit1_item2_product3->id)>'
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
     -
         type: productkititems
         id: '<toString(@product_kit1_item2->id)>'
@@ -288,11 +333,11 @@ included:
                 data:
                     type: products
                     id: '<toString(@product_kit1->id)>'
-            products:
+            kitItemProducts:
                 data:
                     -
-                        type: products
-                        id: '<toString(@product3->id)>'
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item2_product3->id)>'
             productUnit:
                 data:
                     type: productunits

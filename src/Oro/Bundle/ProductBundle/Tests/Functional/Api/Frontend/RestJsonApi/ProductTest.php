@@ -537,7 +537,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product_kit1->id)>'],
-            ['include' => 'kitItems,kitItems.products']
+            ['include' => 'kitItems,kitItems.kitItemProducts,kitItems.kitItemProducts.product']
         );
 
         $this->assertResponseContains('get_product_kit_with_kit_items.yml', $response);
@@ -894,15 +894,15 @@ class ProductTest extends FrontendRestJsonApiTestCase
                             'maximumQuantity' => null,
                         ],
                         'relationships' => [
-                            'products'  => [
+                            'kitItemProducts'  => [
                                 'data'  => [
                                     [
-                                        'type' => 'products',
-                                        'id'   => '<toString(@product1->id)>',
+                                        'type' => 'productkititemproducts',
+                                        'id'   => '<toString(@product_kit1_item1_product1->id)>',
                                     ],
                                     [
-                                        'type' => 'products',
-                                        'id'   => '<toString(@product3->id)>',
+                                        'type' => 'productkititemproducts',
+                                        'id'   => '<toString(@product_kit1_item1_product3->id)>',
                                     ],
                                 ],
                             ],
@@ -918,11 +918,11 @@ class ProductTest extends FrontendRestJsonApiTestCase
                             'maximumQuantity' => 5,
                         ],
                         'relationships' => [
-                            'products' => [
+                            'kitItemProducts' => [
                                 'data' => [
                                     [
-                                        'type' => 'products',
-                                        'id'   => '<toString(@product3->id)>',
+                                        'type' => 'productkititemproducts',
+                                        'id'   => '<toString(@product_kit1_item2_product3->id)>',
                                     ],
                                 ],
                             ],

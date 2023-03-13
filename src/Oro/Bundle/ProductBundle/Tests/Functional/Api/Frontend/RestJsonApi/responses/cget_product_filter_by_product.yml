@@ -15,14 +15,14 @@ data:
                 data:
                     type: products
                     id: '<toString(@product_kit1->id)>'
-            products:
+            kitItemProducts:
                 data:
                     -
-                        type: products
-                        id: '<toString(@product1->id)>'
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product1->id)>'
                     -
-                        type: products
-                        id: '<toString(@product3->id)>'
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product3->id)>'
             productUnit:
                 data:
                     type: productunits
@@ -43,11 +43,11 @@ data:
                 data:
                     type: products
                     id: '<toString(@product_kit1->id)>'
-            products:
+            kitItemProducts:
                 data:
                     -
-                        type: products
-                        id: '<toString(@product3->id)>'
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item2_product3->id)>'
             productUnit:
                 data:
                     type: productunits

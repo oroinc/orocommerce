@@ -1,0 +1,14 @@
+data:
+    type: productkititemproducts
+    id: '<toString(@product_kit1_item1_product1->id)>'
+    attributes:
+        sortOrder: 1
+    relationships:
+        kitItem:
+            data:
+                type: productkititems
+                id: '<toString(@product_kit1_item1->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product1->id)>'
