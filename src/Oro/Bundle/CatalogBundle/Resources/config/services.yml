@@ -403,16 +403,24 @@ services:
 
     oro_catalog.provider.form_template_data.return_action:
         class: Oro\Bundle\CatalogBundle\Provider\CategoryFormTemplateDataProvider
+        arguments:
+            - '@oro_catalog.utils.sort_order_dialog_target_storage'
         tags:
             - { name: oro_form.form_template_data_provider, alias: category_form_template }
 
     Oro\Bundle\CatalogBundle\Provider\CategoryFormTemplateDataProvider:
         alias: oro_catalog.provider.form_template_data.return_action
 
-    oro_catalog.event_listener.form_handler.sort_order_dialog_trigger:
-        class: Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTriggerFormHandlerEventListener
+    oro_catalog.event_listener.form_handler.sort_order_dialog_target:
+        class: Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTargetFormHandlerEventListener
         arguments:
-            - '@request_stack'
+            - '@oro_catalog.utils.sort_order_dialog_target_storage'
             - '@oro_ui.router'
+            - '@property_accessor'
         tags:
             - { name: kernel.event_listener, event: oro_catalog.category.edit, method: onFormAfterFlush }
+
+    oro_catalog.utils.sort_order_dialog_target_storage:
+        class: Oro\Bundle\CatalogBundle\Utils\SortOrderDialogTargetStorage
+        arguments:
+            - '@request_stack'

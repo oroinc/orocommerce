@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form;
 
-use Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTriggerFormHandlerEventListener;
+use Oro\Bundle\CatalogBundle\Utils\SortOrderDialogTargetStorage;
 use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -15,6 +15,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ContentNodeFormTemplateDataProvider implements FormTemplateDataProviderInterface
 {
+    private SortOrderDialogTargetStorage $sortOrderDialogTargetStorage;
+
+    public function __construct(SortOrderDialogTargetStorage $sortOrderDialogTargetStorage)
+    {
+        $this->sortOrderDialogTargetStorage = $sortOrderDialogTargetStorage;
+    }
+
     public function getData($entity, FormInterface $form, Request $request): array
     {
         if (!$entity instanceof ContentNode) {
@@ -32,7 +39,7 @@ class ContentNodeFormTemplateDataProvider implements FormTemplateDataProviderInt
             $contentVariantsForm = $data['form']->offsetGet('contentVariants');
 
             if (!$form->isSubmitted() || $form->isValid()) {
-                $this->handleDataWhenNotSubmitted($request, $contentVariantsForm, $data);
+                $this->handleDataWhenNotSubmitted($contentVariantsForm, $data);
 
                 return $data;
             }
@@ -52,32 +59,19 @@ class ContentNodeFormTemplateDataProvider implements FormTemplateDataProviderInt
         return $data;
     }
 
-    private function handleDataWhenNotSubmitted(
-        Request $request,
-        FormView $contentVariantsForm,
-        array &$data
-    ): void {
-        if ($request->hasSession()) {
-            $session = $request->getSession();
-            $sortOrderDialogTarget = $session->get(
-                SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET,
-                ''
-            );
+    private function handleDataWhenNotSubmitted(FormView $contentVariantsForm, array &$data): void
+    {
+        foreach ($contentVariantsForm as $contentVariantForm) {
+            $contentVariantForm->vars['triggerSortOrderDialog'] = false;
+            $targetEntity = $contentVariantForm->vars['value'];
+            if (is_object($targetEntity)
+                && $this->sortOrderDialogTargetStorage->hasTarget(ContentVariant::class, $targetEntity->getId())) {
+                $contentVariantForm->vars['triggerSortOrderDialog'] = true;
+                $data['expandedContentVariantForms'][] = $contentVariantForm;
 
-            if (!$sortOrderDialogTarget) {
-                return;
-            }
+                $this->sortOrderDialogTargetStorage->removeTarget(ContentVariant::class, $targetEntity->getId());
 
-            $data['expandedContentVariantForms'] = [];
-            foreach ($contentVariantsForm as $contentVariantForm) {
-                $contentVariantForm->vars['triggerSortOrderDialog'] = false;
-                if ($contentVariantForm->vars['full_name'] === $sortOrderDialogTarget) {
-                    $contentVariantForm->vars['triggerSortOrderDialog'] = true;
-                    $data['expandedContentVariantForms'][] = $contentVariantForm;
-                    $session->remove(SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET);
-
-                    break;
-                }
+                break;
             }
         }
     }

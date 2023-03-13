@@ -3,7 +3,8 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form;
 
 use InvalidArgumentException;
-use Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTriggerFormHandlerEventListener;
+use Oro\Bundle\CatalogBundle\Utils\SortOrderDialogTargetStorage;
+use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider;
@@ -12,15 +13,18 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ContentNodeFormTemplateDataProviderTest extends TestCase
 {
+    private SortOrderDialogTargetStorage|MockObject $sortOrderDialogTargetStorage;
+
     private ContentNodeFormTemplateDataProvider $provider;
 
     protected function setUp(): void
     {
-        $this->provider = new ContentNodeFormTemplateDataProvider();
+        $this->sortOrderDialogTargetStorage = $this->createMock(SortOrderDialogTargetStorage::class);
+
+        $this->provider = new ContentNodeFormTemplateDataProvider($this->sortOrderDialogTargetStorage);
     }
 
     public function testGetDataWhenWrongEntity(): void
@@ -38,10 +42,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
     public function testGetDataWhenNotSubmitted(): void
     {
         $entity = new ContentNode();
-        /** @var FormInterface|MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-
         $contentVariantFormView = new FormView();
         $contentVariantFormView->vars['value'] = new ContentVariant();
         $collectionFormView = new FormView();
@@ -56,7 +57,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
             ->method('isSubmitted')
             ->willReturn(false);
 
-        $result = $this->provider->getData($entity, $form, $request);
+        $result = $this->provider->getData($entity, $form, $this->createMock(Request::class));
         self::assertArrayNotHasKey('expandedContentVariantForms', $result);
         self::assertArrayHasKey('entity', $result);
         self::assertEquals($entity, $result['entity']);
@@ -67,10 +68,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
     public function testGetDataWhenIsValid(): void
     {
         $entity = new ContentNode();
-        /** @var FormInterface|MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-
         $contentVariantFormView = new FormView();
         $contentVariantFormView->vars['value'] = new ContentVariant();
         $collectionFormView = new FormView();
@@ -88,7 +86,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $result = $this->provider->getData($entity, $form, $request);
+        $result = $this->provider->getData($entity, $form, $this->createMock(Request::class));
         self::assertArrayNotHasKey('expandedContentVariantForms', $result);
         self::assertArrayHasKey('entity', $result);
         self::assertEquals($entity, $result['entity']);
@@ -96,19 +94,17 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
         self::assertEquals($formView, $result['form']);
     }
 
-    public function testGetDataWithoutExpandedForms(): void
+    public function testGetDataWhenSubmittedAndNotValidWithoutExpandedForms(): void
     {
         $entity = new ContentNode();
-        /** @var FormInterface|MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-
         $contentVariantFormView = new FormView();
         $contentVariantFormView->vars['value'] = new ContentVariant();
         $collectionFormView = new FormView();
         $collectionFormView->children[] = $contentVariantFormView;
         $formView = new FormView();
         $formView->children['contentVariants'] = $collectionFormView;
+
         $form->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
@@ -119,7 +115,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
             ->method('isValid')
             ->willReturn(false);
 
-        $result = $this->provider->getData($entity, $form, $request);
+        $result = $this->provider->getData($entity, $form, $this->createMock(Request::class));
         self::assertArrayHasKey('expandedContentVariantForms', $result);
         self::assertEquals([], $result['expandedContentVariantForms']);
         self::assertArrayHasKey('entity', $result);
@@ -128,13 +124,10 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
         self::assertEquals($formView, $result['form']);
     }
 
-    public function testGetData(): void
+    public function testGetDataWhenSubmittedAndNotValidWithExpandedForms(): void
     {
         $entity = new ContentNode();
-        /** @var FormInterface|MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-
         $contentVariant = new ContentVariant();
         $contentVariant->setExpanded(true);
         $contentVariantFormView = new FormView();
@@ -143,6 +136,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
         $collectionFormView->children[] = $contentVariantFormView;
         $formView = new FormView();
         $formView->children['contentVariants'] = $collectionFormView;
+
         $form->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
@@ -153,7 +147,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
             ->method('isValid')
             ->willReturn(false);
 
-        $result = $this->provider->getData($entity, $form, $request);
+        $result = $this->provider->getData($entity, $form, $this->createMock(Request::class));
         self::assertArrayHasKey('expandedContentVariantForms', $result);
         self::assertEquals([$contentVariantFormView], $result['expandedContentVariantForms']);
         self::assertArrayHasKey('entity', $result);
@@ -162,14 +156,13 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
         self::assertEquals($formView, $result['form']);
     }
 
-    public function testGetDataWhenNotSubmittedButNoSession(): void
+    public function testGetDataWhenNotSubmittedAndNoTarget(): void
     {
         $entity = new ContentNode();
         $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-
         $contentVariantFormView = new FormView();
-        $contentVariantFormView->vars['value'] = new ContentVariant();
+        $contentVariant = (new ContentVariantStub())->setId(442);
+        $contentVariantFormView->vars['value'] = $contentVariant;
         $collectionFormView = new FormView();
         $collectionFormView->children[] = $contentVariantFormView;
         $formView = new FormView();
@@ -185,7 +178,13 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
             ->method('isSubmitted')
             ->willReturn(false);
 
-        $result = $this->provider->getData($entity, $form, $request);
+        $this->sortOrderDialogTargetStorage
+            ->expects(self::once())
+            ->method('hasTarget')
+            ->with(ContentVariant::class, $contentVariant->getId())
+            ->willReturn(false);
+
+        $result = $this->provider->getData($entity, $form, $this->createMock(Request::class));
 
         self::assertEquals([
             'entity' => $entity,
@@ -193,16 +192,13 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
         ], $result);
     }
 
-    public function testGetDataWhenNotSubmittedAndSessionExistsWithoutTarget(): void
+    public function testGetDataWhenNotSubmittedAndHasTarget(): void
     {
         $entity = new ContentNode();
         $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-        $session = $this->createMock(SessionInterface::class);
-        $request->setSession($session);
-
         $contentVariantFormView = new FormView();
-        $contentVariantFormView->vars['value'] = new ContentVariant();
+        $contentVariant = (new ContentVariantStub())->setId(442);
+        $contentVariantFormView->vars['value'] = $contentVariant;
         $collectionFormView = new FormView();
         $collectionFormView->children[] = $contentVariantFormView;
         $formView = new FormView();
@@ -218,103 +214,19 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
             ->method('isSubmitted')
             ->willReturn(false);
 
-        $session
+        $this->sortOrderDialogTargetStorage
             ->expects(self::once())
-            ->method('get')
-            ->with(SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET)
-            ->willReturn('');
+            ->method('hasTarget')
+            ->with(ContentVariant::class, $contentVariant->getId())
+            ->willReturn(true);
 
-        $result = $this->provider->getData($entity, $form, $request);
-
-        self::assertEquals([
-            'entity' => $entity,
-            'form' => $formView,
-        ], $result);
-    }
-
-    public function testGetDataWhenNotSubmittedAndSessionExistsWithAnotherTarget(): void
-    {
-        $targetName = 'sample_form_name';
-        $entity = new ContentNode();
-        $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-        $session = $this->createMock(SessionInterface::class);
-        $request->setSession($session);
-
-        $contentVariantFormView = new FormView();
-        $contentVariantFormView->vars['full_name'] = $targetName;
-        $collectionFormView = new FormView();
-        $collectionFormView->children[] = $contentVariantFormView;
-        $formView = new FormView();
-        $formView->children['contentVariants'] = $collectionFormView;
-
-        $form
+        $this->sortOrderDialogTargetStorage
             ->expects(self::once())
-            ->method('createView')
-            ->willReturn($formView);
+            ->method('removeTarget')
+            ->with(ContentVariant::class, $contentVariant->getId())
+            ->willReturn(true);
 
-        $form
-            ->expects(self::once())
-            ->method('isSubmitted')
-            ->willReturn(false);
-
-        $session
-            ->expects(self::once())
-            ->method('get')
-            ->with(SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET)
-            ->willReturn('sample_another_form_name');
-
-        $session
-            ->expects(self::never())
-            ->method('remove');
-
-        $result = $this->provider->getData($entity, $form, $request);
-
-        self::assertEquals([
-            'entity' => $entity,
-            'form' => $formView,
-            'expandedContentVariantForms' => [],
-        ], $result);
-    }
-
-    public function testGetDataWhenNotSubmittedAndSessionExistsWithSameTarget(): void
-    {
-        $targetName = 'sample_form_name';
-        $entity = new ContentNode();
-        $form = $this->createMock(FormInterface::class);
-        $request = new Request();
-        $session = $this->createMock(SessionInterface::class);
-        $request->setSession($session);
-
-        $contentVariantFormView = new FormView();
-        $contentVariantFormView->vars['full_name'] = $targetName;
-        $collectionFormView = new FormView();
-        $collectionFormView->children[] = $contentVariantFormView;
-        $formView = new FormView();
-        $formView->children['contentVariants'] = $collectionFormView;
-
-        $form
-            ->expects(self::once())
-            ->method('createView')
-            ->willReturn($formView);
-
-        $form
-            ->expects(self::once())
-            ->method('isSubmitted')
-            ->willReturn(false);
-
-        $session
-            ->expects(self::once())
-            ->method('get')
-            ->with(SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET)
-            ->willReturn($targetName);
-
-        $session
-            ->expects(self::once())
-            ->method('remove')
-            ->with(SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET);
-
-        $result = $this->provider->getData($entity, $form, $request);
+        $result = $this->provider->getData($entity, $form, $this->createMock(Request::class));
 
         self::assertEquals([
             'entity' => $entity,

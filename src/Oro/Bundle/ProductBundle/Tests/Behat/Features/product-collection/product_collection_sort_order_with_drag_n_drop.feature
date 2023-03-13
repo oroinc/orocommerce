@@ -7,11 +7,11 @@ Feature: Product collection sort order with drag n' drop
 
   Scenario: Logged in as buyer and manager on different window sessions
     Given sessions active:
-      | Admin  | first_session  |
+      | Admin | first_session |
 
   Scenario: Product Collection sort order can be added
     Given I proceed as the Admin
-    Given I login as administrator
+    And I login as administrator
     And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
@@ -43,9 +43,6 @@ Feature: Product collection sort order with drag n' drop
     Then should see "Save all changes?" in confirmation dialogue
     When I click "Submit and continue" in confirmation dialogue
     Then I should see "Content Node has been saved" flash message
-    # @todo remove following two steps
-    And I click on "First Content Variant Expand Button"
-    And I click "Manage sort order"
     And I should see "UiDialog" with elements:
       | Title | Sort products in Some Custom Segment Name product collection |
     When I drag and drop "Draggable Separator Row" before "Draggable Product5 Row"

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTriggerFormHandlerEventListener;
+use Oro\Bundle\CatalogBundle\Utils\SortOrderDialogTargetStorage;
 use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +13,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CategoryFormTemplateDataProvider implements FormTemplateDataProviderInterface
 {
+    private SortOrderDialogTargetStorage $sortOrderDialogTargetStorage;
+
+    public function __construct(SortOrderDialogTargetStorage $sortOrderDialogTargetStorage)
+    {
+        $this->sortOrderDialogTargetStorage = $sortOrderDialogTargetStorage;
+    }
+
     /**
      * @param Category $entity
      * @param FormInterface $form
@@ -36,16 +43,9 @@ class CategoryFormTemplateDataProvider implements FormTemplateDataProviderInterf
         ];
 
         if (!$form->isSubmitted() || $form->isValid()) {
-            if ($request->hasSession()) {
-                $session = $request->getSession();
-                $sortOrderDialogTarget = $session->get(
-                    SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET,
-                    ''
-                );
-                if ($sortOrderDialogTarget === $form->getName()) {
-                    $data['triggerSortOrderDialog'] = true;
-                    $session->remove(SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET);
-                }
+            if ($this->sortOrderDialogTargetStorage->hasTarget(Category::class, $entity->getId())) {
+                $data['triggerSortOrderDialog'] = true;
+                $this->sortOrderDialogTargetStorage->removeTarget(Category::class, $entity->getId());
             }
         }
 

@@ -113,7 +113,7 @@
                             inputAction: {
                                 route: 'oro_catalog_category_update',
                                 params: {id: '$id'},
-                                (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTriggerFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.vars.full_name
+                                (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTargetFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.vars.full_name
                             }|json_encode,
                             autoExecute: triggerSortOrderDialog|default(''),
                             warnings: {

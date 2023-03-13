@@ -489,6 +489,8 @@ services:
 
     Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider:
         class: Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider
+        arguments:
+            - '@oro_catalog.utils.sort_order_dialog_target_storage'
 
     Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototypeValidator:
         class: Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototypeValidator
@@ -532,10 +534,11 @@ services:
             - '@oro_web_catalog.request_web_content_scope_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
 
-    oro_web_catalog.event_listener.form_handler.sort_order_dialog_trigger:
-        class: Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTriggerFormHandlerEventListener
+    oro_web_catalog.event_listener.form_handler.sort_order_dialog_target:
+        class: Oro\Bundle\CatalogBundle\EventListener\SortOrderDialogTargetFormHandlerEventListener
         arguments:
-            - '@request_stack'
+            - '@oro_catalog.utils.sort_order_dialog_target_storage'
             - '@oro_ui.router'
+            - '@property_accessor'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_web_catalog_content_node, method: onFormAfterFlush }
