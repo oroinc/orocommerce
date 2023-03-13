@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -18,6 +17,12 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
  * )
  * @ORM\Table(
  *     name="oro_website_search_term_report",
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(
+ *              name="website_search_term_report_term_unq",
+ *              columns={"search_date", "normalized_search_term_hash"}
+ *         )
+ *     },
  *     indexes={
  *         @ORM\Index(name="website_search_term_report_date_idx", columns={"search_date"})
  *     }
@@ -70,6 +75,16 @@ class SearchTermReport implements
 
     /**
      * @ORM\Column(
+     *     name="normalized_search_term_hash",
+     *     type="string",
+     *     length=32,
+     *     nullable=false
+     * )
+     */
+    private $normalizedSearchTermHash;
+
+    /**
+     * @ORM\Column(
      *     name="times_searched",
      *     type="integer",
      *     nullable=false
@@ -117,6 +132,18 @@ class SearchTermReport implements
     public function setSearchTerm(string $searchTerm): self
     {
         $this->searchTerm = $searchTerm;
+
+        return $this;
+    }
+
+    public function getNormalizedSearchTermHash(): ?string
+    {
+        return $this->normalizedSearchTermHash;
+    }
+
+    public function setNormalizedSearchTermHash(string $normalizedSearchTermHash): self
+    {
+        $this->normalizedSearchTermHash = $normalizedSearchTermHash;
 
         return $this;
     }

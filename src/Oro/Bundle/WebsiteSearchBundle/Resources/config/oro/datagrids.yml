@@ -12,6 +12,7 @@ datagrids:
                 select:
                     - e.id
                     - e.searchTerm
+                    - LOWER(e.searchTerm) as searchTermLower
                     - e.resultType
                     - e.resultsCount
                     - e.createdAt
@@ -33,8 +34,16 @@ datagrids:
                 label: oro.websitesearch.searchresult.entity.searchresulthistory.search_term.label
             resultType:
                 label: oro.websitesearch.searchresult.entity.searchresulthistory.result_type.label
+                frontend_type: select
+                choices:
+                    'oro.websitesearch.searchresult.entity.searchresulthistory.result_type.choice.empty': empty
+                    'oro.websitesearch.searchresult.entity.searchresulthistory.result_type.choice.product_autocomplete': product_autocomplete
+                    'oro.websitesearch.searchresult.entity.searchresulthistory.result_type.choice.product_search': product_search
             resultsCount:
-                label: oro.websitesearch.searchresult.entity.searchresulthistory.results_count.label
+                label: oro.websitesearch.searchresult.entity.searchresulthistory.datagrid.results.label
+                type: twig
+                frontend_type: html
+                template: '@OroWebsiteSearch/Datagrid/searchResult.html.twig'
             createdAt:
                 label: oro.websitesearch.searchresult.entity.searchresulthistory.created_at.label
                 frontend_type: datetime
@@ -73,15 +82,20 @@ datagrids:
         filters:
             columns:
                 searchTerm:
-                    data_name: e.searchTerm
+                    data_name: searchTermLower
                     type: string
                     case_insensitive: false
-                    value_conversion: mb_strtoupper
+                    value_conversion: mb_strtolower
                 resultType:
                     data_name: e.resultType
-                    type: string
-                    case_insensitive: false
-                    value_conversion: mb_strtoupper
+                    type: choice
+                    options:
+                        field_options:
+                            choices:
+                                'oro.websitesearch.searchresult.entity.searchresulthistory.result_type.choice.empty': empty
+                                'oro.websitesearch.searchresult.entity.searchresulthistory.result_type.choice.product_autocomplete': product_autocomplete
+                                'oro.websitesearch.searchresult.entity.searchresulthistory.result_type.choice.product_search': product_search
+                            multiple: true
                 createdAt:
                     data_name: e.createdAt
                     type: datetime
@@ -115,32 +129,32 @@ datagrids:
             query:
                 select:
                     - e.searchTerm
-                    - e.timesSearched
-                    - e.timesReturnedResults
-                    - e.timesEmpty
-                    - e.searchDate
+                    - SUM(e.timesSearched) as timesSearchedSum
+                    - SUM(e.timesReturnedResults) as timesReturnedResultsSum
+                    - SUM(e.timesEmpty) as timesEmptySum
                 from:
                     - { table: 'Oro\Bundle\ReportBundle\Entity\CalendarDate', alias: calendarDate }
                 join:
                     inner:
-                        - table: Oro\Bundle\WebsiteSearchBundle\Entity\SearchTermReport
-                          alias: e
-                          conditionType: WITH
-                          condition: e.searchDate = CAST(calendarDate.date as DATE)
+                        -
+                            join: Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport
+                            alias: e
+                            conditionType: WITH
+                            condition: e.searchDate = CAST(calendarDate.date as DATE)
+                groupBy: e.normalizedSearchTermHash, e.searchTerm
         columns:
             timePeriod:
                 label: oro.report.datagrid.column.time_period.label
-
             searchTerm:
                 label: oro.websitesearch.searchresult.entity.searchtermreport.search_term.label
                 cellClassName: 'direction-ltr'
-            timesSearched:
+            timesSearchedSum:
                 label: oro.websitesearch.searchresult.entity.searchtermreport.times_searched.label
                 frontend_type: integer
-            timesReturnedResults:
+            timesReturnedResultsSum:
                 label: oro.websitesearch.searchresult.entity.searchtermreport.times_returned_results.label
                 frontend_type: integer
-            timesEmpty:
+            timesEmptySum:
                 label: oro.websitesearch.searchresult.entity.searchtermreport.times_empty.label
                 frontend_type: integer
         sorters:
@@ -150,12 +164,12 @@ datagrids:
                     apply_callback: ['@oro_filter.date_grouping_filter', 'applyOrderBy']
                 searchTerm:
                     data_name: e.searchTerm
-                timesSearched:
-                    data_name: e.timesSearched
-                timesReturnedResults:
-                    data_name: e.timesReturnedResults
-                timesEmpty:
-                    data_name: e.timesEmpty
+                timesSearchedSum:
+                    data_name: timesSearchedSum
+                timesReturnedResultsSum:
+                    data_name: timesReturnedResultsSum
+                timesEmptySum:
+                    data_name: timesEmptySum
             default:
                 timePeriod: DESC
         filters:
@@ -167,19 +181,19 @@ datagrids:
                 searchTerm:
                     data_name: e.searchTerm
                     type: string
-                timesSearched:
-                    data_name: e.timesSearched
+                timesSearchedSum:
+                    data_name: timesSearchedSum
                     type: number-range
-                timesReturnedResults:
-                    data_name: e.timesReturnedResults
+                timesReturnedResultsSum:
+                    data_name: timesReturnedResultsSum
                     type: number-range
-                timesEmpty:
-                    data_name: e.timesEmpty
+                timesEmptySum:
+                    data_name: timesEmptySum
                     type: number-range
                 skip_empty_periods:
                     label: oro.report.filter.skip_empty_periods.label
                     type: skip_empty_periods
-                    data_name: searchTerm
+                    data_name: e.id
                     options:
                         field_options:
                             choices:
@@ -192,9 +206,9 @@ datagrids:
                     data_name: calendarDate.date
                     column_name: timePeriod
                     calendar_entity: 'Oro\Bundle\ReportBundle\Entity\CalendarDate'
-                    target_entity: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
-                    not_nullable_field: searchResult.id
-                    joined_column: createdAt
+                    target_entity: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport'
+                    not_nullable_field: e.id
+                    joined_column: searchDate
                     joined_table: joinedTableAlias
                     options:
                         field_options:

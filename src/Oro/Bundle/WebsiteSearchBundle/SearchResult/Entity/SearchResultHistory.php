@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -28,7 +29,9 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *         @ORM\UniqueConstraint(name="website_search_result_history_search_session_unq", columns={"search_session"})
  *     },
  *     indexes={
- *         @ORM\Index(name="website_search_result_history_sterm_hash_idx", columns={"normalized_search_term_hash"})
+ *         @ORM\Index(name="website_search_result_history_sterm_hash_idx", columns={"normalized_search_term_hash"}),
+ *         @ORM\Index(name="website_search_result_history_term_lower_idx", columns={"search_term"}),
+ *         @ORM\Index(name="website_search_result_history_search_date_idx", columns={"created_at"})
  *     }
  * )
  * @Config(
@@ -278,6 +281,30 @@ class SearchResultHistory implements
     public function setCustomerUser(?CustomerUser $customerUser): self
     {
         $this->customerUser = $customerUser;
+
+        return $this;
+    }
+
+    public function getCustomerVisitor(): ?CustomerVisitor
+    {
+        return $this->customerVisitor;
+    }
+
+    public function setCustomerVisitor(?CustomerVisitor $customerVisitor): self
+    {
+        $this->customerVisitor = $customerVisitor;
+
+        return $this;
+    }
+
+    public function getSearchSession(): ?string
+    {
+        return $this->searchSession;
+    }
+
+    public function setSearchSession(?string $searchSession): self
+    {
+        $this->searchSession = $searchSession;
 
         return $this;
     }

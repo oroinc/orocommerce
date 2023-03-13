@@ -13,4 +13,8 @@ interface SearchResultHistoryManagerInterface
         int $resultsCount,
         string $searchSessionId = null
     ): void;
+
+    public function removeOutdatedHistoryRecords(): void;
+
+    public function actualizeHistoryReport(): void;
 }

@@ -16,6 +16,7 @@ oro:
                     entity_plural_label: 'Search Term Reports'
                     entity_grid_all_view_label: 'All %entity_plural_label%'
                     id.label: ID
+                    normalized_search_term_hash.label: 'Normalized Search Term Hash'
                     search_term.label: 'Search Term'
                     times_searched.label: 'Number of Times Searched'
                     times_returned_results.label: 'Times Returned Products'
@@ -29,7 +30,12 @@ oro:
                     entity_grid_all_view_label: 'All %entity_plural_label%'
                     id.label: ID
                     normalized_search_term_hash.label: 'Normalized Search Term Hash'
-                    result_type.label: 'Result Type'
+                    result_type:
+                        label: 'Search Result Type'
+                        choice:
+                            empty: 'Empty'
+                            product_autocomplete: 'Product Autocomplete'
+                            product_search: 'Product Search'
                     results_count.label: 'Results Count'
                     website.label: Website
                     localization.label: Localization
@@ -42,10 +48,10 @@ oro:
                     owner.label: Owner
                     organization.label: Organization
                     created_at.label: Searched At
-                    types:
-                        products:
-                            datagrid:
-                                result: '%result% products'
+                    datagrid:
+                        results:
+                            label: 'Results'
+                            product_type.label: '{1} %count% product|]1,Inf[ %count% products'
                     reports:
                         number_of_times_searched.title: Number Of Times Searched
                         number_of_products.title: Times Returned Products

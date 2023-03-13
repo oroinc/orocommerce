@@ -12,6 +12,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository;
+use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchTermReportRepository;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
@@ -25,22 +26,31 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
 {
     use LoggerAwareTrait;
 
-    private SearchResultHistoryRepository $repository;
+    private SearchResultHistoryRepository $historyRepository;
+    private SearchTermReportRepository $reportRepository;
     private TokenStorageInterface $tokenStorage;
     private WebsiteManager $websiteManager;
     private LocalizationHelper $localizationHelper;
+    private int $keepDays = 30;
 
     public function __construct(
-        SearchResultHistoryRepository $repository,
+        SearchResultHistoryRepository $historyRepository,
+        SearchTermReportRepository $reportRepository,
         TokenStorageInterface $tokenStorage,
         WebsiteManager $websiteManager,
         LocalizationHelper $localizationHelper
     ) {
-        $this->repository = $repository;
+        $this->historyRepository = $historyRepository;
+        $this->reportRepository = $reportRepository;
         $this->tokenStorage = $tokenStorage;
         $this->websiteManager = $websiteManager;
         $this->localizationHelper = $localizationHelper;
         $this->logger = new NullLogger();
+    }
+
+    public function setKeepDays(int $keepDays): void
+    {
+        $this->keepDays = $keepDays;
     }
 
     public function saveSearchResult(
@@ -64,7 +74,7 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
         $customerUser = $this->getCustomerUser($token);
 
         try {
-            $this->repository->upsertSearchHistoryRecord(
+            $this->historyRepository->upsertSearchHistoryRecord(
                 $searchTerm,
                 $searchType,
                 $resultsCount,
@@ -81,6 +91,16 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
         } catch (\Exception $e) {
             $this->logger->error('Unable to save search term', ['exception' => $e]);
         }
+    }
+
+    public function removeOutdatedHistoryRecords(): void
+    {
+        $this->historyRepository->removeOldRecords($this->keepDays);
+    }
+
+    public function actualizeHistoryReport(): void
+    {
+        $this->reportRepository->actualizeReport();
     }
 
     private function getCustomerVisitor(?TokenInterface $token): ?CustomerVisitor

@@ -14,7 +14,7 @@ class CreateSearchResultHistoryTable implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroWebsiteSearchResultHistoryTable($schema, $queries);
-        $this->createOroWebsiteSearchSearchTermReportTable($schema);
+        $this->createOroWebsiteSearchSearchTermReportTable($schema, $queries);
 
         $this->addOroWebsiteSearchResultHistoryForeignKeys($schema);
         $this->addOroWebsiteSearchSearchTermReportForeignKeys($schema);
@@ -42,15 +42,26 @@ class CreateSearchResultHistoryTable implements Migration
         $table->addIndex(['normalized_search_term_hash'], 'website_search_result_history_sterm_hash_idx');
 
         $queries->addPostQuery(
+            'CREATE INDEX website_search_result_history_term_lower_idx'
+            . ' ON oro_website_search_result_history (LOWER("search_term"))'
+        );
+
+        $queries->addPostQuery(
+            'CREATE INDEX website_search_result_history_search_date_idx'
+            . ' ON oro_website_search_result_history (DATE("created_at"))'
+        );
+
+        $queries->addPostQuery(
             'ALTER TABLE oro_website_search_result_history'
             . ' ADD CONSTRAINT "website_search_result_history_search_session_unq" UNIQUE ("search_session")'
         );
     }
 
-    private function createOroWebsiteSearchSearchTermReportTable(Schema $schema): void
+    private function createOroWebsiteSearchSearchTermReportTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_website_search_term_report');
         $table->addColumn('id', 'guid');
+        $table->addColumn('normalized_search_term_hash', 'string', ['length' => 32]);
         $table->addColumn('search_term', 'string', ['length' => 255]);
         $table->addColumn('times_searched', 'integer');
         $table->addColumn('times_returned_results', 'integer');
@@ -61,6 +72,12 @@ class CreateSearchResultHistoryTable implements Migration
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['search_date'], 'website_search_term_report_date_idx');
+
+        $queries->addPostQuery(
+            'ALTER TABLE oro_website_search_term_report'
+            . ' ADD CONSTRAINT "website_search_term_report_term_unq"'
+            . ' UNIQUE ("search_date", "normalized_search_term_hash")'
+        );
     }
 
     private function addOroWebsiteSearchResultHistoryForeignKeys(Schema $schema): void
