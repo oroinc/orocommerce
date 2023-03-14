@@ -461,16 +461,6 @@ oro_behat_extension:
         locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Phones"]'
         type: 'xpath'
 
-    Common Business Unit Name:
-      selector:
-        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Common Business Unit"]'
-        type: 'xpath'
-
-    Second Business Unit:
-      selector:
-        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Second Business Unit"]'
-        type: 'xpath'
-
     SubOrders Grid:
       selector: 'div[data-page-component-name="suborders-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

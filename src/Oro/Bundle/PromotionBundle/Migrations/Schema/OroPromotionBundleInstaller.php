@@ -8,6 +8,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -35,7 +36,7 @@ class OroPromotionBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -89,6 +90,8 @@ class OroPromotionBundleInstaller implements
         $this->addAppliedCouponsToCheckout($schema);
         $this->addAppliedPromotionsToOrder($schema);
         $this->addDisablePromotionsToOrder($schema);
+
+        $this->addPromotionEntityConfigs($schema);
     }
 
     /**
@@ -607,5 +610,19 @@ class OroPromotionBundleInstaller implements
                 ]
             ]
         );
+    }
+
+    public function addPromotionEntityConfigs(Schema $schema): void
+    {
+        $options = new OroOptions();
+        $options->set('promotion', 'is_promotion_aware', true);
+        $options->set('promotion', 'is_coupon_aware', true);
+        $schema->getTable('oro_order')
+               ->addOption(OroOptions::KEY, $options);
+
+        $options = new OroOptions();
+        $options->set('promotion', 'is_coupon_aware', true);
+        $schema->getTable('oro_checkout')
+            ->addOption(OroOptions::KEY, $options);
     }
 }

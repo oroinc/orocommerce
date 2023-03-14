@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierTypeStub;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -59,7 +60,7 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
             $this->typeRegistry,
             $this->metadataProvider,
             $this->doctrineHelper,
-            new PropertyAccessor()
+            PropertyAccess::createPropertyAccessor()
         );
 
         parent::setUp();

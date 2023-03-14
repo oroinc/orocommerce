@@ -76,13 +76,13 @@ datagrids:
                 activity:
                     type:      single_choice
                     data_name: activity
+                    label:     oro.pricing.pricelist_schedule.activity.label
                     options:
                         field_options:
                             choices:
                                 oro.pricing.pricelist_schedule.disabled: disabled
                                 oro.pricing.pricelist_schedule.inactive: inactive
                                 oro.pricing.pricelist_schedule.active: active
-                    label: oro.pricing.pricelist_schedule.activity.label
 
     pricing-price-list-grid:
         extends: pricing-price-list-select-grid
@@ -473,6 +473,8 @@ datagrids:
                     data_name: unitCode
                     options:
                         field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+                        field_options:
+                            translatable_options: false
                 value:
                     type:      number
                     data_name: productPrice.value
@@ -482,6 +484,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
+                            translatable_options: false
                 filter:
                     type:       single_choice
                     data_name:  ruleId
@@ -612,6 +615,8 @@ datagrids:
                     data_name: unitCode
                     options:
                         field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+                        field_options:
+                            translatable_options: false
                 value:
                     type:      number
                     data_name: productPrice.value
@@ -621,6 +626,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
+                            translatable_options: false
             default:
                 priceListName: { value: "@oro_pricing.provider.price_list_default_value->getDefaultPriceListId" }
         properties:

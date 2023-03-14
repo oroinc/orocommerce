@@ -15,9 +15,11 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\SaleBundle\Model\ExtendQuote;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
@@ -74,8 +76,10 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @method AbstractEnumValue getInternalStatus()
+ * @method AbstractEnumValue getCustomerStatus()
  */
-class Quote extends ExtendQuote implements
+class Quote implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
     EmailOwnerAwareInterface,
@@ -83,11 +87,13 @@ class Quote extends ExtendQuote implements
     MethodLockedShippingMethodConfigurationInterface,
     AllowUnlistedShippingMethodConfigurationInterface,
     OverriddenCostShippingMethodConfigurationInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    ExtendEntityInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     const CUSTOMER_STATUS_CODE = 'quote_customer_status';
     const INTERNAL_STATUS_CODE = 'quote_internal_status';
@@ -369,8 +375,6 @@ class Quote extends ExtendQuote implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->quoteProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
         $this->assignedCustomerUsers = new ArrayCollection();
@@ -584,6 +588,7 @@ class Quote extends ExtendQuote implements
     public function __clone()
     {
         $this->generateGuestAccessId();
+        $this->cloneExtendEntityStorage();
     }
 
     /**

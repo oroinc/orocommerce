@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\WebCatalogBundle\ContentNodeUtils;
 
@@ -12,30 +13,31 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Service that collect content nodes tree by scope, including content variants.
  */
 class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 {
-    private DoctrineHelper $doctrineHelper;
-
-    private ContentNodeProvider $contentNodeProvider;
-
-    private ScopeManager $scopeManager;
-
+    private DoctrineHelper             $doctrineHelper;
+    private ContentNodeProvider        $contentNodeProvider;
+    private ScopeManager               $scopeManager;
     private ResolvedContentNodesLoader $resolvedContentNodesLoader;
+    private PropertyAccessorInterface  $propertyAccessor;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ContentNodeProvider $contentNodeProvider,
         ScopeManager $scopeManager,
-        ResolvedContentNodesLoader $resolvedContentNodesLoader
+        ResolvedContentNodesLoader $resolvedContentNodesLoader,
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->contentNodeProvider = $contentNodeProvider;
         $this->scopeManager = $scopeManager;
         $this->resolvedContentNodesLoader = $resolvedContentNodesLoader;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -139,8 +141,11 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         // a consent or other object).
         // We need the customer group to be sure that content nodes that have a restriction
         // by a customer group will be filtered correctly.
-        if (method_exists($scope, 'getCustomer') && $scope->getCustomer()) {
-            $context[ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP] = $scope->getCustomer()->getGroup();
+        if ($this->propertyAccessor->isReadable($scope, 'customer')
+            && $this->propertyAccessor->getValue($scope, 'customer')
+        ) {
+            $customer = $this->propertyAccessor->getValue($scope, 'customer');
+            $context[ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP] = $customer->getGroup();
         }
 
         return $this->scopeManager->getCriteriaByScope($scope, 'web_content', $context);

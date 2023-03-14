@@ -5,9 +5,9 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Api;
 use Oro\Bundle\CMSBundle\Api\LocalizedFallbackValueExtractor;
 use Oro\Bundle\CMSBundle\Api\WYSIWYGValueRenderer;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\WYSIWYGLocalizedFallbackValue;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\LocaleBundle\Api\LocalizedFallbackValueExtractorInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class LocalizedFallbackValueExtractorTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,7 +28,7 @@ class LocalizedFallbackValueExtractorTest extends \PHPUnit\Framework\TestCase
         $this->valueExtractor = new LocalizedFallbackValueExtractor(
             $this->innerValueExtractor,
             $this->wysiwygValueRenderer,
-            new PropertyAccessor()
+            PropertyAccess::createPropertyAccessor()
         );
     }
 

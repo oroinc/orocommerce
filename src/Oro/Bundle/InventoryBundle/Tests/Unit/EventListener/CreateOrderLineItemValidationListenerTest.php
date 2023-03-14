@@ -8,7 +8,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener;
-use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -179,8 +178,6 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestC
 
     public function testOnLineItemValidateWhenInventoryLevelNotFound(): void
     {
-        $this->expectException(InventoryLevelNotFoundException::class);
-
         $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
         $this->doctrine->expects(self::once())
             ->method('getRepository')
@@ -200,5 +197,16 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestC
 
         $event = $this->getEvent('order_review');
         $this->createOrderLineItemValidationListener->onLineItemValidate($event);
+
+        self::assertEquals(
+            [
+                [
+                    'sku' => 'TEST001',
+                    'unit' => 'item',
+                    'message' => 'oro.inventory.decrement_inventory.product.not_allowed (translated)'
+                ]
+            ],
+            $event->getErrors()->toArray()
+        );
     }
 }

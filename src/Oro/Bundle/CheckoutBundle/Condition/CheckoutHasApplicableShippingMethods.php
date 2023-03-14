@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Condition;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
+use Oro\Bundle\CheckoutBundle\Provider\AvailableShippingMethodCheckerInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
@@ -19,12 +19,12 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
 {
     use ContextAccessorAwareTrait;
 
-    private CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider;
+    private AvailableShippingMethodCheckerInterface $availableShippingMethodChecker;
     private mixed $checkout = null;
 
-    public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
+    public function __construct(AvailableShippingMethodCheckerInterface $availableShippingMethodChecker)
     {
-        $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
+        $this->availableShippingMethodChecker = $availableShippingMethodChecker;
     }
 
     /**
@@ -64,7 +64,7 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
             return false;
         }
 
-        return !$this->checkoutShippingMethodsProvider->getApplicableMethodsViews($checkout)->isEmpty();
+        return $this->availableShippingMethodChecker->hasAvailableShippingMethods($checkout);
     }
 
     /**

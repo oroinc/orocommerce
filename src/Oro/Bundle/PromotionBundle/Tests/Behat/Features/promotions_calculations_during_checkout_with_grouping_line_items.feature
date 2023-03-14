@@ -19,26 +19,11 @@ Feature: Promotions calculations during checkout with grouping line items
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-
-  Scenario: Enable line item grouping and suborders
-    Given I proceed as the Admin
-    And I login as administrator
-    And I go to System/Configuration
-    And I follow "Commerce/Sales/Multi Shipping Options" on configuration sidebar
-    And uncheck "Use default" for "Enable shipping method selection per line item" field
-    And I fill form with:
-      | Enable shipping method selection per line item | true |
-    And uncheck "Use default" for "Enable grouping of line items during checkout" field
-    And I fill form with:
-      | Enable grouping of line items during checkout | true |
-    And uncheck "Use default" for "Group line items by" field
-    And I fill form with:
-      | Group line items by | Category |
-    And uncheck "Use default" for "Create Sub-Orders for each group" field
-    And I fill form with:
-      | Create Sub-Orders for each group | true |
-    And I save form
-    Then I should see "Configuration saved" flash message
+    And I change configuration options:
+      | oro_checkout.enable_shipping_method_selection_per_line_item | true             |
+      | oro_checkout.enable_line_item_grouping                      | true             |
+      | oro_checkout.group_line_items_by                            | product.category |
+      | oro_checkout.create_suborders_for_each_group                | true             |
 
   Scenario: Start checkout and check line items discount applied only for the "Lighting products" group.
     Given I proceed as the Buyer
@@ -119,6 +104,7 @@ Feature: Promotions calculations during checkout with grouping line items
 
   Scenario: Check discounts in created order and sub orders in admin
     Given I proceed as the Admin
+    And I login as administrator
     And I go to Sales/Orders
     Then I should see following grid:
       | Order Number | Total  |

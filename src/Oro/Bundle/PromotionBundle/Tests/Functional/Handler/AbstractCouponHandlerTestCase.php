@@ -70,7 +70,7 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
     public function testHandleWhenEntityDoesNotImplementNeededInterface()
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Entity should be instance of AppliedCouponsAwareInterface');
+        $this->expectExceptionMessage('Entity should have is_coupon_aware entity config');
 
         $request = $this->getRequestWithCouponData([
             'entityClass' => Promotion::class,

@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Adds child form for each variant field
@@ -33,7 +33,7 @@ class FrontendVariantFiledType extends AbstractType
 
     protected LocalizationProviderInterface $localizationProvider;
 
-    protected PropertyAccessor $propertyAccessor;
+    protected PropertyAccessorInterface $propertyAccessor;
 
     protected string $productClass;
 
@@ -42,7 +42,7 @@ class FrontendVariantFiledType extends AbstractType
         ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry,
         VariantFieldProvider $variantFieldProvider,
         LocalizationProviderInterface $localizationProvider,
-        PropertyAccessor $propertyAccessor,
+        PropertyAccessorInterface $propertyAccessor,
         $productClass
     ) {
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;

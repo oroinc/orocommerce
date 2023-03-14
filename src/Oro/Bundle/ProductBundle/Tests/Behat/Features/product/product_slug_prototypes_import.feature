@@ -1,5 +1,7 @@
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @ticket-BB-20692
+@ticket-BB-20552
+
 Feature: Product slug prototypes import
   In order to be able to modify product slugs
   As an Administrator
@@ -104,3 +106,15 @@ Feature: Product slug prototypes import
     And click on "Product Form Slug Fallbacks"
     And URLSlugEnglishValue field should has nameenimport5 value
     And URLSlugEnglishUnitedStatesValue field should has slugnameenusimport5 value
+
+  Scenario: Import with localized name column merely and generate slugPrototypes
+    And I go to Products / Products
+    And I click "Import file"
+    And I upload "import_product_localized_name_merely_column.csv" file to "ShoppingListImportFileField"
+    And I click "Import file"
+    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
+    When I go to Products/Products
+    And click edit "SKU" in grid
+    And click on "Product Form Slug Fallbacks"
+    And URLSlugEnglishValue field should has nameenimport5 value
+    And URLSlugEnglishUnitedStatesValue field should has nameenusimport6 value

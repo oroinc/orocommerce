@@ -6,8 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PromotionBundle\Model\ExtendAppliedDiscount;
 
 /**
  * Represents a discount applied to order line item.
@@ -16,9 +17,12 @@ use Oro\Bundle\PromotionBundle\Model\ExtendAppliedDiscount;
  * @ORM\Table(name="oro_promotion_applied_discount")
  * @ORM\Entity()
  */
-class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterface
+class AppliedDiscount implements
+    DatesAwareInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @ORM\Id

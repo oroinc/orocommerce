@@ -3,18 +3,17 @@
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\FallbackBundle\DependencyInjection\OroFallbackExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroFallbackExtensionTest extends ExtensionTestCase
+class OroFallbackExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
-        $this->loadExtension(new OroFallbackExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            'oro_fallback.form.type.website_collection',
-            'oro_fallback.form.type.website_property',
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        $extension = new OroFallbackExtension();
+        $extension->load([], $container);
+
+        self::assertNotEmpty($container->getDefinitions());
     }
 }

@@ -7,11 +7,12 @@ use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
-use Oro\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -28,7 +29,7 @@ class VirtualFieldsProductDecorator
     private Product $product;
     private FieldHelper $fieldHelper;
     private static array $values = [];
-    private static ?PropertyAccessor $propertyAccessor = null;
+    private static ?PropertyAccessorInterface $propertyAccessor = null;
     private CacheInterface $cacheProvider;
     private ConfigProvider $attributeProvider;
 
@@ -275,12 +276,12 @@ class VirtualFieldsProductDecorator
     }
 
     /**
-     * @return PropertyAccessor
+     * @return PropertyAccessorInterface
      */
     protected function getPropertyAccessor()
     {
         if (!static::$propertyAccessor) {
-            static::$propertyAccessor = new PropertyAccessor();
+            static::$propertyAccessor = PropertyAccess::createPropertyAccessor();
         }
 
         return static::$propertyAccessor;

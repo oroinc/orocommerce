@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
@@ -127,7 +128,7 @@ class ProductVisibility implements VisibilityInterface, ScopeAwareInterface
      */
     public static function getVisibilityList($product)
     {
-        if (method_exists($product, 'getCategory') && !$product->getCategory()) {
+        if (EntityPropertyInfo::methodExists($product, 'getCategory') && !$product->getCategory()) {
             return [
                 self::CONFIG,
                 self::HIDDEN,

@@ -32,7 +32,8 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
     public function testOnBuilderBeforeFeatureDisabled()
     {
         $event = $this->createMock(BuildBefore::class);
-        $event->expects($this->never())->method('getDatagrid');
+        $event->expects($this->never())
+            ->method('getDatagrid');
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -47,7 +48,8 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
     public function testOnResultAfterFeatureDisabled()
     {
         $event = $this->createMock(OrmResultAfter::class);
-        $event->expects($this->never())->method('getRecords');
+        $event->expects($this->never())
+            ->method('getRecords');
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -61,7 +63,8 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
 
     public function testOnResultAfter()
     {
-        $relation = $this->createRelation();
+        $objectId = 123;
+        $relation = $this->createRelation($objectId);
         $this->repository->expects(self::any())
             ->method('getRelationsByHolders')
             ->willReturn([$relation]);
@@ -72,7 +75,7 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
 
         $eventBuildBefore = new BuildBefore($dataGrid, $config);
 
-        $record = new ResultRecord(['name' => 'test']);
+        $record = new ResultRecord(['id' => $objectId, 'name' => 'test']);
         $event = new OrmResultAfter($dataGrid, [$record]);
 
         $this->featureChecker->expects($this->exactly(2))
@@ -106,5 +109,5 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
         );
     }
 
-    abstract protected function createRelation(): BasePriceListRelation;
+    abstract protected function createRelation(int $objectId): BasePriceListRelation;
 }

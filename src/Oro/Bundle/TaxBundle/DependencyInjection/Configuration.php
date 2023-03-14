@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 'use_as_base_by_default' => [
                     'type' => 'text',
-                    'value' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN
+                    'value' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN
                 ],
                 'use_as_base_exclusions' => [
                     'type' => 'array',

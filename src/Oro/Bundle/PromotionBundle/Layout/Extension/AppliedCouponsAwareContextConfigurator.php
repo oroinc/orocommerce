@@ -3,17 +3,21 @@
 namespace Oro\Bundle\PromotionBundle\Layout\Extension;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Component\Layout\ContextConfiguratorInterface;
 use Oro\Component\Layout\ContextInterface;
 
 /**
  * Set isAppliedCouponsAware to context if entity or source entity of checkout
- * is instance of AppliedCouponsAwareInterface
+ * is coupons aware
  */
 class AppliedCouponsAwareContextConfigurator implements ContextConfiguratorInterface
 {
+    public function __construct(protected PromotionAwareEntityHelper $promotionAwareHelper)
+    {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -23,10 +27,11 @@ class AppliedCouponsAwareContextConfigurator implements ContextConfiguratorInter
         if ($context->data()->has('checkout')) {
             $checkout = $context->data()->get('checkout');
             $isAppliedCouponsAware = $checkout instanceof CheckoutInterface
-                && $checkout instanceof AppliedCouponsAwareInterface
+                && $this->promotionAwareHelper->isCouponAware($checkout)
                 && !$checkout->getSourceEntity() instanceof QuoteDemand;
         } elseif ($context->data()->has('entity')) {
-            $isAppliedCouponsAware = $context->data()->get('entity') instanceof AppliedCouponsAwareInterface;
+            $entity = $context->data()->get('entity');
+            $isAppliedCouponsAware = is_object($entity) && $this->promotionAwareHelper->isCouponAware($entity);
         }
 
         $context->getResolver()->setDefault('isAppliedCouponsAware', false);

@@ -1,6 +1,7 @@
 /* @theme: default; */
 
 $product-item-gallery-view-offset-x: $offset-x-m !default;
+$product-item-gallery-view-width: calc(20% - (#{$product-item-gallery-view-offset-x} * 2)) !default;
 $product-item-gallery-view-offset-bottom: 30px !default;
 $product-item-gallery-view-border: 1px solid get-color('additional', 'light') !default;
 $product-item-qty-height: 115px !default;
@@ -27,11 +28,30 @@ $product-item-view-product-color: null !default;
 
 $product-item-select-row-gallery-view-height: var(--product-item-select-row-gallery-view-height, 26px) !default;
 
+// strict-tablet
+$product-item-gallery-view-width-strict-tablet: calc(25% - (#{$product-item-gallery-view-offset-x} * 2)) !default;
+
 // tablet
 $product-item-select-row-gallery-view-height-tablet: auto !default;
 
 // tablet-small
 $product-item-gallery-view-offset-x-tablet-small: 12px !default;
+$product-item-primary-content-remainder-width-width-tablet-small: 77% !default;
+$product-item-secondary-content-list-view-width-tablet-small: 240px !default;
+$product-item-primary-content-list-view-width-tablet-small: calc(
+    $product-item-primary-content-remainder-width-width-tablet-small -
+    $product-item-secondary-content-list-view-width-tablet-small
+) !default;
+
+//strict-tablet-small
+$product-item-gallery-view-width-strict-tablet-small: calc(
+    33.3333% - (#{$product-item-gallery-view-offset-x-tablet-small} * 2)
+) !default;
 
 // mobile-landscape
 $product-item-gallery-view-offset-x-mobile-landscape: $offset-x-s !default;
+
+// strict-mobile-landscape
+$product-item-gallery-view-width-strict-mobile-landscape: calc(
+    50% - (#{$product-item-gallery-view-offset-x-mobile-landscape} * 2)
+) !default;

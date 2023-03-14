@@ -145,8 +145,8 @@ datagrids:
                 label: oro.cms.contentblock.enabled.label
                 frontend_type: select
                 choices:
-                    Disabled: 0
-                    Enabled: 1
+                    oro.cms.contentblock.filters.disabled: 0
+                    oro.cms.contentblock.filters.enabled: 1
             createdAt:
                 label: oro.cms.contentblock.createdat.label
                 frontend_type: datetime
@@ -274,10 +274,12 @@ datagrids:
                     type: string
                     data_name: contentWidget.description
                 widgetType:
-                    type: choice-tree
+                    type: choice
                     data_name: contentWidget.widgetType
-                    autocomplete_alias: oro_cms_content_widget_types
-                    renderedPropertyName: 'label'
+                    options:
+                        field_options:
+                            choices: '@oro_cms.provider.content_widget_type->getAvailableContentWidgetTypes()'
+                            multiple: true
                 createdAt:
                     type: datetime
                     data_name: contentWidget.createdAt

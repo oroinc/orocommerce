@@ -129,6 +129,18 @@ services:
     oro_checkout.provider.shipping_context.cache:
         parent: oro.cache.provider.memory_cache
 
+    oro_checkout.shipping_origin_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\ConfigCheckoutShippingOriginProvider
+        public: true
+        arguments:
+            - '@oro_shipping.system_shipping_origin_provider'
+
+    oro_checkout.available_shipping_method_checker:
+        class: Oro\Bundle\CheckoutBundle\Provider\AvailableShippingMethodChecker
+        arguments:
+            - '@oro_shipping.provider.methods_configs_rules.by_context_required_parameters'
+            - '@oro_checkout.provider.shipping_context'
+
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
         arguments:
@@ -396,7 +408,7 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_order.shipping_line_item.converter_basic'
-            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_checkout.shipping_origin_provider'
             - '@oro_shipping.context.builder_factory_basic'
 
     oro_checkout.factory.payment_context_factory:
@@ -406,7 +418,7 @@ services:
             - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
-            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_checkout.shipping_origin_provider'
             - '@oro_payment.context.builder_factory_basic'
 
     oro_checkout.mapper.order_mapper:
@@ -499,7 +511,7 @@ services:
     oro_checkout.condition.checkout_has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'
         arguments:
-            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.available_shipping_method_checker'
         tags:
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
 
@@ -513,8 +525,7 @@ services:
             - '@oro_order.order.provider.order_address'
             - '@oro_order.order.provider.order_address_security'
             - '@oro_order.manager.order_address'
-            - '@oro_shipping.provider.methods_configs_rules.by_context_required_parameters'
-            - '@oro_checkout.provider.shipping_context'
+            - '@oro_checkout.available_shipping_method_checker'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }
 

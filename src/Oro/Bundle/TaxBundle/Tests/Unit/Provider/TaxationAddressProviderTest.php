@@ -108,7 +108,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                 [
                     'country' => $countryCA,
                     'region' => null,
-                    'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                    'option' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                 ]
             ),
         ];
@@ -199,7 +199,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                         [
                             'country' => $countryCA,
                             'region' => null,
-                            'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                         ]
                     ),
                 ]
@@ -223,7 +223,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                         [
                             'country' => $countryCA,
                             'region' => null,
-                            'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                         ]
                     ),
                 ]

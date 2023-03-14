@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference;
@@ -16,7 +17,6 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -53,7 +53,7 @@ class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
             ->withAnyParameters()
             ->willReturn($entityManager);
 
-        return new LexemeCircularReferenceValidator($this->parser, $doctrine, new PropertyAccessor());
+        return new LexemeCircularReferenceValidator($this->parser, $doctrine, PropertyAccess::createPropertyAccessor());
     }
 
     private function getPriceList(int $id, string $productAssignmentRule = null): PriceList

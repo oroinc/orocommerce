@@ -15,8 +15,10 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\RFPBundle\Model\ExtendRequest;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -62,19 +64,23 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @method AbstractEnumValue getInternalStatus()
+ * @method AbstractEnumValue getCustomerStatus()
  */
-class Request extends ExtendRequest implements
+class Request implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
     EmailOwnerInterface,
     SoftDeleteableInterface,
     OrganizationAwareInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    ExtendEntityInterface
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use AuditableUserAwareTrait;
+    use ExtendEntityTrait;
 
     const CUSTOMER_STATUS_CODE = 'rfp_customer_status';
     const INTERNAL_STATUS_CODE = 'rfp_internal_status';
@@ -303,8 +309,6 @@ class Request extends ExtendRequest implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = clone $this->createdAt;
 

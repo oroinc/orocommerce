@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\ImportExport\Normalizer;
 
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\Persistence\ManagerRegistry;
-use Extend\Entity\EX_OroCatalogBundle_Category;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
@@ -91,7 +90,7 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
      * and manager will do clear per batch. the parent category of a category might be cleared
      * before it been accessed as a parent category.
      * To fetch them with EAGER mode could prevent them to load as Proxy implementation.
-     * @param Category|EX_OroCatalogBundle_Category $object
+     * @param Category $object
      * @return Category
      */
     private function revitalizeObject($object): Category

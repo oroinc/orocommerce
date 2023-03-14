@@ -46,6 +46,13 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
 
+    oro_shipping.datagrid.method_configs_provider:
+        class: Oro\Bundle\ShippingBundle\Provider\MethodConfigsDatagridDataProvider
+        public: true
+        arguments:
+            - '@oro_shipping.method.org_provider'
+            - '@twig'
+
     oro_shipping.formatter.length_unit_label:
         parent: oro_product.formatter.unit_label
         calls:
@@ -266,12 +273,8 @@ services:
             - '@request_stack'
             - '@doctrine.orm.entity_manager'
 
-    Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider:
-        alias: oro_shipping.shipping_origin.provider
-
-    oro_shipping.shipping_origin.provider:
-        class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
-        public: true
+    oro_shipping.system_shipping_origin_provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider'
         arguments:
             - '@oro_config.global'
             - '@oro_shipping.factory.shipping_origin_model_factory'
@@ -480,16 +483,22 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelLoader'
         arguments:
             - '@doctrine'
-            - '@oro_security.acl_helper'
+            - '@security.authorization_checker'
+            - '@oro_security.token_accessor'
 
     oro_shipping.method.loader:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodLoader'
         arguments:
             - '@oro_shipping.method.integration_channel_loader'
             - '@oro_shipping.method.loader.memory_cache'
+            - '@oro_shipping.method.org_provider'
+            - '@oro_security.token_accessor'
 
     oro_shipping.method.loader.memory_cache:
         parent: oro.cache.provider.memory_cache
+
+    oro_shipping.method.org_provider:
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider'
 
     oro_shipping.method.provider.type.label.provider:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Label\Type\BasicMethodTypeLabelsProvider'
@@ -505,10 +514,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProvider'
         arguments:
             - '@oro_shipping.shipping_method_provider'
-        calls:
-            - ['setLogger', ['@logger']]
-        public: false
-        lazy: true
+            - '@logger'
 
     oro_shipping.rule_filtration.basic_service:
         class: 'Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
@@ -522,6 +528,7 @@ services:
         arguments:
             - '@oro_shipping.rule_filtration.basic_service'
             - '@doctrine'
+            - '@oro_shipping.method.org_provider'
 
     oro_shipping.enabled_rule_filtration.basic_service:
         class: 'Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService'
@@ -535,6 +542,7 @@ services:
         arguments:
             - '@oro_shipping.enabled_rule_filtration.basic_service'
             - '@doctrine'
+            - '@oro_shipping.method.org_provider'
 
     oro_shipping.configuration_search_provider.shipping_origin:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingOriginConfigSearchProvider'

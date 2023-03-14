@@ -346,7 +346,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
                 'value' => false,
             ],
             [
-                'configValue' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                'configValue' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                 'value' => true,
             ],
         ];
@@ -374,7 +374,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
                 'value' => true,
             ],
             [
-                'configValue' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                'configValue' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                 'value' => false,
             ],
         ];

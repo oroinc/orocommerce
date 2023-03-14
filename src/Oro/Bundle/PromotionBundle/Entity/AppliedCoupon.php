@@ -6,18 +6,24 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\PromotionBundle\Model\ExtendAppliedCoupon;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
+ * Store Applied Coupon in database.
+ *
  * @Config()
  * @ORM\Table(name="oro_promotion_applied_coupon")
  * @ORM\Entity
  *
- * Store Applied Coupon in a database
+ * @method Order getOrder()
+ * @method setOrder(Order $order)
  */
-class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterface
+class AppliedCoupon implements CreatedAtAwareInterface, ExtendEntityInterface
 {
     use CreatedAtAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @ORM\Id

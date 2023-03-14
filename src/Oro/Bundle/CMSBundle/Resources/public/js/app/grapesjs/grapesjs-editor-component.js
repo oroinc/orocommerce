@@ -1,5 +1,6 @@
 import BaseComponent from 'oroui/js/app/components/base/component';
 import loadModules from 'oroui/js/app/services/load-modules';
+import errorHandler from 'oroui/js/error';
 import GrapesjsEditorView from './grapesjs-editor-view';
 
 const GrapesjsEditorComponent = BaseComponent.extend({
@@ -50,7 +51,18 @@ const GrapesjsEditorComponent = BaseComponent.extend({
         }
 
         this.view = new GrapesjsEditorView(options);
-        this._resolveDeferredInit();
+
+        if (this.view.deferredRender) {
+            this.view.deferredRender
+                .done(this._resolveDeferredInit.bind(this))
+                .fail(error => {
+                    errorHandler.showError(error || new Error('View rendering failed'));
+                    // the error is already handled, there's no need to propagate it upper
+                    this._rejectDeferredInit();
+                });
+        } else {
+            this._resolveDeferredInit();
+        }
     }
 });
 

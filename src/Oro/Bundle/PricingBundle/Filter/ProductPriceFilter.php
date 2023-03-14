@@ -172,7 +172,8 @@ class ProductPriceFilter extends NumberRangeFilter
         $metadata = parent::getMetadata();
         $metadata['unitChoices'] = [];
 
-        $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
+        $formView = $this->getFormView();
+        $unitChoices = $formView['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
             $metadata['unitChoices'][] = [
                 'data' => $choice->data,

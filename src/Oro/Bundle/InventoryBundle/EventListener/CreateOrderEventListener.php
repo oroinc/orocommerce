@@ -7,7 +7,6 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -55,11 +54,9 @@ class CreateOrderEventListener
             }
 
             $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
-            if (null === $inventoryLevel) {
-                throw new InventoryLevelNotFoundException();
-            }
-
-            if ($this->quantityManager->canDecrementInventory($inventoryLevel, $lineItem->getQuantity())) {
+            if (null !== $inventoryLevel
+                && $this->quantityManager->canDecrementInventory($inventoryLevel, $lineItem->getQuantity())
+            ) {
                 $this->quantityManager->decrementInventory($inventoryLevel, $lineItem->getQuantity());
                 $this->statusHandler->changeInventoryStatusWhenDecrement($inventoryLevel);
             }
@@ -84,11 +81,9 @@ class CreateOrderEventListener
             }
 
             $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
-            if (null === $inventoryLevel) {
-                throw new InventoryLevelNotFoundException();
-            }
-
-            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
+            if (null === $inventoryLevel
+                || !$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())
+            ) {
                 $event->addError('');
 
                 return;

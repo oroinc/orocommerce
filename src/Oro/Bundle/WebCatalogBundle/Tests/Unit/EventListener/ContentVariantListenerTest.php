@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadata;
@@ -52,11 +53,13 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
         $this->typeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
         $this->metadataProvider = $this->createMock(OwnershipMetadataProviderInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         $this->listener = new ContentVariantListener(
             $this->typeRegistry,
             $this->metadataProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $propertyAccessor
         );
     }
 

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOf;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -20,7 +20,7 @@ class BlankOneOfValidatorTest extends ConstraintValidatorTestCase
                 return $id . ' (translated)';
             });
 
-        return new BlankOneOfValidator($translator, new PropertyAccessor());
+        return new BlankOneOfValidator($translator, PropertyAccess::createPropertyAccessor());
     }
 
     public function testGetTargets()

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -15,23 +14,16 @@ use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 /**
- * Adds price list column and filter
- * Adds price list data to selected records
+ * Adds price list column and filter.
+ * Adds price list data to selected records.
  */
 abstract class AbstractPriceListRelationDataGridListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
 
-    const PRICE_LIST_KEY = 'price_list';
+    private const PRICE_LIST_KEY = 'price_list';
 
-    protected ManagerRegistry $registry;
-
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildBefore(BuildBefore $event): void
     {
         if (!$this->isFeaturesEnabled()) {
             return;
@@ -43,7 +35,7 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
         $this->addPriceListFilter($config);
     }
 
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event): void
     {
         if (!$this->isFeaturesEnabled()) {
             return;
@@ -51,13 +43,13 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
 
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $priceListHoldersIds = [];
 
+        $priceListHoldersIds = [];
         foreach ($records as $record) {
             $priceListHoldersIds[] = $record->getValue('id');
         }
 
-        if (count($priceListHoldersIds) > 0) {
+        if (\count($priceListHoldersIds) > 0) {
             $groupedPriceLists = [];
             $relations = $this->getRelations($priceListHoldersIds);
             foreach ($relations as $relation) {
@@ -70,7 +62,7 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
             foreach ($records as $record) {
                 $priceListHolderId = $record->getValue('id');
                 $priceLists = [];
-                if (array_key_exists($priceListHolderId, $groupedPriceLists)) {
+                if (\array_key_exists($priceListHolderId, $groupedPriceLists)) {
                     $priceLists = $groupedPriceLists[$priceListHolderId];
                 }
                 $data = ['price_lists' => $priceLists];
@@ -79,7 +71,7 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
         }
     }
 
-    protected function addPriceListFilter(DatagridConfiguration $config)
+    protected function addPriceListFilter(DatagridConfiguration $config): void
     {
         $config->addFilter(
             self::PRICE_LIST_KEY,
@@ -93,14 +85,15 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
                     'field_options' => [
                         'multiple' => false,
                         'class' => PriceList::class,
-                        'choice_label' => 'name'
+                        'choice_label' => 'name',
+                        'translatable_options' => false
                     ]
                 ]
             ]
         );
     }
 
-    protected function addPriceListColumn(DatagridConfiguration $config)
+    protected function addPriceListColumn(DatagridConfiguration $config): void
     {
         $config->addColumn(
             'price_lists',
@@ -115,19 +108,13 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
     }
 
     /**
-     * @param array|int[] $priceListHolderIds
+     * @param int[] $priceListHolderIds
+     *
      * @return BasePriceListRelation[]
      */
-    abstract protected function getRelations(array $priceListHolderIds);
+    abstract protected function getRelations(array $priceListHolderIds): array;
 
-    /**
-     * @param BasePriceListRelation $relation
-     * @return int
-     */
-    abstract protected function getObjectId(BasePriceListRelation $relation);
+    abstract protected function getObjectId(BasePriceListRelation $relation): int;
 
-    /**
-     * @return string
-     */
-    abstract protected function getRelationClassName();
+    abstract protected function getRelationClassName(): string;
 }

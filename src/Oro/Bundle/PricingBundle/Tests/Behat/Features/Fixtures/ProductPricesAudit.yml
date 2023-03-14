@@ -51,3 +51,4 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         __calls:
             - addCurrencyByCode: ['USD']
             - addCurrencyByCode: ['EUR']
+        organization: '@organization'

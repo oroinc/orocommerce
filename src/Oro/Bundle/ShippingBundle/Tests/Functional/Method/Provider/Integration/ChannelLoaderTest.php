@@ -62,6 +62,14 @@ class ChannelLoaderTest extends WebTestCase
         self::assertSame($expectedIds, $actualIds);
     }
 
+    public function testLoadChannelsWhenNoSecurityToken(): void
+    {
+        $this->assertChannels(
+            [],
+            $this->getChannelLoader()->loadChannels('bar', true)
+        );
+    }
+
     public function testLoadChannels(): void
     {
         $this->setUpTokenStorage();

@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -21,7 +22,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
@@ -44,7 +44,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentContextBuilderFactory;
 
-    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CheckoutShippingOriginProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingOriginProvider;
 
     /** @var CheckoutPaymentContextFactory */
@@ -58,7 +58,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->contextBuilder = $this->createMock(PaymentContextBuilderInterface::class);
         $this->paymentLineItemConverter = $this->createMock(OrderPaymentLineItemConverterInterface::class);
         $this->paymentContextBuilderFactory = $this->createMock(PaymentContextBuilderFactoryInterface::class);
-        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
+        $this->shippingOriginProvider = $this->createMock(CheckoutShippingOriginProviderInterface::class);
 
         $this->factory = new CheckoutPaymentContextFactory(
             $this->checkoutLineItemsManager,
@@ -100,7 +100,8 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 
         $shippingOrigin = new ShippingOrigin();
         $this->shippingOriginProvider->expects($this->once())
-            ->method('getSystemShippingOrigin')
+            ->method('getShippingOrigin')
+            ->with(self::identicalTo($checkout))
             ->willReturn($shippingOrigin);
 
         $this->contextBuilder->expects($this->once())

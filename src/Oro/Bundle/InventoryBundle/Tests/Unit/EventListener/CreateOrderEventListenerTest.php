@@ -8,7 +8,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener;
-use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
@@ -200,8 +199,6 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testNoInventoryLevel(): void
     {
-        $this->expectException(InventoryLevelNotFoundException::class);
-
         $this->checkoutLineItemsManager->expects(self::once())
             ->method('getData')
             ->willReturn([$this->getOrderLineItem()]);
@@ -295,8 +292,6 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testNoInventoryForBeforeCreate(): void
     {
-        $this->expectException(InventoryLevelNotFoundException::class);
-
         $this->checkoutLineItemsManager->expects(self::once())
             ->method('getData')
             ->willReturn([$this->getLineItem()]);

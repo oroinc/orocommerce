@@ -122,7 +122,6 @@ system_configuration:
                 choices:
                     oro.product.entity_label:
                         oro.product.id.label: product.id
-                        oro.product.owner.label: product.owner
                         oro.product.category.label: product.category
                         oro.product.brand.label: product.brand
                     oro.checkout.checkoutlineitem.entity_label:

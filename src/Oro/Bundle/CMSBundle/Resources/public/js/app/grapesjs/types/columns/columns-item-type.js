@@ -12,6 +12,11 @@ const ColumnsItemType = BaseType.extend({
             privateClasses: ['grid-col'],
             draggable: '[data-gjs-type="columns"]',
             name: __('oro.cms.wysiwyg.component.columns_item.label'),
+            unstylable: [
+                'width', 'height', 'max-width', 'min-height', 'float',
+                'display', 'label-parent-flex', 'flex-direction', 'justify-content',
+                'align-items', 'flex', 'align-self', 'order'
+            ],
             resizable: columnsResizer
         },
 

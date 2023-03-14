@@ -3,20 +3,11 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp(): void
-    {
-        $configuration = new Configuration();
-
-        $treeBuilder = $configuration->getConfigTreeBuilder();
-        $this->assertInstanceOf(TreeBuilder::class, $treeBuilder);
-    }
-
     /**
      * @dataProvider configurationDataProvider
      */

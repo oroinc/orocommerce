@@ -1929,8 +1929,7 @@ services:
     oro_product.data_provider.schema_org_product_full_description:
         class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider'
         arguments:
-            - !service
-                class: Oro\Component\PropertyAccess\PropertyAccessor
+            - '@oro_entity_extend.accessor.property_accessor_with_dot_array_syntax'
             - '@oro_ui.html_tag_helper'
             - '@oro_locale.helper.localization'
             - 'descriptions'
@@ -1940,8 +1939,7 @@ services:
     oro_product.data_provider.schema_org_product_short_description:
         class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider'
         arguments:
-            - !service
-                class: Oro\Component\PropertyAccess\PropertyAccessor
+            - '@oro_entity_extend.accessor.property_accessor_with_dot_array_syntax'
             - '@oro_ui.html_tag_helper'
             - '@oro_locale.helper.localization'
             - 'shortDescriptions'
@@ -2051,6 +2049,20 @@ services:
         class: Oro\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionTransformer
         arguments:
             - '@oro_product.model.builder.quick_add_row_collection'
+
+    oro_product.event_listener.product_duplicate:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductDuplicateListener
+        arguments:
+            - '@oro_entity_config.config_manager'
+            - '@oro_entity_config.provider.attribute'
+            - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
+        tags:
+            -
+                name: kernel.event_listener
+                event: oro_product.product.duplicate.after
+                method: onDuplicateAfter
+                priority: -128
 
     oro_product.event_listener.doctrine.product_kit_item_unit_of_quantity:
         class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductKitUnitOfQuantityDoctrineListener

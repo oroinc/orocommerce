@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -29,6 +30,9 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
+
     /** @var PriceListRequestHandler */
     private $handler;
 
@@ -47,10 +51,16 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->session);
         $this->requestStack = $this->createMock(RequestStack::class);
 
-        $this->handler = new PriceListRequestHandler($this->requestStack, $this->registry);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+
+        $this->handler = new PriceListRequestHandler(
+            $this->requestStack,
+            $this->registry,
+            $this->tokenAccessor
+        );
     }
 
-    private function initEntityManager()
+    private function initEntityManager(): void
     {
         $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
@@ -62,7 +72,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($em);
     }
 
-    public function testGetPriceListWithoutRequest()
+    public function testGetPriceListWithoutRequest(): void
     {
         $priceList = $this->getPriceList(2);
 
@@ -70,13 +80,14 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->repository->expects($this->once())
             ->method('getDefault')
             ->willReturn($priceList);
+
         $this->repository->expects($this->never())
             ->method('find');
 
         $this->assertSame($priceList, $this->handler->getPriceList());
     }
 
-    public function testGetPriceList()
+    public function testGetPriceList(): void
     {
         $this->initEntityManager();
         $this->requestStack->expects($this->any())
@@ -103,7 +114,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($priceList, $handler->getPriceList());
     }
 
-    public function testDefaultPriceListNotFound()
+    public function testDefaultPriceListNotFound(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Default PriceList not found');
@@ -117,7 +128,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->getPriceList();
     }
 
-    public function testGetPriceListNotFound()
+    public function testGetPriceListNotFound(): void
     {
         $priceList = $this->getPriceList(2);
 
@@ -140,7 +151,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($priceList, $this->handler->getPriceList());
     }
 
-    public function testGetPriceListCurrenciesWithoutRequest()
+    public function testGetPriceListCurrenciesWithoutRequest(): void
     {
         $priceList = $this->getPriceList(2, ['USD']);
         $this->requestStack->expects($this->any())
@@ -156,7 +167,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         mixed $paramValue,
         array $currencies = [],
         array $expected = []
-    ) {
+    ): void {
         $this->requestStack->expects($this->any())
             ->method('getCurrentRequest')
             ->willReturn($this->request);
@@ -176,7 +187,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getPriceListKeysDataProvider
      */
-    public function testGetPriceListCurrenciesWithRequestValueInvalid(mixed $paramValue)
+    public function testGetPriceListCurrenciesWithRequestValueInvalid(mixed $paramValue): void
     {
         $priceList = $this->getPriceList(2);
 
@@ -207,7 +218,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetPriceListCurrenciesWithSessionParam()
+    public function testGetPriceListCurrenciesWithSessionParam(): void
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -270,7 +281,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetShowTierPricesWithoutRequest()
+    public function testGetShowTierPricesWithoutRequest(): void
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')

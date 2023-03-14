@@ -6,6 +6,10 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Represents a tax jurisdiction exception - countries and states where tax jurisdiction selection deviates
+ * from the core rule.
+ */
 class TaxBaseExclusion extends AbstractResult
 {
     const COUNTRY = 'country';
@@ -66,7 +70,7 @@ class TaxBaseExclusion extends AbstractResult
     {
         $options = [
             TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
-            TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+            TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
         ];
 
         if (!in_array($option, $options, true)) {

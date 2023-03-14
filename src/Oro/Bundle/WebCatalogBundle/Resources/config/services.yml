@@ -95,6 +95,7 @@ services:
             - '@oro_web_catalog.content_variant_type.registry'
             - '@oro_security.owner.metadata_provider.chain'
             - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentVariant', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentVariant', event: preUpdate }
@@ -301,6 +302,7 @@ services:
             - '@oro_web_catalog.content_node_provider'
             - '@oro_scope.scope_manager'
             - '@oro_web_catalog.resolved_content_nodes_loader'
+            - '@property_accessor'
 
     oro_web_catalog.content_node_tree_resolver.caching:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCachingResolver

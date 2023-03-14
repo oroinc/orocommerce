@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Model;
 
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,14 +35,14 @@ class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
         return [
             [['country' => 'US'], ['country' => 'CA']],
             [['region' => 'US-AL'], ['region' => 'CA-QC']],
-            [['option' => 'shipping_origin'], ['option' => 'destination']],
+            [['option' => 'origin'], ['option' => 'destination']],
         ];
     }
 
     public function testAddInvalidOptionSetter()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Option values is "val", one of "destination,shipping_origin" allowed');
+        $this->expectExceptionMessage('Option values is "val", one of "destination,origin" allowed');
 
         $exclusion = new TaxBaseExclusion();
         $exclusion->setOption('val');

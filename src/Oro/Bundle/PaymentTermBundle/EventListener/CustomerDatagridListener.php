@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
 /**
@@ -14,13 +15,8 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
  */
 class CustomerDatagridListener
 {
-    /** @var PaymentTermAssociationProvider */
-    private $paymentTermAssociationProvider;
-
-    /**
-     * @var SelectedFieldsProviderInterface
-     */
-    private $selectedFieldsProvider;
+    private PaymentTermAssociationProvider $paymentTermAssociationProvider;
+    private SelectedFieldsProviderInterface $selectedFieldsProvider;
 
     public function __construct(
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
@@ -30,7 +26,7 @@ class CustomerDatagridListener
         $this->selectedFieldsProvider = $selectedFieldsProvider;
     }
 
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildBefore(BuildBefore $event): void
     {
         $associationNames = $this->getSelectedCustomerAssociations($event);
         if (!$associationNames) {
@@ -86,7 +82,7 @@ class CustomerDatagridListener
                     'options' => [
                         'field_options' => [
                             'multiple' => true,
-                            'class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
+                            'class' => PaymentTerm::class,
                             'choice_label' => 'label'
                         ]
                     ]
@@ -109,14 +105,7 @@ class CustomerDatagridListener
         }
     }
 
-    /**
-     * @param array $aliases
-     * @param string $fieldName
-     * @param string $alias
-     * @param array $prepend
-     * @return string
-     */
-    protected function getSelectPart(array $aliases, $alias, $fieldName, array $prepend = [])
+    private function getSelectPart(array $aliases, string $alias, string $fieldName, array $prepend = []): string
     {
         return sprintf(
             'COALESCE(%s) as %s',
@@ -149,7 +138,7 @@ class CustomerDatagridListener
 
         $associationNames = $this->paymentTermAssociationProvider->getAssociationNames($className);
 
-        return \array_intersect($associationNames, $selectedFields);
+        return array_intersect($associationNames, $selectedFields);
     }
 
     private function joinExists(OrmQueryConfiguration $query, string $alias): bool

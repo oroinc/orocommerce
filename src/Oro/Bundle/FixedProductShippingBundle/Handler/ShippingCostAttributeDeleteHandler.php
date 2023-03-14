@@ -31,7 +31,11 @@ class ShippingCostAttributeDeleteHandler
             return false;
         }
 
-        $channels = $this->channelLoader->loadChannels(FixedProductChannelType::TYPE, false);
+        $channels = $this->channelLoader->loadChannels(
+            FixedProductChannelType::TYPE,
+            false,
+            $priceAttributePriceList->getOrganization()
+        );
         if (!$channels) {
             return false;
         }
