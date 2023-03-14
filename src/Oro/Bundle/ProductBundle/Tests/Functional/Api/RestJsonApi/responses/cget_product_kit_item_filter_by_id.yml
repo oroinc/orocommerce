@@ -42,7 +42,7 @@ included:
             string: 'Product Kit 1 Item 1'
             fallback: null
         relationships:
-            productKitItem:
+            kitItem:
                 data:
                     type: productkititems
                     id: '<toString(@product_kit1_item1->id)>'
@@ -55,7 +55,7 @@ included:
             string: 'Product Kit 1 Item 1 ES'
             fallback: null
         relationships:
-            productKitItem:
+            kitItem:
                 data:
                     type: productkititems
                     id: '<toString(@product_kit1_item1->id)>'

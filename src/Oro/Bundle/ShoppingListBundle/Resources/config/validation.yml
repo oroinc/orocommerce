@@ -27,6 +27,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
             - Length:
                 max: 2048
                 groups: [Default, create, update, add_product]
+        kitItemLineItems:
+            - Valid:
+                groups: [Default, create, update, add_product]
+        checksum:
+            - Length:
+                  max: 40
+                  groups: [Default, create, update, add_product]
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
@@ -59,3 +66,27 @@ Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+
+Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+              path: quantity
+    properties:
+        lineItem:
+            - NotNull: ~
+        kitItem:
+            - NotNull: ~
+        product:
+            - NotNull: ~
+        quantity:
+            - Type: float
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        unit:
+            - NotNull: ~
+        sortOrder:
+            - Type: integer
+            - Range:
+                  # Minimum of 4-byte integer value.
+                  min: -2147483648
+                  # Maximum of 4-byte integer value.
+                  max: 2147483647

@@ -34,8 +34,6 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     use DatesAwareTrait;
 
     /**
-     * @var int|null
-     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -43,11 +41,9 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     protected ?int $id = null;
 
     /**
-     * @var Collection<ProductKitItemLabel>
-     *
      * @ORM\OneToMany(
      *     targetEntity="ProductKitItemLabel",
-     *     mappedBy="productKitItem",
+     *     mappedBy="kitItem",
      *     cascade={"ALL"},
      *     orphanRemoval=true
      * )
@@ -55,15 +51,11 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     protected Collection $labels;
 
     /**
-     * @var int
-     *
      * @ORM\Column(name="sort_order", type="integer", options={"default"=0})
      */
     protected int $sortOrder = 0;
 
     /**
-     * @var Product|null
-     *
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="kitItems")
      * @ORM\JoinColumn(name="product_kit_id", referencedColumnName="id", onDelete="CASCADE")
      */
@@ -84,22 +76,16 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     protected Collection $kitItemProducts;
 
     /**
-     * @var bool
-     *
      * @ORM\Column(name="optional", type="boolean", options={"default"=false})
      */
     protected bool $optional = false;
 
     /**
-     * @var float|null
-     *
      * @ORM\Column(name="minimum_quantity", type="float", nullable=true)
      */
     protected ?float $minimumQuantity = null;
 
     /**
-     * @var float|null
-     *
      * @ORM\Column(name="maximum_quantity", type="float", nullable=true)
      */
     protected ?float $maximumQuantity = null;
@@ -163,7 +149,7 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     public function setDefaultLabel($value): self
     {
         $this->setDefaultFallbackValue($this->labels, $value, ProductKitItemLabel::class);
-        $this->getDefaultLabel()->setProductKitItem($this);
+        $this->getDefaultLabel()->setKitItem($this);
 
         return $this;
     }
@@ -187,7 +173,7 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     public function addLabel(ProductKitItemLabel $label): self
     {
         if (!$this->labels->contains($label)) {
-            $label->setProductKitItem($this);
+            $label->setKitItem($this);
             $this->labels->add($label);
         }
 

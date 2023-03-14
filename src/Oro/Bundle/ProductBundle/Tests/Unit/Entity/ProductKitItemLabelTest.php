@@ -20,7 +20,7 @@ class ProductKitItemLabelTest extends \PHPUnit\Framework\TestCase
                 ['fallback', 'test'],
                 ['string', 'text string'],
                 ['localization', new Localization()],
-                ['productKitItem', new ProductKitItem()],
+                ['kitItem', new ProductKitItem()],
             ]
         );
     }

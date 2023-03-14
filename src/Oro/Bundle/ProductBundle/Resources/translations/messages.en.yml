@@ -407,18 +407,18 @@ oro:
             string:
                 label: 'String value'
                 description: 'The string value for the current localization.'
-            product_kit_item:
+            kit_item:
                 label: 'Product Kit Item'
                 description: 'The related product kit item.'
 
         productkititemproduct:
-            entity_label: 'Kit Item Product'
-            entity_plural_label: 'Kit Item Products'
+            entity_label: 'Product Kit Item Product'
+            entity_plural_label: 'Product Kit Item Products'
             entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description: 'Junction entity between a kit item and a product.'
             id.label: 'ID'
             kit_item:
-                label: 'Kit Item'
+                label: 'Product Kit Item'
                 description: 'The related product kit item.'
             product:
                 label: 'Product'

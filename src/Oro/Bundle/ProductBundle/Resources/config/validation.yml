@@ -281,7 +281,7 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
         string:
             - Length:
                   max: 255
-        productKitItem:
+        kitItem:
             - NotNull: ~
             - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
                   groups: [api]

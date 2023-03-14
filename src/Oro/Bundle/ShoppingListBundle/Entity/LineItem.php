@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -23,7 +26,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_shopping_list_line_item_uidx",
- *              columns={"product_id", "shopping_list_id", "unit_code"}
+ *              columns={"product_id", "shopping_list_id", "unit_code", "checksum"}
  *          )
  *      }
  * )
@@ -103,6 +106,35 @@ class LineItem implements
     protected $parentProduct;
 
     /**
+     * @var Collection<ProductKitItemLineItem>
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="ProductKitItemLineItem",
+     *     mappedBy="lineItem",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
+     * @OrderBy({"sortOrder"="ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected Collection $kitItemLineItems;
+
+    /**
+     * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
+     * moving the logic of distinguishing of such line items out of the entity class.
+     *
+     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
+     */
+    protected string $checksum = '';
+
+    /**
      * @var ShoppingList
      *
      * @ORM\ManyToOne(
@@ -177,6 +209,13 @@ class LineItem implements
      * )
      */
     protected $customerUser;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->kitItemLineItems = new ArrayCollection();
+    }
 
     /**
      * @return integer
@@ -380,5 +419,42 @@ class LineItem implements
     public function getVisitor()
     {
         return $this->getShoppingList()->getVisitor();
+    }
+
+    /**
+     * @return Collection<ProductKitItemLineItem>
+     */
+    public function getKitItemLineItems(): Collection
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(ProductKitItemLineItem $productKitItemLineItem): self
+    {
+        if (!$this->kitItemLineItems->contains($productKitItemLineItem)) {
+            $productKitItemLineItem->setLineItem($this);
+            $this->kitItemLineItems->add($productKitItemLineItem);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(ProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
     }
 }

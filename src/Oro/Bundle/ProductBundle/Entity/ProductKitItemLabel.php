@@ -34,16 +34,16 @@ class ProductKitItemLabel extends AbstractLocalizedFallbackValue
      * @ORM\ManyToOne(targetEntity="ProductKitItem", inversedBy="labels")
      * @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected ?ProductKitItem $productKitItem = null;
+    protected ?ProductKitItem $kitItem = null;
 
-    public function getProductKitItem(): ?ProductKitItem
+    public function getKitItem(): ?ProductKitItem
     {
-        return $this->productKitItem;
+        return $this->kitItem;
     }
 
-    public function setProductKitItem(?ProductKitItem $productKitItem): self
+    public function setKitItem(?ProductKitItem $kitItem): self
     {
-        $this->productKitItem = $productKitItem;
+        $this->kitItem = $kitItem;
 
         return $this;
     }

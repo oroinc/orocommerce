@@ -147,7 +147,7 @@ included:
             string: productkititems3-productkititemlabels-default
             fallback: null
         relationships:
-            productKitItem:
+            kitItem:
                 data:
                     type: productkititems
                     id: new

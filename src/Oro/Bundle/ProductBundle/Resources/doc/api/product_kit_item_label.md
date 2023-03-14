@@ -48,7 +48,7 @@ Example:
 
 Can be set to the one of the following values: "system", "parent_localization", "null".
 
-### productKitItem
+### kitItem
 
 #### create
 
@@ -90,7 +90,7 @@ Retrieve a record of localization assigned to a specific product kit item label 
 
 Retrieve ID of localization record assigned to a specific product kit item label record.
 
-### productKitItem
+### kitItem
 
 #### get_subresource
 

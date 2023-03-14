@@ -178,7 +178,7 @@ api:
                 delete_list: false
                 delete: false
             subresources:
-                productKitItem:
+                kitItem:
                     actions:
                         update_relationship: false
                         delete_relationship: false
