@@ -1452,12 +1452,12 @@ oro_behat_extension:
     MultipleImages Storefront Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "product-view__attribute-title") and contains(., "MultipleImages")]/parent::div'
+        locator: '//div[contains(@class, "product-view-attribute") and contains(., "MultipleImages")]/parent::div'
 
     MultipleFiles Storefront Field:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "product-view__attribute-title") and contains(., "MultipleFiles")]/parent::div'
+        locator: '//div[contains(@class, "product-view-attribute") and contains(., "MultipleFiles")]/parent::div'
 
     Product Segment Content Widget Slider Next:
       selector: 'div[data-page-component-name="segment-product-list-0"] button.slick-next'

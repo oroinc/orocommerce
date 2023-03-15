@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
@@ -13,7 +14,6 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
@@ -103,7 +103,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     private function createTransport(array $settings): PayPalSettings
     {
-        $propertyAccessor = new PropertyAccessor();
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $transport = new PayPalSettings();
         foreach ($settings as $key => $value) {
             if ($this->isLocalizedProperty($key)) {

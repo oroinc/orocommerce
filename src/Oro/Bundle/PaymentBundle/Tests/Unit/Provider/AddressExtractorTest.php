@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class AddressExtractorTest extends \PHPUnit\Framework\TestCase
 {

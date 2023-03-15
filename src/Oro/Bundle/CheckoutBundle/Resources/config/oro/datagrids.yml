@@ -290,6 +290,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                            translatable_options: false
                             multiple: true
                     label:            oro.checkout.frontend.checkout.lineitem.filter.inventory_status.label
                 quantity:
@@ -301,9 +302,10 @@ datagrids:
                     data_name:        lineItem.productUnit
                     label:            oro.checkout.frontend.checkout.lineitem.filter.unit.label
                     options:
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
                         field_options:
+                            translatable_options: false
                             multiple: true
-                        field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
         properties:
             productId: ~
             variantId: ~

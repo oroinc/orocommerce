@@ -4,8 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Handler;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
@@ -79,7 +77,7 @@ class FrontendCouponHandler extends AbstractCouponHandler
             $this->skippedFilters
         );
 
-        if (empty($errors) && !$entity instanceof AppliedPromotionsAwareInterface) {
+        if (empty($errors) && !$this->promotionAwareHelper->isPromotionAware($entity)) {
             $this->saveAppliedCoupon($coupon, $entity);
         }
 
@@ -101,7 +99,7 @@ class FrontendCouponHandler extends AbstractCouponHandler
         return $this->getRepository(Coupon::class)->getSingleCouponByCode($couponCode, $caseInsensitive);
     }
 
-    private function saveAppliedCoupon(Coupon $coupon, AppliedCouponsAwareInterface $entity)
+    private function saveAppliedCoupon(Coupon $coupon, object $entity)
     {
         $appliedCoupon = $this->entityCouponsProvider->createAppliedCouponByCoupon($coupon);
         $entity->addAppliedCoupon($appliedCoupon);

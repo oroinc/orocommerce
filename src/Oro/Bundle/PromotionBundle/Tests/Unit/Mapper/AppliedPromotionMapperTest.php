@@ -309,7 +309,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setCouponCode(self::COUPON_CODE)
             ->setSourceCouponId(self::COUPON_ID)
             ->setSourcePromotionId(self::PROMOTION_ID);
-
         $appliedPromotionEntity = $this->getEntity(AppliedPromotion::class, [
             'promotionData' => $promotionData,
             'type' => self::DISCOUNT_TYPE,
@@ -353,7 +352,6 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ->setDiscountConfiguration($discountConfiguration)
             ->addCoupon($newCoupon);
         $actual = $this->appliedPromotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity);
-
         self::assertEquals($expectedAppliedPromotion, $actual);
     }
 }

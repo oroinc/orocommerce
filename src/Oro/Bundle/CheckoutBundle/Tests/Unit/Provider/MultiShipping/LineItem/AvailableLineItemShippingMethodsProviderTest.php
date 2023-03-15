@@ -8,6 +8,9 @@ use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
 class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\TestCase
@@ -21,6 +24,9 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
     /** @var CheckoutFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutFactory;
 
+    /** @var ShippingMethodOrganizationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $organizationProvider;
+
     /** @var AvailableLineItemShippingMethodsProvider */
     private $provider;
 
@@ -29,11 +35,13 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
         $this->shippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
         $this->multiShippingMethodProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);
+        $this->organizationProvider = $this->createMock(ShippingMethodOrganizationProvider::class);
 
         $this->provider = new AvailableLineItemShippingMethodsProvider(
             $this->shippingMethodsProvider,
             $this->multiShippingMethodProvider,
-            $this->checkoutFactory
+            $this->checkoutFactory,
+            $this->organizationProvider
         );
     }
 
@@ -49,7 +57,11 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testGetAvailableShippingMethods(): void
     {
+        $organization = $this->createMock(Organization::class);
+        $product = new Product();
+        $product->setOrganization($organization);
         $lineItem = new CheckoutLineItem();
+        $lineItem->setProduct($product);
         $checkout = new Checkout();
         $checkout->addLineItem($lineItem);
         $lineItem->setCheckout($checkout);
@@ -76,6 +88,10 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
                 'types'      => ['test_shipping_type' => ['identifier' => 'test_shipping_type']]
             ]
         ];
+
+        $this->organizationProvider->expects(self::exactly(2))
+            ->method('setOrganization')
+            ->withConsecutive([$organization], [null]);
 
         $this->shippingMethodsProvider->expects(self::once())
             ->method('getApplicableMethodsViews')
@@ -107,7 +123,11 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testGetAvailableShippingMethodsWhenMultiShippingMethodsNotConfigured(): void
     {
+        $organization = $this->createMock(Organization::class);
+        $product = new Product();
+        $product->setOrganization($organization);
         $lineItem = new CheckoutLineItem();
+        $lineItem->setProduct($product);
         $checkout = new Checkout();
         $checkout->addLineItem($lineItem);
         $lineItem->setCheckout($checkout);
@@ -125,6 +145,10 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
                 'types'      => ['test_shipping_type' => ['identifier' => 'test_shipping_type']]
             ]
         ];
+
+        $this->organizationProvider->expects(self::exactly(2))
+            ->method('setOrganization')
+            ->withConsecutive([$organization], [null]);
 
         $this->shippingMethodsProvider->expects(self::once())
             ->method('getApplicableMethodsViews')
@@ -145,7 +169,11 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
 
     public function testResetMemoryCache(): void
     {
+        $organization = $this->createMock(Organization::class);
+        $product = new Product();
+        $product->setOrganization($organization);
         $lineItem = new CheckoutLineItem();
+        $lineItem->setProduct($product);
         $checkout = new Checkout();
         $checkout->addLineItem($lineItem);
         $lineItem->setCheckout($checkout);
@@ -156,6 +184,10 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
                 'types'      => ['primary' => ['identifier' => 'primary']]
             ]
         ];
+
+        $this->organizationProvider->expects(self::exactly(4))
+            ->method('setOrganization')
+            ->withConsecutive([$organization], [null], [$organization], [null]);
 
         $this->shippingMethodsProvider->expects(self::exactly(2))
             ->method('getApplicableMethodsViews')

@@ -7,47 +7,27 @@ use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Base handle coupon applicability and apply it by code.
+ */
 abstract class AbstractCouponHandler
 {
-    /**
-     * @var EntityRoutingHelper
-     */
-    protected $routingHelper;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    protected $authorizationChecker;
-
     public function __construct(
-        EntityRoutingHelper $routingHelper,
-        ManagerRegistry $registry,
-        EventDispatcherInterface $eventDispatcher,
-        AuthorizationCheckerInterface $authorizationChecker
+        protected EntityRoutingHelper           $routingHelper,
+        protected ManagerRegistry               $registry,
+        protected EventDispatcherInterface      $eventDispatcher,
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected PromotionAwareEntityHelper    $promotionAwareHelper
     ) {
-        $this->routingHelper = $routingHelper;
-        $this->registry = $registry;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -65,7 +45,7 @@ abstract class AbstractCouponHandler
 
     /**
      * @param Request $request
-     * @return AppliedCouponsAwareInterface
+     * @return object
      * @throws LogicException|AccessDeniedException
      */
     protected function getActualizedEntity(Request $request)
@@ -76,15 +56,15 @@ abstract class AbstractCouponHandler
         }
         $resolvedEntityClass = $this->resolveEntityClass($entityClass);
 
-        $entityId = (int) $request->request->get('entityId');
+        $entityId = (int)$request->request->get('entityId');
         if ($entityId) {
             $entity = $this->getRepository($resolvedEntityClass)->find($entityId);
         } else {
             $entity = new $resolvedEntityClass();
         }
 
-        if (!$entity instanceof AppliedCouponsAwareInterface) {
-            throw new LogicException('Entity should be instance of AppliedCouponsAwareInterface');
+        if (!$this->promotionAwareHelper->isCouponAware($entityClass)) {
+            throw new LogicException('Entity should have is_coupon_aware entity config');
         }
 
         if (!$this->authorizationChecker->isGranted('EDIT', $entity)) {

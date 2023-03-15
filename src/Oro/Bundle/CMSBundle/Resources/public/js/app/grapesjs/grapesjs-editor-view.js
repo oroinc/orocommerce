@@ -297,6 +297,10 @@ const GrapesjsEditorView = BaseView.extend({
         'wysiwyg:disable': 'throttleDisableEditor'
     },
 
+    listen: {
+        'layout:reposition mediator': 'onLayoutReposition'
+    },
+
     /**
      * @inheritdoc
      */
@@ -346,6 +350,9 @@ const GrapesjsEditorView = BaseView.extend({
             entityClass: this.entityClass,
             fieldName: this.$el.attr('data-grapesjs-field')
         });
+        this.extendPluginOptions('grapesjs-export', {
+            entityLabels: options.entityLabels
+        });
 
         GrapesjsEditorView.__super__.initialize.call(this, options);
     },
@@ -365,6 +372,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritdoc
      */
     render() {
+        this._deferredRender();
         this.renderStart = true;
         this.timeoutId = null;
 
@@ -469,7 +477,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @returns {*}
      */
     initContainer() {
-        this.$container = $('<div class="grapesjs" data-skip-input-widgets />');
+        this.$container = $('<div class="grapesjs" data-skip-input-widgets data-ignore-form-state-change />');
         this.$container.appendTo(this.$el.parent());
     },
 
@@ -485,6 +493,10 @@ const GrapesjsEditorView = BaseView.extend({
 
     getState() {
         return this.state;
+    },
+
+    isStateChanged() {
+        return JSON.stringify(this.state.toJSON()) === this.$propertiesInputElement.val();
     },
 
     /**
@@ -619,6 +631,12 @@ const GrapesjsEditorView = BaseView.extend({
 
         if (this.builder) {
             this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
+        }
+    },
+
+    onLayoutReposition() {
+        if (this.builder) {
+            this.builder.trigger('change:canvasOffset');
         }
     },
 
@@ -859,7 +877,6 @@ const GrapesjsEditorView = BaseView.extend({
         this._addClassForFrameWrapper();
 
         mediator.trigger('grapesjs:loaded', this.builder);
-        mediator.trigger('page:afterChange');
 
         this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
 
@@ -877,6 +894,7 @@ const GrapesjsEditorView = BaseView.extend({
         _.delay(() => {
             this.renderStart = false;
             this.builder.trigger('editor:rendered');
+            this._resolveDeferredRender();
         }, 250);
     },
 
@@ -973,9 +991,15 @@ const GrapesjsEditorView = BaseView.extend({
                 this.$stylesInputElement.valid();
             }
         }
+
+        this.updatePropertyField();
     },
 
     updatePropertyField() {
+        if (this.isStateChanged() || this.renderStart) {
+            return;
+        }
+
         this.$propertiesInputElement.val(JSON.stringify(this.state.toJSON()));
     },
 
@@ -1119,23 +1143,46 @@ const GrapesjsEditorView = BaseView.extend({
         if (!this.builder) {
             return;
         }
-        const $builderIframe = $(this.builder.Canvas.getFrameEl());
+
+        const $builderIframe = this.builder.Canvas.canvasView.$el;
+        const {
+            height: frameHeight,
+            bottom: frameBottom,
+            top: frameTop
+        } = this.builder.Canvas.getFrameEl().getBoundingClientRect();
         const selected = this.builder.getSelected();
+
         if (!selected) {
             return;
         }
 
         const $el = selected.view.$el;
-        const targetHeight = $(this.rte.actionbar).outerHeight();
-        const targetWidth = $(this.rte.actionbar).outerWidth();
+        const {
+            width: targetWidth,
+            height: targetHeight,
+            top: targetTop,
+            bottom: targetBottom
+        } = this.rte.actionbar.getBoundingClientRect();
 
         $(this.rte.actionbar).parent().css('margin-left', '');
 
         if ($el && $builderIframe.innerWidth() <= (pos.canvasOffsetLeft + targetWidth)) {
-            $(this.rte.actionbar).parent().css('margin-left', $el.outerWidth() - targetWidth);
+            let marginLeft = $el.outerWidth() - targetWidth;
+            $(this.rte.actionbar).parent().css('margin-left', marginLeft);
+
+            const barOffset = $(this.rte.actionbar).offset().left - $builderIframe.offset().left;
+            if (barOffset < 0) {
+                marginLeft -= barOffset;
+                $(this.rte.actionbar).parent().css('margin-left', marginLeft);
+            }
         }
-        if (pos.top < 0 && $builderIframe.innerHeight() > (pos.canvasOffsetTop + targetHeight)) {
+
+        if (pos.top < 0 && frameHeight > (pos.canvasOffsetTop + targetHeight)) {
             pos.top += $el.outerHeight() + targetHeight;
+        }
+
+        if (this.rte.customRte) {
+            this.rte.customRte.toggleVisibility(targetTop > frameBottom || targetBottom < frameTop);
         }
     },
 

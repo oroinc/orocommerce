@@ -22,7 +22,7 @@ class ProductTaxCodeMultiSelectType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent(): string
+    public function getParent(): ?string
     {
         return OroJquerySelect2HiddenType::class;
     }

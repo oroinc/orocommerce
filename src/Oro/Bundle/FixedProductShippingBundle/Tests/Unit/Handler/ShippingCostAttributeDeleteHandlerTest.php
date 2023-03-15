@@ -65,7 +65,7 @@ class ShippingCostAttributeDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->channelLoader->expects(self::once())
             ->method('loadChannels')
-            ->with(FixedProductChannelType::TYPE, self::isFalse())
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
             ->willReturn([]);
 
         $this->doctrine->expects(self::never())
@@ -81,7 +81,7 @@ class ShippingCostAttributeDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->channelLoader->expects(self::once())
             ->method('loadChannels')
-            ->with(FixedProductChannelType::TYPE, self::isFalse())
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
             ->willReturn([$channel]);
 
         $this->doctrine->expects(self::never())
@@ -97,7 +97,7 @@ class ShippingCostAttributeDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->channelLoader->expects(self::once())
             ->method('loadChannels')
-            ->with(FixedProductChannelType::TYPE, self::isFalse())
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
             ->willReturn([$channel]);
 
         $shippingMethodConfigRepository = $this->createMock(ShippingMethodConfigRepository::class);
@@ -121,7 +121,7 @@ class ShippingCostAttributeDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->channelLoader->expects(self::once())
             ->method('loadChannels')
-            ->with(FixedProductChannelType::TYPE, self::isFalse())
+            ->with(FixedProductChannelType::TYPE, self::isFalse(), self::identicalTo($attribute->getOrganization()))
             ->willReturn([$channel]);
 
         $shippingMethodConfigRepository = $this->createMock(ShippingMethodConfigRepository::class);

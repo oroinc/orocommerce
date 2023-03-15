@@ -13,6 +13,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\OrderBundle\Datagrid\SubOrdersFrontendDatagridListener;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Provider\OrderTypeProvider;
 
 class SubOrdersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -30,105 +31,122 @@ class SubOrdersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->multiShippingConfigProvider = $this->createMock(ConfigProvider::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
 
+        $orderTypeProvider = $this->createMock(OrderTypeProvider::class);
+        $orderTypeProvider->expects(self::any())
+            ->method('getOrderTypeChoices')
+            ->willReturn(['primary_order' => 1, 'sub_order' => 2]);
+
         $this->listener = new SubOrdersFrontendDatagridListener(
             $this->multiShippingConfigProvider,
-            $this->doctrine
+            $this->doctrine,
+            $orderTypeProvider
         );
     }
 
     public function testOnBuildBefore()
     {
-        $this->multiShippingConfigProvider->expects($this->once())
+        $config = DatagridConfiguration::create([]);
+
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowMainOrdersAndSubOrdersInOrderHistoryEnabled')
             ->willReturn(true);
 
-        $config = DatagridConfiguration::create([]);
-
-        $event = $this->createMock(BuildBefore::class);
-        $event->expects($this->once())
-            ->method('getConfig')
-            ->willReturn($config);
-
+        $event = new BuildBefore($this->createMock(DatagridInterface::class), $config);
         $this->listener->onBuildBefore($event);
 
-        $columns = $config->offsetGetByPath('[columns]');
-        $sorters = $config->offsetGetByPath('[sorters][columns]');
-        $filters = $config->offsetGetByPath('[filters][columns]');
-
-        $this->assertNotEmpty($columns);
-        $this->assertNotEmpty($sorters);
-        $this->assertNotEmpty($filters);
-
-        $this->assertArrayHasKey('orderType', $columns);
-        $this->assertArrayHasKey('orderType', $sorters);
-        $this->assertArrayHasKey('orderType', $filters);
-
-        $select = $config->getOrmQuery()->getSelect();
-        $this->assertNotEmpty($select);
-        $this->assertContains(
-            "CASE WHEN IDENTITY(order1.parent) IS NULL THEN 'oro.order.order_type.primary_order' "
-            . "ELSE 'oro.order.order_type.sub_order' END AS orderType",
-            $select
+        self::assertEquals(
+            [
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            'CASE WHEN IDENTITY(order1.parent) IS NULL THEN 1 ELSE 2 END AS orderType'
+                        ]
+                    ]
+                ],
+                'columns' => [
+                    'orderType' => [
+                        'label' => 'oro.order.order_type.label',
+                        'frontend_type' => 'select',
+                        'choices' => ['primary_order' => 1, 'sub_order' => 2],
+                        'renderable' => false
+                    ]
+                ],
+                'filters' => [
+                    'columns' => [
+                        'orderType' => [
+                            'type' => 'single_choice',
+                            'data_name' => 'orderType',
+                            'enabled' => false,
+                            'options' => [
+                                'field_options' => [
+                                    'choices' => ['primary_order' => 1, 'sub_order' => 2]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'sorters' => [
+                    'columns' => [
+                        'orderType' => [
+                            'data_name' => 'orderType'
+                        ]
+                    ]
+                ]
+            ],
+            $config->toArray()
         );
     }
 
     public function testOnBuildBeforeWhenMultiShippingDisabled()
     {
-        $this->multiShippingConfigProvider->expects($this->once())
+        $config = DatagridConfiguration::create([]);
+
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowMainOrdersAndSubOrdersInOrderHistoryEnabled')
             ->willReturn(false);
 
-        $event = $this->createMock(BuildBefore::class);
-        $event->expects($this->never())
-            ->method('getConfig');
-
+        $event = new BuildBefore($this->createMock(DatagridInterface::class), $config);
         $this->listener->onBuildBefore($event);
+
+        self::assertEquals([], $config->toArray());
     }
 
     public function testOnBuildAfterWhenShowMainOrdersDisabled()
     {
-        $this->multiShippingConfigProvider->expects($this->once())
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowSubordersInOrderHistoryEnabled')
             ->willReturn(true);
 
-        $this->multiShippingConfigProvider->expects($this->once())
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowMainOrderInOrderHistoryDisabled')
             ->willReturn(true);
 
-        $datagrid = $this->createMock(DatagridInterface::class);
-
-        $event = $this->createMock(BuildAfter::class);
-        $event->expects($this->once())
-            ->method('getDatagrid')
-            ->willReturn($datagrid);
-
-        $datasource = $this->createMock(OrmDatasource::class);
-
-        $datagrid->expects($this->once())
-            ->method('getDatasource')
-            ->willReturn($datasource);
-
         $em = $this->createMock(EntityManagerInterface::class);
-        $qb = new QueryBuilder($em);
-
-        $datasource->expects($this->once())
-            ->method('getQueryBuilder')
-            ->willReturn($qb);
-
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(Order::class)
             ->willReturn($em);
 
+        $qb = new QueryBuilder($em);
         $subQb = new QueryBuilder($em);
 
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('createQueryBuilder')
             ->willReturn($subQb);
 
-        $this->listener->onBuildAfter($event);
+        $datasource = $this->createMock(OrmDatasource::class);
+        $datasource->expects(self::once())
+            ->method('getQueryBuilder')
+            ->willReturn($qb);
 
-        $this->assertEquals(
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagrid->expects(self::once())
+            ->method('getDatasource')
+            ->willReturn($datasource);
+
+        $this->listener->onBuildAfter(new BuildAfter($datagrid));
+
+        self::assertEquals(
             'SELECT WHERE order1.id NOT IN(SELECT IDENTITY(osub.parent)'
             . ' FROM Oro\Bundle\OrderBundle\Entity\Order osub '
             . 'WHERE IDENTITY(osub.parent) IS NOT NULL)',
@@ -138,73 +156,57 @@ class SubOrdersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildAfterWhenShowMainOrdersEnabled()
     {
-        $this->multiShippingConfigProvider->expects($this->once())
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowSubordersInOrderHistoryEnabled')
             ->willReturn(true);
 
-        $this->multiShippingConfigProvider->expects($this->once())
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowMainOrderInOrderHistoryDisabled')
             ->willReturn(false);
 
-        $datagrid = $this->createMock(DatagridInterface::class);
-
-        $event = $this->createMock(BuildAfter::class);
-        $event->expects($this->once())
-            ->method('getDatagrid')
-            ->willReturn($datagrid);
+        $qb = new QueryBuilder($this->createMock(EntityManagerInterface::class));
 
         $datasource = $this->createMock(OrmDatasource::class);
-
-        $datagrid->expects($this->once())
-            ->method('getDatasource')
-            ->willReturn($datasource);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $qb = new QueryBuilder($em);
-
-        $datasource->expects($this->once())
+        $datasource->expects(self::once())
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        $this->listener->onBuildAfter($event);
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagrid->expects(self::once())
+            ->method('getDatasource')
+            ->willReturn($datasource);
 
-        $this->assertEmpty($qb->getDQLPart('select'));
-        $this->assertNull($qb->getDQLPart('where'));
+        $this->listener->onBuildAfter(new BuildAfter($datagrid));
+
+        self::assertEmpty($qb->getDQLPart('select'));
+        self::assertNull($qb->getDQLPart('where'));
     }
 
     public function testOnBuildAfterShowSubordersInOrderHistoryDisabled()
     {
-        $this->multiShippingConfigProvider->expects($this->once())
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowSubordersInOrderHistoryEnabled')
             ->willReturn(false);
 
-        $this->multiShippingConfigProvider->expects($this->once())
+        $this->multiShippingConfigProvider->expects(self::once())
             ->method('isShowMainOrderInOrderHistoryDisabled')
             ->willReturn(false);
 
-        $datagrid = $this->createMock(DatagridInterface::class);
-
-        $event = $this->createMock(BuildAfter::class);
-        $event->expects($this->once())
-            ->method('getDatagrid')
-            ->willReturn($datagrid);
+        $qb = new QueryBuilder($this->createMock(EntityManagerInterface::class));
 
         $datasource = $this->createMock(OrmDatasource::class);
-
-        $datagrid->expects($this->once())
-            ->method('getDatasource')
-            ->willReturn($datasource);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $qb = new QueryBuilder($em);
-
-        $datasource->expects($this->once())
+        $datasource->expects(self::once())
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        $this->listener->onBuildAfter($event);
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagrid->expects(self::once())
+            ->method('getDatasource')
+            ->willReturn($datasource);
 
-        $this->assertNotNull($qb->getDQLPart('where'));
-        $this->assertEquals('order1.parent IS NULL', $qb->getDQLPart('where'));
+        $this->listener->onBuildAfter(new BuildAfter($datagrid));
+
+        self::assertNotNull($qb->getDQLPart('where'));
+        self::assertEquals('order1.parent IS NULL', $qb->getDQLPart('where'));
     }
 }

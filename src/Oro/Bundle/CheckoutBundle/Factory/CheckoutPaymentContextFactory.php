@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Factory;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
@@ -11,7 +12,6 @@ use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
 /**
  * Creates a payment context for a specific checkout object.
@@ -22,7 +22,7 @@ class CheckoutPaymentContextFactory
     private SubtotalProviderInterface $checkoutSubtotalProvider;
     private TotalProcessorProvider $totalProcessor;
     private OrderPaymentLineItemConverterInterface $paymentLineItemConverter;
-    private ShippingOriginProvider $shippingOriginProvider;
+    private CheckoutShippingOriginProviderInterface $shippingOriginProvider;
     private PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory;
 
     public function __construct(
@@ -30,7 +30,7 @@ class CheckoutPaymentContextFactory
         SubtotalProviderInterface $checkoutSubtotalProvider,
         TotalProcessorProvider $totalProcessor,
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
-        ShippingOriginProvider $shippingOriginProvider,
+        CheckoutShippingOriginProviderInterface $shippingOriginProvider,
         PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
@@ -80,7 +80,7 @@ class CheckoutPaymentContextFactory
             $paymentContextBuilder->setShippingAddress($checkout->getShippingAddress());
         }
 
-        $paymentContextBuilder->setShippingOrigin($this->shippingOriginProvider->getSystemShippingOrigin());
+        $paymentContextBuilder->setShippingOrigin($this->shippingOriginProvider->getShippingOrigin($checkout));
     }
 
     private function addCustomer(

@@ -9,6 +9,9 @@
         border-radius: $product-view-attributes-container-border-radius;
 
         .tab-content {
+            display: flex;
+            flex-direction: column;
+            row-gap: $product-view-attributes-tab-content-gap;
             padding: $product-view-attributes-tab-content-offset-inner;
 
             .entity-label {

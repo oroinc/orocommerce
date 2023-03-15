@@ -7,15 +7,18 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * Store payment method config rule in database.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository")
  * @ORM\Table(name="oro_payment_mtds_cfgs_rl")
  * @Config(
@@ -39,10 +42,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implements
+class PaymentMethodsConfigsRule implements
     RuleOwnerInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var integer
      *
@@ -146,8 +152,6 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->methodConfigs = new ArrayCollection();
         $this->destinations = new ArrayCollection();
         $this->websites = new ArrayCollection();

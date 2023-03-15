@@ -4,9 +4,11 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\MethodsConfigsRule\Conte
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\Basic\BasicMethodsConfigsRulesByContextProvider;
 use Oro\Bundle\ShippingBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -19,6 +21,9 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
     /** @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
+    /** @var ShippingMethodOrganizationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $organizationProvider;
+
     /** @var BasicMethodsConfigsRulesByContextProvider */
     private $provider;
 
@@ -26,6 +31,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
     {
         $this->filtrationService = $this->createMock(MethodsConfigsRulesFiltrationServiceInterface::class);
         $this->repository = $this->createMock(ShippingMethodsConfigsRuleRepository::class);
+        $this->organizationProvider = $this->createMock(ShippingMethodOrganizationProvider::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects(self::any())
@@ -35,7 +41,8 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
 
         $this->provider = new BasicMethodsConfigsRulesByContextProvider(
             $this->filtrationService,
-            $doctrine
+            $doctrine,
+            $this->organizationProvider
         );
     }
 
@@ -44,17 +51,23 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
         $currency = 'USD';
         $address = $this->createMock(AddressInterface::class);
         $website = $this->createMock(Website::class);
+        $organization = $this->createMock(Organization::class);
         $rulesFromDb = [
             $this->createMock(ShippingMethodsConfigsRule::class),
             $this->createMock(ShippingMethodsConfigsRule::class),
         ];
+
+        $this->organizationProvider->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->repository->expects(self::once())
             ->method('getByDestinationAndCurrencyAndWebsite')
             ->with(
                 self::identicalTo($address),
                 $currency,
-                self::identicalTo($website)
+                self::identicalTo($website),
+                self::identicalTo($organization)
             )
             ->willReturn($rulesFromDb);
 
@@ -89,11 +102,16 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
     {
         $currency = 'USD';
         $website = $this->createMock(Website::class);
+        $organization = $this->createMock(Organization::class);
         $rulesFromDb = [$this->createMock(ShippingMethodsConfigsRule::class)];
+
+        $this->organizationProvider->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->repository->expects(self::once())
             ->method('getByCurrencyAndWebsiteWithoutDestination')
-            ->with($currency, self::identicalTo($website))
+            ->with($currency, self::identicalTo($website), self::identicalTo($organization))
             ->willReturn($rulesFromDb);
 
         $context = $this->createMock(ShippingContextInterface::class);

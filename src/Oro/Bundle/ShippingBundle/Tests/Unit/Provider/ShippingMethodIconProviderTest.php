@@ -26,8 +26,7 @@ class ShippingMethodIconProviderTest extends \PHPUnit\Framework\TestCase
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->provider = new ShippingMethodIconProvider($this->shippingMethodProvider);
-        $this->provider->setLogger($this->logger);
+        $this->provider = new ShippingMethodIconProvider($this->shippingMethodProvider, $this->logger);
     }
 
     public function testGetIcon()

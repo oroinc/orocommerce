@@ -39,7 +39,11 @@ const Index = BaseType.extend({
             };
 
             if (el.src) {
-                result.src = el.src;
+                result.src = el.getAttribute('src');
+
+                if (el.tagName === 'VIDEO') {
+                    result.source = el.getAttribute('src');
+                }
             }
 
             if (isExtProv) {

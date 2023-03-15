@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -34,7 +35,7 @@ class ConfigurableProductProvider
 
     public function __construct(
         CustomFieldProvider $customFieldProvider,
-        PropertyAccessor $propertyAccessor,
+        PropertyAccessorInterface $propertyAccessor,
         ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry,
         TranslatorInterface $translator
     ) {

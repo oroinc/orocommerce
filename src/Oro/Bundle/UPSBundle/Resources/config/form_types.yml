@@ -3,7 +3,7 @@ services:
         class: Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType
         arguments:
             - "@oro_ups.provider.transport"
-            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_shipping.system_shipping_origin_provider'
         tags:
             - { name: form.type }
 

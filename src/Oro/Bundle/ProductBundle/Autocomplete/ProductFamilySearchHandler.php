@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * ORM search for ProductFamily by default label
@@ -18,14 +18,17 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
     /** @var ManagerRegistry */
     private $registry;
 
-    /** @var PropertyAccessor */
+    /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
     /** @var AclHelper */
     private $aclHelper;
 
-    public function __construct(ManagerRegistry $registry, PropertyAccessor $propertyAccessor, AclHelper $aclHelper)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        PropertyAccessorInterface $propertyAccessor,
+        AclHelper $aclHelper
+    ) {
         $this->registry = $registry;
         $this->propertyAccessor = $propertyAccessor;
         $this->aclHelper = $aclHelper;

@@ -32,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_23';
+        return 'v1_24';
     }
 
     /**
@@ -69,6 +69,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->createOroPriceListCombinedGCTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroPriceListForeignKeys($schema);
         $this->addOroPriceListCurrencyForeignKeys($schema);
         $this->addOroPriceListToAccGrForeignKeys($schema);
         $this->addOroPriceListToAccountForeignKeys($schema);
@@ -102,6 +103,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     {
         $table = $schema->createTable('oro_price_list');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('is_default', 'boolean', []);
         $table->addColumn('active', 'boolean', ['notnull' => true, 'default' => true]);
@@ -518,6 +520,20 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
             ['combined_price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_price_list foreign keys.
+     */
+    protected function addOroPriceListForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_price_list');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
         );
     }
 

@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();
@@ -54,6 +54,7 @@ class Configuration implements ConfigurationInterface
                 static::CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS => [
                     'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
                 ],
+                'order_creation_new_order_owner' => ['value' => null, 'type' => 'string'],
                 static::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD => [
                     'value' => 90,
                 ],

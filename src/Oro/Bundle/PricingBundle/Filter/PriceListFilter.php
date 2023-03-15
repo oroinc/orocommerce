@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Filter\SingleChoiceFilter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType;
+use Oro\Bundle\PricingBundle\Form\Type\Filter\PriceListFilterType;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
@@ -14,8 +14,7 @@ use Symfony\Component\Form\FormFactoryInterface;
  */
 class PriceListFilter extends SingleChoiceFilter
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
 
     public function __construct(FormFactoryInterface $factory, FilterUtility $util, ManagerRegistry $doctrine)
     {
@@ -55,7 +54,7 @@ class PriceListFilter extends SingleChoiceFilter
     {
         $metadata = parent::getMetadata();
 
-        $formView  = $this->getForm()->createView();
+        $formView = $this->getFormView();
 
         // Allow clearing if filter is not required, disallow otherwise.
         $metadata['allowClear'] = false;
@@ -74,8 +73,8 @@ class PriceListFilter extends SingleChoiceFilter
     /**
      * {@inheritDoc}
      */
-    protected function getFormType()
+    protected function getFormType(): string
     {
-        return DefaultPriceListFilterType::class;
+        return PriceListFilterType::class;
     }
 }

@@ -2,23 +2,20 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget;
 
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
-use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ContentWidgetTypeStub;
 
 class ContentWidgetTypeRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContentWidgetType */
-    private $widgetType;
-
-    /** @var ContentWidgetTypeRegistry */
-    private $registry;
+    private ContentWidgetTypeInterface $widgetType;
+    private ContentWidgetTypeRegistry $registry;
 
     protected function setUp(): void
     {
         $this->widgetType = new ContentWidgetTypeStub();
 
-        $this->registry = new ContentWidgetTypeRegistry($this->getIteratorAggregate([$this->widgetType]));
+        $this->registry = new ContentWidgetTypeRegistry([$this->widgetType]);
     }
 
     public function testGetWidgetType(): void
@@ -30,26 +27,5 @@ class ContentWidgetTypeRegistryTest extends \PHPUnit\Framework\TestCase
     public function testGetTypes(): void
     {
         $this->assertEquals([$this->widgetType], $this->registry->getTypes());
-    }
-
-    private function getIteratorAggregate(array $data): \IteratorAggregate
-    {
-        return new class($data) implements \IteratorAggregate {
-            /** @var array */
-            private $data;
-
-            public function __construct(array $data)
-            {
-                $this->data = $data;
-            }
-
-            /**
-             * {@inheritdoc}
-             */
-            public function getIterator(): \Traversable
-            {
-                return new \ArrayIterator($this->data);
-            }
-        };
     }
 }

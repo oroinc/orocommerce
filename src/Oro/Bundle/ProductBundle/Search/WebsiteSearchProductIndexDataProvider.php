@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Provides product attributes information for the website search index.
@@ -21,14 +21,14 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
     private AttributeTypeRegistry $attributeTypeRegistry;
     private AttributeConfigurationProviderInterface $configurationProvider;
     private ProductIndexAttributeProviderInterface $indexFieldsProvider;
-    private PropertyAccessor $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
     private SearchableInformationProvider $searchableProvider;
 
     public function __construct(
         AttributeTypeRegistry $attributeTypeRegistry,
         AttributeConfigurationProviderInterface $configurationProvider,
         ProductIndexAttributeProviderInterface $indexFieldsProvider,
-        PropertyAccessor $propertyAccessor,
+        PropertyAccessorInterface $propertyAccessor,
         SearchableInformationProvider $searchableProvider
     ) {
         $this->attributeTypeRegistry = $attributeTypeRegistry;

@@ -6,18 +6,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\ProductBundle\Model\ExtendProduct;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
@@ -146,15 +150,34 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyFields)
+ *
+ * @method AbstractEnumValue getInventoryStatus()
+ * @method Product setInventoryStatus(AbstractEnumValue $enumId)
+ * @method ProductName getName(Localization $localization = null)
+ * @method ProductName getDefaultName()
+ * @method LocalizedFallbackValue getDefaultSlugPrototype()
+ * @method setDefaultSlugPrototype(string $value)
+ * @method ProductDescription getDescription(Localization $localization = null)
+ * @method ProductDescription getDefaultDescription()
+ * @method ProductShortDescription getShortDescription(Localization $localization = null)
+ * @method ProductShortDescription getDefaultShortDescription()
+ * @method LocalizedFallbackValue getMetaTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
+ * @method EntityFieldFallbackValue getPageTemplate()
+ * @method $this setPageTemplate(EntityFieldFallbackValue $pageTemplate)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
-class Product extends ExtendProduct implements
+class Product implements
     OrganizationAwareInterface,
     AttributeFamilyAwareInterface,
     SluggableInterface,
     DatesAwareInterface,
-    DenormalizedPropertyAwareInterface
+    DenormalizedPropertyAwareInterface,
+    ExtendEntityInterface
 {
     use SluggableTrait;
+    use ExtendEntityTrait;
 
     const STATUS_DISABLED = 'disabled';
     const STATUS_ENABLED = 'enabled';
@@ -674,8 +697,6 @@ class Product extends ExtendProduct implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->unitPrecisions = new ArrayCollection();
         $this->names = new ArrayCollection();
         $this->descriptions = new ArrayCollection();
@@ -1452,6 +1473,7 @@ class Product extends ExtendProduct implements
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
             $this->variantFields = [];
 
+            $this->cloneExtendEntityStorage();
             $this->cloneLocalizedFallbackValueAssociations();
         }
     }

@@ -2,23 +2,16 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DBAL\Types;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType;
-use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
 class WYSIWYGPropertiesTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Type */
-    private $type;
-
-    public static function setUpBeforeClass(): void
-    {
-        Type::addType('wysiwyg_properties', WYSIWYGPropertiesType::class);
-    }
+    private WYSIWYGPropertiesType $type;
 
     protected function setUp(): void
     {
-        $this->type = Type::getType('wysiwyg_properties');
+        $this->type = new WYSIWYGPropertiesType();
     }
 
     public function testSuffixConst(): void
@@ -33,9 +26,6 @@ class WYSIWYGPropertiesTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testRequiresSQLCommentHint(): void
     {
-        /** @var DatabasePlatformMock $platform */
-        $platform = $this->createMock(DatabasePlatformMock::class);
-
-        $this->assertTrue($this->type->requiresSQLCommentHint($platform));
+        $this->assertTrue($this->type->requiresSQLCommentHint($this->createMock(AbstractPlatform::class)));
     }
 }

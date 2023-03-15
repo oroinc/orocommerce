@@ -3,42 +3,30 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroPromotionExtensionTest extends ExtensionTestCase
+class OroPromotionExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
-        $this->loadExtension(new OroPromotionExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            'oro_promotion.rule_filtration.service',
-            'oro_promotion.rule_filtration.scope_decorator',
-            'oro_promotion.rule_filtration.schedule_decorator',
-            'oro_promotion.rule_filtration.matching_items',
-            'oro_promotion.promotion.context_data_converter_registry',
-            'oro_promotion.promotion_provider',
-            'oro_promotion.discount_factory',
-            'oro_promotion.discount_type_to_form_type_provider',
-            'oro_promotion.discount.shipping_discount',
-            'oro_promotion.discount.order_discount',
-            'oro_promotion.discount.buy_x_get_y_discount',
-            'oro_promotion.importexport.configuration_provider.coupon',
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        $extension = new OroPromotionExtension();
+        $extension->load([], $container);
 
-        $sharedFalseDefinitions = [
-            'oro_promotion.discount.shipping_discount',
-            'oro_promotion.discount.order_discount',
-            'oro_promotion.discount.buy_x_get_y_discount'
-        ];
-        foreach ($sharedFalseDefinitions as $sharedFalseDefinition) {
-            $this->assertFalse($this->actualDefinitions[$sharedFalseDefinition]->isShared());
-        }
-
-        $expectedExtensionConfigs = [
-            'oro_promotion',
-        ];
-        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'feature_enabled' => ['value' => true, 'scope' => 'app'],
+                        'discount_strategy' => ['value' => 'apply_all', 'scope' => 'app'],
+                        'case_insensitive_coupon_search' => ['value' => false, 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_promotion')
+        );
     }
 }

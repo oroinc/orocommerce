@@ -1,5 +1,6 @@
 @ticket-BB-17519
 @ticket-BB-20219
+@ticket-BB-22129
 @fixture-OroProductBundle:product_listing_images.yml
 
 Feature: Sidebar filters on product listing page
@@ -8,7 +9,7 @@ Feature: Sidebar filters on product listing page
   Scenario: Feature background
     Given sessions active:
       | admin    |first_session |
-      | customer  |second_session|
+      | customer |second_session|
     And I set configuration property "oro_product.filters_position" to "sidebar"
     And I set configuration property "oro_catalog.all_products_page_enabled" to "1"
 
@@ -219,6 +220,22 @@ Feature: Sidebar filters on product listing page
     When I click "FrontendGridFilterManagerButtonAll"
     Then I click "FrontendGridFilterManagerButtonNone"
     And I should see an "FrontendGridFilterManagerButton" element
+
+  Scenario: Ensure the filter manager is visible after change selected filters
+    Given I proceed as the admin
+    And I go to Products/Product Attributes
+    And I click edit "brand" in grid
+    And I fill form with:
+        | Filterable | Yes |
+    And I save and close form
+    And I should see "Attribute was successfully saved" flash message
+    And I proceed as the customer
+    And I reload the page
+    And I click "Toggle Sidebar Button"
+    When I click "FrontendGridFilterManagerButton"
+    And I click "FrontendGridFilterManagerButtonAll"
+    Then I should see an "FrontendGridFilterManager" element
+    And I click "Toggle Sidebar Button Expanded"
 
   Scenario: Ensure that a toggle sidebar button is hidden on the tablet view
     Given I set window size to 992x1024

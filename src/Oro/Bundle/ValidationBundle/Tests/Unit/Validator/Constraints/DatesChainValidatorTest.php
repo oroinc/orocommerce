@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class DatesChainValidatorTest extends ConstraintValidatorTestCase
@@ -15,7 +15,7 @@ class DatesChainValidatorTest extends ConstraintValidatorTestCase
 
     protected function createValidator()
     {
-        return new DatesChainValidator(new PropertyAccessor());
+        return new DatesChainValidator(PropertyAccess::createPropertyAccessor());
     }
 
     private function createTestObject(?\DateTime $first, ?\DateTime $second, ?\DateTime $third): \stdClass

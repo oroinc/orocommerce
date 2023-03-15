@@ -21,6 +21,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\ProductDescription;
@@ -36,7 +37,6 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\StringSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -79,7 +79,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
             $this->attributeTypeRegistry,
             new AttributeConfigurationProvider($configManager),
             $this->filterableAttributeProvider,
-            new PropertyAccessor(),
+            PropertyAccess::createPropertyAccessor(),
             $searchableProvider
         );
     }

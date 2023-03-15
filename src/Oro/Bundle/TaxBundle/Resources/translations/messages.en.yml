@@ -175,7 +175,7 @@ oro.tax:
             use_as_base:
                 default.label: 'Use as Base by Default'
                 exclusions.label: 'Use as Base Exclusions'
-                shipping_origin.label: 'Shipping Origin'
+                origin.label: 'Origin'
                 destination.label: 'Destination'
                 option.label: 'Option'
             destination:

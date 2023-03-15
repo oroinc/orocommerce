@@ -27,8 +27,9 @@ datagrids:
                 label:         oro.product.names.label
             inventoryStatusId:
                 label:         oro.product.inventory_status.label
-                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
                 frontend_type: select
+                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                translatable_options: false
             status:
                 label:         oro.product.status.label
                 frontend_type: select
@@ -162,8 +163,9 @@ datagrids:
                 label:         oro.product.names.label
             inventoryStatus:
                 label:         oro.product.inventory_status.label
-                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
                 frontend_type: select
+                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                translatable_options: false
         filters:
             columns:
                 sku:
@@ -679,8 +681,9 @@ datagrids:
                 label:         oro.product.names.label
             inventoryStatusId:
                 label:         oro.product.inventory_status.label
-                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
                 frontend_type: select
+                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                translatable_options: false
             status:
                 label:         oro.product.status.label
                 frontend_type: select

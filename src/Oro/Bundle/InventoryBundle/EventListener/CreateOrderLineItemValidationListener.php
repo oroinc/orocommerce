@@ -6,7 +6,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -57,11 +56,9 @@ class CreateOrderLineItemValidationListener
 
             $inventoryLevel = $this->doctrine->getRepository(InventoryLevel::class)
                 ->getLevelByProductAndProductUnit($lineItem->getProduct(), $lineItem->getProductUnit());
-            if (null === $inventoryLevel) {
-                throw new InventoryLevelNotFoundException();
-            }
-
-            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
+            if (null === $inventoryLevel
+                || !$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())
+            ) {
                 $event->addErrorByUnit(
                     $lineItem->getProductSku(),
                     $lineItem->getProductUnitCode(),

@@ -18,16 +18,7 @@ use Oro\Component\Exception\UnexpectedTypeException;
  */
 class SubcategoryFilter extends AbstractFilter
 {
-    const FILTER_TYPE_NAME = 'subcategory';
-    const DEFAULT_VALUE = [];
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getFormType()
-    {
-        return SearchEntityFilterType::class;
-    }
+    public const FILTER_TYPE_NAME = 'subcategory';
 
     /**
      * {@inheritDoc}
@@ -46,7 +37,7 @@ class SubcategoryFilter extends AbstractFilter
     {
         $metadata = parent::getMetadata();
 
-        $formView = $this->getForm()->createView();
+        $formView = $this->getFormView();
         $fieldView = $formView->children['value'];
 
         $metadata['choices'] = $fieldView->vars['choices'];
@@ -75,12 +66,14 @@ class SubcategoryFilter extends AbstractFilter
     }
 
     /**
-     * @param FilterDatasourceAdapterInterface $ds
-     * @param array $data
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data)
+    protected function getFormType(): string
+    {
+        return SearchEntityFilterType::class;
+    }
+
+    protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data): bool
     {
         /** @var Category $rootCategory */
         $rootCategory = $this->get('rootCategory');
@@ -113,13 +106,13 @@ class SubcategoryFilter extends AbstractFilter
         return true;
     }
 
-    /**
-     * @return string
-     */
-    protected function getFieldName()
+    protected function getFieldName(): string
     {
-        $dataName = $this->get(FilterUtility::DATA_NAME_KEY);
-
-        return sprintf('%s.%s.%s', Query::TYPE_INTEGER, $dataName, CategoryPathPlaceholder::NAME);
+        return sprintf(
+            '%s.%s.%s',
+            Query::TYPE_INTEGER,
+            $this->get(FilterUtility::DATA_NAME_KEY),
+            CategoryPathPlaceholder::NAME
+        );
     }
 }

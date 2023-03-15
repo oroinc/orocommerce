@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport\EventListener
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\ImportExport\EventListeners\EntityFieldFallbackValueMergeListener;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Event\StrategyEvent;
 use Oro\Bundle\ImportExportBundle\Strategy\StrategyInterface;
@@ -12,7 +13,6 @@ use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadProductRelatedF
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class EntityFieldFallbackValueMergeListenerTest extends WebTestCase
 {

@@ -22,7 +22,7 @@ class CustomerTaxCodeAutocompleteType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent(): string
+    public function getParent(): ?string
     {
         return OroEntitySelectOrCreateInlineType::class;
     }

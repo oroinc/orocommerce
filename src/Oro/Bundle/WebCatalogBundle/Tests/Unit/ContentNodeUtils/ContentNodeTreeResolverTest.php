@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerGroupCriteriaProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
@@ -35,12 +36,13 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
         $this->contentNodeProvider = $this->createMock(ContentNodeProvider::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->resolvedContentNodesLoader = $this->createMock(ResolvedContentNodesLoader::class);
-
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->resolver = new ContentNodeTreeResolver(
             $this->doctrineHelper,
             $this->contentNodeProvider,
             $this->scopeManager,
-            $this->resolvedContentNodesLoader
+            $this->resolvedContentNodesLoader,
+            $propertyAccessor
         );
     }
 
