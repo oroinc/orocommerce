@@ -33,4 +33,5 @@ dynamic-imports:
     productskit:
         - oroproduct/js/app/components/product-kit-items-component
         - oroproduct/js/app/views/product-kit/product-kit-view
+        - oroproduct/js/app/views/product-kit/product-kit-widget-view
         - oroproduct/datagrid/builder/product-kit-items-builder
