@@ -49,6 +49,7 @@ oro:
                     organization.label: Organization
                     created_at.label: Searched At
                     datagrid:
+                        preview.label: 'Preview'
                         results:
                             label: 'Results'
                             product_type.label: '{1} %count% product|]1,Inf[ %count% products'

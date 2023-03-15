@@ -9,7 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\SearchResultHistoryManagerInterface;
 /**
  * Log search term to search history table basing on the search query.
  */
-class SearchHistoryEventListener
+class SearchHistoryEventListener implements SearchHistoryEventListenerInterface
 {
     protected const EMPTY_TYPE = 'empty';
     protected const UNKNOWN_TYPE = 'unknown';
