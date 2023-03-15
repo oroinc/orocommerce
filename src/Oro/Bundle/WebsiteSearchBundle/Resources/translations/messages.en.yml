@@ -9,6 +9,27 @@ oro:
                 label: 'Global Search Boost'
                 tooltip: 'Decimal value greater than zero. Empty value means no boosting. Any value (even 0.1) already applies boosting. Works only for searchable attributes.'
     websitesearch:
+        system_configuration:
+            groups:
+                search:
+                    title: 'Search'
+            pages:
+                search_terms:
+                    title: 'Search Terms'
+            fieldsets:
+                search_history:
+                    title: 'Search History'
+        feature:
+            website_search_history:
+                label: 'Enable Search History Feature'
+                description: TBD
+            website_search_history_tracking:
+                label: 'Enable Global Search History'
+                description: >
+                    When enabled, all search queries that led users to the search results page, along with the type of 
+                    the search result that they were shown on the search results page, will be recorded to the database.
+                    Excercise care when enabling this option as on popular websites it may result in large number of
+                    records saved to the database.
         searchresult:
             entity:
                 searchtermreport:

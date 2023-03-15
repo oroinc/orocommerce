@@ -369,3 +369,5 @@ services:
         abstract: true
         arguments:
             - '@oro_website_search.search_result_history.manager'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_website_search_history_tracking }

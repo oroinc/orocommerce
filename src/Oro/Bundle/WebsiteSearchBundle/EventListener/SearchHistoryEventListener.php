@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Event\AfterSearchEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\SearchResultHistoryManagerInterface;
@@ -9,8 +11,10 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\SearchResultHistoryManagerInterface;
 /**
  * Log search term to search history table basing on the search query.
  */
-class SearchHistoryEventListener implements SearchHistoryEventListenerInterface
+class SearchHistoryEventListener implements SearchHistoryEventListenerInterface, FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     protected const EMPTY_TYPE = 'empty';
     protected const UNKNOWN_TYPE = 'unknown';
 
@@ -53,7 +57,8 @@ class SearchHistoryEventListener implements SearchHistoryEventListenerInterface
 
     protected function isSupportedQuery(Query $query): bool
     {
-        return !empty($this->supportedQueryTypes[$query->getHint(Query::HINT_SEARCH_TYPE)]);
+        return $this->isFeaturesEnabled()
+            && !empty($this->supportedQueryTypes[$query->getHint(Query::HINT_SEARCH_TYPE)]);
     }
 
     protected function getSearchTerm(Query $query): ?string
