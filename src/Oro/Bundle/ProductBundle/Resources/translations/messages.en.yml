@@ -389,6 +389,8 @@ oro:
                             title: Add Product
                         datagrid:
                             is_selected: Selected
+                        kit_item:
+                            label: Add Kit Item
 
         productkititemlabel:
             entity_label: 'Product Kit Item Label'

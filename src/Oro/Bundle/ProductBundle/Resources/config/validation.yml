@@ -251,9 +251,6 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
             - Count:
                 min: 1
                 minMessage: oro.product.productkititem.products.not_empty
-                payload:
-                    jsValidation:
-                        type: NotBlank
         minimumQuantity:
             - Type: [float, null]
             - Range:

@@ -281,7 +281,14 @@ class ProductType extends AbstractType
             $form->add(
                 'kitItems',
                 ProductKitItemCollectionType::class,
-                ['prototype_data' => (new ProductKitItem())->setProductKit($product), 'error_bubbling'=>false]
+                [
+                    'label' => false,
+                    'attr' => [
+                        'class' => 'product-kit-control-group'
+                    ],
+                    'prototype_data' => (new ProductKitItem())->setProductKit($product),
+                    'error_bubbling'=> false
+                ]
             );
         }
 

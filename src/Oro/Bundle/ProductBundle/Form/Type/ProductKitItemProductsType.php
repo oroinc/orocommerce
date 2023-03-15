@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\Proxy;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Event\PostSubmitEvent;
@@ -16,6 +17,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -80,6 +82,11 @@ class ProductKitItemProductsType extends AbstractType
             static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct()->getId(),
             (array)$form->getData()?->toArray()
         );
+        $view->vars['sortOrderConstraints'] = [
+            'Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal' => new Decimal(),
+            'Range' => new Range(['min' => 0])
+        ];
+        $view->vars['attr']['data-type'] = 'json-collection';
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -15,6 +15,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Represents a form type for {@see ProductKitItem}.
@@ -31,6 +33,7 @@ class ProductKitItemType extends AbstractType
                     'label' => 'oro.product.productkititem.labels.label',
                     'required' => true,
                     'value_class' => ProductKitItemLabel::class,
+                    'entry_options' => ['constraints' => [new NotBlank(), new Length(['max' => 255])]]
                 ]
             )
             ->add('sortOrder', IntegerType::class, [
@@ -73,6 +76,24 @@ class ProductKitItemType extends AbstractType
             static fn (Product $product) => $product->getSkuUppercase(),
             (array) $kitItem?->getProducts()->toArray()
         );
+
+        $view->vars['fieldsMap'] = [];
+        foreach ($view->children as $name => $childView) {
+            if ($name === 'labels' && isset($childView->children['values']->children)) {
+                $childViewDefault = reset($childView->children['values']->children);
+                $view->vars['fieldsMap'][$name] = [
+                    'key' => $name,
+                    'name' => $childViewDefault->vars['full_name'],
+                    'id' => $childViewDefault->vars['id'],
+                ];
+            } else {
+                $view->vars['fieldsMap'][$name] = [
+                    'key' => $name,
+                    'name' => $childView->vars['full_name'],
+                    'id' => $childView->vars['id'],
+                ];
+            }
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

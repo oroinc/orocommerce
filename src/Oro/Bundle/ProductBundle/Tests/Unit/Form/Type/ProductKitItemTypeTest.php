@@ -102,6 +102,47 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
             $formView->vars['selectedProductsSkus'],
             'Variable "selectedProductsSkus" is expected to be empty'
         );
+        self::assertEquals(
+            [
+                'labels' => [
+                    'key' => 'labels',
+                    'name' => 'oro_product_kit_item[labels]',
+                    'id' => 'oro_product_kit_item_labels',
+                ],
+                'sortOrder' => [
+                    'key' => 'sortOrder',
+                    'name' => 'oro_product_kit_item[sortOrder]',
+                    'id' => 'oro_product_kit_item_sortOrder',
+                ],
+                'optional' => [
+                    'key' => 'optional',
+                    'name' => 'oro_product_kit_item[optional]',
+                    'id' => 'oro_product_kit_item_optional',
+                ],
+                'minimumQuantity' => [
+                    'key' => 'minimumQuantity',
+                    'name' => 'oro_product_kit_item[minimumQuantity]',
+                    'id' => 'oro_product_kit_item_minimumQuantity',
+                ],
+                'maximumQuantity' => [
+                    'key' => 'maximumQuantity',
+                    'name' => 'oro_product_kit_item[maximumQuantity]',
+                    'id' => 'oro_product_kit_item_maximumQuantity',
+                ],
+                'productUnit' => [
+                    'key' => 'productUnit',
+                    'name' => 'oro_product_kit_item[productUnit]',
+                    'id' => 'oro_product_kit_item_productUnit',
+                ],
+                'kitItemProducts' => [
+                    'key' => 'kitItemProducts',
+                    'name' => 'oro_product_kit_item[kitItemProducts]',
+                    'id' => 'oro_product_kit_item_kitItemProducts',
+                ],
+            ],
+            $formView->vars['fieldsMap'],
+            'Variable "fieldMap" is not expected to be empty'
+        );
 
         self::assertNull($form->getData());
     }
@@ -135,7 +176,47 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
             $formView->vars['selectedProductsSkus'],
             'Variable "selectedProductsSkus" is not as expected'
         );
-
+        self::assertEquals(
+            [
+                'labels' => [
+                    'key' => 'labels',
+                    'name' => 'oro_product_kit_item[labels]',
+                    'id' => 'oro_product_kit_item_labels',
+                ],
+                'sortOrder' => [
+                    'key' => 'sortOrder',
+                    'name' => 'oro_product_kit_item[sortOrder]',
+                    'id' => 'oro_product_kit_item_sortOrder',
+                ],
+                'optional' => [
+                    'key' => 'optional',
+                    'name' => 'oro_product_kit_item[optional]',
+                    'id' => 'oro_product_kit_item_optional',
+                ],
+                'minimumQuantity' => [
+                    'key' => 'minimumQuantity',
+                    'name' => 'oro_product_kit_item[minimumQuantity]',
+                    'id' => 'oro_product_kit_item_minimumQuantity',
+                ],
+                'maximumQuantity' => [
+                    'key' => 'maximumQuantity',
+                    'name' => 'oro_product_kit_item[maximumQuantity]',
+                    'id' => 'oro_product_kit_item_maximumQuantity',
+                ],
+                'productUnit' => [
+                    'key' => 'productUnit',
+                    'name' => 'oro_product_kit_item[productUnit]',
+                    'id' => 'oro_product_kit_item_productUnit',
+                ],
+                'kitItemProducts' => [
+                    'key' => 'kitItemProducts',
+                    'name' => 'oro_product_kit_item[kitItemProducts]',
+                    'id' => 'oro_product_kit_item_kitItemProducts',
+                ],
+            ],
+            $formView->vars['fieldsMap'],
+            'Variable "fieldMap" is not expected to be empty'
+        );
         self::assertSame($productKitItem, $form->getData());
     }
 

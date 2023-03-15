@@ -1108,6 +1108,16 @@ datagrids:
             bind_parameters:
                 selectedProductsIds:
                     default: 0
+        sorters:
+            columns:
+                sku:
+                    disabled: true
+                productName:
+                    disabled: true
+                status:
+                    disabled: true
+        properties:
+            id: ~
         columns:
             sortOrder:
                 order: -1
@@ -1115,6 +1125,9 @@ datagrids:
                 editable: true
                 cellClassName: 'editing-cell'
                 frontend_type: string
+        options:
+            jsmodules:
+                - oroproduct/datagrid/builder/product-kit-items-builder
 
     kit-item-products-add-grid:
         extends: kit-item-products-base-grid
