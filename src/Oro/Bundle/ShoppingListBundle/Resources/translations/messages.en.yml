@@ -172,26 +172,27 @@ oro:
             entity_plural_label: Shopping List Kit Item Line Items
             entity_grid_all_view_label: All %entity_plural_label%
             entity_frontend_grid_all_view_label: All %entity_plural_label%
-            entity_description: Represents the line item of the product kit item in the shopping list.
+            entity_description: Represents the line item of the product kit item in the shopping list
             id.label: ID
             line_item:
                 label: Shopping List Line Item
-                description: The related shopping list line item.
+                description: The related shopping list line item
             kit_item:
                 label: Product Kit Item
-                description: The related product kit item.
+                description: The related product kit item
             product:
                 label: Product
-                description: The kit item product to be purchased.
+                description: The kit item product to be purchased
             quantity:
                 label: Quantity
-                description: The quantity of product kit item units to be purchased.
+                description: The quantity of product kit item units to be purchased
+                aria_label: Product Kit Item Quantity
             unit:
                 label: Unit of Quantity
-                description: The unit of quantity of the kit item product to be purchased in.
+                description: The unit of quantity of the kit item product to be purchased in
             sort_order:
                 label: Sort Order
-                description: Used to sort kit item line item products when displaying.
+                description: Used to sort kit item line item products when displaying
 
         system_configuration:
             groups:
@@ -363,3 +364,14 @@ oro:
                 apply: 'Apply changes in the Note'
                 decline: 'Decline changes in the Note'
                 edit: 'Edit the Note'
+
+            product_kit_line_item:
+                dialog_widget:
+                    product_kit_item_line_item:
+                        product:
+                            choices:
+                                none: None
+                    submit:
+                        label: Submit
+                    cancel:
+                        label: Cancel

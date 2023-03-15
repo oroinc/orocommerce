@@ -2,13 +2,6 @@
     {% if not is_configurable_product_type(product.type) or matrixFormType != 'none' %}
         {% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
 
-        {% set view = 'oroshoppinglist/js/app/views/product-add-to-shopping-list-view' %}
-        {% if matrixFormType == 'popup' %}
-            {% set view = 'oroshoppinglist/js/app/views/matrix-grid-popup-button-view' %}
-        {% elseif matrixFormType == 'inline' %}
-            {% set view = 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view' %}
-        {% endif %}
-
         {% set buttonOptions = {
             dataUrl: 'oro_shopping_list_frontend_add_product',
             dataAttributes: {},
@@ -16,6 +9,22 @@
             iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
             labelInIcon: false
         } %}
+
+        {% if is_configurable_product_type(product.type) %}
+            {% if matrixFormType == 'popup' %}
+                {% set view = 'oroshoppinglist/js/app/views/matrix-grid-popup-button-view' %}
+            {% elseif matrixFormType == 'inline' %}
+                {% set view = 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view' %}
+            {% endif %}
+        {% elseif is_kit_product_type(product.type) %}
+            {% set view = 'oroshoppinglist/js/app/views/product-kit-add-to-shopping-list-view' %}
+            {% set buttonOptions = buttonOptions|merge({
+                dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create'
+            }) %}
+        {% else %}
+            {% set view = 'oroshoppinglist/js/app/views/product-add-to-shopping-list-view' %}
+        {% endif %}
+
         {% set removeOptions = buttonOptions|merge({
             dataUrl: 'oro_shopping_list_frontend_remove_product',
             actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,

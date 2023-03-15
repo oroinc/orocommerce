@@ -2,32 +2,28 @@ services:
     _defaults:
         public: true
 
-    Oro\Bundle\ShoppingListBundle\Controller\ShoppingListController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
+    _instanceof:
+        Symfony\Contracts\Service\ServiceSubscriberInterface:
+            tags:
+                - { name: container.service_subscriber }
 
-    Oro\Bundle\ShoppingListBundle\Controller\Frontend\ShoppingListController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
+        Symfony\Bundle\FrameworkBundle\Controller\AbstractController:
+            calls:
+                - ['setContainer', ['@Psr\Container\ContainerInterface']]
 
-    Oro\Bundle\ShoppingListBundle\Controller\Frontend\MatrixGridOrderController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
+    Oro\Bundle\ShoppingListBundle\Controller\ShoppingListController: ~
 
-    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\ShoppingListController: ~
 
-    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxMassActionController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\MatrixGridOrderController: ~
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController: ~
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController:
+        arguments:
+            - '@oro_shopping_list.product_kit.checker.product_kit_availability_checker'
+            - '@oro_shopping_list.manager.current_shopping_list'
+            - '@oro_shopping_list.manager.shopping_list'
+            - '@oro_shopping_list.product_kit.factory.product_kit_line_item'
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxMassActionController: ~

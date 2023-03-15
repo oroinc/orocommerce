@@ -1,3 +1,46 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    properties:
+        type:
+            - EqualTo:
+                value: kit
+                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.type.kit.message'
+                groups: [product_kit_is_available_for_purchase_for_purchase]
+            - EqualTo:
+                value: simple
+                groups: [product_kit_item_product_is_available_for_purchase]
+        status:
+            - EqualTo:
+                value: enabled
+                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.status.enabled.message'
+                groups: [product_kit_is_available_for_purchase]
+            - EqualTo:
+                value: enabled
+                groups: [product_kit_item_product_is_available_for_purchase]
+        inventory_status:
+            - Expression:
+                expression: 'value.getId() === "in_stock"'
+                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.inventory_status.in_stock.message'
+                groups: [product_kit_is_available_for_purchase]
+            - Expression:
+                expression: 'value.getId() === "in_stock"'
+                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.inventory_status.in_stock.message'
+                groups: [product_kit_item_product_is_available_for_purchase]
+        kitItems:
+            - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchase:
+                groups: [product_kit_is_available_for_purchase]
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    properties:
+        kitItemProducts:
+            - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchase:
+                groups: [product_kit_item_is_available_for_purchase]
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    properties:
+        product:
+            - Valid:
+                  groups: [product_kit_item_product_is_available_for_purchase]
+
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
         - Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
@@ -76,6 +119,8 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             - NotNull: ~
         kitItem:
             - NotNull: ~
+            - Valid:
+                  groups: [product_kit_is_available_for_purchase]
         product:
             - NotNull: ~
         quantity:

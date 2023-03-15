@@ -20,3 +20,16 @@ services:
             - '@oro_shopping_list.manager.current_shopping_list'
         tags:
             - { name: form.type, alias: oro_shopping_list_frontend_line_item_widget }
+
+    oro_shopping_list.form.type.product_kit_line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType'
+        tags:
+            - { name: form.type }
+
+    oro_shopping_list.form.type.product_kit_item_line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitItemLineItemType'
+        arguments:
+            - '@oro_shopping_list.product_kit.provider.product_kit_item_products'
+            - '@oro_product.form.data_transformer.product_to_id'
+        tags:
+            - { name: form.type }

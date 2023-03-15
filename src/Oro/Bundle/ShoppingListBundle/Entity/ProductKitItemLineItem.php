@@ -86,7 +86,7 @@ class ProductKitItemLineItem extends ExtendProductKitLineItem implements Product
      *      }
      * )
      */
-    protected ?float $quantity = 1;
+    protected ?float $quantity = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
@@ -140,7 +140,7 @@ class ProductKitItemLineItem extends ExtendProductKitLineItem implements Product
         return $this->kitItem;
     }
 
-    public function setProduct(Product $product): self
+    public function setProduct(?Product $product): self
     {
         $this->product = $product;
 
@@ -167,7 +167,7 @@ class ProductKitItemLineItem extends ExtendProductKitLineItem implements Product
         return $this;
     }
 
-    public function setQuantity(float $quantity): self
+    public function setQuantity(?float $quantity): self
     {
         $this->quantity = $quantity;
 
@@ -179,7 +179,7 @@ class ProductKitItemLineItem extends ExtendProductKitLineItem implements Product
         return $this->quantity;
     }
 
-    public function setUnit(ProductUnit $unit): self
+    public function setUnit(?ProductUnit $unit): self
     {
         $this->unit = $unit;
 
