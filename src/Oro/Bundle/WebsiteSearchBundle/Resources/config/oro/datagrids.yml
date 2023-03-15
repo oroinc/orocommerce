@@ -20,7 +20,7 @@ datagrids:
                     - localization.name as localizationName
                     - customer.name as customerName
                     - 'TRIM(CONCAT(COALESCE(CONCAT(CAST(customerUser.namePrefix as string), '' ''), ''''), COALESCE(CONCAT(CAST(customerUser.firstName as string), '' ''), ''''), COALESCE(CONCAT(CAST(customerUser.middleName as string), '' ''), ''''), COALESCE(CONCAT(CAST(customerUser.lastName as string), '' ''), ''''), COALESCE(CAST(customerUser.nameSuffix as string), ''''))) as customerUserTitle'
-                    - IDENTITY(e.customerVisitor) as customerVisitorId
+                    - e.customerVisitorId
                 from:
                     - { table: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory', alias: e }
                 join:
@@ -72,7 +72,7 @@ datagrids:
                 customerUserTitle:
                     data_name: customerUserTitle
                 customerVisitorId:
-                    data_name: customerVisitorId
+                    data_name: e.customerVisitorId
                 searchTerm:
                     data_name: e.searchTerm
                 createdAt:
@@ -113,7 +113,7 @@ datagrids:
                     data_name: customer.name
                 customerVisitorId:
                     type: number
-                    data_name: customerVisitorId
+                    data_name: e.customerVisitorId
                 customerUserTitle:
                     type: string
                     data_name: customerUserTitle

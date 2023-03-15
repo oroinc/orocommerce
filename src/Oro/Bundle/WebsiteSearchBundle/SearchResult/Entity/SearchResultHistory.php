@@ -158,16 +158,13 @@ class SearchResultHistory implements
     private $customerUser;
 
     /**
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor"
-     * )
-     * @ORM\JoinColumn(
+     * @ORM\Column(
      *     name="customer_visitor_id",
-     *     nullable=true,
-     *     onDelete="SET NULL"
+     *     type="integer",
+     *     nullable=true
      * )
      */
-    private $customerVisitor;
+    private $customerVisitorId;
 
     /**
      * @ORM\Column(
@@ -285,14 +282,14 @@ class SearchResultHistory implements
         return $this;
     }
 
-    public function getCustomerVisitor(): ?CustomerVisitor
+    public function getCustomerVisitorId(): ?int
     {
-        return $this->customerVisitor;
+        return $this->customerVisitorId;
     }
 
-    public function setCustomerVisitor(?CustomerVisitor $customerVisitor): self
+    public function setCustomerVisitorId(?int $customerVisitorId): self
     {
-        $this->customerVisitor = $customerVisitor;
+        $this->customerVisitorId = $customerVisitorId;
 
         return $this;
     }

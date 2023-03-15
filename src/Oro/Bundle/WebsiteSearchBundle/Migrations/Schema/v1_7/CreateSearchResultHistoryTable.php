@@ -96,12 +96,6 @@ class CreateSearchResultHistoryTable implements Migration
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_customer_visitor'),
-            ['customer_visitor_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer'),
             ['customer_id'],
             ['id'],
