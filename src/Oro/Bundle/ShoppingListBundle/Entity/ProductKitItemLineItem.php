@@ -7,11 +7,12 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Bundle\ShoppingListBundle\Model\ExtendProductKitLineItem;
 
 /**
  * Represents a line item of the product kit item.
@@ -28,8 +29,10 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendProductKitLineItem;
  *      }
  * )
  */
-class ProductKitItemLineItem extends ExtendProductKitLineItem implements ProductLineItemInterface
+class ProductKitItemLineItem implements ExtendEntityInterface, ProductLineItemInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")

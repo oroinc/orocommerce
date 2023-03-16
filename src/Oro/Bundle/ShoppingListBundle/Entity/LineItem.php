@@ -212,8 +212,6 @@ class LineItem implements
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->kitItemLineItems = new ArrayCollection();
     }
 
