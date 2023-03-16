@@ -8,7 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\ProductBundle\Model\ExtendProductKitItem;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 
 /**
  * Represents a product kit item.
@@ -20,9 +22,14 @@ use Oro\Bundle\ProductBundle\Model\ExtendProductKitItem;
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ *
+ * @method ProductKitItemLabel getLabel(Localization $localization = null)
+ * @method ProductKitItemLabel getDefaultLabel()
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
-class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
+class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
 {
+    use ExtendEntityTrait;
     use DatesAwareTrait;
 
     /**
@@ -122,8 +129,6 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->labels = new ArrayCollection();
         $this->products = new ArrayCollection();
         $this->referencedUnitPrecisions = new ArrayCollection();
@@ -176,7 +181,7 @@ class ProductKitItem extends ExtendProductKitItem implements DatesAwareInterface
 
     public function setDefaultLabel($value): self
     {
-        parent::setDefaultLabel($value);
+        $this->setDefaultFallbackValue($this->labels, $value, ProductKitItemLabel::class);
         $this->getDefaultLabel()->setProductKitItem($this);
 
         return $this;
