@@ -78,6 +78,9 @@ oro_behat_extension:
               type: 'css'
               locator: 'input[name^="oro_sale_quote_shipUntil"]'
           Valid Until: 'oro_sale_quote[validUntil]'
+          Price of Line Item Secondary Offer: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][1][price][value]'
+          Quantity of Line Item Secondary Offer: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][1][quantity]'
+          Unit of Line Item Secondary Offer: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][1][productUnit]'
 
     Quote Shipping Address State Selector:
       selector:

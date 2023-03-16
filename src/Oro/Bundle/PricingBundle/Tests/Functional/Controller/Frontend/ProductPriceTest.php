@@ -40,7 +40,7 @@ class ProductPriceTest extends WebTestCase
                 'frontend-product-search-grid[_pager][_page]' => '1',
                 'frontend-product-search-grid[_pager][_per_page]' => '100000',
             ],
-            true
+            false
         );
 
         $this->getJsonResponseContent($response, 200);
@@ -55,7 +55,7 @@ class ProductPriceTest extends WebTestCase
                 'frontend-product-search-grid[_pager][_page]' => '1',
                 'frontend-product-search-grid[_pager][_per_page]' => '100000',
             ],
-            true
+            false
         );
 
         $this->getJsonResponseContent($response, 200);

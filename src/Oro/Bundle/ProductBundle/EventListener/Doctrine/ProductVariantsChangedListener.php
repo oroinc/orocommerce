@@ -26,7 +26,7 @@ class ProductVariantsChangedListener
      */
     public function prePersist(ProductVariantLink $productVariantLink, LifecycleEventArgs $event)
     {
-        if ($productVariantLink->getProduct()) {
+        if ($this->isSupported($productVariantLink)) {
             $this->productReindexManager
                 ->reindexProductWithFieldGroups($productVariantLink->getProduct(), null, true, ['main']);
         }
@@ -37,9 +37,14 @@ class ProductVariantsChangedListener
      */
     public function preRemove(ProductVariantLink $productVariantLink)
     {
-        if ($productVariantLink->getProduct()) {
+        if ($this->isSupported($productVariantLink)) {
             $this->productReindexManager
                 ->reindexProductWithFieldGroups($productVariantLink->getProduct(), null, true, ['main']);
         }
+    }
+
+    private function isSupported(ProductVariantLink $productVariantLink): bool
+    {
+        return (bool) $productVariantLink->getProduct()?->getId();
     }
 }

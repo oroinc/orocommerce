@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -118,7 +122,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     {
         return [
             'all products' => [[]],
-            'product-1' => [['product-1']]
+            'product-1' => [['product-1']],
         ];
     }
 
@@ -180,6 +184,10 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
      */
     public function testInsertPricesByPriceListWithTempTable($combinedPriceList, $product, $expectedExists)
     {
+        if ($this->getContainer()->get('doctrine')->getConnection()->getDatabasePlatform() instanceof MySqlPlatform) {
+            $this->markTestSkipped('Test skipped due to unsupported multiple temp table referencing on MySQL');
+        }
+
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
 
@@ -211,6 +219,25 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $products
             );
         }
+
+        // Move prices from temp to persistent CPL table
+        $this->tempTableManipulator->moveDataFromTemplateTableToEntityTable(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id',
+            ]
+        );
+
         /** @var CombinedProductPrice[] $prices */
         $prices = $combinedProductPriceRepository->findBy($findBy);
         if ($expectedExists) {
@@ -248,7 +275,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             'test getting price list 1f' => [
                 'combinedPriceList' => '1f',
                 'product' => null,
-                'expectedExists' => true
+                'expectedExists' => true,
             ],
         ];
     }
@@ -780,5 +807,80 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         }
 
         return $a['cpl'] > $b['cpl'] ? 1 : 0;
+    }
+
+    public function testHasDuplicatePricesNoDuplicates()
+    {
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CombinedProductPrice::class);
+
+        $this->assertFalse($repo->hasDuplicatePrices());
+    }
+
+    public function testHasDuplicatePrices()
+    {
+        $this->prepareDuplicatedPrices();
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(CombinedProductPrice::class);
+
+        $this->assertTrue($repo->hasDuplicatePrices());
+    }
+
+    public function testDeleteDuplicatePricesNoDuplicates()
+    {
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(CombinedProductPrice::class);
+        $this->assertEquals(0, $repo->deleteDuplicatePrices());
+    }
+
+    public function testDeleteDuplicatePrices()
+    {
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
+        /** @var Connection $connection */
+        $connection = $doctrine->getConnection();
+        if ($connection->getDatabasePlatform() instanceof MySqlPlatform) {
+            $this->markTestSkipped('deleteDuplicatePrices always returns 0 on mysql');
+        }
+
+        $this->prepareDuplicatedPrices();
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $doctrine->getRepository(CombinedProductPrice::class);
+        $this->assertGreaterThan(0, $repo->deleteDuplicatePrices());
+    }
+
+    private function prepareDuplicatedPrices(): void
+    {
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
+        /** @var Connection $connection */
+        $connection = $doctrine->getConnection();
+        if ($connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+            $connection->executeQuery(
+                <<<'SQL'
+INSERT INTO oro_price_product_combined
+    (id, unit_code, product_id, combined_price_list_id, origin_price_id, product_sku,
+     quantity, value, currency, merge_allowed)
+SELECT uuid_generate_v4(), unit_code, product_id, combined_price_list_id, origin_price_id, product_sku,
+       quantity, value, currency, merge_allowed
+FROM oro_price_product_combined
+SQL
+            );
+        } else {
+            $connection->executeQuery(
+                <<<'SQL'
+INSERT INTO oro_price_product_combined
+    (id, unit_code, product_id, combined_price_list_id, origin_price_id, product_sku,
+     quantity, value, currency, merge_allowed)
+SELECT uuid(), unit_code, product_id, combined_price_list_id, origin_price_id, product_sku,
+       quantity, value, currency, merge_allowed
+FROM oro_price_product_combined
+SQL
+            );
+        }
     }
 }

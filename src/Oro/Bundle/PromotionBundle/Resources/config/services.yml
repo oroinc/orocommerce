@@ -126,6 +126,7 @@ services:
             - '@oro_promotion.mapper.applied_promotion'
         calls:
             - ['setTokenAccessor', ['@oro_security.token_accessor']]
+            - ['setMemoryCacheProvider', ['@oro_promotion.promotion_provider.memory_cache']]
 
     oro_promotion.shipping_promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
@@ -136,6 +137,10 @@ services:
             - '@oro_promotion.mapper.applied_promotion'
         calls:
             - ['setTokenAccessor', ['@oro_security.token_accessor']]
+            - ['setMemoryCacheProvider', ['@oro_promotion.promotion_provider.memory_cache']]
+
+    oro_promotion.promotion_provider.memory_cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory

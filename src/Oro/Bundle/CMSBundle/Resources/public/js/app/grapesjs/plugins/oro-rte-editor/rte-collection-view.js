@@ -2,6 +2,7 @@ import {invoke, uniq} from 'underscore';
 import BaseCollectionView from 'oroui/js/app/views/base/collection-view';
 import template from 'tpl-loader!orocms/templates/plugins/rte-collection-view-template.html';
 import RteItemView from './rte-item-view';
+import {isBlockFormatted} from '../components/rte/utils/utils';
 
 const RteCollectionView = BaseCollectionView.extend({
     optionNames: BaseCollectionView.prototype.optionNames.concat([
@@ -81,7 +82,8 @@ const RteCollectionView = BaseCollectionView.extend({
                 return node.nodeType === Node.ELEMENT_NODE &&
                     node.tagName === 'SPAN' &&
                     isNotSavedSpan &&
-                    node.getAttribute('data-gjs-type') !== 'text-style';
+                    node.getAttribute('data-gjs-type') !== 'text-style' &&
+                    !isBlockFormatted(node.parentNode);
             });
 
             if (mutation.type === 'childList' && isSpanAdded.length) {

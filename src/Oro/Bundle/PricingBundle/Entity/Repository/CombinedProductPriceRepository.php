@@ -53,83 +53,53 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
+    public function copyPricesByPriceListWithTempTable(
+        TempTableManipulatorInterface $tempTableManipulator,
+        CombinedPriceList $combinedPriceList,
+        PriceList $priceList,
+        bool $mergeAllowed,
+        array $products = []
+    ) {
+        $tempTableName = $tempTableManipulator->getTempTableNameForEntity(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId()
+        );
+
+        $this->doInsertByProductsUsingTempTable(
+            $tempTableManipulator,
+            $combinedPriceList,
+            $priceList,
+            $products,
+            $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList),
+            $tempTableName,
+            false
+        );
+    }
+
     public function insertPricesByPriceListWithTempTable(
         TempTableManipulatorInterface $tempTableManipulator,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         bool $mergeAllowed,
         array $products
-    ) {
-        // Copy prices for products that are not in the CPL yet to temp table (faster insert)
-        // This logic is same to copying prices from price list with merge = false
-        $notInListQb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
-        $this->addPresentProductsRestriction($notInListQb, $combinedPriceList);
-
+    ): void {
         $tempTableName = $tempTableManipulator->getTempTableNameForEntity(
             CombinedProductPrice::class,
             $combinedPriceList->getId()
         );
 
-        // Source - PL, restricted by - CPL, target - TMP
+        $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
+        $this->addUniquePriceCondition($qb, $combinedPriceList, $mergeAllowed);
+
         $this->doInsertByProductsUsingTempTable(
             $tempTableManipulator,
             $combinedPriceList,
             $priceList,
             $products,
-            $notInListQb,
-            $tempTableName,
-            false
-        );
-
-        if ($mergeAllowed) {
-            // For merge allowed add prices not blocked by merge:false for qty/units/currencies that are not present yet
-            // Skip prices moved to temp table
-            $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
-            $this->addProductsBlockedByMergeFlagRestriction($qb, $combinedPriceList);
-            $this->addPresentPricesRestriction($qb, $combinedPriceList);
-
-            // Apply restriction by temp table
-            $tempTableSubQb = $this->_em->createQueryBuilder();
-            $tempTableSubQb->select('cpp_tmp.id')
-                ->from(CombinedProductPrice::class, 'cpp_tmp')
-                ->where(
-                    $tempTableSubQb->expr()->eq('pp.product', 'cpp_tmp.product')
-                );
-            $qb->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->exists($tempTableSubQb->getDQL())
-                )
-            );
-
-            // Source - PL, restricted by - TMP, target - CPL
-            $this->doInsertByProductsUsingTempTable(
-                $tempTableManipulator,
-                $combinedPriceList,
-                $priceList,
-                $products,
-                $qb,
-                $tempTableManipulator->getTableNameForEntity(CombinedProductPrice::class),
-                true,
-                ['cpp_tmp' => $tempTableName]
-            );
-        }
-
-        // Move prices from temp to persistent CPL table
-        $tempTableManipulator->moveDataFromTemplateTableToEntityTable(
-            CombinedProductPrice::class,
-            $combinedPriceList->getId(),
-            [
-                'product',
-                'unit',
-                'priceList',
-                'productSku',
-                'quantity',
-                'value',
-                'currency',
-                'mergeAllowed',
-                'originPriceId',
-                'id'
-            ]
+            $qb,
+            $tempTableManipulator->getTempTableNameForEntity(CombinedProductPrice::class, $combinedPriceList->getId()),
+            true,
+            ['cpp' => $tempTableName, 'cpp2' => $tempTableName]
         );
     }
 
@@ -257,9 +227,9 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     public function hasDuplicatePrices(array $cpls = []): bool
     {
         $sql = <<<SQL
-            SELECT cpp1.id
+            SELECT 1
             FROM oro_price_product_combined cpp1 
-            INNER JOIN oro_price_product_combined cpp2 ON 
+            INNER JOIN oro_price_product_combined cpp2 ON
                 cpp1.id < cpp2.id
                 AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
                 AND cpp1.product_id = cpp2.product_id

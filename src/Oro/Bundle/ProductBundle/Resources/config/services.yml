@@ -2186,3 +2186,17 @@ services:
         class: Oro\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionTransformer
         arguments:
             - '@oro_product.model.builder.quick_add_row_collection'
+
+    oro_product.event_listener.product_duplicate:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductDuplicateListener
+        arguments:
+            - '@oro_entity_config.config_manager'
+            - '@oro_entity_config.provider.attribute'
+            - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
+        tags:
+            -
+                name: kernel.event_listener
+                event: oro_product.product.duplicate.after
+                method: onDuplicateAfter
+                priority: -128

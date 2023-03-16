@@ -128,9 +128,9 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContextData()
     {
-        $customerGroup = new CustomerGroup();
-        $customer = new Customer();
-        $customerUser = new CustomerUser();
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 1]);
+        $customer = $this->getEntity(Customer::class, ['id' => 1]);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
         $billingAddress = new OrderAddress();
         $shippingAddress = new OrderAddress();
         $website = new Website();
