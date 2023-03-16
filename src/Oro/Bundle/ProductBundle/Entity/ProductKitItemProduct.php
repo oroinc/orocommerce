@@ -4,7 +4,8 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\ProductBundle\Model\ExtendProductKitItemProduct;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Junction entity between product kit item and product to enable sort order.
@@ -13,8 +14,10 @@ use Oro\Bundle\ProductBundle\Model\ExtendProductKitItemProduct;
  * @ORM\Table(name="oro_product_kit_item_product")
  * @Config()
  */
-class ProductKitItemProduct extends ExtendProductKitItemProduct
+class ProductKitItemProduct implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
