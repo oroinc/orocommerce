@@ -302,8 +302,8 @@ services:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemProductsType
         arguments:
             - '@translator'
-            - '@oro_product.form.data_transformer.product_kit_item_products.view'
-            - '@oro_product.form.data_transformer.product_kit_item_products.model'
+            - !service_closure '@oro_product.form.data_transformer.product_kit_item_products.view'
+            - !service_closure '@oro_product.form.data_transformer.product_kit_item_products.model'
         tags:
             - { name: form.type }
 

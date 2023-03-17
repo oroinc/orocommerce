@@ -27,14 +27,16 @@ class ProductKitItemProductsType extends AbstractType
 {
     private TranslatorInterface $translator;
 
-    private DataTransformerInterface $viewDataTransformer;
+    /** @var \Closure(): DataTransformerInterface  */
+    private \Closure $viewDataTransformer;
 
-    private DataTransformerInterface $modelDataTransformer;
+    /** @var \Closure(): DataTransformerInterface  */
+    private \Closure $modelDataTransformer;
 
     public function __construct(
         TranslatorInterface $translator,
-        DataTransformerInterface $viewDataTransformer,
-        DataTransformerInterface $modelDataTransformer
+        \Closure $viewDataTransformer,
+        \Closure $modelDataTransformer
     ) {
         $this->translator = $translator;
         $this->viewDataTransformer = $viewDataTransformer;
@@ -43,8 +45,8 @@ class ProductKitItemProductsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addViewTransformer($this->viewDataTransformer);
-        $builder->addModelTransformer($this->modelDataTransformer);
+        $builder->addViewTransformer($this->getViewDataTransformer());
+        $builder->addModelTransformer($this->getModelDataTransformer());
 
         // Kit item products collection may contain uninitialized proxy product entities. That probably means that they
         // were not found. This listener adds proper form errors for such products and removes them from the collection.
@@ -107,5 +109,15 @@ class ProductKitItemProductsType extends AbstractType
     public function getParent(): string
     {
         return HiddenType::class;
+    }
+
+    private function getViewDataTransformer(): DataTransformerInterface
+    {
+        return ($this->viewDataTransformer)();
+    }
+
+    private function getModelDataTransformer(): DataTransformerInterface
+    {
+        return ($this->modelDataTransformer)();
     }
 }

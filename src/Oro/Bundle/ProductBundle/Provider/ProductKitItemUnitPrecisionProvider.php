@@ -32,7 +32,7 @@ class ProductKitItemUnitPrecisionProvider
         $unitPrecisionRepo = $this->managerRegistry->getRepository(ProductUnitPrecision::class);
         $queryBuilder = $unitPrecisionRepo->createQueryBuilder('pup');
 
-        return $queryBuilder
+        return (int) $queryBuilder
             ->select($queryBuilder->expr()->min('pup.precision'))
             ->innerJoin(
                 ProductKitItemProduct::class,

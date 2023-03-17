@@ -26,13 +26,13 @@ class ProductKitItemProductsTypeTest extends FormIntegrationTestCase
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $bypassCallback = static fn ($value) => $value;
-        $viewDataTransformer = new CallbackTransformer($bypassCallback, $bypassCallback);
+        $viewDataTransformer = static fn () => new CallbackTransformer($bypassCallback, $bypassCallback);
         $this->modelDataTransformer = $this->createMock(DataTransformerInterface::class);
 
         $this->type = new ProductKitItemProductsType(
             $translator,
             $viewDataTransformer,
-            $this->modelDataTransformer
+            fn () => $this->modelDataTransformer
         );
 
         parent::setUp();
