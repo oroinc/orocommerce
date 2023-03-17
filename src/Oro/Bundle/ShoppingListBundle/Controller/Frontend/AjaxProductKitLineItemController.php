@@ -49,7 +49,7 @@ class AjaxProductKitLineItemController extends AbstractController
      * @Route(
      *      "/create/{productId}",
      *      name="oro_shopping_list_frontend_product_kit_line_item_create",
-     *      requirements={"id"="\d+"},
+     *      requirements={"productId"="\d+"},
      *      methods={"GET","POST"}
      * )
      * @ParamConverter("product", options={"id"="productId"})
@@ -59,42 +59,52 @@ class AjaxProductKitLineItemController extends AbstractController
     public function createAction(Product $product, Request $request): Response|array
     {
         $constraintViolations = null;
-        if ($this->productKitAvailabilityChecker->isAvailableForPurchase($product, $constraintViolations)) {
-            /** @var ShoppingList|null $shoppingList */
-            $shoppingList = $this->currentShoppingListManager
-                ->getForCurrentUser((int)$request->get('shoppingListId'), false);
-            $setCurrent = false;
-            if ($shoppingList === null) {
-                $shoppingList = $this->shoppingListManager->create();
-                $setCurrent = true;
+        if (!$this->productKitAvailabilityChecker->isAvailableForPurchase($product, $constraintViolations)) {
+            $messages = [];
+            if ($constraintViolations !== null) {
+                foreach ($constraintViolations as $constraintViolation) {
+                    $messages['error'][] = $constraintViolation->getMessage();
+                }
             }
 
-            $productKitLineItem = $this->productKitLineItemFactory->createProductKitLineItem($product, $shoppingList);
+            return new JsonResponse(['success' => false, 'messages' => $messages], 400);
+        }
 
-            $form = $this->createForm(ProductKitLineItemType::class, $productKitLineItem);
+        /** @var ShoppingList|null $shoppingList */
+        $shoppingList = $this->currentShoppingListManager
+            ->getForCurrentUser((int)$request->get('shoppingListId'), false);
+        $setCurrent = false;
+        if ($shoppingList === null) {
+            $shoppingList = $this->shoppingListManager->create();
+            $setCurrent = true;
+        }
 
-            // ... the form handler steps in here ...
+        $productKitLineItem = $this->productKitLineItemFactory->createProductKitLineItem($product, $shoppingList);
 
-            if ($setCurrent === true && $form->isValid()) {
+        $form = $this->createForm(
+            ProductKitLineItemType::class,
+            $productKitLineItem,
+            ['validation_groups' => ['Default', 'product_kit_line_item', 'product_kit_is_available_for_purchase']]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($setCurrent === true) {
                 $this->currentShoppingListManager->setCurrent($shoppingList->getCustomerUser(), $shoppingList);
             }
 
-            return [
-                'data' => [
-                    'product' => $product,
-                    'shoppingList' => $shoppingList,
-                    'form' => $form->createView(),
-                ],
-            ];
+            $this->shoppingListManager->addLineItem($productKitLineItem, $shoppingList);
+
+            return new JsonResponse(['success' => true, 'messages' => []]);
         }
 
-        $messages = [];
-        if ($constraintViolations !== null) {
-            foreach ($constraintViolations as $constraintViolation) {
-                $messages['error'][] = $constraintViolation->getMessage();
-            }
-        }
-
-        return new JsonResponse(['success' => false, 'messages' => $messages], 400);
+        return [
+            'data' => [
+                'lineItem' => $productKitLineItem,
+                'product' => $product,
+                'shoppingList' => $shoppingList,
+                'form' => $form->createView(),
+            ],
+        ];
     }
 }

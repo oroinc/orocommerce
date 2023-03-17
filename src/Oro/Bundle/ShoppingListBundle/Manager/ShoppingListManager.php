@@ -131,7 +131,9 @@ class ShoppingListManager
         $this->totalManager->recalculateTotals($shoppingList, false);
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $entityManager = $this->getEntityManager();
+            $entityManager->persist($shoppingList);
+            $entityManager->flush();
         }
     }
 
@@ -336,6 +338,11 @@ class ShoppingListManager
         }
         if (null === $lineItem->getOrganization() && $shoppingList->getOrganization()) {
             $lineItem->setOrganization($shoppingList->getOrganization());
+        }
+
+        if ($lineItem->getProduct()?->isKit()) {
+            // Sets a random hash as a temporary solution. Must be changed in BB-22290.
+            $lineItem->setChecksum(sha1(uniqid('kit', true)));
         }
 
         return $this;

@@ -286,6 +286,11 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     {
         $shoppingList = new ShoppingList();
 
+        $this->em
+            ->expects(self::exactly(2))
+            ->method('persist')
+            ->withConsecutive([$lineItem], [$shoppingList]);
+
         $this->manager->addLineItem($lineItem, $shoppingList);
         self::assertCount(1, $shoppingList->getLineItems());
         self::assertNull($lineItem->getCustomerUser());

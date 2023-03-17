@@ -24,13 +24,18 @@ class LineItemRepository extends ServiceEntityRepository
      */
     public function findDuplicateInShoppingList(LineItem $lineItem, ?ShoppingList $shoppingList): ?LineItem
     {
+        $shoppingListId = $shoppingList?->getId();
+        if ($shoppingListId === null) {
+            return null;
+        }
+
         $qb = $this->createQueryBuilder('li');
         $qb->where('li.product = :product')
             ->andWhere('li.unit = :unit')
             ->andWhere('li.shoppingList = :shoppingList')
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
-            ->setParameter('shoppingList', $shoppingList)
+            ->setParameter('shoppingList', $shoppingListId)
             ->addOrderBy($qb->expr()->asc('li.id'))
             ->setMaxResults(1);
 

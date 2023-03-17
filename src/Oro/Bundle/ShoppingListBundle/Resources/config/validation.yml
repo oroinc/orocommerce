@@ -4,7 +4,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - EqualTo:
                 value: kit
                 message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.type.kit.message'
-                groups: [product_kit_is_available_for_purchase_for_purchase]
+                groups: [product_kit_is_available_for_purchase]
             - EqualTo:
                 value: simple
                 groups: [product_kit_item_product_is_available_for_purchase]
@@ -20,11 +20,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Expression:
                 expression: 'value.getId() === "in_stock"'
                 message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.inventory_status.in_stock.message'
-                groups: [product_kit_is_available_for_purchase]
-            - Expression:
-                expression: 'value.getId() === "in_stock"'
-                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.inventory_status.in_stock.message'
-                groups: [product_kit_item_product_is_available_for_purchase]
+                groups: [product_kit_is_available_for_purchase, product_kit_item_product_is_available_for_purchase]
         kitItems:
             - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchase:
                 groups: [product_kit_is_available_for_purchase]
@@ -47,36 +43,36 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
             groups: [update]
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
             path: quantity
-            groups: [Default, create, update, add_product]
+            groups: [Default, create, update, add_product, product_kit_line_item]
     properties:
         product:
             - NotBlank:
-                groups: [create, update, add_product]
+                groups: [create, update, add_product, product_kit_line_item]
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
-                groups: [create, update, add_product]
+                groups: [create, update, add_product, product_kit_line_item]
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 value: 0
-                groups: [create, update, add_product]
+                groups: [create, update, add_product, product_kit_line_item]
             - NotBlank:
-                groups: [create, update, add_product]
+                groups: [create, update, add_product, product_kit_line_item]
         unit:
             - NotBlank:
-                groups: [create, update, add_product]
+                groups: [create, update, add_product, product_kit_line_item]
         shoppingList:
             - NotBlank:
-                groups: [create, update]
+                groups: [create, update, product_kit_line_item]
         notes:
             - Length:
                 max: 2048
-                groups: [Default, create, update, add_product]
+                groups: [Default, create, update, add_product, product_kit_line_item]
         kitItemLineItems:
             - Valid:
-                groups: [Default, create, update, add_product]
+                groups: [Default, product_kit_line_item]
         checksum:
             - Length:
                   max: 40
-                  groups: [Default, create, update, add_product]
+                  groups: [Default, product_kit_line_item]
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
@@ -119,13 +115,15 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             - NotNull: ~
         kitItem:
             - NotNull: ~
-            - Valid:
-                  groups: [product_kit_is_available_for_purchase]
         product:
             - NotNull: ~
+            - Valid: ~
         quantity:
             - Type: float
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Range:
+                  maxPropertyPath: 'kitItem.maximumQuantity'
+                  minPropertyPath: 'kitItem.minimumQuantity'
         unit:
             - NotNull: ~
         sortOrder:

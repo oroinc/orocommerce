@@ -56,6 +56,14 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertFalse(null === $duplicate);
     }
 
+    public function testFindDuplicateInShoppingListWhenShoppingListIsNull(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem3 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_3);
+
+        self::assertNull($this->getLineItemRepository()->findDuplicateInShoppingList($lineItem3, null));
+    }
+
     public function testGetItemsByProductAndShoppingList()
     {
         /** @var Product $product */
