@@ -117,7 +117,6 @@ Oro\Bundle\CatalogBundle\Entity\Category:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist1:
         name: 'Price List 1'
-        default: true
         __calls:
             - setCurrencies: [['USD']]
         active: true

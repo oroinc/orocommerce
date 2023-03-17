@@ -147,7 +147,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         ],
         self::PRODUCT_PRICE_13 => [
             'product' => 'product-2',
-            'priceList' => 'default_price_list',
+            'priceList' => 'first_price_list',
             'quantity' => 1,
             'unit' => 'product_unit.bottle',
             'value' => 17.5,
@@ -155,7 +155,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         ],
         self::PRODUCT_PRICE_14 => [
             'product' => 'product-3',
-            'priceList' => 'default_price_list',
+            'priceList' => 'first_price_list',
             'quantity' => 1,
             'unit' => 'product_unit.bottle',
             'value' => 20.5,
@@ -196,8 +196,8 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         foreach (static::$data as $reference => $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
-            if ($data['priceList'] === 'default_price_list') {
-                $priceList = $manager->getRepository(PriceList::class)->getDefault($this->getReference('organization'));
+            if ($data['priceList'] === 'first_price_list') {
+                $priceList = $this->getFirstPriceList($manager);
             } else {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($data['priceList']);
@@ -241,5 +241,15 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+    }
+
+    private function getFirstPriceList(ObjectManager $manager): PriceList
+    {
+        return $manager->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->orderBy('p.id')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getSingleResult();
     }
 }

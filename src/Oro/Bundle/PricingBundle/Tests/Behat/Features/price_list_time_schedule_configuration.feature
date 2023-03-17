@@ -43,9 +43,9 @@ Feature: Price List time schedule configuration
     Then I should see "Product Price has been added" flash message
     When go to Sales/ Price Lists
     Then I should see following grid:
-      | Name                | Is Default | Status   |
-      | Customer Price List | No         | Inactive |
-      | Default Price List  | Yes        | Active   |
+      | Name                 | Status   |
+      | Customer Price List  | Inactive |
+      | Default Price List   | Active   |
     And price lists scheduled cron processes are executed
     When go to Customers/ Customers
     And click edit "Company A" in grid
@@ -74,9 +74,9 @@ Feature: Price List time schedule configuration
     Then I should see "Price List has been saved" flash message and I close it
     When go to Sales/ Price Lists
     Then I should see following grid:
-      | Name                | Is Default | Status |
-      | Customer Price List | No         | Active |
-      | Default Price List  | Yes        | Active |
+      | Name                | Status |
+      | Customer Price List | Active |
+      | Default Price List  | Active |
     And price lists scheduled cron processes are executed
 
   Scenario: Check that price list with schedule in the furure date is not available at frontstore
@@ -96,9 +96,9 @@ Feature: Price List time schedule configuration
     Then I should see "Price List has been saved" flash message and I close it
     When go to Sales/ Price Lists
     Then I should see following grid:
-      | Name                | Is Default | Status   |
-      | Customer Price List | No         | Inactive |
-      | Default Price List  | Yes        | Active   |
+      | Name                | Status   |
+      | Customer Price List | Inactive |
+      | Default Price List  | Active   |
     And price lists scheduled cron processes are executed
 
   Scenario: Check that price list with schedule in the current date is available at frontstore

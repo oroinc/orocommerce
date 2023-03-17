@@ -50,9 +50,6 @@ oro.pricing:
             label: 'Name'
             description: 'The name of the price list'
         sortOrder.label: Sort Order
-        default:
-            label: 'Is Default'
-            description: 'Defines whether the price list is used by default'
         active:
             label: 'Active'
             description: 'Defines whether the price list is active'

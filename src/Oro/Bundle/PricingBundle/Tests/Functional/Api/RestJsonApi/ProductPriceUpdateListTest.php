@@ -244,7 +244,6 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
                     'type'       => 'pricelists',
                     'id'         => 'new_price_list',
                     'attributes' => [
-                        'default'             => false,
                         'active'              => true,
                         'name'                => 'New Price List 1',
                         'priceListCurrencies' => ['EUR', 'GBP']

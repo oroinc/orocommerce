@@ -41,7 +41,6 @@ class LoadDependentPriceLists extends AbstractFixture implements DependentFixtur
 
             $priceList
                 ->setName($priceListData['name'])
-                ->setDefault($priceListData['default'])
                 ->setCurrencies($priceListData['currencies'])
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)

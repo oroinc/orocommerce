@@ -36,7 +36,7 @@ class LoadCombinedPriceListWithCustomerRelation extends AbstractFixture implemen
         /** @var Website $website */
         $website = $this->getReference('website');
         /** @var PriceList $priceList */
-        $priceList = $manager->getRepository(PriceList::class)->getDefault();
+        $priceList = $this->getFirstPriceList($manager);
 
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $combinedPriceList = new CombinedPriceList();
@@ -63,5 +63,15 @@ class LoadCombinedPriceListWithCustomerRelation extends AbstractFixture implemen
         $manager->persist($priceListToCustomer);
 
         $this->setReference(self::DEFAULT_PRICE_LIST, $priceList);
+    }
+
+    private function getFirstPriceList(ObjectManager $manager): PriceList
+    {
+        return $manager->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->orderBy('p.id')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getSingleResult();
     }
 }
