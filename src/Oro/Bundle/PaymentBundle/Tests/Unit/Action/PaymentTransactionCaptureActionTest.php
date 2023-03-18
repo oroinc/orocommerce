@@ -6,11 +6,57 @@ use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Component\ConfigExpression\ContextAccessor;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Routing\RouterInterface;
 
-class PaymentTransactionCaptureActionTest extends AbstractActionTest
+class PaymentTransactionCaptureActionTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
+
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodProvider;
+
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTransactionProvider;
+
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $router;
+
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $dispatcher;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
+    /** @var PaymentTransactionCaptureAction */
+    private $action;
+
+    protected function setUp(): void
+    {
+        $this->contextAccessor = $this->createMock(ContextAccessor::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->action = new PaymentTransactionCaptureAction(
+            $this->contextAccessor,
+            $this->paymentMethodProvider,
+            $this->paymentTransactionProvider,
+            $this->router
+        );
+        $this->action->setLogger($this->logger);
+        $this->action->setDispatcher($this->dispatcher);
+    }
+
     /**
      * @dataProvider executeDataProvider
      */
@@ -142,19 +188,6 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getAction()
-    {
-        return new PaymentTransactionCaptureAction(
-            $this->contextAccessor,
-            $this->paymentMethodProvider,
-            $this->paymentTransactionProvider,
-            $this->router
-        );
-    }
-
     public function testExecuteFailedWhenPaymentMethodNotExists()
     {
         $context = [];
@@ -166,7 +199,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             ],
         ];
 
-        $this->paymentMethodProvider->expects($this->once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('hasPaymentMethod')
             ->willReturn(false);
         $this->contextAccessor->expects(self::any())

@@ -5,10 +5,56 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 use Oro\Bundle\PaymentBundle\Action\PaymentTransactionRefundAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Component\ConfigExpression\ContextAccessor;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Routing\RouterInterface;
 
-class PaymentTransactionRefundActionTest extends AbstractActionTest
+class PaymentTransactionRefundActionTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
+
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodProvider;
+
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTransactionProvider;
+
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $router;
+
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $dispatcher;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
+    /** @var PaymentTransactionRefundAction */
+    private $action;
+
+    protected function setUp(): void
+    {
+        $this->contextAccessor = $this->createMock(ContextAccessor::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->action = new PaymentTransactionRefundAction(
+            $this->contextAccessor,
+            $this->paymentMethodProvider,
+            $this->paymentTransactionProvider,
+            $this->router
+        );
+        $this->action->setLogger($this->logger);
+        $this->action->setDispatcher($this->dispatcher);
+    }
+
     /**
      * @dataProvider executeDataProvider
      */
@@ -21,13 +67,11 @@ class PaymentTransactionRefundActionTest extends AbstractActionTest
         $options = $data['options'];
         $context = [];
 
-        $this->contextAccessor
-            ->expects(static::any())
+        $this->contextAccessor->expects(self::any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
-        $this->paymentTransactionProvider
-            ->expects(static::once())
+        $this->paymentTransactionProvider->expects(self::once())
             ->method('createPaymentTransactionByParentTransaction')
             ->with(PaymentMethodInterface::REFUND, $capturePaymentTransaction)
             ->willReturn($cancelPaymentTransaction);
@@ -38,33 +82,30 @@ class PaymentTransactionRefundActionTest extends AbstractActionTest
             $responseValue = $this->returnValue($data['response']);
         }
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethod->expects(static::once())
+        $paymentMethod->expects(self::once())
             ->method('execute')
             ->with(PaymentMethodInterface::REFUND, $cancelPaymentTransaction)
             ->will($responseValue);
 
-        $this->paymentMethodProvider
+        $this->paymentMethodProvider->expects(self::any())
             ->method('hasPaymentMethod')
             ->with($capturePaymentTransaction->getPaymentMethod())
             ->willReturn(true);
 
-        $this->paymentMethodProvider
+        $this->paymentMethodProvider->expects(self::any())
             ->method('getPaymentMethod')
             ->with($capturePaymentTransaction->getPaymentMethod())
             ->willReturn($paymentMethod);
 
-        $this->paymentTransactionProvider
-            ->expects(static::exactly(2))
+        $this->paymentTransactionProvider->expects(self::exactly(2))
             ->method('savePaymentTransaction')
             ->withConsecutive(
                 [$cancelPaymentTransaction],
                 [$capturePaymentTransaction]
             );
 
-        $this->contextAccessor
-            ->expects(static::once())
+        $this->contextAccessor->expects(self::once())
             ->method('setValue')
             ->with($context, $options['attribute'], $expected);
 
@@ -117,18 +158,6 @@ class PaymentTransactionRefundActionTest extends AbstractActionTest
         ];
     }
 
-    private function getPaymentTransaction(string $action, bool $successful): PaymentTransaction
-    {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setAction($action);
-        $paymentTransaction->setAmount(100);
-        $paymentTransaction->setActive(true);
-        $paymentTransaction->setSuccessful($successful);
-        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
-
-        return $paymentTransaction;
-    }
-
     /**
      * @dataProvider executeWrongOptionsDataProvider
      */
@@ -153,16 +182,6 @@ class PaymentTransactionRefundActionTest extends AbstractActionTest
         ];
     }
 
-    protected function getAction()
-    {
-        return new PaymentTransactionRefundAction(
-            $this->contextAccessor,
-            $this->paymentMethodProvider,
-            $this->paymentTransactionProvider,
-            $this->router
-        );
-    }
-
     public function testExecuteFailedWhenPaymentMethodNotExists()
     {
         $context = [];
@@ -174,11 +193,14 @@ class PaymentTransactionRefundActionTest extends AbstractActionTest
             ],
         ];
 
-        $this->paymentMethodProvider->expects($this->once())->method('hasPaymentMethod')->willReturn(false);
-        $this->contextAccessor->method('getValue')->will($this->returnArgument(1));
+        $this->paymentMethodProvider->expects(self::once())
+            ->method('hasPaymentMethod')
+            ->willReturn(false);
+        $this->contextAccessor->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
 
-        $this->contextAccessor
-            ->expects($this->once())
+        $this->contextAccessor->expects(self::once())
             ->method('setValue')
             ->with(
                 $context,
@@ -193,5 +215,17 @@ class PaymentTransactionRefundActionTest extends AbstractActionTest
 
         $this->action->initialize($options);
         $this->action->execute($context);
+    }
+
+    private function getPaymentTransaction(string $action, bool $successful): PaymentTransaction
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setAction($action);
+        $paymentTransaction->setAmount(100);
+        $paymentTransaction->setActive(true);
+        $paymentTransaction->setSuccessful($successful);
+        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
+
+        return $paymentTransaction;
     }
 }
