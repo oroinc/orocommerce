@@ -7,7 +7,7 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DomCrawler\Crawler;
@@ -17,7 +17,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 {
-    const WORKFLOW_BUTTONS = [
+    private const WORKFLOW_BUTTONS = [
         'Open',
         'Process',
         'Request More Information',
@@ -37,9 +37,6 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     /** @var Request */
     private $request;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -57,13 +54,9 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         unset($this->request);
-
         parent::tearDown();
     }
 
@@ -79,7 +72,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
     public function testTransitFrontofficeTransition()
     {
-        $this->expectException(\Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException::class);
+        $this->expectException(WorkflowNotFoundException::class);
         $this->expectExceptionMessage('Workflow "b2b_rfq_frontoffice_default" not found');
 
         $frontoffice = $this->systemManager->getWorkflow('b2b_rfq_frontoffice_default');
@@ -98,7 +91,6 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         /** @var Workflow $workflow */
         $workflow = $this->manager->getWorkflow('b2b_rfq_backoffice_default');
 
-        /** @var TransitionManager $transitionManager */
         $transitionManager = $workflow->getTransitionManager();
 
         $this->assertEquals(
@@ -254,10 +246,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->assertBackofficeTransition('Mark as Processed', 'processed', 'submitted', ['Delete']);
     }
 
-    /**
-     * @return array
-     */
-    protected function getExpectedTransitions()
+    private function getExpectedTransitions(): array
     {
         return [
             '__start__',
@@ -274,25 +263,19 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $internalStatus
-     * @param string $customerStatus
-     */
-    protected function assertStatuses($internalStatus, $customerStatus)
+    private function assertStatuses(string $internalStatus, string $customerStatus): void
     {
         $this->request = $this->refreshRequestEntity($this->request);
         $this->assertEquals($internalStatus, $this->request->getInternalStatus()->getId());
         $this->assertEquals($customerStatus, $this->request->getCustomerStatus()->getId());
     }
 
-    /**
-     * @param string $button
-     * @param string $internalStatus
-     * @param string $customerStatus
-     * @param array $availableButtons
-     */
-    protected function assertBackofficeTransition($button, $internalStatus, $customerStatus, array $availableButtons)
-    {
+    private function assertBackofficeTransition(
+        ?string $button,
+        string $internalStatus,
+        string $customerStatus,
+        array $availableButtons
+    ): void {
         if ($button) {
             $this->transit($this->request, $button);
         }
@@ -300,12 +283,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->assertButtonsAvailable($this->request, $availableButtons);
     }
 
-    /**
-     * @param Request $request
-     * @param string  $linkTitle
-     * @return array
-     */
-    private function transit(Request $request, $linkTitle)
+    private function transit(Request $request, string $linkTitle): void
     {
         $crawler = $this->openRequestWorkflowWidget($request);
 
@@ -323,18 +301,12 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $data = self::jsonToArray($this->client->getResponse()->getContent());
         $this->assertArrayHasKey('workflowItem', $data);
         $this->request = $this->refreshRequestEntity($request);
-
-        return $data;
     }
 
-    /**
-     * @param Request $request
-     * @return null|Crawler
-     */
-    private function openRequestWorkflowWidget(Request $request)
+    private function openRequestWorkflowWidget(Request $request): Crawler
     {
         $crawler = $this->client->request(
             'GET',
@@ -355,11 +327,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         return $crawler;
     }
 
-    /**
-     * @param Request $request
-     * @return null|Crawler
-     */
-    private function openRequestPage(Request $request)
+    private function openRequestPage(Request $request): Crawler
     {
         $crawler = $this->client->request(
             'GET',
@@ -375,7 +343,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         return $crawler;
     }
 
-    private function assertButtonsAvailable(Request $request, array $buttonTitles)
+    private function assertButtonsAvailable(Request $request, array $buttonTitles): void
     {
         $crawler = $this->openRequestWorkflowWidget($request);
         foreach ($buttonTitles as $title) {
@@ -387,32 +355,22 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         }
     }
 
-    /**
-     * @param Request $request
-     * @return Request
-     */
-    private function refreshRequestEntity(Request $request)
+    private function refreshRequestEntity(Request $request): Request
     {
         return $this->getEntityManager(Request::class)->find(Request::class, $request->getId());
     }
 
-    /**
-     * @param string $className
-     * @return ObjectManager
-     */
-    private function getEntityManager($className)
+    private function getEntityManager(string $className): ObjectManager
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass($className);
     }
 
-    /**
-     * @param object $entity
-     * @param string $workflowName
-     * @param string $transitionName
-     * @param array $transitionData
-     */
-    protected function transitSystem($entity, $workflowName, $transitionName, $transitionData = [])
-    {
+    private function transitSystem(
+        object $entity,
+        string $workflowName,
+        string $transitionName,
+        array $transitionData = []
+    ): void {
         /** @var WorkflowItem $wi */
         $wi = $this->manager->getWorkflowItem($entity, $workflowName);
         $this->assertNotNull($wi);

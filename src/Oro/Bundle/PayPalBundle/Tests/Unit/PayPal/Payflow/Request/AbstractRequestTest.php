@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Request;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class AbstractRequestTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,7 +35,7 @@ class AbstractRequestTest extends \PHPUnit\Framework\TestCase
 
     public function testLockTrxTypeToRequest()
     {
-        $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
+        $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('The option "TRXTYPE" with value "another_action" is invalid.');
 
         $request = new Stub\AbstractRequestStub();

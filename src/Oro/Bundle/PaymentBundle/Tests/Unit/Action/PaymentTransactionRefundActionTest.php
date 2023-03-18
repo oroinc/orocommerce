@@ -10,6 +10,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -163,7 +164,8 @@ class PaymentTransactionRefundActionTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteWrongOptions(array $options)
     {
-        $this->expectException(\Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException::class);
+        $this->expectException(UndefinedOptionsException::class);
+
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('testPaymentMethodType');
 

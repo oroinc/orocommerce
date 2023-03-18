@@ -6,6 +6,7 @@ use Oro\Bundle\RFPBundle\Form\Type\OffersType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class OffersTypeTest extends FormIntegrationTestCase
 {
@@ -32,7 +33,7 @@ class OffersTypeTest extends FormIntegrationTestCase
 
     public function testOffersOptionInvalid()
     {
-        $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
+        $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage(
             '"offers" with value 1 is expected to be of type "array", but is of type "int".'
         );
