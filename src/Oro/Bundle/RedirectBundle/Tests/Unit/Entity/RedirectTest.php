@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class RedirectTest extends \PHPUnit\Framework\TestCase
@@ -34,15 +35,9 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
     {
         $from = 'test';
 
-        $redirect = new class() extends Redirect {
-            public function xgetFromHash(): string
-            {
-                return $this->fromHash;
-            }
-        };
-
+        $redirect = new Redirect();
         $redirect->setFrom($from);
 
-        static::assertEquals(md5($from), $redirect->xgetFromHash());
+        self::assertEquals(md5($from), ReflectionUtil::getPropertyValue($redirect, 'fromHash'));
     }
 }
