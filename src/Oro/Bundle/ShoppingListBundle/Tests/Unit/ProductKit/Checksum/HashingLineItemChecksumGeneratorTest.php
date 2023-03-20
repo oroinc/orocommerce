@@ -32,7 +32,7 @@ class HashingLineItemChecksumGeneratorTest extends TestCase
             ->with($lineItem)
             ->willReturn(null);
 
-        self::assertEquals(sha1(''), $this->generator->getChecksum($lineItem));
+        self::assertNull($this->generator->getChecksum($lineItem));
     }
 
     public function testGetChecksumWhenNotNull(): void

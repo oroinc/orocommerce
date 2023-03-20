@@ -79,12 +79,12 @@ class AjaxProductKitLineItemController extends AbstractController
             $setCurrent = true;
         }
 
-        $productKitLineItem = $this->productKitLineItemFactory->createProductKitLineItem($product, $shoppingList);
+        $productKitLineItem = $this->productKitLineItemFactory->createProductKitLineItem($product);
 
         $form = $this->createForm(
             ProductKitLineItemType::class,
             $productKitLineItem,
-            ['validation_groups' => ['Default', 'product_kit_line_item', 'product_kit_is_available_for_purchase']]
+            ['validation_groups' => ['Default', 'add_product_kit_line_item', 'product_kit_is_available_for_purchase']]
         );
         $form->handleRequest($request);
 

@@ -30,11 +30,14 @@ class LineItemRepository extends ServiceEntityRepository
         }
 
         $qb = $this->createQueryBuilder('li');
-        $qb->where('li.product = :product')
+        $qb
+            ->where('li.product = :product')
             ->andWhere('li.unit = :unit')
+            ->andWhere('li.checksum = :checksum')
             ->andWhere('li.shoppingList = :shoppingList')
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
+            ->setParameter('checksum', $lineItem->getChecksum())
             ->setParameter('shoppingList', $shoppingListId)
             ->addOrderBy($qb->expr()->asc('li.id'))
             ->setMaxResults(1);

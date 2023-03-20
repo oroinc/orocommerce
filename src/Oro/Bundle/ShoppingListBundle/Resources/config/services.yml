@@ -68,6 +68,7 @@ services:
             - "@oro_product.provider.product_variant_availability_provider"
             - "@oro_config.manager"
             - "@oro_entity.delete_handler_registry"
+            - "@oro_shopping_list.product_kit.checksum"
 
     Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager:
         alias: 'oro_shopping_list.manager.shopping_list'

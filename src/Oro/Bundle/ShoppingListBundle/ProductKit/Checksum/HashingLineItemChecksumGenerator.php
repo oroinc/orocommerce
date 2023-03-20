@@ -18,10 +18,13 @@ class HashingLineItemChecksumGenerator implements LineItemChecksumGeneratorInter
         $this->innerChecksumGenerator = $innerChecksumGenerator;
     }
 
-    public function getChecksum(LineItem $lineItem): string
+    public function getChecksum(LineItem $lineItem): ?string
     {
         $checksum = $this->innerChecksumGenerator->getChecksum($lineItem);
+        if ($checksum !== null) {
+            return sha1($checksum);
+        }
 
-        return sha1((string)$checksum);
+        return null;
     }
 }

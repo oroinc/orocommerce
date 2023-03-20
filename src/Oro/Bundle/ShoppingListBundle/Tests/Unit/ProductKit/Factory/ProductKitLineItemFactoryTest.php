@@ -7,6 +7,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\ProductKit\Factory;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
@@ -33,9 +35,86 @@ class ProductKitLineItemFactoryTest extends TestCase
         $this->factory = new ProductKitLineItemFactory($this->productKitItemsProvider, $this->kitItemLineItemFactory);
     }
 
+    public function testCreateProductKitLineItemWhenNoUnitNoQuantityNoShoppingListNoKitItems(): void
+    {
+        $product = new ProductStub();
+
+        $this->productKitItemsProvider
+            ->expects(self::once())
+            ->method('getKitItemsAvailableForPurchase')
+            ->with($product)
+            ->willReturn([]);
+
+        $expected = (new LineItem())
+            ->setProduct($product);
+
+        self::assertEquals($expected, $this->factory->createProductKitLineItem($product));
+    }
+
+    public function testCreateProductKitLineItemWhenNoQuantityNoShoppingListNoKitItemsAndUnitFallbacksToProduct(): void
+    {
+        $product = new ProductStub();
+        $productUnitItem = (new ProductUnit())->setCode('item');
+        $unitPrecision = (new ProductUnitPrecision())->setUnit($productUnitItem)->setPrecision(2);
+        $product->setPrimaryUnitPrecision($unitPrecision);
+
+        $this->productKitItemsProvider
+            ->expects(self::once())
+            ->method('getKitItemsAvailableForPurchase')
+            ->with($product)
+            ->willReturn([]);
+
+        $expected = (new LineItem())
+            ->setProduct($product)
+            ->setUnit($productUnitItem)
+            ->setQuantity(0.01);
+
+        self::assertEquals($expected, $this->factory->createProductKitLineItem($product));
+    }
+
+    public function testCreateProductKitLineItemWhenNoQuantityNoShoppingListNoKitItems(): void
+    {
+        $product = new ProductStub();
+        $productUnitItem = (new ProductUnit())->setCode('item');
+
+        $this->productKitItemsProvider
+            ->expects(self::once())
+            ->method('getKitItemsAvailableForPurchase')
+            ->with($product)
+            ->willReturn([]);
+
+        $expected = (new LineItem())
+            ->setProduct($product)
+            ->setUnit($productUnitItem);
+
+        self::assertEquals($expected, $this->factory->createProductKitLineItem($product, $productUnitItem));
+    }
+
+    public function testCreateProductKitLineItemWhenNoShoppingListNoKitItems(): void
+    {
+        $product = new ProductStub();
+        $productUnitItem = (new ProductUnit())->setCode('item');
+        $quantity = 11;
+
+        $this->productKitItemsProvider
+            ->expects(self::once())
+            ->method('getKitItemsAvailableForPurchase')
+            ->with($product)
+            ->willReturn([]);
+
+        $expected = (new LineItem())
+            ->setProduct($product)
+            ->setUnit($productUnitItem)
+            ->setQuantity($quantity);
+
+        self::assertEquals($expected, $this->factory->createProductKitLineItem($product, $productUnitItem, $quantity));
+    }
+
     public function testCreateProductKitLineItemWhenNoKitItems(): void
     {
         $product = new ProductStub();
+        $productUnitItem = (new ProductUnit())->setCode('item');
+        $quantity = 11;
         $customerUser = new CustomerUser();
         $organization = new Organization();
         $shoppingList = (new ShoppingList())
@@ -50,16 +129,23 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $expected = (new LineItem())
             ->setProduct($product)
+            ->setUnit($productUnitItem)
+            ->setQuantity($quantity)
             ->setShoppingList($shoppingList)
             ->setCustomerUser($shoppingList->getCustomerUser())
             ->setOrganization($shoppingList->getOrganization());
 
-        self::assertEquals($expected, $this->factory->createProductKitLineItem($product, $shoppingList));
+        self::assertEquals(
+            $expected,
+            $this->factory->createProductKitLineItem($product, $productUnitItem, $quantity, $shoppingList)
+        );
     }
 
     public function testCreateProductKitLineItemWhenHasKitItems(): void
     {
         $product = new ProductStub();
+        $productUnitItem = (new ProductUnit())->setCode('item');
+        $quantity = 11;
         $customerUser = new CustomerUser();
         $organization = new Organization();
         $shoppingList = (new ShoppingList())
@@ -87,12 +173,17 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $expected = (new LineItem())
             ->setProduct($product)
+            ->setUnit($productUnitItem)
+            ->setQuantity($quantity)
             ->setShoppingList($shoppingList)
             ->setCustomerUser($shoppingList->getCustomerUser())
             ->setOrganization($shoppingList->getOrganization())
             ->addKitItemLineItem($kitItemLineItem1)
             ->addKitItemLineItem($kitItemLineItem2);
 
-        self::assertEquals($expected, $this->factory->createProductKitLineItem($product, $shoppingList));
+        self::assertEquals(
+            $expected,
+            $this->factory->createProductKitLineItem($product, $productUnitItem, $quantity, $shoppingList)
+        );
     }
 }
