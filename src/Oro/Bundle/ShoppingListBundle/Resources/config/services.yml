@@ -795,3 +795,19 @@ services:
         arguments:
             - '@oro_shopping_list.product_kit.provider.product_kit_items'
             - '@oro_shopping_list.product_kit.factory.product_kit_item_line_item'
+
+    oro_shopping_list.product_kit.checksum.product_kit_line_item:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\ProductKitLineItemChecksumGenerator
+        tags:
+            - { name: oro_shopping_list.product_kit.checksum }
+
+    oro_shopping_list.product_kit.checksum:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\CompositeLineItemChecksumGenerator
+        arguments:
+            - !tagged_iterator { tag: oro_shopping_list.product_kit.checksum}
+
+    oro_shopping_list.product_kit.checksum.hashing:
+        decorates: oro_shopping_list.product_kit.checksum
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator
+        arguments:
+            - '@.inner'
