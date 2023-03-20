@@ -28,7 +28,8 @@
     }
 
     .grid-body-cell-sku {
-        width: 80px;
+        width: $responsive-shopping-grid-body-cell-sku-width;
+        min-width: $responsive-shopping-grid-body-cell-sku-width;
         word-break: break-all;
     }
 
