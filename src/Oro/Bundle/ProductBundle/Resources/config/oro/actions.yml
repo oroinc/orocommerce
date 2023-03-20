@@ -44,6 +44,9 @@ operations:
             - products-grid
             - products-select-grid
             - frontend-product-search-grid
+            - kit-item-products-edit-grid
+            - kit-item-products-view-grid
+            - kit-item-products-add-grid
 
     oro_product_update:
         extends: UPDATE
