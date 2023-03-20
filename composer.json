@@ -119,5 +119,10 @@
             "Oro\\Component\\Website\\": "src/Oro/Component/Website"
         },
         "exclude-from-classmap": ["/Tests/"]
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        }
     }
 }
