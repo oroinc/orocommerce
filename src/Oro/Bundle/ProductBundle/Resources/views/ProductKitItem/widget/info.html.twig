@@ -40,9 +40,12 @@
 
                         <div class="attribute-wide">
                             {%- set kitItemProductsLinks -%}
-                                {%- for product in entity.products|slice(0, 10) -%}
+                                {%- for product in entity.products|slice(0, 3) -%}
                                     <div data-role="kit-item-product-link">{{ UI.renderUrl(oro_entity_object_view_link(product), product.skuUppercase ~ ' - ' ~ product|oro_format_name) }}</div>
                                 {%- endfor -%}
+                                {% if entity.products|length > 3 %}
+                                    <div data-role="kit-item-product-link">...</div>
+                                {% endif %}
                             {%- endset -%}
 
                             {{ UI.renderHtmlProperty('oro.product.productkititem.kit_item_products.label'|trans, kitItemProductsLinks) }}

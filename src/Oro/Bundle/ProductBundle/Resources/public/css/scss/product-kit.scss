@@ -14,6 +14,12 @@
             width: $field-width;
         }
     }
+
+    .removeRow {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
 }
 
 .product-kit-item {
@@ -55,10 +61,6 @@
 
             &__term {
                 width: 182px;
-
-                &:after {
-                    content: ':';
-                }
             }
 
             &__description {
@@ -116,6 +118,16 @@
 
             .content-variant-item-content__body {
                 border-top-color: $danger;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: $product-kit-view-breakpoint) {
+    .product-kit-item {
+        &__horizontal {
+            .attribute-item {
+                width: 50%;
             }
         }
     }

@@ -17,7 +17,6 @@ class ProductKitItemCollectionType extends AbstractType
     {
         $resolver->setDefaults([
             'add_label' => 'oro.product.productkititem.form.kit_item_collection.add',
-            'allow_delete' => false,
             'entry_type' => ProductKitItemType::class,
             'entry_options' => [
                 'required' => true,

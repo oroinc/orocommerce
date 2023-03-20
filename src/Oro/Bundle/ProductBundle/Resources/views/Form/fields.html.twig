@@ -635,7 +635,7 @@
     {% set collapseClass = 'collapse-' ~ id %}
     {% set collapseFormId = 'collapse-form-' ~ id %}
     {% set collapseViewId = 'collapse-view-' ~ id %}
-    {% set isShow = value.id is null or value.id == 1 %}
+    {% set isShow = value.id is null or form.vars.name == '0' %}
 
     {% apply spaceless %}
     <div class="product-kit-item content-variant-item
@@ -732,7 +732,6 @@
                 </div>
             </div>
         </div>
-        <button class="removeRow btn-remove-variant btn btn-icon btn-square-light" type="button" data-related="{{ full_name }}" data-action="remove" aria-label="{{ 'Remove row'|trans }}"></button>
     </div>
     {% endapply %}
 {% endblock %}
