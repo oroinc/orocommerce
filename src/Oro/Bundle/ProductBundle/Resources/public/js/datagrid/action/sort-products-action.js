@@ -78,7 +78,7 @@ const SortProductsAction = AbstractAction.extend({
     getConfirmDialogOptions() {
         const options = {
             ...SortProductsAction.__super__.getConfirmDialogOptions.call(this),
-            className: 'modal oro-modal-danger',
+            className: 'modal oro-modal-normal',
             attributes: {
                 role: 'alertdialog'
             }
