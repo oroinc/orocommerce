@@ -8,6 +8,9 @@ use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -75,11 +78,29 @@ abstract class AbstractSetVisibilityScope implements ProcessorInterface
 
     abstract protected function getExistingVisibilitySearchCriteria(VisibilityInterface $entity, Scope $scope): array;
 
+    private function isExistingVisibilityCheckApplicable(VisibilityInterface $entity): bool
+    {
+        if ($entity instanceof ProductVisibility
+            || $entity instanceof CustomerProductVisibility
+            || $entity instanceof CustomerGroupProductVisibility
+        ) {
+            $product = $entity->getProduct();
+
+            return null !== $product && null !== $product->getId();
+        }
+
+        return true;
+    }
+
     private function isVisibilityExists(
         string $visibilityEntityClass,
         VisibilityInterface $entity,
         Scope $scope
     ): bool {
+        if (!$this->isExistingVisibilityCheckApplicable($entity)) {
+            return false;
+        }
+
         $criteria = $this->getExistingVisibilitySearchCriteria($entity, $scope);
         $qb = $this->doctrineHelper->createQueryBuilder($visibilityEntityClass, 'e')
             ->select('e.id');
