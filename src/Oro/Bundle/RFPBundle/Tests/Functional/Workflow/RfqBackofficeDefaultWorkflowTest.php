@@ -28,14 +28,9 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         'Mark as Processed'
     ];
 
-    /** @var WorkflowManager */
-    private $manager;
-
-    /** @var WorkflowManager */
-    private $systemManager;
-
-    /** @var Request */
-    private $request;
+    private WorkflowManager $manager;
+    private WorkflowManager $systemManager;
+    private Request $request;
 
     protected function setUp(): void
     {
@@ -52,12 +47,6 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');
         $this->request = $this->getReference(LoadRequestData::REQUEST1);
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->request);
-        parent::tearDown();
     }
 
     public function testApplicableWorkflows()
