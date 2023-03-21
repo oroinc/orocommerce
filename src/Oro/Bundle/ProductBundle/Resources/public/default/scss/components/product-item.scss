@@ -67,7 +67,8 @@
             flex-direction: column;
             min-height: 100%;
 
-            &.is-configurable {
+            &.is-configurable,
+            &.is-kit {
                 padding-bottom: $product-item-select-row-gallery-view-height;
             }
         }

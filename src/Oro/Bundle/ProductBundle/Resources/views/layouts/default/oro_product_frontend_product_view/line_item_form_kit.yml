@@ -1,8 +1,4 @@
 layout:
-    imports:
-        -
-            id: line_item_buttons_kit
-            root: product_view_kit_content_container_start
     actions:
         - '@setBlockTheme':
               themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/line_item_form_kit.html.twig'
@@ -12,24 +8,11 @@ layout:
             optionName: attr.class
             optionValue: 'product-kit-view'
 
-        - '@setOption':
-              id: line_item_form
-              optionName: visible
-              optionValue: false
-
         - '@move':
               id: product_view_specification_container
               parentId: product_view_content_container
               siblingId: product_view_kit_content_container
               prepend: false
-
-        - '@move':
-              id: product_shopping_lists
-              parentId: product_view_kit_content_container_end
-
-        - '@removeOption':
-              id: line_item_form_shopping_lists
-              optionName: attr.class
 
         - '@addTree':
               items:
@@ -39,8 +22,7 @@ layout:
                       blockType: container
                   product_view_kit_content_container_end:
                       blockType: container
-                  product_view_kit_configure_button:
-                      blockType: container
+
               tree:
                   product_view_content_container:
                       product_view_kit_content_container:

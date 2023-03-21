@@ -9,7 +9,15 @@
     }) %}
     {% set buttonsId = id|replace({'_price_container': ''}) ~ '_line_item_form_buttons' %}
     {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
-        {% if applicableForConfiguredProduct or not is_configurable_product_type(product.type) %}
+        {% set isRenderable = (
+            applicableForConfiguredProduct or
+            (
+                not is_configurable_product_type(product.type) and
+                not is_kit_product_type(product.type)
+            )
+        ) %}
+
+        {% if isRenderable %}
             <div {{ block('block_attributes') }}>
                 {{ block_widget(block) }}
             </div>
@@ -18,7 +26,14 @@
 {% endblock %}
 
 {% block product_price_component %}
-    {% if not is_configurable_product_type(product.type) or matrixFormType == 'none' %}
+    {% set isRenderable = (
+        (
+            not is_configurable_product_type(product.type) and
+            not is_kit_product_type(product.type)
+        ) or
+        matrixFormType == 'none'
+    ) %}
+    {% if isRenderable %}
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/view-component',
             '~data-page-component-options': {
@@ -163,7 +178,15 @@
         '~class': ' product-prices'
     }) %}
 
-    {% if not is_configurable_product_type(product.type) or matrixFormType|default(false) == 'none' %}
+    {% set isRenderable = (
+        (
+            not is_configurable_product_type(product.type) and
+            not is_kit_product_type(product.type)
+        ) or
+        matrixFormType|default(false) == 'none'
+    ) %}
+
+    {% if isRenderable %}
         {# Use to modify quantity in case when it not enough quantity to show the price #}
         {# We use this component as single entry point for price extendability #}
         {% set attr = layout_attr_defaults(attr, {
