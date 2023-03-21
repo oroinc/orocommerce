@@ -49,6 +49,7 @@ oro:
             add_to_shopping_list.label: Add to Shopping List
             create_new_shopping_list.label: Create New Shopping List
             added.label: 'Product has been added to "%shoppinglist%"'
+            kit.add_to_shopping_list.label: Configure and Add to Shopping List
 
         actions:
             set_current: Set as current
