@@ -134,7 +134,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
 Oro\Bundle\PricingBundle\Entity\PriceList:
   pricelistShipping:
     name: 'pricelist_shipping'
-    default: true
     __calls:
         - setCurrencies: [['USD']]
     active: true

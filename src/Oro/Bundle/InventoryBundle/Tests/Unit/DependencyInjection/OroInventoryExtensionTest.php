@@ -4,20 +4,42 @@ declare(strict_types=1);
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroInventoryExtensionTest extends ExtensionTestCase
+class OroInventoryExtensionTest extends \PHPUnit\Framework\TestCase
 {
     public function testLoad(): void
     {
-        $this->loadExtension(new OroInventoryExtension());
+        $container = new ContainerBuilder();
 
-        $expectedExtensionConfigs = ['oro_inventory'];
-        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
+        $extension = new OroInventoryExtension();
+        $extension->load([], $container);
 
-        $expectedDefinitions = [
-            'oro_inventory.importexport.configuration_provider.inventory_level',
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'manage_inventory' => ['value' => false, 'scope' => 'app'],
+                        'highlight_low_inventory' => ['value' => false, 'scope' => 'app'],
+                        'inventory_threshold' => ['value' => 0, 'scope' => 'app'],
+                        'low_inventory_threshold' => ['value' => 0, 'scope' => 'app'],
+                        'backorders' => ['value' => false, 'scope' => 'app'],
+                        'decrement_inventory' => ['value' => true, 'scope' => 'app'],
+                        'minimum_quantity_to_order' => ['value' => null, 'scope' => 'app'],
+                        'maximum_quantity_to_order' => ['value' => 100000, 'scope' => 'app'],
+                        'hide_labels_past_availability_date' => ['value' => true, 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_inventory')
+        );
+
+        self::assertSame(
+            dirname((new \ReflectionClass(OroInventoryExtension::class))->getFileName())
+            . '/../Resources/config/validation_inventory_level.yml',
+            $container->getParameter('oro_inventory.validation.config_path')
+        );
     }
 }

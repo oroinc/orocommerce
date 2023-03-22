@@ -14,9 +14,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceListRepositoryTest extends WebTestCase
 {
-    /**@var array [organizationId => PriceList, ...] */
-    private array $defaultPriceLists;
-
     protected function setUp(): void
     {
         $this->initClient();
@@ -25,54 +22,15 @@ class PriceListRepositoryTest extends WebTestCase
             LoadProductPrices::class,
             LoadPriceListRelations::class
         ]);
-
-        $this->defaultPriceLists = $this->getDefaultPriceLists();
-    }
-
-    protected function tearDown(): void
-    {
-        foreach ($this->defaultPriceLists as $defaultPriceList) {
-            $this->getRepository()->setDefault($defaultPriceList);
-        }
-        parent::tearDown();
-    }
-
-    public function testDefaultState(): void
-    {
-        $repository = $this->getRepository();
-
-        /** @var PriceList $priceList1 */
-        $priceList1 = $this->getReference('price_list_1');
-        $repository->setDefault($priceList1);
-        $this->assertEquals(
-            $priceList1->getId(),
-            $this->getDefaultPriceLists()[$priceList1->getOrganization()->getId()]->getId()
-        );
-
-        /** @var PriceList $priceList2 */
-        $priceList2 = $this->getReference('price_list_2');
-        $repository->setDefault($priceList2);
-        $this->assertEquals(
-            $priceList2->getId(),
-            $this->getDefaultPriceLists()[$priceList1->getOrganization()->getId()]->getId()
-        );
-    }
-
-    public function testGetDefault(): void
-    {
-        $this->assertContains(
-            $this->getRepository()->getDefault(),
-            $this->getDefaultPriceLists()
-        );
     }
 
     public function testGetCurrenciesIndexedByPriceListIds(): void
     {
-        /** @var PriceList $defaultPriceList */
-        $defaultPriceList = $this->getRepository()->findOneBy(['name' => LoadPriceListData::DEFAULT_PRICE_LIST_NAME]);
+        /** @var PriceList $priceList */
+        $priceList = $this->getRepository()->findOneBy(['name' => LoadPriceListData::PRICE_LIST_NAME]);
 
         $expectedCurrencies = [
-            $defaultPriceList->getId() => $defaultPriceList->getCurrencies(),
+            $priceList->getId() => $priceList->getCurrencies(),
         ];
 
         foreach (LoadPriceLists::getPriceListData() as $priceListData) {
@@ -149,20 +107,6 @@ class PriceListRepositoryTest extends WebTestCase
         $expectedPriceList = $this->getReference('price_list_5');
 
         $this->assertSame($expectedPriceList->getId(), $priceList->getId());
-    }
-
-    /**
-     * @return array [organizationId => PriceList, ...]
-     */
-    private function getDefaultPriceLists(): array
-    {
-        $defaultPriceLists = $this->getRepository()->findBy(['default' => true]);
-        $result = [];
-        foreach ($defaultPriceLists as $defaultPriceList) {
-            $result[$defaultPriceList->getOrganization()->getId()] = $defaultPriceList;
-        }
-
-        return $result;
     }
 
     private function getRepository(): PriceListRepository

@@ -3,8 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
@@ -122,23 +120,6 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertNotNull($this->getPriceRuleLexeme($priceList1Id));
         self::assertNotNull($this->getPriceRuleLexeme($priceList4Id));
 
-        self::assertMessagesSent(
-            MassRebuildCombinedPriceListsTopic::getName(),
-            [
-                [
-                    'assignments' => [
-                        [
-                            'website' => $this->getReference('Canada')->getId(),
-                            'customer' => $this->getReference('customer.level_1_1')->getId()
-                        ],
-                        [
-                            'website' => $this->getReference('US')->getId()
-                        ]
-                    ]
-                ]
-            ]
-        );
-
         $response = $this->cget(
             ['entity' => 'pricelists'],
             ['filter' => ['id' => [(string)$priceList1Id, (string)$priceList4Id]]]
@@ -200,30 +181,6 @@ class PriceListUpdateListTest extends RestJsonApiUpdateListTestCase
         $newPriceListId = $this->getPriceListId('New Price List 1');
         self::assertNotNull($this->getPriceRuleLexeme($newPriceListId));
         self::assertNotNull($this->getPriceRuleLexeme($updatedPriceListId));
-
-        /** @var Customer $customer */
-        $customerLevel13 = $this->getReference('customer.level_1.3');
-        $customerGroup1 = $this->getReference('customer_group.group1');
-        $customerGroup2 = $this->getReference('customer_group.group2');
-
-        self::assertMessagesSent(
-            MassRebuildCombinedPriceListsTopic::getName(),
-            [
-                [
-                    'assignments' => [
-                        [
-                            'customer' => $customerLevel13->getId(),
-                            'customerGroup' => $customerGroup1->getId(),
-                            'website' => $this->getReference('US')->getId()
-                        ],
-                        [
-                            'customerGroup' => $customerGroup2->getId(),
-                            'website' => $this->getReference('US')->getId()
-                        ]
-                    ]
-                ]
-            ]
-        );
 
         $response = $this->cget(
             ['entity' => 'pricelists'],

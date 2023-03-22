@@ -7,7 +7,6 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
@@ -18,52 +17,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class PriceListRepository extends BasePriceListRepository
 {
-    public function setDefault(PriceList $priceList): void
-    {
-        $this->dropDefaults($priceList->getOrganization());
-
-        $qb = $this->createQueryBuilder('pl');
-
-        $qb
-            ->update()
-            ->set('pl.default', ':newValue')
-            ->setParameter('newValue', true)
-            ->where($qb->expr()->eq('pl', ':entity'))
-            ->setParameter('entity', $priceList)
-            ->getQuery()
-            ->execute();
-    }
-
-    public function getDefault(?Organization $organization = null): ?PriceList
-    {
-        $qb = $this->createQueryBuilder('pl');
-
-        $qb->where($qb->expr()->eq('pl.default', ':default'))
-            ->setParameter('default', true)
-            ->orderBy('pl.id')
-            ->setMaxResults(1)
-            ->getQuery();
-
-        if ($organization) {
-            $qb->andWhere('pl.organization = :organization')
-                ->setParameter('organization', $organization);
-        }
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    public function getAllDefaultPriceLists(): array
-    {
-        $qb = $this->createQueryBuilder('pl');
-
-        return $qb
-            ->where($qb->expr()->eq('pl.default', ':default'))
-            ->setParameter('default', true)
-            ->orderBy('pl.id')
-            ->getQuery()
-            ->getResult();
-    }
-
     /**
      * @return array in format
      * [
@@ -177,19 +130,5 @@ class PriceListRepository extends BasePriceListRepository
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    private function dropDefaults(Organization $organization): void
-    {
-        $qb = $this->createQueryBuilder('pl');
-        $qb->update()
-            ->set('pl.default', ':defaultValue')
-            ->setParameter('defaultValue', false)
-            ->where($qb->expr()->eq('pl.default', ':oldValue'))
-            ->andWhere($qb->expr()->eq('pl.organization', ':organization'))
-            ->setParameter('oldValue', true)
-            ->setParameter('organization', $organization)
-            ->getQuery()
-            ->execute();
     }
 }

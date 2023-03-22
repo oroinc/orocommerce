@@ -4,7 +4,6 @@ include:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist_shipping'
-        default: true
         __calls:
             - setCurrencies: [['USD','EUR']]
         active: true

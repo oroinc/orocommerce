@@ -55,8 +55,7 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
     protected function processRow(ObjectManager $manager, array $row, array $currencies): void
     {
         $priceList = $this->getPriceList($manager, $row['name'], $row['organization']);
-        $priceList->setDefault((bool)$row['default'])
-            ->setCurrencies(array_unique(array_merge($currencies, $priceList->getCurrencies())));
+        $priceList->setCurrencies(array_unique(array_merge($currencies, $priceList->getCurrencies())));
 
         $manager->persist($priceList);
     }

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\DataConverter;
 
+use Oro\Bundle\ImportExportBundle\Exception\LogicException;
 use Oro\Bundle\ProductBundle\ImportExport\DataConverter\RelatedProductDataConverter;
 
 class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RelatedProductDataConverter */
-    private $dataConverter;
+    private RelatedProductDataConverter $dataConverter;
 
     protected function setUp(): void
     {
@@ -48,7 +48,7 @@ class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertToExportFormatIncorrectKey(): void
     {
-        $this->expectException(\Oro\Bundle\ImportExportBundle\Exception\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Delimiter ":" is not allowed in keys');
 
         $this->dataConverter->convertToExportFormat(['owner:firstName' => 'John']);
@@ -56,7 +56,7 @@ class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertToImportIncorrectKey(): void
     {
-        $this->expectException(\Oro\Bundle\ImportExportBundle\Exception\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Can\'t set nested value under key "owner"');
 
         $this->dataConverter->convertToImportFormat(['owner' => 'John Doe', 'owner:firstName' => 'John']);

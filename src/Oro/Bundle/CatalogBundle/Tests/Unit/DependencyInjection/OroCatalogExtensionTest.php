@@ -3,24 +3,31 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CatalogBundle\DependencyInjection\OroCatalogExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroCatalogExtensionTest extends ExtensionTestCase
+class OroCatalogExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
-        $this->loadExtension(new OroCatalogExtension());
+        $container = new ContainerBuilder();
 
-        $expectedServices = [
-            'oro_catalog.form.extension.product_type',
-            'oro_catalog.form.extension.product_step_one_type',
-            'oro_catalog.provider.default_product_unit_provider.category'
-        ];
-        $this->assertDefinitionsLoaded($expectedServices);
+        $extension = new OroCatalogExtension();
+        $extension->load([], $container);
 
-        $expectedExtensionConfigs = [
-            'oro_catalog',
-        ];
-        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'category_direct_url_prefix' => ['value' => '', 'scope' => 'app'],
+                        'all_products_page_enabled' => ['value' => false, 'scope' => 'app'],
+                        'category_image_placeholder' => ['value' => null, 'scope' => 'app'],
+                        'search_autocomplete_max_categories' => ['value' => 2, 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_catalog')
+        );
     }
 }

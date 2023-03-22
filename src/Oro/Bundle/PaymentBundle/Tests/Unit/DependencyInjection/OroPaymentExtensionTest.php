@@ -2,20 +2,29 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController;
 use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroPaymentExtensionTest extends ExtensionTestCase
+class OroPaymentExtensionTest extends \PHPUnit\Framework\TestCase
 {
     public function testLoad(): void
     {
-        $this->loadExtension(new OroPaymentExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            PaymentMethodsConfigsRuleController::class,
-        ];
+        $extension = new OroPaymentExtension();
+        $extension->load([], $container);
 
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'merchant_country' => ['value' => 'US', 'scope' => 'app']
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_payment')
+        );
     }
 }

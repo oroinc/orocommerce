@@ -109,7 +109,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $exception = new \Exception('Some error');
         $this->jobRunner
             ->expects($this->once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willThrowException($exception);
 
         $this->logger
@@ -201,8 +201,8 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->jobRunner
             ->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(fn ($ownerId, $name, $closure) => $closure($this->jobRunner, $job));
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(fn ($message, $closure) => $closure($this->jobRunner, $job));
         $this->jobRunner
             ->expects($this->once())
             ->method('createDelayed')
@@ -305,8 +305,8 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->jobRunner
             ->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(fn ($ownerId, $name, $closure) => $closure($this->jobRunner, $job));
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(fn ($message, $closure) => $closure($this->jobRunner, $job));
         $this->jobRunner
             ->expects($this->once())
             ->method('createDelayed')

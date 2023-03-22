@@ -32,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_24';
+        return 'v1_25';
     }
 
     /**
@@ -105,7 +105,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('is_default', 'boolean', []);
         $table->addColumn('active', 'boolean', ['notnull' => true, 'default' => true]);
         $table->addColumn('actual', 'boolean', ['notnull' => true, 'default' => true]);
         $table->addColumn('product_assignment_rule', 'text', ['notnull' => false]);

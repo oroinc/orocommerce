@@ -5,7 +5,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException;
 
 class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWorkflowTest
 {
@@ -21,7 +21,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
 
     public function testTransitBackofficeTransition()
     {
-        $this->expectException(\Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException::class);
+        $this->expectException(WorkflowNotFoundException::class);
         $this->expectExceptionMessage('Workflow "rfq_backoffice_default" not found');
 
         $backoffice = $this->systemManager->getWorkflow('rfq_backoffice_default');
@@ -60,7 +60,6 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
 
     public function testWorkflowTransitions()
     {
-        /** @var TransitionManager $transitionManager */
         $transitionManager = $this->workflow->getTransitionManager();
 
         $this->assertEquals(
@@ -79,7 +78,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $this->assertNotEmpty($link, 'Transit button not found');
         $result = $this->transitWeb($link);
         $this->assertNotEmpty($result, 'Transit failed');
-        $data = json_decode($result, true);
+        $data = self::jsonToArray($result);
         $this->assertArrayHasKey('workflowItem', $data);
         $this->request = $this->refreshEntity($this->request);
         $this->assertEquals('cancelled', $this->request->getCustomerStatus()->getId());
@@ -100,7 +99,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $result = $this->transitWeb($link);
         $this->assertNotEmpty($result, 'Transit failed');
 
-        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $data = self::jsonToArray($this->client->getResponse()->getContent());
         $this->assertArrayHasKey('workflowItem', $data);
         $workflowItem = $data['workflowItem'];
         $this->assertArrayHasKey('workflow_name', $workflowItem);
@@ -182,10 +181,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         return self::generateWsseAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
     }
 
-    /**
-     * @return array
-     */
-    protected function getExpectedTransitions()
+    private function getExpectedTransitions(): array
     {
         return [
             '__start__',

@@ -113,7 +113,7 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $exception = new \Exception('Some error');
         $this->jobRunner->expects($this->once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willThrowException($exception);
 
         $this->logger->expects($this->once())
@@ -175,9 +175,9 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn(42);
         $this->jobRunner->expects($this->once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job) {
+                function ($message, $closure) use ($job) {
                     return $closure($this->jobRunner, $job);
                 }
             );
@@ -264,8 +264,8 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn(42);
         $this->jobRunner->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(function ($ownerId, $name, $closure) use ($job) {
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(function ($message, $closure) use ($job) {
                 return $closure($this->jobRunner, $job);
             });
         $this->jobRunner->expects($this->once())

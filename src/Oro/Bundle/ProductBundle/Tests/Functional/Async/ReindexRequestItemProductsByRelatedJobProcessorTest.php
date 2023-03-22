@@ -3,11 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Async;
 
 use Monolog\Handler\TestHandler;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\JobsAwareTestTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductWebsiteReindexRequestItems;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
+use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Transport\ConnectionInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -20,6 +23,7 @@ use Symfony\Component\Yaml\Yaml;
 class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use JobsAwareTestTrait;
 
     private ReindexRequestItemProductsByRelatedJobProcessor $processor;
 
@@ -72,6 +76,8 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
                 'indexationFieldsGroups' => $fieldGroups,
             ]
         );
+
+        $this->createRootJobMyMessage($message);
 
         /** @var Logger $logger */
         $logger = self::getContainer()->get('logger');
@@ -161,6 +167,9 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         $message = new Message();
         $message->setBody($body);
         $message->setMessageId('some_message_id');
+        $message->setProperties([
+            Config::PARAMETER_TOPIC_NAME => ReindexRequestItemProductsByRelatedJobIdTopic::getName()
+        ]);
 
         return $message;
     }

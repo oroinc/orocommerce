@@ -123,13 +123,13 @@ class PriceListTest extends RestJsonApiTestCase
             ->getRepository(PriceList::class)
             ->findOneBy(['name' => 'New']);
 
-        self::assertFalse($priceList->isDefault());
         self::assertTrue($priceList->isActive());
         self::assertFalse($priceList->isActual());
         self::assertSame('product.category.id == 1', $priceList->getProductAssignmentRule());
         self::assertArrayContains(['USD'], $priceList->getCurrencies());
         self::assertArrayContains(['RUB'], $priceList->getCurrencies());
         self::assertEquals($this->getReference('schedule.5'), $priceList->getSchedules()->first());
+        self::assertEquals($this->getReference('organization'), $priceList->getOrganization());
 
         $lexeme = $this->getEntityManager()
             ->getRepository(PriceRuleLexeme::class)

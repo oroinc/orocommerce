@@ -132,4 +132,22 @@ class MassRebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
             ],
         ];
     }
+
+    public function testCreateJobName(): void
+    {
+        $data = [
+            'assignments' => [
+                [
+                    'force' => true,
+                    'website' => 1,
+                    'customer' => 2,
+                    'customerGroup' => 3,
+                ],
+            ],
+        ];
+        self::assertSame(
+            'oro_pricing.price_lists.cpl.mass_rebuild:' . md5(json_encode($data)),
+            $this->getTopic()->createJobName($data)
+        );
+    }
 }

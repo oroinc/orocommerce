@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO;
 
-use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -40,7 +39,7 @@ class ObjectStorage implements \Countable
         }
 
         // If given entity has not empty id - use it as offset to improve performance
-        if (EntityPropertyInfo::methodExists($object, 'getId') && $object->getId()) {
+        if (method_exists($object, 'getId') && $object->getId()) {
             return $object->getId();
         }
 
