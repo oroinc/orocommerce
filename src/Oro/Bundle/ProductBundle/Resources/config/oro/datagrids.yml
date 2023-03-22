@@ -1039,7 +1039,6 @@ datagrids:
             entityHint: oro.product.product_attributes.plural_label
 
     content-node-product-collection-widget-grid:
-        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         source:
             type: orm
             query:

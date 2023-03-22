@@ -152,7 +152,6 @@ datagrids:
 
     category-products-widget-grid:
         acl_resource: oro_product_update
-        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         options:
             entityHint: oro.product.entity_plural_label
             entity_pagination: false
