@@ -16,6 +16,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message;
+use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -76,11 +77,11 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(['id' => 3])
             ->willReturn($node);
 
-        $this->assertProcessCalled($webCatalog, $node);
+        $this->assertProcessCalled($message, $webCatalog, $node);
         self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
-    private function assertProcessCalled(WebCatalog $webCatalog, ContentNode $node): void
+    private function assertProcessCalled($message, WebCatalog $webCatalog, ContentNode $node): void
     {
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => 21]);
@@ -100,7 +101,7 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
                     WebCatalogCalculateContentNodeTreeCacheTopic::JOB_ID => 123,
                 ]
             );
-        $this->assertUniqueJobExecuted();
+        $this->assertUniqueJobExecuted($message);
         $this->assertChildJobCreated($scope, $node);
     }
 
@@ -113,15 +114,14 @@ class ContentNodeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-    private function assertUniqueJobExecuted(): void
+    private function assertUniqueJobExecuted(MessageInterface $expectedMessage): void
     {
         $job = $this->createMock(Job::class);
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job) {
-                    $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(WebCatalogCalculateContentNodeCacheTopic::getName() . ':3', $name);
+                function ($actualMessage, $closure) use ($job, $expectedMessage) {
+                    $this->assertSame($actualMessage, $expectedMessage);
 
                     return $closure($this->jobRunner, $job);
                 }

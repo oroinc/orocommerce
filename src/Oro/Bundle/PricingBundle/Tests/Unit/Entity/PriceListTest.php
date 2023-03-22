@@ -18,7 +18,6 @@ class PriceListTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             $this->createPriceList(),
             [
-                ['default', false],
                 ['active', true],
                 ['productAssignmentRule', 'test rule'],
             ]

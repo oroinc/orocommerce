@@ -50,7 +50,6 @@ class OrganizationListener implements OptionalListenerInterface
         $priceList->setActive(true);
         $priceList->setName($organization->getName() . ' ' . self::PRICE_LIST_NAME_POSTFIX);
         $priceList->setOrganization($organization);
-        $priceList->setDefault(true);
         $priceList->setCurrencies($this->currencyConfigProvider->getCurrencyList());
         $this->doctrineHelper->getEntityManager(PriceList::class)->persist($priceList);
 

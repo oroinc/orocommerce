@@ -64,7 +64,6 @@ class UpdatePriceListsWithOrganization extends UpdateWithOrganization implements
             $priceList->setActive(true);
             $priceList->setName($organization->getName() . 'Price List');
             $priceList->setOrganization($organization);
-            $priceList->setDefault(true);
             $priceList->setCurrencies($currencies);
 
             $manager->persist($priceList);

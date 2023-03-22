@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 
@@ -80,18 +79,6 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
         ];
         $this->processUpdateList(PriceRule::class, $data);
 
-        self::assertMessagesSent(
-            ResolvePriceRulesTopic::getName(),
-            [
-                [
-                    'product' => [
-                        $this->getReference('price_list_3')->getId() => [],
-                        $this->getReference('price_list_2')->getId() => []
-                    ]
-                ]
-            ]
-        );
-
         $response = $this->cget(
             ['entity' => 'pricerules'],
             ['filter[id][gt]' => '@price_list_3_price_rule_5->id']
@@ -130,18 +117,6 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
             ]
         ];
         $this->processUpdateList(PriceRule::class, $data);
-
-        self::assertMessagesSent(
-            ResolvePriceRulesTopic::getName(),
-            [
-                [
-                    'product' => [
-                        $this->getReference('price_list_1')->getId() => [],
-                        $this->getReference('price_list_4')->getId() => []
-                    ]
-                ]
-            ]
-        );
 
         $response = $this->cget(
             ['entity' => 'pricerules'],
@@ -198,18 +173,6 @@ class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
             ]
         ];
         $this->processUpdateList(PriceRule::class, $data);
-
-        self::assertMessagesSent(
-            ResolvePriceRulesTopic::getName(),
-            [
-                [
-                    'product' => [
-                        $this->getReference('price_list_3')->getId() => [],
-                        $this->getReference('price_list_4')->getId() => []
-                    ]
-                ]
-            ]
-        );
 
         $response = $this->cget(
             ['entity' => 'pricerules'],

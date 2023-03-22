@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Factory;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
+use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Component\Testing\Unit\TestContainerBuilder;
 
@@ -49,7 +50,7 @@ class TaxFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateThrowExceptionWithoutMapper()
     {
-        $this->expectException(\Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException::class);
+        $this->expectException(UnmappableArgumentException::class);
         $this->expectExceptionMessage('Can\'t find Tax Mapper for object "stdClass"');
 
         $this->factory->create(new \stdClass());

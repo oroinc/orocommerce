@@ -8,6 +8,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class CheckoutGridCustomerVisitorAclListenerTest extends TestCase
 {
@@ -25,7 +26,7 @@ class CheckoutGridCustomerVisitorAclListenerTest extends TestCase
 
     public function testOnBuildBeforeWithAnonymousCustomerUserTokenShouldThrowException()
     {
-        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('Anonymous users are not allowed.');
 
         $this->tokenStorage->setToken(new AnonymousCustomerUserToken('test'));

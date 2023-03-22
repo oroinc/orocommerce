@@ -8,23 +8,15 @@ use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
  */
 abstract class AbstractPaymentConfigTestCase extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PaymentConfigInterface
-     */
+    /** @var PaymentConfigInterface */
     protected $config;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->config = $this->getPaymentConfig();
     }
 
-    /**
-     * @return PaymentConfigInterface
-     */
-    abstract protected function getPaymentConfig();
+    abstract protected function getPaymentConfig(): PaymentConfigInterface;
 
     public function testGetLabel()
     {

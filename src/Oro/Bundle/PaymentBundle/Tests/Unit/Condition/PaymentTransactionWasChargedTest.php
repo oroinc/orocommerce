@@ -6,17 +6,14 @@ use Oro\Bundle\PaymentBundle\Condition\PaymentTransactionWasCharged;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 class PaymentTransactionWasChargedTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $transactionRepository;
 
-    /**
-     * @var PaymentTransactionWasCharged
-     */
+    /** @var PaymentTransactionWasCharged */
     private $condition;
 
     protected function setUp(): void
@@ -33,7 +30,7 @@ class PaymentTransactionWasChargedTest extends \PHPUnit\Framework\TestCase
 
     public function testInitializeException()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "transaction" option');
 
         $this->condition->initialize([]);

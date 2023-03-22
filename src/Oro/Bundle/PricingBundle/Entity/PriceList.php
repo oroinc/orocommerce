@@ -55,13 +55,6 @@ class PriceList extends BasePriceList implements
     use ExtendEntityTrait;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_default", type="boolean")
-     */
-    protected $default = false;
-
-    /**
      * @var Organization
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
@@ -159,26 +152,6 @@ class PriceList extends BasePriceList implements
         $this->schedules = new ArrayCollection();
         $this->priceRules = new ArrayCollection();
         parent::__construct();
-    }
-
-    /**
-     * @param bool $default
-     *
-     * @return PriceList
-     */
-    public function setDefault($default)
-    {
-        $this->default = (bool)$default;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return $this->default;
     }
 
     /**

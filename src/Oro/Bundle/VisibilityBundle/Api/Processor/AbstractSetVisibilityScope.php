@@ -70,11 +70,17 @@ abstract class AbstractSetVisibilityScope implements ProcessorInterface
 
     abstract protected function getExistingVisibilitySearchCriteria(VisibilityInterface $entity, Scope $scope): array;
 
+    abstract protected function isExistingVisibilityCheckApplicable(VisibilityInterface $entity): bool;
+
     private function isVisibilityExists(
         string $visibilityEntityClass,
         VisibilityInterface $entity,
         Scope $scope
     ): bool {
+        if (!$this->isExistingVisibilityCheckApplicable($entity)) {
+            return false;
+        }
+
         $criteria = $this->getExistingVisibilitySearchCriteria($entity, $scope);
         $qb = $this->doctrineHelper->createQueryBuilder($visibilityEntityClass, 'e')
             ->select('e.id');

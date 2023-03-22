@@ -12,11 +12,11 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Loads Default Price List for the first organization.
+ * Loads Price List for the first organization.
  */
 class LoadPriceListData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    public const DEFAULT_PRICE_LIST_NAME = 'Default Price List';
+    public const PRICE_LIST_NAME = 'Default Price List';
 
     private ContainerInterface $container;
 
@@ -43,17 +43,21 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
             : $manager->getRepository(Organization::class)->getFirst();
 
         $priceList = $manager->getRepository(PriceList::class)
-            ->findOneBy(['organization' => $organization, 'default' => true]);
+            ->createQueryBuilder('p')
+            ->where('p.organization = :organization')
+            ->setParameter('organization', $organization)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
 
         if (null === $priceList) {
             $priceList = new PriceList();
             $priceList
-                ->setDefault(true)
                 ->setCurrencies($this->container->get('oro_currency.config.currency')->getCurrencyList())
                 ->setOrganization($organization);
         }
 
-        $priceList->setName(self::DEFAULT_PRICE_LIST_NAME);
+        $priceList->setName(self::PRICE_LIST_NAME);
         $manager->persist($priceList);
         $manager->flush();
 

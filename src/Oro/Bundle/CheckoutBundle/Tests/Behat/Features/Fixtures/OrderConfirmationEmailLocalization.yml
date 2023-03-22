@@ -24,7 +24,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\PricingBundle\Entity\PriceList:
   pricelist:
     name: 'pricelist'
-    default: true
     __calls:
       - setCurrencies: [['USD']]
     active: true

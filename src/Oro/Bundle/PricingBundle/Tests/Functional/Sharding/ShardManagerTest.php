@@ -131,7 +131,6 @@ class ShardManagerTest extends WebTestCase
             'oro_price_list',
             [
                 'name' => $name,
-                'is_default' => 1,
                 'contain_schedule' => 1,
                 'created_at' => '2017-03-29',
                 'updated_at' => '2017-03-29',

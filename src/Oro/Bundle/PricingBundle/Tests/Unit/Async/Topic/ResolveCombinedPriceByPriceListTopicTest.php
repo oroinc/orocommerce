@@ -34,4 +34,13 @@ class ResolveCombinedPriceByPriceListTopicTest extends AbstractTopicTestCase
             ]
         ];
     }
+
+    public function testCreateJobName(): void
+    {
+        $messageBody = ['product' => [1 => [10, 20], 50 => [10, 300]]];
+        self::assertSame(
+            'oro_pricing.price_lists.cpl.resolve_prices:' . md5(json_encode($messageBody)),
+            $this->getTopic()->createJobName($messageBody)
+        );
+    }
 }
