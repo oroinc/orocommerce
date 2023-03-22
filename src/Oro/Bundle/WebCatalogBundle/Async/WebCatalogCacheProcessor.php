@@ -44,11 +44,9 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $messageBody = $message->getBody();
-        $jobName = sprintf('%s:%s', Topic::getName(), $messageBody[Topic::WEB_CATALOG_ID]);
 
-        $result = $this->jobRunner->runUnique(
-            $message->getMessageId(),
-            $jobName,
+        $result = $this->jobRunner->runUniqueByMessage(
+            $message,
             function () use ($messageBody) {
                 $rootNodeId = $this->registry
                     ->getRepository(ContentNode::class)

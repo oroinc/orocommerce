@@ -49,4 +49,12 @@ class ResolveCombinedPriceByVersionedPriceListTopicTest extends AbstractTopicTes
             ]
         ];
     }
+
+    public function testCreateJobName(): void
+    {
+        self::assertSame(
+            'oro_pricing.price_lists.cpl.resolve_prices_by_version:v42',
+            $this->getTopic()->createJobName(['version' => 42])
+        );
+    }
 }

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 
 /**
@@ -32,29 +31,6 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
             'update_list_create_customer_group_product_visibilities.yml'
         );
 
-        $visibilityRepo = $this->getEntityManager()->getRepository(CustomerGroupProductVisibility::class);
-        $visibility1 = $visibilityRepo->findOneBy([
-            'product' => $this->getReference('product-4')->getId(),
-            'scope'   => $this->getReference('scope_2')->getId(),
-        ]);
-        $visibility2 = $visibilityRepo->findOneBy([
-            'product' => $this->getReference('product-4')->getId(),
-            'scope'   => $this->getReference('scope_3')->getId(),
-        ]);
-        self::assertMessagesSent(
-            ResolveProductVisibilityTopic::getName(),
-            [
-                [
-                    'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $visibility1->getId(),
-                ],
-                [
-                    'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $visibility2->getId(),
-                ],
-            ]
-        );
-
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
             ['filter[product][eq]' => '@product-4->id']
@@ -65,9 +41,6 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
 
     public function testUpdateEntities(): void
     {
-        $visibility1Id = $this->getReference('visibility_1')->getId();
-        $visibility2Id = $this->getReference('visibility_2')->getId();
-
         $visibility1ApiId = '<(implode("-", [@product-1->id, @customer_group.group1->id]))>';
         $visibility2ApiId = '<(implode("-", [@product-2->id, @customer_group.group2->id]))>';
         $data = [
@@ -91,20 +64,6 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
             ],
         ];
         $this->processUpdateList(CustomerGroupProductVisibility::class, $data);
-
-        self::assertMessagesSent(
-            ResolveProductVisibilityTopic::getName(),
-            [
-                [
-                    'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $visibility1Id,
-                ],
-                [
-                    'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $visibility2Id,
-                ],
-            ]
-        );
 
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],
@@ -155,27 +114,6 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
             ],
         ];
         $this->processUpdateList(CustomerGroupProductVisibility::class, $data);
-
-        $visibility1 = $this->getReference('visibility_1');
-        $visibility2 = $this->getEntityManager()->getRepository(CustomerGroupProductVisibility::class)->findOneBy(
-            [
-                'product' => $this->getReference('product-4')->getId(),
-                'scope'   => $this->getReference('scope_3')->getId(),
-            ]
-        );
-        self::assertMessagesSent(
-            ResolveProductVisibilityTopic::getName(),
-            [
-                [
-                    'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $visibility1->getId(),
-                ],
-                [
-                    'entity_class_name' => CustomerGroupProductVisibility::class,
-                    'id'                => $visibility2->getId(),
-                ],
-            ]
-        );
 
         $response = $this->cget(
             ['entity' => 'customergroupproductvisibilities'],

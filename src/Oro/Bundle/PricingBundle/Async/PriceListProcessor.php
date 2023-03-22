@@ -73,10 +73,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     {
         $body = $message->getBody();
         try {
-            $jobName = ResolveCombinedPriceByPriceListTopic::getName() . ':' . md5(json_encode($body));
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                $jobName,
+            $result = $this->jobRunner->runUniqueByMessage(
+                $message,
                 function (JobRunner $jobRunner, Job $job) use ($body) {
                     $cpl2plRepository = $this->doctrine->getRepository(CombinedPriceListToPriceList::class);
                     $allProducts = $body['product'];

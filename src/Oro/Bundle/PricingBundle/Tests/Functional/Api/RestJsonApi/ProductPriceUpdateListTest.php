@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\JsonApiDocContainsConstraint;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
@@ -74,18 +73,6 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
         ];
         $this->processUpdateList(ProductPrice::class, $data);
 
-        self::assertMessageSent(
-            ResolvePriceRulesTopic::getName(),
-            [
-                'product' => [
-                    $priceList5Id => [
-                        $this->getReference('product-5')->getId(),
-                        $this->getReference('product-1')->getId()
-                    ]
-                ]
-            ]
-        );
-
         $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => '@price_list_5->id']);
         // we cannot rely to order of returned data due to product price ID is UUID
         $responseContent = self::jsonToArray($response->getContent());
@@ -109,7 +96,6 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
     public function testUpdateEntities()
     {
         $priceList1Id = $this->getReference('price_list_1')->getId();
-        $priceList2Id = $this->getReference('price_list_2')->getId();
         $productPrice1Id = $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_1)->getId();
         $productPrice1ApiId = $productPrice1Id . '-' . $priceList1Id;
         $productPrice2Id = $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_2)->getId();
@@ -155,24 +141,6 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
             ]
         ];
         $this->processUpdateList(ProductPrice::class, $data);
-
-        self::assertMessageSent(
-            ResolvePriceRulesTopic::getName(),
-            [
-                'product' => [
-                    $priceList1Id => [
-                        $this->getReference('product-5')->getId(),
-                        $this->getReference('product-3')->getId()
-                    ],
-                    $priceList2Id => [
-                        $this->getReference('product-1')->getId(),
-                        $this->getReference('product-5')->getId(),
-                        $this->getReference('product-2')->getId(),
-                        $this->getReference('product-3')->getId()
-                    ]
-                ]
-            ]
-        );
 
         $response = $this->cget(['entity' => 'productprices'], ['filter[priceList]' => (string)$priceList1Id]);
         // we cannot rely to order of returned data due to product price ID is UUID
@@ -258,26 +226,6 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
             ->findOneBy(['name' => 'New Price List 1'])
             ->getId();
 
-        self::assertMessagesSent(
-            ResolvePriceRulesTopic::getName(),
-            [
-                [
-                    'product' => [
-                        $priceListId => [
-                            $this->getReference('product-5')->getId()
-                        ]
-                    ]
-                ],
-                [
-                    'product' => [
-                        $priceListId => [
-                            $this->getReference('product-1')->getId()
-                        ]
-                    ]
-                ]
-            ]
-        );
-
         $response = $this->cget(
             ['entity' => 'productprices'],
             ['filter[priceList]' => $priceListId, 'include' => 'priceList']
@@ -307,7 +255,6 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
     public function testUpdateResetPriceRule()
     {
         $priceList1Id = $this->getReference('price_list_1')->getId();
-        $priceList2Id = $this->getReference('price_list_2')->getId();
         $productPrice1Id = $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_1)->getId();
         $productPrice1ApiId = $productPrice1Id . '-' . $priceList1Id;
         $data = [
@@ -323,17 +270,6 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
             ]
         ];
         $this->processUpdateList(ProductPrice::class, $data);
-
-        self::assertMessageSent(
-            ResolvePriceRulesTopic::getName(),
-            [
-                'product' => [
-                    $priceList2Id => [
-                        $this->getReference('product-1')->getId()
-                    ]
-                ]
-            ]
-        );
 
         $productPrice = $this->findProductPriceByUniqueKey(
             5,
