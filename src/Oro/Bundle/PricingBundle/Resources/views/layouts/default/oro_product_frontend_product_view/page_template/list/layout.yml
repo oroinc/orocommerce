@@ -6,4 +6,4 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroPricing/layouts/default/oro_product_frontend_product_view/page_template/list/layout.html.twig'
-    conditions: '!context["is_mobile"]'
+    conditions: '!context["is_mobile"] && context["product_type"] != "kit"'

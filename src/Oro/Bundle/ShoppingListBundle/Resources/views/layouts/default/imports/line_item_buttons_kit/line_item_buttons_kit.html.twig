@@ -1,0 +1,7 @@
+{% block __line_item_buttons_kit__button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' btn btn--block btn--info',
+        'type': 'button'
+    }) %}
+    <button {{ block('block_attributes') }}>{{ 'oro.shoppinglist.product.kit.add_to_shopping_list.label'|trans }}</button>
+{% endblock %}

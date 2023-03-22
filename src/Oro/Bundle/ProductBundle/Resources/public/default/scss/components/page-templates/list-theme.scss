@@ -2,7 +2,7 @@
 // @productTheme: list-theme;
 
 @include breakpoint('desktop') {
-    .list-theme.product-view {
+    .list-theme {
         .product-view {
             &__content {
                 display: $list-theme-product-view-content-display-desktop;

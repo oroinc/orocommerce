@@ -59,4 +59,7 @@ styles:
         - 'bundles/oroproduct/default/scss/components/product-popup-header.scss'
         - 'bundles/oroproduct/default/scss/components/search-autocomplete.scss'
 
+        # Product kit styles
+        - 'bundles/oroproduct/default/scss/components/product-kit/product-kit-view.scss'
+
         - 'bundles/oroproduct/default/scss/styles.scss'

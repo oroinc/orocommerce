@@ -1,0 +1,25 @@
+/* @theme: default; */
+
+// Selector's weight is increased to make product kit styles more important then styles for page templates
+.product-kit-view.product-view {
+    .product-view__content {
+        display: flex;
+        padding-top: 32px;
+        gap: 32px;
+    }
+
+    .product-view__specification {
+        width: 100%;
+        padding: 0;
+    }
+
+    .product-view__kit-container,
+    .product-view__description {
+        width: 100%;
+    }
+
+    .product-item-shopping-lists,
+    .shopping-lists {
+        height: 100%;
+    }
+}
