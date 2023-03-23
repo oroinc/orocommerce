@@ -11,6 +11,9 @@ use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Abstract implementation of search engine. Performs search operation for search index.
+ */
 abstract class AbstractEngine implements EngineInterface
 {
     /** @var EventDispatcherInterface */

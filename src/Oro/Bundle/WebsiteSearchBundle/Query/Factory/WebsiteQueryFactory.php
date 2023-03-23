@@ -8,6 +8,9 @@ use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
+/**
+ * Creates and configures WebsiteSearchQuery instances.
+ */
 class WebsiteQueryFactory implements QueryFactoryInterface
 {
     /** @var EngineInterface */
