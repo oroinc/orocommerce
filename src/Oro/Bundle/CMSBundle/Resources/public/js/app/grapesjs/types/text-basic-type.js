@@ -49,7 +49,8 @@ const TextBasicType = BaseType.extend({
         return false;
     }
 }, {
-    type: 'text-basic'
+    type: 'text-basic',
+    priority: 400
 });
 
 export default TextBasicType;
