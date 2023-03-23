@@ -13,14 +13,20 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
@@ -38,51 +44,52 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
     private const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
     private const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
     private const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
+    private const KIT_ITEM_1_LABEL = 'Kit item 1 label';
+    private const KIT_ITEM_2_LABEL = 'Kit item 2 label';
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
+    private SkuIncrementorInterface|MockObject $skuIncrementor;
 
-    /** @var SkuIncrementorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $skuIncrementor;
+    private FileManager|MockObject $fileManager;
 
-    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $fileManager;
+    private AttachmentProvider|MockObject $attachmentProvider;
 
-    /** @var AttachmentProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $attachmentProvider;
+    private Connection|MockObject $connection;
 
-    /** @var Connection|\PHPUnit\Framework\MockObject\MockObject */
-    private $connection;
-
-    /** @var ProductDuplicator */
-    private $duplicator;
+    private ProductDuplicator $duplicator;
 
     protected function setUp(): void
     {
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                $this->isInstanceOf(ProductDuplicateAfterEvent::class),
+                ProductDuplicateAfterEvent::NAME
+            );
+
         $this->skuIncrementor = $this->createMock(SkuIncrementorInterface::class);
         $this->fileManager = $this->createMock(FileManager::class);
         $this->attachmentProvider = $this->createMock(AttachmentProvider::class);
         $this->connection = $this->createMock(Connection::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->any())
+        $em->expects(self::any())
             ->method('getConnection')
             ->willReturn($this->connection);
 
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $doctrineHelper->expects($this->any())
+        $doctrineHelper->expects(self::any())
             ->method('getEntityManager')
-            ->with($this->anything())
+            ->with(self::anything())
             ->willReturn($em);
 
         $this->duplicator = new ProductDuplicator(
             $doctrineHelper,
-            $this->eventDispatcher,
+            $eventDispatcher,
             $this->fileManager,
-            $this->attachmentProvider
+            $this->attachmentProvider,
+            $this->skuIncrementor
         );
-        $this->duplicator->setSkuIncrementor($this->skuIncrementor);
     }
 
     private function getFile(int $id): File
@@ -141,10 +148,20 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         return $productUnitPrecision;
     }
 
+    private function getKitItem(int $id, string $label, Product $product): ProductKitItem
+    {
+        $productKitItemLabel = (new ProductKitItemLabel())->setString($label);
+        $productKitItemProduct = (new ProductKitItemProduct())->setProduct($product);
+
+        return (new ProductKitItemStub($id))
+            ->addLabel($productKitItemLabel)
+            ->addKitItemProduct($productKitItemProduct);
+    }
+
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testDuplicate()
+    public function testDuplicate(): void
     {
         $image1 = $this->getFile(1);
         $image2 = $this->getFile(2);
@@ -172,6 +189,8 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         $attachment2 = (new Attachment())
             ->setFile($attachmentFile2);
 
+        $product43 = $this->getProduct(43);
+
         $product = $this->getProduct(42);
         $product->setSku(self::PRODUCT_SKU)
             ->setPrimaryUnitPrecision($this->getProductUnitPrecision(
@@ -190,19 +209,21 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
             ->addShortDescription($this->getProductShortDescription(null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE))
             ->addShortDescription($this->getProductShortDescription(null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE))
             ->addImage($productImage1)
-            ->addImage($productImage2);
+            ->addImage($productImage2)
+            ->addKitItem($this->getKitItem(1, self::KIT_ITEM_1_LABEL, $product43))
+            ->addKitItem($this->getKitItem(2, self::KIT_ITEM_2_LABEL, $product43));
 
-        $this->skuIncrementor->expects($this->once())
+        $this->skuIncrementor->expects(self::once())
             ->method('increment')
             ->with(self::PRODUCT_SKU)
             ->willReturn(self::PRODUCT_COPY_SKU);
 
-        $this->attachmentProvider->expects($this->once())
+        $this->attachmentProvider->expects(self::once())
             ->method('getEntityAttachments')
             ->with($product)
             ->willReturn([$attachment1, $attachment2]);
 
-        $this->fileManager->expects($this->exactly(4))
+        $this->fileManager->expects(self::exactly(4))
             ->method('cloneFileEntity')
             ->withConsecutive(
                 [$image1],
@@ -212,47 +233,68 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls($image1Copy, $attachmentFileCopy2);
 
-        $this->connection->expects($this->once())
+        $this->connection->expects(self::once())
             ->method('beginTransaction');
-        $this->connection->expects($this->once())
+        $this->connection->expects(self::once())
             ->method('commit');
 
         $productCopy = $this->duplicator->duplicate($product);
         $productCopyUnitPrecisions = $productCopy->getUnitPrecisions();
 
-        $this->assertEmpty($productCopy->getSlugPrototypes());
-        $this->assertEmpty($productCopy->getSlugs());
+        self::assertEmpty($productCopy->getSlugPrototypes());
+        self::assertEmpty($productCopy->getSlugs());
 
-        $this->assertEquals(self::PRODUCT_COPY_SKU, $productCopy->getSku());
-        $this->assertEquals(self::PRODUCT_STATUS, $productCopy->getStatus());
-        $this->assertCount(2, $productCopyUnitPrecisions);
-        $this->assertEquals(self::UNIT_PRECISION_CODE_1, $productCopyUnitPrecisions[0]->getUnit()->getCode());
-        $this->assertEquals(
+        self::assertEquals(self::PRODUCT_COPY_SKU, $productCopy->getSku());
+        self::assertEquals(self::PRODUCT_STATUS, $productCopy->getStatus());
+        self::assertCount(2, $productCopyUnitPrecisions);
+        self::assertEquals(self::UNIT_PRECISION_CODE_1, $productCopyUnitPrecisions[0]->getUnit()->getCode());
+        self::assertEquals(
             self::UNIT_PRECISION_DEFAULT_PRECISION_1,
             $productCopyUnitPrecisions[0]->getUnit()->getDefaultPrecision()
         );
-        $this->assertEquals(self::UNIT_PRECISION_CODE_2, $productCopyUnitPrecisions[1]->getUnit()->getCode());
-        $this->assertEquals(
+        self::assertEquals(self::UNIT_PRECISION_CODE_2, $productCopyUnitPrecisions[1]->getUnit()->getCode());
+        self::assertEquals(
             self::UNIT_PRECISION_DEFAULT_PRECISION_2,
             $productCopyUnitPrecisions[1]->getUnit()->getDefaultPrecision()
         );
 
         $productCopyNames = $productCopy->getNames();
-        $this->assertEquals(self::NAME_DEFAULT_LOCALE, $productCopyNames[0]->getString());
-        $this->assertEquals(self::NAME_CUSTOM_LOCALE, $productCopyNames[1]->getString());
+        self::assertEquals(self::NAME_DEFAULT_LOCALE, $productCopyNames[0]->getString());
+        self::assertEquals(self::NAME_CUSTOM_LOCALE, $productCopyNames[1]->getString());
 
         $productCopyDescriptions = $productCopy->getDescriptions();
-        $this->assertEquals(self::DESCRIPTION_DEFAULT_LOCALE, $productCopyDescriptions[0]->getText());
-        $this->assertEquals(self::DESCRIPTION_CUSTOM_LOCALE, $productCopyDescriptions[1]->getText());
+        self::assertEquals(self::DESCRIPTION_DEFAULT_LOCALE, $productCopyDescriptions[0]->getText());
+        self::assertEquals(self::DESCRIPTION_CUSTOM_LOCALE, $productCopyDescriptions[1]->getText());
 
         $productCopyShortDescriptions = $productCopy->getShortDescriptions();
-        $this->assertEquals(self::SHORT_DESCRIPTION_DEFAULT_LOCALE, $productCopyShortDescriptions[0]->getText());
-        $this->assertEquals(self::SHORT_DESCRIPTION_CUSTOM_LOCALE, $productCopyShortDescriptions[1]->getText());
+        self::assertEquals(self::SHORT_DESCRIPTION_DEFAULT_LOCALE, $productCopyShortDescriptions[0]->getText());
+        self::assertEquals(self::SHORT_DESCRIPTION_CUSTOM_LOCALE, $productCopyShortDescriptions[1]->getText());
 
-        $this->assertEquals($image1Copy, $productImage1Copy->getImage());
+        self::assertEquals($image1Copy, $productImage1Copy->getImage());
+
+        $productCopyKitItems = $productCopy->getKitItems();
+        self::assertCount(2, $productCopyKitItems);
+
+        $productCopyKitItem1 = $productCopyKitItems[0];
+        $productCopyKitItem1Labels = $productCopyKitItem1->getLabels();
+        self::assertCount(1, $productCopyKitItem1Labels);
+        self::assertEquals(self::KIT_ITEM_1_LABEL, $productCopyKitItem1Labels[0]->getString());
+
+        $productCopyKitItem1KitItemProducts = $productCopyKitItem1->getProducts();
+        self::assertCount(1, $productCopyKitItem1KitItemProducts);
+        self::assertEquals(43, $productCopyKitItem1KitItemProducts[0]->getId());
+
+        $productCopyKitItem2 = $productCopyKitItems[1];
+        $productCopyKitItem2Labels = $productCopyKitItem2->getLabels();
+        self::assertCount(1, $productCopyKitItem2Labels);
+        self::assertEquals(self::KIT_ITEM_2_LABEL, $productCopyKitItem2Labels[0]->getString());
+
+        $productCopyKitItem2KitItemProducts = $productCopyKitItem2->getProducts();
+        self::assertCount(1, $productCopyKitItem2KitItemProducts);
+        self::assertEquals(43, $productCopyKitItem2KitItemProducts[0]->getId());
     }
 
-    public function testDuplicateFailed()
+    public function testDuplicateFailed(): void
     {
         $this->expectException(\Exception::class);
         $product = (new Product())
@@ -262,22 +304,22 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
                 self::UNIT_PRECISION_DEFAULT_PRECISION_1
             ));
 
-        $this->skuIncrementor->expects($this->once())
+        $this->skuIncrementor->expects(self::once())
             ->method('increment')
             ->with(self::PRODUCT_SKU)
             ->willReturn(self::PRODUCT_COPY_SKU);
 
-        $this->attachmentProvider->expects($this->once())
+        $this->attachmentProvider->expects(self::once())
             ->method('getEntityAttachments')
             ->with($product)
             ->willReturn([]);
 
-        $this->connection->expects($this->once())
+        $this->connection->expects(self::once())
             ->method('beginTransaction');
-        $this->connection->expects($this->once())
+        $this->connection->expects(self::once())
             ->method('commit')
             ->willThrowException(new \Exception());
-        $this->connection->expects($this->once())
+        $this->connection->expects(self::once())
             ->method('rollback');
 
         $this->duplicator->duplicate($product);
