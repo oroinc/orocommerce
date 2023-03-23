@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\CheckboxType;
+use Oro\Bundle\FormBundle\Provider\FormFieldsMapProvider;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
@@ -23,6 +24,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ProductKitItemType extends AbstractType
 {
+    private FormFieldsMapProvider $fieldsMapProvider;
+
+    public function __construct(FormFieldsMapProvider $fieldsMapProvider)
+    {
+        $this->fieldsMapProvider = $fieldsMapProvider;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -77,23 +85,16 @@ class ProductKitItemType extends AbstractType
             (array) $kitItem?->getProducts()->toArray()
         );
 
-        $view->vars['fieldsMap'] = [];
-        foreach ($view->children as $name => $childView) {
-            if ($name === 'labels' && isset($childView->children['values']->children)) {
-                $childViewDefault = reset($childView->children['values']->children);
-                $view->vars['fieldsMap'][$name] = [
-                    'key' => $name,
-                    'name' => $childViewDefault->vars['full_name'],
-                    'id' => $childViewDefault->vars['id'],
-                ];
-            } else {
-                $view->vars['fieldsMap'][$name] = [
-                    'key' => $name,
-                    'name' => $childView->vars['full_name'],
-                    'id' => $childView->vars['id'],
-                ];
-            }
-        }
+        $view->vars['fieldsMap'] = $this->fieldsMapProvider->getFormFieldsMap($view, $form, $options);
+
+        // Adds the first child for the "labels" localized fallback values collection form field.
+        $labelsChildren = reset($view['labels']->children);
+        $labelsFirstChild = $labelsChildren ? reset($labelsChildren->children) : $view['labels'];
+        $view->vars['fieldsMap']['labels'] = [
+            'key' => 'labels',
+            'name' => $labelsFirstChild->vars['full_name'],
+            'id' => $labelsFirstChild->vars['id'],
+        ];
     }
 
     public function configureOptions(OptionsResolver $resolver): void

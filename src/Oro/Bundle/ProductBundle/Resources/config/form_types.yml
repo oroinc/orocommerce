@@ -295,6 +295,8 @@ services:
 
     oro_product.form.type.product_kit_item:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType
+        arguments:
+            - '@oro_form.provider.form_fields_map'
         tags:
             - { name: form.type }
 

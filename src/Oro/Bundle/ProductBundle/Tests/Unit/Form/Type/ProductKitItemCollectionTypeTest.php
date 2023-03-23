@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\FormBundle\Provider\FormFieldsMapProvider;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -11,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductKitItemCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductKitItemProductsType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
@@ -36,8 +38,11 @@ class ProductKitItemCollectionTypeTest extends FormIntegrationTestCase
 
     private UnitLabelFormatterInterface|MockObject $productUnitLabelFormatter;
 
+    private FormFieldsMapProvider|MockObject $fieldsMapProvider;
+
     protected function setUp(): void
     {
+        $this->fieldsMapProvider = $this->createMock(FormFieldsMapProvider::class);
         $this->type = new ProductKitItemCollectionType();
         $translator = $this->createMock(TranslatorInterface::class);
         $bypassCallback = static fn ($value) => $value;
@@ -60,6 +65,7 @@ class ProductKitItemCollectionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->type,
+                    new ProductKitItemType($this->fieldsMapProvider),
                     ProductKitItemProductsType::class => $this->kitItemProductsType,
                     new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => new EntityTypeStub([
