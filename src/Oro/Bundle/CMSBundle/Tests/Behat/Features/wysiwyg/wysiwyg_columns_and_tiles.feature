@@ -110,8 +110,9 @@ Feature: WYSIWYG columns and tiles
   Scenario: Add sub columns
     When I select component in canvas by tree:
       | columns | 1 |
+      | columns-item | 3 |
     And I click on "Delete" action for selected component
-    And I add new component "Columns" from panel to:
+    And I add new component "Columns" by click from panel to:
       | columns | 1 |
     And I click "3ColumnsPreset"
     And I select component in canvas by tree:

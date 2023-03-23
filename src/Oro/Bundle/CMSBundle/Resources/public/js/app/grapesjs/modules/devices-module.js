@@ -339,8 +339,7 @@ define(function(require) {
             return str;
         },
 
-        updateSelectedElement(model, deviceName) {
-            const selected = this.builder.getSelected();
+        updateSelectedElement() {
             const iframe = this.$builderIframe[0];
             const iframeWrapper = this.$framesArea.find('.gjs-frame-wrapper');
             const editorConf = this.builder.getConfig();
@@ -376,10 +375,7 @@ define(function(require) {
                     marginLeft: -leftOffset
                 });
 
-                if (selected) {
-                    this.builder.selectRemove(selected);
-                    this.builder.selectAdd(selected);
-                }
+                this.builder.trigger('change:canvasOffset');
             });
         },
 

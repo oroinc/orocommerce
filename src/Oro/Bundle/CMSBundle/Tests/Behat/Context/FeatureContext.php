@@ -699,7 +699,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $selectedComponent = $selectedComponents[$eq - 1];
         }
 
-        $selectedComponent->click();
+        $selectedComponent->find('css', '[data-toggle-select]')->click();
     }
 
     /**
