@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\SearchResult\Entity;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -28,6 +28,8 @@ class SearchResultHistoryTest extends TestCase
             ['createdAt', $now, false],
             ['customer', new Customer()],
             ['customerUser', new CustomerUser()],
+            ['customerVisitorId', 100],
+            ['searchSession', 'abc111']
         ];
 
         $entity = new SearchResultHistory();

@@ -19,7 +19,7 @@ features:
         navigation_items:
             - 'application_menu.marketing_tab.oro_website_search_tab.oro_website_search_result_history_list'
             - 'shortcut_oro_website_search_result_history_index'
-            - 'application_menu.reports_tab.static_reports_tab.oro_website_search_results_report'
+            - 'application_menu.reports_tab.static_reports_tab.oro_website_search_report_tab.oro_website_search_results_report'
 
     oro_website_search_history_tracking:
         label: oro.websitesearch.feature.website_search_history_tracking.label

@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationAwareTokenInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository;
@@ -61,7 +62,7 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
     ): void {
         $token = $this->tokenStorage->getToken();
         $website = $this->websiteManager->getCurrentWebsite();
-        $organization = $token->getOrganization();
+        $organization = $this->getOrganization($token);
         $businessUnit = $this->getOwner($website, $organization);
 
         if (!$businessUnit) {
@@ -80,9 +81,9 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
                 $resultsCount,
                 $this->getNormalizedSearchTermHash($searchTerm),
                 $businessUnit->getId(),
+                $website->getId(),
                 $searchSessionId,
                 $this->localizationHelper->getCurrentLocalization()?->getId(),
-                $website?->getId(),
                 $customerUser?->getCustomer()?->getId(),
                 $customerUser?->getId(),
                 $customerVisitor?->getId(),
@@ -105,19 +106,18 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
 
     private function getCustomerVisitor(?TokenInterface $token): ?CustomerVisitor
     {
-        $customerVisitor = null;
         if ($token instanceof AnonymousCustomerUserToken) {
-            $customerVisitor = $token->getVisitor();
+            return $token->getVisitor();
         }
 
-        return $customerVisitor;
+        return null;
     }
 
     private function getCustomerUser(?TokenInterface $token): ?CustomerUser
     {
-        $customerUser = $token->getUser();
+        $customerUser = $token?->getUser();
         if (!$customerUser instanceof CustomerUser) {
-            $customerUser = null;
+            return null;
         }
 
         return $customerUser;
@@ -139,5 +139,14 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
                 Query::clearString($searchTerm)
             )
         );
+    }
+
+    private function getOrganization(?TokenInterface $token): ?Organization
+    {
+        if ($token instanceof OrganizationAwareTokenInterface) {
+            return $token->getOrganization();
+        }
+
+        return null;
     }
 }

@@ -1,0 +1,30 @@
+data:
+    type: searchresulthistories
+    id: '<toString(@search_result_1->id)>'
+    attributes:
+        searchTerm: 'Led flashlight'
+        customerVisitorId: null
+        resultType: 'product_search'
+        resultsCount: 12
+        createdAt: '@search_result_1->createdAt->format("Y-m-d\TH:i:s\Z")'
+    relationships:
+        localization:
+            data:
+                type: localizations
+                id: '<toString(@search_result_1->localization->id)>'
+        owner:
+            data:
+                type: businessunits
+                id: '<toString(@search_result_1->owner->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@search_result_1->organization->id)>'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@search_result_1->customerUser->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@search_result_1->customer->id)>'

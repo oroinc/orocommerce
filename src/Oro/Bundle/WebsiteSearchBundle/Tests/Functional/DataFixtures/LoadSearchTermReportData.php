@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
@@ -43,6 +43,7 @@ class LoadSearchTermReportData extends AbstractFixture
                 ->setOwner($organization->getBusinessUnits()->first())
                 ->setOrganization($organization);
 
+            $this->setReference($row['reference'], $reportRecord);
             $manager->persist($reportRecord);
         }
 

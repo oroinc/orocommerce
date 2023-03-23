@@ -111,13 +111,13 @@ class CreateSearchResultHistoryTable implements Migration
             $schema->getTable('oro_business_unit'),
             ['business_unit_owner_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

@@ -1,0 +1,57 @@
+data:
+    -
+        type: searchresulthistories
+        id: '<toString(@search_result_1->id)>'
+        attributes:
+            searchTerm: '@search_result_1->searchTerm'
+            customerVisitorId: '@search_result_1->customerVisitorId'
+            resultType: '@search_result_1->resultType'
+            resultsCount: '@search_result_1->resultsCount'
+            createdAt: '@search_result_1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@search_result_1->localization->id)>'
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@search_result_1->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@search_result_1->organization->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@search_result_1->customerUser->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@search_result_1->customer->id)>'
+    -
+        type: searchresulthistories
+        id: '<toString(@search_result_2->id)>'
+        attributes:
+            searchTerm: '@search_result_2->searchTerm'
+            customerVisitorId: '@search_result_2->customerVisitorId'
+            resultType: '@search_result_2->resultType'
+            resultsCount: '@search_result_2->resultsCount'
+            createdAt: '@search_result_2->createdAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@search_result_2->localization->id)>'
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@search_result_2->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@search_result_2->organization->id)>'
+            customerUser:
+                data: null
+            customer:
+                data: null

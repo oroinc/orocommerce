@@ -5,6 +5,9 @@ navigation:
                 label: oro.websitesearch.navigation.package_label
                 uri: '#'
                 position: 200
+            oro_website_search_report_tab:
+                label: oro.websitesearch.navigation.package_label
+                uri: '#'
             oro_website_search_result_history_list:
                 label: oro.websitesearch.navigation.search_history_index.label
                 route: oro_website_search_result_history_index
@@ -33,7 +36,9 @@ navigation:
                         children:
                             static_reports_tab:
                                 children:
-                                    oro_website_search_results_report: ~
+                                    oro_website_search_report_tab:
+                                        children:
+                                            oro_website_search_results_report: ~
 
             shortcuts:
                 children:

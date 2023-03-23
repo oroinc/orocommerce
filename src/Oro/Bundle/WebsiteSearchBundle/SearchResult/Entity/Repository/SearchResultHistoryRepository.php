@@ -24,15 +24,18 @@ class SearchResultHistoryRepository extends ServiceEntityRepository
         parent::__construct($registry, SearchResultHistory::class);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function upsertSearchHistoryRecord(
         string $searchTerm,
         string $resultType,
         int $resultsCount,
         string $searchTermHash,
         int $businessUnitId,
+        int $websiteId = null,
         ?string $searchSessionId = null,
         ?int $localizationId = null,
-        ?int $websiteId = null,
         ?int $customerId = null,
         ?int $customerUserId = null,
         ?int $customerVisitorId = null,

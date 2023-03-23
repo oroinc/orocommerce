@@ -4,7 +4,7 @@ system_configuration:
             title: oro.websitesearch.system_configuration.groups.search.title
         website_search_terms:
             title: oro.websitesearch.system_configuration.pages.search_terms.title
-            icon: fa-search
+            icon: fa-file-text-o
         website_search_history:
             title: oro.websitesearch.system_configuration.fieldsets.search_history.title
 
