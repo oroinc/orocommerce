@@ -16,7 +16,7 @@ class SearchResultImportExportConfigurationProvider implements ImportExportConfi
     {
         return new ImportExportConfiguration([
             ImportExportConfiguration::FIELD_ENTITY_CLASS => SearchResultHistory::class,
-            ImportExportConfiguration::FIELD_EXPORT_PROCESSOR_ALIAS => 'oro_website_search_result'
+            ImportExportConfiguration::FIELD_EXPORT_PROCESSOR_ALIAS => 'oro_website_search_result_history'
         ]);
     }
 }

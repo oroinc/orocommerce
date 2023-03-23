@@ -4,6 +4,7 @@ datagrids:
         acl_resource: oro_website_search_result_history_view
         options:
             entityHint: oro.websitesearch.searchresult.entity.searchresulthistory.entity_plural_label
+            export: true
         properties:
             id: ~
         source:

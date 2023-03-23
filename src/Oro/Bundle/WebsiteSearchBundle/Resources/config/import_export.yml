@@ -11,9 +11,9 @@ services:
             -   name: oro_importexport.processor
                 type: export
                 entity: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
-                alias: oro_website_search_result
+                alias: oro_website_search_result_history
 
     oro.website_search.importexport.configuration_provider.search_result:
         class: 'Oro\Bundle\WebsiteSearchBundle\ImportExport\Configuration\SearchResultImportExportConfigurationProvider'
         tags:
-            - { name: oro_importexport.configuration, alias: oro_website_search_result }
+            - { name: oro_importexport.configuration, alias: oro_website_search_result_history }
