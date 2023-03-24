@@ -21,3 +21,8 @@ oro_order_products_frontend:
      prefix:       /customer/order/products
      options:
         frontend: true
+
+oro_order_dashboard:
+    resource:     "@OroOrderBundle/Controller/DashboardController.php"
+    type:         annotation
+    prefix:       /order/dashboard
