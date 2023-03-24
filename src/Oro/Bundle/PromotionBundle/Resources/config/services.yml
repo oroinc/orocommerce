@@ -806,20 +806,16 @@ services:
 
     oro_promotion.event_listener.datagrid_line_items_data.promotions:
         class: Oro\Bundle\PromotionBundle\EventListener\DatagridLineItemsDataPromotionsListener
-        # Decorates listener from pricing bundle because it directly depends on it - alters the pricing data by
-        # applying discounts.
-        decorates: oro_pricing.event_listener.datagrid_line_items_data.pricing
         arguments:
-            - '@.inner'
             - '@oro_promotion.promotion_executor'
-            - '@oro_pricing.user_currency_manager'
             - '@oro_locale.formatter.number'
             - '@oro_checkout.provider.multi_shipping.split_entities_provider'
         tags:
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+            # Priority should be less than "oro_pricing.event_listener.datagrid_line_items_data.pricing" and "oro_pricing.event_listener.datagrid_kit_line_items_data.pricing" have.
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 80 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 80 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 80 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 80 }
 
     oro_promotion.order_tax.mapper.order_after_discounts_mapper:
         class: Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderAfterDiscountsMapper

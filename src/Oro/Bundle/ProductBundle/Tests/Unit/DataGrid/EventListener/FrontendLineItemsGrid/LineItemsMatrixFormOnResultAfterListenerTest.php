@@ -9,6 +9,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsDataOnResultAfterListener;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsMatrixFormOnResultAfterListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
@@ -92,10 +93,13 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
                 'recordData' => ['isConfigurable' => true],
             ],
             [
-                'recordData' => ['isConfigurable' => true, 'lineItemsByIds' => []],
+                'recordData' => ['isConfigurable' => true, LineItemsDataOnResultAfterListener::LINE_ITEMS => []],
             ],
             [
-                'recordData' => ['isConfigurable' => true, 'lineItemsByIds' => [new \stdClass()]],
+                'recordData' => [
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [new \stdClass()]
+                ],
             ],
         ];
     }
@@ -112,7 +116,7 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
         $resultRecord = new ResultRecord(
             [
                 'isConfigurable' => true,
-                'lineItemsByIds' => [$lineItem],
+                LineItemsDataOnResultAfterListener::LINE_ITEMS => [$lineItem],
             ]
         );
 

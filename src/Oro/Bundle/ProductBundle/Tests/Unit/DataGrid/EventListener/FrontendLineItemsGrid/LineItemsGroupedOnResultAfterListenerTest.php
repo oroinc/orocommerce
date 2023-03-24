@@ -12,9 +12,9 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsDataOnResultAfterListener;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsGroupedOnResultAfterListener;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductImageStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -85,7 +85,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $resultRecord
             ->expects($this->once())
             ->method('getValue')
-            ->with('lineItemsByIds')
+            ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn($lineItemsByIds);
 
         $resultRecord
@@ -103,9 +103,9 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     public function onResultAfterWhenSimpleRowDataProvider(): array
     {
         return [
-            ['lineItemsByIds' => null],
-            ['lineItemsByIds' => []],
-            ['lineItemsByIds' => [new ProductLineItemStub(10)]],
+            [LineItemsDataOnResultAfterListener::LINE_ITEMS => null],
+            [LineItemsDataOnResultAfterListener::LINE_ITEMS => []],
+            [LineItemsDataOnResultAfterListener::LINE_ITEMS => [new ProductLineItemStub(10)]],
         ];
     }
 
@@ -115,16 +115,8 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $resultRecord
             ->expects($this->once())
             ->method('getValue')
-            ->with('lineItemsByIds')
+            ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn([new \stdClass(), new \stdClass()]);
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(
-            sprintf(
-                'Element lineItemsByIds was expected to contain %s objects',
-                ProductLineItemInterface::class
-            )
-        );
 
         $resultRecord
             ->expects($this->never())
@@ -144,7 +136,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $resultRecord
             ->expects($this->once())
             ->method('getValue')
-            ->with('lineItemsByIds')
+            ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn([new ProductLineItemStub(10), new ProductLineItemStub(20)]);
 
         $this->expectException(\LogicException::class);
@@ -214,12 +206,13 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         return [
             'empty line items data' => [
                 'recordData' => [
-                    'lineItemsByIds' => [111 => $lineItem, 222 => $lineItem],
-                    'lineItemsDataByIds' => [],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItem, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
                 ],
                 'expectedRecordData' => [
-                    'lineItemsByIds' => [111 => $lineItem, 222 => $lineItem],
-                    'lineItemsDataByIds' => [],
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItem, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
                     'id' => $parentProduct->getId() . '_' . $productUnit->getCode(),
                     'productId' => $parentProduct->getId(),
                     'sku' => null,
@@ -235,8 +228,8 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
             ],
             'with quantity and subtotals' => [
                 'recordData' => [
-                    'lineItemsByIds' => [111 => $lineItem, 222 => $lineItem],
-                    'lineItemsDataByIds' => [
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItem, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
                             'name' => 'sample_name',
                             'id' => '111',
@@ -248,8 +241,9 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     ],
                 ],
                 'expectedRecordData' => [
-                    'lineItemsByIds' => [111 => $lineItem, 222 => $lineItem],
-                    'lineItemsDataByIds' => [
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItem, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
                             'name' => 'sample_name',
                             'id' => '111',
@@ -291,8 +285,12 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
             ],
             'with discount' => [
                 'recordData' => [
-                    'lineItemsByIds' => [111 => $lineItem, 222 => $lineItem, 333 => $lineItem],
-                    'lineItemsDataByIds' => [
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [
+                        111 => $lineItem,
+                        222 => $lineItem,
+                        333 => $lineItem
+                    ],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
                             'name' => 'sample_name',
                             'id' => '111',
@@ -314,8 +312,13 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     ],
                 ],
                 'expectedRecordData' => [
-                    'lineItemsByIds' => [111 => $lineItem, 222 => $lineItem, 333 => $lineItem],
-                    'lineItemsDataByIds' => [
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [
+                        111 => $lineItem,
+                        222 => $lineItem,
+                        333 => $lineItem
+                    ],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
                             'name' => 'sample_name',
                             'id' => '111',
@@ -380,12 +383,13 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
             ],
             'with image' => [
                 'recordData' => [
-                    'lineItemsByIds' => [111 => $lineItemWithImage, 222 => $lineItem],
-                    'lineItemsDataByIds' => [],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItemWithImage, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
                 ],
                 'expectedRecordData' => [
-                    'lineItemsByIds' => [111 => $lineItemWithImage, 222 => $lineItem],
-                    'lineItemsDataByIds' => [],
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItemWithImage, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
                     'id' => $parentProductWithImage->getId() . '_' . $productUnit->getCode(),
                     'productId' => $parentProductWithImage->getId(),
                     'sku' => null,
@@ -401,13 +405,14 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
             ],
             'with filteredOut' => [
                 'recordData' => [
-                    'lineItemsByIds' => [111 => $lineItemWithImage, 222 => $lineItem],
-                    'lineItemsDataByIds' => [111 => ['id' => 111], 222 => ['id' => 222]],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItemWithImage, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [111 => ['id' => 111], 222 => ['id' => 222]],
                     'displayedLineItemsIds' => '111',
                 ],
                 'expectedRecordData' => [
-                    'lineItemsByIds' => [111 => $lineItemWithImage, 222 => $lineItem],
-                    'lineItemsDataByIds' => [111 => ['id' => 111], 222 => ['id' => 222]],
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [111 => $lineItemWithImage, 222 => $lineItem],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [111 => ['id' => 111], 222 => ['id' => 222]],
                     'displayedLineItemsIds' => '111',
                     'id' => $parentProductWithImage->getId() . '_' . $productUnit->getCode(),
                     'productId' => $parentProductWithImage->getId(),

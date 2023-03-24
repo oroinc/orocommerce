@@ -6,7 +6,7 @@
         src: obj.image,
         srcWebp: obj.imageWebp,
         placeholder: _metadata.image_placeholder,
-        productId: variantId ? variantId : productId,
+        productId: typeof variantId !== 'undefined' ? variantId : productId,
         title: sku,
         alt: name,
         isConfigurable: obj.isConfigurable,
@@ -17,10 +17,40 @@
             <% return _metadata.inventory_statuses[inventoryStatus] ? _metadata.inventory_statuses[inventoryStatus] : inventoryStatus %>
         <% } %>
 
-        <% if (!obj._isVariant) { %>
-            <% let productUrl = function (productId, variantId) { %>
-                <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
+        <% let productUrl = function (productId, variantId) { %>
+            <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
+        <% } %>
+
+        <% if (obj._isVariant) { %>
+            <div class="grid-line-items__row-item mobile-column show-in-tablet">
+                <span class="highlighted-in-mobile break-all"><%- sku %></span>
+                <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
+            </div>
+            <div class="grid-line-items__configuration shift-mobile-row">
+                <% _.each(productConfiguration, function(field) { %>
+                <div class="grid-line-items__field">
+                    <span class="grid-line-items__field-val"><%- field.label %>:</span>
+                    <span class="grid-line-items__field-val bold"><%- field.value %></span>
+                </div>
+                <% }) %>
+            </div>
+            <% if (notes) { %>
+            <div class="shift-mobile-row">
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
+            </div>
             <% } %>
+        <% } else if (obj._isKitItemLineItem) { %>
+            <div class="grid-line-items__row-item height-as-image-mobile">
+                <div data-role="kit-item-label" class="bold"><%= obj.kitItemLabel %>:</div>
+                <% if (name.length <= clipLength) { %>
+                    <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId)}) %>
+                <% } else { %>
+                <div class="grid-line-items__clip-container">
+                    <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrl(productId)}) %>
+                </div>
+                <% } %>
+            </div>
+        <% } else { %>
             <div class="grid-line-items__row-item height-as-image-mobile">
                 <% if (name.length <= clipLength) { %>
                     <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId, variantId)}) %>
@@ -55,24 +85,6 @@
                 <% }) %>
             </div>
             <% } %>
-            <% if (notes) { %>
-            <div class="shift-mobile-row">
-                <%= oroshoppinglist.renderNotes({notes: notes}) %>
-            </div>
-            <% } %>
-        <% } else { %>
-            <div class="grid-line-items__row-item mobile-column show-in-tablet">
-                <span class="highlighted-in-mobile break-all"><%- sku %></span>
-                <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
-            </div>
-            <div class="grid-line-items__configuration shift-mobile-row">
-                <% _.each(productConfiguration, function(field) { %>
-                <div class="grid-line-items__field">
-                    <span class="grid-line-items__field-val"><%- field.label %>:</span>
-                    <span class="grid-line-items__field-val bold"><%- field.value %></span>
-                </div>
-                <% }) %>
-            </div>
             <% if (notes) { %>
             <div class="shift-mobile-row">
                 <%= oroshoppinglist.renderNotes({notes: notes}) %>

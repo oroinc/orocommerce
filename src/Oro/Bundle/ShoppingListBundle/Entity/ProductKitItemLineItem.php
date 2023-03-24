@@ -12,7 +12,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 
 /**
  * Represents a line item of the product kit item.
@@ -29,7 +29,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  *      }
  * )
  */
-class ProductKitItemLineItem implements ExtendEntityInterface, ProductLineItemInterface
+class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLineItemInterface
 {
     use ExtendEntityTrait;
 
@@ -41,7 +41,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductLineItemIn
     protected ?int $id = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShoppingListBundle\Entity\LineItem", inversedBy="kitItemLineItems")
+     * @ORM\ManyToOne(targetEntity="LineItem", inversedBy="kitItemLineItems")
      * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={

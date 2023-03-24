@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
@@ -14,17 +15,25 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  */
 class DatagridLineItemsDataPricingListener
 {
-    /** @var FrontendProductPricesDataProvider */
-    private $frontendProductPricesDataProvider;
+    public const PRICE_VALUE = 'priceValue';
+    public const SUBTOTAL_VALUE = 'subtotalValue';
+    public const PRICE = 'price';
+    public const SUBTOTAL = 'subtotal';
+    public const CURRENCY = 'currency';
 
-    /** @var NumberFormatter */
-    private $numberFormatter;
+    private FrontendProductPricesDataProvider $frontendProductPricesDataProvider;
+
+    private UserCurrencyManager $userCurrencyManager;
+
+    private NumberFormatter $numberFormatter;
 
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
+        UserCurrencyManager $userCurrencyManager,
         NumberFormatter $numberFormatter
     ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->numberFormatter = $numberFormatter;
     }
 
@@ -32,24 +41,25 @@ class DatagridLineItemsDataPricingListener
     {
         $lineItems = $event->getLineItems();
         $matchedPrices = $this->frontendProductPricesDataProvider->getProductsMatchedPrice($lineItems);
+        $currency = $this->userCurrencyManager->getUserCurrency();
 
         foreach ($lineItems as $lineItem) {
             $productPrice = $this->getPrice($lineItem, $matchedPrices);
-            if (!$productPrice) {
-                continue;
-            }
-
-            $price = $productPrice->getValue();
-            $currency = $productPrice->getCurrency();
-            $subtotal = $price * $lineItem->getQuantity();
+            $priceValue = $productPrice?->getValue();
+            $subtotalValue = $priceValue !== null ? $priceValue * (float)$lineItem->getQuantity() : null;
 
             $event->addDataForLineItem(
-                $lineItem->getId(),
+                (int) $lineItem->getEntityIdentifier(),
                 [
-                    'price' => $this->numberFormatter->formatCurrency($price, $currency),
-                    'subtotal' => $this->numberFormatter->formatCurrency($subtotal, $currency),
-                    'currency' => $currency,
-                    'subtotalValue' => $subtotal,
+                    self::PRICE_VALUE => $priceValue,
+                    self::CURRENCY => $currency,
+                    self::SUBTOTAL_VALUE => $subtotalValue,
+                    self::PRICE => $priceValue !== null
+                        ? $this->numberFormatter->formatCurrency($priceValue, $currency)
+                        : null,
+                    self::SUBTOTAL => $subtotalValue
+                        ? $this->numberFormatter->formatCurrency($subtotalValue, $currency)
+                        : null,
                 ]
             );
         }

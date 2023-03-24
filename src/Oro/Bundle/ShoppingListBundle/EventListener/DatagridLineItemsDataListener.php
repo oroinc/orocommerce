@@ -12,19 +12,11 @@ class DatagridLineItemsDataListener
 {
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
-        $lineItems = $event->getLineItems();
-        if (!$lineItems) {
-            return;
-        }
+        foreach ($event->getLineItems() as $lineItem) {
+            if (!$lineItem instanceof LineItem) {
+                continue;
+            }
 
-        $firstLineItem = reset($lineItems);
-        if (!($firstLineItem instanceof LineItem)) {
-            throw new \LogicException(
-                sprintf('%s entity was expected, got %s', LineItem::class, \get_class($firstLineItem))
-            );
-        }
-
-        foreach ($lineItems as $lineItem) {
             $event->addDataForLineItem($lineItem->getEntityIdentifier(), ['notes' => (string)$lineItem->getNotes()]);
         }
     }

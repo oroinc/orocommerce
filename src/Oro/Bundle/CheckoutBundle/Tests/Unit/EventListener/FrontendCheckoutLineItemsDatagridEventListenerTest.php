@@ -14,6 +14,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsDataOnResultAfterListener;
 use Oro\Component\Testing\ReflectionUtil;
 
 class FrontendCheckoutLineItemsDatagridEventListenerTest extends \PHPUnit\Framework\TestCase
@@ -103,7 +104,9 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends \PHPUnit\Framew
         $lineItem1 = $this->getCheckoutLineItem(4, 'sku-4', 'item', 'flat_rate_1', 'primary');
         $lineItem2 = $this->getCheckoutLineItem(1, 'sku-1', 'item', 'flat_rate_2', 'primary');
 
-        $record = new ResultRecord(['id' => 4, 'lineItemsByIds' => [$lineItem1, $lineItem2]]);
+        $record = new ResultRecord(
+            ['id' => 4, LineItemsDataOnResultAfterListener::LINE_ITEMS => [$lineItem1, $lineItem2]]
+        );
 
         $availableShippingMethods = [
             'flat_rate_1' => [

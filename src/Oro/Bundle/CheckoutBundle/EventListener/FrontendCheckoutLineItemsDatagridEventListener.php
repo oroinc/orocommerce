@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingMe
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsDataOnResultAfterListener;
 
 /**
  * Adds available line item shipping methods to the datagrid records
@@ -68,11 +69,8 @@ class FrontendCheckoutLineItemsDatagridEventListener
 
         foreach ($records as $record) {
             $id = $record->getValue('id');
-            $lineItems = $record->getValue('lineItemsByIds') ?? [];
-
-            $lineItems = array_filter($lineItems, function ($lineItem) use ($id) {
-                return $lineItem->getId() === $id;
-            });
+            $lineItems = $record->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS) ?? [];
+            $lineItems = array_filter($lineItems, static fn ($lineItem) => $lineItem->getId() === $id);
 
             $lineItem = !empty($lineItems) ? reset($lineItems) : $this->findLineItem($id);
 

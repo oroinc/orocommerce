@@ -35,7 +35,6 @@ class DatagridLineItemsDataListener
 
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
-        /** @var ProductLineItemInterface $lineItem */
         foreach ($event->getLineItems() as $lineItem) {
             $lineItemId = $lineItem->getEntityIdentifier();
             $product = $lineItem->getProduct();
@@ -57,6 +56,8 @@ class DatagridLineItemsDataListener
                 if ($unitPrecision !== null) {
                     $lineItemData['units'][$unitCode] = ['precision' => $unitPrecision];
                 }
+
+                $lineItemData['isConfigurable'] = $product->isConfigurable();
 
                 $parentProduct = $lineItem->getParentProduct();
                 if ($parentProduct) {

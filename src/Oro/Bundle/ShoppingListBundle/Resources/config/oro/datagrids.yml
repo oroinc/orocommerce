@@ -356,15 +356,7 @@ datagrids:
             type: orm
             query:
                 select:
-                    - >
-                        (
-                            CASE WHEN parentProduct.id IS NOT NULL
-                            THEN
-                                true
-                            ELSE
-                                CASE WHEN product.type = 'configurable' THEN true ELSE false END
-                            END
-                        ) as isConfigurable
+                    - COALESCE(parentProduct.type, product.type) as type
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
                     - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
@@ -459,6 +451,7 @@ datagrids:
         properties:
             productId: ~
             variantId: ~
+            kitItemLabel: ~
             name: ~
             image: ~
             imageWebp: ~
@@ -466,6 +459,8 @@ datagrids:
             initialSubtotal: ~
             discount: ~
             isConfigurable:
+                frontend_type: boolean
+            isKit:
                 frontend_type: boolean
             isUpcoming:
                 frontend_type: boolean
