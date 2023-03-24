@@ -42,9 +42,8 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
     {
         $messageBody = $message->getBody();
 
-        $result = $this->jobRunner->runUnique(
-            $message->getMessageId(),
-            sprintf('%s:%s', Topic::getName(), $messageBody[Topic::CONTENT_NODE_ID]),
+        $result = $this->jobRunner->runUniqueByMessage(
+            $message,
             function (JobRunner $jobRunner) use ($messageBody) {
                 $contentNode = $this->getContentNode($messageBody[Topic::CONTENT_NODE_ID]);
                 if ($contentNode) {

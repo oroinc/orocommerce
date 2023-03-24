@@ -38,7 +38,6 @@ Example:
             "name": "some name",
             "priceListCurrencies": ["EUR", "USD"],
             "active": true,
-            "default": false,
             "productAssignmentRule": "product.category.id > 0"
         },
         "relationships": {

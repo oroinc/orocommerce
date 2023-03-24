@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Layout\DataProvider;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -15,8 +12,6 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItemDataProvider;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendRelatedProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -26,52 +21,26 @@ class RelatedItemDataProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private ?ConfigManager $configManager;
-    private ?RelatedItemDataProvider $provider;
+    private ConfigManager $configManager;
+    private RelatedItemDataProvider $provider;
 
-    /**
-     * @inheritDoc
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
-        $this->loadFixtures([
-            new class implements FixtureInterface, ContainerAwareInterface, DependentFixtureInterface {
-                use ContainerAwareTrait;
+        $this->loadFixtures([LoadFrontendRelatedProductData::class]);
+        self::getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
+        self::getContainer()->get('event_dispatcher')->dispatch(
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
+        );
 
-                /**
-                 * @inheritDoc
-                 */
-                public function getDependencies()
-                {
-                    return [
-                        LoadFrontendRelatedProductData::class,
-                    ];
-                }
-
-                /**
-                 * {@inheritdoc}
-                 */
-                public function load(ObjectManager $manager)
-                {
-                    $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
-                    $this->container->get('event_dispatcher')->dispatch(
-                        new ReindexationRequestEvent([Product::class], [], [], false),
-                        ReindexationRequestEvent::EVENT_NAME
-                    );
-                }
-            },
-        ]);
-
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
         $this->provider = self::getContainer()->get('oro_product.tests.related_item.related_product.data_provider');
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function tearDown(): void
     {
         $this->configManager->set(
@@ -83,10 +52,7 @@ class RelatedItemDataProviderTest extends WebTestCase
             Configuration::RELATED_PRODUCTS_MAX_ITEMS_COUNT
         );
         $this->configManager->flush();
-        unset(
-            $this->configManager,
-            $this->provider
-        );
+
         parent::tearDown();
     }
 

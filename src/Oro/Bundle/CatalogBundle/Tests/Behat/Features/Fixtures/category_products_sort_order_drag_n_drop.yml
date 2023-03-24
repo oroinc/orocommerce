@@ -1,0 +1,18 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    - '@OroProductBundle:product_sort_order.yml'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localNewCategory:
+        string: 'NewCategory'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    newCategory:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
+            - addProduct: ['@product2']
+            - addProduct: ['@product4']
+            - addProduct: ['@product5']

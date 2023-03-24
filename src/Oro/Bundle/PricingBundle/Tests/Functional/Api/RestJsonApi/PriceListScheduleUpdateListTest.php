@@ -7,7 +7,6 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
 
 /**
@@ -21,9 +20,14 @@ class PriceListScheduleUpdateListTest extends RestJsonApiUpdateListTestCase
         $this->loadFixtures([LoadPriceListSchedules::class]);
     }
 
-    private function getPriceListRepository(): PriceListRepository
+    private function getFirstPriceList(): PriceList
     {
-        return $this->getEntityManager()->getRepository(PriceList::class);
+        return $this->getEntityManager()->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->orderBy('p.id')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getSingleResult();
     }
 
     private function getCombinedPriceListActivationRuleRepository(): CombinedPriceListActivationRuleRepository
@@ -338,7 +342,7 @@ class PriceListScheduleUpdateListTest extends RestJsonApiUpdateListTestCase
 
     public function testCombinedPriceListBuildOnScheduleCreate()
     {
-        $priceList = $this->getPriceListRepository()->getDefault();
+        $priceList = $this->getFirstPriceList();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
         self::assertCount(0, $createdActivationRules);

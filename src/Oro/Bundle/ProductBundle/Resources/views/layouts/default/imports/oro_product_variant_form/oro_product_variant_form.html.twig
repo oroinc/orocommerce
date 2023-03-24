@@ -1,15 +1,25 @@
 {% block oro_product_product_variant_frontend_variant_field_widget %}
-    {%- if form.parent is empty -%}
-        {{ form_errors(form) }}
-    {%- endif -%}
-    {% set contextAttr = attr %}
-    {% for child in form.children %}
-        {% set attr = child.vars.attr %}
-        {% set attr = layout_attr_defaults(attr, {
-            'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode
-        }) %}
-        {{ form_row(child, {attr: attr}) }}
-    {% endfor %}
-    {% set attr = contextAttr %}
-    {{- form_rest(form) -}}
+    <div class="grid product-view__variant-field">
+        {%- if form.parent is empty -%}
+            {{ form_errors(form) }}
+        {%- endif -%}
+        {% set contextAttr = attr %}
+        {% for child in form.children %}
+            {% set attr = child.vars.attr %}
+            {% set attr = layout_attr_defaults(attr, {
+                'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode
+            }) %}
+
+            {% set row_attr = child.vars.row_attr %}
+            {% set row_attr = layout_attr_defaults(row_attr, {
+                '~class': ' grid-col-12'
+            }) %}
+            {{ form_row(child, {
+                attr: attr,
+                row_attr: row_attr
+            }) }}
+        {% endfor %}
+        {% set attr = contextAttr %}
+        {{- form_rest(form) -}}
+    </div>
 {% endblock %}

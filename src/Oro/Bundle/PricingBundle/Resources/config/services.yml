@@ -429,7 +429,7 @@ services:
         arguments:
             - '@request_stack'
             - '@doctrine'
-            - '@oro_security.token_accessor'
+            - '@oro_security.acl_helper'
 
     Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface:
         alias: oro_pricing.model.price_list_request_handler
@@ -1438,11 +1438,6 @@ services:
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: price_list }
 
-    oro_pricing.provider.price_list_provider:
-        class: Oro\Bundle\PricingBundle\Provider\PriceListProvider
-        arguments:
-            - '@doctrine'
-
     oro_pricing.handler.product_price_handler:
         class: Oro\Bundle\PricingBundle\Handler\ProductPriceHandler
         parent: oro_form.form.handler.default
@@ -1480,12 +1475,13 @@ services:
         arguments:
             - '@oro_config.manager'
 
-    oro_pricing.provider.price_list_default_value:
-        class: 'Oro\Bundle\PricingBundle\Provider\PriceListDefaultValueProvider'
+    oro_pricing.provider.price_list_value:
+        class: 'Oro\Bundle\PricingBundle\Provider\PriceListValueProvider'
         public: true
         arguments:
-            - '@oro_pricing.provider.price_list_provider'
             - '@oro_pricing.shard_manager'
+            - '@doctrine'
+            - '@oro_security.acl_helper'
 
     oro_pricing.entity_listener.remove_price_list_from_configuration:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\RemoveFromConfigurationPriceListEntityListener'

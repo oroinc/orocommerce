@@ -3,12 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Async\Topic;
 
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
+use Oro\Component\MessageQueue\Topic\JobAwareTopicInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Updates combined price lists in case of changes in structure of original price lists.
  */
-class MassRebuildCombinedPriceListsTopic extends AbstractTopic
+class MassRebuildCombinedPriceListsTopic extends AbstractTopic implements JobAwareTopicInterface
 {
     public const NAME = 'oro_pricing.price_lists.cpl.mass_rebuild';
 
@@ -62,5 +63,22 @@ class MassRebuildCombinedPriceListsTopic extends AbstractTopic
     public static function getDescription(): string
     {
         return 'Updates combined price lists in case of changes in structure of original price lists.';
+    }
+
+    public function createJobName($messageBody): string
+    {
+        $data = [];
+        foreach ($messageBody as $key => $value) {
+            if (is_object($value)) {
+                if (method_exists($value, 'getId')) {
+                    $value = $value->getId();
+                } else {
+                    $value = serialize($value);
+                }
+            }
+            $data[$key] = $value;
+        }
+
+        return self::getName() . ':' . md5(json_encode($data));
     }
 }

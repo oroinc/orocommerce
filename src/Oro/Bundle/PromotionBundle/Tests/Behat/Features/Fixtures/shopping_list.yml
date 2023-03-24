@@ -115,7 +115,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist:
         name: 'pricelist'
-        default: true
         __calls:
             - setCurrencies: [['USD']]
         active: true

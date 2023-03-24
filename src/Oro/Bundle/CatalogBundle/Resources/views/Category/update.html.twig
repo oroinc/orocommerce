@@ -87,6 +87,49 @@
     {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.catalog.sections.additional'|trans)) %}
 
     {% if is_granted('oro_product_update') %}
+        {% set categoryId = entityId ? entityId : 0 %}
+        {% if categoryId %}
+            {% set categoryTitle = entity.defaultTitle.string|default('N/A'|trans) %}
+            {% set sortProductsAction = {
+                launcherOptions: {
+                    ariaLabel: 'oro.catalog.product.grid.action.sort_products.aria_label'|trans({'{{ category }}': categoryTitle}),
+                },
+                frontend_options: {
+                    title: 'oro.catalog.product.sort_products.dialog.title'|trans({'{{ category }}': categoryTitle}),
+                },
+                entityId: categoryId
+            } %}
+        {% endif %}
+
+        {% set categoryProductsGrid %}
+            <div data-ignore-form-state-change>
+                {{ dataGrid.renderGrid('category-products-grid', {
+                    category_id: categoryId
+                }, {
+                    cssClass: 'inner-grid',
+                    jsmodules: ['oroproduct/js/datagrid/builder/sort-products-action-builder'],
+                    gridBuildersOptions: {
+                        sortProductsAction: {
+                            inputAction: {
+                                route: 'oro_catalog_category_update',
+                                params: {id: '$id'},
+                                (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTargetFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.vars.full_name
+                            }|json_encode,
+                            autoExecute: triggerSortOrderDialog|default(''),
+                            warnings: {
+                                limit_warning: 'oro.catalog.product.sort_products.dialog.limit_warning'
+                            },
+                            route: 'oro_catalog_category_products_manage_sort_order_widget',
+                            route_parameters: {
+                                id: categoryId,
+                                params: {category_id: categoryId}
+                            }
+                        }|merge(sortProductsAction|default({}))
+                    }
+                }) }}
+            </div>
+        {% endset %}
+
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.entity_plural_label'|trans,
             'subblocks':
@@ -94,7 +137,7 @@
                 {
                     'title' : null,
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('category-products-grid', { category_id: entityId ? entityId : 0 }, { cssClass: 'inner-grid' })]
+                    'data' : [categoryProductsGrid]
                 }
             ]
         }]) %}

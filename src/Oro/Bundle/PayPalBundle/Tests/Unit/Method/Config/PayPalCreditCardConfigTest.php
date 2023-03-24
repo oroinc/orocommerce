@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -11,15 +12,13 @@ class PayPalCreditCardConfigTest extends AbstractPayPalConfigTest
 {
     use EntityTrait;
 
-    /**
-     * @var PayPalCreditCardConfigInterface
-     */
+    /** @var PayPalCreditCardConfigInterface */
     protected $config;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getPaymentConfig()
+    protected function getPaymentConfig(): PaymentConfigInterface
     {
         $params = [
             PayPalCreditCardConfig::FIELD_LABEL => 'test label',

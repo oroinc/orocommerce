@@ -5,14 +5,16 @@ namespace Oro\Bundle\PricingBundle\Async\Topic;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
+use Oro\Component\MessageQueue\Topic\JobAwareTopicInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Resolves flat prices.
  */
-class ResolveFlatPriceTopic extends AbstractTopic
+class ResolveFlatPriceTopic extends AbstractTopic implements JobAwareTopicInterface
 {
     public const NAME = 'oro_pricing.flat_price.resolve';
 
@@ -56,5 +58,10 @@ class ResolveFlatPriceTopic extends AbstractTopic
 
                 return $products;
             });
+    }
+
+    public function createJobName($messageBody): string
+    {
+        return sprintf('%s_%s', self::getName(), UUIDGenerator::v4());
     }
 }

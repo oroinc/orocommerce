@@ -89,7 +89,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         return $website;
     }
 
-    private function getJobAndRunUnique(string $messageId): Job
+    private function getJobAndRunUnique($message): Job
     {
         $rootJob = new Job();
         $rootJob->setId(100);
@@ -98,9 +98,9 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
         $job->setRootJob($rootJob);
 
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
-            ->with($messageId, GenerateSitemapTopic::getName())
-            ->willReturnCallback(function ($jobId, $name, $callback) use ($job) {
+            ->method('runUniqueByMessage')
+            ->with($message)
+            ->willReturnCallback(function ($message, $callback) use ($job) {
                 return $callback($this->jobRunner, $job);
             });
 
@@ -128,7 +128,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getAvailableWebsites')
             ->willReturn([$website]);
 
-        $job = $this->getJobAndRunUnique($messageId);
+        $job = $this->getJobAndRunUnique($message);
 
         $dependentJobContext = new DependentJobContext($job->getRootJob());
         $this->dependentJob->expects(self::once())
@@ -183,7 +183,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getAvailableWebsites')
             ->willReturn($websites);
 
-        $job = $this->getJobAndRunUnique($messageId);
+        $job = $this->getJobAndRunUnique($message);
 
         $dependentJobContext = new DependentJobContext($job->getRootJob());
         $this->dependentJob->expects(self::once())

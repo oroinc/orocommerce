@@ -17,12 +17,18 @@ Feature: Product collection grid pagination
     And Grid Pagination field should has 2 value
     And I click "Cancel"
     Examples:
-      |tabName       |
-      |Manually Added|
-      |Excluded      |
+      | tabName        |
+      | Manually Added |
+      | Excluded       |
 
   Scenario: All Added Grid pagination follow after product collection save
-    Given I am on Content Node page and added Product Collection variant
+    Given I go to Marketing/Web Catalogs
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click on "Remove Variant Button"
+    And I click on "Show Variants Dropdown"
+    And I click "Add Product Collection"
+    When I click "Content Variants"
+    Then I should see 1 elements "Product Collection Variant Label"
     And I click on "Advanced Filter"
     And I should see "Drag And Drop From The Left To Start Working"
     And I drag and drop "Field Condition" on "Drop condition here"
@@ -32,12 +38,11 @@ Feature: Product collection grid pagination
     And I click on "Preview Results"
     And I save form
     And I click "Content Variants"
-    And I click on "First Content Variant Expand Button"
-    And Grid Pagination field should has 1 value
-    Then I press next page button in grid "Active Grid"
-    And Grid Pagination field should has 2 value
-    Then I press next page button in grid "Active Grid"
-    And Grid Pagination field should has 3 value
-    Then I press previous page button in grid "Active Grid"
-    And Grid Pagination field should has 2 value
-    And I click "Cancel"
+    When I click on "First Content Variant Expand Button"
+    Then Grid Pagination field should has 1 value
+    When I press next page button in grid "Active Grid"
+    Then Grid Pagination field should has 2 value
+    When I press next page button in grid "Active Grid"
+    Then Grid Pagination field should has 3 value
+    When I press previous page button in grid "Active Grid"
+    Then Grid Pagination field should has 2 value

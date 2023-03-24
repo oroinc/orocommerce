@@ -48,4 +48,12 @@ class SetCustomerGroupProductVisibilityScope extends AbstractSetVisibilityScope
             'scope'   => $scope,
         ];
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function isExistingVisibilityCheckApplicable(VisibilityInterface $entity): bool
+    {
+        return null !== $entity->getProduct()?->getId();
+    }
 }

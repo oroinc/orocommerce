@@ -31,6 +31,12 @@
     '~class': ' product-view__attribute-box-wrapper product-view__attribute-box-related-items'
     }) %}
 
+    {% if block.children|length > 1 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__related-items-titles'
+        }) %}
+    {% endif %}
+
     {% set content = block_widget(block) %}
     {% if content|trim|length > 0 %}
     <div {{ block('block_attributes') }}>

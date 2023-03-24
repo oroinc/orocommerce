@@ -123,13 +123,9 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
             });
 
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
-            ->willReturnCallback(function (string $ownerId, string $rootJobName, callable $callback) {
-                self::assertEquals($this->message->getMessageId(), $ownerId);
-                self::assertStringContainsString(
-                    ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-                    $rootJobName
-                );
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(function ($actualMessage, callable $callback) {
+                self::assertEquals($actualMessage, $this->message);
 
                 return $callback($this->jobRunner, new Job());
             });
@@ -154,7 +150,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
             ->willReturn([1, 2, 3]);
 
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willReturn(null);
 
         self::assertEquals(
@@ -179,7 +175,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
             ->willReturn([1, 2, 3]);
 
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willThrowException($exception);
 
         $this->loggerMock->expects(self::once())

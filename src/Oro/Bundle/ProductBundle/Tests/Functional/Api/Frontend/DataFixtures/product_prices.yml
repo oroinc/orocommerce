@@ -6,6 +6,11 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
         name: 'Combined Price List'
         enabled: true
 
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    first_combined_price:
+        priceList: '@combinedPriceList'
+        website: '@website'
+
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
     product1_price1:
         pricelist: '@combinedPriceList'

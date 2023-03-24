@@ -14,22 +14,16 @@ class RelatedProductsConfigProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    private ?ConfigManager $configManager;
-    private ?RelatedProductsConfigProvider $provider;
+    private ConfigManager $configManager;
+    private RelatedProductsConfigProvider $provider;
 
-    /**
-     * @inheritDoc
-     */
     protected function setUp(): void
     {
         parent::setUp();
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
         $this->provider = self::getContainer()->get('oro_product.tests.related_item.related_product.config_provider');
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function tearDown(): void
     {
         $this->configManager->set(
@@ -41,10 +35,7 @@ class RelatedProductsConfigProviderTest extends WebTestCase
             Configuration::RELATED_PRODUCTS_MAX_ITEMS_COUNT
         );
         $this->configManager->flush();
-        unset(
-            $this->configManager,
-            $this->provider
-        );
+
         parent::tearDown();
     }
 

@@ -68,9 +68,8 @@ class VersionedFlatPriceProcessor implements MessageProcessorInterface, TopicSub
             $priceLists = $body['priceLists'];
 
             $closure = fn (JobRunner $jobRunner, Job $job) => $this->doJob($job, $version, $priceLists);
-            $name = ResolveFlatPriceTopic::getName() . ':v' . $version;
 
-            return $this->jobRunner->runUnique($message->getMessageId(), $name, $closure) ? self::ACK : self::REJECT;
+            return $this->jobRunner->runUniqueByMessage($message, $closure) ? self::ACK : self::REJECT;
         } catch (\Exception $e) {
             $this->logger?->error(
                 'Unexpected exception occurred during queue message processing',

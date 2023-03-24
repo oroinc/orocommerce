@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -46,7 +47,7 @@ class PriceListsFilterTest extends \PHPUnit\Framework\TestCase
 
     public function testInitEntityAliasExceptions()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Parameter relation_class_name is required');
 
         $this->priceListsFilter->init('price_list', []);

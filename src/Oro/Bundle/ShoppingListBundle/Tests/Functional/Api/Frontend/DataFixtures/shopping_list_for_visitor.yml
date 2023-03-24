@@ -7,7 +7,6 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
-    - Oro\Bundle\PricingBundle\Tests\Functional\Api\DataFixtures\LoadCombinedPriceList
 
 Oro\Bundle\WebsiteBundle\Entity\Website:
     website1:
@@ -114,6 +113,18 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         lineItems: ['@line_item3']
         organization: '@organization'
         website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    default_combined_price_list:
+        name: 'combined_price_list'
+        enabled: true
+        __calls:
+            -   setCurrencies: [ ['USD'] ]
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    first_combined_price:
+        priceList: '@default_combined_price_list'
+        website: '@website'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
     product1_price_item:
