@@ -28,6 +28,9 @@ features:
             - application_menu.sales_tab.order_list
         configuration:
             - oro_order.backend_product_visibility
+        dashboard_widgets:
+            - sales_orders_volume
+            - sales_orders_number
 
     create_orders:
         label: oro.order.feature.create.label

@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -108,33 +109,17 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $regularCustomerUser = $this->getCustomerUser($manager);
         $guestCustomerUser = $this->getCustomerUser($manager, true);
 
+        $orderMetadata = $manager->getClassMetadata(Order::class);
+        $this->disablePrePersistCallback($orderMetadata);
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
             $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
             $order = new Order();
 
-            $billingAddress = [
-                'label' => $row['billingAddressLabel'],
-                'country' => $row['billingAddressCountry'],
-                'city' => $row['billingAddressCity'],
-                'region' => $row['billingAddressRegion'],
-                'street' => $row['billingAddressStreet'],
-                'postalCode' => $row['billingAddressPostalCode'],
-                'firstName' => $customerUser->getFirstName(),
-                'lastName' => $customerUser->getLastName(),
-            ];
-
-            $shippingAddress = [
-                'label' => $row['shippingAddressLabel'],
-                'country' => $row['shippingAddressCountry'],
-                'city' => $row['shippingAddressCity'],
-                'region' => $row['shippingAddressRegion'],
-                'street' => $row['shippingAddressStreet'],
-                'postalCode' => $row['shippingAddressPostalCode'],
-                'firstName' => $customerUser->getFirstName(),
-                'lastName' => $customerUser->getLastName(),
-            ];
+            $billingAddress = $this->getBillingAddressData($row, $customerUser);
+            $shippingAddress = $this->getShippingAddressData($row, $customerUser);
 
             $total = MultiCurrency::create($row['total'], $row['currency']);
             $baseTotal = $rateConverter->getBaseCurrencyAmount($total);
@@ -143,6 +128,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $subtotal = MultiCurrency::create($row['subtotal'], $row['currency']);
             $baseSubtotal = $rateConverter->getBaseCurrencyAmount($subtotal);
             $subtotal->setBaseCurrencyValue($baseSubtotal);
+
+            $randomDateTime = $this->getRandomDateTime();
 
             $order
                 ->setOwner($user)
@@ -159,7 +146,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setTotalObject($total)
                 ->addLineItem($this->getOrderLineItem($manager))
                 ->setSubtotalObject($subtotal)
-                ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager));
+                ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager))
+                ->setCreatedAt($randomDateTime)
+                ->setUpdatedAt($randomDateTime);
 
             $paymentTermAccessor->setPaymentTerm($order, $this->getPaymentTerm($manager, $row['paymentTerm']));
 
@@ -171,12 +160,43 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             if (!empty($row['customerNotes'])) {
                 $order->setCustomerNotes($row['customerNotes']);
             }
+
             $manager->persist($order);
         }
 
         fclose($handler);
 
+        $this->enablePrePersistCallback($orderMetadata);
+
         $manager->flush();
+    }
+
+    private function getBillingAddressData(array $row, CustomerUser $customerUser): array
+    {
+        return [
+            'label' => $row['billingAddressLabel'],
+            'country' => $row['billingAddressCountry'],
+            'city' => $row['billingAddressCity'],
+            'region' => $row['billingAddressRegion'],
+            'street' => $row['billingAddressStreet'],
+            'postalCode' => $row['billingAddressPostalCode'],
+            'firstName' => $customerUser->getFirstName(),
+            'lastName' => $customerUser->getLastName(),
+        ];
+    }
+
+    private function getShippingAddressData(array $row, CustomerUser $customerUser): array
+    {
+        return [
+            'label' => $row['shippingAddressLabel'],
+            'country' => $row['shippingAddressCountry'],
+            'city' => $row['shippingAddressCity'],
+            'region' => $row['shippingAddressRegion'],
+            'street' => $row['shippingAddressStreet'],
+            'postalCode' => $row['shippingAddressPostalCode'],
+            'firstName' => $customerUser->getFirstName(),
+            'lastName' => $customerUser->getLastName(),
+        ];
     }
 
     protected function createOrderAddress(EntityManagerInterface $manager, array $address): OrderAddress
@@ -256,5 +276,32 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         }
 
         return $this->websites[$name];
+    }
+
+    private function enablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        array_unshift($lifecycleCallbacks['prePersist'], 'prePersist');
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function disablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        $lifecycleCallbacks['prePersist'] = array_diff($lifecycleCallbacks['prePersist'], ['prePersist']);
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function getRandomDateTime(): \DateTime
+    {
+        return new \DateTime(
+            sprintf(
+                '-%sday %s:%s',
+                random_int(0, 7),
+                random_int(0, 23),
+                random_int(0, 59)
+            ),
+            new \DateTimeZone('UTC')
+        );
     }
 }

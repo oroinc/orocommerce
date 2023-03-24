@@ -22,7 +22,6 @@ Feature: Price List ACL
       | Create Price List |
     And I should see following actions for first price list in grid:
       | Disable     |
-      | Set default |
       | View        |
       | Edit        |
       | Delete      |
@@ -64,7 +63,6 @@ Feature: Price List ACL
       | Delete   |
     And I should see following actions for first price list in grid:
       | Disable     |
-      | Set default |
       | View        |
       | Edit        |
 
@@ -82,7 +80,6 @@ Feature: Price List ACL
     And I should not see following actions for first price list in grid:
       | Disable     |
       | Edit        |
-      | Set default |
       | Delete      |
     And I should see following actions for first price list in grid:
       | View        |

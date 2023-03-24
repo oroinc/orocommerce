@@ -109,10 +109,12 @@ oro:
             label:                        'Order Type'
             primary_order:                'Primary Order'
             sub_order:                    'Sub-Order'
-
         subtotal:
             label: Subtotal
             base.label:                   'Subtotal In Base Currency'
+        subtotal_with_discounts:
+            label: 'Subtotal With Discounts'
+            description: 'A subtotal amount is the sum of the line item cost including order discounts excluding shipping discounts.'
         total:
             label: Total
         base.label:                       'Total In Base Currency'
@@ -570,6 +572,33 @@ oro:
                     label:      Shipping Cost
                 shipping_method:
                     label:      Shipping Method
+
+        dashboard:
+            widget:
+                sales_orders_volume:
+                    label: Sales Orders Volume
+                    description: This widget displays a configurable chart based on total sales order amounts for selected period of time to easily assess the sales order volume over a period of time, and to compare sales order volume over multiple periods of time if needed.
+                    configuration_form:
+                        date_range_one.label: Date Range 1
+                        date_range_two.label: Date Range 2
+                        date_range_three.label: Date Range 3
+                        included_order_statuses.label: Included Order Statuses
+                        include_sub_orders.label: Include Sub-Orders
+                        order_total:
+                            label: Order Total
+                            choices:
+                                subtotal_with_discounts: Subtotal with applied discounts
+                                subtotal: Subtotal
+                                order_total: Order total
+                sales_orders_number:
+                    label: Sales Orders Number
+                    description: This widget displays a configurable chart based on number (count) of orders for selected period of time to easily assess the sales order number over a period of time, and to compare sales order number over multiple periods of time if needed.
+                    configuration_form:
+                        date_range_one.label: Date Range 1
+                        date_range_two.label: Date Range 2
+                        date_range_three.label: Date Range 3
+                        included_order_statuses.label: Included Order Statuses
+                        include_sub_orders.label: Include Sub-Orders
 
     frontend:
         order:

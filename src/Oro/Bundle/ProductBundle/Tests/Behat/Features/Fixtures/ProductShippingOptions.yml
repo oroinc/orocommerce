@@ -80,7 +80,6 @@ Oro\Bundle\CatalogBundle\Entity\Category:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist:
         name: 'Price List'
-        default: true
         __calls:
             - setCurrencies: [['USD']]
         active: true

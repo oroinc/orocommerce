@@ -288,6 +288,11 @@ services:
         tags:
             - { name: form.type }
 
+    oro_product.form.type.product_collection_segment_products_type:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentProductsType
+        tags:
+            - { name: form.type }
+
     oro_product.form.type.product_kit_item_collection:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemCollectionType
         tags:

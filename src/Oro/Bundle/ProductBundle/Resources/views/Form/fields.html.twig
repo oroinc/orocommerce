@@ -446,13 +446,61 @@
                                             }
                                         }
                                     }) }}
+
+                                    {% if form.vars.value is not empty and form.vars.value.id is not empty %}
+                                        {% set entityId = form.vars.value.id %}
+                                        {% set segmentTitle = form.vars.value.name %}
+                                        {% set sortProductsAction = {
+                                            launcherOptions: {
+                                                ariaLabel: 'oro.webcatalog.product_segment.grid.action.sort_products.aria_label'|trans({'{{ segment }}': segmentTitle}),
+                                            },
+                                            frontend_options: {
+                                                title: 'oro.webcatalog.product_segment.sort_products.dialog.title'|trans({'{{ segment }}': segmentTitle}),
+                                            },
+                                            entityId: entityId
+                                        } %}
+                                    {% endif %}
+
+                                    {% set productCollectionGridWidgetName = oro_datagrid_build_fullname('content-node-product-collection-widget-grid', scope) %}
+                                    {% set segmentDefinitionParameterKey = constant('Oro\\Bundle\\ProductBundle\\EventListener\\ProductCollectionContentVariantDatagridListener::SEGMENT_DEFINITION_PARAMETER_KEY') %}
+                                    {% set segmentIdParameterKey = constant('Oro\\Bundle\\ProductBundle\\EventListener\\ProductCollectionContentVariantDatagridListener::SEGMENT_ID_PARAMETER_KEY') %}
+                                    {% set widgetRouteParameters = widgetRouteParameters|merge({
+                                        renderParams: {
+                                            jsmodules: ['oroproduct/js/datagrid/builder/sort-products-collection-action-builder'],
+                                            gridBuildersOptions: {
+                                                sortProductsAction: {
+                                                    inputAction: {
+                                                        route: 'oro_content_node_update',
+                                                        params: {id: '$id'},
+                                                        (constant('Oro\\Bundle\\CatalogBundle\\EventListener\\SortOrderDialogTargetFormHandlerEventListener::SORT_ORDER_DIALOG_TARGET')): form.parent.vars.full_name|default('')
+                                                    }|json_encode,
+                                                    autoExecute: form.parent.vars.triggerSortOrderDialog|default(''),
+                                                    route: 'oro_product_collection_content_variant_manage_sort_order_widget',
+                                                    route_parameters: {
+                                                        id: form.parent.vars.value.id|default(0),
+                                                        gridName: productCollectionGridWidgetName,
+                                                        (segmentIdParameterKey ~ productCollectionGridWidgetName): segmentId,
+                                                        (segmentDefinitionParameterKey ~ productCollectionGridWidgetName): form.vars.segmentDefinition,
+                                                        (segmentDefinitionParameterKey ~ productCollectionGridWidgetName ~ ':incl'): form.includedProducts.vars.value,
+                                                        (segmentDefinitionParameterKey ~ productCollectionGridWidgetName ~ ':excl'): form.excludedProducts.vars.value,
+                                                        params: {
+                                                            content_variant_id: form.parent.vars.value.id|default(0),
+                                                        },
+                                                    },
+                                                    productCollectionSelectors: productCollectionApplyQueryComponentOptions.selectors,
+                                                }|merge(sortProductsAction|default({}))
+                                            }
+                                        }
+                                    }) %}
                                 {% endif %}
-                                {{ oro_widget_render({
-                                    'widgetType': 'block',
-                                    'url': path('oro_datagrid_widget', widgetRouteParameters),
-                                    'title': '',
-                                    'alias': gridWidgetAlias
-                                }) }}
+                                <div data-ignore-form-state-change>
+                                    {{ oro_widget_render({
+                                        'widgetType': 'block',
+                                        'url': path('oro_datagrid_widget', widgetRouteParameters),
+                                        'title': '',
+                                        'alias': gridWidgetAlias
+                                    }) }}
+                                </div>
                             </div>
 
                             <div class="tab-pane"

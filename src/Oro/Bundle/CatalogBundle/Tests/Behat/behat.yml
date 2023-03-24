@@ -203,6 +203,9 @@ oro_behat_extension:
             locator: '//tbody/tr[.//td[contains(text(), "PSKU5")]]//input[contains (@name,"sortOrder_")]'
             type: xpath
 
+    Drop Zone Exclude from Category:
+      selector: '.drop-zones-menu [data-zone="excludeFromCategory"]'
+
   pages:
     Category Update:
       class: Oro\Bundle\CatalogBundle\Tests\Behat\Page\CategoryUpdate

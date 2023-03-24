@@ -80,9 +80,8 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
             $this->fileSystemAdapter->clearTempStorage();
 
             $websites = $this->websiteProvider->getAvailableWebsites();
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                GenerateSitemapTopic::getName(),
+            $result = $this->jobRunner->runUniqueByMessage(
+                $message,
                 function (JobRunner $jobRunner, Job $job) use ($version, $websites) {
                     $this->createFinishJob($job, $version, $websites);
                     $this->scheduleGeneratingSitemap($jobRunner, $version, $websites);

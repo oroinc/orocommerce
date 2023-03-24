@@ -1,0 +1,29 @@
+data:
+    Jan 1, 2023 - Jan 4, 2023:
+        -
+            date: '2023-01-01' # Actual day of the time period
+            amount: 2468.0
+            dateStart: '2023-01-01'
+            dateEnd: '2023-01-01'
+        -
+            date: '2023-01-02' # Date of Monday of each following week
+            amount: 4936.0
+            dateStart: '2023-01-02'
+            dateEnd: '2023-01-04'
+
+    Dec 31, 2022 - Jan 3, 2023:
+        -
+            date: '2022-12-31' # Actual day of the time period
+            amount: 2468.0
+            dateStart: '2022-12-31'
+            dateEnd: '2023-01-01'
+        -
+            date: '2023-01-02' # Date of Monday of each following week
+            amount: 3702.0
+            dateStart: '2023-01-02'
+            dateEnd: '2023-01-03'
+
+calculatedDateRangeLabels:
+    - 'Jan 1, 2023 - Jan 4, 2023'
+    - 'Jan 1, 2023 - Jan 4, 2023'
+    - 'Dec 31, 2022 - Jan 3, 2023'

@@ -79,10 +79,8 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
             $version = $body['version'];
             $priceLists = $body['priceLists'];
 
-            $jobName = ResolveCombinedPriceByVersionedPriceListTopic::getName() . ':v' . $version;
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                $jobName,
+            $result = $this->jobRunner->runUniqueByMessage(
+                $message,
                 function (JobRunner $jobRunner, Job $job) use ($priceLists, $version) {
                     $combinedPriceLists = $this->getCombinedPriceListsByPriceList($priceLists);
                     $combinedPriceListIds = array_map(

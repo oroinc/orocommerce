@@ -56,6 +56,16 @@ class PriceListScheduleTest extends RestJsonApiTestCase
         return $this->getEntityManager()->getRepository(CombinedPriceListActivationRule::class);
     }
 
+    private function getFirstPriceList(): PriceList
+    {
+        return $this->getEntityManager()->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->orderBy('p.id')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getSingleResult();
+    }
+
     private function sendCreateScheduleRequest(
         \DateTime $activateAt,
         \DateTime $deactivateAt,
@@ -349,7 +359,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCombinedPriceListBuildOnScheduleCreate()
     {
-        $priceList = $this->getPriceListRepository()->getDefault();
+        $priceList = $this->getFirstPriceList();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
         self::assertCount(0, $createdActivationRules);
@@ -366,7 +376,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCombinedPriceListBuildOnScheduleUpdate()
     {
-        $priceList = $this->getPriceListRepository()->getDefault();
+        $priceList = $this->getFirstPriceList();
 
         $schedule = new PriceListSchedule(new \DateTime(), new \DateTime('tomorrow'));
         $schedule->setPriceList($priceList);
@@ -388,7 +398,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCombinedPriceListBuildOnScheduleDelete()
     {
-        $priceList = $this->getPriceListRepository()->getDefault();
+        $priceList = $this->getFirstPriceList();
 
         $schedule = new PriceListSchedule(new \DateTime(), new \DateTime('tomorrow'));
         $schedule->setPriceList($priceList);
@@ -411,7 +421,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCombinedPriceListBuildOnScheduleListDelete()
     {
-        $priceList = $this->getPriceListRepository()->getDefault();
+        $priceList = $this->getFirstPriceList();
 
         $schedule = new PriceListSchedule(new \DateTime(), new \DateTime('tomorrow'));
         $schedule->setPriceList($priceList);
@@ -437,7 +447,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCombinedPriceListBuildOnScheduleCreateAsIncludedData()
     {
-        $priceList = $this->getPriceListRepository()->getDefault();
+        $priceList = $this->getFirstPriceList();
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
         self::assertCount(0, $createdActivationRules);
@@ -475,7 +485,7 @@ class PriceListScheduleTest extends RestJsonApiTestCase
 
     public function testCombinedPriceListBuildOnScheduleUpdateAsIncludedData()
     {
-        $priceList = $this->getPriceListRepository()->getDefault();
+        $priceList = $this->getFirstPriceList();
 
         $schedule = new PriceListSchedule(new \DateTime(), new \DateTime('tomorrow'));
         $schedule->setPriceList($priceList);

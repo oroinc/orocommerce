@@ -1,0 +1,11 @@
+data:
+    Jan 7, 2023 - Jan 9, 2023:
+        -
+            date: '2023-01-07'
+        -
+            date: '2023-01-08'
+        -
+            date: '2023-01-09'
+
+calculatedDateRangeLabels:
+    - 'Jan 7, 2023 - Jan 9, 2023'

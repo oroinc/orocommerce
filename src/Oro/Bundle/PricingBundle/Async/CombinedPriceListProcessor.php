@@ -88,9 +88,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         $body = $message->getBody();
         $associations = $this->getAssociations($body);
 
-        $this->jobRunner->runUnique(
-            $message->getMessageId(),
-            $this->getJobName($body),
+        $this->jobRunner->runUniqueByMessage(
+            $message,
             function (JobRunner $jobRunner, Job $job) use ($associations) {
                 $this->schedulePostCplJobs($job);
 
@@ -168,22 +167,5 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         return isset($item[$key])
             ? $this->doctrine->getManagerForClass($className)->getReference($className, $item[$key])
             : null;
-    }
-
-    private function getJobName(array $body): string
-    {
-        $data = [];
-        foreach ($body as $key => $value) {
-            if (is_object($value)) {
-                if (method_exists($value, 'getId')) {
-                    $value = $value->getId();
-                } else {
-                    $value = serialize($value);
-                }
-            }
-            $data[$key] = $value;
-        }
-
-        return MassRebuildCombinedPriceListsTopic::getName() . ':' . md5(json_encode($data));
     }
 }

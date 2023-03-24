@@ -190,6 +190,13 @@ oro:
             section.catalog: 'Master Catalog'
             in_category.label: 'In category'
             category_sort_order.label: 'Sort order'
+            grid:
+                action:
+                    sort_products:
+                        aria_label: 'Sort products in {{ category }} category'
+            sort_products:
+                dialog:
+                    title: 'Sort products in {{ category }} category'
 
         controller:
             category:

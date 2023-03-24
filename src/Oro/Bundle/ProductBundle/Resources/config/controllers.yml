@@ -79,6 +79,12 @@ services:
         tags:
             - { name: container.service_subscriber }
 
+    Oro\Bundle\ProductBundle\Controller\ProductCollectionContentVariantController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
     Oro\Bundle\ProductBundle\Controller\ProductKitItemController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]

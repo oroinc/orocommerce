@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -120,7 +121,8 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testRecalculateTotalsNoAccessView()
     {
-        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectException(AccessDeniedException::class);
+
         $entityClassName = EntityStub::class;
         $entityId = 1;
 

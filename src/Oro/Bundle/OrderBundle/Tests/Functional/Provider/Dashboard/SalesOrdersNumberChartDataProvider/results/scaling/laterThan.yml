@@ -1,0 +1,14 @@
+data:
+    Jan 2, 2023 - Jan 4, 2023:
+        -
+            date: '2023-01-02'
+            number: 2
+        -
+            date: '2023-01-03'
+            number: 1
+        -
+            date: '2023-01-04'
+            number: 1
+
+calculatedDateRangeLabels:
+    - 'Jan 2, 2023 - Jan 4, 2023'

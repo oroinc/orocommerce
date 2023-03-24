@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExistsValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -17,14 +18,17 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    /**
+     * {@inheritDoc}
+     */
+    protected function createValidator(): ProductUnitExistsValidator
     {
         return new ProductUnitExistsValidator();
     }
 
     public function testInvalidConstraint(): void
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 

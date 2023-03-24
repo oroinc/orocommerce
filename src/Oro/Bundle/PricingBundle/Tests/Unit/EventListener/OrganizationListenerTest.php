@@ -68,14 +68,12 @@ class OrganizationListenerTest extends \PHPUnit\Framework\TestCase
         $expectedPriceList1->setActive(true);
         $expectedPriceList1->setName('org1 Price List');
         $expectedPriceList1->setOrganization($organization1);
-        $expectedPriceList1->setDefault(true);
         $expectedPriceList1->setCurrencies(['USD', 'UAH']);
 
         $expectedPriceList2 = new PriceList();
         $expectedPriceList2->setActive(true);
         $expectedPriceList2->setName('org2 Price List');
         $expectedPriceList2->setOrganization($organization2);
-        $expectedPriceList2->setDefault(true);
         $expectedPriceList2->setCurrencies(['USD', 'UAH']);
 
         $entityManager = $this->createMock(EntityManager::class);

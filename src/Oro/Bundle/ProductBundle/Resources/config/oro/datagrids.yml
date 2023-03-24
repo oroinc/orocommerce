@@ -231,7 +231,7 @@ datagrids:
         extends: product-collection-base-grid
         options:
             jsmodules:
-                - oroproduct/datagrid/builder/sort-order-builder
+                - oroproduct/js/datagrid/builder/sort-order-builder
             cellSelection:
                 dataField: id
                 columnName:
@@ -1045,6 +1045,82 @@ datagrids:
     attributes-grid:
         options:
             entityHint: oro.product.product_attributes.plural_label
+
+    content-node-product-collection-widget-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - product.id
+                    - product.sku
+                    - product.status
+                    - product.type
+                    - product.denormalizedDefaultName as productName
+                    - IDENTITY(product.inventory_status) as inventoryStatusId
+                from:
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
+                join:
+                    left:
+                        - { join: product.attributeFamily, alias: af }
+        properties:
+            id: ~
+            product_family:
+                type: localized_value
+                data_name: af.labels
+                allow_empty: true
+        options:
+            entityHint: oro.product.entity_plural_label
+            entity_pagination: false
+            toolbarOptions:
+                hide: true
+                pageSize:
+                    items: [ 1000 ]
+                    default_per_page: 1000
+            jsmodules:
+                - orodatagrid/js/sort-rows-drag-n-drop/builder
+            gridBuildersOptions:
+                sortRowsDragNDropBuilder:
+                    sortOrderColumnName: 'categorySortOrder'
+                    renderDropZonesMenu: true
+                    renderDraggableSeparator: true
+                    dropZones:
+                        excludeFromCollection: 'oroproduct/js/sort-rows-drag-n-drop/exclude-from-collection'
+        columns:
+            categorySortOrder:
+                order: -1
+                label: oro.catalog.product.category_sort_order.label
+                editable: false
+                renderable: false
+                manageable: false
+                cellClassName: 'editing-cell'
+                frontend_type: string
+            sku:
+                label: oro.product.sku.label
+            productName:
+                label: oro.product.names.label
+            inventoryStatusId:
+                label: oro.product.inventory_status.label
+                frontend_type: select
+                choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                translatable_options: false
+            status:
+                label: oro.product.status.label
+                frontend_type: select
+                choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
+            attributeFamily:
+                label: oro.product.attribute_family.label
+                data_name: product_family
+            type:
+                label: oro.product.type.label
+                frontend_type: select
+                choices: "@oro_product.provider.product_type_provider->getAvailableProductTypes"
+                renderable: true
+        sorters:
+            columns:
+                categorySortOrder:
+                    data_name: categorySortOrder
+            default:
+                categorySortOrder: ASC
 
     kit-item-products-base-grid:
         extends: products-select-grid-base-without-default-sorting

@@ -1556,25 +1556,67 @@ oro_behat_extension:
     SchemaOrg Description:
       selector: 'meta[itemprop="description"]'
 
+    Draggable Product1 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU1")]/..'
+
+    Draggable Product2 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU2")]/..'
+
+    Draggable Product3 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU3")]/..'
+
+    Draggable Product4 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU4")]/..'
+
+    Draggable Product5 Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr/td[@data-column-label="SKU"][contains(., "PSKU5")]/..'
+
+    Draggable Separator Row:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "drag-n-drop-enable")]//tbody[contains(@class, "ui-sortable")]/tr[contains(@class, "draggable-separator")]'
+
+    Drop Zone Move to Top:
+      selector: '.drop-zones-menu [data-zone="toTop"]'
+
+    Drop Zone Move to Bottom:
+      selector: '.drop-zones-menu [data-zone="toBottom"]'
+
+    Drop Zone Remove from Sorted:
+      selector: '.drop-zones-menu [data-zone="removeSortOrder"]'
+
+    Drop Zone Exclude from Collection:
+      selector: '.drop-zones-menu [data-zone="excludeFromCollection"]'
+
     Add More Product Kit:
       selector: '.product-kit-control-group .add-list-item'
 
     KitItemProductsAddGrid:
       selector: 'div[data-page-component-name="kit-item-products-add-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
-      
+
     KitItemProductsEditGrid 1:
       selector: '.oro-collection-item[data-content*="0"] div[data-page-component-name^="kit-item-products-edit-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
-      
+
     KitItemProductsEditGrid 2:
       selector: '.oro-collection-item[data-content*="1"] div[data-page-component-name^="kit-item-products-edit-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
-    
+
     KitItemProductsEditGrid 3:
       selector: '.oro-collection-item[data-content*="2"] div[data-page-component-name^="kit-item-products-edit-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
-      
+
     KitItemProductsViewGrid 1:
       selector: '.content-variant-item:nth-of-type(1) div[data-page-component-name^="kit-item-products-view-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -1586,7 +1628,7 @@ oro_behat_extension:
     KitItemProductsViewGrid 3:
       selector: '.content-variant-item:nth-of-type(3) div[data-page-component-name^="kit-item-products-view-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
-  
+
     Product Kit Add Product Button:
       selector: '.product-kit-item__add-product-button'
 
@@ -1635,17 +1677,17 @@ oro_behat_extension:
           productUnit2: 'oro_product[kitItems][1][productUnit]'
           productUnit3: 'oro_product[kitItems][2][productUnit]'
           productKits: 'validate_oro_product[kitItems]'
-    
+
     Product Kit 1 Toggler:
       selector:
         type: 'xpath'
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][1]//*[@data-toggle="collapse"]|.//*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][1]//*[@data-toggle="collapse"]'
-      
+
     Product Kit 2 Toggler:
       selector:
         type: 'xpath'
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][2]//*[@data-toggle="collapse"]|.//*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][2]//*[@data-toggle="collapse"]'
-      
+
     Product Kit 3 Toggler:
       selector:
         type: 'xpath'
@@ -1655,12 +1697,12 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"0")]//*[contains(concat(" ",normalize-space(@class)," ")," removeRow ")]'
-        
+
     Product Kit 2 Remove Button:
       selector:
         type: 'xpath'
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"1")]//*[contains(concat(" ",normalize-space(@class)," ")," removeRow ")]'
-        
+
     Product Kit 3 Remove Button:
       selector:
         type: 'xpath'
@@ -1695,6 +1737,7 @@ oro_behat_extension:
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\PinbarContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
         - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
         - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
         - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext

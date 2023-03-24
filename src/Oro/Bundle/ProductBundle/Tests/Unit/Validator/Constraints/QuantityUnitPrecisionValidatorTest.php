@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -18,7 +19,8 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
 {
-    private RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject $roundingService;
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $roundingService;
 
     protected function setUp(): void
     {
@@ -32,14 +34,17 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    protected function createValidator()
+    /**
+     * {@inheritDoc}
+     */
+    protected function createValidator(): QuantityUnitPrecisionValidator
     {
         return new QuantityUnitPrecisionValidator($this->roundingService);
     }
 
     public function testInvalidConstraint(): void
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(null, $this->createMock(Constraint::class));
     }
 

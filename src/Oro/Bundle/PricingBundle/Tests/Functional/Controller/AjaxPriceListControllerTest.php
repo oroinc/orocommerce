@@ -17,31 +17,6 @@ class AjaxPriceListControllerTest extends WebTestCase
         $this->loadFixtures([LoadPriceLists::class]);
     }
 
-    public function testDefaultAction()
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
-
-        $this->ajaxRequest(
-            'POST',
-            $this->getUrl('oro_pricing_price_list_default', ['id' => $priceList->getId()])
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-
-        $data = self::jsonToArray($result->getContent());
-
-        $this->assertArrayHasKey('successful', $data);
-        $this->assertTrue($data['successful']);
-
-        $defaultPriceLists = $this->getContainer()->get('doctrine')
-            ->getRepository(PriceList::class)
-            ->findBy(['default' => true]);
-
-        $this->assertEquals([$priceList], $defaultPriceLists);
-    }
-
     public function testGetPriceListCurrencyListAction()
     {
         /** @var PriceList $priceList */

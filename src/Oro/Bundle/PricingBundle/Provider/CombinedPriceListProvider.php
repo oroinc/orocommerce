@@ -168,7 +168,7 @@ class CombinedPriceListProvider
 
     private function filterPriceListRelations(array $relations): array
     {
-        $filteredRelations = array_filter($relations, function ($relation) {
+        return array_filter($relations, function ($relation) {
             /** @var PriceList $priceList */
             $priceList = $relation->getPriceList();
 
@@ -176,13 +176,6 @@ class CombinedPriceListProvider
                 $priceList->isActive()
                 && $this->getProductPriceRepository()->hasPrices($this->shardManager, $priceList);
         });
-
-        // At least one combined price list must be in the application for all available products.
-        if (count($filteredRelations) === 0) {
-            $filteredRelations = array_filter($relations, fn ($relation) => $relation->getPriceList()->isDefault());
-        }
-
-        return $filteredRelations;
     }
 
     private function createCombinedPriceList($identifier): CombinedPriceList

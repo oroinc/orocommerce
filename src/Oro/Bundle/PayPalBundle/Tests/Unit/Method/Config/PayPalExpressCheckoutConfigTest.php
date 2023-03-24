@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -11,15 +12,13 @@ class PayPalExpressCheckoutConfigTest extends AbstractPayPalConfigTest
 {
     use EntityTrait;
 
-    /**
-     * @var PayPalExpressCheckoutConfigInterface
-     */
+    /** @var PayPalExpressCheckoutConfigInterface */
     protected $config;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getPaymentConfig()
+    protected function getPaymentConfig(): PaymentConfigInterface
     {
         $params = [
             PayPalExpressCheckoutConfig::FIELD_LABEL => 'test label',

@@ -100,8 +100,8 @@ class VersionedFlatPriceProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->jobRunner
             ->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(function ($messageId, $name, $closure) use ($jobRunner, $job) {
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(function ($message, $closure) use ($jobRunner, $job) {
                 return $closure($jobRunner, $job);
             });
 
