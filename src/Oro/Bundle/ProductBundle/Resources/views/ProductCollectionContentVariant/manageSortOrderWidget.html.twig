@@ -1,0 +1,30 @@
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+<div class="widget-content">
+    {% block widget_content %}
+        <div class="flash-messages">
+            <div class="flash-messages-frame">
+                <div class="flash-messages-holder"></div>
+            </div>
+        </div>
+        <div class="filters-view-container"></div>
+
+        {{ dataGrid.renderGrid(
+            gridName,
+            params,
+            {
+                enableFullScreenLayout: true,
+                enableFilters: false,
+                gridBuildersOptions: {
+                    sortRowsDragNDropBuilder: {
+                        formName: 'product_collection_segment_products',
+                        route: 'oro_product_collection_content_variant_products_update',
+                        route_parameters: {
+                            id: params.content_variant_id
+                        }
+                    }
+                }
+            }|merge(renderParams)
+        ) }}
+    {% endblock %}
+</div>

@@ -56,7 +56,7 @@ class CollectionSortOrderTransformer implements DataTransformerInterface
                 continue;
             }
             // Managing non-existent products
-            $product = $this->getEntity('OroProductBundle:Product', (int)$productId);
+            $product = $this->getEntity(Product::class, (int)$productId);
             if (!$product) {
                 unset($value[$productId]);
                 continue;
@@ -106,6 +106,6 @@ class CollectionSortOrderTransformer implements DataTransformerInterface
      */
     protected function getEntity(string $entityClass, int $id)
     {
-        return $this->doctrineHelper->getEntityReference($entityClass, $id);
+        return $this->doctrineHelper->getEntityManager($entityClass)->find($entityClass, $id);
     }
 }

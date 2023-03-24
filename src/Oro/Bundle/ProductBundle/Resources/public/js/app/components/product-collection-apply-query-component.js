@@ -128,14 +128,18 @@ define(function(require) {
 
             this._checkOptions();
 
-            this.$included = this.options._sourceElement.find(this.options.selectors.included);
-            this.$excluded = this.options._sourceElement.find(this.options.selectors.excluded);
+            const {selectors: elems} = this.options;
+            this.$included = this.options._sourceElement.find(elems.included);
+            this.$excluded = this.options._sourceElement.find(elems.excluded);
             this.$form = this.options._sourceElement.closest('form');
 
+            const eventNS = this.eventNamespace();
             this.options._sourceElement
-                .on('click', this.options.selectors.apply, this.onApplyQuery.bind(this))
-                .on('click', this.options.selectors.reset, this.onReset.bind(this))
-                .on('query-designer:validate:not-empty-filters', this.onFiltersValidate.bind(this));
+                .on(`click${eventNS}`, elems.apply, this.onApplyQuery.bind(this))
+                .on(`click${eventNS}`, elems.reset, this.onReset.bind(this))
+                .on(`patchInitialState${eventNS}`, elems.included, () => this.initialIncluded = this.$included.val())
+                .on(`patchInitialState${eventNS}`, elems.excluded, () => this.initialExcluded = this.$excluded.val())
+                .on(`query-designer:validate:not-empty-filters${eventNS}`, this.onFiltersValidate.bind(this));
 
             this.initialDefinitionState = this._getSegmentDefinition();
             this.initialIncluded = this.$included.val();
@@ -145,9 +149,9 @@ define(function(require) {
                 this.currentDefinitionState = this.initialDefinitionState;
                 mediator.on('grid-sidebar:load:' + this.options.controlsBlockAlias, this._applyQuery, this);
             }
-            this.$form.on('submit' + this.eventNamespace(), this.onSubmit.bind(this));
+            this.$form.on(`submit${eventNS}`, this.onSubmit.bind(this));
 
-            this.applyQueryEventName = 'productCollection:applyQuery:' + this.eventNamespace();
+            this.applyQueryEventName = `productCollection:applyQuery:${eventNS}`;
             mediator.on(this.applyQueryEventName, this.applyQuery.bind(this));
             this._initializeInclusionExclusionSubComponent();
             this._initializeSelectedProductGridsSubComponent();
@@ -431,6 +435,7 @@ define(function(require) {
                 return;
             }
 
+            this.options._sourceElement.off(this.eventNamespace());
             this.$form.off(this.eventNamespace());
             mediator.off('grid-sidebar:load:' + this.options.controlsBlockAlias);
             mediator.off(this.applyQueryEventName);

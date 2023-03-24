@@ -1,8 +1,8 @@
 aliases:
+    oro/datagrid/action/sort-products-action$: oroproduct/js/datagrid/action/sort-products-action
     oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action$: oroproduct/js/datagrid/action/trigger-event-for-selected-product-ids-mass-action
     oro/product-collection-popup-add-products-widget$: oroproduct/js/app/widget/product-collection-popup-add-products-widget
     oro/related-items-widget$: oroproduct/js/app/widget/related-items-widget
-    oroproduct/datagrid/builder/sort-order-builder$: oroproduct/js/datagrid/builder/sort-order-builder
     oroproduct/js/app/datagrid/listener/related-product-listener$: oroproduct/js/app/datagrid/listener/related-items-listener
 app-modules:
     - oroproduct/js/app/modules/validator-constraints-module
@@ -12,10 +12,14 @@ dynamic-imports:
     commons:
         - oroproduct/js/validator/sku-regex
     orodatagrid:
+        - oro/datagrid/action/sort-products-action
         - oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action
-        - oroproduct/datagrid/builder/sort-order-builder
+        - oroproduct/js/datagrid/builder/sort-order-builder
+        - oroproduct/js/datagrid/builder/sort-products-action-builder
+        - oroproduct/js/datagrid/builder/sort-products-collection-action-builder
         - oroproduct/js/app/components/product-name-popup-editor-component
         - oroproduct/js/app/datagrid/listener/related-product-listener
+        - oroproduct/js/sort-rows-drag-n-drop/exclude-from-collection
     orosale:
         - oro/product-collection-popup-add-products-widget
         - oro/related-items-widget

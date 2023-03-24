@@ -19,6 +19,8 @@ class LoadProductCollectionWithSortOrderData extends AbstractFixture implements 
     public const PRODUCT = 'pr_collection_product';
     public const PRODUCT_REMOVED = 'removed_pr_collection_product';
     public const PRODUCT_ADDED = 'pr_collection_product_added';
+    public const SORT_ORDER_REMOVED = 'product_removed_collection_sort_order';
+    public const SORT_ORDER_ADDED = 'product_added_collection_sort_order';
 
     private static $products = [
         LoadProductData::PRODUCT_1 => self::PRODUCT,
@@ -92,12 +94,14 @@ class LoadProductCollectionWithSortOrderData extends AbstractFixture implements 
         $collectionSortOrder2->setProduct($this->getReference(self::PRODUCT_REMOVED));
         $collectionSortOrder2->setSortOrder(0);
         $manager->persist($collectionSortOrder2);
+        $this->setReference(self::SORT_ORDER_REMOVED, $collectionSortOrder2);
 
         $collectionSortOrder3 = new CollectionSortOrder();
         $collectionSortOrder3->setSegment($this->getReference(self::SEGMENT));
         $collectionSortOrder3->setProduct($this->getReference(self::PRODUCT_ADDED));
         $collectionSortOrder3->setSortOrder(0.2);
         $manager->persist($collectionSortOrder3);
+        $this->setReference(self::SORT_ORDER_ADDED, $collectionSortOrder3);
 
         $manager->flush();
     }

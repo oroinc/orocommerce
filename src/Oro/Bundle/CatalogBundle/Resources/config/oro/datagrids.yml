@@ -43,7 +43,8 @@ datagrids:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
             bind_parameters:
-                - category_id
+                - name: category_id
+                  default: 0
             hints:
                 - HINT_TRANSLATABLE
         columns:
@@ -136,7 +137,7 @@ datagrids:
             entityHint: oro.product.entity_plural_label
             entity_pagination: true
             jsmodules:
-                - oroproduct/datagrid/builder/sort-order-builder
+                - oroproduct/js/datagrid/builder/sort-order-builder
             cellSelection:
                 dataField: id
                 columnName:
@@ -148,6 +149,94 @@ datagrids:
                 selectors:
                     included: '#categoryAppendProducts'
                     excluded: '#categoryRemoveProducts'
+
+    category-products-widget-grid:
+        acl_resource: oro_product_update
+        options:
+            entityHint: oro.product.entity_plural_label
+            entity_pagination: false
+            toolbarOptions:
+                hide: true
+                pageSize:
+                    items: [ 1000 ]
+                    default_per_page: 1000
+            jsmodules:
+                - orodatagrid/js/sort-rows-drag-n-drop/builder
+            gridBuildersOptions:
+                sortRowsDragNDropBuilder:
+                    sortOrderColumnName: 'categorySortOrder'
+                    renderDropZonesMenu: true
+                    renderDraggableSeparator: true
+                    dropZones:
+                        excludeFromCategory: 'orocatalog/js/sort-rows-drag-n-drop/exclude-from-category'
+        source:
+            type: orm
+            query:
+                select:
+                    - product.id
+                    - product.sku
+                    - productInventoryStatus.id as inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
+                    - product.status
+                    - product.type
+                    - product.category_sort_order as categorySortOrder
+                    - ( CASE WHEN (product.category_sort_order IS NOT NULL) THEN 1 ELSE 0 END ) as hasSortOrder
+                from:
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
+                join:
+                    left:
+                        - { join: product.inventory_status, alias: productInventoryStatus }
+                        - { join: product.attributeFamily, alias: af }
+                where:
+                    and:
+                        - product.category = :category_id
+                orderBy:
+                    - column: hasSortOrder
+                      dir: desc
+                    - column: categorySortOrder
+                      dir: ASC
+            bind_parameters:
+                -   name: category_id
+                    default: 0
+            hints:
+                - HINT_TRANSLATABLE
+        properties:
+            id: ~
+            name:
+                type: localized_value
+                data_name: names
+            product_family:
+                type: localized_value
+                data_name: af.labels
+                allow_empty: true
+        columns:
+            categorySortOrder:
+                label: oro.catalog.product.category_sort_order.label
+                editable: false
+                renderable: false
+                manageable: false
+                cellClassName: 'editing-cell'
+                frontend_type: string # can't use decimal because of inappropriate formatter
+                data_name: categorySortOrder
+            sku:
+                label: oro.product.sku.label
+            name:
+                label: oro.product.names.label
+                data_name: name
+            inventoryStatus:
+                label: oro.product.inventory_status.label
+                type: twig
+                frontend_type: html
+                template: '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
+            status:
+                label: oro.product.status.label
+                frontend_type: select
+                choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
+            attributeFamily:
+                label: oro.product.attribute_family.label
+                data_name: product_family
+            type:
+                label: oro.product.type.label
 
     frontend-catalog-allproducts-grid:
         extends: frontend-product-search-grid
