@@ -318,6 +318,8 @@ services:
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
         public: true
+        arguments:
+            - !abstract '$availableProductTypes defined in Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension'
 
     oro_product.product_unit.cache:
         public: false
