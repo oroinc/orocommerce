@@ -2,16 +2,19 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\CollectionSortOrderGridType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -22,18 +25,23 @@ class CollectionSortOrderGridTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $formFactory;
+    private FormFactoryInterface|MockObject $formFactory;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
+    private DoctrineHelper|MockObject $doctrineHelper;
 
     private CollectionSortOrderGridType $type;
+
+    private EntityManager|MockObject $entityManager;
 
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->doctrineHelper
+            ->method('getEntityManager')
+            ->with(Product::class)
+            ->willReturn($this->entityManager);
 
         $this->type = new CollectionSortOrderGridType($this->formFactory, $this->doctrineHelper);
 
@@ -66,12 +74,13 @@ class CollectionSortOrderGridTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(CollectionSortOrderGridType::class, null, $options);
 
         if (!empty($expectedData)) {
-            $this->doctrineHelper->expects(self::exactly(3))
-                ->method('getEntityReference')
+            $this->entityManager
+                ->expects(self::exactly(3))
+                ->method('find')
                 ->withConsecutive(
-                    ['OroProductBundle:Product', 1],
-                    ['OroProductBundle:Product', 2],
-                    ['OroProductBundle:Product', 3]
+                    [Product::class, 1],
+                    [Product::class, 2],
+                    [Product::class, 3]
                 )
                 ->willReturnOnConsecutiveCalls(new ProductStub(), new ProductStub(), new ProductStub());
             if (null !== $options['segment']) {

@@ -1,6 +1,8 @@
 dynamic-imports:
     commons:
         - orocatalog/js/app/views/category-unit-limitations-view
+    orodatagrid:
+        - orocatalog/js/sort-rows-drag-n-drop/exclude-from-category
     jstree:
         - orocatalog/js/app/views/product-sidebar-view
         - orocatalog/js/app/views/tree-manage-view

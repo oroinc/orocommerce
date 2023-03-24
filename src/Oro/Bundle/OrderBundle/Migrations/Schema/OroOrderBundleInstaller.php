@@ -54,7 +54,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_15';
+        return 'v1_16';
     }
 
     /**
@@ -120,6 +120,11 @@ class OroOrderBundleInstaller implements
             'base_subtotal_value',
             'money',
             ['notnull' => false, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'subtotal_with_discounts',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn(
             'total_value',

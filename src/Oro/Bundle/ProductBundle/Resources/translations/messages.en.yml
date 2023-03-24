@@ -1096,6 +1096,14 @@ oro:
         contentvariant:
             product_collection_segment.label: Product Collection Segment
             product_page_product.label: Product
+        product_segment:
+            grid:
+                action:
+                    sort_products:
+                        aria_label: 'Sort products in {{ segment }} product collection'
+            sort_products:
+                dialog:
+                    title: 'Sort products in {{ segment }} product collection'
 
     feature:
         quick_add_import_help_widget:

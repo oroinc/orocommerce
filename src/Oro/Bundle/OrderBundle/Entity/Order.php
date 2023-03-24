@@ -228,6 +228,13 @@ class Order implements
     protected $subtotal;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="subtotal_with_discounts", type="money", nullable=true)
+     */
+    protected $subtotalWithDiscounts;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="subtotal_currency", type="currency", length=3, nullable=true)
@@ -1366,6 +1373,16 @@ class Order implements
         }
 
         $this->setBaseTotalValue(null);
+    }
+
+    public function getSubtotalWithDiscounts(): ?float
+    {
+        return $this->subtotalWithDiscounts;
+    }
+
+    public function setSubtotalWithDiscounts(?float $subtotalWithDiscounts): void
+    {
+        $this->subtotalWithDiscounts = $subtotalWithDiscounts;
     }
 
     /**

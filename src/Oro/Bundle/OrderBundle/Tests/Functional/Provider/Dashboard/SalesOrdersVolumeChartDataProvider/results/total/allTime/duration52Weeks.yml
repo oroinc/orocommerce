@@ -1,0 +1,216 @@
+data:
+    Jan 12, 2022 - Jan 4, 2023:
+        -
+            date: '2022-01-12' # Actual day of the time period
+            amount: 1234.0
+            dateStart: '2022-01-12'
+            dateEnd: '2022-01-16'
+        -
+            date: '2022-01-17' # Date of Monday of each following week
+            dateStart: '2022-01-17'
+            dateEnd: '2022-01-23'
+        -
+            date: '2022-01-24'
+            dateStart: '2022-01-24'
+            dateEnd: '2022-01-30'
+        -
+            date: '2022-01-31'
+            dateStart: '2022-01-31'
+            dateEnd: '2022-02-06'
+        -
+            date: '2022-02-07'
+            dateStart: '2022-02-07'
+            dateEnd: '2022-02-13'
+        -
+            date: '2022-02-14'
+            dateStart: '2022-02-14'
+            dateEnd: '2022-02-20'
+        -
+            date: '2022-02-21'
+            dateStart: '2022-02-21'
+            dateEnd: '2022-02-27'
+        -
+            date: '2022-02-28'
+            dateStart: '2022-02-28'
+            dateEnd: '2022-03-06'
+        -
+            date: '2022-03-07'
+            dateStart: '2022-03-07'
+            dateEnd: '2022-03-13'
+        -
+            date: '2022-03-14'
+            dateStart: '2022-03-14'
+            dateEnd: '2022-03-20'
+        -
+            date: '2022-03-21'
+            dateStart: '2022-03-21'
+            dateEnd: '2022-03-27'
+        -
+            date: '2022-03-28'
+            dateStart: '2022-03-28'
+            dateEnd: '2022-04-03'
+        -
+            date: '2022-04-04'
+            dateStart: '2022-04-04'
+            dateEnd: '2022-04-10'
+        -
+            date: '2022-04-11'
+            dateStart: '2022-04-11'
+            dateEnd: '2022-04-17'
+        -
+            date: '2022-04-18'
+            dateStart: '2022-04-18'
+            dateEnd: '2022-04-24'
+        -
+            date: '2022-04-25'
+            dateStart: '2022-04-25'
+            dateEnd: '2022-05-01'
+        -
+            date: '2022-05-02'
+            dateStart: '2022-05-02'
+            dateEnd: '2022-05-08'
+        -
+            date: '2022-05-09'
+            dateStart: '2022-05-09'
+            dateEnd: '2022-05-15'
+        -
+            date: '2022-05-16'
+            dateStart: '2022-05-16'
+            dateEnd: '2022-05-22'
+        -
+            date: '2022-05-23'
+            dateStart: '2022-05-23'
+            dateEnd: '2022-05-29'
+        -
+            date: '2022-05-30'
+            dateStart: '2022-05-30'
+            dateEnd: '2022-06-05'
+        -
+            date: '2022-06-06'
+            dateStart: '2022-06-06'
+            dateEnd: '2022-06-12'
+        -
+            date: '2022-06-13'
+            dateStart: '2022-06-13'
+            dateEnd: '2022-06-19'
+        -
+            date: '2022-06-20'
+            dateStart: '2022-06-20'
+            dateEnd: '2022-06-26'
+        -
+            date: '2022-06-27'
+            dateStart: '2022-06-27'
+            dateEnd: '2022-07-03'
+        -
+            date: '2022-07-04'
+            dateStart: '2022-07-04'
+            dateEnd: '2022-07-10'
+        -
+            date: '2022-07-11'
+            dateStart: '2022-07-11'
+            dateEnd: '2022-07-17'
+        -
+            date: '2022-07-18'
+            dateStart: '2022-07-18'
+            dateEnd: '2022-07-24'
+        -
+            date: '2022-07-25'
+            dateStart: '2022-07-25'
+            dateEnd: '2022-07-31'
+        -
+            date: '2022-08-01'
+            dateStart: '2022-08-01'
+            dateEnd: '2022-08-07'
+        -
+            date: '2022-08-08'
+            dateStart: '2022-08-08'
+            dateEnd: '2022-08-14'
+        -
+            date: '2022-08-15'
+            dateStart: '2022-08-15'
+            dateEnd: '2022-08-21'
+        -
+            date: '2022-08-22'
+            dateStart: '2022-08-22'
+            dateEnd: '2022-08-28'
+        -
+            date: '2022-08-29'
+            dateStart: '2022-08-29'
+            dateEnd: '2022-09-04'
+        -
+            date: '2022-09-05'
+            dateStart: '2022-09-05'
+            dateEnd: '2022-09-11'
+        -
+            date: '2022-09-12'
+            dateStart: '2022-09-12'
+            dateEnd: '2022-09-18'
+        -
+            date: '2022-09-19'
+            dateStart: '2022-09-19'
+            dateEnd: '2022-09-25'
+        -
+            date: '2022-09-26'
+            dateStart: '2022-09-26'
+            dateEnd: '2022-10-02'
+        -
+            date: '2022-10-03'
+            dateStart: '2022-10-03'
+            dateEnd: '2022-10-09'
+        -
+            date: '2022-10-10'
+            dateStart: '2022-10-10'
+            dateEnd: '2022-10-16'
+        -
+            date: '2022-10-17'
+            dateStart: '2022-10-17'
+            dateEnd: '2022-10-23'
+        -
+            date: '2022-10-24'
+            dateStart: '2022-10-24'
+            dateEnd: '2022-10-30'
+        -
+            date: '2022-10-31'
+            dateStart: '2022-10-31'
+            dateEnd: '2022-11-06'
+        -
+            date: '2022-11-07'
+            dateStart: '2022-11-07'
+            dateEnd: '2022-11-13'
+        -
+            date: '2022-11-14'
+            dateStart: '2022-11-14'
+            dateEnd: '2022-11-20'
+        -
+            date: '2022-11-21'
+            dateStart: '2022-11-21'
+            dateEnd: '2022-11-27'
+        -
+            date: '2022-11-28'
+            dateStart: '2022-11-28'
+            dateEnd: '2022-12-04'
+        -
+            date: '2022-12-05'
+            dateStart: '2022-12-05'
+            dateEnd: '2022-12-11'
+        -
+            date: '2022-12-12'
+            dateStart: '2022-12-12'
+            dateEnd: '2022-12-18'
+        -
+            date: '2022-12-19'
+            dateStart: '2022-12-19'
+            dateEnd: '2022-12-25'
+        -
+            date: '2022-12-26'
+            amount: 2468.0
+            dateStart: '2022-12-26'
+            dateEnd: '2023-01-01'
+        -
+            date: '2023-01-02'
+            amount: 4936.0
+            dateStart: '2023-01-02'
+            dateEnd: '2023-01-04'
+
+calculatedDateRangeLabels:
+    - 'Jan 12, 2022 - Jan 4, 2023'

@@ -84,6 +84,10 @@ oro:
             blank_filters_or_included: "Should be specified filters or added some products manually."
             blank_condition_item: "Conditions in filters should not be blank."
             blank_condition_group: "Conditions groups in filters should not be blank."
+            invalid_content_variant_type: "Content Variant is expected to be Product Collection"
+            append_products_invalid: "The products specified for addition cannot be found"
+            remove_products_invalid: "The products specified for removal cannot be found"
+            sort_order_invalid: "The specified sort order values cannot be processed"
 
         related_items:
             related_product:
