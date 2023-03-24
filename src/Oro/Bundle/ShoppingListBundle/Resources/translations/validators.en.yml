@@ -19,6 +19,11 @@ oro:
 
         create_not_allowed: "It is not allowed to create a new shopping list."
 
+        product_kit_line_item:
+            quantity:
+                not_blank:
+                    message: 'Quantity cannot be empty'
+
         product_kit_is_available_for_purchase:
             product:
                 type:

@@ -6,6 +6,7 @@
         form: form,
         product: product,
         shoppingList: shoppingList,
+        shoppingLists: shoppingLists,
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -67,26 +68,4 @@
     }) %}
     {{ parent_block_widget(block) }}
     {{ form_widget(form._token) }}
-{% endblock %}
-
-{% block __product_kit_line_item_form__form_actions_widget %}
-    {{ block_widget(block) }}
-{% endblock %}
-
-{% block __product_kit_line_item_form__form_actions_submit_widget %}
-    {% set text = 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.submit.label' %}
-    {% set action = 'submit' %}
-    {% set style = 'auto' %}
-    {% set attr = layout_attr_defaults(attr, {
-        'data-role': 'cancel'
-    }) %}
-    {{ parent_block_widget(block) }}
-{% endblock %}
-
-{% block __product_kit_line_item_form__form_actions_cancel_widget %}
-    {% set text = 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.cancel.label' %}
-    {% set attr = layout_attr_defaults(attr, {
-        'data-role': 'cancel'
-    }) %}
-    {{ parent_block_widget(block) }}
 {% endblock %}

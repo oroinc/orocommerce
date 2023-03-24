@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,17 +22,15 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 
     private const TEST_CURRENCY = 'USD';
 
-    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $productPriceProvider;
+    private ProductPriceProviderInterface|MockObject $productPriceProvider;
 
-    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $userCurrencyManager;
+    private UserCurrencyManager|MockObject $userCurrencyManager;
 
-    /** @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $scopeCriteriaRequestHandler;
+    private ProductPriceScopeCriteriaRequestHandler|MockObject $scopeCriteriaRequestHandler;
 
-    /** @var FrontendProductPricesDataProvider */
-    private $provider;
+    private FrontendProductPricesDataProvider $provider;
+
+    private ProductPriceScopeCriteriaInterface|MockObject $scopeCriteria;
 
     protected function setUp(): void
     {
@@ -44,6 +43,15 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->userCurrencyManager,
             $this->scopeCriteriaRequestHandler
         );
+
+        $this->userCurrencyManager
+            ->method('getUserCurrency')
+            ->willReturn(self::TEST_CURRENCY);
+
+        $this->scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->scopeCriteriaRequestHandler
+            ->method('getPriceScopeCriteria')
+            ->willReturn($this->scopeCriteria);
     }
 
     /**
@@ -54,23 +62,14 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
         array $matchedPrices,
         array $lineItems,
         array $expectedResult
-    ) {
-        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->scopeCriteriaRequestHandler->expects($this->any())
-            ->method('getPriceScopeCriteria')
-            ->willReturn($scopeCriteria);
-
-        $this->userCurrencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn(self::TEST_CURRENCY);
-
-        $this->productPriceProvider->expects($this->once())
+    ): void {
+        $this->productPriceProvider->expects(self::once())
             ->method('getMatchedPrices')
-            ->with($criteriaArray, $scopeCriteria)
+            ->with($criteriaArray, $this->scopeCriteria)
             ->willReturn($matchedPrices);
 
         $result = $this->provider->getProductsMatchedPrice($lineItems);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     public function getDataDataProvider(): array
@@ -99,44 +98,39 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
             'line item with product' => [
                 'criteriaArray' => [$criteria],
                 'matchedPrices' => [
-                    '42-test-100-USD' => $price
+                    '42-test-100-USD' => $price,
                 ],
                 'lineItems' => [$lineItemWithProduct],
-                'expectedResult' => [42 => ['test' => $price]]
+                'expectedResult' => [42 => ['test' => $price]],
             ],
             'line item without product' => [
                 'criteriaArray' => [],
                 'matchedPrices' => [],
                 'lineItems' => [$lineItemWOProduct],
-                'expectedResult' => []
+                'expectedResult' => [],
             ],
         ];
     }
 
     /**
-     * @dataProvider getProductsAllPricesProvider
+     * @dataProvider getAllPricesForLineItemsProvider
      */
-    public function testGetProductsAllPrices(array $lineItems, array $products, array $prices, array $expectedPrices)
-    {
-        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->scopeCriteriaRequestHandler->expects($this->any())
-            ->method('getPriceScopeCriteria')
-            ->willReturn($scopeCriteria);
-
-        $this->userCurrencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn(self::TEST_CURRENCY);
-
-        $this->productPriceProvider->expects($this->once())
+    public function testGetAllPricesForLineItems(
+        array $lineItems,
+        array $products,
+        array $prices,
+        array $expectedPrices
+    ): void {
+        $this->productPriceProvider
             ->method('getPricesByScopeCriteriaAndProducts')
-            ->with($scopeCriteria, $products, [self::TEST_CURRENCY])
+            ->with($this->scopeCriteria, $products, [self::TEST_CURRENCY])
             ->willReturn($prices);
 
-        $result = $this->provider->getProductsAllPrices($lineItems);
-        $this->assertEquals($expectedPrices, $result);
+        $result = $this->provider->getAllPricesForLineItems($lineItems);
+        self::assertEquals($expectedPrices, $result);
     }
 
-    public function getProductsAllPricesProvider(): array
+    public function getAllPricesForLineItemsProvider(): array
     {
         $product = $this->getEntity(Product::class, ['id' => 42]);
         $productUnit = new ProductUnit();
@@ -159,20 +153,64 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
                 'lineItems' => [$lineItemWithProduct],
                 'products' => [$product],
                 'prices' => [
-                    42 => $this->getPricesArray($priceValue, $quantity, self::TEST_CURRENCY, ['item'])
+                    42 => $this->getPricesArray($priceValue, $quantity, self::TEST_CURRENCY, ['item']),
                 ],
                 'expectedPrices' => [
                     42 => [
-                        'item' => [$this->createPrice($priceValue, self::TEST_CURRENCY, $quantity, 'item')]
-                    ]
-                ]
+                        'item' => [$this->createPrice($priceValue, self::TEST_CURRENCY, $quantity, 'item')],
+                    ],
+                ],
             ],
             'line item without product' => [
                 'lineItems' => [$lineItemWOProduct],
                 'products' => [],
                 'prices' => [],
-                'expectedPrices' => []
-            ]
+                'expectedPrices' => [],
+            ],
+        ];
+    }
+
+
+    /**
+     * @dataProvider getAllPricesForProductsProvider
+     */
+    public function testGetAllPricesForProducts(array $products, array $prices, array $expectedPrices): void
+    {
+        $this->productPriceProvider
+            ->method('getPricesByScopeCriteriaAndProducts')
+            ->with($this->scopeCriteria, $products, [self::TEST_CURRENCY])
+            ->willReturn($prices);
+
+        $result = $this->provider->getAllPricesForProducts($products);
+        self::assertEquals($expectedPrices, $result);
+    }
+
+    public function getAllPricesForProductsProvider(): array
+    {
+        $product = $this->getEntity(Product::class, ['id' => 42]);
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('item');
+
+        $quantity = 100;
+        $priceValue = 10;
+
+        return [
+            'line item with product' => [
+                'products' => [$product],
+                'prices' => [
+                    42 => $this->getPricesArray($priceValue, $quantity, self::TEST_CURRENCY, ['item']),
+                ],
+                'expectedPrices' => [
+                    42 => [
+                        'item' => [$this->createPrice($priceValue, self::TEST_CURRENCY, $quantity, 'item')],
+                    ],
+                ],
+            ],
+            'line item without product' => [
+                'products' => [],
+                'prices' => [],
+                'expectedPrices' => [],
+            ],
         ];
     }
 

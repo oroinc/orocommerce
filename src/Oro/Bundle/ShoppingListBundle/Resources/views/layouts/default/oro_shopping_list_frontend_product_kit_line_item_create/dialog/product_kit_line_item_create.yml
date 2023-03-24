@@ -12,6 +12,7 @@ layout:
                 form: '=data["form"]'
                 product: '=data["product"]'
                 shoppingList: '=data["shoppingList"]'
+                shoppingLists:  '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
         - '@move':
             id: widget_actions
             parentId: product_kit_line_item_widget_form_actions

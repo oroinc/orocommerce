@@ -64,7 +64,7 @@ class FrontendShoppingListProductsProvider
         }
 
         $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
-        $productPrices = $this->productPriceProvider->getProductsAllPrices($lineItems);
+        $productPrices = $this->productPriceProvider->getAllPricesForLineItems($lineItems);
 
         return $this->productPriceFormatter->formatProducts($productPrices);
     }

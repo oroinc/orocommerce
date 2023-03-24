@@ -64,7 +64,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
             ->willReturn($lineItems);
 
         $this->frontendProductPricesDataProvider->expects($this->once())
-            ->method('getProductsAllPrices')
+            ->method('getAllPricesForLineItems')
             ->with($lineItems)
             ->willReturn($prices);
 
@@ -82,7 +82,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
         $this->shoppingListLineItemsDataProvider->expects($this->never())
             ->method('getShoppingListLineItems');
         $this->frontendProductPricesDataProvider->expects($this->never())
-            ->method('getProductsAllPrices');
+            ->method('getAllPricesForLineItems');
         $this->productPriceFormatter->expects($this->never())
             ->method('formatProducts');
 

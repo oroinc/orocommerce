@@ -58,7 +58,7 @@ class ProductKitItemLineItemType extends AbstractType
             $choices = $this->kitItemProductsProvider->getProductsAvailableForPurchase($kitItemLineItem->getKitItem());
             $isOptional = $kitItemLineItem->getKitItem()?->isOptional();
             if ($isOptional) {
-                array_unshift($choices, null);
+                $choices[] = null;
             }
 
             $form = $event->getForm();

@@ -23,11 +23,6 @@
             {% elseif matrixFormType == 'inline' %}
                 {% set view = 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view' %}
             {% endif %}
-        {% elseif is_kit_product_type(product.type) %}
-            {% set view = 'oroshoppinglist/js/app/views/product-kit-add-to-shopping-list-view' %}
-            {% set buttonOptions = buttonOptions|merge({
-                dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create'
-            }) %}
         {% else %}
             {% set view = 'oroshoppinglist/js/app/views/product-add-to-shopping-list-view' %}
         {% endif %}

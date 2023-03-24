@@ -87,7 +87,7 @@ class ProductKitItemLineItemTypeTest extends FormIntegrationTestCase
         $this->assertFormOptionEqual(true, 'expanded', $form->get('product'));
         $this->assertFormOptionEqual(false, 'multiple', $form->get('product'));
         $this->assertFormOptionEqual(
-            [null, $this->kitItemProduct1, $this->kitItemProduct2],
+            [$this->kitItemProduct1, $this->kitItemProduct2, null],
             'choices',
             $form->get('product')
         );

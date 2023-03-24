@@ -23,6 +23,8 @@ services:
 
     oro_shopping_list.form.type.product_kit_line_item:
         class: 'Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType'
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices'
         tags:
             - { name: form.type }
 

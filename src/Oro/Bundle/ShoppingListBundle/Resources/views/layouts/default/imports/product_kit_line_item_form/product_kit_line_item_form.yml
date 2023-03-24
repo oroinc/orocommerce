@@ -28,12 +28,6 @@ layout:
                           render_rest: false
                   __form_actions:
                       blockType: container
-                  __form_actions_cancel:
-                      blockType: button
-                      options:
-                          action: reset
-                          text: 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.cancel.label'
-                          style: ''
                   __form_actions_submit:
                       blockType: button
                       options:
@@ -55,5 +49,4 @@ layout:
                           __form_fields: ~
                           __form_actions:
                               __form_actions_submit: ~
-                              __form_actions_cancel: ~
                           __form_end: ~

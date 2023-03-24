@@ -120,6 +120,9 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             - NotNull: ~
         quantity:
             - Type: float
+            - Expression:
+                  expression: 'value && this.product'
+                  message: 'oro.shoppinglist.product_kit_line_item.quantity.not_blank.message'
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
             - Range:
                   maxPropertyPath: 'kitItem.maximumQuantity'

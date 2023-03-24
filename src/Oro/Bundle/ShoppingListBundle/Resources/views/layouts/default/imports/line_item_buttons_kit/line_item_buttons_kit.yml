@@ -6,3 +6,6 @@ layout:
            id: __button
            blockType: container
            parentId: __root
+           options:
+            vars:
+                product: '=data["product"]'

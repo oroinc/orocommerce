@@ -45,7 +45,7 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
         if (jqxhr.responseJSON) {
             return this._onJsonContentResponse(jqxhr.responseJSON);
         } else {
-            return ProductKitLineItemWidget.__super__._onContentLoadFail().call(this, jqxhr.response);
+            return ProductKitLineItemWidget.__super__._onContentLoadFail.call(this, jqxhr);
         }
     },
 

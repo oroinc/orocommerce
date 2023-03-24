@@ -374,5 +374,5 @@ oro:
                                 none: None
                     submit:
                         label: Submit
-                    cancel:
-                        label: Cancel
+                    subtotal:
+                        label: 'Price as configured: %subtotal%'
