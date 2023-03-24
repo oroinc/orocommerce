@@ -1,0 +1,32 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'First Order'
+        website: '@website1'
+        currency: USD
+        poNumber: 'Order1'
+    order2:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'Second Order'
+        website: '@website1'
+        currency: USD
+        poNumber: 'Order2'
+
+Oro\Bundle\ReportBundle\Entity\Report:
+    report:
+        name: 'Orders'
+        createdAt: '<dateTime()>'
+        updatedAt: '<dateTime()>'
+        type: '@report_type_TABLE'
+        entity: 'Oro\Bundle\OrderBundle\Entity\Order'
+        organization: '@organization'
+        definition: <('{"columns":[{"name":"identifier","label":"Order Number","func":"","sorting":"DESC"},{"name":"subtotalBaseCurrency","label":"Subtotal ($)","func":{"name":"Sum","group_type":"aggregates","group_name":"number"},"sorting":""},{"name":"estimatedShippingCostAmount","label":"Estimated Shipping Cost Amount","func":{"name":"Sum","group_type":"aggregates","group_name":"number"},"sorting":""},{"name":"totalDiscountsAmount","label":"Total Discounts Amount","func":{"name":"Sum","group_type":"aggregates","group_name":"number"},"sorting":""},{"name":"totalBaseCurrency","label":"Total ($)","func":{"name":"Sum","group_type":"aggregates","group_name":"number"},"sorting":""},{"name":"totalValue","label":"Total","func":{"name":"Count","group_type":"aggregates","group_name":"number","return_type":"integer"},"sorting":""},{"name":"customer+Oro\\\\Bundle\\\\CustomerBundle\\\\Entity\\\\Customer::name","label":"Name","func":{"name":"Count","group_type":"aggregates","group_name":"string","return_type":"integer"},"sorting":""},{"name":"internal_status","label":"Internal Status","func":"","sorting":""}],"grouping_columns":[{"name":"internal_status","temp-validation-name-7268":""},{"name":"identifier","temp-validation-name-7268":""}],"date_grouping":{"fieldName":"createdAt","useSkipEmptyPeriodsFilter":true,"useDateGroupFilter":true}}')>

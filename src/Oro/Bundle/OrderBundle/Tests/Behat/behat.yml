@@ -279,7 +279,6 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
         - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
         - Oro\Bundle\ActionBundle\Tests\Behat\Context\OroActionContext
         - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
@@ -299,5 +298,6 @@ oro_behat_extension:
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'
