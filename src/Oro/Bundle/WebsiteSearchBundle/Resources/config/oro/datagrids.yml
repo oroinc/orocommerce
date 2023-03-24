@@ -178,7 +178,7 @@ datagrids:
                 timePeriod:
                     label: oro.report.datagrid.column.time_period.label
                     type: datetime
-                    data_name: searchResult.createdAt
+                    data_name: e.searchDate
                 searchTerm:
                     data_name: e.searchTerm
                     type: string
