@@ -195,14 +195,14 @@ class ProductCollectionContentVariantControllerTest extends WebTestCase
         /** @var Segment $segment */
         $segment = $contentVariant->getProductCollectionSegment();
         $definitionParts = $this->definitionConverter->getDefinitionParts($segment->getDefinition());
-        self::assertEquals(
-            implode(',', $this->resolveReferences($expectedIncluded)),
-            $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY],
+        self::assertEqualsCanonicalizing(
+            $this->resolveReferences($expectedIncluded),
+            array_filter(explode(',', $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY])),
             'Included products are not as expected'
         );
-        self::assertEquals(
-            implode(',', $this->resolveReferences($expectedExcluded)),
-            $definitionParts[ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY],
+        self::assertEqualsCanonicalizing(
+            $this->resolveReferences($expectedExcluded),
+            array_filter(explode(',', $definitionParts[ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY])),
             'Excluded products are not as expected'
         );
 
