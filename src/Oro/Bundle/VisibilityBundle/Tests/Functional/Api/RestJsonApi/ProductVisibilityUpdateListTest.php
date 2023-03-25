@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
-use Oro\Bundle\VisibilityBundle\Async\Topic\ResolveProductVisibilityTopic;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 
 /**
@@ -33,29 +32,6 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
         $this->processUpdateList(
             ProductVisibility::class,
             'update_list_create_product_visibilities.yml'
-        );
-
-        $visibilityRepo = $this->getEntityManager()->getRepository(ProductVisibility::class);
-        $visibility1 = $visibilityRepo->findOneBy([
-            'product' => $product1Id,
-            'scope'   => $this->getReference('scope'),
-        ]);
-        $visibility2 = $visibilityRepo->findOneBy([
-            'product' => $product2Id,
-            'scope'   => $this->getReference('scope'),
-        ]);
-        self::assertMessagesSent(
-            ResolveProductVisibilityTopic::getName(),
-            [
-                [
-                    'entity_class_name' => ProductVisibility::class,
-                    'id'                => $visibility1->getId(),
-                ],
-                [
-                    'entity_class_name' => ProductVisibility::class,
-                    'id'                => $visibility2->getId(),
-                ],
-            ]
         );
 
         $response = $this->cget(
@@ -127,20 +103,6 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
         ];
         $this->processUpdateList(ProductVisibility::class, $data);
 
-        self::assertMessagesSent(
-            ResolveProductVisibilityTopic::getName(),
-            [
-                [
-                    'entity_class_name' => ProductVisibility::class,
-                    'id'                => $visibility1->getId(),
-                ],
-                [
-                    'entity_class_name' => ProductVisibility::class,
-                    'id'                => $visibility2->getId(),
-                ],
-            ]
-        );
-
         $response = $this->cget(
             ['entity' => 'productvisibilities'],
             ['filter' => ['id' => [$visibility1->getProduct()->getId(), $visibility2->getProduct()->getId()]]]
@@ -183,27 +145,6 @@ class ProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
             ],
         ];
         $this->processUpdateList(ProductVisibility::class, $data);
-
-        $visibility1 = $this->getReference('product_visibility_1');
-        $visibility2 = $this->getEntityManager()->getRepository(ProductVisibility::class)->findOneBy(
-            [
-                'product' => $product2Id,
-                'scope'   => $this->getReference('scope')->getId(),
-            ]
-        );
-        self::assertMessagesSent(
-            ResolveProductVisibilityTopic::getName(),
-            [
-                [
-                    'entity_class_name' => ProductVisibility::class,
-                    'id'                => $visibility1->getId(),
-                ],
-                [
-                    'entity_class_name' => ProductVisibility::class,
-                    'id'                => $visibility2->getId(),
-                ],
-            ]
-        );
 
         $response = $this->cget(
             ['entity' => 'productvisibilities'],

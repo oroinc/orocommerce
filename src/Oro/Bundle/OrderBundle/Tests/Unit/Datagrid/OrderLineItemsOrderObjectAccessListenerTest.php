@@ -11,10 +11,11 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsOrderObjectAccessListener;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class OrderLineItemsOrderObjectAccessListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
     /** @var BuildBefore */
@@ -60,7 +61,8 @@ class OrderLineItemsOrderObjectAccessListenerTest extends \PHPUnit\Framework\Tes
 
     public function testOnBuildBeforeWhenAccessIsNotGranted()
     {
-        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectException(AccessDeniedException::class);
+
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);

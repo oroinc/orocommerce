@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class CheckoutShipUntilTypeTest extends FormIntegrationTestCase
 {
@@ -30,7 +31,7 @@ class CheckoutShipUntilTypeTest extends FormIntegrationTestCase
 
     public function testRequiredOption()
     {
-        $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
+        $this->expectException(InvalidOptionsException::class);
         $this->expectExceptionMessage('The option "checkout" with value stdClass is invalid.');
 
         $this->factory->create(CheckoutShipUntilType::class, new \DateTime(), ['checkout' => new \stdClass()]);

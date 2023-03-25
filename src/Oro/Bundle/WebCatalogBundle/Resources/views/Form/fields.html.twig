@@ -50,7 +50,7 @@
          data-role="content-variant-item"
          class="content-variant-item {% if form.default.vars.data %}content-variant-item-default{% endif %}"
     >
-        {% set collapseId = 'collapse-'|uniqid %}
+        {% set collapseId = 'collapse-'|uniqid ~ form.default.vars.id %}
         <button class="btn-toggle-variant btn btn-icon btn-square-light"
                 type="button"
                 data-toggle="collapse"

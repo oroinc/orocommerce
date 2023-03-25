@@ -49,4 +49,12 @@ class ResolveVersionedFlatPriceTopicTest extends AbstractTopicTestCase
             ]
         ];
     }
+
+    public function testCreateJobName(): void
+    {
+        self::assertSame(
+            'oro_pricing.flat_price.resolve:v42',
+            $this->getTopic()->createJobName(['version' => 42])
+        );
+    }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\FormBundle\Provider\FormFieldsMapProvider;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -38,9 +39,15 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
     private UnitLabelFormatterInterface|MockObject $productUnitLabelFormatter;
 
+    private FormFieldsMapProvider|MockObject $fieldsMapProvider;
+
+    private array $fieldsMap;
+
     protected function setUp(): void
     {
-        $this->type = new ProductKitItemType();
+        $this->fieldsMapProvider = $this->createMock(FormFieldsMapProvider::class);
+        $this->type = new ProductKitItemType($this->fieldsMapProvider);
+
         $translator = $this->createMock(TranslatorInterface::class);
         $bypassCallback = static fn ($value) => $value;
         $viewDataTransformer = static fn () => new CallbackTransformer($bypassCallback, $bypassCallback);
@@ -52,6 +59,44 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
             $viewDataTransformer,
             fn () => $this->modelDataTransformer
         );
+
+        $this->fieldsMap = [
+            'sortOrder' => [
+                'key' => 'sortOrder',
+                'name' => 'oro_product_kit_item[sortOrder]',
+                'id' => 'oro_product_kit_item_sortOrder',
+            ],
+            'optional' => [
+                'key' => 'optional',
+                'name' => 'oro_product_kit_item[optional]',
+                'id' => 'oro_product_kit_item_optional',
+            ],
+            'minimumQuantity' => [
+                'key' => 'minimumQuantity',
+                'name' => 'oro_product_kit_item[minimumQuantity]',
+                'id' => 'oro_product_kit_item_minimumQuantity',
+            ],
+            'maximumQuantity' => [
+                'key' => 'maximumQuantity',
+                'name' => 'oro_product_kit_item[maximumQuantity]',
+                'id' => 'oro_product_kit_item_maximumQuantity',
+            ],
+            'productUnit' => [
+                'key' => 'productUnit',
+                'name' => 'oro_product_kit_item[productUnit]',
+                'id' => 'oro_product_kit_item_productUnit',
+            ],
+            'kitItemProducts' => [
+                'key' => 'kitItemProducts',
+                'name' => 'oro_product_kit_item[kitItemProducts]',
+                'id' => 'oro_product_kit_item_kitItemProducts',
+            ],
+        ];
+
+        $this->fieldsMapProvider
+            ->expects(self::any())
+            ->method('getFormFieldsMap')
+            ->willReturn($this->fieldsMap);
 
         parent::setUp();
     }
@@ -67,7 +112,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
                     EntityType::class => new EntityTypeStub([
                         'each' => (new ProductUnit())->setCode('each'),
                         'item' => (new ProductUnit())->setCode('item'),
-                        'kg' => (new ProductUnit())->setCode('kg')
+                        'kg' => (new ProductUnit())->setCode('kg'),
                     ]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     QuantityType::class => $this->getQuantityType(),
@@ -75,12 +120,15 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
                 [
                     FormType::class => [
                         new TooltipFormExtensionStub($this),
-                    ]
+                    ],
                 ]
-            )
+            ),
         ];
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testBuildFormWithoutData(): void
     {
         $form = $this->factory->create(ProductKitItemType::class);
@@ -109,37 +157,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
                     'name' => 'oro_product_kit_item[labels]',
                     'id' => 'oro_product_kit_item_labels',
                 ],
-                'sortOrder' => [
-                    'key' => 'sortOrder',
-                    'name' => 'oro_product_kit_item[sortOrder]',
-                    'id' => 'oro_product_kit_item_sortOrder',
-                ],
-                'optional' => [
-                    'key' => 'optional',
-                    'name' => 'oro_product_kit_item[optional]',
-                    'id' => 'oro_product_kit_item_optional',
-                ],
-                'minimumQuantity' => [
-                    'key' => 'minimumQuantity',
-                    'name' => 'oro_product_kit_item[minimumQuantity]',
-                    'id' => 'oro_product_kit_item_minimumQuantity',
-                ],
-                'maximumQuantity' => [
-                    'key' => 'maximumQuantity',
-                    'name' => 'oro_product_kit_item[maximumQuantity]',
-                    'id' => 'oro_product_kit_item_maximumQuantity',
-                ],
-                'productUnit' => [
-                    'key' => 'productUnit',
-                    'name' => 'oro_product_kit_item[productUnit]',
-                    'id' => 'oro_product_kit_item_productUnit',
-                ],
-                'kitItemProducts' => [
-                    'key' => 'kitItemProducts',
-                    'name' => 'oro_product_kit_item[kitItemProducts]',
-                    'id' => 'oro_product_kit_item_kitItemProducts',
-                ],
-            ],
+            ] + $this->fieldsMap,
             $formView->vars['fieldsMap'],
             'Variable "fieldMap" is not expected to be empty'
         );
@@ -180,40 +198,10 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
             [
                 'labels' => [
                     'key' => 'labels',
-                    'name' => 'oro_product_kit_item[labels]',
-                    'id' => 'oro_product_kit_item_labels',
+                    'name' => 'oro_product_kit_item[labels][0][string]',
+                    'id' => 'oro_product_kit_item_labels_0_string',
                 ],
-                'sortOrder' => [
-                    'key' => 'sortOrder',
-                    'name' => 'oro_product_kit_item[sortOrder]',
-                    'id' => 'oro_product_kit_item_sortOrder',
-                ],
-                'optional' => [
-                    'key' => 'optional',
-                    'name' => 'oro_product_kit_item[optional]',
-                    'id' => 'oro_product_kit_item_optional',
-                ],
-                'minimumQuantity' => [
-                    'key' => 'minimumQuantity',
-                    'name' => 'oro_product_kit_item[minimumQuantity]',
-                    'id' => 'oro_product_kit_item_minimumQuantity',
-                ],
-                'maximumQuantity' => [
-                    'key' => 'maximumQuantity',
-                    'name' => 'oro_product_kit_item[maximumQuantity]',
-                    'id' => 'oro_product_kit_item_maximumQuantity',
-                ],
-                'productUnit' => [
-                    'key' => 'productUnit',
-                    'name' => 'oro_product_kit_item[productUnit]',
-                    'id' => 'oro_product_kit_item_productUnit',
-                ],
-                'kitItemProducts' => [
-                    'key' => 'kitItemProducts',
-                    'name' => 'oro_product_kit_item[kitItemProducts]',
-                    'id' => 'oro_product_kit_item_kitItemProducts',
-                ],
-            ],
+            ] + $this->fieldsMap,
             $formView->vars['fieldsMap'],
             'Variable "fieldMap" is not expected to be empty'
         );
@@ -245,7 +233,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
             'minimumQuantity' => 1,
             'maximumQuantity' => 10,
             'productUnit' => $productUnitItem->getCode(),
-            'kitItemProducts' => $kitItemProductsRawData
+            'kitItemProducts' => $kitItemProductsRawData,
         ]);
 
         $this->assertFormIsValid($form);

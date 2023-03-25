@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
+use Oro\Bundle\CatalogBundle\Provider\CategoryFormTemplateDataProvider;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
@@ -115,7 +116,7 @@ class CategoryController extends AbstractController
                 $responseData['changed'][] = [
                     'id' => $source->getKey(),
                     'parent' => $collection->target->getKey(),
-                    'position' => $currentInsertPosition
+                    'position' => $currentInsertPosition,
                 ];
                 $currentInsertPosition++;
             }
@@ -154,7 +155,8 @@ class CategoryController extends AbstractController
             $form,
             $this->get(TranslatorInterface::class)->trans('oro.catalog.controller.category.saved.message'),
             $request,
-            $handler
+            $handler,
+            $this->get(CategoryFormTemplateDataProvider::class)
         );
 
         if (is_array($result)) {
@@ -171,8 +173,10 @@ class CategoryController extends AbstractController
      */
     public function getChangedSlugsAction(Category $category): JsonResponse
     {
-        return new JsonResponse($this->get(ChangedSlugsHelper::class)
-            ->getChangedSlugsData($category, CategoryType::class));
+        return new JsonResponse(
+            $this->get(ChangedSlugsHelper::class)
+                ->getChangedSlugsData($category, CategoryType::class)
+        );
     }
 
     /**
@@ -186,7 +190,8 @@ class CategoryController extends AbstractController
             ChangedSlugsHelper::class,
             EventDispatcherInterface::class,
             TranslatorInterface::class,
-            UpdateHandlerFacade::class
+            UpdateHandlerFacade::class,
+            CategoryFormTemplateDataProvider::class,
         ]);
     }
 }

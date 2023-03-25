@@ -34,33 +34,6 @@ class PriceListDeleteOperationTest extends ActionTestCase
         self::assertStringContainsString('Price List deleted', $crawler->html());
     }
 
-    public function testDeleteDefault()
-    {
-        $priceList = $this->getRepository()->getDefault();
-
-        $this->client->followRedirects(true);
-
-        $this->assertExecuteOperation(
-            'DELETE',
-            $priceList->getId(),
-            PriceList::class,
-            [],
-            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-            Response::HTTP_FORBIDDEN
-        );
-
-        $this->assertEquals(
-            [
-                'success' => false,
-                'message' => 'Operation "DELETE" execution is forbidden!',
-                'messages' => [],
-                'refreshGrid' => null,
-                'pageReload' => true
-            ],
-            self::jsonToArray($this->client->getResponse()->getContent())
-        );
-    }
-
     private function getRepository(): PriceListRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(PriceList::class);

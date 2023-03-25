@@ -5,8 +5,7 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -17,25 +16,22 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class PriceListRequestHandler implements PriceListRequestHandlerInterface
 {
     private RequestStack $requestStack;
-    private ManagerRegistry $registry;
-    private TokenAccessorInterface $tokenAccessor;
+    private ManagerRegistry $doctrine;
+    private AclHelper $aclHelper;
 
-    private ?PriceListRepository $priceListRepository = null;
+    private ?PriceList $priceList = null;
 
-    /** @var array [organizationId => PriceList, ...] */
-    private array $defaultPriceList = [];
-
-    /** @var array [organizationId => [PriceList1, PriceList2, ...], ...] */
+    /** @var array [PriceList1, PriceList2, ...] */
     private array $priceLists = [];
 
     public function __construct(
         RequestStack $requestStack,
-        ManagerRegistry $registry,
-        TokenAccessorInterface $tokenAccessor
+        ManagerRegistry $doctrine,
+        AclHelper $aclHelper
     ) {
         $this->requestStack = $requestStack;
-        $this->registry = $registry;
-        $this->tokenAccessor = $tokenAccessor;
+        $this->doctrine = $doctrine;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -43,27 +39,23 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      */
     public function getPriceList()
     {
-        $organizationId = $this->tokenAccessor->getOrganizationId();
-
         $priceListId = $this->getPriceListId();
         if (!$priceListId) {
-            return $this->getDefaultPriceList();
+            return $this->getFirstPriceList();
         }
 
-        if (isset($this->priceLists[$organizationId])
-            && array_key_exists($priceListId, $this->priceLists[$organizationId])
-        ) {
-            return $this->priceLists[$organizationId][$priceListId];
+        if (\array_key_exists($priceListId, $this->priceLists)) {
+            return $this->priceLists[$priceListId];
         }
 
-        $priceList = $this->getPriceListRepository()->find($priceListId);
+        $priceList = $this->getPriceListById($priceListId);
         if ($priceList) {
-            $this->priceLists[$organizationId][$priceListId] = $priceList;
+            $this->priceLists[$priceListId] = $priceList;
 
             return $priceList;
         }
 
-        return $this->getDefaultPriceList();
+        return $this->getFirstPriceList();
     }
 
     /**
@@ -113,23 +105,35 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         return filter_var($request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
     }
 
-    private function getDefaultPriceList(): PriceList
+    private function getFirstPriceList(): PriceList
     {
-        $organizationId = $this->tokenAccessor->getOrganizationId();
+        if (!$this->priceList) {
+            $qb = $this->doctrine->getRepository(PriceList::class)
+                ->createQueryBuilder('p')
+                ->orderBy('p.id')
+                ->setMaxResults(1);
 
-        if (!isset($this->defaultPriceList[$organizationId])) {
-            $this->defaultPriceList[$organizationId] = $this->getPriceListRepository()
-                ->getDefault($this->tokenAccessor->getOrganization());
+            $this->priceList = $this->aclHelper->apply($qb)->getOneOrNullResult();
         }
 
-        if (!isset($this->defaultPriceList[$organizationId])) {
-            throw new \InvalidArgumentException('Default PriceList not found');
+        if (!isset($this->priceList)) {
+            throw new \InvalidArgumentException('PriceList not found');
         }
 
-        return $this->defaultPriceList[$organizationId];
+        return $this->priceList;
     }
 
-    private function getPriceListId(): int|null
+    private function getPriceListById(int $id): ?PriceList
+    {
+        $qb = $this->doctrine->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->where('p.id = :id')
+            ->setParameter('id', $id);
+
+        return $this->aclHelper->apply($qb)->getOneOrNullResult();
+    }
+
+    private function getPriceListId(): ?int
     {
         $request = $this->getRequest();
         if (!$request) {
@@ -138,7 +142,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
 
         $value = $request->get(self::PRICE_LIST_KEY);
 
-        if (is_bool($value)) {
+        if (\is_bool($value)) {
             return null;
         }
 
@@ -148,16 +152,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         }
 
         return null;
-    }
-
-    private function getPriceListRepository(): PriceListRepository
-    {
-        if (!$this->priceListRepository) {
-            $this->priceListRepository = $this->registry->getManagerForClass(PriceList::class)
-                ->getRepository(PriceList::class);
-        }
-
-        return $this->priceListRepository;
     }
 
     private function getRequest(): ?Request

@@ -557,3 +557,82 @@ services:
             - order_create_for_customer_user_link
         tags:
             - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_order.form.type.order_internal_status:
+        class: Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType
+        arguments:
+            - '@oro_entity_extend.enum_value_provider'
+        tags:
+            - { name: form.type }
+
+    oro_order.widget_config_value.widget_order_internal_status.converter:
+        parent: oro_dashboard.widget_config_value.widget_enum_select.converter
+        arguments: ['order_internal_status']
+        tags:
+            - { name: oro_dashboard.value.converter, form_type: Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType }
+
+    oro_order.provider.dashboard.sales_orders_chart_scale_provider:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartScaleProvider
+        arguments:
+            - '@oro_dashboard.datetime.helper'
+
+    oro_order.provider.dashboard.sales_orders_chart_widget_provider.abstract:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartWidgetProvider
+        abstract: true
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_chart_scale_provider'
+            - '@oro_chart.factory.chart_view_builder_factory'
+            - '@oro_dashboard.widget_configs'
+
+    oro_order.provider.dashboard.sales_orders_chart_widget_provider.volume:
+        parent: oro_order.provider.dashboard.sales_orders_chart_widget_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_chart_data_provider.volume'
+            - 'sales_orders_volume_chart'
+            - 'sales_orders_volume'
+
+    oro_order.provider.dashboard.sales_orders_chart_widget_provider.number:
+        parent: oro_order.provider.dashboard.sales_orders_chart_widget_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_chart_data_provider.number'
+            - 'sales_orders_number_chart'
+            - 'sales_orders_number'
+
+    oro_order.provider.dashboard.sales_orders_chart_data_provider.abstract:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider
+        abstract: true
+        arguments:
+            - '@oro_locale.formatter.date_time'
+            - '@oro_dashboard.datetime.helper'
+
+    oro_order.provider.dashboard.sales_orders_chart_data_provider.volume:
+        parent: oro_order.provider.dashboard.sales_orders_chart_data_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_volume_data_provider'
+            - 'amount'
+
+    oro_order.provider.dashboard.sales_orders_chart_data_provider.number:
+        parent: oro_order.provider.dashboard.sales_orders_chart_data_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_number_data_provider'
+            - 'number'
+
+    oro_order.provider.dashboard.sales_orders_volume_data_provider:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersVolumeDataProvider
+        arguments:
+            - '@doctrine'
+
+    oro_order.provider.dashboard.sales_orders_number_data_provider:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersNumberDataProvider
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
+            - [setDateHelper, ['@oro_dashboard.datetime.helper']]
+        tags:
+            - { name: doctrine.repository_service }

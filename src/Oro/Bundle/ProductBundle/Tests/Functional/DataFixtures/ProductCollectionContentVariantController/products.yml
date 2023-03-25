@@ -1,0 +1,16 @@
+initial: true
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_name{1..4}:
+        string: 'Product-<current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..4}:
+        type: 'simple'
+        sku: 'product-<current()>'
+        inventoryStatus: '@in_stock'
+        status: 'enabled'
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            - addName: ['@product_name<current()>']

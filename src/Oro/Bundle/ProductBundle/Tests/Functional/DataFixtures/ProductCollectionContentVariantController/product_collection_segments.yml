@@ -1,0 +1,29 @@
+initial: true
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    productCollectionContentVariantSegment1:
+        name: 'Product Collection Content Variant 1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+    productCollectionContentVariantSegment2:
+        name: 'Product Collection Content Variant 2'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}],"filters":[{"alias":"incl","columnName":"id","criterion":{"filter":"number","data":{"value":"')>@product1->getId()<(',')>@product2->getId()<('","type":9}}},"AND",{"alias":"excl","columnName":"id","criterion":{"filter":"number","data":{"value":"')>@product3->getId()<(',')>@product4->getId()<('","type":10}}}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\ProductBundle\Entity\CollectionSortOrder:
+    segment2Product1SortOrder:
+        segment: '@productCollectionContentVariantSegment2'
+        product: '@product1'
+        sortOrder: 11
+
+    segment2Product2SortOrder:
+        segment: '@productCollectionContentVariantSegment2'
+        product: '@product2'
+        sortOrder: 22

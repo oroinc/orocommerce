@@ -48,3 +48,51 @@
         }
     }
 }
+
+@include breakpoint('tablet-small') {
+    .embedded-products {
+        &__item {
+            // Styles that apply when tiles are disabled.
+            &:not(.tiles-item) {
+                width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+            }
+
+            // We need to exclude the influence of styles when the tiles are on.
+            &:not(.slick-slide):not(.tiles-item) {
+                min-width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .embedded-products {
+        &__item {
+            // Styles that apply when tiles are disabled.
+            &:not(.tiles-item) {
+                width: math.div(100%, $embedded-products-item-count-mobile-big);
+            }
+
+            // We need to exclude the influence of styles when the tiles are on.
+            &:not(.slick-slide):not(.tiles-item) {
+                min-width: math.div(100%, $embedded-products-item-count-mobile-big);
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .embedded-products {
+        &__item {
+            // Styles that apply when tiles are disabled.
+            &:not(.tiles-item) {
+                width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+            }
+
+            // We need to exclude the influence of styles when the tiles are on.
+            &:not(.slick-slide):not(.tiles-item) {
+                min-width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+            }
+        }
+    }
+}

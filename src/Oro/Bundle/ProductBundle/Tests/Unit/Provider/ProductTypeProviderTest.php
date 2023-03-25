@@ -7,22 +7,37 @@ use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
 
 class ProductTypeProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductTypeProvider */
-    protected $productTypeProvider;
-
-    protected function setUp(): void
+    /**
+     * @dataProvider getAvailableProductTypesDataProvider
+     */
+    public function testGetAvailableProductTypes(array $availableProductTypes, array $expectedProductTypesChoices): void
     {
-        $this->productTypeProvider = new ProductTypeProvider();
+        $productTypeProvider = new ProductTypeProvider($availableProductTypes);
+
+        self::assertEquals($expectedProductTypesChoices, $productTypeProvider->getAvailableProductTypes());
     }
 
-    public function testGetAvailableProductTypes()
+    public function getAvailableProductTypesDataProvider(): array
     {
-        $expected = [
-            'oro.product.type.simple' => Product::TYPE_SIMPLE,
-            'oro.product.type.configurable' => Product::TYPE_CONFIGURABLE,
-            'oro.product.type.kit' => Product::TYPE_KIT,
+        return [
+            'default' => [
+                'availableProductTypes' => Product::getTypes(),
+                'expectedProductTypesChoices' => [
+                    'oro.product.type.simple' => 'simple',
+                    'oro.product.type.configurable' => 'configurable',
+                    'oro.product.type.kit' => 'kit',
+                ],
+            ],
+            'custom' => [
+                'availableProductTypes' => [
+                    'simple',
+                    'configurable',
+                ],
+                'expectedProductTypesChoices' => [
+                    'oro.product.type.simple' => 'simple',
+                    'oro.product.type.configurable' => 'configurable',
+                ],
+            ],
         ];
-
-        $this->assertEquals($expected, $this->productTypeProvider->getAvailableProductTypes());
     }
 }

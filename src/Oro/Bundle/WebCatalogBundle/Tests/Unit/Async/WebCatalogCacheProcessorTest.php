@@ -18,6 +18,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\Message;
+use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -83,7 +84,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
                 WebCatalogCalculateContentNodeCacheTopic::getName(),
                 [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => $node->getId()]
             );
-        $this->assertUniqueJobExecuted();
+        $this->assertUniqueJobExecuted($message);
 
         self::assertEquals(
             MessageProcessorInterface::ACK,
@@ -107,7 +108,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('error')
             ->with('Root node for the web catalog #{webCatalogId} is not found', $message->getBody());
 
-        $this->assertUniqueJobExecuted();
+        $this->assertUniqueJobExecuted($message);
 
         self::assertEquals(
             MessageProcessorInterface::REJECT,
@@ -124,15 +125,14 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
         return $message;
     }
 
-    private function assertUniqueJobExecuted(): void
+    private function assertUniqueJobExecuted(MessageInterface $expectedMessage): void
     {
         $job = $this->createMock(Job::class);
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job) {
-                    $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(WebCatalogCalculateCacheTopic::getName() . ':1', $name);
+                function ($actualMessage, $closure) use ($job, $expectedMessage) {
+                    $this->assertSame($actualMessage, $expectedMessage);
 
                     return $closure($this->jobRunner, $job);
                 }

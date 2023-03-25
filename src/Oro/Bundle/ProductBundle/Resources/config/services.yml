@@ -120,8 +120,7 @@ services:
             - "@event_dispatcher"
             - "@oro_attachment.file_manager"
             - "@oro_attachment.provider.attachment"
-        calls:
-            - [setSkuIncrementor,  ["@oro_product.service.sku_incrementor"]]
+            - "@oro_product.service.sku_incrementor"
 
     oro_product.service.related_items_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler'
@@ -319,6 +318,8 @@ services:
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
         public: true
+        arguments:
+            - !abstract '$availableProductTypes defined in Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension'
 
     oro_product.product_unit.cache:
         public: false
@@ -609,6 +610,13 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\ProductImage'
+        tags:
+            - { name: doctrine.repository_service }
+
+    Oro\Bundle\ProductBundle\Entity\Repository\CollectionSortOrderRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ProductBundle\Entity\CollectionSortOrder'
         tags:
             - { name: doctrine.repository_service }
 
@@ -1278,6 +1286,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-collection-content-variant-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-content-variant-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.content-node-product-collection-widget-grid, method: onBuildAfter }
 
     oro_product.event_listener.product_collection_datagrid:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener
@@ -1290,6 +1299,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-content-variant-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.content-node-product-collection-widget-grid, method: onBuildAfter }
 
     oro_product.provider.segment_with_relations_provider:
         class: Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider
@@ -2076,6 +2086,22 @@ services:
                 event: oro_product.product.duplicate.after
                 method: onDuplicateAfter
                 priority: -128
+
+    oro_product.service.product_collection_segment_manipulator:
+        class: Oro\Bundle\ProductBundle\Service\ProductCollectionSegmentManipulator
+        arguments:
+            - '@doctrine'
+            - '@oro_product.service.product_collection_definition_converter'
+
+    oro_product.form.handler.product_collection_segment_products:
+        class: Oro\Bundle\ProductBundle\Form\Handler\ProductCollectionSegmentProductsFormHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_product.service.product_collection_segment_manipulator'
+            - '@oro_product.handler.collection_sort_order'
+
+    Oro\Bundle\ProductBundle\Form\Handler\ProductCollectionSegmentProductsFormHandler:
+        alias: oro_product.form.handler.product_collection_segment_products
 
     oro_product.event_listener.doctrine.product_kit_item_product.unit_precision:
         class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductKitItemProductUnitPrecisionDoctrineListener

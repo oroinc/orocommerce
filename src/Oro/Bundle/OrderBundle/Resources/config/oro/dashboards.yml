@@ -1,0 +1,137 @@
+dashboards:
+    widgets:
+        sales_orders_volume:
+            label: oro.order.dashboard.widget.sales_orders_volume.label
+            description: oro.order.dashboard.widget.sales_orders_volume.description
+            route: oro_order_dashboard_sales_orders_volume
+            configuration:
+                dateRange1:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\CurrentDateWidgetDateRangeType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_volume.configuration_form.date_range_one.label
+                        update_dependent_date_range_fields:
+                            TYPE_ALL_TIME:
+                                dateRange2: TYPE_NONE
+                                dateRange3: TYPE_NONE
+                    show_on_widget: true
+                    converter_attributes:
+                        default_selected: TYPE_THIS_MONTH
+                        today_as_end_date_for:
+                            - TYPE_THIS_MONTH
+                            - TYPE_THIS_QUARTER
+                            - TYPE_THIS_YEAR
+                            - TYPE_MORE_THAN
+                            - TYPE_ALL_TIME
+                dateRange2:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\DependentDateWidgetDateRangeType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_volume.configuration_form.date_range_two.label
+                    show_on_widget: true
+                    converter_attributes:
+                        default_selected: TYPE_NONE
+                dateRange3:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\DependentDateWidgetDateRangeType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_volume.configuration_form.date_range_three.label
+                    show_on_widget: true
+                    converter_attributes:
+                        default_selected: TYPE_NONE
+                includedOrderStatuses:
+                    type: Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_volume.configuration_form.included_order_statuses.label
+                        required: false
+                        configs:
+                            allowClear: false
+                    converter_attributes:
+                        default_selected:
+                            - open
+                            - shipped
+                            - closed
+                            - archived
+                    show_on_widget: true
+                includeSubOrders:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\WidgetChoiceType
+                    converter_attributes:
+                        default_selected: false
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_volume.configuration_form.include_sub_orders.label
+                        required: true
+                        choices:
+                            oro.dashboard.widget.option_value.boolean.false: false
+                            oro.dashboard.widget.option_value.boolean.true: true
+                    show_on_widget: true
+                orderTotal:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\WidgetChoiceType
+                    converter_attributes:
+                        default_selected: 'subtotal_with_discounts'
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_volume.configuration_form.order_total.label
+                        required: true
+                        choices:
+                            'oro.order.dashboard.widget.sales_orders_volume.configuration_form.order_total.choices.subtotal_with_discounts': 'subtotal_with_discounts'
+                            'oro.order.dashboard.widget.sales_orders_volume.configuration_form.order_total.choices.subtotal': 'subtotal'
+                            'oro.order.dashboard.widget.sales_orders_volume.configuration_form.order_total.choices.order_total': 'total'
+                    show_on_widget: true
+
+        sales_orders_number:
+            label: oro.order.dashboard.widget.sales_orders_number.label
+            description: oro.order.dashboard.widget.sales_orders_number.description
+            route: oro_order_dashboard_sales_orders_number
+            configuration:
+                dateRange1:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\CurrentDateWidgetDateRangeType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_number.configuration_form.date_range_one.label
+                        update_dependent_date_range_fields:
+                            TYPE_ALL_TIME:
+                                dateRange2: TYPE_NONE
+                                dateRange3: TYPE_NONE
+                    show_on_widget: true
+                    converter_attributes:
+                        default_selected: TYPE_THIS_MONTH
+                        today_as_end_date_for:
+                            - TYPE_THIS_MONTH
+                            - TYPE_THIS_QUARTER
+                            - TYPE_THIS_YEAR
+                            - TYPE_MORE_THAN
+                            - TYPE_ALL_TIME
+                dateRange2:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\DependentDateWidgetDateRangeType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_number.configuration_form.date_range_two.label
+                    show_on_widget: true
+                    converter_attributes:
+                        default_selected: TYPE_NONE
+                dateRange3:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\DependentDateWidgetDateRangeType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_number.configuration_form.date_range_three.label
+                    show_on_widget: true
+                    converter_attributes:
+                        default_selected: TYPE_NONE
+                includedOrderStatuses:
+                    type: Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_number.configuration_form.included_order_statuses.label
+                        required: false
+                        configs:
+                            allowClear: false
+                    converter_attributes:
+                        default_selected:
+                            - open
+                            - shipped
+                            - closed
+                            - archived
+                    show_on_widget: true
+                includeSubOrders:
+                    type: Oro\Bundle\DashboardBundle\Form\Type\WidgetChoiceType
+                    converter_attributes:
+                        default_selected: false
+                    options:
+                        label: oro.order.dashboard.widget.sales_orders_number.configuration_form.include_sub_orders.label
+                        required: true
+                        choices:
+                            oro.dashboard.widget.option_value.boolean.false: false
+                            oro.dashboard.widget.option_value.boolean.true: true
+                    show_on_widget: true

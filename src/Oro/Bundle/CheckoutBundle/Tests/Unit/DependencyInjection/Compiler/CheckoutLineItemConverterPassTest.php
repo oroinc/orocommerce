@@ -6,14 +6,13 @@ use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutLineItemConve
 use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
 {
     private ContainerBuilder $container;
-
     private Definition $registry;
-
     private CheckoutLineItemConverterPass $compiler;
 
     protected function setUp(): void
@@ -37,7 +36,7 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWithoutAliasAttribute(): void
     {
-        $this->expectException(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'The attribute "alias" is required for "oro.checkout.line_item.converter" tag. Service: "converter_1".'
         );

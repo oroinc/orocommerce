@@ -288,6 +288,11 @@ services:
         tags:
             - { name: form.type }
 
+    oro_product.form.type.product_collection_segment_products_type:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentProductsType
+        tags:
+            - { name: form.type }
+
     oro_product.form.type.product_kit_item_collection:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemCollectionType
         tags:
@@ -295,6 +300,8 @@ services:
 
     oro_product.form.type.product_kit_item:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType
+        arguments:
+            - '@oro_form.provider.form_fields_map'
         tags:
             - { name: form.type }
 

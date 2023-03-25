@@ -104,6 +104,8 @@
                 @extend %base-button;
 
                 @include button-custom-variant($style-variants...);
+
+                user-select: text;
             }
         }
     }

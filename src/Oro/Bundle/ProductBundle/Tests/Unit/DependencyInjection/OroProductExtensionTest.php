@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
@@ -88,6 +89,32 @@ class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
             $container->getExtensionConfig('oro_product')
+        );
+
+        self::assertEquals(
+            Product::getTypes(),
+            $container->getDefinition('oro_product.provider.product_type_provider')
+                ->getArgument('$availableProductTypes')
+        );
+    }
+
+    public function testLoadWithCustomProductTypesConfigs(): void
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'prod');
+
+        $configs = [
+            ['product_types' => ['simple']],
+            ['product_types' => ['configurable']],
+        ];
+
+        $extension = new OroProductExtension();
+        $extension->load($configs, $container);
+
+        self::assertEquals(
+            ['simple', 'configurable'],
+            $container->getDefinition('oro_product.provider.product_type_provider')
+                ->getArgument('$availableProductTypes')
         );
     }
 }

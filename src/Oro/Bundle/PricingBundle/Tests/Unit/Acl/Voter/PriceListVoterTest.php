@@ -33,12 +33,9 @@ class PriceListVoterTest extends \PHPUnit\Framework\TestCase
         $this->voter = new PriceListVoter($this->doctrineHelper, $container);
     }
 
-    private function getPriceList(bool $isDefault): PriceList
+    private function getPriceList(): PriceList
     {
-        $priceList = new PriceList();
-        $priceList->setDefault($isDefault);
-
-        return $priceList;
+        return new PriceList();
     }
 
     /**
@@ -67,9 +64,8 @@ class PriceListVoterTest extends \PHPUnit\Framework\TestCase
     public function attributesDataProvider(): array
     {
         return [
-            [$this->getPriceList(false), false, VoterInterface::ACCESS_ABSTAIN],
-            [$this->getPriceList(true), false, VoterInterface::ACCESS_DENIED],
-            [$this->getPriceList(false), true, VoterInterface::ACCESS_DENIED]
+            [$this->getPriceList(), false, VoterInterface::ACCESS_ABSTAIN],
+            [$this->getPriceList(), true, VoterInterface::ACCESS_DENIED]
         ];
     }
 }

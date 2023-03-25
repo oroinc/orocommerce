@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
- * Prevents removal of default and referential price lists.
+ * Prevents removal of referential price lists.
  */
 class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
@@ -57,10 +57,6 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if ($this->getPriceListReferenceChecker()->isReferential($this->object)) {
-            return self::ACCESS_DENIED;
-        }
-
-        if ($this->object->isDefault()) {
             return self::ACCESS_DENIED;
         }
 

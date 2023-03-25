@@ -6,21 +6,20 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
 use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductTypeTypeTest extends FormIntegrationTestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductTypeProvider */
-    private $productTypeProvider;
+    private ProductTypeProvider|MockObject $productTypeProvider;
 
-    /** @var ProductTypeType */
-    private $productTypeType;
+    private ProductTypeType $productTypeType;
 
     protected function setUp(): void
     {
-        $this->productTypeProvider = new ProductTypeProvider();
+        $this->productTypeProvider = new ProductTypeProvider(Product::getTypes());
         $this->productTypeType = new ProductTypeType($this->productTypeProvider);
         parent::setUp();
     }
@@ -35,12 +34,12 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetParent()
+    public function testGetParent(): void
     {
-        $this->assertEquals(ChoiceType::class, $this->productTypeType->getParent());
+        self::assertEquals(ChoiceType::class, $this->productTypeType->getParent());
     }
 
-    public function testChoices()
+    public function testChoices(): void
     {
         $form = $this->factory->create(ProductTypeType::class);
         $availableProductTypes = $this->productTypeProvider->getAvailableProductTypes();
@@ -50,12 +49,12 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
             $choices[] = new ChoiceView($value, $value, $label);
         }
 
-        $this->assertEquals(
+        self::assertEquals(
             $choices,
             $form->createView()->vars['choices']
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             Product::TYPE_SIMPLE,
             $form->getConfig()->getOptions()['preferred_choices']
         );

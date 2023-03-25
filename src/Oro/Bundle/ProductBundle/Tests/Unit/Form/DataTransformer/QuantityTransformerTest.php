@@ -54,8 +54,8 @@ class QuantityTransformerTest extends \PHPUnit\Framework\TestCase
 
     public function testReverseTransformationWillFailWithTransformationExceptionIfDecimalCouldNotBeParsed()
     {
-        self::expectExceptionMessage('Quantity 1..000,8666 is not a valid decimal number');
-        self::expectException(TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
+        $this->expectExceptionMessage('Quantity 1..000,8666 is not a valid decimal number');
 
         $valueForReverseTransformation = '1..000,8666';
 

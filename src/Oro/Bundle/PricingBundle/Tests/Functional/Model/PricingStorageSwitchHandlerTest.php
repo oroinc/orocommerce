@@ -67,6 +67,16 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
         $configManager->flush();
     }
 
+    private function getFirstPriceList(): PriceList
+    {
+        return self::getContainer()->get('doctrine')->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->orderBy('p.id')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getSingleResult();
+    }
+
     public function testMoveAssociationsForFlatPricingStorage()
     {
         $this->handler->moveAssociationsForFlatPricingStorage();
@@ -86,14 +96,13 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
 
         $configManager = self::getConfigManager('global');
         $this->assertEquals([], $configManager->get('oro_pricing.default_price_lists'));
-        $defaultPl = $em->getRepository(PriceList::class)->getDefault();
+        $defaultPl = $this->getFirstPriceList();
         $this->assertEquals($defaultPl->getId(), $configManager->get('oro_pricing.default_price_list'));
     }
 
     public function testMoveAssociationsForCombinedPricingStorage()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceList::class);
-        $defaultPl = $em->getRepository(PriceList::class)->getDefault();
+        $defaultPl = $this->getFirstPriceList();
         $this->configManager->set('oro_pricing.default_price_list', $defaultPl->getId());
 
         $this->handler->moveAssociationsForCombinedPricingStorage();

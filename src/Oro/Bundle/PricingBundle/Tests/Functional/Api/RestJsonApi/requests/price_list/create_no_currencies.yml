@@ -1,7 +1,6 @@
 data:
     type: 'pricelists'
     attributes:
-        default: false
         active: true
         actual: true
         productAssignmentRule: 'product.category.id == 1'

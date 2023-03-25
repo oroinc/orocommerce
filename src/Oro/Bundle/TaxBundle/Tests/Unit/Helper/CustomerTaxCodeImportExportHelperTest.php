@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Helper;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
@@ -98,7 +99,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
      */
     public function testDenormalizeCustomerTaxCodeShouldThrowException(array $data)
     {
-        $this->expectException(\Doctrine\ORM\EntityNotFoundException::class);
+        $this->expectException(EntityNotFoundException::class);
         $this->doctrineShouldReturnTagsByCode();
         $this->manager->denormalizeCustomerTaxCode($data);
     }

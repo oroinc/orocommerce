@@ -21,7 +21,6 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         [
             'name' => 'priceList1',
             'reference' => self::PRICE_LIST_1,
-            'default' => false,
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
             'active' => true,
             'assignmentRule' => null,
@@ -29,7 +28,6 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         [
             'name' => 'priceList2',
             'reference' => self::PRICE_LIST_2,
-            'default' => false,
             'currencies' => ['USD'],
             'active' => true,
             'assignmentRule' => 'product.category.id == 2',
@@ -37,7 +35,6 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         [
             'name' => 'priceList3',
             'reference' => self::PRICE_LIST_3,
-            'default' => false,
             'currencies' => ['CAD'],
             'active' => true,
             'assignmentRule' => null,
@@ -45,7 +42,6 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         [
             'name' => 'priceList4',
             'reference' => self::PRICE_LIST_4,
-            'default' => false,
             'currencies' => ['GBP'],
             'active' => true,
             'assignmentRule' => 'product.sku == "product-1"',
@@ -53,7 +49,6 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         [
             'name' => 'priceList5',
             'reference' => self::PRICE_LIST_5,
-            'default' => false,
             'currencies' => ['GBP', 'EUR'],
             'active' => true,
             'assignmentRule' => 'product.category == 1 or product.category.id == 2',
@@ -61,7 +56,6 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         [
             'name' => 'priceList6',
             'reference' => self::PRICE_LIST_6,
-            'default' => false,
             'currencies' => ['USD'],
             'active' => false,
             'assignmentRule' => null,
@@ -87,7 +81,6 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             $priceList = new PriceList();
 
             $priceList->setName($priceListData['name'])
-                ->setDefault($priceListData['default'])
                 ->setCurrencies($priceListData['currencies'])
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)

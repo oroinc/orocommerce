@@ -854,3 +854,11 @@ services:
         class: Oro\Bundle\PromotionBundle\EntityConfig\PromotionAwareEntityConfiguration
         tags:
             - oro_entity_config.validation.entity_config
+
+    oro_promotion.event_listener.order_subtotal_with_discounts_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderSubtotalWithDiscountsListener
+        arguments:
+            - '@oro_promotion.provider.subtotal_provider'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preUpdate }

@@ -75,7 +75,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class,
                     array_merge(
                         $this->getOroRichTextTypeConfiguration('oro.catalog.category.short_descriptions.label'),
-                        ['value_class' => CategoryShortDescription::class,]
+                        ['value_class' => CategoryShortDescription::class]
                     )
                 ],
                 [
