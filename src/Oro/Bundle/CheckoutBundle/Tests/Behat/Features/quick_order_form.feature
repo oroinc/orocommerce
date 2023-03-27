@@ -209,6 +209,16 @@ Feature: Quick order form
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
+  Scenario: User is able to use Quick Order Form (copy paste) with 1000 items
+    Given I click "Quick Order Form"
+    When I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | PSKU1 1000 |
+    And I click "Verify Order"
+    And I click "Get Quote"
+    Then Page title equals to "Request A Quote - Requests For Quote - My Account"
+    And Request a Quote contains products
+      | Product1`"'&йёщ®&reg;> | 1,000 | item |
+
   Scenario: User is able to use Quick Order Form (copy paste) and create RFQ with product without price
     Given I click "Quick Order Form"
     When I fill "Quick Add Copy Paste Form" with:
