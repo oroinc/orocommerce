@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
-use Oro\Bundle\MaintenanceBundle\Maintenance\Mode as MaintenanceMode;
+use Oro\Bundle\MaintenanceBundle\Maintenance\MaintenanceModeState;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Component\Routing\UrlUtil;
@@ -28,7 +28,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     private RouterInterface $router;
     private MatchedUrlDecisionMaker $matchedUrlDecisionMaker;
     private SlugEntityFinder $slugEntityFinder;
-    private MaintenanceMode $maintenanceMode;
+    private MaintenanceModeState $maintenanceModeState;
 
     private RequestMatcherInterface|UrlMatcherInterface $baseMatcher;
     private array $matchSlugsFirst = [];
@@ -40,12 +40,12 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         RouterInterface $router,
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         SlugEntityFinder $slugEntityFinder,
-        MaintenanceMode $maintenanceMode
+        MaintenanceModeState $maintenanceModeState
     ) {
         $this->router = $router;
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
         $this->slugEntityFinder = $slugEntityFinder;
-        $this->maintenanceMode = $maintenanceMode;
+        $this->maintenanceModeState = $maintenanceModeState;
     }
 
     public function setBaseMatcher(RequestMatcherInterface|UrlMatcherInterface $baseMatcher): void
@@ -126,7 +126,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     {
         return function () {
             // prevents http not found exception for slugged urls when maintenance mode is enabled
-            return $this->maintenanceMode->isOn()
+            return $this->maintenanceModeState->isOn()
                 ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
                 : [];
         };
