@@ -185,12 +185,15 @@ datagrids:
                 timesSearchedSum:
                     data_name: timesSearchedSum
                     type: number-range
+                    filter_by_having: true
                 timesReturnedResultsSum:
                     data_name: timesReturnedResultsSum
                     type: number-range
+                    filter_by_having: true
                 timesEmptySum:
                     data_name: timesEmptySum
                     type: number-range
+                    filter_by_having: true
                 skip_empty_periods:
                     label: oro.report.filter.skip_empty_periods.label
                     type: skip_empty_periods
