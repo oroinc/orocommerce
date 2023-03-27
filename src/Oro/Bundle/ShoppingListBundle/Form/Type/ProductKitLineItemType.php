@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
@@ -28,9 +30,14 @@ class ProductKitLineItemType extends AbstractType
 {
     private FrontendProductPricesDataProvider $frontendProductPricesDataProvider;
 
-    public function __construct(FrontendProductPricesDataProvider $frontendProductPricesDataProvider)
-    {
+    private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
+
+    public function __construct(
+        FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
+        SubtotalProviderInterface $lineItemNotPricedSubtotalProvider
+    ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -65,8 +72,8 @@ class ProductKitLineItemType extends AbstractType
             $view['kitItemLineItems']->vars['productPrices'] = $this->frontendProductPricesDataProvider
                 ->getAllPricesForProducts($this->getAllProducts($productKitLineItem));
 
-            // TODO: Set correct subtotal from subtotal provider after BB-22291.
-            $view->vars['subtotal'] = (new Subtotal())->setAmount(999);
+            $view->vars['subtotal'] = $this->lineItemNotPricedSubtotalProvider
+                ->getSubtotal(new LineItemsNotPricedDTO(new ArrayCollection([$productKitLineItem])));
         }
     }
 

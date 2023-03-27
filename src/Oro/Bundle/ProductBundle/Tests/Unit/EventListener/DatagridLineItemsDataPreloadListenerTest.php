@@ -7,8 +7,8 @@ use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataPreloadListener;
-use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemsAwareStub;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -42,10 +42,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
             ->method('getParentProduct')
             ->willReturn($this->createMock(Product::class));
 
-        $lineItemKit = $this->createMock(ProductKitItemLineItemsAwareInterface::class);
-        $lineItemKit
-            ->method('getEntityIdentifier')
-            ->willReturn(30);
+        $lineItemKit = new ProductKitItemLineItemsAwareStub(30);
 
         $this->preloadingManager
             ->expects(self::exactly(3))
@@ -225,10 +222,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
             ->method('getParentProduct')
             ->willReturn($this->createMock(Product::class));
 
-        $lineItemKit = $this->createMock(ProductKitItemLineItemsAwareInterface::class);
-        $lineItemKit
-            ->method('getEntityIdentifier')
-            ->willReturn(30);
+        $lineItemKit = new ProductKitItemLineItemsAwareStub(30);
 
         $this->preloadingManager
             ->expects(self::exactly(3))

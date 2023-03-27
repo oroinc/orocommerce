@@ -16,6 +16,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
@@ -60,6 +61,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 class LineItem implements
     OrganizationAwareInterface,
     CustomerVisitorOwnerAwareInterface,
+    ProductLineItemInterface,
     ProductKitItemLineItemsAwareInterface,
     ExtendEntityInterface
 {

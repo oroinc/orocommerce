@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Interface for line item aware of product kit item line items.
  */
-interface ProductKitItemLineItemsAwareInterface extends ProductLineItemInterface
+interface ProductKitItemLineItemsAwareInterface
 {
     /**
      * @return Collection<ProductKitItemLineItemInterface>

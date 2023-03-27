@@ -46,7 +46,6 @@ class ProductKitItemLineItemStub extends ProductLineItem implements ProductKitIt
         return $this;
     }
 
-
     public function getSortOrder(): int
     {
         return $this->sortOrder;

@@ -6,6 +6,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
@@ -30,6 +33,8 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
     private FrontendProductPricesDataProvider|MockObject $frontendProductPricesDataProvider;
 
+    private SubtotalProviderInterface|MockObject $lineItemNotPricedSubtotalProvider;
+
     private ProductKitLineItemType $type;
 
     private Product $productKit;
@@ -44,8 +49,12 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
     protected function setUp(): void
     {
+        $this->lineItemNotPricedSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
-        $this->type = new ProductKitLineItemType($this->frontendProductPricesDataProvider);
+        $this->type = new ProductKitLineItemType(
+            $this->frontendProductPricesDataProvider,
+            $this->lineItemNotPricedSubtotalProvider
+        );
 
         $this->productKit = (new ProductStub())->setId(42);
         $this->kitItemProduct1 = (new ProductStub())->setId(142);
@@ -129,6 +138,13 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
             ->with([$this->productKit, $this->kitItemProduct1, $this->kitItemProduct2])
             ->willReturn($productPrices);
 
+        $subtotal = new Subtotal();
+        $this->lineItemNotPricedSubtotalProvider
+            ->expects(self::once())
+            ->method('getSubtotal')
+            ->with(new LineItemsNotPricedDTO(new ArrayCollection([$lineItem])))
+            ->willReturn($subtotal);
+
         $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
 
         $this->assertFormOptionEqual(LineItem::class, 'data_class', $form);
@@ -152,6 +168,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         self::assertEquals($productPrices, $formView['kitItemLineItems']->vars['productPrices']);
 
         self::assertArrayHasKey('subtotal', $formView->vars);
+        self::assertSame($subtotal, $formView->vars['subtotal']);
     }
 
     public function testSubmitWhenHasLineItem(): void
@@ -174,7 +191,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
             [
                 'quantity' => 42.2,
                 'unit' => 'each',
-                'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]]
+                'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]],
             ]
         );
 
@@ -212,7 +229,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
             [
                 'quantity' => 42.2,
                 'unit' => 'each',
-                'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]]
+                'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]],
             ]
         );
 
