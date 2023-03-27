@@ -100,7 +100,9 @@ const ProductKitItemsComponent = BaseComponent.extend({
             'grid-row-select': ({model}) => {
                 const {collection} = this.gridComponent;
                 const selectedProductsIds = collection.map(model => String(model.get('id')));
-                collection.urlParams.selectedProductsIds = uniq(selectedProductsIds.concat(model.get('id')));
+                collection.assignUrlParams({
+                    selectedProductsIds: uniq(selectedProductsIds.concat(model.get('id')))
+                });
 
                 collection.fetch({reset: true});
                 dialog.remove();
