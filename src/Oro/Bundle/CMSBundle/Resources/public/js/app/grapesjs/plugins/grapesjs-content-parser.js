@@ -6,6 +6,10 @@
  */
 
 const postParseModel = model => {
+    if (model.attributes && model.attributes['data-type'] === 'temporary-container') {
+        return model.components;
+    }
+
     if (model.components) {
         if (model.components.length) {
             const isTextContain = model.components.every(
@@ -41,10 +45,6 @@ const postParseModel = model => {
                 tagName: ''
             }];
         }
-    }
-
-    if (model.attributes && model.attributes['data-type'] === 'temporary-container') {
-        return model.components;
     }
 
     return model;
