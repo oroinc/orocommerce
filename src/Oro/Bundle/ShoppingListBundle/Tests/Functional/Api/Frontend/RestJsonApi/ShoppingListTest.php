@@ -1035,7 +1035,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $shoppingList = $this->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
-        self::assertCount(3, $shoppingList->getLineItems());
+        self::assertCount(4, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
             $lineItem,
@@ -1048,7 +1048,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             $productId,
             'New Line Item Notes'
         );
-        $this->assertShoppingListTotal($shoppingList, 139.45, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 164.13, 'USD');
     }
 
     public function testAddToCartForExistingListItem()
@@ -1072,7 +1072,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $shoppingList = $this->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
-        self::assertCount(2, $shoppingList->getLineItems());
+        self::assertCount(3, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, $lineItemId);
         self::assertLineItem(
             $lineItem,
@@ -1085,7 +1085,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             $productId,
             'Updated Existing Line Item Notes'
         );
-        $this->assertShoppingListTotal($shoppingList, 38.55, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 63.23, 'USD');
     }
 
     public function testAddToCartForNewListItemForDefaultShoppingList()
@@ -1111,7 +1111,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $shoppingList = $this->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
-        self::assertCount(3, $shoppingList->getLineItems());
+        self::assertCount(4, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
             $lineItem,
@@ -1124,7 +1124,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             $productId,
             'New Line Item Notes'
         );
-        $this->assertShoppingListTotal($shoppingList, 139.45, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 164.13, 'USD');
     }
 
     public function testAddToCartForNewListItemForDefaultShoppingListWhenNoDefaultShoppingList()
@@ -1713,6 +1713,15 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                             'currency' => 'USD',
                             'value'    => '2.34'
                         ]
+                    ],
+                    [
+                        'type'       => 'shoppinglistitems',
+                        'id'         => '<toString(@kit_line_item1->id)>',
+                        'attributes' => [
+                            'quantity' => 2,
+                            'currency' => 'USD',
+                            'value'    => '12.34'
+                        ]
                     ]
                 ]
             ],
@@ -1754,7 +1763,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
-                    ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>']
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>'],
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>'],
                 ]
             ],
             $response

@@ -128,7 +128,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $shoppingList = $this->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
-        self::assertCount(2, $shoppingList->getLineItems());
+        self::assertCount(3, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
             $lineItem,
@@ -197,7 +197,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $shoppingList = $this->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
-        self::assertCount(2, $shoppingList->getLineItems());
+        self::assertCount(3, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
             $lineItem,

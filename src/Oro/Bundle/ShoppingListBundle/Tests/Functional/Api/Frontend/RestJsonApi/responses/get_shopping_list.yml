@@ -8,8 +8,8 @@ data:
         updatedAt: '@shopping_list1->updatedAt->format("Y-m-d\TH:i:s\Z")'
         default: false
         currency: USD
-        total: '29.55'
-        subTotal: '29.55'
+        total: '54.23'
+        subTotal: '54.23'
     relationships:
         items:
             data:
@@ -19,6 +19,9 @@ data:
                 -
                     type: shoppinglistitems
                     id: '<toString(@line_item2->id)>'
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@kit_line_item1->id)>'
         customerUser:
             data:
                 type: customerusers

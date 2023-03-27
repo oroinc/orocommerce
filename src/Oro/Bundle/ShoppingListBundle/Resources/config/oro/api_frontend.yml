@@ -4,6 +4,10 @@ api:
             alias: shoppinglistitem
             plural_alias: shoppinglistitems
 
+        Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
+            alias: shoppinglistkititem
+            plural_alias: shoppinglistkititems
+
     entities:
         Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
             documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list.md'
@@ -96,6 +100,11 @@ api:
                     form_options:
                         mapped: false
                     depends_on: [product, quantity, unit]
+                kitItems:
+                    property_path: kitItemLineItems
+                    max_results: -1
+                    form_options:
+                        mapped: false
             actions:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
@@ -113,6 +122,33 @@ api:
                     acl_resource: oro_shopping_list_frontend_update
                 delete_list:
                     acl_resource: oro_shopping_list_frontend_update
+                get_subresource: false
+                get_relationship: false
+                add_relationship: false
+                update_relationship: false
+                delete_relationship: false
+
+        Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
+            documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list_kit_item.md'
+            fields:
+                lineItem: ~
+                kitItem: ~
+                unit: ~
+                currency:
+                    data_type: string
+                value:
+                    data_type: money
+                sortOrder:
+                    data_type: integer
+            actions:
+                create: false
+                update: false
+                get:
+                    acl_resource: oro_shopping_list_frontend_view
+                get_list:
+                    acl_resource: oro_shopping_list_frontend_view
+                delete: false
+                delete_list: false
                 get_subresource: false
                 get_relationship: false
                 update_relationship: false
