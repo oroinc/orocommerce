@@ -1,0 +1,16 @@
+operations:
+    oro_website_search_preview:
+        label: oro.websitesearch.searchresult.entity.searchresulthistory.datagrid.preview.label
+        acl_resource: [VIEW, $.data]
+        datagrids:
+            - oro-website-search-result-history-grid
+        button_options:
+            icon: fa-search
+        preconditions:
+            '@gt': [$resultsCount, 0]
+        actions:
+            - '@redirect':
+                route: oro_website_search_term_preview
+                route_parameters:
+                    id: $id
+                new_tab: true

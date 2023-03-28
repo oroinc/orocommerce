@@ -1,0 +1,31 @@
+api:
+    entity_aliases:
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory:
+            alias: searchresulthistory
+            plural_alias: searchresulthistories
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport:
+            alias: searchtermreport
+            plural_alias: searchtermreports
+    entities:
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory:
+            documentation_resource: '@OroWebsiteSearchBundle/Resources/doc/api/search_results_history.md'
+            fields:
+                normalizedSearchTermHash:
+                    exclude: true
+                searchSession:
+                    exclude: true
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport:
+            documentation_resource: '@OroWebsiteSearchBundle/Resources/doc/api/search_term_report.md'
+            fields:
+                normalizedSearchTermHash:
+                    exclude: true
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false

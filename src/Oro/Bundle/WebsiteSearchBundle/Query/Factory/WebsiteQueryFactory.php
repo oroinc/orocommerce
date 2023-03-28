@@ -8,6 +8,9 @@ use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
+/**
+ * Creates and configures WebsiteSearchQuery instances.
+ */
 class WebsiteQueryFactory implements QueryFactoryInterface
 {
     /** @var EngineInterface */
@@ -22,10 +25,10 @@ class WebsiteQueryFactory implements QueryFactoryInterface
     {
         $builder = new YamlToSearchQueryConverter();
 
-        $queryConfig = [];
-        if (isset($config['query'])) {
-            $queryConfig = ['query' => $config['query']];
-        }
+        $queryConfig = [
+            'query' => $config['query'] ?? [],
+            'hints' => $config['hints'] ?? []
+        ];
 
         $builder->process($query, $queryConfig);
     }

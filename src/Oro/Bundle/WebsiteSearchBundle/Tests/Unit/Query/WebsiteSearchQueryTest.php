@@ -103,4 +103,21 @@ class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame($query, $newQuery->getQuery());
         $this->assertEquals($query, $newQuery->getQuery());
     }
+
+    public function testHints()
+    {
+        $query = new Query();
+        $websiteSearchQuery = new WebsiteSearchQuery($this->engine, $query);
+
+        $this->assertFalse($websiteSearchQuery->hasHint('test'));
+        $this->assertFalse($websiteSearchQuery->getHint('test'));
+
+        $websiteSearchQuery->setHint('test', 'value');
+        $websiteSearchQuery->setHint('test2', 'value2');
+        $this->assertTrue($websiteSearchQuery->hasHint('test'));
+        $this->assertTrue($websiteSearchQuery->hasHint('test2'));
+        $this->assertEquals('value', $websiteSearchQuery->getHint('test'));
+        $this->assertEquals('value2', $websiteSearchQuery->getHint('test2'));
+        $this->assertEquals(['test' => 'value', 'test2' => 'value2'], $websiteSearchQuery->getHints());
+    }
 }

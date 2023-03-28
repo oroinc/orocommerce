@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -15,6 +16,7 @@ class OroWebsiteSearchExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        $container->prependExtensionConfig($this->getAlias(), SettingsBuilder::getSettings($config));
 
         $container->setParameter('oro_website_search.engine_dsn', $config['engine_dsn']);
         $container->setParameter('oro_website_search.engine_parameters', $config['engine_parameters']);
@@ -28,6 +30,9 @@ class OroWebsiteSearchExtension extends Extension
         $loader->load('website_search.yml');
         $loader->load('mq_topics.yml');
         $loader->load('mq_processors.yml');
+        $loader->load('controllers.yml');
+        $loader->load('import_export.yml');
+        $loader->load('repositories.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');

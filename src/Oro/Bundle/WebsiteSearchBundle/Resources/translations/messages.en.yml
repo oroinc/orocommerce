@@ -1,9 +1,119 @@
-oro.website_search:
-    search_field_placeholder: Search for a product
-    search_label: Search
-    search_submit_btn: Start Searching
+oro:
+    website_search:
+        search_field_placeholder: Search for a product
+        search_label: Search
+        search_submit_btn: Start Searching
 
-    entity_config:
-        search_boost:
-            label: 'Global Search Boost'
-            tooltip: 'Decimal value greater than zero. Empty value means no boosting. Any value (even 0.1) already applies boosting. Works only for searchable attributes.'
+        entity_config:
+            search_boost:
+                label: 'Global Search Boost'
+                tooltip: 'Decimal value greater than zero. Empty value means no boosting. Any value (even 0.1) already applies boosting. Works only for searchable attributes.'
+    websitesearch:
+        system_configuration:
+            groups:
+                search:
+                    title: 'Search'
+            pages:
+                search_terms:
+                    title: 'Search Terms'
+            fieldsets:
+                search_history:
+                    title: 'Search History'
+        feature:
+            website_search_history:
+                label: 'Enable Search History Reporting'
+                description: >
+                    Enables the Search History feature globally to track your customers’ search activity in the storefront. 
+                    When disabled, the Search Terms feature is removed from the main menu, along with the Search Terms report.
+                    Exercise care when enabling this option as on popular websites it may result in large number of
+                    records saved to the database.
+            website_search_history_tracking:
+                label: 'Enable Search History Collection'
+                description: >
+                    When enabled, all search queries that led users to the search results page, along with the type of 
+                    the search result that they were shown on the search results page, will be recorded to the database.
+                    Depends on the Enable Search History Reporting option.
+                    Exercise care when enabling this option on popular websites as it may result in a large number 
+                    of records saved to the database.
+        searchresult:
+            entity:
+                searchtermreport:
+                    entity_label: 'Search Term Report'
+                    entity_plural_label: 'Search Term Reports'
+                    entity_grid_all_view_label: 'All %entity_plural_label%'
+                    id.label: ID
+                    normalized_search_term_hash.label: 'Normalized Search Term Hash'
+                    search_term:
+                        label: 'Search Term'
+                        description: 'The search term entered by the user.'
+                    times_searched:
+                        label: 'Number of Times Searched'
+                        description: 'Number of times that this search term was searched'
+                    times_returned_results:
+                        label: 'Times Returned Products'
+                        description: 'Number of times that search result type was not empty'
+                    times_empty:
+                        label: 'Times Returned Empty Result'
+                        description: 'Number of times that search result type was empty'
+                    search_date:
+                        label: 'Search Date'
+                        description: 'Date when search term was searched'
+                    owner.label: Owner
+                    organization.label: Organization
+                searchresulthistory:
+                    entity_label: 'Search Result'
+                    entity_plural_label: 'Search Results'
+                    entity_grid_all_view_label: 'All %entity_plural_label%'
+                    id:
+                        label: ID
+                        description: 'The unique identifier of a resource.'
+                    normalized_search_term_hash.label: 'Normalized Search Term Hash'
+                    result_type:
+                        label: 'Search Result Type'
+                        description: 'The type of search result.'
+                        choice:
+                            empty: 'Empty'
+                            product_autocomplete: 'Product Autocomplete'
+                            product_search: 'Product Search'
+                    results_count:
+                        label: 'Results Count'
+                        description: 'Number of returned results'
+                    website:
+                        label: Website
+                        description: 'The website on which the search was performed.'
+                    localization:
+                        label: Localization
+                        description: 'The localization used when the search was performed.'
+                    customer:
+                        label: Customer
+                        description: 'The customer who performed search (empty if guest user).'
+                    customer_user:
+                        label: 'Customer User'
+                        description: 'The customer user who performed search (empty if guest user).'
+                    customer_visitor_id:
+                        label: 'Customer Visitor ID'
+                        description: 'Internal Identifier of customer visitor'
+                    search_session.label: 'Search Session ID'
+                    search_term:
+                        label: 'Search Term'
+                        description: 'The search term entered by the user.'
+                    owner.label: Owner
+                    organization.label: Organization
+                    created_at.label: Searched At
+                    datagrid:
+                        preview.label: 'Preview'
+                        results:
+                            label: 'Results'
+                            product_type.label: '{1} %count% product|]1,Inf[ %count% products'
+                    reports:
+                        number_of_times_searched.title: Number Of Times Searched
+                        number_of_products.title: Times Returned Products
+                        number_of_empty_results.title: Times Returned Empty Result
+        menu:
+            search_result_histories: 'Search Results'
+        shortcut:
+            list_search_result_histories.label: 'Show Website Search Results History'
+        navigation:
+            package_label: Search
+            search_history_index.label: Search History
+            search_report.label: Search Terms

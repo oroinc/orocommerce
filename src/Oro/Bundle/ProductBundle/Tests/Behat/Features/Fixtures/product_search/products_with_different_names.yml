@@ -1,0 +1,62 @@
+include:
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    localProductName1:
+        string: 'Industrial Steel Handheld Flashlight'
+
+    localProductName2:
+        string: 'Handheld Flashlight'
+
+    localProductName3:
+        string: 'Colorful Scrub Top'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    localProductDescription{1..3}:
+        wysiwyg: 'Product Description<current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..3}:
+        unit: '@each'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..3}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        __calls:
+            - addName: ['@localProductName<current()>']
+            - addDescription: ['@localProductDescription<current()>']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price{1..3}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..3}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localValueRetailSupplies:
+        string: 'Retail Supplies'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryRetailSupplies:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localValueRetailSupplies']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
+            - addProduct: ['@product2']
+            - addProduct: ['@product3']
