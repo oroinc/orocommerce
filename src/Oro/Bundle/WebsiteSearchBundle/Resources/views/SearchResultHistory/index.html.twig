@@ -1,0 +1,12 @@
+{% extends '@OroUI/actions/index.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% set gridName = 'oro-website-search-result-history-grid' %}
+{% set pageTitle = 'oro.websitesearch.searchresult.entity.searchresulthistory.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% include '@OroImportExport/ImportExport/buttons_from_configuration.html.twig' with {
+        'alias': 'oro_website_search_result_history'
+    } %}
+{% endblock %}

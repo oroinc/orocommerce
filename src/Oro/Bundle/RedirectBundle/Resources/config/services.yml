@@ -17,7 +17,7 @@ services:
             - '@router.default'
             - '@oro_redirect.routing.matched_url_decision_maker'
             - '@oro_redirect.slug_entity_finder'
-            - '@oro_maintenance.maintenance'
+            - '@oro_maintenance.maintenance_state'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
         tags:

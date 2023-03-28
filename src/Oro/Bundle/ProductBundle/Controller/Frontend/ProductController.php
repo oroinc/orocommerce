@@ -84,9 +84,10 @@ class ProductController extends AbstractController
     public function autocompleteAction(Request $request): JsonResponse
     {
         $searchString = trim($request->get('search'));
+        $searchSessionId = trim($request->get('search_id'));
 
         $autocompleteData = $this->get(ProductAutocompleteProvider::class)
-            ->getAutocompleteData($searchString);
+            ->getAutocompleteData($searchString, $searchSessionId);
 
         return new JsonResponse($autocompleteData);
     }

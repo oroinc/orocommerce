@@ -1,0 +1,40 @@
+system_configuration:
+    groups:
+        search:
+            title: oro.websitesearch.system_configuration.groups.search.title
+        website_search_terms:
+            title: oro.websitesearch.system_configuration.pages.search_terms.title
+            icon: fa-file-text-o
+        website_search_history:
+            title: oro.websitesearch.system_configuration.fieldsets.search_history.title
+
+    fields:
+        oro_website_search.enable_global_search_history_feature:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 100
+            page_reload: true
+            options:
+                label: oro.websitesearch.feature.website_search_history.label
+                tooltip: oro.websitesearch.feature.website_search_history.description
+
+        oro_website_search.enable_global_search_history_tracking:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 50
+            options:
+                label: oro.websitesearch.feature.website_search_history_tracking.label
+                tooltip: oro.websitesearch.feature.website_search_history_tracking.description
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    search:
+                        children:
+                            website_search_terms:
+                                children:
+                                    website_search_history:
+                                        children:
+                                            - oro_website_search.enable_global_search_history_feature
+                                            - oro_website_search.enable_global_search_history_tracking

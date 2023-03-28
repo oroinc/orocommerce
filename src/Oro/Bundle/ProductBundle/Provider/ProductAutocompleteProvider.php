@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration as ProductConfigu
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteQueryEvent;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use Oro\Bundle\UIBundle\Twig\HtmlTagExtension;
@@ -22,6 +23,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ProductAutocompleteProvider
 {
+    protected const SEARCH_TYPE = 'product_autocomplete';
+
     protected UrlGeneratorInterface $urlGenerator;
     protected ProductRepository $searchRepository;
     protected HtmlTagExtension $htmlTagExtension;
@@ -53,14 +56,19 @@ class ProductAutocompleteProvider
 
     /**
      * @param string $queryString
+     * @param string|null $searchSessionId
      * @return array ['total_count' => int, 'products' => [<productData>, ...], 'categories' => [<categoryData>, ...]]
      */
-    public function getAutocompleteData(string $queryString): array
+    public function getAutocompleteData(string $queryString, ?string $searchSessionId = null): array
     {
         $numberOfProducts = $this->configManager
             ->get(ProductConfiguration::getConfigKeyByName(ProductConfiguration::SEARCH_AUTOCOMPLETE_MAX_PRODUCTS));
 
         $query = $this->searchRepository->getAutocompleteSearchQuery($queryString, $numberOfProducts);
+
+        $query->setHint(Query::HINT_SEARCH_TYPE, self::SEARCH_TYPE);
+        $query->setHint(Query::HINT_SEARCH_TERM, $queryString);
+        $query->setHint(Query::HINT_SEARCH_SESSION, $searchSessionId);
 
         $event = new ProcessAutocompleteQueryEvent($query, $queryString);
         $this->eventDispatcher->dispatch($event);

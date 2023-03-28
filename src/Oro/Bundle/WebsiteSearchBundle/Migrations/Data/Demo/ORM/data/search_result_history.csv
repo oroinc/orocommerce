@@ -1,0 +1,9 @@
+term,type,count,localization,customer,customer_user,visitor_id
+Led flashlight,product_search,12,en_US,Company A,AmandaRCole@example.org,
+expert,empty,0,en_US,,,42
+lamp,product_autocomplete,18,en_US,Company A,BrandaJSanborn@example.org,
+clogs,product_search,4,en_US,Company A,BrandaJSanborn@example.org,
+clogs,empty,0,fr_FR,Company A,BrandaJSanborn@example.org,
+scrubs,product_autocomplete,8,en_US,,,42
+clogs,product_autocomplete,4,en_US,Company A,AmandaRCole@example.org,
+tires,empty,0,en_US,Company A,AmandaRCole@example.org,

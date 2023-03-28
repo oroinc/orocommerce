@@ -1,0 +1,18 @@
+data:
+    type: searchtermreports
+    id: '<toString(@search_term_report_1->id)>'
+    attributes:
+        searchTerm: '@search_term_report_1->searchTerm'
+        timesSearched: '@search_term_report_1->timesSearched'
+        timesReturnedResults: '@search_term_report_1->timesReturnedResults'
+        timesEmpty: '@search_term_report_1->timesEmpty'
+        searchDate: '@search_term_report_1->searchDate->format("Y-m-d")'
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '<toString(@search_term_report_1->owner->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@search_term_report_1->organization->id)>'

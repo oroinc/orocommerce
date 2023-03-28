@@ -6,7 +6,7 @@ export default {
     },
 
     onKeyUp(event) {
-        if (event.originalEvent.keyCode === 27 && this.isEnabled()) {
+        if (event.keyCode === 27 && this.isEnabled()) {
             this.stop(this.editor, this.sender);
         }
     },

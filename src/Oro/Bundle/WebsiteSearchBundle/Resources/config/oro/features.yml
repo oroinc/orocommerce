@@ -1,0 +1,29 @@
+features:
+    oro_website_search_history:
+        label: oro.websitesearch.feature.website_search_history.label
+        description: oro.pricing.feature.website_search_history.description
+        toggle: 'oro_website_search.enable_global_search_history_feature'
+        routes:
+            - 'oro_website_search_result_history_index'
+            - 'oro_website_search_term_preview'
+        commands:
+            - 'oro:website-search:actualize-search-term-report'
+        entities:
+            - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
+            - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport'
+        api_resources:
+            - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
+            - 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport'
+        configuration:
+            - 'oro_website_search.enable_global_search_history_tracking'
+        navigation_items:
+            - 'application_menu.marketing_tab.oro_website_search_tab.oro_website_search_result_history_list'
+            - 'shortcut_oro_website_search_result_history_index'
+            - 'application_menu.reports_tab.static_reports_tab.oro_website_search_report_tab.oro_website_search_results_report'
+
+    oro_website_search_history_tracking:
+        label: oro.websitesearch.feature.website_search_history_tracking.label
+        description: oro.pricing.feature.website_search_history_tracking.description
+        toggle: 'oro_website_search.enable_global_search_history_tracking'
+        dependencies:
+            - 'oro_website_search_history'

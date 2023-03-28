@@ -1,0 +1,5 @@
+reference,term,type,count,localization,customer,customer_user,visitor_id,created_at
+search_result_scrubs,scrubs,product_autocomplete,8,en_US,,,42,-33 days 13:10
+search_result_clogs_1,clogs,product_search,4,en_US,customer.level_1,other.user@test.com,,-31 days 13:10
+search_result_clogs_2,clogs,empty,0,en_CA,customer.level_1,other.user@test.com,,-31 days 13:11
+search_result_clogs_3,clogs,product_autocomplete,4,en_US,customer.level_1,grzegorz.brzeczyszczykiewicz@example.com,,-31 days 13:12

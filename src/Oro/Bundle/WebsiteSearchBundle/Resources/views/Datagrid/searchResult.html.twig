@@ -1,0 +1,5 @@
+{% set result = record.getValue('resultsCount') %}
+{% set resultType = record.getValue('resultType') %}
+{% if resultType starts with 'product' %}
+    {{ 'oro.websitesearch.searchresult.entity.searchresulthistory.datagrid.results.product_type.label'|trans({'%count%': result}) }}
+{% endif %}
