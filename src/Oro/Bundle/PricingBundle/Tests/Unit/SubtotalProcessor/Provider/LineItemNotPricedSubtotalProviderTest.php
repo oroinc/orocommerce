@@ -82,8 +82,8 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
             ->addLineItem($lineItem1)
             ->addLineItem($lineItem2);
 
-        $prices['1-kg-3-USD'] = Price::create(0.03, self::CURRENCY_USD);
-        $prices['2-item-7-USD'] = Price::create(1.02, self::CURRENCY_USD);
+        $prices['1-kg-3-USD'] = Price::create(0.033, self::CURRENCY_USD);
+        $prices['2-item-7-USD'] = Price::create(1.021, self::CURRENCY_USD);
 
         $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
         $this->priceScopeCriteriaFactory->expects(self::once())
@@ -110,7 +110,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertEquals('test', $subtotal->getLabel());
         self::assertEquals(self::CURRENCY_USD, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
-        self::assertSame(7.23, $subtotal->getAmount());
+        self::assertSame(7.25, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
     }
 
@@ -169,6 +169,28 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertIsFloat($subtotal->getAmount());
         self::assertSame(85.81, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
+        self::assertEquals([
+            spl_object_hash($lineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 0.03,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 0.09,
+            ],
+            spl_object_hash($lineItem2) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 1.02,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 7.14,
+            ],
+            spl_object_hash($productKitLineItem) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 39.288,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 78.576,
+            ],
+            spl_object_hash($kitItemLineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 10.123,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 20.246,
+            ],
+            spl_object_hash($kitItemLineItem2) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 5.345,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 16.035,
+            ],
+        ], $subtotal->getData());
     }
 
     public function testGetSubtotalWhenNoPriceButHasProductKitItemLineItems(): void
@@ -221,6 +243,24 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertIsFloat($subtotal->getAmount());
         self::assertSame(72.67, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
+        self::assertEquals([
+            spl_object_hash($lineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 0.03,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 0.09,
+            ],
+            spl_object_hash($productKitLineItem) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 36.29,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 72.58,
+            ],
+            spl_object_hash($kitItemLineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 10.123,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 20.246,
+            ],
+            spl_object_hash($kitItemLineItem2) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 5.345,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 16.035,
+            ],
+        ], $subtotal->getData());
     }
 
     private function createProductPriceCriteria(ProductLineItemInterface $lineItem): ProductPriceCriteria
@@ -274,6 +314,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertIsFloat($subtotal->getAmount());
         self::assertEquals(0, $subtotal->getAmount());
         self::assertFalse($subtotal->isVisible());
+        self::assertEquals([], $subtotal->getData());
     }
 
     public function testGetSubtotalWithWrongEntity(): void

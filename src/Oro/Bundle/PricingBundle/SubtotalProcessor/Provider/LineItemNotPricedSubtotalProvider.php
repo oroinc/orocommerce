@@ -170,14 +170,13 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
 
             $subtotalAmount = $priceAmount
                 ->multipliedBy((float)$lineItemPriceCriterion?->getQuantity());
-            $subtotalAmount = $this->rounding->round($subtotalAmount->toFloat());
 
             $extraData[$lineItemHash] = [
                 self::EXTRA_DATA_PRICE => $priceAmount->toFloat(),
-                self::EXTRA_DATA_SUBTOTAL => $subtotalAmount,
+                self::EXTRA_DATA_SUBTOTAL => $subtotalAmount->toFloat(),
             ];
 
-            return $subtotalAmount;
+            return $this->rounding->round($subtotalAmount->toFloat());
         }
 
         return 0.0;
