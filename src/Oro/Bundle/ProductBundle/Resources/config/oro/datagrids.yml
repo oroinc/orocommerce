@@ -1233,6 +1233,14 @@ datagrids:
                 where:
                     and:
                         - product_kit_item_product.id IS NOT NULL
+        sorters:
+            columns:
+                sku:
+                    disabled: true
+                productName:
+                    disabled: true
+                status:
+                    disabled: true
         properties:
             id: ~
             view_link:
