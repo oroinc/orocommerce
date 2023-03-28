@@ -672,7 +672,7 @@
 {% endmacro %}
 
 {% macro bind_model_value(value, name) %}
-    <span data-model="{{ name }}">{{ value }}</span>
+    <span data-model="{{ name }}">{{ value|escape }}</span>
 {% endmacro %}
 
 {% block oro_product_kit_item_widget %}
@@ -710,7 +710,7 @@
                  data-toggle="collapse"
                  data-target="#{{ collapseFormId }}"
                  data-model="labels"
-            >{{ value.labels|localized_value }}</div>
+            >{{ value.labels|localized_value|escape }}</div>
         </div>
 
         <div class="content-variant-item-content__body">
