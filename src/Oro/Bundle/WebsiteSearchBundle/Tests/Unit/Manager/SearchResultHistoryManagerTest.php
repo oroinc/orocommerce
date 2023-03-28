@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Manager;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
@@ -53,6 +54,11 @@ class SearchResultHistoryManagerTest extends TestCase
     private $localizationHelper;
 
     /**
+     * @var ConfigManager|MockObject
+     */
+    private $configManager;
+
+    /**
      * @var MockObject|LoggerInterface
      */
     private $logger;
@@ -66,6 +72,7 @@ class SearchResultHistoryManagerTest extends TestCase
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->manager = new SearchResultHistoryManager(
@@ -73,7 +80,8 @@ class SearchResultHistoryManagerTest extends TestCase
             $this->reportRepository,
             $this->tokenStorage,
             $this->websiteManager,
-            $this->localizationHelper
+            $this->localizationHelper,
+            $this->configManager
         );
         $this->manager->setLogger($this->logger);
     }
@@ -264,8 +272,20 @@ class SearchResultHistoryManagerTest extends TestCase
 
     public function testActualizeHistoryReport()
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 10]);
+
+        $this->historyRepository->expects($this->once())
+            ->method('getOrganizationsByHistory')
+            ->willReturn([$organization]);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_locale.timezone', 'UTC', false, $organization)
+            ->willReturn('Europe/Kyiv');
+
         $this->reportRepository->expects($this->once())
-            ->method('actualizeReport');
+            ->method('actualizeReport')
+            ->with($organization, new \DateTimeZone('Europe/Kyiv'));
 
         $this->manager->actualizeHistoryReport();
     }

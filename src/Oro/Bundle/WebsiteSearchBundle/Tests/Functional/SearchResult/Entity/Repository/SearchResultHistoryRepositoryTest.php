@@ -4,12 +4,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchResult\Entity\Re
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryOldData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryPart1Data;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryPart2Data;
 
 /**
  * @dbIsolationPerTest
@@ -24,16 +27,37 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
         $this->repo = self::getContainer()->get('doctrine')->getRepository(SearchResultHistory::class);
     }
 
+    public function testGetOrganizationsByHistory()
+    {
+        $this->loadFixtures([
+            LoadSearchResultHistoryOldData::class,
+            LoadSearchResultHistoryPart1Data::class,
+            LoadSearchResultHistoryPart2Data::class,
+        ]);
+        $organizationsIds = [];
+        foreach ($this->repo->getOrganizationsByHistory() as $org) {
+            $this->assertInstanceOf(Organization::class, $org);
+            $organizationsIds[] = $org->getId();
+        }
+
+        $orgId = $this->getReference('search_result_scrubs')->getOrganization()->getId();
+        $this->assertEquals([$orgId], $organizationsIds);
+    }
+
     public function testRemoveOldRecords()
     {
-        $this->loadFixtures([LoadSearchResultHistoryData::class]);
+        $this->loadFixtures([
+            LoadSearchResultHistoryOldData::class,
+            LoadSearchResultHistoryPart1Data::class,
+            LoadSearchResultHistoryPart2Data::class,
+        ]);
 
-        $oldEntityId = $this->getReference('search_result_4')->getId();
-        $freshEntityId = $this->getReference('search_result_1')->getId();
+        $oldEntityId = $this->getReference('search_result_scrubs')->getId();
+        $freshEntityId = $this->getReference('search_result_led_light_2')->getId();
 
-        $this->assertEquals(8, $this->repo->count([]));
+        $this->assertEquals(9, $this->repo->count([]));
         $this->repo->removeOldRecords(30);
-        $this->assertEquals(4, $this->repo->count([]));
+        $this->assertEquals(5, $this->repo->count([]));
 
         $this->assertNull($this->repo->findOneBy(['id' => $oldEntityId]));
         $this->assertNotNull($this->repo->findOneBy(['id' => $freshEntityId]));
@@ -47,7 +71,7 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
         $this->loadFixtures([
             LoadCustomerUserData::class,
             LoadLocalizationData::class,
-            LoadWebsite::class
+            LoadWebsite::class,
         ]);
 
         $customerUser = $this->getReference(LoadCustomerUserData::EMAIL);
@@ -115,10 +139,10 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
             ->refresh($record);
         $this->assertNotNull($record);
 
-        $this->assertEquals($searchTerm . ' updated', $record->getSearchTerm());
+        $this->assertEquals($searchTerm.' updated', $record->getSearchTerm());
         $this->assertEquals('empty', $record->getResultType());
         $this->assertEquals(0, $record->getResultsCount());
-        $this->assertEquals(md5($searchTerm . ' updated'), $record->getNormalizedSearchTermHash());
+        $this->assertEquals(md5($searchTerm.' updated'), $record->getNormalizedSearchTermHash());
         $this->assertEquals($businessUnit->getId(), $record->getOwner()->getId());
         $this->assertEquals($sessionId, $record->getSearchSession());
         $this->assertEquals($localization->getId(), $record->getLocalization()->getId());

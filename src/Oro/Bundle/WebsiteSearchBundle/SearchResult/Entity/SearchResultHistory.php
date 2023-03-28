@@ -21,7 +21,6 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *
  * Functional indexes:
  *  - website_search_result_history_term_lower_idx as LOWER("search_term")
- *  - website_search_result_history_search_date_idx as DATE("created_at")
  *
  * @ORM\Entity(
  *     repositoryClass="Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository"

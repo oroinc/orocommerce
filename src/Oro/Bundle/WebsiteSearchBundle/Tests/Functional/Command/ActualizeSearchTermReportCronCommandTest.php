@@ -7,14 +7,20 @@ use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHi
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchTermReportRepository;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryOldData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryPart1Data;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryPart2Data;
 
 class ActualizeSearchTermReportCronCommandTest extends WebTestCase
 {
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadSearchResultHistoryData::class]);
+        $this->loadFixtures([
+            LoadSearchResultHistoryOldData::class,
+            LoadSearchResultHistoryPart1Data::class,
+            LoadSearchResultHistoryPart2Data::class,
+        ]);
     }
 
     public function testCommand()
@@ -25,11 +31,11 @@ class ActualizeSearchTermReportCronCommandTest extends WebTestCase
         $historyRepo = self::getContainer()->get('doctrine')->getRepository(SearchResultHistory::class);
 
         $this->assertEquals(0, $reportRepo->count([]));
-        $this->assertEquals(8, $historyRepo->count([]));
+        $this->assertEquals(9, $historyRepo->count([]));
 
         $this->runCommand('oro:website-search:actualize-search-term-report');
 
         $this->assertEquals(6, $reportRepo->count([]));
-        $this->assertEquals(4, $historyRepo->count([]));
+        $this->assertEquals(5, $historyRepo->count([]));
     }
 }

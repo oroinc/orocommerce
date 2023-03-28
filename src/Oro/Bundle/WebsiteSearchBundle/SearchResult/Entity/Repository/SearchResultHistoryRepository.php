@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
 
 /**
@@ -107,5 +108,16 @@ class SearchResultHistoryRepository extends ServiceEntityRepository
             [new \DateTime(sprintf('-%d days', $keepDays), new \DateTimeZone('UTC'))],
             [Types::DATE_MUTABLE]
         );
+    }
+
+    public function getOrganizationsByHistory(): iterable
+    {
+        $qb = $this->createQueryBuilder('e');
+        $qb->select('IDENTITY(e.organization) as organizationId')
+            ->distinct(true);
+
+        foreach ($qb->getQuery()->getArrayResult() as $row) {
+            yield $this->getEntityManager()->getReference(Organization::class, $row['organizationId']);
+        }
     }
 }

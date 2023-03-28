@@ -50,8 +50,12 @@ Feature: Search terms report
       | 2000        | boneym      | 40  | 30                      | 10   |
       | 2001        | abba        | 150 | 106                     | 44   |
 
-  Scenario: Check filter by search term
+  Scenario: Check report grid filters
     When I filter "Search term" as contains "bon"
+    And I set range filter "Number of Times Searched" as min value "10" and max value "50"
+    And I set range filter "Times returned products" as min value "10" and max value "50"
+    And I set range filter "Times Returned Empty Result" as min value "1" and max value "20"
+    And I filter "Time Period" as between "1999-12-12" and "2015-12-12"
     Then I should see following grid:
       | Time Period | Search Term | NTS | Times returned products | TRER |
       | 2000        | boneym      | 40  | 30                      | 10   |

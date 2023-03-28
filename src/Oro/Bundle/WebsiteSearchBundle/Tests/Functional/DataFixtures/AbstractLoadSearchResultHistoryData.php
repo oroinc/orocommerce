@@ -14,7 +14,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
 
-class LoadSearchResultHistoryData extends AbstractFixture implements DependentFixtureInterface
+abstract class AbstractLoadSearchResultHistoryData extends AbstractFixture implements DependentFixtureInterface
 {
     public function getDependencies()
     {
@@ -24,10 +24,7 @@ class LoadSearchResultHistoryData extends AbstractFixture implements DependentFi
         ];
     }
 
-    protected function getCsvPath(): string
-    {
-        return __DIR__ . '/data/search_result_history.csv';
-    }
+    abstract protected function getCsvPath(): string;
 
     public function load(ObjectManager $manager)
     {

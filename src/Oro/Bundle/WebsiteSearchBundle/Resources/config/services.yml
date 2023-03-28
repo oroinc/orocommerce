@@ -358,6 +358,7 @@ services:
             - '@security.token_storage'
             - '@oro_website.manager'
             - '@oro_locale.helper.localization'
+            - '@oro_config.manager'
         calls:
             - ['setKeepDays', ['%oro_website_search.search_history.keep_days%']]
             - ['setLogger', ['@logger']]

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Manager;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
@@ -32,6 +33,7 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
     private TokenStorageInterface $tokenStorage;
     private WebsiteManager $websiteManager;
     private LocalizationHelper $localizationHelper;
+    private ConfigManager $configManager;
     private int $keepDays = 30;
 
     public function __construct(
@@ -39,7 +41,8 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
         SearchTermReportRepository $reportRepository,
         TokenStorageInterface $tokenStorage,
         WebsiteManager $websiteManager,
-        LocalizationHelper $localizationHelper
+        LocalizationHelper $localizationHelper,
+        ConfigManager $configManager
     ) {
         $this->historyRepository = $historyRepository;
         $this->reportRepository = $reportRepository;
@@ -47,6 +50,7 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
         $this->websiteManager = $websiteManager;
         $this->localizationHelper = $localizationHelper;
         $this->logger = new NullLogger();
+        $this->configManager = $configManager;
     }
 
     public function setKeepDays(int $keepDays): void
@@ -101,7 +105,10 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
 
     public function actualizeHistoryReport(): void
     {
-        $this->reportRepository->actualizeReport();
+        foreach ($this->historyRepository->getOrganizationsByHistory() as $organization) {
+            $timezone = $this->configManager->get('oro_locale.timezone', 'UTC', false, $organization);
+            $this->reportRepository->actualizeReport($organization, new \DateTimeZone($timezone));
+        }
     }
 
     private function getCustomerVisitor(?TokenInterface $token): ?CustomerVisitor

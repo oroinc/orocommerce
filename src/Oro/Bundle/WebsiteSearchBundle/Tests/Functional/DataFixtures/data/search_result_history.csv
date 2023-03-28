@@ -1,9 +1,0 @@
-reference,term,type,count,localization,customer,customer_user,visitor_id,created_at
-search_result_1,Led flashlight,product_search,12,en_US,customer.level_1,grzegorz.brzeczyszczykiewicz@example.com,,now
-search_result_2,expert,empty,0,en_US,,,42,-2 days
-search_result_3,lamp,product_autocomplete,18,en_US,customer.level_1,other.user@test.com,,now
-search_result_4,clogs,product_search,4,en_US,customer.level_1,other.user@test.com,,-31 days
-search_result_5,clogs,empty,0,en_CA,customer.level_1,other.user@test.com,,-31 days
-search_result_6,scrubs,product_autocomplete,8,en_US,,,42,-33 days
-search_result_7,clogs,product_autocomplete,4,en_US,customer.level_1,grzegorz.brzeczyszczykiewicz@example.com,,-31 days
-search_result_8,tires,empty,0,en_US,customer.level_1,grzegorz.brzeczyszczykiewicz@example.com,,-3 hours

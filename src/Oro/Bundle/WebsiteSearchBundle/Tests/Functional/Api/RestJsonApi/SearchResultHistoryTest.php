@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Api\RestJsonApi;
 
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryApiData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResultHistoryPart1Data;
 
 class SearchResultHistoryTest extends FeatureAwareRestJsonApiTestCase
 {
@@ -13,7 +13,7 @@ class SearchResultHistoryTest extends FeatureAwareRestJsonApiTestCase
         parent::setUp();
 
         $this->loadFixtures([
-            LoadSearchResultHistoryApiData::class,
+            LoadSearchResultHistoryPart1Data::class,
         ]);
     }
 
@@ -32,7 +32,7 @@ class SearchResultHistoryTest extends FeatureAwareRestJsonApiTestCase
 
     public function testGet()
     {
-        $id = $this->getReference('search_result_1')->getId();
+        $id = $this->getReference('search_result_tires')->getId();
         $response = $this->get(
             ['entity' => self::API_TYPE, 'id' => $id]
         );
@@ -53,7 +53,7 @@ class SearchResultHistoryTest extends FeatureAwareRestJsonApiTestCase
     ) {
         $getterMethod = 'get' . ucwords($associationType, '_');
 
-        $record = $this->getReference('search_result_1');
+        $record = $this->getReference('search_result_tires');
         $id = $record->getId();
 
         $response = $this->getRelationship(

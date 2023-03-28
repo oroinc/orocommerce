@@ -47,11 +47,6 @@ class CreateSearchResultHistoryTable implements Migration
         );
 
         $queries->addPostQuery(
-            'CREATE INDEX website_search_result_history_search_date_idx'
-            . ' ON oro_website_search_result_history (DATE("created_at"))'
-        );
-
-        $queries->addPostQuery(
             'ALTER TABLE oro_website_search_result_history'
             . ' ADD CONSTRAINT "website_search_result_history_search_session_unq" UNIQUE ("search_session")'
         );
