@@ -14,7 +14,7 @@ interface ProductKitItemLineItemsAwareInterface
     /**
      * @return Collection<ProductKitItemLineItemInterface>
      */
-    public function getKitItemLineItems(): Collection;
+    public function getKitItemLineItems();
 
     public function getChecksum(): string;
 }

@@ -48,7 +48,7 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
      *     orphanRemoval=true
      * )
      */
-    protected Collection $labels;
+    protected $labels;
 
     /**
      * @ORM\Column(name="sort_order", type="integer", options={"default"=0})
@@ -73,7 +73,7 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
      * )
      * @OrderBy({"sortOrder"="ASC"})
      */
-    protected Collection $kitItemProducts;
+    protected $kitItemProducts;
 
     /**
      * @ORM\Column(name="optional", type="boolean", options={"default"=false})
@@ -204,7 +204,7 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
     /**
      * @return Collection<ProductKitItemProduct>
      */
-    public function getKitItemProducts(): Collection
+    public function getKitItemProducts()
     {
         return $this->kitItemProducts;
     }

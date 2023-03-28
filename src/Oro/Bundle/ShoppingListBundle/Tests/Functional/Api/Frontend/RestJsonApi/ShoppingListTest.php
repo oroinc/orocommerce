@@ -184,9 +184,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'shoppinglists'],
             [
-                'include'                   => 'items',
+                'include'                   => 'items.items.kitItems',
                 'fields[shoppinglists]'     => 'name,currency,total,subTotal,items',
-                'fields[shoppinglistitems]' => 'currency,value,quantity'
+                'fields[shoppinglistitems]' => 'currency,value,quantity,kitItems'
             ],
             ['HTTP_X-Include' => 'totalCount']
         );
@@ -1048,7 +1048,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             $productId,
             'New Line Item Notes'
         );
-        $this->assertShoppingListTotal($shoppingList, 164.13, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 169.05, 'USD');
     }
 
     public function testAddToCartForExistingListItem()
@@ -1085,7 +1085,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             $productId,
             'Updated Existing Line Item Notes'
         );
-        $this->assertShoppingListTotal($shoppingList, 63.23, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 68.15, 'USD');
     }
 
     public function testAddToCartForNewListItemForDefaultShoppingList()
@@ -1124,7 +1124,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             $productId,
             'New Line Item Notes'
         );
-        $this->assertShoppingListTotal($shoppingList, 164.13, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 169.05, 'USD');
     }
 
     public function testAddToCartForNewListItemForDefaultShoppingListWhenNoDefaultShoppingList()

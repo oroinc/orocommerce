@@ -114,8 +114,7 @@ class LineItem implements
      *     targetEntity="ProductKitItemLineItem",
      *     mappedBy="lineItem",
      *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
+     *     orphanRemoval=true
      * )
      * @OrderBy({"sortOrder"="ASC"})
      * @ConfigField(
@@ -126,7 +125,7 @@ class LineItem implements
      *      }
      * )
      */
-    protected Collection $kitItemLineItems;
+    protected $kitItemLineItems;
 
     /**
      * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
@@ -424,7 +423,7 @@ class LineItem implements
     /**
      * @return Collection<ProductKitItemLineItem>
      */
-    public function getKitItemLineItems(): Collection
+    public function getKitItemLineItems()
     {
         return $this->kitItemLineItems;
     }

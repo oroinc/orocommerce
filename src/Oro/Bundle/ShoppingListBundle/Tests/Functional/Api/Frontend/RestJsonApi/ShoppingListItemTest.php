@@ -190,7 +190,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             ->find($lineItemId);
         self::assertNotNull($lineItem);
         self::assertEquals(123.45, $lineItem->getQuantity());
-        $this->assertShoppingListTotal($lineItem->getShoppingList(), 172.76, 'USD');
+        $this->assertShoppingListTotal($lineItem->getShoppingList(), 177.68, 'USD');
     }
 
     public function testTryToUpdateFloatQuantityWhenPrecisionIsZero()
@@ -259,7 +259,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $shoppingList = $lineItem->getShoppingList();
         self::assertEquals($shoppingListId, $shoppingList->getId());
         self::assertCount(4, $shoppingList->getLineItems());
-        $this->assertShoppingListTotal($lineItem->getShoppingList(), 164.13, 'USD');
+        $this->assertShoppingListTotal($lineItem->getShoppingList(), 169.05, 'USD');
     }
 
     public function testTryToCreateWithFloatQuantityWhenPrecisionIsZero()
@@ -508,7 +508,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
         self::assertCount(2, $shoppingList->getLineItems());
-        $this->assertShoppingListTotal($shoppingList, 48.08, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 53.0, 'USD');
     }
 
     public function testDeleteList()
@@ -531,7 +531,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
         self::assertCount(2, $shoppingList->getLineItems());
-        $this->assertShoppingListTotal($shoppingList, 48.08, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 53.0, 'USD');
     }
 
     public function testTryToSetZeroQuantity()

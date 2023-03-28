@@ -107,10 +107,12 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             $searchScope = $this->priceScopeCriteriaFactory->createByContext($entity);
             $prices = $this->productPriceProvider->getMatchedPrices($priceCriteria, $searchScope);
             foreach ($entity->getLineItems() as $lineItem) {
-                $initialLineItemSubtotalAmount = BigDecimal::of(0);
-
-                if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
+                $initialLineItemSubtotalAmount = null;
+                if ($lineItem instanceof ProductKitItemLineItemsAwareInterface && $lineItem->getKitItemLineItems()) {
                     foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                        if ($initialLineItemSubtotalAmount === null) {
+                            $initialLineItemSubtotalAmount = BigDecimal::of(0);
+                        }
                         $kitItemLineItemSubtotalAmount = $this->getLineItemSubtotalAmount(
                             $kitItemLineItem,
                             $prices,
@@ -215,7 +217,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     private function getLineItems(LineItemsNotPricedAwareInterface $entity): \Generator
     {
         foreach ($entity->getLineItems() as $lineItem) {
-            if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
+            if ($lineItem instanceof ProductKitItemLineItemsAwareInterface && $lineItem->getKitItemLineItems()) {
                 foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
                     yield $kitItemLineItem;
                 }
