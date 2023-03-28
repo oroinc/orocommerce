@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
@@ -10,6 +11,7 @@ use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInt
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -67,13 +69,12 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     protected function getExtensions(): array
     {
         return [
-            new PreloadedExtension(
-                [
-                    PayPalSettingsType::class => $this->formType,
-                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
-                ],
-                []
-            ),
+            new PreloadedExtension([
+                PayPalSettingsType::class => $this->formType,
+                LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
+            ], [
+                FormType::class => [new TooltipFormExtensionStub($this)],
+            ]),
             new ValidatorExtension(Validation::createValidator())
         ];
     }
