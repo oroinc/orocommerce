@@ -27,7 +27,7 @@
                                 aria-expanded="false"
                                 data-target="#{{ targetId }}"
                                 class="font-weight-bold content-variant-item-title"
-                        >{{ kitItem.labels|localized_value }}</label>
+                        >{{ kitItem.labels|localized_value|escape }}</label>
 
                         <div class="content-variant-item-content__body">
                             {{ oro_widget_render({
