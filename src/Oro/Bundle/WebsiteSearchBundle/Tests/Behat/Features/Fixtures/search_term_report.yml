@@ -1,0 +1,41 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: Common Business Unit
+        organization: '@organization'
+
+Oro\Bundle\ReportBundle\Entity\CalendarDate:
+    date1:
+        date: '<(new \DateTime("2001-04-01 00:00:00", new \DateTimeZone("UTC")))>'
+    date2:
+        date: '<(new \DateTime("2001-05-10 00:00:00", new \DateTimeZone("UTC")))>'
+    date3:
+        date: '<(new \DateTime("2000-04-13 00:00:00", new \DateTimeZone("UTC")))>'
+
+Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport:
+    row1:
+        searchTerm: 'abba'
+        normalizedSearchTermHash: '54a8723466e5d487247f3d93d51c66bc'
+        timesSearched: 100
+        timesReturnedResults: 80
+        timesEmpty: 20
+        searchDate: '<(new \DateTime("2001-04-01 00:00:00", new \DateTimeZone("UTC")))>'
+        organization: '@organization'
+        owner: '@businessUnit'
+    row2:
+        searchTerm: 'abba'
+        normalizedSearchTermHash: '54a8723466e5d487247f3d93d51c66bc'
+        timesSearched: 50
+        timesReturnedResults: 26
+        timesEmpty: 24
+        searchDate: '<(new \DateTime("2001-05-10 00:00:00", new \DateTimeZone("UTC")))>'
+        organization: '@organization'
+        owner: '@businessUnit'
+    row3:
+        searchTerm: 'boneym'
+        normalizedSearchTermHash: '9096d75e4242e20b4bdbd393b8f7d951'
+        timesSearched: 40
+        timesReturnedResults: 30
+        timesEmpty: 10
+        searchDate:  '<(new \DateTime("2000-04-13 00:00:00", new \DateTimeZone("UTC")))>'
+        organization: '@organization'
+        owner: '@businessUnit'

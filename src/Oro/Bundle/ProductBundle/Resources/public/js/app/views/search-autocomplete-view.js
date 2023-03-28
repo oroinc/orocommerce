@@ -5,6 +5,7 @@ import BaseView from 'oroui/js/app/views/base/view';
 import routing from 'routing';
 import template from 'tpl-loader!oroproduct/templates/search-autocomplete.html';
 import 'jquery-ui/tabbable';
+import tools from 'oroui/js/tools';
 
 const SearchAutocompleteView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
@@ -47,6 +48,8 @@ const SearchAutocompleteView = BaseView.extend({
     },
 
     previousValue: '',
+
+    searchSessionId: '',
 
     autocompleteItems: '[role="option"]',
 
@@ -228,7 +231,8 @@ const SearchAutocompleteView = BaseView.extend({
 
     _getSearchXHR(inputString) {
         const autocompleteUrl = routing.generate(this.autocompleteRoute, {
-            search: inputString
+            search: inputString,
+            search_id: this.searchSessionId
         });
 
         return Backbone.ajax({
@@ -313,6 +317,10 @@ const SearchAutocompleteView = BaseView.extend({
         const inputString = this.getInputString();
         if (inputString === this.previousValue) {
             return;
+        }
+
+        if (!this.previousValue || !inputString.startsWith(this.previousValue)) {
+            this.searchSessionId = tools.createRandomUUID();
         }
 
         this._shouldShowPopup(inputString)

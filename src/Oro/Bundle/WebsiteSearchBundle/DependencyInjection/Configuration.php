@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\SearchBundle\DependencyInjection\Configuration as SearchConfiguration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -38,6 +39,14 @@ class Configuration implements ConfigurationInterface
                 ->max(self::INDEXER_BATCH_SIZE_MAX)
             ->end()
         ;
+
+        SettingsBuilder::append(
+            $rootNode,
+            [
+                'enable_global_search_history_feature' => ['type' => 'boolean', 'value' => false],
+                'enable_global_search_history_tracking' => ['type' => 'boolean', 'value' => true]
+            ]
+        );
 
         return $treeBuilder;
     }

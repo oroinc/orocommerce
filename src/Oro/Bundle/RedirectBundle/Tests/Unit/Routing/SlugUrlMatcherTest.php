@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
-use Oro\Bundle\MaintenanceBundle\Maintenance\Mode as MaintenanceMode;
+use Oro\Bundle\MaintenanceBundle\Maintenance\MaintenanceModeState;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
@@ -32,8 +32,8 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var SlugEntityFinder|\PHPUnit\Framework\MockObject\MockObject */
     private $slugEntityFinder;
 
-    /** @var MaintenanceMode|\PHPUnit\Framework\MockObject\MockObject */
-    private $maintenanceMode;
+    /** @var MaintenanceModeState|\PHPUnit\Framework\MockObject\MockObject */
+    private $maintenanceModeState;
 
     /** @var SlugUrlMatcher */
     private $matcher;
@@ -43,13 +43,13 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $this->router = $this->createMock(RouterInterface::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
         $this->slugEntityFinder = $this->createMock(SlugEntityFinder::class);
-        $this->maintenanceMode = $this->createMock(MaintenanceMode::class);
+        $this->maintenanceModeState = $this->createMock(MaintenanceModeState::class);
 
         $this->matcher = new SlugUrlMatcher(
             $this->router,
             $this->matchedUrlDecisionMaker,
             $this->slugEntityFinder,
-            $this->maintenanceMode
+            $this->maintenanceModeState
         );
     }
 
@@ -201,7 +201,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     {
         $url = '/test';
 
-        $this->maintenanceMode->expects(self::once())
+        $this->maintenanceModeState->expects(self::once())
             ->method('isOn')
             ->willReturn(true);
 
@@ -422,7 +422,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     {
         $url = '/test';
 
-        $this->maintenanceMode->expects(self::once())
+        $this->maintenanceModeState->expects(self::once())
             ->method('isOn')
             ->willReturn(true);
 
@@ -528,7 +528,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     {
         $request = Request::create('/test');
 
-        $this->maintenanceMode->expects(self::once())
+        $this->maintenanceModeState->expects(self::once())
             ->method('isOn')
             ->willReturn(true);
 
@@ -1037,7 +1037,7 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
         $url = '/test';
         $request = Request::create('/test');
 
-        $this->maintenanceMode->expects(self::once())
+        $this->maintenanceModeState->expects(self::once())
             ->method('isOn')
             ->willReturn(true);
 

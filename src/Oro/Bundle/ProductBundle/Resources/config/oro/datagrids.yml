@@ -912,6 +912,8 @@ datagrids:
                     - text.schema_org_description_LOCALIZATION_ID as schemaOrgDescription
                 from:
                     - oro_product_WEBSITE_ID
+            hints:
+                - {'name': HINT_SEARCH_TYPE, 'value': 'product_search'} # Used for search term logging.
         columns:
             sku:
                 label:         oro.product.sku.label

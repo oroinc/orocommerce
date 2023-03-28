@@ -1,5 +1,6 @@
 parameters:
     oro_website_search.index_text_table_name: oro_website_search_text
+    oro_website_search.search_history.keep_days: 30
 
 services:
     oro_website_search.resolver.query_placeholder:
@@ -348,3 +349,26 @@ services:
 
     oro_website_search.formatter.decimal_flat_value_formatter:
         class: 'Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter'
+
+    oro_website_search.search_result_history.manager:
+        class: Oro\Bundle\WebsiteSearchBundle\Manager\SearchResultHistoryManager
+        arguments:
+            - '@Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository'
+            - '@Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchTermReportRepository'
+            - '@security.token_storage'
+            - '@oro_website.manager'
+            - '@oro_locale.helper.localization'
+            - '@oro_config.manager'
+        calls:
+            - ['setKeepDays', ['%oro_website_search.search_history.keep_days%']]
+            - ['setLogger', ['@logger']]
+        tags:
+            - {name: monolog.logger, channel: oro_website_search}
+
+    oro_website_search.event_listener.search_listener:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\SearchHistoryEventListener
+        abstract: true
+        arguments:
+            - '@oro_website_search.search_result_history.manager'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_website_search_history_tracking }

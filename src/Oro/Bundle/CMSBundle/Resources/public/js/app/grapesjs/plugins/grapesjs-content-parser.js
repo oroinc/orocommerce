@@ -6,6 +6,9 @@
  */
 
 const postParseModel = model => {
+    if (model.attributes && model.attributes['data-type'] === 'temporary-container') {
+        return model.components;
+    }
     /**
      * Move style props to attributes.style to display styles as inline
      * Need for "indent" and "outdent" action in RTE editor
@@ -60,10 +63,6 @@ const postParseModel = model => {
                 tagName: ''
             }];
         }
-    }
-
-    if (model.attributes && model.attributes['data-type'] === 'temporary-container') {
-        return model.components;
     }
 
     return model;
