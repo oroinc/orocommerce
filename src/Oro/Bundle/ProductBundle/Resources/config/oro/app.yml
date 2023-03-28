@@ -20,3 +20,8 @@ knp_gaufrette:
         import_product_images:
             adapter: import_files
             alias: import_product_images_filesystem
+
+oro_product:
+    product_types:
+        - simple
+        - configurable
