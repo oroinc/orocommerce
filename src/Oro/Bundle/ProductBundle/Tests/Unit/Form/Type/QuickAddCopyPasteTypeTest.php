@@ -22,17 +22,29 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(array $data, bool $isValid)
+    public function testSubmit(array $data, bool $isValid, array $parsed = [])
     {
         $form = $this->factory->create(QuickAddCopyPasteType::class);
 
         $form->submit($data);
-        $this->assertEquals($isValid, $form->isValid());
         $this->assertTrue($form->isSynchronized());
+        $this->assertSame($isValid, $form->isValid());
+        $this->assertEquals($data, $form->getData());
 
-        $formData = $form->getData();
-
-        $this->assertEquals($data, $formData);
+        // test the item parse pattern
+        if ($isValid && $data[QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME] && $parsed) {
+            $itemParsePattern = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)
+                ->getConfig()
+                ->getOption('attr')['data-item-parse-pattern'];
+            $dataRows = explode("\n", $data[QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME]);
+            $parsedItems = [];
+            foreach ($dataRows as $dataRow) {
+                $dataRow = trim($dataRow, "\r");
+                self::assertSame(1, preg_match($itemParsePattern, $dataRow, $matches), $dataRow);
+                $parsedItems[] = [$matches['sku'], $matches['quantity'], $matches['unit'] ?? null];
+            }
+            self::assertEquals($parsed, $parsedItems);
+        }
     }
 
     /**
@@ -60,7 +72,8 @@ ABC,1,item
 DEF,4.5,item
 TEXT
                 ],
-                'isValid' => true
+                'isValid' => true,
+                'parsed' => [['ABC', '1', 'item'], ['DEF', '4.5', 'item']]
             ],
             'valid string with tab separator' => [
                 'data' => [
@@ -69,7 +82,8 @@ ABC	1	item
 DEF	4.5	item
 TEXT
                 ],
-                'isValid' => true
+                'isValid' => true,
+                'parsed' => [['ABC', '1', 'item'], ['DEF', '4.5', 'item']]
             ],
             'valid string with space separator' => [
                 'data' => [
@@ -78,7 +92,8 @@ ABC 1 item
 DEF 4.5 item
 TEXT
                 ],
-                'isValid' => true
+                'isValid' => true,
+                'parsed' => [['ABC', '1', 'item'], ['DEF', '4.5', 'item']]
             ],
             'valid comma separated string without optional field' => [
                 'data' => [
@@ -88,7 +103,8 @@ DEC,1
 DEF,4.5,item
 TEXT
                 ],
-                'isValid' => true
+                'isValid' => true,
+                'parsed' => [['ABC', '1', 'item'], ['DEC', '1', null], ['DEF', '4.5', 'item']]
             ],
             'valid semicolon separated string without optional field' => [
                 'data' => [
@@ -98,7 +114,8 @@ DEC;1
 DEF;4.5;item
 TEXT
                 ],
-                'isValid' => true
+                'isValid' => true,
+                'parsed' => [['ABC', '1', 'item'], ['DEC', '1', null], ['DEF', '4.5', 'item']]
             ],
             'valid tab separated string without optional field' => [
                 'data' => [
@@ -108,7 +125,8 @@ DEC	1
 DEF	4.5	item
 TEXT
                 ],
-                'isValid' => true
+                'isValid' => true,
+                'parsed' => [['ABC', '1', 'item'], ['DEC', '1', null], ['DEF', '4.5', 'item']]
             ],
             'tab separated string with negative quantity' => [
                 'data' => [
@@ -118,7 +136,8 @@ DEC	-1
 DEF	-4.5	item
 TEXT
                 ],
-                'isValid' => false
+                'isValid' => false,
+                'parsed' => [['ABC', '-1', 'item'], ['DEC', '-1', null], ['DEF', '-4.5', 'item']]
             ],
             'semicolon separated string with negative quantity' => [
                 'data' => [
@@ -128,7 +147,8 @@ DEC;-1
 DEF;-4.5;item
 TEXT
                 ],
-                'isValid' => false
+                'isValid' => false,
+                'parsed' => [['ABC', '-1', 'item'], ['DEC', '-1', null], ['DEF', '-4.5', 'item']]
             ],
             'string with space separator and negative quantity' => [
                 'data' => [
@@ -137,7 +157,8 @@ ABC -1 item
 DEF -4.5 item
 TEXT
                 ],
-                'isValid' => false
+                'isValid' => false,
+                'parsed' => [['ABC', '-1', 'item'], ['DEF', '-4.5', 'item']]
             ],
             'multiple rows in one line' => [
                 'data' => [

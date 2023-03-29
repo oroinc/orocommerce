@@ -2,35 +2,24 @@
 
 namespace Oro\Bundle\ProductBundle\Model\Builder;
 
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Creates the instance of QuickAddRow model based on the passed data.
  */
 class QuickAddRowInputParser
 {
-    private ManagerRegistry $registry;
     private ProductUnitsProvider $productUnitsProvider;
-    private AclHelper $aclHelper;
     private NumberFormatter $numberFormatter;
 
     public function __construct(
-        ManagerRegistry $registry,
         ProductUnitsProvider $productUnitsProvider,
-        AclHelper $aclHelper,
         NumberFormatter $numberFormatter
     ) {
-        $this->registry = $registry;
         $this->productUnitsProvider = $productUnitsProvider;
-        $this->aclHelper = $aclHelper;
         $this->numberFormatter = $numberFormatter;
     }
 
@@ -42,18 +31,22 @@ class QuickAddRowInputParser
         }
         $quantity = isset($product[1]) ? trim($product[1]) : null;
         $organization = isset($organization) ? trim($organization) : null;
+        if ('' === $organization) {
+            $organization = null;
+        }
+
         $parsedQty = $this->numberFormatter->parseFormattedDecimal($quantity);
-        if ($parsedQty === false) {
-            // Support nonformatted quantity
+        if (false === $parsedQty) {
+            // support non formatted quantity
             $parsedQty = (float)$quantity;
             if ((string)$parsedQty !== $quantity) {
-                $parsedQty = 0;
+                $parsedQty = 0.0;
             }
         }
 
         $unit = isset($product[2]) ? trim($product[2]) : null;
 
-        return new QuickAddRow($lineNumber, $sku, $parsedQty, $this->resolveUnit($sku, $unit), $organization);
+        return new QuickAddRow($lineNumber, $sku, $parsedQty, $this->resolveUnit($unit), $organization);
     }
 
     public function createFromArray(array $product, int $index): QuickAddRow
@@ -61,8 +54,12 @@ class QuickAddRowInputParser
         $sku = isset($product[QuickAddRow::SKU]) ? trim($product[QuickAddRow::SKU]) : '';
         $quantity = isset($product[QuickAddRow::QUANTITY]) ? (float)$product[QuickAddRow::QUANTITY] : 0;
         $unit = isset($product[QuickAddRow::UNIT]) ? trim($product[QuickAddRow::UNIT]) : null;
+        $organization = isset($product[QuickAddRow::ORGANIZATION]) ? trim($product[QuickAddRow::ORGANIZATION]) : null;
+        if ('' === $organization) {
+            $organization = null;
+        }
 
-        return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($sku, $unit));
+        return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($unit), $organization);
     }
 
     public function createFromRequest(array $product, int $index): QuickAddRow
@@ -70,9 +67,16 @@ class QuickAddRowInputParser
         $sku = trim($product[ProductDataStorage::PRODUCT_SKU_KEY]);
         $quantity = (float)$product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
         $unit = isset($product[ProductDataStorage::PRODUCT_UNIT_KEY])
-            ? trim($product[ProductDataStorage::PRODUCT_UNIT_KEY]) : null;
+            ? trim($product[ProductDataStorage::PRODUCT_UNIT_KEY])
+            : null;
+        $organization = isset($product[ProductDataStorage::PRODUCT_ORGANIZATION_KEY])
+            ? trim($product[ProductDataStorage::PRODUCT_ORGANIZATION_KEY])
+            : null;
+        if ('' === $organization) {
+            $organization = null;
+        }
 
-        return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($sku, $unit));
+        return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($unit), $organization);
     }
 
     public function createFromCopyPasteTextLine(array $product, int $lineNumber): QuickAddRow
@@ -80,43 +84,25 @@ class QuickAddRowInputParser
         return $this->createFromFileLine($product, $lineNumber);
     }
 
-    private function resolveUnit(string $sku, ?string $unitName = null): ?string
+    private function resolveUnit(?string $unitName): ?string
     {
         if (!$unitName) {
-            $qb = $this->getProductRepository()->getPrimaryUnitPrecisionCodeQueryBuilder($sku);
-            $defaultUnitName = $this->aclHelper->apply($qb)->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
-
-            return $defaultUnitName ?: null;
+            return null;
         }
 
-        $unit = \strtolower($unitName);
-        $availableUnits = $this->getAvailableProductUnitCodes();
-
-        // Support translated unit codes
-        if (\array_key_exists($unit, $availableUnits)) {
-            return $availableUnits[$unit];
-        }
-
-        // Support untranslated unit codes
-        if (\in_array($unit, $availableUnits, true)) {
-            return $unit;
-        }
-
-        return $unitName;
-    }
-
-    private function getAvailableProductUnitCodes(): array
-    {
+        $resolvedUnitName = null;
+        $unitLowercase = strtolower($unitName);
         $units = $this->productUnitsProvider->getAvailableProductUnits();
+        foreach ($units as $translatedName => $name) {
+            if (strtolower($translatedName) === $unitLowercase) {
+                $resolvedUnitName = $name;
+                break;
+            }
+            if (strtolower($name) === $unitLowercase) {
+                $resolvedUnitName = $name;
+            }
+        }
 
-        return \array_combine(
-            \array_map('strtolower', \array_keys($units)),
-            \array_map('strtolower', $units)
-        );
-    }
-
-    private function getProductRepository(): ProductRepository
-    {
-        return $this->registry->getRepository(Product::class);
+        return $resolvedUnitName ?? $unitName;
     }
 }

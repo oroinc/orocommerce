@@ -57,6 +57,10 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_product.layout.data_provider.product_form, key: Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider }
+            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add_process, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler }
+            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add_import_from_file, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler }
+            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add_import_from_plain_text, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromPlainTextHandler }
 
     Oro\Bundle\ProductBundle\Controller\Frontend\AjaxProductController:
         calls:
@@ -84,3 +88,4 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_product.form.handler.product_collection_segment_products, key: Oro\Bundle\ProductBundle\Form\Handler\ProductCollectionSegmentProductsFormHandler }

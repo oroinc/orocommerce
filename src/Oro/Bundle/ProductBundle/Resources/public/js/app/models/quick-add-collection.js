@@ -12,7 +12,7 @@ const QuickAddCollection = BaseCollection.extend({
     model: QuickAddModel,
 
     constructor: function QuickAddCollection(data, options) {
-        this._index = {_: []};
+        this._index = {__: []};
 
         this.listenTo(this, {
             add: this.onModelAdd,
@@ -25,18 +25,22 @@ const QuickAddCollection = BaseCollection.extend({
     },
 
     onModelAdd(model) {
-        const key = this._formatIndexKey(model.get('sku'), model.get('unit_label'));
+        const key = this._formatIndexKey(model.get('sku'), model.get('unit_label'), model.get('organization'));
         this._addToIndex(key, model);
     },
 
     onModelRemove(model) {
-        const key = this._formatIndexKey(model.get('sku'), model.get('unit_label'));
+        const key = this._formatIndexKey(model.get('sku'), model.get('unit_label'), model.get('organization'));
         this._removeFromIndex(key, model);
     },
 
     onModelChange(model) {
-        const previousKey = this._formatIndexKey(model.previous('sku'), model.previous('unit_label'));
-        const key = this._formatIndexKey(model.get('sku'), model.get('unit_label'));
+        const previousKey = this._formatIndexKey(
+            model.previous('sku'),
+            model.previous('unit_label'),
+            model.previous('organization')
+        );
+        const key = this._formatIndexKey(model.get('sku'), model.get('unit_label'), model.get('organization'));
         if (key !== previousKey) {
             this._removeFromIndex(previousKey, model);
             this._addToIndex(key, model);
@@ -52,8 +56,8 @@ const QuickAddCollection = BaseCollection.extend({
         removedModels.forEach(model => model.trigger('removed'));
     },
 
-    _formatIndexKey(sku, unitLabel) {
-        return `${(sku || '').toUpperCase()}_${(unitLabel || '').toUpperCase()}`;
+    _formatIndexKey(sku, unitLabel, organization) {
+        return `${(sku || '').toUpperCase()}_${(unitLabel || '').toUpperCase()}_${(organization || '').toUpperCase()}`;
     },
 
     _addToIndex(key, model) {
@@ -81,8 +85,8 @@ const QuickAddCollection = BaseCollection.extend({
      * @param {Object<{sku:string, unit_label:string}>} attrs
      * @return {QuickAddModel|null}
      */
-    findCompatibleModel({sku, unit_label: unitLabel}) {
-        const key = this._formatIndexKey(sku, unitLabel);
+    findCompatibleModel({sku, unit_label: unitLabel, organization}) {
+        const key = this._formatIndexKey(sku, unitLabel, organization);
         const models = this._index[key];
         return models && models.length ? models[0] : null;
     },
@@ -93,7 +97,7 @@ const QuickAddCollection = BaseCollection.extend({
      * @return {QuickAddModel}
      */
     getEmptyModel() {
-        const models = this._index['_'] || [];
+        const models = this._index['__'] || [];
         let model = models[0];
         if (!model) {
             // create new empty model
@@ -111,8 +115,8 @@ const QuickAddCollection = BaseCollection.extend({
      * @param {string=} options.strategy Either "update" or "replace"
      */
     addQuickAddRows(items, options = {}) {
-        if (this._index['_']) {
-            this._index['_'] // sort empty models by rows order in form
+        if (this._index['__']) {
+            this._index['__'] // sort empty models by rows order in form
                 .sort((ma, mb) => ma.get('index') - mb.get('index'));
         }
 

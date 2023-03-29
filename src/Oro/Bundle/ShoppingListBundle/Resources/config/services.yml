@@ -122,36 +122,32 @@ services:
             - '@oro_shopping_list.provider.shopping_list_url'
             - '@oro_entity.doctrine_helper'
 
-    oro_shopping_list.processor.abstract_quick_add:
-        class: 'Oro\Bundle\ShoppingListBundle\Processor\AbstractShoppingListQuickAddProcessor'
-        abstract: true
-        arguments:
-            - "@oro_shopping_list.handler.shopping_list_line_item"
-            - "@doctrine"
-            - "@oro_shopping_list.service.message_generator"
-            - "@oro_security.acl_helper"
-        calls:
-            - [setProductClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
-
     oro_shopping_list.processor.quick_add:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor'
         public: true
-        parent: oro_shopping_list.processor.abstract_quick_add
+        arguments:
+            - '@oro_shopping_list.handler.shopping_list_line_item'
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@oro_shopping_list.service.message_generator'
         tags:
             - { name: oro_product.quick_add_processor }
 
     oro_shopping_list.processor.quick_add_to_checkout:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor'
         public: true
-        parent: oro_shopping_list.processor.abstract_quick_add
-        calls:
-            - [setShoppingListManager, ['@oro_shopping_list.manager.shopping_list']]
-            - [setShoppingListLimitManager, ['@oro_shopping_list.manager.shopping_list_limit']]
-            - [setCurrentShoppingListManager, ['@oro_shopping_list.manager.current_shopping_list']]
-            - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
-            - [setTranslator, ['@translator']]
-            - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setActionGroupName, ['start_quickorder_checkout']]
+        arguments:
+            - '@oro_shopping_list.handler.shopping_list_line_item'
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@oro_shopping_list.service.message_generator'
+            - '@oro_shopping_list.manager.shopping_list'
+            - '@oro_shopping_list.manager.shopping_list_limit'
+            - '@oro_shopping_list.manager.current_shopping_list'
+            - '@oro_action.action_group_registry'
+            - '@translator'
+            - '@oro_locale.formatter.date_time'
+            - 'start_quickorder_checkout'
         tags:
             - { name: oro_product.quick_add_processor }
 

@@ -7,8 +7,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
-use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Model\Grouping\QuickAddRowGrouper;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
@@ -24,30 +24,32 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    private QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject $quickAddRowCollectionBuilder;
+    /** @var QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $quickAddRowCollectionBuilder;
 
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    private ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator;
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $validator;
 
-    private ProductsGrouperFactory $productsGrouperFactory;
+    /** @var QuickAddRowCollectionViolationsMapper|\PHPUnit\Framework\MockObject\MockObject */
+    private $quickAddRowCollectionViolationsMapper;
 
-    private QuickAddRowCollectionViolationsMapper|\PHPUnit\Framework\MockObject\MockObject
-        $quickAddRowCollectionViolationsMapper;
+    /** @var QuickAddCollectionNormalizerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $quickAddCollectionNormalizer;
 
-    private QuickAddCollectionNormalizerInterface|\PHPUnit\Framework\MockObject\MockObject
-        $quickAddCollectionNormalizer;
+    /** @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $preloadingManager;
 
-    private PreloadingManager|\PHPUnit\Framework\MockObject\MockObject $preloadingManager;
-
-    private QuickAddImportFromFileHandler $handler;
+    /** @var QuickAddImportFromFileHandler */
+    private $handler;
 
     protected function setUp(): void
     {
         $this->quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
-        $this->productsGrouperFactory = new ProductsGrouperFactory();
         $this->quickAddRowCollectionViolationsMapper = $this->createMock(QuickAddRowCollectionViolationsMapper::class);
         $this->quickAddCollectionNormalizer = $this->createMock(QuickAddCollectionNormalizerInterface::class);
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
@@ -56,24 +58,21 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
             $this->quickAddRowCollectionBuilder,
             $this->eventDispatcher,
             $this->validator,
-            $this->productsGrouperFactory,
+            new QuickAddRowGrouper(),
             $this->quickAddRowCollectionViolationsMapper,
-            $this->quickAddCollectionNormalizer
+            $this->quickAddCollectionNormalizer,
+            $this->preloadingManager
         );
-        $this->handler->setPreloadingManager($this->preloadingManager);
     }
 
     public function testProcessWhenNotSubmitted(): void
     {
         $request = new Request();
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('handleRequest')
             ->with($request);
-
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('isSubmitted')
             ->willReturn(false);
 
@@ -90,23 +89,16 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $request = new Request();
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('handleRequest')
             ->with($request);
-
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('isSubmitted')
             ->willReturn(true);
-
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('isValid')
             ->willReturn(false);
-
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('getErrors')
             ->with(true)
             ->willReturn(new FormErrorIterator($form, $formErrors));
@@ -129,30 +121,23 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
     {
         $request = new Request();
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('handleRequest')
             ->with($request);
-
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('isSubmitted')
             ->willReturn(true);
-
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('isValid')
             ->willReturn(true);
 
         $fileForm = $this->createMock(FormInterface::class);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('get')
             ->with(QuickAddImportFromFileType::FILE_FIELD_NAME)
             ->willReturn($fileForm);
         $file = $this->createMock(UploadedFile::class);
-        $fileForm
-            ->expects(self::once())
+        $fileForm->expects(self::once())
             ->method('getData')
             ->willReturn($file);
 
@@ -160,14 +145,12 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
         $quickAddRow->setProduct($product);
         $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
-        $this->quickAddRowCollectionBuilder
-            ->expects(self::once())
+        $this->quickAddRowCollectionBuilder->expects(self::once())
             ->method('buildFromFile')
             ->with($file)
             ->willReturn($quickAddRowCollection);
 
-        $this->preloadingManager
-            ->expects(self::once())
+        $this->preloadingManager->expects(self::once())
             ->method('preloadInEntities')
             ->with(
                 [$product],
@@ -181,19 +164,16 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
             );
 
         $violationList = new ConstraintViolationList();
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($quickAddRowCollection)
             ->willReturn($violationList);
 
-        $this->quickAddRowCollectionViolationsMapper
-            ->expects(self::once())
+        $this->quickAddRowCollectionViolationsMapper->expects(self::once())
             ->method('mapViolations')
             ->with($quickAddRowCollection, $violationList);
 
-        $this->eventDispatcher
-            ->expects(self::once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(
                 new QuickAddRowsCollectionReadyEvent($quickAddRowCollection),
@@ -201,8 +181,7 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
             );
 
         $normalizedCollection = ['errors' => [], 'items' => [['sample_key' => 'sample_value']]];
-        $this->quickAddCollectionNormalizer
-            ->expects(self::once())
+        $this->quickAddCollectionNormalizer->expects(self::once())
             ->method('normalize')
             ->with($quickAddRowCollection)
             ->willReturn($normalizedCollection);

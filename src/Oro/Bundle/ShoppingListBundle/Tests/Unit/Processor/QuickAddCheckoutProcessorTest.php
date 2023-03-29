@@ -3,14 +3,20 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -22,36 +28,55 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
+    /** @var ShoppingListLineItemHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $handler;
+
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
+    /** @var MessageGenerator|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageGenerator;
+
+    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListLimitManager */
+    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListLimitManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
+    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currentShoppingListManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ActionGroupRegistry */
+    /** @var ActionGroupRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $actionGroupRegistry;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ActionGroup */
+    /** @var ActionGroup|\PHPUnit\Framework\MockObject\MockObject */
     private $actionGroup;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DateTimeFormatterInterface */
+    /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dateFormatter;
 
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
+
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $em;
+
     /** @var QuickAddCheckoutProcessor */
-    protected $processor;
+    private $processor;
 
     protected function setUp(): void
     {
-        parent::setUp();
-
+        $this->handler = $this->createMock(ShoppingListLineItemHandler::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->messageGenerator = $this->createMock(MessageGenerator::class);
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
@@ -59,66 +84,77 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->actionGroup = $this->createMock(ActionGroup::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->dateFormatter = $this->createMock(DateTimeFormatterInterface::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($this->productRepository);
+        $doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->em);
 
         $this->processor = new QuickAddCheckoutProcessor(
             $this->handler,
-            $this->registry,
+            $doctrine,
+            $this->aclHelper,
             $this->messageGenerator,
-            $this->aclHelper
+            $this->shoppingListManager,
+            $this->shoppingListLimitManager,
+            $this->currentShoppingListManager,
+            $this->actionGroupRegistry,
+            $this->translator,
+            $this->dateFormatter,
+            'start_shoppinglist_checkout'
         );
-
-        $this->processor->setProductClass(Product::class);
-        $this->processor->setShoppingListManager($this->shoppingListManager);
-        $this->processor->setShoppingListLimitManager($this->shoppingListLimitManager);
-        $this->processor->setCurrentShoppingListManager($this->currentShoppingListManager);
-        $this->processor->setActionGroupRegistry($this->actionGroupRegistry);
-        $this->processor->setTranslator($this->translator);
-        $this->processor->setDateFormatter($this->dateFormatter);
-        $this->processor->setActionGroupName('start_shoppinglist_checkout');
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getProcessorName(): string
+    public function testGetName(): void
     {
-        return QuickAddCheckoutProcessor::NAME;
+        self::assertEquals('oro_shopping_list_to_checkout_quick_add_processor', $this->processor->getName());
     }
 
-    public function testIsAllowed()
+    public function testIsValidationRequired(): void
     {
-        $this->handler->expects($this->once())
+        self::assertTrue($this->processor->isValidationRequired());
+    }
+
+    public function testIsAllowed(): void
+    {
+        $this->handler->expects(self::once())
             ->method('isAllowed')
             ->willReturn(true);
-        $this->actionGroupRegistry->expects($this->once())
+        $this->actionGroupRegistry->expects(self::once())
             ->method('findByName')
             ->with('start_shoppinglist_checkout')
             ->willReturn($this->actionGroup);
 
-        $this->assertTrue($this->processor->isAllowed());
+        self::assertTrue($this->processor->isAllowed());
     }
 
-    public function testIsAllowedAndNoActionGroup()
+    public function testIsAllowedAndNoActionGroup(): void
     {
-        $this->handler->expects($this->once())
+        $this->handler->expects(self::once())
             ->method('isAllowed')
             ->willReturn(true);
-        $this->actionGroupRegistry->expects($this->once())
+        $this->actionGroupRegistry->expects(self::once())
             ->method('findByName')
             ->with('start_shoppinglist_checkout')
             ->willReturn(null);
 
-        $this->assertFalse($this->processor->isAllowed());
+        self::assertFalse($this->processor->isAllowed());
     }
 
     /**
      * @dataProvider wrongDataDataProvider
      */
-    public function testProcessWithNotValidData(array $data)
+    public function testProcessWithNotValidData(array $data): void
     {
         $request = $this->createMock(Request::class);
 
-        $this->assertEquals(null, $this->processor->process($data, $request));
+        self::assertNull($this->processor->process($data, $request));
     }
 
     public function wrongDataDataProvider(): array
@@ -142,33 +178,33 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         ];
     }
 
-    public function testProcessWhenCommitted()
+    public function testProcessWhenCommitted(): void
     {
         $data = $this->getProductData();
 
         $productIds = ['sku1абв' => 1, 'sku2' => 2];
         $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
-        $this->shoppingListLimitManager->expects($this->once())
+        $this->shoppingListLimitManager->expects(self::once())
             ->method('isReachedLimit')
             ->willReturn(false);
 
         $shoppingList = new ShoppingList();
 
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('create')
             ->willReturn($shoppingList);
 
-        $this->em->expects($this->once())
+        $this->em->expects(self::once())
             ->method('persist');
-        $this->em->expects($this->once())
+        $this->em->expects(self::once())
             ->method('flush');
 
-        $this->dateFormatter->expects($this->once())
+        $this->dateFormatter->expects(self::once())
             ->method('format')
             ->willReturn('Mar 28, 2016, 2:50 PM');
 
-        $this->translator->expects($this->once())
+        $this->translator->expects(self::once())
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
@@ -179,7 +215,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         ]);
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getArrayResult')
             ->willReturn([
                 ['id' => 1, 'sku' => 'SKU1АБВ'],
@@ -187,35 +223,35 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $this->productRepository->expects($this->once())
+        $this->productRepository->expects(self::once())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with(['sku1абв', 'sku2'])
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->actionGroupRegistry->expects($this->once())
+        $this->actionGroupRegistry->expects(self::once())
             ->method('findByName')
             ->with('start_shoppinglist_checkout')
             ->willReturn($this->actionGroup);
 
-        $this->actionGroup->expects($this->once())
+        $this->actionGroup->expects(self::once())
             ->method('execute')
             ->willReturn($actionData);
 
-        $this->handler->expects($this->once())
+        $this->handler->expects(self::once())
             ->method('createForShoppingList')
             ->with(
-                $this->isInstanceOf(ShoppingList::class),
+                self::isInstanceOf(ShoppingList::class),
                 array_values($productIds),
                 $productUnitsQuantities
             )
             ->willReturn(count($data));
 
-        $this->em->expects($this->once())
+        $this->em->expects(self::once())
             ->method('commit');
 
         $request = new Request();
@@ -223,41 +259,45 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         /** @var RedirectResponse $result */
         $result = $this->processor->process($data, $request);
-        $this->assertInstanceOf(RedirectResponse::class, $result);
-        $this->assertEquals($redirectUrl, $result->getTargetUrl());
+        self::assertInstanceOf(RedirectResponse::class, $result);
+        self::assertEquals($redirectUrl, $result->getTargetUrl());
     }
 
-    public function testProcessWhenCommittedWithLimit()
+    public function testProcessWhenCommittedWithLimit(): void
     {
         $data = $this->getProductData();
 
         $productIds = ['sku1абв' => 1, 'sku2' => 2];
         $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
-        $this->shoppingListLimitManager->expects($this->once())
+        $this->shoppingListLimitManager->expects(self::once())
             ->method('isReachedLimit')
             ->willReturn(true);
 
         $shoppingList = new ShoppingList();
 
-        $this->currentShoppingListManager->expects($this->once())
+        $this->translator->expects(self::once())
+            ->method('trans')
+            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
+
+        $this->currentShoppingListManager->expects(self::once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('edit')
             ->willReturn($shoppingList);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('removeLineItems');
 
-        $this->em->expects($this->never())
+        $this->em->expects(self::never())
             ->method('persist');
-        $this->em->expects($this->never())
+        $this->em->expects(self::never())
             ->method('flush');
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getArrayResult')
             ->willReturn([
                 ['id' => 1, 'sku' => 'SKU1АБВ'],
@@ -265,34 +305,35 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $this->productRepository->expects($this->once())
+        $this->productRepository->expects(self::once())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with(['sku1абв', 'sku2'])
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
+        $redirectUrl = 'some/url';
         $actionData = new ActionData([
             'shoppingList' => $shoppingList,
-            'redirectUrl' => 'some/url'
+            'redirectUrl' => $redirectUrl
         ]);
 
-        $this->actionGroupRegistry->expects($this->once())
+        $this->actionGroupRegistry->expects(self::once())
             ->method('findByName')
             ->with('start_shoppinglist_checkout')
             ->willReturn($this->actionGroup);
 
-        $this->actionGroup->expects($this->once())
+        $this->actionGroup->expects(self::once())
             ->method('execute')
             ->willReturn($actionData);
 
-        $this->handler->expects($this->once())
+        $this->handler->expects(self::once())
             ->method('createForShoppingList')
             ->with(
-                $this->isInstanceOf(ShoppingList::class),
+                self::isInstanceOf(ShoppingList::class),
                 array_values($productIds),
                 $productUnitsQuantities
             )
@@ -301,10 +342,12 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $request = new Request();
         $request->setSession($this->createMock(Session::class));
 
-        $this->processor->process($data, $request);
+        $result = $this->processor->process($data, $request);
+        self::assertInstanceOf(RedirectResponse::class, $result);
+        self::assertEquals($redirectUrl, $result->getTargetUrl());
     }
 
-    public function testProcessWhenActionGroupFailedWithErrors()
+    public function testProcessWhenActionGroupFailedWithErrors(): void
     {
         $data = $this->getProductData();
 
@@ -313,15 +356,15 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $shoppingList = new ShoppingList();
 
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('create')
             ->willReturn($shoppingList);
 
-        $this->dateFormatter->expects($this->once())
+        $this->dateFormatter->expects(self::once())
             ->method('format')
             ->willReturn('Mar 28, 2016, 2:50 PM');
 
-        $this->translator->expects($this->once())
+        $this->translator->expects(self::once())
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
@@ -332,7 +375,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         ]);
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getArrayResult')
             ->willReturn([
                 ['id' => 1, 'sku' => 'SKU1АБВ'],
@@ -340,90 +383,90 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $this->productRepository->expects($this->once())
+        $this->productRepository->expects(self::once())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with(['sku1абв', 'sku2'])
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->actionGroupRegistry->expects($this->once())
+        $this->actionGroupRegistry->expects(self::once())
             ->method('findByName')
             ->with('start_shoppinglist_checkout')
             ->willReturn($this->actionGroup);
 
-        $this->actionGroup->expects($this->once())
+        $this->actionGroup->expects(self::once())
             ->method('execute')
             ->willReturn($actionData);
 
-        $this->handler->expects($this->once())
+        $this->handler->expects(self::once())
             ->method('createForShoppingList')
             ->with(
-                $this->isInstanceOf(ShoppingList::class),
+                self::isInstanceOf(ShoppingList::class),
                 array_values($productIds),
                 $productUnitsQuantities
             )
             ->willReturn(count($data));
 
         $request = new Request();
-        $this->assertFailedFlashMessage($request);
+        $this->expectsFailedFlashMessage($request);
 
-        $this->em->expects($this->once())
+        $this->em->expects(self::once())
             ->method('rollback');
 
-        $this->assertFalse($this->processor->process($data, $request));
+        self::assertNull($this->processor->process($data, $request));
     }
 
-    public function testProcessWhenHandlerThrowsException()
+    public function testProcessWhenHandlerThrowsException(): void
     {
         $data = $this->getProductData();
 
         $shoppingList = new ShoppingList();
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('create')
             ->willReturn($shoppingList);
 
-        $this->dateFormatter->expects($this->once())
+        $this->dateFormatter->expects(self::once())
             ->method('format')
             ->willReturn('Mar 28, 2016, 2:50 PM');
 
-        $this->translator->expects($this->once())
+        $this->translator->expects(self::once())
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getArrayResult')
             ->willReturn([]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $this->productRepository->expects($this->once())
+        $this->productRepository->expects(self::once())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with(['sku1абв', 'sku2'])
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->handler->expects($this->once())
+        $this->handler->expects(self::once())
             ->method('createForShoppingList')
             ->willThrowException(new AccessDeniedException());
 
         $request = new Request();
-        $this->assertFailedFlashMessage($request);
+        $this->expectsFailedFlashMessage($request);
 
-        $this->em->expects($this->once())
+        $this->em->expects(self::once())
             ->method('rollback');
 
-        $this->assertEquals(null, $this->processor->process($data, $request));
+        self::assertNull($this->processor->process($data, $request));
     }
 
-    public function testProcessWhenNoItemsCreatedForShoppingList()
+    public function testProcessWhenNoItemsCreatedForShoppingList(): void
     {
         $data = $this->getProductData();
 
@@ -432,20 +475,20 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $shoppingList = new ShoppingList();
 
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('create')
             ->willReturn($shoppingList);
 
-        $this->dateFormatter->expects($this->once())
+        $this->dateFormatter->expects(self::once())
             ->method('format')
             ->willReturn('Mar 28, 2016, 2:50 PM');
 
-        $this->translator->expects($this->once())
+        $this->translator->expects(self::once())
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getArrayResult')
             ->willReturn([
                 ['id' => 1, 'sku' => 'SKU1АБВ'],
@@ -453,53 +496,52 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $this->productRepository->expects($this->once())
+        $this->productRepository->expects(self::once())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with(['sku1абв', 'sku2'])
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
-        $this->handler->expects($this->once())
+        $this->handler->expects(self::once())
             ->method('createForShoppingList')
             ->with(
-                $this->isInstanceOf(ShoppingList::class),
+                self::isInstanceOf(ShoppingList::class),
                 array_values($productIds),
                 $productUnitsQuantities
             )
             ->willReturn(0);
 
-        $this->em->expects($this->once())
+        $this->em->expects(self::once())
             ->method('rollback');
 
         $request = new Request();
-        $this->assertFailedFlashMessage($request);
+        $this->expectsFailedFlashMessage($request);
 
-        $this->assertEquals(null, $this->processor->process($data, $request));
+        self::assertNull($this->processor->process($data, $request));
     }
 
-    private function assertFailedFlashMessage(Request $request)
+    private function expectsFailedFlashMessage(Request $request)
     {
         $message = 'failed message';
 
-        $this->messageGenerator->expects($this->once())
+        $this->messageGenerator->expects(self::once())
             ->method('getFailedMessage')
             ->willReturn($message);
 
         $flashBag = $this->createMock(FlashBagInterface::class);
-        $flashBag->expects($this->once())
+        $flashBag->expects(self::once())
             ->method('add')
             ->with('error')
             ->willReturn($flashBag);
 
         $session = $this->createMock(Session::class);
-        $session->expects($this->once())
+        $session->expects(self::once())
             ->method('getFlashBag')
             ->willReturn($flashBag);
-
         $request->setSession($session);
     }
 

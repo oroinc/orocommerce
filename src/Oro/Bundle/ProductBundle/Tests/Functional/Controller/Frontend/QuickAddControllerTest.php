@@ -16,14 +16,11 @@ class QuickAddControllerTest extends WebTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-
-        $this->loadFixtures(
-            [
-                LoadFrontendProductData::class,
-                LoadFrontendProductVisibilityData::class,
-                LoadProductUnitPrecisions::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadFrontendProductData::class,
+            LoadFrontendProductVisibilityData::class,
+            LoadProductUnitPrecisions::class,
+        ]);
     }
 
     /**
@@ -62,13 +59,6 @@ class QuickAddControllerTest extends WebTestCase
     public function importFromFileProvider(): array
     {
         $dir = __DIR__ . '/files/';
-        $correctCSV = $dir . 'quick-order.csv';
-        $correctXLSX = $dir . 'quick-order.xlsx';
-        $correctODS = $dir . 'quick-order.ods';
-        $invalidDOC = $dir . 'quick-order.doc';
-        $emptyCSV = $dir . 'quick-order-empty.csv';
-        $invalidCSV = $dir . 'quick-order-invalid.csv';
-
         $expectedResponse = json_decode(
             file_get_contents(__DIR__ . '/files/expected-quick-order-import-response.json'),
             true,
@@ -78,24 +68,24 @@ class QuickAddControllerTest extends WebTestCase
 
         return [
             'valid CSV' => [
-                'file' => $correctCSV,
+                'file' => $dir . 'quick-order.csv',
                 'expectedResponse' => $expectedResponse,
             ],
             'valid XLSX' => [
-                'file' => $correctXLSX,
+                'file' => $dir . 'quick-order.xlsx',
                 'expectedResponse' => $expectedResponse,
             ],
             'valid ODS' => [
-                'file' => $correctODS,
+                'file' => $dir . 'quick-order.ods',
                 'expectedResponse' => $expectedResponse,
             ],
             'empty CSV' => [
-                'file' => $emptyCSV,
+                'file' => $dir . 'quick-order-empty.csv',
                 'expectedResponse' => null,
                 'formErrorMessage' => 'An empty file is not allowed.',
             ],
             'invalid CSV' => [
-                'file' => $invalidCSV,
+                'file' => $dir . 'quick-order-invalid.csv',
                 'expectedResponse' => [
                     'success' => false,
                     'collection' => [
@@ -110,7 +100,7 @@ class QuickAddControllerTest extends WebTestCase
                 ],
             ],
             'invalid DOC' => [
-                'file' => $invalidDOC,
+                'file' => $dir . 'quick-order.doc',
                 'expectedResponse' => [
                     'success' => false,
                     'collection' => [
