@@ -23,7 +23,10 @@ oro_behat_extension:
     Configurable Attributes:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
-
+    Brand hamburger:
+      selector:
+        locator: '//label[text()="Brand"]/../..//button[contains(@class,"entity-select-btn")]'
+        type: xpath
     ProductViewRelatedItemQuickEdit:
       selector:
           type: xpath

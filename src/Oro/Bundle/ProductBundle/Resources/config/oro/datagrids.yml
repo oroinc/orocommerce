@@ -1008,7 +1008,7 @@ datagrids:
 
     brand-select-grid:
         extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Brand'
-        acl_resource: oro_product_brand_update
+        acl_resource: oro_product_brand_view
         options:
             entityHint: oro.product.brand.entity_plural_label
         source:
