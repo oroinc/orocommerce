@@ -2,6 +2,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
+@behat-test-env
 Feature: Process order submission with PayPal Payments Pro and Authorize & Charge payment action
   As an Administrator
   I want to be sure that PayPal Payment Pro validation work correctly

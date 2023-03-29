@@ -2,7 +2,6 @@
 @random-failed
 @ticket-BB-17734
 @fixture-OroPricingBundle:ProductPricesAudit.yml
-
 Feature: Product prices audit
   In order to have the ability to manage product prices
   As an Administrator

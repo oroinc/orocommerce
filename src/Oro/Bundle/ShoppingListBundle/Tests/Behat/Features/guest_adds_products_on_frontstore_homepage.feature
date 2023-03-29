@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @ticket-BB-15962
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroShoppingListBundle:ProductFixture.yml

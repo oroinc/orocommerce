@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @ticket-BB-17550
 @pricing-storage-flat
 @fixture-OroProductBundle:product_with_price.yml

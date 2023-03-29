@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @ticket-BAP-17428
 @fixture-OroProductBundle:CustomEmptyGridTranslation.yml
 

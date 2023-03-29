@@ -4,7 +4,7 @@
 @fixture-OroCheckoutBundle:ShippingRuleFreeShipping.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-shopping-list-page.yml
-
+@behat-test-env
 Feature: Enter coupon code on front store on single page checkout
   In order to apply discount coupons on Front Store
   As a site user

@@ -2,6 +2,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
+@behat-test-env
 Feature: Order submission with PayPal Payments Pro and zero "authorization amount" option
 
   Scenario: Create new PayPal Payments Pro Integration
