@@ -7,12 +7,8 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -20,24 +16,15 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class QuickAddRowCollectionBuilder
 {
-    private EntityRepository $productRepository;
-
-    private ProductManager $productManager;
-
     private QuickAddRowInputParser $quickAddRowInputParser;
-
-    private AclHelper $aclHelper;
+    private QuickAddRowProductMapperInterface $quickAddRowProductMapper;
 
     public function __construct(
-        EntityRepository $productRepository,
-        ProductManager $productManager,
         QuickAddRowInputParser $quickAddRowInputParser,
-        AclHelper $aclHelper
+        QuickAddRowProductMapperInterface $quickAddRowProductMapper
     ) {
-        $this->productRepository = $productRepository;
-        $this->productManager = $productManager;
         $this->quickAddRowInputParser = $quickAddRowInputParser;
-        $this->aclHelper = $aclHelper;
+        $this->quickAddRowProductMapper = $quickAddRowProductMapper;
     }
 
     public function buildFromArray(array $products): QuickAddRowCollection
@@ -50,39 +37,41 @@ class QuickAddRowCollectionBuilder
                 );
             }
 
-            $this->mapProducts($collection);
+            $this->quickAddRowProductMapper->mapProducts($collection);
         }
 
         return $collection;
     }
 
     /**
-     * @throws UnsupportedTypeException
+     * @throws UnsupportedTypeException if the given file type is not supported
      */
     public function buildFromFile(UploadedFile $file): QuickAddRowCollection
     {
-        $lineNumber = 0;
         $collection = new QuickAddRowCollection();
 
         $reader = $this->createReaderForFile($file);
         $reader->open($file->getRealPath());
-
-        foreach ($reader->getSheetIterator() as $sheet) {
-            /** @var Row $row */
-            foreach ($sheet->getRowIterator() as $row) {
-                $row = $row->toArray();
-                if (0 === $lineNumber) {
-                    $lineNumber++;
-                    continue;
+        try {
+            $lineNumber = 0;
+            foreach ($reader->getSheetIterator() as $sheet) {
+                /** @var Row $row */
+                foreach ($sheet->getRowIterator() as $row) {
+                    $row = $row->toArray();
+                    if (0 === $lineNumber) {
+                        $lineNumber++;
+                        continue;
+                    }
+                    $collection->add($this->quickAddRowInputParser->createFromFileLine($row, $lineNumber++));
                 }
-
-                $collection->add(
-                    $this->quickAddRowInputParser->createFromFileLine($row, $lineNumber++)
-                );
             }
+        } finally {
+            $reader->close();
         }
 
-        $this->mapProducts($collection);
+        if (!$collection->isEmpty()) {
+            $this->quickAddRowProductMapper->mapProducts($collection);
+        }
 
         return $collection;
     }
@@ -90,24 +79,24 @@ class QuickAddRowCollectionBuilder
     public function buildFromCopyPasteText(string $text): QuickAddRowCollection
     {
         $collection = new QuickAddRowCollection();
-        $lineNumber = 1;
 
         $text = trim($text);
         if ($text) {
+            $lineNumber = 1;
             $delimiter = null;
             foreach (explode(PHP_EOL, $text) as $line) {
                 $line = trim($line);
-                if ($delimiter === null) {
+                if (null === $delimiter) {
                     $delimiter = $this->detectDelimiter($line);
                 }
-                $data = preg_split('/' . preg_quote($delimiter, '/') . '(?=([^\"]*\"[^\"]*\")*[^\"]*$)/', $line);
-                $collection->add(
-                    $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
-                );
+                $data = preg_split($this->getSplitPattern($delimiter), $line);
+                $collection->add($this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++));
             }
         }
 
-        $this->mapProducts($collection);
+        if (!$collection->isEmpty()) {
+            $this->quickAddRowProductMapper->mapProducts($collection);
+        }
 
         return $collection;
     }
@@ -115,8 +104,7 @@ class QuickAddRowCollectionBuilder
     private function detectDelimiter(string $line): string
     {
         foreach (["\t", ';', ' ', ','] as $delimiter) {
-            $data = preg_split('/' . preg_quote($delimiter, '/') . '+/', $line, 2);
-
+            $data = preg_split($this->getSplitPattern($delimiter), $line, 2);
             if ($data[0] !== $line) {
                 break;
             }
@@ -125,39 +113,15 @@ class QuickAddRowCollectionBuilder
         return $delimiter;
     }
 
-    /**
-     * @param string[] $skus
-     * @return Product[]
-     */
-    private function getRestrictedProductsBySkus(array $skus): array
+    private function getSplitPattern(string $delimiter): string
     {
-        $qb = $this->productRepository->getProductWithNamesBySkuQueryBuilder($skus);
-        $restricted = $this->productManager->restrictQueryBuilder($qb, []);
-
-        // Configurable products require additional option selection is not implemented yet
-        // Thus we need to hide configurable products from the product drop-downs
-        $restricted->andWhere($restricted->expr()->neq('product.type', ':configurable_type'))
-            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
-
-        $query = $this->aclHelper->apply($restricted);
-
-        /** @var Product[] $products */
-        $products = $query->execute();
-        $productsBySku = [];
-
-        foreach ($products as $product) {
-            $productsBySku[mb_strtoupper($product->getSku())] = $product;
-        }
-
-        return $productsBySku;
+        return '/' . preg_quote($delimiter, '/') . '(?=([^\"]*\"[^\"]*\")*[^\"]*$)/';
     }
 
     /**
-     * @param UploadedFile $file
-     * @return ReaderInterface
-     * @throws UnsupportedTypeException
+     * @throws UnsupportedTypeException if the given file type is not supported
      */
-    private function createReaderForFile(UploadedFile $file)
+    private function createReaderForFile(UploadedFile $file): ReaderInterface
     {
         switch ($file->getClientOriginalExtension()) {
             case 'csv':
@@ -169,14 +133,5 @@ class QuickAddRowCollectionBuilder
         }
 
         throw new UnsupportedTypeException();
-    }
-
-    private function mapProducts(QuickAddRowCollection $collection): void
-    {
-        $skus = $collection->getSkus();
-        if ($skus) {
-            $products = $this->getRestrictedProductsBySkus($skus);
-            $collection->mapProducts($products);
-        }
     }
 }

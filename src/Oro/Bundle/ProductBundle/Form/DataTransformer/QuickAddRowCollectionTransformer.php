@@ -31,6 +31,7 @@ class QuickAddRowCollectionTransformer implements DataTransformerInterface
                     QuickAddRow::SKU => $quickAddRow->getSku(),
                     QuickAddRow::QUANTITY => $quickAddRow->getQuantity(),
                     QuickAddRow::UNIT => $quickAddRow->getUnit(),
+                    QuickAddRow::ORGANIZATION => $quickAddRow->getOrganization(),
                 ];
             }
         }

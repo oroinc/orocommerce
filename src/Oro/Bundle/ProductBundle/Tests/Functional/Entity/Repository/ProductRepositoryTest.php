@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
@@ -336,7 +335,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testImagesFilesByProductId(string $productReference, array $expectedImages)
     {
-        $result = $this->getRepository()->getImagesFilesByProductId($this->getProduct($productReference));
+        $result = $this->getRepository()->getImagesFilesByProductId($this->getProduct($productReference)->getId());
 
         $this->assertEquals($this->referencesToEntities($expectedImages), array_values($result));
     }
@@ -357,18 +356,6 @@ class ProductRepositoryTest extends WebTestCase
                 ],
             ],
         ];
-    }
-
-    public function testGetPrimaryUnitPrecisionCode()
-    {
-        /** @var Product $product */
-        $product = $this->getRepository()->findOneBy(['sku' => LoadProductData::PRODUCT_9]);
-
-        $result = $this->getRepository()
-            ->getPrimaryUnitPrecisionCodeQueryBuilder(mb_strtolower($product->getSku()))
-            ->getQuery()
-            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
-        $this->assertEquals($product->getPrimaryUnitPrecision()->getProductUnitCode(), $result);
     }
 
     /**
@@ -458,28 +445,6 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertCount(2, $result);
         $this->assertInstanceOf(Product::class, $result[0]);
         $this->assertInstanceOf(Product::class, $result[1]);
-    }
-
-    public function testSkuUppercaseField()
-    {
-        $skus = [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_7];
-        $uppercaseSkus = ['PRODUCT-1', 'ПРОДУКТ-7'];
-
-        $result1 = $this->getRepository()
-            ->getPrimaryUnitPrecisionCodeQueryBuilder($skus[0])
-            ->getQuery()
-            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
-        $result2 = $this->getRepository()
-            ->getPrimaryUnitPrecisionCodeQueryBuilder($uppercaseSkus[0])
-            ->getQuery()
-            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
-
-        $this->assertEquals($result1, $result2);
-
-        $result1 = $this->getRepository()->findOneBySku($skus[0]);
-        $result2 = $this->getRepository()->findOneBySku($uppercaseSkus[0]);
-
-        $this->assertEquals($result1, $result2);
     }
 
     public function testGetProductIdsByAttributeFamilies()

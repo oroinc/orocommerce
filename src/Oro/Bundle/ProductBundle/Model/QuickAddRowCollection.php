@@ -10,9 +10,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class QuickAddRowCollection extends ArrayCollection
 {
-    use QuickAddFieldTrait;
-
-    protected array $errors = [];
+    /** @var array [['message' => string, 'parameters' => array], ...] */
+    private array $errors = [];
+    /** @var QuickAddField[] [name => field, ...] */
+    private $additionalFields = [];
 
     public function __toString(): string
     {
@@ -35,54 +36,25 @@ class QuickAddRowCollection extends ArrayCollection
         });
     }
 
-    public function getSkus(): array
-    {
-        $skus = [];
-
-        /** @var QuickAddRow $row */
-        foreach ($this->getIterator() as $row) {
-            if ($sku = $row->getSku()) {
-                $skus[] = $sku;
-            }
-        }
-
-        return $skus;
-    }
-
     /**
-     * @param Product[] $products
-     *
-     * @return QuickAddRowCollection
+     * @return Product[]
      */
-    public function mapProducts(array $products): QuickAddRowCollection
-    {
-        /** @var QuickAddRow $row */
-        foreach ($this->getIterator() as $row) {
-            $sku = mb_strtoupper($row->getSku());
-
-            if (array_key_exists($sku, $products)) {
-                $row->setProduct($products[$sku]);
-            }
-        }
-
-        return $this;
-    }
-
     public function getProducts(): array
     {
         $products = [];
-
-        /** @var QuickAddRow $row */
-        foreach ($this->getIterator() as $row) {
-            if ($product = $row->getProduct()) {
-                $products[mb_strtoupper($product->getSku())] = $product;
+        /** @var QuickAddRow[] $rows */
+        $rows = $this->toArray();
+        foreach ($rows as $row) {
+            $product = $row->getProduct();
+            if (null !== $product) {
+                $products[] = $product;
             }
         }
 
         return $products;
     }
 
-    protected function createFrom(array $elements): QuickAddRowCollection
+    protected function createFrom(array $elements): static
     {
         $quickAddRowCollection = parent::createFrom($elements);
         $quickAddRowCollection->errors = $this->errors;
@@ -90,18 +62,13 @@ class QuickAddRowCollection extends ArrayCollection
         return $quickAddRowCollection;
     }
 
-    public function addError(string $message, array $parameters = []): self
+    public function addError(string $message, array $parameters = []): void
     {
-        $this->errors[] = [
-            'message' => $message,
-            'parameters' => $parameters,
-        ];
-
-        return $this;
+        $this->errors[] = ['message' => $message, 'parameters' => $parameters];
     }
 
     /**
-     * @return array<array{message: string, parameters: array}>
+     * @return array [['message' => string, 'parameters' => array], ...]
      */
     public function getErrors(): array
     {
@@ -110,11 +77,33 @@ class QuickAddRowCollection extends ArrayCollection
 
     public function hasErrors(): bool
     {
-        return count($this->errors) > 0;
+        return !empty($this->errors);
     }
 
     public function isValid(): bool
     {
-        return !$this->hasErrors() && $this->forAll(static fn ($key, QuickAddRow $element) => !$element->hasErrors());
+        return
+            !$this->hasErrors()
+            && $this->forAll(function ($key, QuickAddRow $row) {
+                return !$row->hasErrors();
+            });
+    }
+
+    public function addAdditionalField(QuickAddField $field): void
+    {
+        $this->additionalFields[$field->getName()] = $field;
+    }
+
+    /**
+     * @return QuickAddField[] [field name => field, ...]
+     */
+    public function getAdditionalFields(): array
+    {
+        return $this->additionalFields;
+    }
+
+    public function getAdditionalField(string $name): ?QuickAddField
+    {
+        return $this->additionalFields[$name] ?? null;
     }
 }

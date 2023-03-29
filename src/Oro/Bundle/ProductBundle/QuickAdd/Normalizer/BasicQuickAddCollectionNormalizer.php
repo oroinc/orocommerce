@@ -17,9 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerInterface
 {
     private LocalizationHelper $localizationHelper;
-
     private UnitLabelFormatterInterface $unitLabelFormatter;
-
     private TranslatorInterface $translator;
 
     public function __construct(

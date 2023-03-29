@@ -4,9 +4,14 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,27 +19,68 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
+class QuickAddProcessorTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ShoppingListLineItemHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $handler;
+
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
+    /** @var MessageGenerator|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageGenerator;
+
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
+
+    /** @var QuickAddProcessor */
+    private $processor;
+
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->handler = $this->createMock(ShoppingListLineItemHandler::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->messageGenerator = $this->createMock(MessageGenerator::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($this->productRepository);
 
         $this->processor = new QuickAddProcessor(
             $this->handler,
-            $this->registry,
-            $this->messageGenerator,
-            $this->aclHelper
+            $doctrine,
+            $this->aclHelper,
+            $this->messageGenerator
         );
-        $this->processor->setProductClass(Product::class);
+    }
+    public function testGetName(): void
+    {
+        self::assertEquals('oro_shopping_list_quick_add_processor', $this->processor->getName());
+    }
+
+    public function testIsValidationRequired(): void
+    {
+        self::assertTrue($this->processor->isValidationRequired());
     }
 
     /**
-     * {@inheritdoc}
+     * @dataProvider isAllowedDataProvider
      */
-    public function getProcessorName(): string
+    public function testIsAllowed(bool $isAllowed): void
     {
-        return QuickAddProcessor::NAME;
+        $this->handler->expects(self::once())
+            ->method('isAllowed')
+            ->willReturn($isAllowed);
+
+        self::assertSame($isAllowed, $this->processor->isAllowed());
+    }
+
+    public function isAllowedDataProvider(): array
+    {
+        return [[false], [true]];
     }
 
     /**
@@ -46,10 +92,10 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
         array $productIds = [],
         array $productQuantities = [],
         bool $failed = false
-    ) {
+    ): void {
         $entitiesCount = count($data);
 
-        $this->handler->expects($this->any())
+        $this->handler->expects(self::any())
             ->method('getShoppingList')
             ->willReturnCallback(function ($shoppingListId) {
                 $shoppingList = new ShoppingList();
@@ -65,86 +111,84 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             $result[] = ['id' => $id, 'sku' => $sku];
         }
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
+        $query->expects(self::once())
             ->method('getArrayResult')
             ->willReturn($result);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $this->productRepository->expects($this->once())
+        $this->productRepository->expects(self::once())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with(array_column($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY], 'productSku'))
             ->willReturn($queryBuilder);
 
-        $this->aclHelper->expects($this->once())
+        $this->aclHelper->expects(self::once())
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
 
         if ($failed) {
-            $this->handler->expects($this->once())
+            $this->handler->expects(self::once())
                 ->method('createForShoppingList')
                 ->willThrowException(new AccessDeniedException());
         } else {
-            $this->handler->expects($data ? $this->once() : $this->never())
+            $this->handler->expects($data ? self::once() : self::never())
                 ->method('createForShoppingList')
                 ->with(
-                    $this->isInstanceOf(ShoppingList::class),
+                    self::isInstanceOf(ShoppingList::class),
                     array_values($productIds),
                     $productQuantities
                 )
                 ->willReturn($entitiesCount);
         }
 
+        $flashBag = $this->createMock(FlashBagInterface::class);
+        $session = $this->createMock(Session::class);
+        $session->expects(self::once())
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
+        $request->setSession($session);
+
+        $message = 'test message';
         if ($failed) {
-            $this->assertFlashMessage($request, true);
+            $this->messageGenerator->expects(self::once())
+                ->method('getFailedMessage')
+                ->willReturn($message);
+            $flashBag->expects(self::once())
+                ->method('add')
+                ->with('error', $message)
+                ->willReturnSelf();
         } elseif ($entitiesCount) {
-            $this->assertFlashMessage($request);
+            $this->messageGenerator->expects(self::once())
+                ->method('getSuccessMessage')
+                ->willReturn($message);
+            $flashBag->expects(self::once())
+                ->method('add')
+                ->with('success', $message)
+                ->willReturnSelf();
         }
 
-        $this->processor->process($data, $request);
+        self::assertNull($this->processor->process($data, $request));
     }
 
-    public function testProcessEmpty()
+    public function testProcessEmpty(): void
     {
         $data = [];
         $request = new Request();
 
-        $this->handler->expects($this->never())
+        $this->handler->expects(self::never())
             ->method('getShoppingList');
 
-        $this->productRepository->expects($this->never())
+        $this->productRepository->expects(self::never())
             ->method('getProductsIdsBySkuQueryBuilder')
             ->with([]);
 
-        $this->aclHelper->expects($this->never())
+        $this->aclHelper->expects(self::never())
             ->method('apply');
 
-        $this->handler->expects($this->never())
+        $this->handler->expects(self::never())
             ->method('createForShoppingList');
 
-        $this->processor->process($data, $request);
-    }
-
-    private function assertFlashMessage(Request $request, bool $isFailedMessage = false): void
-    {
-        $message = 'test message';
-
-        $this->messageGenerator->expects($this->once())
-            ->method($isFailedMessage ? 'getFailedMessage' : 'getSuccessMessage')
-            ->willReturn($message);
-
-        $flashBag = $this->createMock(FlashBagInterface::class);
-        $flashBag->expects($this->once())
-            ->method('add')
-            ->with($isFailedMessage ? 'error' : 'success', $message)
-            ->willReturn($flashBag);
-
-        $session = $this->createMock(Session::class);
-        $session->expects($this->once())
-            ->method('getFlashBag')
-            ->willReturn($flashBag);
-
-        $request->setSession($session);
+        self::assertNull($this->processor->process($data, $request));
     }
 
     public function processDataProvider(): array
