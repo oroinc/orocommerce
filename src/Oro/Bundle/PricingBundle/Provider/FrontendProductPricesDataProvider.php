@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
- * Allows to get all or matched prices for products from given line items
+ * Allows to get all or matched prices for products.
  */
 class FrontendProductPricesDataProvider
 {
@@ -55,7 +55,7 @@ class FrontendProductPricesDataProvider
 
         $result = [];
         foreach ($prices as $key => $price) {
-            list($productId, $unitId) = explode('-', $key);
+            [$productId, $unitId] = explode('-', $key);
             $result[$productId][$unitId] = $price;
         }
 
@@ -63,14 +63,29 @@ class FrontendProductPricesDataProvider
     }
 
     /**
-     * @param array|ProductHolderInterface[] $lineItems
-     * @return array
+     * @param array<ProductHolderInterface> $lineItems
+     *
+     * @return array<int,array<string,array<ProductPriceInterface>>>
      */
-    public function getProductsAllPrices(array $lineItems)
+    public function getAllPricesForLineItems(array $lineItems): array
     {
+        return $this->getAllPricesForProducts($this->getProductsFromLineItems($lineItems));
+    }
+
+    /**
+     * @param array<Product> $products
+     *
+     * @return array<int,array<string,array<ProductPriceInterface>>>
+     */
+    public function getAllPricesForProducts(array $products): array
+    {
+        if (!$products) {
+            return [];
+        }
+
         $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
-            $this->getProducts($lineItems),
+            $products,
             [$this->userCurrencyManager->getUserCurrency()]
         );
 
@@ -114,7 +129,7 @@ class FrontendProductPricesDataProvider
      * @param array|ProductHolderInterface[] $lineItems
      * @return array|Product[]
      */
-    protected function getProducts(array $lineItems): array
+    protected function getProductsFromLineItems(array $lineItems): array
     {
         return array_map(
             function (ProductHolderInterface $lineItem) {

@@ -1,0 +1,41 @@
+data:
+    type: productkititems
+    id: '<toString(@product_kit1_item2->getId())>'
+    attributes:
+        sortOrder: 3
+    relationships:
+        kitItemProducts:
+            data:
+                -
+                    type: productkititemproducts
+                    id: 'productkititems2-productkititemproducts1-products3'
+                -
+                    type: productkititemproducts
+                    id: 'productkititems2-productkititemproducts2-products4'
+included:
+    -   type: productkititemproducts
+        id: 'productkititems2-productkititemproducts1-products3'
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->getId())>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->getId())>'
+    -   type: productkititemproducts
+        id: 'productkititems2-productkititemproducts2-products4'
+        attributes:
+            sortOrder: 2
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->getId())>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product4->getId())>'

@@ -66,7 +66,8 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
             ->method($this->anything());
 
         $event = new DatagridLineItemsDataEvent(
-            [$this->getEntity(LineItem::class, ['id' => 42])],
+            [42 => $this->getEntity(LineItem::class, ['id' => 42])],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );
@@ -97,6 +98,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $event = new DatagridLineItemsDataEvent(
             [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );
@@ -137,6 +139,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $event = new DatagridLineItemsDataEvent(
             [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );
@@ -174,6 +177,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $event = new DatagridLineItemsDataEvent(
             [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );
@@ -210,6 +214,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
         $event = new DatagridLineItemsDataEvent(
             [$this->getEntity(LineItem::class, ['id' => 42, 'product' => $product])],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );

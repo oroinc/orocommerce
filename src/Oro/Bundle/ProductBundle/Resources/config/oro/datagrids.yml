@@ -413,6 +413,14 @@ datagrids:
                     confirm_content_params:
                         entityLabel: '@translator->trans(oro.product.entity_label)'
                     success: oro.product.grid.delete_success
+        mass_actions:
+            delete:
+                type: delete
+                icon: trash
+                label: oro.grid.action.delete
+                entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
+                data_identifier: product.id
+                handler: oro_product.datagrid.extension.mass_action.handler.product_delete
         inline_editing:
             enable: true
             behaviour: enable_selected
@@ -1115,3 +1123,139 @@ datagrids:
                     data_name: categorySortOrder
             default:
                 categorySortOrder: ASC
+
+    kit-item-products-base-grid:
+        extends: products-select-grid-base-without-default-sorting
+        options:
+            routerEnabled: false
+            toolbarOptions:
+                hide: true
+                pagination:
+                    onePage: true
+        source:
+            query:
+                select:
+                    - product_kit_item_product.sortOrder
+                    - CONCAT_WS('|', primary_product_unit.code, GROUP_CONCAT(product_unit.code), GROUP_CONCAT(product_unit_precision.precision)) as unitsWithPrecision
+                join:
+                    inner:
+                        - { join: product.unitPrecisions, alias: product_unit_precision }
+                        - { join: product_unit_precision.unit, alias: product_unit }
+                    left:
+                        - { join: product.primaryUnitPrecision, alias: product_primary_unit_precision }
+                        - { join: product_primary_unit_precision.unit, alias: primary_product_unit }
+                        -
+                            join: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct
+                            alias: product_kit_item_product
+                            conditionType: WITH
+                            condition: "product_kit_item_product.kitItem = :kitItemId AND product_kit_item_product.product = product"
+                where:
+                    and:
+                        - product_unit_precision.sell = true
+                orderBy:
+                    - column: product_kit_item_product.sortOrder
+                      dir: ASC
+                groupBy: product.id, product_kit_item_product.id, product_primary_unit_precision.id, primary_product_unit.code
+            bind_parameters:
+                kitItemId:
+                    default: 0
+        columns:
+            type:
+                renderable: false
+            createdAt:
+                renderable: false
+            updatedAt:
+                renderable: false
+            unitOfQuantity:
+                label: oro.product.productkititem.product_unit.label
+                type: units_with_precision
+                data_name: unitsWithPrecision
+                frontend_type: html
+                template: '@OroProduct/ProductKitItem/Datagrid/unitsWithPrecision.html.twig'
+
+    kit-item-products-edit-grid:
+        extends: kit-item-products-base-grid
+        actions:
+            remove:
+                type: trigger-event
+                event_name: kit-item-products-remove
+                label: oro.product.grid.action.kit_item_products.remove
+                icon: trash-o
+        source:
+            query:
+                where:
+                    and:
+                        - product.id IN (:selectedProductsIds)
+            bind_parameters:
+                selectedProductsIds:
+                    default: 0
+        sorters:
+            columns:
+                sku:
+                    disabled: true
+                productName:
+                    disabled: true
+                status:
+                    disabled: true
+        properties:
+            id: ~
+        columns:
+            sortOrder:
+                order: -1
+                label: oro.product.productkititemproduct.sort_order.label
+                editable: true
+                cellClassName: 'editing-cell'
+                frontend_type: string
+        options:
+            jsmodules:
+                - oroproduct/datagrid/builder/product-kit-items-builder
+
+    kit-item-products-add-grid:
+        extends: kit-item-products-base-grid
+        options:
+            toolbarOptions:
+                hide: false
+                pagination:
+                    onePage: false
+        source:
+            query:
+                where:
+                    and:
+                        - product.id NOT IN (:selectedProductsIds)
+            bind_parameters:
+                selectedProductsIds:
+                    default: 0
+
+    kit-item-products-view-grid:
+        extends: kit-item-products-base-grid
+        source:
+            query:
+                where:
+                    and:
+                        - product_kit_item_product.id IS NOT NULL
+        sorters:
+            columns:
+                sku:
+                    disabled: true
+                productName:
+                    disabled: true
+                status:
+                    disabled: true
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_product_view
+                params: [ id ]
+        actions:
+            view:
+                type: navigate
+                acl_resource: oro_product_view
+                label: oro.grid.action.view
+                icon: eye
+                link: view_link
+                launcherOptions:
+                    className: 'no-hash hide'
+                    attributes:
+                        target: _blank
+                rowAction: true

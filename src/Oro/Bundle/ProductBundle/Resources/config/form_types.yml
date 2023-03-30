@@ -292,3 +292,40 @@ services:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentProductsType
         tags:
             - { name: form.type }
+
+    oro_product.form.type.product_kit_item_collection:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemCollectionType
+        tags:
+            - { name: form.type }
+
+    oro_product.form.type.product_kit_item:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType
+        arguments:
+            - '@oro_form.provider.form_fields_map'
+        tags:
+            - { name: form.type }
+
+    oro_product.form.type.product_kit_item_products:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemProductsType
+        arguments:
+            - '@translator'
+            - !service_closure '@oro_product.form.data_transformer.product_kit_item_products.view'
+            - !service_closure '@oro_product.form.data_transformer.product_kit_item_products.model'
+        tags:
+            - { name: form.type }
+
+    oro_product.form.data_transformer.product_kit_item_products.view:
+        class: Oro\Bundle\MultiCurrencyBundle\Form\Transformer\ArrayToJsonTransformer
+
+    oro_product.form.data_transformer.product_kit_item_products.model:
+        class: Oro\Bundle\ProductBundle\Form\DataTransformer\ProductKitItemProductsDataTransformer
+        shared: false
+        arguments:
+            - '@doctrine'
+
+    oro_product.form.data_transformer.product_to_id:
+        class: Oro\Bundle\FormBundle\Form\DataTransformer\EntityToIdTransformer
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
+            - 'id'

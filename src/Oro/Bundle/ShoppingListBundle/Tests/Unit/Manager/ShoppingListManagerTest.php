@@ -22,34 +22,40 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
+class ShoppingListManagerTest extends TestCase
 {
     private ShoppingListManager $manager;
 
-    private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
+    private TokenAccessorInterface|MockObject $tokenAccessor;
 
-    private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
+    private WebsiteManager|MockObject $websiteManager;
 
-    private ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject $totalManager;
+    private ShoppingListTotalManager|MockObject $totalManager;
 
-    private ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject $productVariantProvider;
+    private ProductVariantAvailabilityProvider|MockObject $productVariantProvider;
 
-    private EntityManager|\PHPUnit\Framework\MockObject\MockObject $em;
+    private EntityManager|MockObject $em;
 
-    private LineItemRepository|\PHPUnit\Framework\MockObject\MockObject $lineItemRepository;
+    private LineItemRepository|MockObject $lineItemRepository;
 
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+    private ConfigManager|MockObject $configManager;
 
-    private EntityDeleteHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject $deleteHandlerRegistry;
+    private EntityDeleteHandlerRegistry|MockObject $deleteHandlerRegistry;
+
+    private LineItemChecksumGeneratorInterface|MockObject $lineItemChecksumGenerator;
 
     protected function setUp(): void
     {
@@ -95,6 +101,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->deleteHandlerRegistry = $this->createMock(EntityDeleteHandlerRegistry::class);
+        $this->lineItemChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);
 
         $this->manager = new ShoppingListManager(
             $doctrine,
@@ -105,7 +112,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->totalManager,
             $this->productVariantProvider,
             $this->configManager,
-            $this->deleteHandlerRegistry
+            $this->deleteHandlerRegistry,
+            $this->lineItemChecksumGenerator
         );
     }
 
@@ -286,6 +294,11 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     {
         $shoppingList = new ShoppingList();
 
+        $this->em
+            ->expects(self::exactly(2))
+            ->method('persist')
+            ->withConsecutive([$lineItem], [$shoppingList]);
+
         $this->manager->addLineItem($lineItem, $shoppingList);
         self::assertCount(1, $shoppingList->getLineItems());
         self::assertNull($lineItem->getCustomerUser());
@@ -308,6 +321,22 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 'lineItem' => $configurableLineItem,
             ],
         ];
+    }
+
+    public function testAddLineItemWithChecksum(): void
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem = new LineItem();
+        $checksum = 'sample_checksum';
+        $this->lineItemChecksumGenerator
+            ->expects(self::once())
+            ->method('getChecksum')
+            ->with($lineItem)
+            ->willReturn($checksum);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertEquals($checksum, $lineItem->getChecksum());
     }
 
     public function testAddLineItemWithShoppingListData(): void
@@ -515,6 +544,35 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(0, $this->manager->bulkAddLineItems([], new ShoppingList(), 10));
     }
 
+    public function testBulkAddLineItemsWithChecksum(): void
+    {
+        $shoppingList = new ShoppingList();
+        $lineItems = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $lineItems[] = (new LineItemStub())->setId($i);
+        }
+
+        $this->lineItemChecksumGenerator
+            ->expects(self::exactly(3))
+            ->method('getChecksum')
+            ->willReturnCallback(static fn (LineItem $lineItem) => 'checksum_' . $lineItem->getId());
+
+        $this->em
+            ->expects(self::once())
+            ->method('flush');
+
+        $this->totalManager
+            ->expects(self::once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, false);
+
+        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 5);
+        self::assertCount(3, $shoppingList->getLineItems());
+        self::assertEquals('checksum_1', $shoppingList->getLineItems()[0]->getChecksum());
+        self::assertEquals('checksum_2', $shoppingList->getLineItems()[1]->getChecksum());
+        self::assertEquals('checksum_3', $shoppingList->getLineItems()[2]->getChecksum());
+    }
+
     public function testEdit(): void
     {
         $label = 'test label';
@@ -573,6 +631,26 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(5, $resultingItem->getQuantity());
     }
 
+    public function testUpdateLineItemWithChecksum(): void
+    {
+        $lineItem = (new LineItem())
+            ->setChecksum('sample_checksum')
+            ->setQuantity(10);
+        $shoppingList = (new ShoppingList())
+            ->addLineItem($lineItem);
+        $checksum = 'new_checksum';
+
+        $this->lineItemChecksumGenerator
+            ->expects(self::once())
+            ->method('getChecksum')
+            ->with($lineItem)
+            ->willReturn($checksum);
+
+        $this->manager->updateLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertEquals($checksum, $lineItem->getChecksum());
+    }
+
     public function testUpdateAndRemoveLineItem(): void
     {
         $lineItem = (new LineItem())
@@ -599,16 +677,20 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testRemoveLineItemWithSimpleProductsInItems(): void
     {
-        $lineItem = (new LineItem())
+        $product1 = new Product();
+        $product2 = new Product();
+        $lineItem1 = (new LineItem())
+            ->setProduct($product1)
             ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
-        $lineItem1 = (new LineItem())
+        $lineItem2 = (new LineItem())
+            ->setProduct($product2)
             ->setUnit($this->getProductUnit('test1', 1))
             ->setQuantity(2);
 
         $shoppingList = $this->getShoppingList(1);
-        $shoppingList->addLineItem($lineItem);
         $shoppingList->addLineItem($lineItem1);
+        $shoppingList->addLineItem($lineItem2);
 
         $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
         $this->deleteHandlerRegistry->expects(self::once())
@@ -617,9 +699,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($deleteHandler);
         $deleteHandler->expects(self::once())
             ->method('delete')
-            ->with(self::identicalTo($lineItem));
+            ->with(self::identicalTo($lineItem1));
 
-        $countDeletedItems = $this->manager->removeLineItem($lineItem);
+        $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
         self::assertEquals(1, $countDeletedItems);
     }

@@ -74,6 +74,18 @@ class ProductController extends AbstractController
     }
 
     /**
+     * @Route("/info/{id}/kit-items", name="oro_product_info_kit_items", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("oro_product_view")
+     */
+    public function kitItemsInfoAction(Product $product): array
+    {
+        return [
+            'entity' => $product,
+        ];
+    }
+
+    /**
      * @Route("/", name="oro_product_index")
      * @Template
      * @AclAncestor("oro_product_view")

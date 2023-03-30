@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
@@ -187,6 +188,7 @@ class Product implements
 
     const TYPE_SIMPLE = 'simple';
     const TYPE_CONFIGURABLE = 'configurable';
+    const TYPE_KIT = 'kit';
 
     /**
      * @ORM\Id
@@ -667,6 +669,30 @@ class Product implements
     protected $denormalizedDefaultNameUppercase;
 
     /**
+     * @var Collection<ProductKitItem>|null
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="ProductKitItem",
+     *     mappedBy="productKit",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
+     * @OrderBy({"sortOrder"="ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected ?Collection $kitItems = null;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -681,6 +707,7 @@ class Product implements
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
         $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
+        $this->kitItems = new ArrayCollection();
     }
 
     /**
@@ -701,7 +728,7 @@ class Product implements
      */
     public static function getTypes()
     {
-        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE];
+        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE, self::TYPE_KIT];
     }
 
     /**
@@ -765,6 +792,11 @@ class Product implements
     public function isConfigurable()
     {
         return $this->getType() === self::TYPE_CONFIGURABLE;
+    }
+
+    public function isKit(): bool
+    {
+        return $this->getType() === self::TYPE_KIT;
     }
 
     /**
@@ -1636,5 +1668,41 @@ class Product implements
     public function getDenormalizedDefaultNameUppercase()
     {
         return $this->denormalizedDefaultNameUppercase;
+    }
+
+    public function addKitItem(ProductKitItem $productKitItem): self
+    {
+        if (!$productKitItem->getProductKit()) {
+            $productKitItem->setProductKit($this);
+        }
+
+        $kitItems = $this->getKitItems();
+        if (!$kitItems->contains($productKitItem)) {
+            $kitItems->add($productKitItem);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItem(ProductKitItem $productKitItem): self
+    {
+        $kitItems = $this->getKitItems();
+        if ($kitItems->contains($productKitItem)) {
+            $kitItems->removeElement($productKitItem);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<ProductKitItem>
+     */
+    public function getKitItems(): Collection
+    {
+        if ($this->kitItems === null) {
+            $this->kitItems = new ArrayCollection();
+        }
+
+        return $this->kitItems;
     }
 }

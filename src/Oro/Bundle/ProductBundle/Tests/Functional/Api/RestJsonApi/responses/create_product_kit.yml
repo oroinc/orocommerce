@@ -1,0 +1,1328 @@
+data:
+    type: products
+    id: new
+    attributes:
+        category_sort_order: null
+        availability_date: null
+        testAttrInvisible: null
+        testAttrBoolean: null
+        testAttrString: null
+        testAttrInteger: null
+        testAttrFloat: null
+        testAttrDateTime: null
+        testAttrMoney: null
+        sku: products-kit1
+        status: enabled
+        variantFields: {  }
+        productType: kit
+        featured: false
+        newArrival: false
+        wysiwyg: null
+        wysiwygAttr: null
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '<toString(@business_unit->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@organization->id)>'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: new
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: new
+        names:
+            data:
+                -
+                    type: productnames
+                    id: new
+                -
+                    type: productnames
+                    id: new
+                -
+                    type: productnames
+                    id: new
+                -
+                    type: productnames
+                    id: new
+        descriptions:
+            data:
+                -
+                    type: productdescriptions
+                    id: new
+                -
+                    type: productdescriptions
+                    id: new
+                -
+                    type: productdescriptions
+                    id: new
+                -
+                    type: productdescriptions
+                    id: new
+        variantLinks:
+            data: []
+        shortDescriptions:
+            data:
+                -
+                    type: productshortdescriptions
+                    id: 'new'
+                -
+                    type: productshortdescriptions
+                    id: 'new'
+                -
+                    type: productshortdescriptions
+                    id: 'new'
+                -
+                    type: productshortdescriptions
+                    id: 'new'
+        images:
+            data: []
+        attributeFamily:
+            data:
+                type: attributefamilies
+                id: '<toString(@default_product_family->id)>'
+        brand:
+            data: null
+        kitItems:
+            data:
+                -
+                    type: productkititems
+                    id: 'new'
+                -
+                    type: productkititems
+                    id: 'new'
+        slugPrototypes:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+        category:
+            data: null
+        pageTemplate:
+            data:
+                type: entityfieldfallbackvalues
+                id: 'new'
+        taxCode:
+            data: null
+        manageInventory:
+            data: null
+        highlightLowInventory:
+            data: null
+        inventoryThreshold:
+            data: null
+        lowInventoryThreshold:
+            data: null
+        minimumQuantityToOrder:
+            data: null
+        maximumQuantityToOrder:
+            data: null
+        decrementQuantity:
+            data: null
+        metaKeywords:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+        backOrder:
+            data: null
+        isUpcoming:
+            data: null
+        metaTitles:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+        metaDescriptions:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+        testAttrManyToOne:
+            data: null
+        testToOneId:
+            data: null
+        testAttrManyToMany:
+            data: []
+        default_testAttrManyToMany:
+            data: null
+        testToManyId:
+            data: []
+        default_testToManyId:
+            data: null
+        contact:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+                -
+                    type: localizedfallbackvalues
+                    id: 'new'
+        default_contact:
+            data: null
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: '<toString(@in_stock->id)>'
+        test_variant_field:
+            data: null
+        testAttrEnum:
+            data: null
+        testAttrMultiEnum:
+            data: []
+        type_contact:
+            data: null
+        contact_type:
+            data: null
+        productShippingOptions:
+            data: []
+        attachments:
+            data: []
+        activityNotes:
+            data: []
+included:
+    -
+        type: entityfieldfallbackvalues
+        id: 'new'
+        meta:
+            includeId: products-kit1-page-template-short
+        attributes:
+            fallback: null
+            scalarValue: null
+            arrayValue:
+                oro_product_frontend_product_view: short
+    -
+        type: productnames
+        id: 'new'
+        meta:
+            includeId: products-kit1-productnames-default
+        attributes:
+            string: products-kit1-productnames-default
+            fallback: null
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            localization:
+                data: null
+    -
+        type: productnames
+        id: 'new'
+        meta:
+            includeId: products-kit1-productnames-es
+        attributes:
+            string: products-kit1-productnames-es
+            fallback: null
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->id)>'
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: products-kit1-productunitprecisions-item
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: productnames
+        id: 'new'
+        meta:
+            includeId: productkititems1-products1-productnames-default
+        attributes:
+            string: productkititems1-products1-productnames-default
+            fallback: null
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            localization:
+                data: null
+    -
+        type: productnames
+        id: 'new'
+        meta:
+            includeId: productkititems1-products2-productnames-default
+        attributes:
+            string: productkititems1-products2-productnames-default
+            fallback: null
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            localization:
+                data: null
+    -
+        type: productnames
+        id: 'new'
+        meta:
+            includeId: productkititems2-products1-productnames-default
+        attributes:
+            string: productkititems2-products1-productnames-default
+            fallback: null
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            localization:
+                data: null
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: productkititems1-products1-productunitprecisions-each
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@each->code)>'
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: productkititems1-products1-productunitprecisions-piece
+        attributes:
+            precision: 0
+            conversionRate: 10
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@piece->code)>'
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: productkititems1-products1-productunitprecisions-item
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: productkititems1-products2-productunitprecisions-each
+        attributes:
+            precision: 0
+            conversionRate: 10
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@each->code)>'
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: productkititems1-products2-productunitprecisions-item
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: productkititems2-products1-productunitprecisions-piece
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@piece->code)>'
+    -
+        type: productunitprecisions
+        id: 'new'
+        meta:
+            includeId: productkititems2-products1-productunitprecisions-item
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: products
+        id: 'new'
+        meta:
+            includeId: productkititems1-products1
+        attributes:
+            category_sort_order: null
+            availability_date: null
+            testAttrInvisible: null
+            testAttrBoolean: null
+            testAttrString: null
+            testAttrInteger: null
+            testAttrFloat: null
+            testAttrDateTime: null
+            testAttrMoney: null
+            sku: productkititems1-products1
+            status: enabled
+            variantFields: {  }
+            productType: simple
+            featured: true
+            newArrival: false
+            wysiwyg: null
+            wysiwygAttr: null
+        relationships:
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@business_unit->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@organization->id)>'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: 'new'
+                    -
+                        type: productunitprecisions
+                        id: 'new'
+                    -
+                        type: productunitprecisions
+                        id: 'new'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+            descriptions:
+                data:
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+            variantLinks:
+                data: []
+            shortDescriptions:
+                data:
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+            images:
+                data: []
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_product_family->id)>'
+            brand:
+                data: null
+            kitItems:
+                data: []
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            category:
+                data: null
+            pageTemplate:
+                data: null
+            taxCode:
+                data: null
+            manageInventory:
+                data: null
+            highlightLowInventory:
+                data: null
+            inventoryThreshold:
+                data: null
+            lowInventoryThreshold:
+                data: null
+            minimumQuantityToOrder:
+                data: null
+            maximumQuantityToOrder:
+                data: null
+            decrementQuantity:
+                data: null
+            metaKeywords:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            backOrder:
+                data: null
+            isUpcoming:
+                data: null
+            metaTitles:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            metaDescriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            testAttrManyToOne:
+                data: null
+            testToOneId:
+                data: null
+            testAttrManyToMany:
+                data: []
+            default_testAttrManyToMany:
+                data: null
+            testToManyId:
+                data: []
+            default_testToManyId:
+                data: null
+            contact:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            default_contact:
+                data: null
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            test_variant_field:
+                data: null
+            testAttrEnum:
+                data: null
+            testAttrMultiEnum:
+                data: []
+            type_contact:
+                data: null
+            contact_type:
+                data: null
+            productShippingOptions:
+                data: []
+            attachments:
+                data: []
+            activityNotes:
+                data: []
+    -
+        type: products
+        id: 'new'
+        meta:
+            includeId: productkititems1-products2
+        attributes:
+            category_sort_order: null
+            availability_date: null
+            testAttrInvisible: null
+            testAttrBoolean: null
+            testAttrString: null
+            testAttrInteger: null
+            testAttrFloat: null
+            testAttrDateTime: null
+            testAttrMoney: null
+            sku: productkititems1-products2
+            status: enabled
+            variantFields: {  }
+            productType: simple
+            featured: false
+            newArrival: false
+            wysiwyg: null
+            wysiwygAttr: null
+        relationships:
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@business_unit->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@organization->id)>'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: 'new'
+                    -
+                        type: productunitprecisions
+                        id: 'new'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+            descriptions:
+                data:
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+            variantLinks:
+                data: []
+            shortDescriptions:
+                data:
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+            images:
+                data: []
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_product_family->id)>'
+            brand:
+                data: null
+            kitItems:
+                data: []
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            category:
+                data: null
+            pageTemplate:
+                data: null
+            taxCode:
+                data: null
+            manageInventory:
+                data: null
+            highlightLowInventory:
+                data: null
+            inventoryThreshold:
+                data: null
+            lowInventoryThreshold:
+                data: null
+            minimumQuantityToOrder:
+                data: null
+            maximumQuantityToOrder:
+                data: null
+            decrementQuantity:
+                data: null
+            metaKeywords:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            backOrder:
+                data: null
+            isUpcoming:
+                data: null
+            metaTitles:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            metaDescriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            testAttrManyToOne:
+                data: null
+            testToOneId:
+                data: null
+            testAttrManyToMany:
+                data: []
+            default_testAttrManyToMany:
+                data: null
+            testToManyId:
+                data: []
+            default_testToManyId:
+                data: null
+            contact:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            default_contact:
+                data: null
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            test_variant_field:
+                data: null
+            testAttrEnum:
+                data: null
+            testAttrMultiEnum:
+                data: []
+            type_contact:
+                data: null
+            contact_type:
+                data: null
+            productShippingOptions:
+                data: []
+            attachments:
+                data: []
+            activityNotes:
+                data: []
+    -
+        type: products
+        id: 'new'
+        meta:
+            includeId: productkititems2-products1
+        attributes:
+            category_sort_order: null
+            availability_date: null
+            testAttrInvisible: null
+            testAttrBoolean: null
+            testAttrString: null
+            testAttrInteger: null
+            testAttrFloat: null
+            testAttrDateTime: null
+            testAttrMoney: null
+            sku: productkititems2-products1
+            status: enabled
+            variantFields: {  }
+            productType: simple
+            featured: false
+            newArrival: false
+            wysiwyg: null
+            wysiwygAttr: null
+        relationships:
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@business_unit->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@organization->id)>'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: 'new'
+                    -
+                        type: productunitprecisions
+                        id: 'new'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+                    -
+                        type: productnames
+                        id: 'new'
+            descriptions:
+                data:
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+                    -
+                        type: productdescriptions
+                        id: 'new'
+            variantLinks:
+                data: []
+            shortDescriptions:
+                data:
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+                    -
+                        type: productshortdescriptions
+                        id: 'new'
+            images:
+                data: []
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_product_family->id)>'
+            brand:
+                data: null
+            kitItems:
+                data: []
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            category:
+                data: null
+            pageTemplate:
+                data: null
+            taxCode:
+                data: null
+            manageInventory:
+                data: null
+            highlightLowInventory:
+                data: null
+            inventoryThreshold:
+                data: null
+            lowInventoryThreshold:
+                data: null
+            minimumQuantityToOrder:
+                data: null
+            maximumQuantityToOrder:
+                data: null
+            decrementQuantity:
+                data: null
+            metaKeywords:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            backOrder:
+                data: null
+            isUpcoming:
+                data: null
+            metaTitles:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            metaDescriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            testAttrManyToOne:
+                data: null
+            testToOneId:
+                data: null
+            testAttrManyToMany:
+                data: []
+            default_testAttrManyToMany:
+                data: null
+            testToManyId:
+                data: []
+            default_testToManyId:
+                data: null
+            contact:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'new'
+            default_contact:
+                data: null
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            test_variant_field:
+                data: null
+            testAttrEnum:
+                data: null
+            testAttrMultiEnum:
+                data: []
+            type_contact:
+                data: null
+            contact_type:
+                data: null
+            productShippingOptions:
+                data: []
+            attachments:
+                data: []
+            activityNotes:
+                data: []
+    -
+        type: productkititemlabels
+        id: 'new'
+        meta:
+            includeId: productkititems1-productkititemlabels-default
+        attributes:
+            string: productkititems1-productkititemlabels-default
+            fallback: null
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            localization:
+                data: null
+    -
+        type: productkititemlabels
+        id: 'new'
+        meta:
+            includeId: productkititems1-productkititemlabels-es
+        attributes:
+            string: productkititems1-productkititemlabels-es
+            fallback: null
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->id)>'
+    -
+        type: productkititemlabels
+        id: 'new'
+        meta:
+            includeId: productkititems2-productkititemlabels-default
+        attributes:
+            string: productkititems2-productkititemlabels-default
+            fallback: null
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            localization:
+                data: null
+    -
+        type: productkititemproducts
+        id: 'new'
+        meta:
+            includeId: productkititems1-productkititemproducts1-products1
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+    -
+        type: productkititemproducts
+        id: 'new'
+        meta:
+            includeId: productkititems1-productkititemproducts1-products2
+        attributes:
+            sortOrder: 2
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+    -
+        type: productkititemproducts
+        id: 'new'
+        meta:
+            includeId: productkititems2-productkititemproducts1-products1
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: 'new'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'new'
+    -
+        type: productkititems
+        id: 'new'
+        meta:
+            includeId: productkititems1
+        attributes:
+            sortOrder: 1
+            optional: false
+            minimumQuantity: 1
+            maximumQuantity: 5
+        relationships:
+            labels:
+                data:
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+            productKit:
+                data:
+                    type: products
+                    id: 'new'
+            kitItemProducts:
+                data:
+                    -
+                        type: productkititemproducts
+                        id: 'new'
+                    -
+                        type: productkititemproducts
+                        id: 'new'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: productkititems
+        id: 'new'
+        meta:
+            includeId: productkititems2
+        attributes:
+            sortOrder: 2
+            optional: true
+            minimumQuantity: 0
+            maximumQuantity: 3
+        relationships:
+            labels:
+                data:
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+                    -
+                        type: productkititemlabels
+                        id: 'new'
+            productKit:
+                data:
+                    type: products
+                    id: 'new'
+            kitItemProducts:
+                data:
+                    -
+                        type: productkititemproducts
+                        id: 'new'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

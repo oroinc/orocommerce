@@ -1,0 +1,15 @@
+/* @theme: admin.oro; */
+
+.product-kit-view {
+    &__collapsed-attributes {
+        .attribute-item {
+            width: 100%;
+        }
+    }
+
+    .attribute-wide {
+        > .attribute-item {
+            width: 100%;
+        }
+    }
+}

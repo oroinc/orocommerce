@@ -1,0 +1,134 @@
+/* @theme: admin.oro; */
+
+.control-group.product-kit-control-group {
+    max-width: 100%;
+
+    > .controls:first-child {
+        margin-left: 0;
+    }
+
+    .oro-collection-item {
+        margin-bottom: 32px;
+
+        .fallback-item-value input[type='text'] {
+            width: $field-width;
+        }
+    }
+
+    .removeRow {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+}
+
+.product-kit-item {
+    &__label {
+        font-weight: bold;
+        width: 100%;
+        cursor: pointer;
+
+        transition: border-color 250ms linear;
+
+        @include text-line-truncate();
+    }
+
+    &__form {
+        padding-top: 16px;
+        padding-bottom: 22px;
+    }
+
+    &__preview {
+        padding-top: 12px;
+    }
+
+    &__preview,
+    &__form {
+        transition: height 250ms ease-in-out, opacity 250ms ease-in-out;
+
+        &:not(.show) {
+            opacity: 0;
+        }
+    }
+
+    &__horizontal {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+
+        .attribute-item {
+            width: 25%;
+
+            &__term {
+                width: 182px;
+            }
+
+            &__description {
+                &--ellipsis {
+                    @include text-line-truncate();
+                }
+
+                > .control-label {
+                    .form-horizontal & {
+                        padding-top: 0;
+                        line-height: inherit;
+
+                        @include text-line-truncate();
+                    }
+                }
+            }
+        }
+
+        .attribute-wide {
+            width: 100%;
+            display: flex;
+
+            > .attribute-item {
+                width: 50%;
+            }
+        }
+
+        .attribute-break {
+            flex-basis: 100%;
+        }
+    }
+
+    &__products {
+        display: flex;
+        flex-direction: column;
+        row-gap: $form-container-control-row-space;
+
+        &:not(:last-child) {
+            margin-bottom: $form-container-control-row-space;
+        }
+
+        .title {
+            display: none;
+        }
+    }
+
+    .content-variant-item-content__body {
+        transition: border-top-color 250ms ease-in-out;
+    }
+
+    &.has-error {
+        &:not(.show) {
+            position: relative;
+            background-color: rgba($danger, .1);
+
+            .content-variant-item-content__body {
+                border-top-color: $danger;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: $product-kit-view-breakpoint) {
+    .product-kit-item {
+        &__horizontal {
+            .attribute-item {
+                width: 50%;
+            }
+        }
+    }
+}

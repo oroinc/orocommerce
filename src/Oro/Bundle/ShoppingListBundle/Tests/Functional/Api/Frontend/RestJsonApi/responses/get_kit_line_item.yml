@@ -1,0 +1,32 @@
+data:
+    type: shoppinglistitems
+    id: '<toString(@kit_line_item1->id)>'
+    attributes:
+        checksum: kit_line_item1_checksum
+        quantity: 2
+        notes: null
+        currency: USD
+        value: '12.34'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        parentProduct:
+            data: null
+        kitItems:
+            data:
+                -
+                    type: shoppinglistkititems
+                    id: '<toString(@product_kit_item1_line_item1->id)>'
+                -
+                    type: shoppinglistkititems
+                    id: '<toString(@product_kit_item1_line_item2->id)>'
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'

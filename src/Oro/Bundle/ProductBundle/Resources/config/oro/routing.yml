@@ -3,6 +3,11 @@ oro_product:
     type:         annotation
     prefix:       /product
 
+oro_product_kit_item:
+    resource:     "@OroProductBundle/Controller/ProductKitItemController.php"
+    type:         annotation
+    prefix:       /product-kit-item
+
 oro_product_unit_ajax:
     resource:     "@OroProductBundle/Controller/AjaxProductUnitController.php"
     type:         annotation

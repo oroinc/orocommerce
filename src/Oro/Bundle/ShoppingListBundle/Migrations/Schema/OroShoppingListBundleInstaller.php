@@ -30,7 +30,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_10';
     }
 
     /**
@@ -41,11 +41,13 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         /** Tables generation **/
         $this->createOroShoppingListTable($schema);
         $this->createOroShoppingListLineItemTable($schema);
+        $this->createOroShoppingListProductKitItemLineItemTable($schema);
         $this->createOroShoppingListTotalTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroShoppingListForeignKeys($schema);
         $this->addOroShoppingListLineItemForeignKeys($schema);
+        $this->addOroShoppingListProductKitItemLineItemForeignKeys($schema);
         $this->addOroShoppingListTotalForeignKeys($schema);
 
         $this->addShoppingListCheckoutSource($schema);
@@ -107,9 +109,10 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float');
         $table->addColumn('notes', 'text', ['notnull' => false]);
+        $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
-            ['product_id', 'shopping_list_id', 'unit_code'],
+            ['product_id', 'shopping_list_id', 'unit_code', 'checksum'],
             'oro_shopping_list_line_item_uidx'
         );
     }
@@ -297,6 +300,49 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
                 'merge' => ['display' => false],
                 'dataaudit' => ['auditable' => false]
             ]
+        );
+    }
+
+    private function createOroShoppingListProductKitItemLineItemTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_shopping_list_product_kit_item_line_item');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('line_item_id', 'integer');
+        $table->addColumn('product_kit_item_id', 'integer');
+        $table->addColumn('product_id', 'integer');
+        $table->addColumn('unit_code', 'string', ['length' => 255]);
+        $table->addColumn('quantity', 'float');
+        $table->addColumn('sort_order', 'integer', ['default' => 0]);
+
+        $table->setPrimaryKey(['id']);
+    }
+
+    private function addOroShoppingListProductKitItemLineItemForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_shopping_list_product_kit_item_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_shopping_list_line_item'),
+            ['line_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_unit'),
+            ['unit_code'],
+            ['code'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

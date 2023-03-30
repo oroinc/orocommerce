@@ -15,6 +15,7 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,32 +26,25 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShoppingListManager
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
 
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
+    private TokenAccessorInterface $tokenAccessor;
 
-    /** @var TranslatorInterface */
-    private $translator;
+    private TranslatorInterface $translator;
 
-    /** @var QuantityRoundingService */
-    private $rounding;
+    private QuantityRoundingService $rounding;
 
-    /** @var WebsiteManager */
-    private $websiteManager;
+    private WebsiteManager $websiteManager;
 
-    /** @var ShoppingListTotalManager */
-    private $totalManager;
+    private ShoppingListTotalManager $totalManager;
 
-    /** @var ProductVariantAvailabilityProvider */
-    private $productVariantProvider;
+    private ProductVariantAvailabilityProvider $productVariantProvider;
 
-    /** @var ConfigManager */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /** @var EntityDeleteHandlerRegistry */
-    private $deleteHandlerRegistry;
+    private EntityDeleteHandlerRegistry $deleteHandlerRegistry;
+
+    private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -64,7 +58,8 @@ class ShoppingListManager
         ShoppingListTotalManager $totalManager,
         ProductVariantAvailabilityProvider $productVariantProvider,
         ConfigManager $configManager,
-        EntityDeleteHandlerRegistry $deleteHandlerRegistry
+        EntityDeleteHandlerRegistry $deleteHandlerRegistry,
+        LineItemChecksumGeneratorInterface $lineItemChecksumGenerator
     ) {
         $this->doctrine = $doctrine;
         $this->tokenAccessor = $tokenAccessor;
@@ -75,6 +70,7 @@ class ShoppingListManager
         $this->productVariantProvider = $productVariantProvider;
         $this->configManager = $configManager;
         $this->deleteHandlerRegistry = $deleteHandlerRegistry;
+        $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
     }
 
     /**
@@ -131,7 +127,9 @@ class ShoppingListManager
         $this->totalManager->recalculateTotals($shoppingList, false);
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $entityManager = $this->getEntityManager();
+            $entityManager->persist($shoppingList);
+            $entityManager->flush();
         }
     }
 
@@ -199,14 +197,15 @@ class ShoppingListManager
     public function removeLineItem(LineItem $lineItem, bool $removeOnlyCurrentItem = false): int
     {
         $parentProduct = $lineItem->getParentProduct();
-        if ($removeOnlyCurrentItem || !$parentProduct) {
+        $product = $lineItem->getProduct();
+        if ($removeOnlyCurrentItem || (!$parentProduct && !$product->isKit())) {
             $this->deleteHandlerRegistry->getHandler(LineItem::class)->delete($lineItem);
 
             // return 1 because only the specified line item was deleted
             return 1;
         }
 
-        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $lineItem->getProduct());
+        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $product);
     }
 
     /**
@@ -336,6 +335,11 @@ class ShoppingListManager
         }
         if (null === $lineItem->getOrganization() && $shoppingList->getOrganization()) {
             $lineItem->setOrganization($shoppingList->getOrganization());
+        }
+
+        $checksum = $this->lineItemChecksumGenerator->getChecksum($lineItem);
+        if ($checksum !== null) {
+            $lineItem->setChecksum($checksum);
         }
 
         return $this;

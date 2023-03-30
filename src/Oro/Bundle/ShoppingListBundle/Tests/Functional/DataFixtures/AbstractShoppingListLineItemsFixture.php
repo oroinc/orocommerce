@@ -17,38 +17,16 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
     /** @var array */
     protected static $lineItems = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $manager)
     {
         $shoppingLists = [];
-        foreach (static::$lineItems as $name => $lineItem) {
-            /** @var ShoppingList $shoppingList */
-            $shoppingList = $this->getReference($lineItem['shoppingList']);
+        foreach (static::$lineItems as $name => $lineItemData) {
+            $lineItem = $this->createLineItem($manager, $lineItemData);
+            $manager->persist($lineItem);
+            $this->addReference($name, $lineItem);
+
+            $shoppingList = $lineItem->getShoppingList();
             $shoppingLists[$shoppingList->getId()] = $shoppingList;
-
-            /** @var ProductUnit $unit */
-            $unit = $this->getReference($lineItem['unit']);
-
-            /** @var Product $product */
-            $product = $this->getReference($lineItem['product']);
-
-            /** @var Product $product */
-            $parentProduct = null;
-            if (isset($lineItem['parentProduct'])) {
-                $parentProduct = $this->getReference($lineItem['parentProduct']);
-            }
-
-            $this->createLineItem(
-                $manager,
-                $shoppingList,
-                $unit,
-                $product,
-                $lineItem['quantity'],
-                $name,
-                $parentProduct
-            );
         }
 
         $shoppingListTotalManager = $this->container->get('oro_shopping_list.manager.shopping_list_total');
@@ -59,27 +37,22 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param ShoppingList $shoppingList
-     * @param ProductUnit $unit
-     * @param Product $product
-     * @param float|null $quantity
-     * @param string $referenceName
-     * @param Product $parentProduct
-     */
     protected function createLineItem(
         ObjectManager $manager,
-        ShoppingList $shoppingList,
-        ProductUnit $unit,
-        Product $product,
-        $quantity,
-        $referenceName,
-        Product $parentProduct = null
-    ) {
+        array $lineItemData
+    ): LineItem {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference($lineItemData['shoppingList']);
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference($lineItemData['unit']);
+
+        /** @var Product $product */
+        $product = $this->getReference($lineItemData['product']);
+
         $owner = $this->getFirstUser($manager);
-        $item = new LineItem();
-        $item->setNotes('Test Notes')
+        $lineItem = (new LineItem())
+            ->setNotes('Test Notes')
             ->setCustomerUser($shoppingList->getCustomerUser())
             ->setOrganization($shoppingList->getOrganization())
             ->setOwner($owner)
@@ -87,15 +60,16 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
             ->setUnit($unit)
             ->setProduct($product);
 
-        if ($quantity !== null) {
-            $item->setQuantity($quantity);
+        if (isset($lineItemData['parentProduct'])) {
+            /** @var Product $parentProduct */
+            $parentProduct = $this->getReference($lineItemData['parentProduct']);
+            $lineItem->setParentProduct($parentProduct);
         }
 
-        if ($parentProduct) {
-            $item->setParentProduct($parentProduct);
+        if (isset($lineItemData['quantity'])) {
+            $lineItem->setQuantity($lineItemData['quantity']);
         }
 
-        $manager->persist($item);
-        $this->addReference($referenceName, $item);
+        return $lineItem;
     }
 }

@@ -50,6 +50,12 @@ services:
         calls:
             - [setTranslationPrefix, ['oro.product_unit']]
 
+    oro_product.formatter.unit_precision_label:
+        class: 'Oro\Bundle\ProductBundle\Formatter\UnitPrecisionLabelFormatter'
+        arguments:
+            - '@oro_product.formatter.product_unit_label'
+            - '@translator'
+
     oro_product.twig.product_unit_extension:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitExtension'
         public: false
@@ -71,6 +77,13 @@ services:
         public: false
         arguments:
             - "@oro_platform.twig.service_locator"
+        tags:
+            - { name: twig.extension }
+
+    oro_product.twig.product_kit_item_extension:
+        class: 'Oro\Bundle\ProductBundle\Twig\ProductKitItemExtension'
+        arguments:
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -107,8 +120,7 @@ services:
             - "@event_dispatcher"
             - "@oro_attachment.file_manager"
             - "@oro_attachment.provider.attachment"
-        calls:
-            - [setSkuIncrementor,  ["@oro_product.service.sku_incrementor"]]
+            - "@oro_product.service.sku_incrementor"
 
     oro_product.service.related_items_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler'
@@ -306,6 +318,8 @@ services:
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
         public: true
+        arguments:
+            - !abstract '$availableProductTypes defined in Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension'
 
     oro_product.product_unit.cache:
         public: false
@@ -1822,6 +1836,9 @@ services:
     oro_product.delete_handler_extension.product_unit_precision:
         class: Oro\Bundle\ProductBundle\Handler\ProductUnitPrecisionDeleteHandlerExtension
         parent: oro_entity.delete_handler_extension
+        arguments:
+            - '@oro_product.provider.product_kits_by_unit_precision'
+            - '@translator'
         tags:
             - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision }
 
@@ -2071,7 +2088,7 @@ services:
                 event: oro_product.product.duplicate.after
                 method: onDuplicateAfter
                 priority: -128
-                
+
     oro_product.service.product_collection_segment_manipulator:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionSegmentManipulator
         arguments:
@@ -2084,3 +2101,118 @@ services:
             - '@doctrine'
             - '@oro_product.service.product_collection_segment_manipulator'
             - '@oro_product.handler.collection_sort_order'
+
+    oro_product.event_listener.doctrine.product_kit_item_product.unit_precision:
+        class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductKitItemProductUnitPrecisionDoctrineListener
+        tags:
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: preUpdate }
+
+    oro_product.event_listener.doctrine.product_kit_item.product_unit:
+        class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductKitItemProductUnitDoctrineListener
+        tags:
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preUpdate }
+
+    oro_product.product_kit_item_product_unit_checker:
+        class: Oro\Bundle\ProductBundle\Service\ProductKitItemProductUnitChecker
+
+    oro_product.validator.not_empty_product_kit_items_collection_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyProductKitItemsCollectionValidator
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.only_simple_products_in_product_kit_item_products_collection_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\OnlySimpleProductsInProductKitItemProductsCollectionValidator
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.product_kit_item_unit_available_for_specified_products_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemUnitAvailableForSpecifiedProductsValidator
+        arguments:
+            - '@oro_product.product_kit_item_product_unit_checker'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.product_kit_item_quantity_precision_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemQuantityPrecisionValidator
+        arguments:
+            - '@oro_product.product_kit_item_product_unit_checker'
+            - '@oro_product.service.quantity_rounding'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.provider.product_kits_by_unit_precision:
+        class: Oro\Bundle\ProductBundle\Provider\ProductKitsByUnitPrecisionProvider
+        arguments:
+            - '@doctrine'
+
+    oro_product.provider.product_kits_by_product:
+        class: Oro\Bundle\ProductBundle\Provider\ProductKitsByProductProvider
+        arguments:
+            - '@doctrine'
+
+    oro_product.validator.product_unit_precisions_collection_referenced_by_product_kit_items_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionsCollectionReferencedByProductKitItemsValidator
+        arguments:
+            - '@oro_product.provider.product_kits_by_unit_precision'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.product_unit_precision_referenced_by_product_kit_items_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionReferencedByProductKitItemsValidator
+        arguments:
+            - '@doctrine'
+            - '@oro_product.provider.product_kits_by_unit_precision'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.repository.product_kit_item:
+        alias: Oro\Bundle\ProductBundle\Entity\Repository\ProductKitItemRepository
+
+    Oro\Bundle\ProductBundle\Entity\Repository\ProductKitItemRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ProductBundle\Entity\ProductKitItem'
+        tags:
+            - { name: doctrine.repository_service }
+
+    oro_product.delete_handler_extension.product:
+        class: Oro\Bundle\ProductBundle\Handler\ProductDeleteHandlerExtension
+        parent: oro_entity.delete_handler_extension
+        arguments:
+            - '@oro_product.provider.product_kits_by_product'
+            - '@translator'
+        tags:
+            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\Product }
+
+    oro_product.delete_handler_extension.product_kit_item:
+        class: Oro\Bundle\ProductBundle\Handler\ProductKitItemDeleteHandlerExtension
+        parent: oro_entity.delete_handler_extension
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@translator'
+        tags:
+            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem }
+
+    oro_product.datagrid.extension.mass_action.handler.product_delete:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\ProductDeleteMassActionHandler
+        parent: oro_datagrid.extension.mass_action.handler.delete
+
+    oro_product.validator.product_kit_items_owned_by_product_kit_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemsOwnedByProductKitValidator
+        arguments:
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.datagrid.formatter.units_with_precision_property:
+        class: Oro\Bundle\ProductBundle\DataGrid\Formatter\Property\UnitsWithPrecisionProperty
+        arguments:
+            - '@oro_datagrid.extension.formatter.property.twig_property'
+        tags:
+            - { name: oro_datagrid.extension.formatter.property, type: units_with_precision }
+
+    oro_product.provider.product_kit_item_unit_precision:
+        class: Oro\Bundle\ProductBundle\Provider\ProductKitItemUnitPrecisionProvider
+        arguments:
+            - '@doctrine'

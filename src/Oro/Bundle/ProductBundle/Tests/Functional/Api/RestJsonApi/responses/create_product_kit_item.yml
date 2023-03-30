@@ -1,0 +1,72 @@
+data:
+    type: productkititems
+    id: 'new'
+    attributes:
+        sortOrder: 3
+        optional: true
+        minimumQuantity: null
+        maximumQuantity: null
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: 'new'
+                -
+                    type: productkititemlabels
+                    id: 'new'
+                -
+                    type: productkititemlabels
+                    id: 'new'
+                -
+                    type: productkititemlabels
+                    id: 'new'
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        kitItemProducts:
+            data:
+                -
+                    type: productkititemproducts
+                    id: 'new'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'
+included:
+    -
+        type: productkititemlabels
+        id: 'new'
+        meta:
+            includeId: productkititems3-productkititemlabels-default
+        attributes:
+            string: productkititems3-productkititemlabels-default
+            fallback: null
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            localization:
+                data: null
+    -
+        type: productkititemproducts
+        id: 'new'
+        meta:
+            includeId: productkititems3-productkititemproducts1-product4
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product4->id)>'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product4_precision->id)>'

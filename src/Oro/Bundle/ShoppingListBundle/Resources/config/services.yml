@@ -68,6 +68,7 @@ services:
             - "@oro_product.provider.product_variant_availability_provider"
             - "@oro_config.manager"
             - "@oro_entity.delete_handler_registry"
+            - "@oro_shopping_list.product_kit.checksum"
 
     Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager:
         alias: 'oro_shopping_list.manager.shopping_list'
@@ -741,3 +742,69 @@ services:
             - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
             - { name: oro_datagrid.extension }
+
+    oro_shopping_list.validator.product_kit_item_collection_is_available_for_purchase:
+        class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchaseValidator
+        arguments:
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_shopping_list.validator.product_kit_item_product_collection_is_available_for_purchase:
+        class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator
+        arguments:
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_shopping_list.product_kit.provider.product_kit_item_products:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemProductsProvider
+        arguments:
+            - '@oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker'
+
+    oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker
+        arguments:
+            - '@validator'
+
+    oro_shopping_list.product_kit.checker.product_kit_item_availability_checker:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker
+        arguments:
+            - '@validator'
+
+    oro_shopping_list.product_kit.checker.product_kit_availability_checker:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker
+        arguments:
+            - '@validator'
+
+    oro_shopping_list.product_kit.provider.product_kit_items:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemsProvider
+        arguments:
+            - '@oro_shopping_list.product_kit.checker.product_kit_item_availability_checker'
+
+    oro_shopping_list.product_kit.factory.product_kit_item_line_item:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitItemLineItemFactory
+        arguments:
+            - '@oro_shopping_list.product_kit.provider.product_kit_item_products'
+
+    oro_shopping_list.product_kit.factory.product_kit_line_item:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitLineItemFactory
+        arguments:
+            - '@oro_shopping_list.product_kit.provider.product_kit_items'
+            - '@oro_shopping_list.product_kit.factory.product_kit_item_line_item'
+
+    oro_shopping_list.product_kit.checksum.product_kit_line_item:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\ProductKitLineItemChecksumGenerator
+        tags:
+            - { name: oro_shopping_list.product_kit.checksum }
+
+    oro_shopping_list.product_kit.checksum:
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\CompositeLineItemChecksumGenerator
+        arguments:
+            - !tagged_iterator { tag: oro_shopping_list.product_kit.checksum}
+
+    oro_shopping_list.product_kit.checksum.hashing:
+        decorates: oro_shopping_list.product_kit.checksum
+        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator
+        arguments:
+            - '@.inner'

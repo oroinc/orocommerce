@@ -120,3 +120,69 @@ api:
                     depends_on: [filename,mimeType,originalFilename,extension,parentEntityClass]
                     form_options:
                         mapped: false
+
+        Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_kit_item.md'
+            subresources:
+                labels:
+                    actions:
+                        add_relationship: false
+                        update_relationship: false
+                        delete_relationship: false
+                productKit:
+                    actions:
+                        update_relationship: false
+                        delete_relationship: false
+
+        Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_kit_item_product.md'
+            actions:
+                create:
+                    status_codes:
+                        201: false
+                        400: false
+                        403: Returned always
+                        409: false
+                        500: false
+                update:
+                    fields:
+                        kitItem:
+                            form_options:
+                                mapped: false
+                delete_list: false
+                delete: false
+            fields:
+                productUnitPrecision:
+                    form_options:
+                        mapped: false
+            subresources:
+                kitItem:
+                    actions:
+                        update_relationship: false
+                        delete_relationship: false
+                productUnitPrecision:
+                    actions:
+                        update_relationship: false
+                        delete_relationship: false
+
+        Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_kit_item_label.md'
+            actions:
+                create:
+                    status_codes:
+                        201: false
+                        400: false
+                        403: Returned always
+                        409: false
+                        500: false
+                delete_list: false
+                delete: false
+            subresources:
+                kitItem:
+                    actions:
+                        update_relationship: false
+                        delete_relationship: false
+                localization:
+                    actions:
+                        update_relationship: false
+                        delete_relationship: false

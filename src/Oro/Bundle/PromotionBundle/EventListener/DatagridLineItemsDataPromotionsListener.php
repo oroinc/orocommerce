@@ -5,8 +5,7 @@ namespace Oro\Bundle\PromotionBundle\EventListener;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProviderInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
@@ -19,31 +18,30 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
  */
 class DatagridLineItemsDataPromotionsListener
 {
-    private PricingLineItemDataListener $pricingLineItemDataListener;
+    public const DISCOUNT_VALUE = 'discountValue';
+    public const DISCOUNT = 'discount';
+    public const INITIAL_SUBTOTAL = 'initialSubtotal';
+
     private PromotionExecutor $promotionExecutor;
-    private UserCurrencyManager $currencyManager;
+
     private NumberFormatter $numberFormatter;
+
     private SplitEntitiesProviderInterface $splitEntitiesProvider;
+
     private array $cache = [];
 
     public function __construct(
-        PricingLineItemDataListener $pricingLineItemDataListener,
         PromotionExecutor $promotionExecutor,
-        UserCurrencyManager $currencyManager,
         NumberFormatter $numberFormatter,
         SplitEntitiesProviderInterface $splitEntitiesProvider
     ) {
-        $this->pricingLineItemDataListener = $pricingLineItemDataListener;
         $this->promotionExecutor = $promotionExecutor;
-        $this->currencyManager = $currencyManager;
         $this->numberFormatter = $numberFormatter;
         $this->splitEntitiesProvider = $splitEntitiesProvider;
     }
 
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
-        $this->pricingLineItemDataListener->onLineItemData($event);
-
         $lineItems = $event->getLineItems();
         if (!$lineItems) {
             return;
@@ -59,27 +57,38 @@ class DatagridLineItemsDataPromotionsListener
             return;
         }
 
-        $currency = $this->currencyManager->getUserCurrency();
-
         foreach ($lineItems as $lineItem) {
             $lineItemId = $lineItem->getId();
-            $discountTotal = $discountTotals[$lineItemId] ?? null;
-            if (!$discountTotal) {
+            $discountValue = $discountTotals[$lineItemId] ?? null;
+            if (!$discountValue) {
                 continue;
             }
 
             $lineItemData = $event->getDataForLineItem($lineItemId);
+            if (empty($lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE])
+                || empty($lineItemData[DatagridLineItemsDataPricingListener::CURRENCY])) {
+                $event->addDataForLineItem($lineItemId, [
+                    self::DISCOUNT_VALUE => 0.0,
+                    self::DISCOUNT => '',
+                    self::INITIAL_SUBTOTAL => $lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL] ?? ''
+                ]);
+                continue;
+            }
 
-            $lineItemData['discountValue'] = $discountTotal;
-            $lineItemData['discount'] = $this->numberFormatter->formatCurrency($discountTotal, $currency);
+            $subtotalValue = (float)($lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE] ?? 0);
+            $subtotalValue -= $discountValue;
 
-            // Applies changes to subtotal.
-            $lineItemData['initialSubtotal'] = $lineItemData['subtotal'] ?? 0;
-            $lineItemData['subtotalValue'] = ($lineItemData['subtotalValue'] ?? 0) - $discountTotal;
-            $lineItemData['subtotal'] = $this->numberFormatter
-                ->formatCurrency($lineItemData['subtotalValue'], $currency);
-
-            $event->addDataForLineItem($lineItemId, $lineItemData);
+            $event->addDataForLineItem($lineItemId, [
+                self::DISCOUNT_VALUE => $discountValue,
+                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $subtotalValue,
+                self::DISCOUNT => $this->numberFormatter->formatCurrency(
+                    $discountValue,
+                    $lineItemData[DatagridLineItemsDataPricingListener::CURRENCY]
+                ),
+                self::INITIAL_SUBTOTAL => $lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL] ?? '',
+                DatagridLineItemsDataPricingListener::SUBTOTAL => $this->numberFormatter
+                    ->formatCurrency($subtotalValue, $lineItemData[DatagridLineItemsDataPricingListener::CURRENCY]),
+            ]);
         }
     }
 
@@ -94,13 +103,12 @@ class DatagridLineItemsDataPromotionsListener
             if (!empty($splitEntities)) {
                 $discounts = [];
                 foreach ($splitEntities as $entity) {
-                    $discount = $this->getLineItemsDiscounts($entity);
-                    // array_replace is used here just only to merge arrays with the integer keys. Its behaviour does
-                    // not impact the logic.
-                    $discounts = array_replace($discounts, $discount);
+                    $discounts[] = $this->getLineItemsDiscounts($entity);
                 }
 
-                $this->cache[$id] = $discounts;
+                // array_replace is used here just only to merge arrays with the integer keys. Its behaviour does
+                // not impact the logic.
+                $this->cache[$id] = array_replace([], ...$discounts);
             } else {
                 $this->cache[$id] = $this->getLineItemsDiscounts($lineItemsHolder);
             }

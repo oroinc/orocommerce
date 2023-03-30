@@ -61,8 +61,10 @@ export const flattenData = data => {
 
             item.row_class_name = itemClassName.join(' ');
             item.ids = [];
-            item._hasVariants = true;
+            item._hasVariants = item.isConfigurable || false;
+            item._hasKitItemLineItems = item.isKit || false;
             item._isVariant = false;
+            item._isKitItemLineItem = false;
 
             if (isError(item) || isHighlight(item)) {
                 flatData.push(messageModel(item));
@@ -97,11 +99,12 @@ export const flattenData = data => {
                 }
 
                 item.ids.push(subItem.id);
-                subItem._isVariant = true;
-                subItem._groupId = item.productId;
+                subItem._isVariant = item._hasVariants || false;
+                subItem._isKitItemLineItem = item._hasKitItemLineItems || false;
+                subItem._groupId = item.isKit ? item.checksum : item.productId;
                 subItem.row_class_name = className.join(' ');
                 subItem.row_attributes = {
-                    'data-product-group': item.productId
+                    'data-product-group': subItem._groupId
                 };
 
                 subDataCollection.push(subItem);

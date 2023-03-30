@@ -89,3 +89,9 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_product.form.handler.product_collection_segment_products, key: Oro\Bundle\ProductBundle\Form\Handler\ProductCollectionSegmentProductsFormHandler }
+
+    Oro\Bundle\ProductBundle\Controller\ProductKitItemController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

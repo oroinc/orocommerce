@@ -9,8 +9,6 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProviderInterf
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Stub\CheckoutStub;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener as PricingLineItemDataListener;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
@@ -28,14 +26,8 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PricingLineItemDataListener|\PHPUnit\Framework\MockObject\MockObject */
-    private $pricingLineItemDataListener;
-
     /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionExecutor;
-
-    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $currencyManager;
 
     /** @var SplitEntitiesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $splitEntitiesProvider;
@@ -45,9 +37,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
 
     protected function setUp(): void
     {
-        $this->pricingLineItemDataListener = $this->createMock(PricingLineItemDataListener::class);
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
-        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->splitEntitiesProvider = $this->createMock(SplitEntitiesProviderInterface::class);
 
         $numberFormatter = $this->createMock(NumberFormatter::class);
@@ -56,9 +46,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->willReturnCallback(static fn (float $value, string $currency) => $currency . $value);
 
         $this->listener = new DatagridLineItemsDataPromotionsListener(
-            $this->pricingLineItemDataListener,
             $this->promotionExecutor,
-            $this->currencyManager,
             $numberFormatter,
             $this->splitEntitiesProvider
         );
@@ -125,10 +113,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         $event->expects($this->never())
             ->method('addDataForLineItem');
 
-        $this->pricingLineItemDataListener->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
-
         $this->listener->onLineItemData($event);
     }
 
@@ -147,10 +131,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->method('addDataForLineItem');
         $event->expects($this->never())
             ->method('addDataForLineItem');
-
-        $this->pricingLineItemDataListener->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
 
         $this->promotionExecutor->expects($this->once())
             ->method('supports')
@@ -175,10 +155,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->method('addDataForLineItem');
         $event->expects($this->never())
             ->method('addDataForLineItem');
-
-        $this->pricingLineItemDataListener->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
 
         $this->splitEntitiesProvider->expects($this->once())
             ->method('getSplitEntities')
@@ -217,10 +193,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->method('addDataForLineItem');
         $event->expects($this->never())
             ->method('addDataForLineItem');
-
-        $this->pricingLineItemDataListener->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
 
         $this->splitEntitiesProvider->expects($this->once())
             ->method('getSplitEntities')
@@ -276,10 +248,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         $discountContext->addLineItem($discountLineItem1);
         $discountContext->addLineItem($discountLineItem2);
 
-        $this->currencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn('USD');
-
         $shoppingList = new ShoppingListStub();
         $shoppingList->setId(12);
         $shoppingList->addLineItem($lineItem1);
@@ -300,18 +268,28 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->willReturn($discountContext);
 
         $event = new DatagridLineItemsDataEvent(
-            [$lineItem1, $lineItem2, $lineItem3],
+            [
+                $lineItem1->getEntityIdentifier() => $lineItem1,
+                $lineItem2->getEntityIdentifier() => $lineItem2,
+                $lineItem3->getEntityIdentifier() => $lineItem3
+            ],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );
 
-        $this->pricingLineItemDataListener->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
-
-        $event->addDataForLineItem($lineItem1->getId(), ['subtotal' => 'USD100', 'subtotalValue' => 100]);
-        $event->addDataForLineItem($lineItem2->getId(), ['subtotal' => 'USD1000', 'subtotalValue' => 1000]);
-        $event->addDataForLineItem($lineItem3->getId(), ['subtotal' => 'USD500', 'subtotalValue' => 500]);
+        $event->addDataForLineItem(
+            $lineItem1->getId(),
+            ['currency' => 'USD', 'subtotal' => 'USD100', 'subtotalValue' => 100]
+        );
+        $event->addDataForLineItem(
+            $lineItem2->getId(),
+            ['currency' => 'USD', 'subtotal' => 'USD1000', 'subtotalValue' => 1000]
+        );
+        $event->addDataForLineItem(
+            $lineItem3->getId(),
+            ['currency' => 'USD', 'subtotal' => 'USD500', 'subtotalValue' => 500]
+        );
 
         $this->listener->onLineItemData($event);
 
@@ -320,8 +298,9 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
                 'discountValue' => $discountInformation1->getDiscountAmount(),
                 'discount' => 'USD30',
                 'subtotal' => 'USD70',
-                'subtotalValue' => '70',
+                'subtotalValue' => 70.0,
                 'initialSubtotal' => 'USD100',
+                'currency' => 'USD',
             ],
             $event->getDataForLineItem($lineItem1->getId())
         );
@@ -333,6 +312,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
                 'subtotal' => 'USD919.7',
                 'subtotalValue' => 919.7,
                 'initialSubtotal' => 'USD1000',
+                'currency' => 'USD',
             ],
             $event->getDataForLineItem($lineItem2->getId())
         );
@@ -341,6 +321,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             [
                 'subtotal' => 'USD500',
                 'subtotalValue' => 500,
+                'currency' => 'USD',
             ],
             $event->getDataForLineItem($lineItem3->getId())
         );
@@ -380,10 +361,6 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
 
         $discountContext2 = new DiscountContext();
 
-        $this->currencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn('USD');
-
         $checkout = new CheckoutStub();
         $checkout->setId(5);
         $checkout->addLineItem($lineItem1);
@@ -409,18 +386,28 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ]);
 
         $event = new DatagridLineItemsDataEvent(
-            [$lineItem1, $lineItem2, $lineItem3],
+            [
+                $lineItem1->getEntityIdentifier() => $lineItem1,
+                $lineItem2->getEntityIdentifier() => $lineItem2,
+                $lineItem3->getEntityIdentifier() => $lineItem3
+            ],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );
 
-        $this->pricingLineItemDataListener->expects($this->once())
-            ->method('onLineItemData')
-            ->with($event);
-
-        $event->addDataForLineItem($lineItem1->getId(), ['subtotal' => 'USD100', 'subtotalValue' => 100]);
-        $event->addDataForLineItem($lineItem2->getId(), ['subtotal' => 'USD1000', 'subtotalValue' => 1000]);
-        $event->addDataForLineItem($lineItem3->getId(), ['subtotal' => 'USD500', 'subtotalValue' => 500]);
+        $event->addDataForLineItem(
+            $lineItem1->getId(),
+            ['currency' => 'USD', 'subtotal' => 'USD100', 'subtotalValue' => 100]
+        );
+        $event->addDataForLineItem(
+            $lineItem2->getId(),
+            ['currency' => 'USD', 'subtotal' => 'USD1000', 'subtotalValue' => 1000]
+        );
+        $event->addDataForLineItem(
+            $lineItem3->getId(),
+            ['currency' => 'USD', 'subtotal' => 'USD500', 'subtotalValue' => 500]
+        );
 
         $this->listener->onLineItemData($event);
 
@@ -429,8 +416,9 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
                 'discountValue' => $discountInformation1->getDiscountAmount(),
                 'discount' => 'USD10',
                 'subtotal' => 'USD90',
-                'subtotalValue' => '90',
+                'subtotalValue' => 90,
                 'initialSubtotal' => 'USD100',
+                'currency' => 'USD',
             ],
             $event->getDataForLineItem($lineItem1->getId())
         );
@@ -442,6 +430,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
                 'subtotal' => 'USD985',
                 'subtotalValue' => 985.00,
                 'initialSubtotal' => 'USD1000',
+                'currency' => 'USD',
             ],
             $event->getDataForLineItem($lineItem2->getId())
         );
@@ -450,6 +439,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             [
                 'subtotal' => 'USD500',
                 'subtotalValue' => 500,
+                'currency' => 'USD',
             ],
             $event->getDataForLineItem($lineItem3->getId())
         );

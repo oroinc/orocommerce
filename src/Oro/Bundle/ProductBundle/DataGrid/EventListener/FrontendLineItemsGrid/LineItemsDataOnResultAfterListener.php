@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
@@ -15,11 +16,12 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class LineItemsDataOnResultAfterListener
 {
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    public const LINE_ITEMS = 'lineItemsByIds';
+    public const LINE_ITEMS_DATA = 'lineItemsDataByIds';
 
-    /** @var EntityClassResolver */
-    private $entityClassResolver;
+    private EventDispatcherInterface $eventDispatcher;
+
+    private EntityClassResolver $entityClassResolver;
 
     public function __construct(EventDispatcherInterface $eventDispatcher, EntityClassResolver $entityClassResolver)
     {
@@ -29,27 +31,31 @@ class LineItemsDataOnResultAfterListener
 
     public function onResultAfter(OrmResultAfter $event): void
     {
-        $lineItemsByIds = $this->getLineItemsIndexedByIds($event);
+        [$lineItemsByIds, $lineItemsRecordsByIds] = $this->getLineItemsIndexedById($event);
         if (!$lineItemsByIds) {
             return;
         }
 
-        $lineItemsData = $this->getLineItemsData($lineItemsByIds, $event->getDatagrid());
+        $lineItemsData = $this->getLineItemsData($lineItemsByIds, $lineItemsRecordsByIds, $event->getDatagrid());
 
         foreach ($event->getRecords() as $record) {
-            $lineItemsIds = array_flip(explode(',', $this->getRowId($record)));
+            $lineItemsIds = array_flip($this->getLineItemIds($record));
             /** @var ProductLineItemInterface[] $recordLineItems */
             $recordLineItems = array_intersect_key($lineItemsByIds, $lineItemsIds);
             $recordLineItemsData = array_intersect_key($lineItemsData, $lineItemsIds);
 
-            $record->setValue('lineItemsByIds', $recordLineItems);
-            $record->setValue('lineItemsDataByIds', $recordLineItemsData);
+            $record->setValue(self::LINE_ITEMS, $recordLineItems);
+            $record->setValue(self::LINE_ITEMS_DATA, $recordLineItemsData);
         }
     }
 
-    private function getRowId(ResultRecordInterface $record): string
+    /**
+     * @param ResultRecordInterface $record
+     * @return int[]|string[]
+     */
+    private function getLineItemIds(ResultRecordInterface $record): array
     {
-        return (string)($record->getValue('allLineItemsIds') ?: $record->getValue('id'));
+        return array_filter(explode(',', (string)($record->getValue('allLineItemsIds') ?: $record->getValue('id'))));
     }
 
     private function isGrouped(DatagridInterface $datagrid): bool
@@ -62,33 +68,30 @@ class LineItemsDataOnResultAfterListener
     /**
      * @param OrmResultAfter $event
      *
-     * @return ProductLineItemInterface[]
+     * @return array{array<int,ProductLineItemInterface>, array<int,array>}
      */
-    private function getLineItemsIndexedByIds(OrmResultAfter $event): array
+    private function getLineItemsIndexedById(OrmResultAfter $event): array
     {
         $records = $event->getRecords();
         if (!$records) {
-            return [];
-        }
-
-        $lineItemsIds = array_filter(
-            array_merge(
-                ...array_map(fn (ResultRecordInterface $record) => explode(',', $this->getRowId($record)), $records)
-            )
-        );
-
-        if (!$lineItemsIds) {
-            return [];
+            return [[], []];
         }
 
         $rootEntityClass = $this->getRootEntityClass($event->getDatagrid());
         $lineItemsByIds = [];
+        $lineItemsDataByIds = [];
+
+        /** @var EntityManager $entityManager */
         $entityManager = $event->getQuery()->getEntityManager();
-        foreach ($lineItemsIds as $lineItemId) {
-            $lineItemsByIds[$lineItemId] = $entityManager->getReference($rootEntityClass, (int)$lineItemId);
+        foreach ($records as $record) {
+            $lineItemIds = $this->getLineItemIds($record);
+            foreach ($lineItemIds as $lineItemId) {
+                $lineItemsByIds[$lineItemId] = $entityManager->getReference($rootEntityClass, (int)$lineItemId);
+                $lineItemsDataByIds[$lineItemId] = $record->getDataArray();
+            }
         }
 
-        return $lineItemsByIds;
+        return [$lineItemsByIds, $lineItemsDataByIds];
     }
 
     private function getRootEntityClass(DatagridInterface $datagrid): string
@@ -107,15 +110,25 @@ class LineItemsDataOnResultAfterListener
         return $rootEntityClass;
     }
 
+    /**
+     * @param array<int,ProductLineItemInterface> $lineItemsByIds
+     * @param array<int,array> $lineItemsDataByIds
+     *
+     * @param DatagridInterface $datagrid
+     * @return array<int,array>
+     */
     private function getLineItemsData(
-        array $lineItems,
+        array $lineItemsByIds,
+        array $lineItemsDataByIds,
         DatagridInterface $datagrid
     ): array {
         $lineItemsDataEvent = new DatagridLineItemsDataEvent(
-            $lineItems,
+            $lineItemsByIds,
+            $lineItemsDataByIds,
             $datagrid,
             ['isGrouped' => $this->isGrouped($datagrid)]
         );
+
         $this->eventDispatcher->dispatch($lineItemsDataEvent, $lineItemsDataEvent->getName());
 
         return $lineItemsDataEvent->getDataForAllLineItems();

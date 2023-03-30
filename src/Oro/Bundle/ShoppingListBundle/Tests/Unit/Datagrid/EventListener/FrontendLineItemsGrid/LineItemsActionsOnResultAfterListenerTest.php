@@ -12,15 +12,15 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid\LineItemsActionsOnResultAfterListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
+class LineItemsActionsOnResultAfterListenerTest extends TestCase
 {
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
 
-    /** @var LineItemsActionsOnResultAfterListener */
-    private $listener;
+    private LineItemsActionsOnResultAfterListener $listener;
 
     protected function setUp(): void
     {
@@ -234,6 +234,58 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     ]
                 ),
             ],
+            'kit with subdata with notes' => [
+                'record' => new ResultRecord(['isKit' => true, 'subData' => [['notes' => 'sample notes']]]),
+                'expectedRecord' => new ResultRecord(
+                    [
+                        'isKit' => true,
+                        'subData' => [
+                            [
+                                'notes' => 'sample notes',
+                                'action_configuration' => [
+                                    'add_notes' => false,
+                                    'edit_notes' => false,
+                                    'update_configurable' => false,
+                                    'delete' => false,
+                                ],
+                            ],
+                        ],
+                        'action_configuration' => [
+                            'add_notes' => false,
+                            'edit_notes' => false,
+                            'update_configurable' => false,
+                            'delete' => false,
+                        ],
+                    ]
+                ),
+            ],
+            'kit with subdata without notes' => [
+                'record' => new ResultRecord(
+                    ['isKit' => true, 'subData' => [['sample_key' => 'sample value']]]
+                ),
+                'expectedRecord' => new ResultRecord(
+                    [
+                        'isKit' => true,
+                        'subData' => [
+                            [
+                                'sample_key' => 'sample value',
+                                'action_configuration' => [
+                                    'add_notes' => false,
+                                    'edit_notes' => false,
+                                    'update_configurable' => false,
+                                    'delete' => false,
+                                ],
+                            ],
+                        ],
+                        'action_configuration' => [
+                            'add_notes' => false,
+                            'edit_notes' => false,
+                            'update_configurable' => false,
+                            'delete' => false,
+                        ],
+                    ]
+                ),
+            ],
         ];
     }
 
@@ -398,6 +450,58 @@ class LineItemsActionsOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => true,
+                            'delete' => true,
+                        ],
+                    ]
+                ),
+            ],
+            'kit with subdata with notes' => [
+                'record' => new ResultRecord(['isKit' => true, 'subData' => [['notes' => 'sample notes']]]),
+                'expectedRecord' => new ResultRecord(
+                    [
+                        'isKit' => true,
+                        'subData' => [
+                            [
+                                'notes' => 'sample notes',
+                                'action_configuration' => [
+                                    'add_notes' => false,
+                                    'edit_notes' => false,
+                                    'update_configurable' => false,
+                                    'delete' => false,
+                                ],
+                            ],
+                        ],
+                        'action_configuration' => [
+                            'add_notes' => true,
+                            'edit_notes' => false,
+                            'update_configurable' => false,
+                            'delete' => true,
+                        ],
+                    ]
+                ),
+            ],
+            'kit with subdata without notes' => [
+                'record' => new ResultRecord(
+                    ['isKit' => true, 'subData' => [['sample_key' => 'sample value']]]
+                ),
+                'expectedRecord' => new ResultRecord(
+                    [
+                        'isKit' => true,
+                        'subData' => [
+                            [
+                                'sample_key' => 'sample value',
+                                'action_configuration' => [
+                                    'add_notes' => false,
+                                    'edit_notes' => false,
+                                    'update_configurable' => false,
+                                    'delete' => false,
+                                ],
+                            ],
+                        ],
+                        'action_configuration' => [
+                            'add_notes' => true,
+                            'edit_notes' => false,
+                            'update_configurable' => false,
                             'delete' => true,
                         ],
                     ]

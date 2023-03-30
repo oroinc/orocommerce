@@ -1,0 +1,67 @@
+data:
+    type: products
+    id: '<toString(@product_kit1->id)>'
+    attributes:
+        sku: PKSKU1
+        variantAttributeNames: {  }
+        createdAt: '@product_kit1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@product_kit1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        productType: kit
+        featured: false
+        newArrival: false
+        name: 'Product Kit 1'
+        shortDescription: null
+        description: null
+        productAttributes:
+            testAttrString: null
+            testAttrBoolean: false
+            testAttrFloat: 1.6
+            testAttrMoney: null
+            testAttrDateTime: null
+            testAttrManyToOne:
+                id: '<toString(@customer6->id)>'
+                targetValue: 'Company 6'
+            testToOneId: null
+            testAttrMultiEnum: []
+            testAttrManyToMany: []
+            testToManyId: []
+        unitPrecisions:
+            -
+                unit: item
+                precision: 0
+                conversionRate: 1
+                default: true
+        url: null
+        urls: {  }
+        prices: {  }
+        lowInventory: false
+        upcoming: false
+        availabilityDate: null
+        metaTitle: null
+        metaDescription: null
+        metaKeywords: null
+    relationships:
+        images:
+            data: []
+        productFamily:
+            data:
+                type: productfamilies
+                id: '<toString(@default_product_family->id)>'
+        kitItems:
+            data:
+                -
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+                -
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->id)>'
+        category:
+            data: null
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
+        variantProducts:
+            data: []
+        parentProducts:
+            data: []

@@ -348,6 +348,8 @@ operations:
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
                           - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\Product']]]
                           - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]]
+                          - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem']]]
+                          - [[collection], [propertyName, [kitItemLineItems]]]
                     - '@assign_value': [$.newShoppingList.label, $.newName]
                     - '@assign_value': [$.newShoppingList.current, false]
                     - '@flush_entity': $.newShoppingList

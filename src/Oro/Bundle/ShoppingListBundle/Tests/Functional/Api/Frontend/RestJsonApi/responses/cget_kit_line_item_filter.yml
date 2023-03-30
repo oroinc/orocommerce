@@ -1,0 +1,51 @@
+data:
+    -
+        type: shoppinglistkititems
+        id: '<toString(@product_kit_item1_line_item1->id)>'
+        attributes:
+            quantity: 2
+            sortOrder: 0
+            currency: null
+            value: null
+        relationships:
+            lineItem:
+                data:
+                    type: shoppinglistitems
+                    id: '<toString(@kit_line_item1->id)>'
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: shoppinglistkititems
+        id: '<toString(@product_kit_item1_line_item2->id)>'
+        attributes:
+            quantity: 3
+            sortOrder: 1
+            currency: null
+            value: null
+        relationships:
+            lineItem:
+                data:
+                    type: shoppinglistitems
+                    id: '<toString(@kit_line_item1->id)>'
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

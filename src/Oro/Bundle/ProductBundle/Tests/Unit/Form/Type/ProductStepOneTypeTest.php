@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
 use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
@@ -12,31 +13,28 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductStepOneTypeTest extends FormIntegrationTestCase
 {
-    public function testIntention()
+    public function testIntention(): void
     {
         $form = $this->factory->create(ProductStepOneType::class);
 
-        $this->assertEquals(
-            'product',
-            $form->getConfig()->getOptions()['csrf_token_id']
-        );
+        self::assertEquals('product', $form->getConfig()->getOptions()['csrf_token_id']);
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $type = new ProductStepOneType();
-        $this->assertEquals(ProductStepOneType::NAME, $type->getName());
+        self::assertEquals(ProductStepOneType::NAME, $type->getName());
     }
 
-    public function testBuildView()
+    public function testBuildView(): void
     {
         $view = new FormView();
         $form = $this->createMock(FormInterface::class);
         $type = new ProductStepOneType();
         $type->buildView($view, $form, []);
 
-        $this->assertArrayHasKey('default_input_action', $view->vars);
-        $this->assertEquals('oro_product_create', $view->vars['default_input_action']);
+        self::assertArrayHasKey('default_input_action', $view->vars);
+        self::assertEquals('oro_product_create', $view->vars['default_input_action']);
     }
 
     /**
@@ -45,7 +43,7 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
     protected function getExtensions(): array
     {
         return [
-            new PreloadedExtension([new ProductTypeType(new ProductTypeProvider())], [])
+            new PreloadedExtension([new ProductTypeType(new ProductTypeProvider(Product::getTypes()))], [])
         ];
     }
 }

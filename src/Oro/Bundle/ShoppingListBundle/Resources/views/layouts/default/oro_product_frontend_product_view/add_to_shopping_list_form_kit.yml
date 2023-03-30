@@ -1,0 +1,19 @@
+layout:
+    imports:
+        -   id: line_item_buttons_kit
+            root: product_view_kit_content_container_start
+
+    actions:
+        - '@setBlockTheme':
+              themes: '@OroShoppingList/layouts/default/oro_product_frontend_product_view/add_to_shopping_list_form_kit.html.twig'
+
+        - '@setOption':
+              id: line_item_form
+              optionName: visible
+              optionValue: false
+
+        - '@move':
+              id: product_shopping_lists
+              parentId: product_view_kit_content_container_end
+
+    conditions: 'context["product_type"] == "kit"'

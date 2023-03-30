@@ -59,9 +59,28 @@ class LineItemsDataOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->never())
             ->method('dispatch');
 
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagridConfig = $this->createMock(DatagridConfiguration::class);
+        $datagrid
+            ->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($datagridConfig);
+
+        $ormQueryConfig = $this->createMock(OrmQueryConfiguration::class);
+        $datagridConfig
+            ->expects($this->any())
+            ->method('getOrmQuery')
+            ->willReturn($ormQueryConfig);
+
+        $ormQueryConfig
+            ->expects($this->any())
+            ->method('getRootEntity')
+            ->with($this->entityClassResolver)
+            ->willReturn(ProductLineItemInterface::class);
+
         $this->listener->onResultAfter(
             new OrmResultAfter(
-                $this->createMock(DatagridInterface::class),
+                $datagrid,
                 [new ResultRecord([]), new ResultRecord(['allLineItemsIds' => '']), new ResultRecord(['id' => ''])],
                 $this->createMock(AbstractQuery::class)
             )
@@ -202,23 +221,34 @@ class LineItemsDataOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $record1 = new ResultRecord(['allLineItemsIds' => '1001,2002']);
-        $record2 = new ResultRecord(['id' => '3003']);
+        $record1Data = ['allLineItemsIds' => '1001,2002'];
+        $record1 = new ResultRecord($record1Data);
+        $record2Data = ['id' => '3003'];
+        $record2 = new ResultRecord($record2Data);
         $this->listener->onResultAfter(
             new OrmResultAfter($datagrid, [$record1, $record2], $query)
         );
 
         $this->assertSame(
             [
-                1001 => $lineItemsData[1001],
-                2002 => $lineItemsData[2002],
+                1001 => array_replace($record1Data, $lineItemsData[1001]),
+                2002 => array_replace($record1Data, $lineItemsData[2002]),
             ],
-            $record1->getValue('lineItemsDataByIds')
+            $record1->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA)
         );
-        $this->assertSame([1001 => $lineItems[1001], 2002 => $lineItems[2002]], $record1->getValue('lineItemsByIds'));
+        $this->assertSame(
+            [1001 => $lineItems[1001], 2002 => $lineItems[2002]],
+            $record1->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS)
+        );
 
-        $this->assertSame([3003 => ['sample_key' => 'sample_value3']], $record2->getValue('lineItemsDataByIds'));
-        $this->assertSame([3003 => $lineItems[3003]], $record2->getValue('lineItemsByIds'));
+        $this->assertSame(
+            [3003 => array_replace($record2Data, ['sample_key' => 'sample_value3'])],
+            $record2->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA)
+        );
+        $this->assertSame(
+            [3003 => $lineItems[3003]],
+            $record2->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS)
+        );
     }
 
     public function onResultAfterDataProvider(): array

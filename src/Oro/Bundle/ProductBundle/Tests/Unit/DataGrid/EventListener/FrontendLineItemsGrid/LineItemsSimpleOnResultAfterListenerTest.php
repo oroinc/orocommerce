@@ -8,8 +8,8 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsDataOnResultAfterListener;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineItemsSimpleOnResultAfterListener;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
@@ -52,7 +52,7 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
         $resultRecord
             ->expects($this->once())
             ->method('getValue')
-            ->with('lineItemsByIds')
+            ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn(
                 [
                     10 => $this->createMock(ProductLineItemInterface::class),
@@ -78,21 +78,13 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
         $resultRecord
             ->expects($this->once())
             ->method('getValue')
-            ->with('lineItemsByIds')
+            ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn([10 => new \stdClass()]);
 
         $event = new OrmResultAfter(
             $this->getDatagrid(),
             [$resultRecord],
             $this->createMock(AbstractQuery::class)
-        );
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(
-            sprintf(
-                'Element lineItemsByIds was expected to contain %s objects',
-                ProductLineItemInterface::class
-            )
         );
 
         $resultRecord
@@ -110,8 +102,11 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['lineItemsByIds', [10 => $this->createMock(ProductLineItemInterface::class)]],
-                    ['lineItemsDataByIds', []],
+                    [
+                        LineItemsDataOnResultAfterListener::LINE_ITEMS,
+                        [10 => $this->createMock(ProductLineItemInterface::class)]
+                    ],
+                    [LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA, []],
                 ]
             );
 
@@ -134,17 +129,14 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
     public function testOnResultAfterWithoutProduct(): void
     {
         $lineItem = $this->createMock(ProductLineItemInterface::class);
-        $lineItem->expects($this->once())
-            ->method('getProduct')
-            ->willReturn(null);
 
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $resultRecord->expects($this->exactly(2))
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['lineItemsByIds', [10 => $lineItem]],
-                    ['lineItemsDataByIds', [10 => ['sample_key' => 'sample_value']]],
+                    [LineItemsDataOnResultAfterListener::LINE_ITEMS, [10 => $lineItem]],
+                    [LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA, [10 => ['sample_key' => 'sample_value']]],
                 ]
             );
 
@@ -154,42 +146,26 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
             $this->createMock(AbstractQuery::class)
         );
 
-        $resultRecord->expects($this->exactly(2))
+        $resultRecord
+            ->expects($this->once())
             ->method('setValue')
-            ->withConsecutive(
-                ['isConfigurable', false],
-                ['sample_key', 'sample_value']
-            );
+            ->with('sample_key', 'sample_value');
 
         $this->listener->onResultAfter($event);
     }
 
-    /**
-     * @dataProvider onResultDataProvider
-     */
-    public function testOnResultAfter(bool $isConfigurable): void
+    public function testOnResultAfter(): void
     {
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $lineItem = $this->createMock(ProductLineItemInterface::class);
 
-        $product = $this->createMock(Product::class);
-        $product
-            ->expects($this->once())
-            ->method('isConfigurable')
-            ->willReturn($isConfigurable);
-
-        $lineItem
-            ->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($product);
-
         $resultRecord
             ->expects($this->exactly(2))
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['lineItemsByIds', [10 => $lineItem]],
-                    ['lineItemsDataByIds', [10 => ['sample_key' => 'sample_value']]],
+                    [LineItemsDataOnResultAfterListener::LINE_ITEMS, [10 => $lineItem]],
+                    [LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA, [10 => ['sample_key' => 'sample_value']]],
                 ]
             );
 
@@ -200,22 +176,11 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
         );
 
         $resultRecord
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('setValue')
-            ->withConsecutive(
-                ['isConfigurable', $isConfigurable],
-                ['sample_key', 'sample_value']
-            );
+            ->with('sample_key', 'sample_value');
 
         $this->listener->onResultAfter($event);
-    }
-
-    public function onResultDataProvider(): array
-    {
-        return [
-            'is configurable' => [true],
-            'is not configurable' => [false],
-        ];
     }
 
     private function getDatagrid(array $parameters = []): Datagrid

@@ -194,7 +194,7 @@ The localized short description of the product.
 
 ### productType
 
-Defines the type of product, "simple" / "configurable".
+Defines the type of product, "simple" / "configurable" / "kit".
 
 ### isVariant
 

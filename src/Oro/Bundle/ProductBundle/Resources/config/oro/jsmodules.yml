@@ -4,6 +4,7 @@ aliases:
     oro/product-collection-popup-add-products-widget$: oroproduct/js/app/widget/product-collection-popup-add-products-widget
     oro/related-items-widget$: oroproduct/js/app/widget/related-items-widget
     oroproduct/js/app/datagrid/listener/related-product-listener$: oroproduct/js/app/datagrid/listener/related-items-listener
+    oroproduct/datagrid/builder/product-kit-items-builder$: oroproduct/js/datagrid/builder/product-kit-items-builder
 app-modules:
     - oroproduct/js/app/modules/validator-constraints-module
 configs:
@@ -33,3 +34,8 @@ dynamic-imports:
         - oroproduct/js/app/components/product-variant-field-component
         - oroproduct/js/app/components/related-items-tabs-component
         - oroproduct/js/app/views/variant-fields-view
+    productskit:
+        - oroproduct/js/app/components/product-kit-items-component
+        - oroproduct/js/app/views/product-kit/product-kit-view
+        - oroproduct/js/app/views/product-kit/product-kit-widget-view
+        - oroproduct/datagrid/builder/product-kit-items-builder

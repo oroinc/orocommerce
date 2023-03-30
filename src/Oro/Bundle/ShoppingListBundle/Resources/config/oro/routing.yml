@@ -24,6 +24,13 @@ oro_shopping_list_line_item_frontend:
     options:
         frontend: true
 
+oro_shopping_list_product_kit_line_item_frontend:
+    resource: "@OroShoppingListBundle/Controller/Frontend/AjaxProductKitLineItemController.php"
+    type:     annotation
+    prefix:   /customer/shoppinglist/product-kit-lineitem/ajax
+    options:
+        frontend: true
+
 oro_shopping_list_mass_action_frontend:
     resource: "@OroShoppingListBundle/Controller/Frontend/AjaxMassActionController.php"
     type:     annotation

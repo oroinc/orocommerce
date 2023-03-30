@@ -93,6 +93,7 @@ Feature: My Shopping List
       | BB10 | Red   | M    | cat1.jpg |
       | BB11 | Green | L    | cat2.jpg |
       | BB12 | Blue  | S    | cat3.jpg |
+      | BB13 | Blue  | S    | cat1.jpg |
 
   Scenario Outline: Prepare configurable products
     Given I go to Products/Products
@@ -639,7 +640,7 @@ Feature: My Shopping List
       | BB19 | Product 19 Note 19 text                                  | Out of Stock | 11  | sets | $29.00 | $319.00  |
       | BB20 | Product 20 Note 20 text                                  | In Stock     | 11  | sets | $29.00 | $319.00  |
 
-  Scenario: Check Image preview
+  Scenario: Check Image preview for configurable row
     Given I reset grid
     When I filter SKU as is equal "BB04"
     And I should not see an "Popup Gallery Widget" element
@@ -647,6 +648,17 @@ Feature: My Shopping List
     And I click "Product Item Gallery Trigger"
     Then I should see an "Popup Gallery Widget" element
     And I should see gallery image with alt "Configurable Product 1"
+    And I click "Popup Gallery Widget Close"
+    And I should not see an "Popup Gallery Widget" element
+
+  Scenario: Check Image preview for simple row
+    Given I reset grid
+    When I filter SKU as is equal "BB13"
+    And I should not see an "Popup Gallery Widget" element
+    And I should see product picture in the "Product Item Preview"
+    And I click "Product Item Gallery Trigger"
+    Then I should see an "Popup Gallery Widget" element
+    And I should see gallery image with alt "Product 13"
     And I click "Popup Gallery Widget Close"
     And I should not see an "Popup Gallery Widget" element
 

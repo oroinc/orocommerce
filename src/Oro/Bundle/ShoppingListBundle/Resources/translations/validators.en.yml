@@ -1,5 +1,13 @@
 oro:
     shoppinglist:
+        validators:
+            product_kit_item_collection_is_available_for_purchase:
+                required_not_available: 'Product kit {{ product_kit_sku }} is not available for purchase: {{ reason }}'
+                no_available: 'Product kit {{ product_kit_sku }} is not available for purchase: there are no available kit items'
+            product_kit_item_product_collection_is_available_for_purchase:
+                message: 'There are no products available for purchase in kit item {{ product_kit_item_label }}'
+                empty_message: 'There are no products available for purchase in kit item'
+
         not_empty: "Shopping List label must not be empty"
 
         lineitem:
@@ -10,6 +18,27 @@ oro:
             min.error.label: "Shopping list subtotal amount cannot be less than {{ limit }}."
 
         create_not_allowed: "It is not allowed to create a new shopping list."
+
+        product_kit_line_item:
+            quantity:
+                not_blank:
+                    message: 'Quantity cannot be empty'
+
+        product_kit_is_available_for_purchase:
+            product:
+                type:
+                    kit:
+                        message: "This product is not a product kit."
+                status:
+                    enabled:
+                        message: "This product is not active."
+                inventory_status:
+                    in_stock:
+                        message: "This product is not in stock."
+            line_item:
+                kit_item_line_items:
+                    count:
+                        min_message: "This product kit does not contain any items available for purchase."
 
     product_unavailable: "This item is unavailable"
     non_valid_precision: "This value should be decimal with a precision {{ precision }}"

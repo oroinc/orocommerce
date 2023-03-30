@@ -1601,6 +1601,116 @@ oro_behat_extension:
     Drop Zone Exclude from Collection:
       selector: '.drop-zones-menu [data-zone="excludeFromCollection"]'
 
+    Add More Product Kit:
+      selector: '.product-kit-control-group .add-list-item'
+
+    KitItemProductsAddGrid:
+      selector: 'div[data-page-component-name="kit-item-products-add-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    KitItemProductsEditGrid 1:
+      selector: '.oro-collection-item[data-content*="0"] div[data-page-component-name^="kit-item-products-edit-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    KitItemProductsEditGrid 2:
+      selector: '.oro-collection-item[data-content*="1"] div[data-page-component-name^="kit-item-products-edit-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    KitItemProductsEditGrid 3:
+      selector: '.oro-collection-item[data-content*="2"] div[data-page-component-name^="kit-item-products-edit-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    KitItemProductsViewGrid 1:
+      selector: '.content-variant-item:nth-of-type(1) div[data-page-component-name^="kit-item-products-view-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    KitItemProductsViewGrid 2:
+      selector: '.content-variant-item:nth-of-type(2) div[data-page-component-name^="kit-item-products-view-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    KitItemProductsViewGrid 3:
+      selector: '.content-variant-item:nth-of-type(3) div[data-page-component-name^="kit-item-products-view-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Product Kit Add Product Button:
+      selector: '.product-kit-item__add-product-button'
+
+    Product Kit Item 1:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"0")]|.//*[contains(concat(" ",normalize-space(@class)," ")," product-kit-view ")]/*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][1]'
+
+    Product Kit Item 2:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"1")]|.//*[contains(concat(" ",normalize-space(@class)," ")," product-kit-view ")]/*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][2]'
+
+    Product Kit Item 3:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"2")]|.//*[contains(concat(" ",normalize-space(@class)," ")," product-kit-view ")]/*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][3]'
+
+    Product Kit Collection:
+      selector: '.product-kit-control-group'
+
+    ProductKitForm:
+      selector: 'form[name="oro_product"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Label1: 'oro_product[kitItems][0][labels][values][default]'
+          Label2: 'oro_product[kitItems][1][labels][values][default]'
+          Label3: 'oro_product[kitItems][2][labels][values][default]'
+          sortOrder1: 'oro_product[kitItems][0][sortOrder]'
+          sortOrder2: 'oro_product[kitItems][1][sortOrder]'
+          sortOrder3: 'oro_product[kitItems][2][sortOrder]'
+          kitItemProducts1: 'oro_product[kitItems][0][kitItemProducts]'
+          kitItemProducts2: 'oro_product[kitItems][1][kitItemProducts]'
+          kitItemProducts3: 'oro_product[kitItems][2][kitItemProducts]'
+          Optional1: 'oro_product[kitItems][0][optional]'
+          Optional2: 'oro_product[kitItems][1][optional]'
+          Optional3: 'oro_product[kitItems][2][optional]'
+          minimumQuantity1: 'oro_product[kitItems][0][minimumQuantity]'
+          minimumQuantity2: 'oro_product[kitItems][1][minimumQuantity]'
+          minimumQuantity3: 'oro_product[kitItems][2][minimumQuantity]'
+          maximumQuantity1: 'oro_product[kitItems][0][maximumQuantity]'
+          maximumQuantity2: 'oro_product[kitItems][1][maximumQuantity]'
+          maximumQuantity3: 'oro_product[kitItems][2][maximumQuantity]'
+          productUnit1: 'oro_product[kitItems][0][productUnit]'
+          productUnit2: 'oro_product[kitItems][1][productUnit]'
+          productUnit3: 'oro_product[kitItems][2][productUnit]'
+          productKits: 'validate_oro_product[kitItems]'
+
+    Product Kit 1 Toggler:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][1]//*[@data-toggle="collapse"]|.//*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][1]//*[@data-toggle="collapse"]'
+
+    Product Kit 2 Toggler:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][2]//*[@data-toggle="collapse"]|.//*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][2]//*[@data-toggle="collapse"]'
+
+    Product Kit 3 Toggler:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][3]//*[@data-toggle="collapse"]|.//*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][3]//*[@data-toggle="collapse"]'
+
+    Product Kit 1 Remove Button:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"0")]//*[contains(concat(" ",normalize-space(@class)," ")," removeRow ")]'
+
+    Product Kit 2 Remove Button:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"1")]//*[contains(concat(" ",normalize-space(@class)," ")," removeRow ")]'
+
+    Product Kit 3 Remove Button:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"2")]//*[contains(concat(" ",normalize-space(@class)," ")," removeRow ")]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -1651,6 +1761,7 @@ oro_behat_extension:
         - '@OroProductBundle/Tests/Behat/Features/product-search'
         - '@OroProductBundle/Tests/Behat/Features/product-attributes'
         - '@OroProductBundle/Tests/Behat/Features/frontend-product-export'
+        - '@OroProductBundle/Tests/Behat/Features/product-kit'
     OroProductBundleRelatedItems:
       contexts:
         - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext

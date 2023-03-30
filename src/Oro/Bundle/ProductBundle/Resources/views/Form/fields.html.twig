@@ -650,3 +650,196 @@
     }) %}
     {{ form_widget(form, {'attr' : attr}) }}
 {% endblock %}
+
+{% macro renderBindDynamicFields(entity, entity_class = null) %}
+    {% import _self as entityConfigMacros %}
+    {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+    {% import '@OroUI/macros.html.twig' as ui %}
+    {% set dynamicFields = oro_get_dynamic_fields(entity, entity_class) %}
+    {% if dynamicFields is defined and dynamicFields|length %}
+        {% for fieldName, item in dynamicFields %}
+            {{ ui.renderHtmlProperty(
+                item.label|trans,
+                entityConfigMacros.bind_model_value(entityConfig.formatDynamicFieldValue(
+                    entity,
+                    entity_class,
+                    fieldName,
+                    item
+                ), fieldName)
+            ) }}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro bind_model_value(value, name) %}
+    <span data-model="{{ name }}">{{ value|escape }}</span>
+{% endmacro %}
+
+{% block oro_product_kit_item_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+    {% import _self as fields %}
+
+    {% set collapseClass = 'collapse-' ~ id %}
+    {% set collapseFormId = 'collapse-form-' ~ id %}
+    {% set collapseViewId = 'collapse-view-' ~ id %}
+    {% set isShow = value.id is null or form.vars.name == '0' %}
+
+    {% apply spaceless %}
+    <div class="product-kit-item content-variant-item
+        {{ form.vars.valid ? '' : 'has-error'}}
+        {{ isShow ? 'show' : '' }}" {{ UI.renderPageComponentAttributes({
+        view: 'oroproduct/js/app/views/product-kit/product-kit-view',
+        options: {
+            fieldsNamespace: form.vars.full_name,
+            kitItemId: value.id,
+            fields: fieldsMap
+        }
+    }) }}  data-role="content-variant-item">
+        <div class="product-kit-item__title content-variant-item-title">
+            <button type="button" class="btn-toggle-variant btn btn-icon btn-square-light {{ isShow ? '' : 'collapsed' }}"
+                data-toggle="collapse"
+                data-related="{{ full_name }}"
+                data-target="#{{ collapseFormId }}"
+                aria-expanded="{{ value.id == '1' ? 'true' : 'false' }}"
+                aria-controls="{{ collapseFormId }}"
+            >
+                <span class="fa-icon oro-collapse-icon" aria-hidden="true"></span>
+            </button>
+            <div class="product-kit-item__label"
+                 data-toggle="collapse"
+                 data-target="#{{ collapseFormId }}"
+                 data-model="labels"
+            >{{ value.labels|localized_value|escape }}</div>
+        </div>
+
+        <div class="content-variant-item-content__body">
+            <div id="{{ collapseFormId }}"
+                 class="{{ collapseClass }} product-kit-item__form collapse {{ isShow ? 'show' : '' }}"
+                 data-role="product-kit-form"
+                 data-type="primary"
+                 data-validation-force
+                >
+                {{ form_widget(form) }}
+            </div>
+            <div id="{{ collapseViewId }}" class="{{ collapseClass }} product-kit-item__preview collapse {{ isShow ? '' : 'show' }}" data-role="product-kit-view" data-type="secondary">
+                <div class="product-kit-item__properties">
+                    <div class="product-kit-item__horizontal">
+                        {%- import '@OroUI/macros.html.twig' as UI %}
+                        {{ UI.renderHtmlProperty(
+                            'oro.product.productkititem.optional.label'|trans,
+                            fields.bind_model_value(
+                                value.optional ? 'oro.product.productkititem.optional.choices.yes'|trans : 'oro.product.productkititem.optional.choices.no'|trans,
+                                'optional'
+                            )
+                        ) }}
+
+                        {{ UI.renderHtmlProperty(
+                            'oro.product.productkititem.minimum_quantity.label'|trans,
+                            fields.bind_model_value(
+                                value.minimumQuantity,
+                                'minimumQuantity'
+                            )
+                        ) }}
+
+                        {{ UI.renderHtmlProperty(
+                            'oro.product.productkititem.maximum_quantity.label'|trans,
+                            fields.bind_model_value(
+                                value.maximumQuantity,
+                                'maximumQuantity'
+                            )
+                        ) }}
+
+                        {{ UI.renderHtmlProperty(
+                            'oro.product.productkititem.product_unit.label'|trans,
+                            fields.bind_model_value(
+                                value.productUnit ? oro_format_product_unit_precision_label(value.productUnit.code, value|oro_product_kit_item_unit_precision),
+                                'productUnit'
+                            )
+                        ) }}
+
+                        {{ fields.renderBindDynamicFields(value) }}
+
+                        <div class="attribute-wide">
+                            {%- set skus = selectedProductsSkus|join(', ') -%}
+                            {{ UI.renderHtmlProperty(
+                                'oro.product.productkititem.kit_item_products.label'|trans,
+                                fields.bind_model_value(
+                                    skus,
+                                    'kitItemProducts'
+                                ),
+                                null,
+                                null,
+                                {
+                                    rootClass: 'wide',
+                                    descriptionClass: 'attribute-item__description--ellipsis'
+                                }
+                            ) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endapply %}
+{% endblock %}
+
+{% block oro_product_kit_item_products_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+    {% set widgetAlias = 'widget-' ~ form.vars.id %}
+    {% set gridName = 'kit-item-products-edit-grid:' ~ widgetAlias %}
+    <div class="product-kit-item__products" {{ UI.renderPageComponentAttributes({
+        module: 'oroproduct/js/app/components/product-kit-items-component',
+        options: {
+            addProductDialogOptions: {
+                route: 'oro_datagrid_widget',
+                routeParams: {
+                    gridName: 'kit-item-products-add-grid',
+                },
+            },
+            viewOptions: {
+                originField: '#' ~ form.vars.id,
+            },
+            relatedSiblingComponents: {
+                gridComponent: gridName
+            }
+        }
+    }) }}>
+        <div class="product-kit-items-grid">
+            {{ dataGrid.renderGrid(
+                gridName,
+                {'kitItemId': kitItemId, 'selectedProductsIds': selectedProductsIds},
+                {
+                    enableViews: false,
+                    enableFilters: false,
+                    gridBuildersOptions: {
+                        'sortOrderConstraints': sortOrderConstraints
+                    }
+                }
+            ) }}
+        </div>
+
+        <div class="btn-group">
+            {{ UI.clientBtn({
+                'btnCss': 'btn product-kit-item__add-product-button',
+                'label' : 'oro.product.productkititem.form.kit_item_products.add.button.label'|trans,
+                'ariaLabel' : 'oro.product.productkititem.form.kit_item_products.add.button.label'|trans,
+                'labelInIcon': false
+            }) }}
+        </div>
+
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block oro_product_kit_items_collection_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " oro-content-variant-collection variant-collection",
+        'data-role': 'collection-container'
+    }) %}
+
+    {{ block('oro_collection_widget') }}
+{% endblock %}

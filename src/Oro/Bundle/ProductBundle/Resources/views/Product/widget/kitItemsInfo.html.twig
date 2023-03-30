@@ -1,0 +1,50 @@
+<div class="widget-content">
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {%- block widget_content -%}
+        {%- if entity.kitItems|length -%}
+            <div class="oro-content-variant-collection product-kit-view">
+                {%- for key, kitItem in entity.kitItems %}
+                    {% set targetId = 'kit-item-'|uniqid  %}
+                    {% set widgetAlias = 'widget-kit-item-' ~ kitItem.id ~ '-info' %}
+                    <div class="content-variant-item" {{ UI.renderPageComponentAttributes({
+                        view: 'oroproduct/js/app/views/product-kit/product-kit-widget-view',
+                        options: {
+                            widgetAlias: widgetAlias,
+                            kitItemId: kitItem.id,
+                            targetId: targetId
+                        }
+                    }) }}>
+                        <button class="btn-toggle-variant btn btn-icon btn-square-light collapsed"
+                            type="button"
+                            data-toggle="collapse"
+                            aria-expanded="false"
+                            data-target="#{{ targetId }}"
+                        >
+                            <span class="fa-icon oro-collapse-icon" aria-hidden="true"></span>
+                        </button>
+
+                        <label data-toggle="collapse"
+                                aria-expanded="false"
+                                data-target="#{{ targetId }}"
+                                class="font-weight-bold content-variant-item-title"
+                        >{{ kitItem.labels|localized_value|escape }}</label>
+
+                        <div class="content-variant-item-content__body">
+                            {{ oro_widget_render({
+                                'widgetType': 'block',
+                                'alias': widgetAlias,
+                                'route': 'oro_product_kit_item_info',
+                                'url': path('oro_product_kit_item_info', {
+                                    'id': kitItem.id,
+                                    'state': 'collapsed'
+                                }),
+                            }) }}
+                        </div>
+                    </div>
+                {%- endfor %}
+            </div>
+        {%- else -%}
+            <div class="no-data">{{ 'N/A'|trans }}</div>
+        {%- endif -%}
+    {%- endblock -%}
+</div>

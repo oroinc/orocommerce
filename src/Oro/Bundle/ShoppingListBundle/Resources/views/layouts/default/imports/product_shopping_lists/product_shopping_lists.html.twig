@@ -1,5 +1,5 @@
 {% block __product_shopping_lists__shopping_lists_widget %}
-    {% if not is_configurable_product_type(product.type) %}
+    {% if not is_configurable_product_type(product.type) and not is_kit_product_type(product.type) %}
         {% import '@OroFrontend/layouts/default/utils.html.twig' as utils %}
         {% set shoppingListsTemplate %}
             {% apply spaceless %}
