@@ -1,4 +1,3 @@
-@skip
 @fixture-OroProductBundle:products_grid.yml
 
 Feature: Product kits management UI
