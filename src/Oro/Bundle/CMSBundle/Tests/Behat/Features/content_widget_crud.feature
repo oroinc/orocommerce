@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @ticket-BB-17552
 
 Feature: Content Widget CRUD

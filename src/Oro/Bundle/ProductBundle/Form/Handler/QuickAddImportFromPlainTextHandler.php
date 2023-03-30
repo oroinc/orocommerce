@@ -5,8 +5,8 @@ namespace Oro\Bundle\ProductBundle\Form\Handler;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
-use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Model\Grouping\QuickAddRowGrouperInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
 use Oro\Bundle\ProductBundle\QuickAdd\QuickAddRowCollectionViolationsMapper;
@@ -14,7 +14,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -23,18 +22,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class QuickAddImportFromPlainTextHandler
 {
     private QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder;
-
     private EventDispatcherInterface $eventDispatcher;
-
     private ValidatorInterface $validator;
-
-    private ProductsGrouperFactory $productsGrouperFactory;
-
+    private QuickAddRowGrouperInterface $quickAddRowGrouper;
     private QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper;
-
     private QuickAddCollectionNormalizerInterface $quickAddCollectionNormalizer;
-
-    private ?PreloadingManager $preloadingManager = null;
+    private PreloadingManager $preloadingManager;
 
     private array $preloadingConfig = [
         'names' => [],
@@ -48,20 +41,17 @@ class QuickAddImportFromPlainTextHandler
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
         EventDispatcherInterface $eventDispatcher,
         ValidatorInterface $validator,
-        ProductsGrouperFactory $productsGrouperFactory,
+        QuickAddRowGrouperInterface $quickAddRowGrouper,
         QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper,
-        QuickAddCollectionNormalizerInterface $quickAddCollectionNormalizer
+        QuickAddCollectionNormalizerInterface $quickAddCollectionNormalizer,
+        PreloadingManager $preloadingManager
     ) {
         $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
         $this->eventDispatcher = $eventDispatcher;
         $this->validator = $validator;
-        $this->productsGrouperFactory = $productsGrouperFactory;
+        $this->quickAddRowGrouper = $quickAddRowGrouper;
         $this->quickAddRowCollectionViolationsMapper = $quickAddRowCollectionViolationsMapper;
         $this->quickAddCollectionNormalizer = $quickAddCollectionNormalizer;
-    }
-
-    public function setPreloadingManager(?PreloadingManager $preloadingManager): void
-    {
         $this->preloadingManager = $preloadingManager;
     }
 
@@ -70,12 +60,7 @@ class QuickAddImportFromPlainTextHandler
         $this->preloadingConfig = $preloadingConfig;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param Request $request
-     * @return Response
-     */
-    public function process(FormInterface $form, Request $request)
+    public function process(FormInterface $form, Request $request): JsonResponse
     {
         $form->handleRequest($request);
 
@@ -83,11 +68,9 @@ class QuickAddImportFromPlainTextHandler
             $plainText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
 
             $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($plainText);
-            $quickAddRowCollection = $this->productsGrouperFactory
-                ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
-                ->process($quickAddRowCollection);
+            $this->quickAddRowGrouper->groupProducts($quickAddRowCollection);
 
-            if (!$quickAddRowCollection->count()) {
+            if ($quickAddRowCollection->isEmpty()) {
                 $quickAddRowCollection->addError('oro.product.at_least_one_item');
             }
 
@@ -116,12 +99,10 @@ class QuickAddImportFromPlainTextHandler
 
     private function validate(QuickAddRowCollection $collection): void
     {
-        if ($this->preloadingManager) {
-            $this->preloadingManager
-                ->preloadInEntities(array_values($collection->getProducts()), $this->preloadingConfig);
-        }
-
-        $violationList = $this->validator->validate($collection);
-        $this->quickAddRowCollectionViolationsMapper->mapViolations($collection, $violationList);
+        $this->preloadingManager->preloadInEntities($collection->getProducts(), $this->preloadingConfig);
+        $this->quickAddRowCollectionViolationsMapper->mapViolations(
+            $collection,
+            $this->validator->validate($collection)
+        );
     }
 }

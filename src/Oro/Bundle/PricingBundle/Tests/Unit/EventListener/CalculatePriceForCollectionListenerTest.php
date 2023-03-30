@@ -14,51 +14,53 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class CalculatePriceForCollectionListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private QuickAddCollectionPriceProvider|\PHPUnit\Framework\MockObject\MockObject $quickAddCollectionPriceProvider;
+    /** @var QuickAddCollectionPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $quickAddCollectionPriceProvider;
 
-    private CalculatePriceForCollectionListener $listener;
+    /** @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $scopeCriteriaRequestHandler;
 
-    private ProductPriceScopeCriteriaInterface|\PHPUnit\Framework\MockObject\MockObject $productPriceScopeCriteria;
+    /** @var CalculatePriceForCollectionListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->quickAddCollectionPriceProvider = $this->createMock(QuickAddCollectionPriceProvider::class);
-        $scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
+        $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
 
         $this->listener = new CalculatePriceForCollectionListener(
             $this->quickAddCollectionPriceProvider,
-            $scopeCriteriaRequestHandler
+            $this->scopeCriteriaRequestHandler
         );
-
-        $this->productPriceScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $scopeCriteriaRequestHandler
-            ->expects(self::any())
-            ->method('getPriceScopeCriteria')
-            ->willReturn($this->productPriceScopeCriteria);
     }
 
     public function testOnQuickAddRowsCollectionReadyWhenIsEmpty(): void
     {
         $collection = new QuickAddRowCollection();
-        $quickAddRowsCollectionReadyEvent = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->quickAddCollectionPriceProvider
-            ->expects(self::never())
-            ->method(self::anything());
+        $this->scopeCriteriaRequestHandler->expects(self::never())
+            ->method('getPriceScopeCriteria');
+        $this->quickAddCollectionPriceProvider->expects(self::never())
+            ->method('addAllPrices');
 
-        $this->listener->onQuickAddRowsCollectionReady($quickAddRowsCollectionReadyEvent);
+        $event = new QuickAddRowsCollectionReadyEvent($collection);
+        $this->listener->onQuickAddRowsCollectionReady($event);
     }
 
     public function testOnQuickAddRowsCollectionReady(): void
     {
         $collection = new QuickAddRowCollection([new QuickAddRow(1, 'SKU1', 1, 'item')]);
-        $quickAddRowsCollectionReadyEvent = new QuickAddRowsCollectionReadyEvent($collection);
+        $productPriceScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
 
-        $this->quickAddCollectionPriceProvider
-            ->expects(self::once())
+        $this->scopeCriteriaRequestHandler->expects(self::any())
+            ->method('getPriceScopeCriteria')
+            ->willReturn($productPriceScopeCriteria);
+
+        $this->quickAddCollectionPriceProvider->expects(self::once())
             ->method('addAllPrices')
-            ->with($collection, $this->productPriceScopeCriteria);
+            ->with(self::identicalTo($collection), self::identicalTo($productPriceScopeCriteria));
 
-        $this->listener->onQuickAddRowsCollectionReady($quickAddRowsCollectionReadyEvent);
+        $event = new QuickAddRowsCollectionReadyEvent($collection);
+        $this->listener->onQuickAddRowsCollectionReady($event);
     }
 }

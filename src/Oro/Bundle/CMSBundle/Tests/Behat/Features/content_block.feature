@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @ticket-BB-19056
 @feature-BAP-19790
 @fixture-OroCMSBundle:CustomerUserFixture.yml

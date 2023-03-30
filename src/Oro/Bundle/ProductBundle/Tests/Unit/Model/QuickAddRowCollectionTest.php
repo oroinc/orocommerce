@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\QuickAddField;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
@@ -12,11 +13,10 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
 {
     private const SKU1 = 'SKU1Абв';
-    private const SKU1_UPPER = 'SKU1АБВ';
     private const SKU2 = 'SKU2';
     private const SKU3 = 'SKU3';
 
-    private const QUANTITY1 = 1;
+    private const QUANTITY1 = 1.0;
     private const QUANTITY2 = 2.5;
 
     private const UNIT1 = 'item';
@@ -40,7 +40,10 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $this->addTwoValidRows($collection);
         self::assertCount(2, $collection->getValidRows());
 
-        $this->assertIsSku1Row($collection->getValidRows()->first());
+        /** @var QuickAddRow $row */
+        $row = $collection->getValidRows()->first();
+        self::assertEquals(self::SKU1, $row->getSku());
+        self::assertEquals(self::QUANTITY1, $row->getQuantity());
     }
 
     public function testGetInvalidRows(): void
@@ -51,30 +54,23 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
 
         $invalidRows = $collection->getInvalidRows();
         self::assertCount(1, $invalidRows);
-        self::assertEquals(self::SKU3, $invalidRows->first()->getSku());
-        self::assertEquals(0, $invalidRows->first()->getQuantity());
+        /** @var QuickAddRow  $invalidRow */
+        $invalidRow = $invalidRows->first();
+        self::assertEquals(self::SKU3, $invalidRow->getSku());
+        self::assertEquals(0.0, $invalidRow->getQuantity());
     }
 
-    public function testMapAndGetProducts(): void
+    public function testGetProducts(): void
     {
         $collection = new QuickAddRowCollection();
         $this->addTwoValidRows($collection);
 
         self::assertCount(0, $collection->getProducts());
 
-        $validProduct = [self::SKU1_UPPER => (new Product())->setSku(self::SKU1)];
-        $invalidProduct = [self::SKU3 => (new Product())->setSku(self::SKU3)];
-
-        $collection->mapProducts(array_merge($validProduct, $invalidProduct));
-        self::assertEquals($validProduct, $collection->getProducts());
-    }
-
-    public function testGetSkus(): void
-    {
-        $collection = new QuickAddRowCollection();
-        $this->addTwoValidRows($collection);
-
-        self::assertEquals([self::SKU1, self::SKU2], $collection->getSkus());
+        $product = new Product();
+        $product->setSku(self::SKU1);
+        $collection->get(0)->setProduct($product);
+        self::assertSame([$product], $collection->getProducts());
     }
 
     private function addTwoValidRows(QuickAddRowCollection $collection): void
@@ -88,12 +84,6 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $quickAddRow = new QuickAddRow(3, self::SKU3, 0);
         $quickAddRow->addError('Sample error');
         $collection->add($quickAddRow);
-    }
-
-    private function assertIsSku1Row(QuickAddRow $row): void
-    {
-        self::assertEquals(self::SKU1, $row->getSku());
-        self::assertEquals(self::QUANTITY1, $row->getQuantity());
     }
 
     public function testAddError(): void
@@ -146,6 +136,12 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $quickAddRowWithError = new QuickAddRow(2, 'sku2', 242, 'kg');
         $quickAddRowWithError->addError('sample quick add row error');
 
+        $quickAddRowCollectionWithError = new QuickAddRowCollection([$quickAddRowWithError]);
+        $quickAddRowCollectionWithError->addError('sample error');
+
+        $emptyQuickAddRowCollectionWithError = new QuickAddRowCollection();
+        $emptyQuickAddRowCollectionWithError->addError('sample error');
+
         return [
             ['quickAddRowCollection' => new QuickAddRowCollection(), 'expected' => true],
             [
@@ -156,17 +152,38 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
                 'quickAddRowCollection' => new QuickAddRowCollection([$quickAddRow]),
                 'expected' => true,
             ],
-            ['quickAddRowCollection' => (new QuickAddRowCollection())->addError('sample error'), 'expected' => false],
             [
-                'quickAddRowCollection' => (new QuickAddRowCollection([$quickAddRowWithError]))
-                    ->addError('sample error'),
+                'quickAddRowCollection' => $emptyQuickAddRowCollectionWithError,
+                'expected' => false
+            ],
+            [
+                'quickAddRowCollection' => $quickAddRowCollectionWithError,
                 'expected' => false,
             ],
-            ['quickAddRowCollection' => new QuickAddRowCollection([$quickAddRowWithError]), 'expected' => false],
+            [
+                'quickAddRowCollection' => new QuickAddRowCollection([$quickAddRowWithError]),
+                'expected' => false
+            ],
             [
                 'quickAddRowCollection' => new QuickAddRowCollection([$quickAddRowWithError, $quickAddRowWithError]),
                 'expected' => false,
             ],
         ];
+    }
+
+    public function testAdditionalFieldsCollection(): void
+    {
+        $collection = new QuickAddRowCollection();
+        self::assertSame([], $collection->getAdditionalFields());
+        self::assertNull($collection->getAdditionalField('field'));
+
+        $field = new QuickAddField('field', 'value');
+        $anotherField = new QuickAddField('anotherField', 'value');
+        $collection->addAdditionalField($field);
+        $collection->addAdditionalField($anotherField);
+        self::assertSame(['field' => $field, 'anotherField' => $anotherField], $collection->getAdditionalFields());
+        self::assertSame($field, $collection->getAdditionalField('field'));
+        self::assertSame($anotherField, $collection->getAdditionalField('anotherField'));
+        self::assertNull($collection->getAdditionalField('unknownField'));
     }
 }

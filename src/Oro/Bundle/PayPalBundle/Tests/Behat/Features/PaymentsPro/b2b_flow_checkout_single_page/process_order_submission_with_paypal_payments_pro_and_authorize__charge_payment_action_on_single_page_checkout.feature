@@ -3,7 +3,7 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 @ticket-BB-13932
-
+@behat-test-env
 Feature: Process order submission with PayPal Payments Pro and Authorize & Charge payment action on single page checkout
 
   In order to check that PayPal Payments Pro with "Authorize & Charge" payment action works on single page checkout

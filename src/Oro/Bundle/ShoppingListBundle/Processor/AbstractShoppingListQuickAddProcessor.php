@@ -4,72 +4,38 @@ namespace Oro\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Base common logic for realization of ComponentProcessorInterface
- * provides defaults for:
- *  isValidationRequired(): true
- *  isAllowed(): ShoppingListLineItemHandler::isAllowed()
- *
- * provides base logic for fillShoppingList(ShoppingList $shoppingList, array $data)
+ * Provides common functionality to handle logic related to quick order process.
  */
 abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcessorInterface
 {
-    /**
-     * @var ShoppingListLineItemHandler
-     */
-    protected $shoppingListLineItemHandler;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $productClass;
-
-    /**
-     * @var MessageGenerator
-     */
-    protected $messageGenerator;
-
-    /**
-     * @var AclHelper
-     */
-    protected $aclHelper;
+    protected ShoppingListLineItemHandler $shoppingListLineItemHandler;
+    protected ManagerRegistry $doctrine;
+    protected AclHelper $aclHelper;
 
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
-        ManagerRegistry $registry,
-        MessageGenerator $messageGenerator,
+        ManagerRegistry $doctrine,
         AclHelper $aclHelper
     ) {
         $this->shoppingListLineItemHandler = $shoppingListLineItemHandler;
-        $this->registry = $registry;
-        $this->messageGenerator = $messageGenerator;
+        $this->doctrine = $doctrine;
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param array $data
-     * @return bool|int
-     */
-    protected function fillShoppingList(ShoppingList $shoppingList, array $data)
+    protected function fillShoppingList(ShoppingList $shoppingList, array $data): int
     {
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
-        $productSkus = \array_column($data, ProductDataStorage::PRODUCT_SKU_KEY);
+        $productSkus = array_column($data, ProductDataStorage::PRODUCT_SKU_KEY);
 
-        $qb = $this->getProductRepository()->getProductsIdsBySkuQueryBuilder($productSkus);
+        $qb = $this->doctrine->getRepository(Product::class)->getProductsIdsBySkuQueryBuilder($productSkus);
         $productsData = $this->aclHelper->apply($qb)->getArrayResult();
 
         $productIds = [];
@@ -80,65 +46,47 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
 
         $productUnitsWithQuantities = [];
         foreach ($data as $product) {
-            $productQuantity = $product['productQuantity'];
+            $productQuantity = $product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
 
-            if (!isset($product['productUnit'])) {
+            if (!isset($product[ProductDataStorage::PRODUCT_UNIT_KEY])) {
                 continue;
             }
 
-            $productUnit = $product['productUnit'];
+            $productUnit = $product[ProductDataStorage::PRODUCT_UNIT_KEY];
 
-            $upperSku = mb_strtoupper($product['productSku']);
-            if (array_key_exists($upperSku, $productUnitsWithQuantities)) {
-                if (isset($productUnitsWithQuantities[$upperSku][$productUnit])) {
-                    $productQuantity += $productUnitsWithQuantities[$upperSku][$productUnit];
-                }
+            $skuUppercase = mb_strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY]);
+            if (\array_key_exists($skuUppercase, $productUnitsWithQuantities)
+                && isset($productUnitsWithQuantities[$skuUppercase][$productUnit])
+            ) {
+                $productQuantity += $productUnitsWithQuantities[$skuUppercase][$productUnit];
             }
 
-            $productUnitsWithQuantities[$upperSku][$productUnit] = $productQuantity;
+            $productUnitsWithQuantities[$skuUppercase][$productUnit] = $productQuantity;
         }
 
         try {
-            $entitiesCount = $this->shoppingListLineItemHandler->createForShoppingList(
+            return $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
                 array_values($productIds),
                 $productUnitsWithQuantities
             );
-
-            return $entitiesCount;
         } catch (AccessDeniedException $e) {
-            return false;
+            return 0;
         }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function isValidationRequired()
+    public function isValidationRequired(): bool
     {
         return true;
     }
 
     /**
-     * @return ProductRepository
+     * {@inheritDoc}
      */
-    protected function getProductRepository()
-    {
-        return $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
-    }
-
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAllowed()
+    public function isAllowed(): bool
     {
         return $this->shoppingListLineItemHandler->isAllowed();
     }

@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
+/**
+ * Contains all component processors and allows to get a component processor by its name.
+ */
 class ComponentProcessorRegistry
 {
-    /**
-     * @var ComponentProcessorInterface[]
-     */
-    protected $processors = [];
+    /** @var ComponentProcessorInterface[] */
+    private array $processors = [];
 
-    public function addProcessor(ComponentProcessorInterface $processor)
+    public function addProcessor(ComponentProcessorInterface $processor): void
     {
         $this->processors[$processor->getName()] = $processor;
     }
@@ -17,37 +18,22 @@ class ComponentProcessorRegistry
     /**
      * @return ComponentProcessorInterface[]
      */
-    public function getProcessors()
+    public function getProcessors(): array
     {
         return $this->processors;
     }
 
-    /**
-     * @param string $name
-     * @return null|ComponentProcessorInterface
-     */
-    public function getProcessorByName($name)
+    public function getProcessorByName(string $name): ?ComponentProcessorInterface
     {
-        if ($this->hasProcessor($name)) {
-            return $this->processors[$name];
-        }
-
-        return null;
+        return $this->processors[$name] ?? null;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasProcessor($name)
+    public function hasProcessor(string $name): bool
     {
-        return array_key_exists($name, $this->processors);
+        return isset($this->processors[$name]);
     }
 
-    /**
-     * @return bool
-     */
-    public function hasAllowedProcessor()
+    public function hasAllowedProcessor(): bool
     {
         $hasAllowed = false;
         foreach ($this->processors as $processor) {

@@ -26,8 +26,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
         $localizationHelper = $this->createMock(LocalizationHelper::class);
         $translator = $this->createMock(TranslatorInterface::class);
         $unitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
-        $unitLabelFormatter
-            ->expects(self::any())
+        $unitLabelFormatter->expects(self::any())
             ->method('format')
             ->willReturnCallback(static fn (string $code) => $code . ' [label]');
 
@@ -37,8 +36,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
             $translator
         );
 
-        $translator
-            ->expects(self::any())
+        $translator->expects(self::any())
             ->method('trans')
             ->willReturnCallback(static function (string $key, array $parameters, string $domain) {
                 self::assertEquals('validators', $domain);
@@ -46,8 +44,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 return $key . ' [trans]';
             });
 
-        $localizationHelper
-            ->expects(self::any())
+        $localizationHelper->expects(self::any())
             ->method('getLocalizedValue')
             ->willReturnCallback(static function (Collection $collection) {
                 return $collection[0]->getString();
@@ -63,9 +60,6 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getResultsDataProvider
-     *
-     * @param QuickAddRowCollection $quickAddRowCollection
-     * @param array $expected
      */
     public function testGetResults(QuickAddRowCollection $quickAddRowCollection, array $expected): void
     {
@@ -79,15 +73,17 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
     {
         $quickAddRowWithoutProductAndAdditional = new QuickAddRow(1, 'SKU1', 42, 'item');
 
-        $each = (new ProductUnit())
-            ->setCode('each');
-        $productUnitPrecision = (new ProductUnitPrecision())
-            ->setUnit($each)
-            ->setPrecision(1);
-        $product = (new ProductStub())
-            ->setSku('SKU2')
-            ->addName((new ProductName())->setString('Sample Name'))
-            ->addUnitPrecision($productUnitPrecision);
+        $productName = new ProductName();
+        $productName->setString('Sample Name');
+        $each = new ProductUnit();
+        $each->setCode('each');
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($each);
+        $productUnitPrecision->setPrecision(1);
+        $product = new ProductStub();
+        $product->setSku('SKU2');
+        $product->addName($productName);
+        $product->addUnitPrecision($productUnitPrecision);
         $quickAddRowWithoutAdditionalFields = new QuickAddRow(2, $product->getSku(), 43, $each->getCode());
         $quickAddRowWithoutAdditionalFields->setProduct($product);
 
@@ -107,6 +103,9 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $quickAddRowWithInvalidUnit = new QuickAddRow(5, $product->getSku(), 46, 'invalid_unit');
         $quickAddRowWithInvalidUnit->setProduct($product);
+
+        $emptyQuickAddRowCollectionWithError = new QuickAddRowCollection();
+        $emptyQuickAddRowCollectionWithError->addError('sample error');
 
         return [
             'without product, additional fields, errors' => [
@@ -220,7 +219,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'collection with errors' => [
-                (new QuickAddRowCollection())->addError('sample error'),
+                $emptyQuickAddRowCollectionWithError,
                 [
                     'errors' => [['message' => 'sample error [trans]']],
                     'items' => [],

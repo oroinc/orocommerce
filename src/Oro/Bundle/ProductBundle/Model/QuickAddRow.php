@@ -13,65 +13,34 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
     public const SKU = 'sku';
     public const UNIT = 'unit';
     public const QUANTITY = 'quantity';
+    public const ORGANIZATION = 'organization';
 
-    use QuickAddFieldTrait;
+    private int $index;
+    private string $sku;
+    private float $quantity;
+    private ?Product $product = null;
+    private ?string $unit;
+    private ?string $organization;
+    /** @var array [['message' => string, 'parameters' => array, 'propertyPath' => string], ...] */
+    private array $errors = [];
+    /** @var QuickAddField[] [name => field, ...] */
+    private $additionalFields = [];
 
-    /**
-     * @var int
-     */
-    protected $index;
-
-    /**
-     * @var string
-     */
-    protected $sku;
-
-    /**
-     * @var float
-     */
-    protected $quantity;
-
-    /**
-     * @var Product
-     */
-    protected $product;
-
-    /**
-     * @var string
-     */
-    protected $unit;
-
-    /**
-     * @var string
-     */
-    protected $organization;
-
-    /**
-     * @var array
-     */
-    protected $errors = [];
-
-    /**
-     * @param int $index
-     * @param string $sku
-     * @param float $quantity
-     * @param string $unit
-     * @param string $organization
-     */
-    public function __construct($index, $sku, $quantity, $unit = null, $organization = null)
-    {
+    public function __construct(
+        int $index,
+        string $sku,
+        float $quantity,
+        ?string $unit = null,
+        ?string $organization = null
+    ) {
         $this->index = $index;
         $this->sku = $sku;
         $this->quantity = $quantity;
         $this->unit = $unit;
         $this->organization = $organization;
-        $this->errors = [];
     }
 
-    /**
-     * @return int
-     */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
@@ -81,20 +50,19 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->index;
     }
 
-    /**
-     * @return string
-     */
-    public function getSku()
+    public function getSku(): string
     {
         return $this->sku;
     }
 
-    /**
-     * @return float
-     */
-    public function getQuantity()
+    public function getQuantity(): float
     {
         return $this->quantity;
+    }
+
+    public function setQuantity(float $quantity): void
+    {
+        $this->quantity = $quantity;
     }
 
     public function getProductSku(): ?string
@@ -107,71 +75,71 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->organization;
     }
 
-    public function setOrganization(string $organization): void
+    public function setOrganization(?string $organization): void
     {
         $this->organization = $organization;
     }
 
-    /**
-     * @return Product
-     */
-    public function getProduct()
+    public function getProduct(): ?Product
     {
         return $this->product;
     }
 
-    public function setProduct(Product $product)
+    public function setProduct(Product $product): void
     {
         $this->product = $product;
     }
 
-    /**
-     * @return string
-     */
-    public function getUnit()
+    public function getUnit(): ?string
     {
         return $this->unit;
     }
 
-    /**
-     * @param string $unit
-     */
-    public function setUnit($unit)
+    public function setUnit(?string $unit): void
     {
         $this->unit = $unit;
     }
 
     public function addError(string $errorMessage, array $additionalParameters = [], string $propertyPath = ''): void
     {
-        if (count(func_get_args()) > 2) {
-            $propertyPath = (string) func_get_arg(2);
-        }
-
-        $additionalParameters = array_merge($additionalParameters, [
-            '{{ index }}' => $this->index,
-            '{{ sku }}' => $this->sku
-        ]);
         $this->errors[] = [
             'message' => $errorMessage,
-            'parameters' => $additionalParameters,
+            'parameters' => array_merge($additionalParameters, [
+                '{{ index }}' => $this->index,
+                '{{ sku }}' => $this->sku
+            ]),
             'propertyPath' => $propertyPath ?? '',
         ];
-        $this->valid = false;
     }
 
     /**
-     * @return array
+     * @return array [['message' => string, 'parameters' => array, 'propertyPath' => string], ...]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
-        return count($this->errors) > 0;
+        return !empty($this->errors);
+    }
+
+    public function addAdditionalField(QuickAddField $field): void
+    {
+        $this->additionalFields[$field->getName()] = $field;
+    }
+
+    /**
+     * @return QuickAddField[] [field name => field, ...]
+     */
+    public function getAdditionalFields(): array
+    {
+        return $this->additionalFields;
+    }
+
+    public function getAdditionalField(string $name): ?QuickAddField
+    {
+        return $this->additionalFields[$name] ?? null;
     }
 }

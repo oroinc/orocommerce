@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @ticket-BB-17552
 @fixture-OroCMSBundle:content_widget_in_cms_page.yml
 

@@ -2,7 +2,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
-
+@behat-test-env
 Feature: Process order submission with PayPal Payments Pro and Authorize & Capture payment action guest checkout
   In order to purchase goods using PayPal Payments Pro payment system
   As a Guest customer

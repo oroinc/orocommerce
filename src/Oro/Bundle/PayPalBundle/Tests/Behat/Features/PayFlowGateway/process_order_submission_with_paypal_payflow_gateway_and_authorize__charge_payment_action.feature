@@ -3,6 +3,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
+@behat-test-env
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Charge payment action
 
   Scenario: Create new PayPal PayFlow Gateway Integration

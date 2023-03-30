@@ -8,31 +8,31 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
- * Form type for rendering textarea with Regex constrain
+ * The form type for rendering quick order textarea with Regex constrain.
  */
 class QuickAddCopyPasteType extends AbstractType
 {
-    const NAME = 'oro_product_quick_add_copy_paste';
-    const COPY_PASTE_FIELD_NAME = 'copyPaste';
+    public const COPY_PASTE_FIELD_NAME = 'copyPaste';
 
     /**
      * The regex for matching lines, separated by space, comma or semicolon
-     * that contains: item sku, quantity, unit name
+     * that contains: item sku, quantity, unit name.
      */
-    const VALIDATION_REGEX = '/^(([^\s,;]+[\t,; ]\d{1,32}([.,]\d{1,32})?([\t,; ][^\s,;]+)?)?(\r?\n|$))+$/';
+    private const VALIDATION_REGEX =
+        '/^(([^\s,;]+[\t,; ]\d{1,32}([.,]\d{1,32})?([\t,; ][^\s,;]+)?)?(\r?\n|$))+$/';
 
     /**
-     * The regex for extract item sku, quantity, unit name from one line
+     * The regex for extracting item sku, quantity, unit name from one line.
      */
-    const ITEM_PARSE_REGEX =
+    private const ITEM_PARSE_REGEX =
         '/^(?<sku>([^\s,;]+))(?:[\t,; ]'
         . '(?<quantity>(\d{1,32}(?:[.,]\d{1,32})?))(?:[\t,; ]'
         . '(?<unit>([^\s,;]+)))?)?$/';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             self::COPY_PASTE_FIELD_NAME,
@@ -55,18 +55,10 @@ class QuickAddCopyPasteType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
+        return 'oro_product_quick_add_copy_paste';
     }
 }

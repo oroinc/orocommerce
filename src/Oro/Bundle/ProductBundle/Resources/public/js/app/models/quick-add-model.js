@@ -67,8 +67,8 @@ const QuickAddModel = BaseModel.extend({
     },
 
     toBackendJSON() {
-        const {sku, unit, quantity, index} = this.getAttributes();
-        return {sku, unit, quantity, index};
+        const {sku, unit, quantity, organization, index} = this.getAttributes();
+        return {sku, unit, quantity, organization, index};
     },
 
     onUnitsLoaded() {

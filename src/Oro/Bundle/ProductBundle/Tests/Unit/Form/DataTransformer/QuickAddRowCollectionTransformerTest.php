@@ -11,20 +11,23 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    private QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject $quickAddRowCollectionBuilder;
+    /** @var QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $quickAddRowCollectionBuilder;
 
-    private QuickAddRowCollectionTransformer $transformer;
+    /** @var QuickAddRowCollectionTransformer */
+    private $transformer;
 
     protected function setUp(): void
     {
         $this->quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);
+
         $this->transformer = new QuickAddRowCollectionTransformer($this->quickAddRowCollectionBuilder);
     }
 
     /**
      * @dataProvider transformDataProvider
      */
-    public function testTransform($value, array $expected): void
+    public function testTransform(?array $value, array $expected): void
     {
         self::assertEquals($expected, $this->transformer->transform($value));
     }
@@ -32,6 +35,8 @@ class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
     public function transformDataProvider(): array
     {
         $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'item');
+        $quickAddRowWithOrganization = new QuickAddRow(1, 'sku1', 42, 'item', 'Org');
+
         return [
             ['value' => null, 'expected' => []],
             ['value' => [], 'expected' => []],
@@ -42,6 +47,18 @@ class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
                         QuickAddRow::SKU => $quickAddRow->getSku(),
                         QuickAddRow::QUANTITY => $quickAddRow->getQuantity(),
                         QuickAddRow::UNIT => $quickAddRow->getUnit(),
+                        QuickAddRow::ORGANIZATION => $quickAddRow->getOrganization(),
+                    ],
+                ],
+            ],
+            [
+                'value' => [$quickAddRowWithOrganization],
+                'expected' => [
+                    [
+                        QuickAddRow::SKU => $quickAddRowWithOrganization->getSku(),
+                        QuickAddRow::QUANTITY => $quickAddRowWithOrganization->getQuantity(),
+                        QuickAddRow::UNIT => $quickAddRowWithOrganization->getUnit(),
+                        QuickAddRow::ORGANIZATION => $quickAddRowWithOrganization->getOrganization(),
                     ],
                 ],
             ],
@@ -51,7 +68,7 @@ class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider reverseTransformDataProvider
      */
-    public function testReverseTransform($value): void
+    public function testReverseTransform(?array $value): void
     {
         $quickAddRowCollection = new QuickAddRowCollection();
         $this->quickAddRowCollectionBuilder

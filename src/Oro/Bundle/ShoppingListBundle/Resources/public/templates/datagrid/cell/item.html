@@ -6,7 +6,7 @@
         src: obj.image,
         srcWebp: obj.imageWebp,
         placeholder: _metadata.image_placeholder,
-        productId: typeof variantId !== 'undefined' ? variantId : productId,
+        productId: typeof variantId !== 'undefined' && variantId ? variantId : productId,
         title: sku,
         alt: name,
         isConfigurable: obj.isConfigurable,

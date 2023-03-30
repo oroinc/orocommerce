@@ -3,6 +3,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
+@behat-test-env
 Feature: Correct render payflow with payments_pro simultaneously
   In order to use multiple PayPal integration on Frontstore
   As a Buyer

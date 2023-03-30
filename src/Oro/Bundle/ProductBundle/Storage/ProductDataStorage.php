@@ -18,6 +18,7 @@ class ProductDataStorage extends AbstractSessionDataStorage
     public const PRODUCT_SKU_KEY = 'productSku';
     public const PRODUCT_QUANTITY_KEY = 'productQuantity';
     public const PRODUCT_UNIT_KEY = 'productUnit';
+    public const PRODUCT_ORGANIZATION_KEY = 'productOrganization';
 
     protected function getKey(): string
     {

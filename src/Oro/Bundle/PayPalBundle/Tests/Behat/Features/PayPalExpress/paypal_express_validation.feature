@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-16146
 @ticket-BB-16431
+@behat-test-env
 Feature: Paypal express validation
   In order to be sure that express checkout names are always unique
   As a administrator

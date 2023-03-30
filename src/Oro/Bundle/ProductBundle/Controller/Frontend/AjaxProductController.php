@@ -43,8 +43,8 @@ class AjaxProductController extends AbstractController
 
         $searchQuery = $this->get(ProductRepository::class)->getFilterSkuQuery($skus);
 
-        // Configurable products require additional option selection is not implemented yet
-        // Thus we need to hide configurable products
+        // Configurable products require additional option selection that is not implemented yet.
+        // Thus we need to hide configurable products.
         $searchQuery->addWhere(
             Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
         );
