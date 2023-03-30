@@ -1175,6 +1175,7 @@ services:
 
     oro_pricing.pricing_storage_switch_handler:
         class: Oro\Bundle\PricingBundle\Model\PricingStorageSwitchHandler
+        public: true
         arguments:
             - '@oro_config.global'
             - '@doctrine'
