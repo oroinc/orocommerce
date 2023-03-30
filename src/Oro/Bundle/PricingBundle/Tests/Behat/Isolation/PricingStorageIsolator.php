@@ -69,17 +69,17 @@ class PricingStorageIsolator implements IsolatorInterface
         $storage = $container->get('oro_config.global')->get('oro_pricing.price_storage');
 
         if ($storage === 'flat') {
-            if (!$container->has('oro_pricing.behat.pricing_storage_switch_handler')) {
+            if (!$container->has('oro_pricing.pricing_storage_switch_handler')) {
                 $event->writeln(
                     '<error>
-                        Service `oro_pricing.behat.pricing_storage_switch_handler` not found.
+                        Service `oro_pricing.pricing_storage_switch_handler` not found.
                         Pricing storage related tests may behave incorrectly as associations will be not moved.
                         Please check that all Tests/Behat/parameters.yml files were merged into parameters.yml
                         and caches were warmed for prod environment.
                     </error>'
                 );
             } else {
-                $container->get('oro_pricing.behat.pricing_storage_switch_handler')
+                $container->get('oro_pricing.pricing_storage_switch_handler')
                     ->moveAssociationsForFlatPricingStorage();
             }
 
