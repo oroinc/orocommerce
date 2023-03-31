@@ -3,9 +3,6 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryType'
         arguments:
             - '@router'
-        calls:
-            - [setDataClass, ['Oro\Bundle\CatalogBundle\Entity\Category']]
-            - [setProductClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
         tags:
             - { name: form.type, alias: oro_catalog_category }
 

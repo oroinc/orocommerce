@@ -22,7 +22,6 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
@@ -31,35 +30,34 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SecurityBundle\Model\Role;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\MutableFormEventSubscriber;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /** @var QuoteType */
-    protected $formType;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressSecurityProvider */
+    /** @var QuoteAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $quoteAddressSecurityProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /** @var MutableFormEventSubscriber */
     private $quoteFormSubscriber;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
+
+    /** @var QuoteType */
+    private $formType;
 
     protected function setUp(): void
     {
@@ -81,7 +79,6 @@ class QuoteTypeTest extends AbstractTest
             $this->quoteFormSubscriber,
             $this->authorizationChecker
         );
-        $this->formType->setDataClass(Quote::class);
 
         parent::setUp();
     }
@@ -126,8 +123,7 @@ class QuoteTypeTest extends AbstractTest
 
         $organization = $this->createMock(OrganizationInterface::class);
 
-        /** @var User $owner */
-        $owner = $this->getEntity(User::class, $ownerId);
+        $owner = $this->getUser($ownerId);
         $owner->setUsername('UserName')
             ->setEmail('test@test.test')
             ->setFirstName('First Name')
@@ -136,24 +132,13 @@ class QuoteTypeTest extends AbstractTest
         $quote->setOwner($owner);
 
         if (null !== $customerUserId) {
-            $customer = $this->createMock(Customer::class);
-            $role = $this->createMock(Role::class);
-
-            /** @var CustomerUser $customerUser */
-            $customerUser = $this->getEntity(CustomerUser::class, $customerUserId);
-            $customerUser->setEmail('test@test.test')
-                ->setFirstName('First Name')
-                ->setLastName('Last Name')
-                ->setUsername('test@test.test')
-                ->setCustomer($customer)
-                ->setUserRoles([$role])
-            ->setOrganization($organization);
+            $customerUser = $this->getTestCustomerUser($customerUserId);
+            $customerUser->setOrganization($organization);
             $quote->setCustomerUser($customerUser);
         }
 
         if (null !== $customerId) {
-            /** @var Customer $customer */
-            $customer = $this->getEntity(Customer::class, $customerId);
+            $customer = $this->getCustomer($customerId);
             $customer->setName('Name');
             $quote->setCustomer($customer);
         }
@@ -193,9 +178,12 @@ class QuoteTypeTest extends AbstractTest
                 'submittedData' => [
                 ],
                 'expectedData'  => $quote,
-                'defaultData'   => $this->getQuote(1)->setCurrency('USD')->setGuestAccessId($quote->getGuestAccessId()),
+                'defaultData'   => $this->getQuote(1)
+                    ->setCurrency('USD')
+                    ->setGuestAccessId($quote->getGuestAccessId()),
                 'options' => [
-                    'data' => $this->getQuote(1)->setGuestAccessId($quote->getGuestAccessId())
+                    'data' => $this->getQuote(1)
+                        ->setGuestAccessId($quote->getGuestAccessId())
                 ]
             ],
             'empty PO number' => [
@@ -228,26 +216,11 @@ class QuoteTypeTest extends AbstractTest
                     'shippingMethodLocked' => true,
                     'allowUnlistedShippingMethod' => true
                 ],
-                'expectedData'  => $this->getQuote(
-                    1,
-                    1,
-                    2,
-                    [$quoteProduct],
-                    null,
-                    null,
-                    true,
-                    true
-                )
+                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct], null, null, true, true)
                     ->setCurrency('USD')
                     ->setGuestAccessId($quote->getGuestAccessId()),
-                'defaultData'   => $this->getQuote(
-                    1,
-                    1,
-                    2,
-                    [$quoteProduct],
-                    null,
-                    null
-                )->setGuestAccessId($quote->getGuestAccessId()),
+                'defaultData'   => $this->getQuote(1, 1, 2, [$quoteProduct])
+                    ->setGuestAccessId($quote->getGuestAccessId())
             ],
             'valid data' => [
                 'isValid'       => true,
@@ -295,7 +268,7 @@ class QuoteTypeTest extends AbstractTest
                     new \DateTime($date . 'T00:00:00+0000')
                 )
                     ->addAssignedUser($this->getUser(1))
-                    ->addAssignedCustomerUser($this->getCustomerUser(11))
+                    ->addAssignedCustomerUser($this->getTestCustomerUser(11))
                     ->setShippingMethod('shippingMethod1')
                     ->setShippingMethodType('shippingType1')
                     ->setCurrency('USD')
@@ -309,8 +282,9 @@ class QuoteTypeTest extends AbstractTest
                     [$quoteProduct],
                     'poNumber',
                     new \DateTime($date . 'T00:00:00+0000')
-                )->addAssignedUser($this->getUser(1))
-                    ->addAssignedCustomerUser($this->getCustomerUser(11))
+                )
+                    ->addAssignedUser($this->getUser(1))
+                    ->addAssignedCustomerUser($this->getTestCustomerUser(11))
                     ->setCurrency('USD')
                     ->setGuestAccessId($quote->getGuestAccessId()),
                 'options' => [
@@ -321,8 +295,9 @@ class QuoteTypeTest extends AbstractTest
                         [$quoteProduct],
                         'poNumber',
                         new \DateTime($date . 'T00:00:00+0000')
-                    )->addAssignedUser($this->getUser(1))
-                        ->addAssignedCustomerUser($this->getCustomerUser(11))
+                    )
+                        ->addAssignedUser($this->getUser(1))
+                        ->addAssignedCustomerUser($this->getTestCustomerUser(11))
                         ->setGuestAccessId($quote->getGuestAccessId()),
                 ]
             ],
@@ -338,9 +313,15 @@ class QuoteTypeTest extends AbstractTest
         $customer->setGroup($customerGroup);
         $quote->setCustomer($customer);
 
-        $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
-        $builder->expects(self::once())->method('get')->willReturn($builder);
-        $builder->expects(self::once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
+        $builder->expects($this->atMost(18))
+            ->method('add')
+            ->willReturn($builder);
+        $builder->expects(self::once())
+            ->method('get')
+            ->willReturn($builder);
+        $builder->expects(self::once())
+            ->method('addEventSubscriber')
+            ->with($this->quoteFormSubscriber);
 
         $this->formType->buildForm(
             $builder,
@@ -353,9 +334,15 @@ class QuoteTypeTest extends AbstractTest
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
 
-        $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
-        $builder->expects(self::once())->method('get')->willReturn($builder);
-        $builder->expects(self::once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
+        $builder->expects($this->atMost(18))
+            ->method('add')
+            ->willReturn($builder);
+        $builder->expects(self::once())
+            ->method('get')
+            ->willReturn($builder);
+        $builder->expects(self::once())
+            ->method('addEventSubscriber')
+            ->with($this->quoteFormSubscriber);
 
         $this->formType->buildForm(
             $builder,
@@ -366,45 +353,54 @@ class QuoteTypeTest extends AbstractTest
     /**
      * {@inheritDoc}
      */
+    protected function createForm(mixed $data, array $options): FormInterface
+    {
+        return $this->factory->create(QuoteType::class, $data, $options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions(): array
     {
-        $quoteProductType = new QuoteProductType(
-            $this->createMock(TranslatorInterface::class),
-            $this->createMock(UnitLabelFormatterInterface::class),
-            $this->quoteProductFormatter,
-            $this->createMock(ManagerRegistry::class)
-        );
-        $quoteProductType->setDataClass(QuoteProduct::class);
-
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    $this->preparePriceType(),
-                    EntityType::class => $this->prepareProductEntityType(),
+                    $this->getPriceType(),
+                    EntityType::class => $this->getProductEntityType(),
                     UserSelectType::class => new EntityTypeStub([
-                        1 => $this->getEntity(User::class, 1),
-                        2 => $this->getEntity(User::class, 2),
+                        1 => $this->getUser(1),
+                        2 => $this->getUser(2),
                     ]),
-                    $quoteProductType,
+                    new QuoteProductType(
+                        $this->createMock(UnitLabelFormatterInterface::class),
+                        $this->createMock(ManagerRegistry::class)
+                    ),
                     ProductSelectType::class => new ProductSelectTypeStub(),
-                    UserMultiSelectType::class => $this->prepareUserMultiSelectType(),
+                    UserMultiSelectType::class => new EntityTypeStub(
+                        [1 => $this->getUser(1), 2 => $this->getUser(2)],
+                        ['multiple' => true]
+                    ),
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    QuoteProductOfferType::class => $this->prepareQuoteProductOfferType(),
-                    QuoteProductRequestType::class => $this->prepareQuoteProductRequestType(),
-                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
-                    CustomerUserMultiSelectType::class => $this->prepareCustomerUserMultiSelectType(),
+                    new QuoteProductOfferType(),
+                    new QuoteProductRequestType(),
+                    ProductUnitSelectionType::class => $this->getProductUnitSelectionType(),
+                    CustomerUserMultiSelectType::class => new EntityTypeStub(
+                        [10 => $this->getTestCustomerUser(10), 11 => $this->getTestCustomerUser(11)],
+                        ['multiple' => true]
+                    ),
                     CustomerSelectType::class => new EntityTypeStub([
-                        1 => $this->getEntity(Customer::class, 1),
-                        2 => $this->getEntity(Customer::class, 2),
+                        1 => $this->getCustomer(1),
+                        2 => $this->getCustomer(2),
                     ]),
                     CustomerUserSelectType::class => new EntityTypeStub([
-                        1 => $this->getEntity(CustomerUser::class, 1),
-                        2 => $this->getEntity(CustomerUser::class, 2),
+                        1 => $this->getCustomerUser(1),
+                        2 => $this->getCustomerUser(2),
                     ]),
                     PriceListSelectType::class => new EntityTypeStub([
-                        1 => $this->getEntity(PriceList::class, 1),
-                        2 => $this->getEntity(PriceList::class, 2),
+                        1 => $this->getPriceList(1),
+                        2 => $this->getPriceList(2),
                     ]),
                     $this->getQuantityType(),
                 ],
@@ -412,5 +408,35 @@ class QuoteTypeTest extends AbstractTest
             ),
             $this->getValidatorExtension(true),
         ];
+    }
+
+    private function getCustomer(int $id): Customer
+    {
+        return $this->getEntity(Customer::class, $id);
+    }
+
+    private function getCustomerUser(int $id): CustomerUser
+    {
+        return $this->getEntity(CustomerUser::class, $id);
+    }
+
+    private function getTestCustomerUser(int $id): CustomerUser
+    {
+        $customerUser = $this->getCustomerUser($id);
+        $customerUser
+            ->setEmail('test@test.test')
+            ->setFirstName('First Name')
+            ->setLastName('Last Name')
+            ->setUsername('test@test.test')
+            ->setCustomer($this->createMock(Customer::class))
+            ->setUserRoles([$this->createMock(Role::class)])
+            ->setOrganization($this->createMock(OrganizationInterface::class));
+
+        return $customerUser;
+    }
+
+    private function getPriceList(int $id): PriceList
+    {
+        return $this->getEntity(PriceList::class, $id);
     }
 }

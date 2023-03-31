@@ -4,7 +4,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +33,7 @@ class AjaxQuoteControllerTest extends WebTestCase
             'GET',
             $this->getUrl('oro_quote_related_data'),
             [
-                QuoteType::NAME => [
+                'oro_sale_quote' => [
                     'customer' => $customerEntity?->getId(),
                     'customerUser' => $customerUserEntity?->getId()
                 ]
@@ -81,7 +80,7 @@ class AjaxQuoteControllerTest extends WebTestCase
             'GET',
             $this->getUrl('oro_quote_related_data'),
             [
-                QuoteType::NAME => [
+                'oro_sale_quote' => [
                     'customer' => $customerUser1->getCustomer()->getId(),
                     'customerUser' => $customerUser2->getId(),
                 ]
@@ -108,7 +107,7 @@ class AjaxQuoteControllerTest extends WebTestCase
             'POST',
             $this->getUrl('oro_quote_entry_point'),
             [
-                QuoteType::NAME => [
+                'oro_sale_quote' => [
                     'calculateShipping' => true
                 ]
             ]

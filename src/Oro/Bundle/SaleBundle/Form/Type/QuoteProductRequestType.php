@@ -5,34 +5,20 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Form type for QuoteProductRequest
+ * The form type for QuoteProductRequest entity.
  */
 class QuoteProductRequestType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_product_request';
-
     /**
-     * @var string
+     * {@inheritDoc}
      */
-    protected $dataClass;
-
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -72,13 +58,13 @@ class QuoteProductRequestType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
             [
-                'data_class'    => $this->dataClass,
+                'data_class' => QuoteProductRequest::class,
                 'compact_units' => false,
                 'csrf_token_id' => 'sale_quote_product_request',
             ]
@@ -86,18 +72,10 @@ class QuoteProductRequestType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
+        return 'oro_sale_quote_product_request';
     }
 }

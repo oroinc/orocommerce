@@ -47,8 +47,6 @@ class CategoryTypeTest extends FormIntegrationTestCase
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->type = new CategoryType($this->urlGenerator);
-        $this->type->setDataClass(Category::class);
-        $this->type->setProductClass(Product::class);
         parent::setUp();
     }
 
@@ -142,17 +140,13 @@ class CategoryTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions(): void
     {
-        $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects(self::once())
-            ->method('setDefaults')
-            ->with(
-                [
-                    'data_class' => Category::class,
-                    'csrf_token_id' => 'category',
-                ]
-            );
+        $resolver = new OptionsResolver();
 
         $this->type->configureOptions($resolver);
+
+        $resolvedOptions = $resolver->resolve();
+        self::assertEquals(Category::class, $resolvedOptions['data_class']);
+        self::assertEquals('category', $resolvedOptions['csrf_token_id']);
     }
 
     public function testGenerateChangedSlugsUrlOnPresetData(): void

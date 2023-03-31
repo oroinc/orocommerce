@@ -5,9 +5,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -17,26 +14,20 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
-use Oro\Bundle\SecurityBundle\Model\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
-use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
     protected const QP_TYPE1 = QuoteProduct::TYPE_REQUESTED;
     protected const QPO_PRICE_TYPE1 = QuoteProductOffer::PRICE_TYPE_UNIT;
-
-    /** @var FormTypeInterface */
-    protected $formType;
 
     /** @var QuoteProductFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $quoteProductFormatter;
@@ -57,6 +48,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->willReturnArgument(0);
     }
 
+    abstract protected function createForm(mixed $data, array $options): FormInterface;
+
     /**
      * @dataProvider submitProvider
      */
@@ -67,7 +60,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         mixed $defaultData = null,
         array $options = []
     ) {
-        $form = $this->factory->create(get_class($this->formType), $defaultData, $options);
+        $form = $this->createForm($defaultData, $options);
 
         self::assertEquals($defaultData, $form->getData());
 
@@ -100,23 +93,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function prepareQuoteProductOfferType(): QuoteProductOfferType
-    {
-        $quoteProductOfferType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
-        $quoteProductOfferType->setDataClass(QuoteProductOffer::class);
-
-        return $quoteProductOfferType;
-    }
-
-    protected function prepareQuoteProductRequestType(): QuoteProductRequestType
-    {
-        $quoteProductRequestType = new QuoteProductRequestType();
-        $quoteProductRequestType->setDataClass(QuoteProductRequest::class);
-
-        return $quoteProductRequestType;
-    }
-
-    protected function preparePriceType(): PriceType
+    protected function getPriceType(): PriceType
     {
         $priceType = new PriceType();
         $priceType->setDataClass(Price::class);
@@ -124,28 +101,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return $priceType;
     }
 
-    protected function prepareProductEntityType(): EntityTypeStub
+    protected function getProductEntityType(): EntityTypeStub
     {
         return new EntityTypeStub([
-            2 => $this->getEntity(Product::class, 2),
-            3 => $this->getEntity(Product::class, 3),
+            2 => $this->getProduct(2),
+            3 => $this->getProduct(3),
         ]);
-    }
-
-    protected function prepareUserMultiSelectType(): EntityTypeStub
-    {
-        return new EntityTypeStub(
-            [1 => $this->getUser(1), 2 => $this->getUser(2)],
-            ['multiple' => true]
-        );
-    }
-
-    protected function prepareCustomerUserMultiSelectType(): EntityTypeStub
-    {
-        return new EntityTypeStub(
-            [10 => $this->getCustomerUser(10), 11 => $this->getCustomerUser(11)],
-            ['multiple' => true]
-        );
     }
 
     /**
@@ -174,14 +135,19 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function prepareProductUnitSelectionType(): EntityTypeStub
+    protected function getProductUnitSelectionType(): EntityTypeStub
     {
         return new ProductUnitSelectionTypeStub([
-            'kg' => $this->getEntity(ProductUnit::class, 'kg', 'code'),
-            'item' => $this->getEntity(ProductUnit::class, 'item', 'code'),
+            'kg' => $this->getProductUnit('kg', 'code'),
+            'item' => $this->getProductUnit('item', 'code'),
         ]);
     }
 
+    /**
+     * @template T
+     * @psalm-param class-string<T> $className
+     * @psalm-return T
+     */
     protected function getEntity(string $className, int|string $id, string $primaryKey = 'id'): object
     {
         static $entities = [];
@@ -198,24 +164,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return $this->getEntity(User::class, $id);
     }
 
-    protected function getCustomerUser(int $id): CustomerUser
+    protected function getProduct(int $id): Product
     {
-        $organization = $this->createMock(OrganizationInterface::class);
-        $role = $this->createMock(Role::class);
+        return $this->getEntity(Product::class, $id);
+    }
 
-        $customer = $this->createMock(Customer::class);
-
-        /** @var CustomerUser $customerUser */
-        $customerUser = $this->getEntity(CustomerUser::class, $id);
-        $customerUser->setEmail('test@test.test')
-            ->setFirstName('First Name')
-            ->setLastName('Last Name')
-            ->setUsername('test@test.test')
-            ->setCustomer($customer)
-            ->setUserRoles([$role])
-            ->setOrganization($organization);
-
-        return $customerUser;
+    protected function getProductUnit(string $id, string $primaryKey): ProductUnit
+    {
+        return $this->getEntity(ProductUnit::class, $id, $primaryKey);
     }
 
     /**
@@ -229,21 +185,17 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @return QuoteProduct
      */
     protected function getQuoteProduct(
-        int $productId = null,
+        int $productId,
         int $type = null,
         string $comment = null,
         string $commentCustomer = null,
         array $requests = [],
         array $offers = []
     ): QuoteProduct {
-        $product = null;
+        $product = $this->getProduct($productId);
 
-        if ($productId) {
-            $product = $this->getEntity(Product::class, $productId);
-
-            foreach ($this->getProductUnitPrecisions() as $precision) {
-                $product->addUnitPrecision($precision);
-            }
+        foreach ($this->getProductUnitPrecisions() as $precision) {
+            $product->addUnitPrecision($precision);
         }
 
         $quoteProduct = new QuoteProduct();
@@ -280,9 +232,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         if (null !== $unitCode) {
-            $quoteProductOffer->setProductUnit(
-                $this->getEntity(ProductUnit::class, $unitCode, 'code')
-            );
+            $quoteProductOffer->setProductUnit($this->getProductUnit($unitCode, 'code'));
         }
 
         $quoteProductOffer->setPriceType($priceType);
@@ -308,9 +258,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         if (null !== $unitCode) {
-            $quoteProductRequest->setProductUnit(
-                $this->getEntity(ProductUnit::class, $unitCode, 'code')
-            );
+            $quoteProductRequest->setProductUnit($this->getProductUnit($unitCode, 'code'));
         }
 
         if (null !== $price) {

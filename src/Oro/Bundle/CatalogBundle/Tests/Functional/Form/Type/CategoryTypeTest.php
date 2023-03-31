@@ -86,7 +86,7 @@ class CategoryTypeTest extends WebTestCase
             'largeImage' => ['file' => $largeImage],
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
             'removeProducts' => implode(',', $this->getProductIds($removedProducts)),
-            'sortOrder' => json_encode($sortOrders),
+            'sortOrder' => json_encode($sortOrders, JSON_THROW_ON_ERROR),
             'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
             'inventoryThreshold' => ['scalarValue' => 0],
             LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => ['scalarValue' => 0],

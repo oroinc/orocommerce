@@ -8,22 +8,20 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductRequestTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /** @var QuoteProductRequestType */
-    protected $formType;
+    private QuoteProductRequestType $formType;
 
     protected function setUp(): void
     {
         $this->formType = new QuoteProductRequestType();
-        $this->formType->setDataClass(QuoteProductRequest::class);
         parent::setUp();
     }
 
@@ -137,6 +135,14 @@ class QuoteProductRequestTypeTest extends AbstractTest
     /**
      * {@inheritDoc}
      */
+    protected function createForm(mixed $data, array $options): FormInterface
+    {
+        return $this->factory->create(QuoteProductRequestType::class, $data, $options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions(): array
     {
         $priceType = new PriceType();
@@ -148,7 +154,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
                     $this->formType,
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     $priceType,
-                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    ProductUnitSelectionType::class => $this->getProductUnitSelectionType(),
                     $this->getQuantityType(),
                 ],
                 []

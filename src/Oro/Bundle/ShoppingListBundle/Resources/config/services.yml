@@ -99,13 +99,6 @@ services:
             - "@oro_featuretoggle.checker.feature_checker"
             - "@oro_product.product.manager"
             - '@oro_security.acl_helper'
-        calls:
-            - [setProductClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
-            - [setShoppingListClass, ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList']]
-            - [setProductUnitClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]
-
-    Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler:
-        alias: 'oro_shopping_list.handler.shopping_list_line_item'
 
     oro_shopping_list.delete_handler.line_item:
         class: Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemDeleteHandler

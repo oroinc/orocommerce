@@ -11,22 +11,19 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductOfferTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /** @var QuoteProductOfferType */
-    protected $formType;
+    private QuoteProductOfferType $formType;
 
     protected function setUp(): void
     {
         $this->configureQuoteProductOfferFormatter();
-        $this->formType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
-        $this->formType->setDataClass(QuoteProductOffer::class);
+        $this->formType = new QuoteProductOfferType();
         parent::setUp();
     }
 
@@ -41,8 +38,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 $this->assertArrayHasKey('csrf_token_id', $options);
 
                 return true;
-            }))
-        ;
+            }));
 
         $this->formType->configureOptions($resolver);
     }
@@ -52,7 +48,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = [])
     {
-        $form = $this->factory->create(QuoteProductOfferType::class, $inputData);
+        $form = $this->createForm($inputData, []);
 
         foreach ($expectedData as $key => $value) {
             $this->assertEquals($value, $form->get($key)->getData(), $key);
@@ -183,15 +179,23 @@ class QuoteProductOfferTypeTest extends AbstractTest
     /**
      * {@inheritDoc}
      */
+    protected function createForm(mixed $data, array $options): FormInterface
+    {
+        return $this->factory->create(QuoteProductOfferType::class, $data, $options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    $this->preparePriceType(),
+                    $this->getPriceType(),
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    ProductUnitSelectionType::class => $this->getProductUnitSelectionType(),
                     $this->getQuantityType()
                 ],
                 []
@@ -202,35 +206,27 @@ class QuoteProductOfferTypeTest extends AbstractTest
 
     public function testOnPreSetData()
     {
-        $formMock = $this->createMock(FormInterface::class);
-        $event = new FormEvent($formMock, new QuoteProductOffer());
+        $form = $this->createForm(new QuoteProductOffer(), []);
 
-        $formMock->expects($this->once())
-            ->method('add')
-            ->with(
-                'price',
-                PriceType::class,
-                [
-                    'currency_empty_value' => null,
-                    'error_bubbling' => false,
-                    'required' => true,
-                    'label' => 'oro.sale.quoteproductoffer.price.label',
-                    //Price value may be not set by user while creating quote
-                    'validation_groups' => [PriceType::OPTIONAL_VALIDATION_GROUP],
-                    'match_price_on_null' => false
-                ]
-            );
-
-        $this->formType->onPreSetData($event);
+        $priceFieldOptions = $form->get('price')->getConfig()->getOptions();
+        self::assertNull($priceFieldOptions['currency_empty_value']);
+        self::assertFalse($priceFieldOptions['error_bubbling']);
+        self::assertTrue($priceFieldOptions['required']);
+        self::assertEquals('oro.sale.quoteproductoffer.price.label', $priceFieldOptions['label']);
+        self::assertEquals([PriceType::OPTIONAL_VALIDATION_GROUP], $priceFieldOptions['validation_groups']);
+        self::assertFalse($priceFieldOptions['match_price_on_null']);
     }
 
     public function testOnPreSetDataNoEntity()
     {
-        $formMock = $this->createMock(FormInterface::class);
-        $event = new FormEvent($formMock, null);
+        $form = $this->createForm(null, []);
 
-        $formMock->expects($this->never())->method('add');
-
-        $this->formType->onPreSetData($event);
+        $priceFieldOptions = $form->get('price')->getConfig()->getOptions();
+        self::assertNull($priceFieldOptions['currency_empty_value']);
+        self::assertFalse($priceFieldOptions['error_bubbling']);
+        self::assertTrue($priceFieldOptions['required']);
+        self::assertEquals('oro.sale.quoteproductoffer.price.label', $priceFieldOptions['label']);
+        self::assertEquals([PriceType::OPTIONAL_VALIDATION_GROUP], $priceFieldOptions['validation_groups']);
+        self::assertTrue($priceFieldOptions['match_price_on_null']);
     }
 }
