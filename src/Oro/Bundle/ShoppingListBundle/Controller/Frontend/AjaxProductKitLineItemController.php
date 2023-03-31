@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -33,16 +36,20 @@ class AjaxProductKitLineItemController extends AbstractController
 
     private ProductKitLineItemFactory $productKitLineItemFactory;
 
+    private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
+
     public function __construct(
         ProductKitAvailabilityChecker $productKitAvailabilityChecker,
         CurrentShoppingListManager $currentShoppingListManager,
         ShoppingListManager $shoppingListManager,
-        ProductKitLineItemFactory $productKitLineItemFactory
+        ProductKitLineItemFactory $productKitLineItemFactory,
+        SubtotalProviderInterface $lineItemNotPricedSubtotalProvider
     ) {
         $this->productKitAvailabilityChecker = $productKitAvailabilityChecker;
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->shoppingListManager = $shoppingListManager;
         $this->productKitLineItemFactory = $productKitLineItemFactory;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
     }
 
     /**
@@ -87,6 +94,17 @@ class AjaxProductKitLineItemController extends AbstractController
             ['validation_groups' => ['Default', 'add_product_kit_line_item', 'product_kit_is_available_for_purchase']]
         );
         $form->handleRequest($request);
+
+        if ($request->get('getSubtotal', false)) {
+            $subtotal = $this->lineItemNotPricedSubtotalProvider
+                ->getSubtotal(new LineItemsNotPricedDTO(new ArrayCollection([$productKitLineItem])))
+                ->toArray();
+
+            return new JsonResponse([
+                'success' => true,
+                'subtotal' => $subtotal
+            ]);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($setCurrent === true) {
