@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $componentRegistry;
+    private $processorRegistry;
 
     /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $validator;
@@ -50,7 +50,7 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->componentRegistry = $this->createMock(ComponentProcessorRegistry::class);
+        $this->processorRegistry = $this->createMock(ComponentProcessorRegistry::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
         $this->quickAddRowGrouper = $this->createMock(QuickAddRowGrouperInterface::class);
         $this->quickAddRowCollectionViolationsMapper = $this->createMock(QuickAddRowCollectionViolationsMapper::class);
@@ -58,7 +58,7 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
         $this->handler = new QuickAddProcessHandler(
-            $this->componentRegistry,
+            $this->processorRegistry,
             $this->validator,
             $this->quickAddRowGrouper,
             $this->quickAddRowCollectionViolationsMapper,
@@ -455,8 +455,8 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('normalize');
 
         $componentProcessor = $this->createMock(ComponentProcessorInterface::class);
-        $this->componentRegistry->expects(self::once())
-            ->method('getProcessorByName')
+        $this->processorRegistry->expects(self::once())
+            ->method('getProcessor')
             ->with($formData[QuickAddType::COMPONENT_FIELD_NAME])
             ->willReturn($componentProcessor);
 
@@ -566,8 +566,8 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('normalize');
 
         $componentProcessor = $this->createMock(ComponentProcessorInterface::class);
-        $this->componentRegistry->expects(self::once())
-            ->method('getProcessorByName')
+        $this->processorRegistry->expects(self::once())
+            ->method('getProcessor')
             ->with($formData[QuickAddType::COMPONENT_FIELD_NAME])
             ->willReturn($componentProcessor);
 

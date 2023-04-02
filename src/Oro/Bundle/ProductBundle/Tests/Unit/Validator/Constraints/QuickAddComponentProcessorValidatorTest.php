@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
@@ -13,18 +13,22 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCase
 {
-    private ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject $componentProcessorRegistry;
+    /** @var ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $processorRegistry;
 
     protected function setUp(): void
     {
-        $this->componentProcessorRegistry = $this->createMock(ComponentProcessorRegistry::class);
+        $this->processorRegistry = $this->createMock(ComponentProcessorRegistry::class);
 
         parent::setUp();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function createValidator(): QuickAddComponentProcessorValidator
     {
-        return new QuickAddComponentProcessorValidator($this->componentProcessorRegistry);
+        return new QuickAddComponentProcessorValidator($this->processorRegistry);
     }
 
     public function testValidateWhenInvalidValue(): void
@@ -50,8 +54,7 @@ class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCas
         $constraint = new QuickAddComponentProcessor();
 
         $value = 'sample_name';
-        $this->componentProcessorRegistry
-            ->expects(self::once())
+        $this->processorRegistry->expects(self::once())
             ->method('hasProcessor')
             ->with($value)
             ->willReturn(false);
@@ -70,21 +73,18 @@ class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCas
         $constraint = new QuickAddComponentProcessor();
 
         $value = 'sample_name';
-        $this->componentProcessorRegistry
-            ->expects(self::once())
+        $this->processorRegistry->expects(self::once())
             ->method('hasProcessor')
             ->with($value)
             ->willReturn(true);
 
-        $componentProcessor = $this->createMock(ComponentProcessorInterface::class);
-        $this->componentProcessorRegistry
-            ->expects(self::once())
-            ->method('getProcessorByName')
+        $processor = $this->createMock(ComponentProcessorInterface::class);
+        $this->processorRegistry->expects(self::once())
+            ->method('getProcessor')
             ->with($value)
-            ->willReturn($componentProcessor);
+            ->willReturn($processor);
 
-        $componentProcessor
-            ->expects(self::once())
+        $processor->expects(self::once())
             ->method('isAllowed')
             ->willReturn(false);
 
@@ -102,21 +102,18 @@ class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCas
         $constraint = new QuickAddComponentProcessor();
 
         $value = 'sample_name';
-        $this->componentProcessorRegistry
-            ->expects(self::once())
+        $this->processorRegistry->expects(self::once())
             ->method('hasProcessor')
             ->with($value)
             ->willReturn(true);
 
-        $componentProcessor = $this->createMock(ComponentProcessorInterface::class);
-        $this->componentProcessorRegistry
-            ->expects(self::once())
-            ->method('getProcessorByName')
+        $processor = $this->createMock(ComponentProcessorInterface::class);
+        $this->processorRegistry->expects(self::once())
+            ->method('getProcessor')
             ->with($value)
-            ->willReturn($componentProcessor);
+            ->willReturn($processor);
 
-        $componentProcessor
-            ->expects(self::once())
+        $processor->expects(self::once())
             ->method('isAllowed')
             ->willReturn(true);
 

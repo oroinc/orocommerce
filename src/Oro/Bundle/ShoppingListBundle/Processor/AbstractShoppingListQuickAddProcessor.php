@@ -78,14 +78,6 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
     /**
      * {@inheritDoc}
      */
-    public function isValidationRequired(): bool
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function isAllowed(): bool
     {
         return $this->shoppingListLineItemHandler->isAllowed();

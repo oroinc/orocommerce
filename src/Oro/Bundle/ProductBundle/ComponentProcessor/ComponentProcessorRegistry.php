@@ -2,46 +2,51 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
+use Psr\Container\ContainerInterface;
+
 /**
  * Contains all component processors and allows to get a component processor by its name.
  */
 class ComponentProcessorRegistry
 {
-    /** @var ComponentProcessorInterface[] */
-    private array $processors = [];
-
-    public function addProcessor(ComponentProcessorInterface $processor): void
-    {
-        $this->processors[$processor->getName()] = $processor;
-    }
+    /** @var string[] */
+    private array $processorNames;
+    private ContainerInterface $processorContainer;
 
     /**
-     * @return ComponentProcessorInterface[]
+     * @param string[]           $processorNames
+     * @param ContainerInterface $processorContainer
      */
-    public function getProcessors(): array
+    public function __construct(array $processorNames, ContainerInterface $processorContainer)
     {
-        return $this->processors;
+        $this->processorNames = $processorNames;
+        $this->processorContainer = $processorContainer;
     }
 
-    public function getProcessorByName(string $name): ?ComponentProcessorInterface
+    public function getProcessor(string $name): ComponentProcessorInterface
     {
-        return $this->processors[$name] ?? null;
+        if (!$this->processorContainer->has($name)) {
+            throw new \LogicException(sprintf('Cannot find a processor with the name "%s".', $name));
+        }
+
+        return $this->processorContainer->get($name);
     }
 
     public function hasProcessor(string $name): bool
     {
-        return isset($this->processors[$name]);
+        return $this->processorContainer->has($name);
     }
 
-    public function hasAllowedProcessor(): bool
+    public function hasAllowedProcessors(): bool
     {
-        $hasAllowed = false;
-        foreach ($this->processors as $processor) {
+        foreach ($this->processorNames as $name) {
+            /** @var ComponentProcessorInterface $processor */
+            $processor = $this->processorContainer->get($name);
             if ($processor->isAllowed()) {
-                $hasAllowed = true;
-                break;
+                return true;
             }
         }
-        return $hasAllowed;
+
+        return false;
     }
 }

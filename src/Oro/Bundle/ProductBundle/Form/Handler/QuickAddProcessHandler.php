@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
-use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\Grouping\QuickAddRowGrouperInterface;
@@ -23,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class QuickAddProcessHandler
 {
-    private ComponentProcessorRegistry $componentRegistry;
+    private ComponentProcessorRegistry $processorRegistry;
     private ValidatorInterface $validator;
     private QuickAddRowGrouperInterface $quickAddRowGrouper;
     private QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper;
@@ -39,14 +38,14 @@ class QuickAddProcessHandler
     ];
 
     public function __construct(
-        ComponentProcessorRegistry $componentRegistry,
+        ComponentProcessorRegistry $processorRegistry,
         ValidatorInterface $validator,
         QuickAddRowGrouperInterface $quickAddRowGrouper,
         QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper,
         QuickAddCollectionNormalizerInterface $quickAddCollectionNormalizer,
         PreloadingManager $preloadingManager
     ) {
-        $this->componentRegistry = $componentRegistry;
+        $this->processorRegistry = $processorRegistry;
         $this->validator = $validator;
         $this->quickAddRowGrouper = $quickAddRowGrouper;
         $this->quickAddRowCollectionViolationsMapper = $quickAddRowCollectionViolationsMapper;
@@ -88,7 +87,7 @@ class QuickAddProcessHandler
                 $additionalData = $formData[QuickAddType::ADDITIONAL_FIELD_NAME] ?? null;
                 $transitionName = $formData[QuickAddType::TRANSITION_FIELD_NAME] ?? null;
 
-                $processor = $this->getProcessor($formData[QuickAddType::COMPONENT_FIELD_NAME]);
+                $processor = $this->processorRegistry->getProcessor($formData[QuickAddType::COMPONENT_FIELD_NAME]);
                 $response = $processor->process(
                     [
                         ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $entityItemsData,
@@ -128,11 +127,6 @@ class QuickAddProcessHandler
         }
 
         return new JsonResponse($responseData);
-    }
-
-    private function getProcessor(string $name): ?ComponentProcessorInterface
-    {
-        return $this->componentRegistry->getProcessorByName($name);
     }
 
     private function validate(QuickAddRowCollection $quickAddRowCollection): void

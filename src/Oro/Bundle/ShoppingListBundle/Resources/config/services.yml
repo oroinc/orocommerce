@@ -125,7 +125,7 @@ services:
             - '@oro_security.acl_helper'
             - '@oro_shopping_list.service.message_generator'
         tags:
-            - { name: oro_product.quick_add_processor }
+            - { name: oro_product.quick_add_processor, processor_name: oro_shopping_list_quick_add_processor }
 
     oro_shopping_list.processor.quick_add_to_checkout:
         class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor'
@@ -143,7 +143,7 @@ services:
             - '@oro_locale.formatter.date_time'
             - 'start_quickorder_checkout'
         tags:
-            - { name: oro_product.quick_add_processor }
+            - { name: oro_product.quick_add_processor, processor_name: oro_shopping_list_to_checkout_quick_add_processor }
 
     oro_shopping_list.service.product_data_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage'

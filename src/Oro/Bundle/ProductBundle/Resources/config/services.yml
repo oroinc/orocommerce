@@ -223,12 +223,6 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_page_template_validator }
 
-    oro_product.component_processor.filter:
-        class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
-        public: false
-        arguments:
-            - "@oro_product.website_search.repository.product"
-
     Oro\Bundle\ProductBundle\Search\ProductRepository:
         alias: oro_product.website_search.repository.product
 
@@ -244,20 +238,9 @@ services:
 
     oro_product.component_processor.registry:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry'
-        public: false
-
-    oro_product.component_processor.data_storage_aware.processor:
-        class: 'Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor'
         arguments:
-            - "@router"
-            - "@oro_product.storage.product_data_storage"
-            - "@security.authorization_checker"
-            - "@oro_security.token_accessor"
-            - "@session"
-            - "@translator"
-        calls:
-            - [setComponentProcessorFilter,  ["@oro_product.component_processor.filter"]]
-        abstract: true
+            - !abstract '$processorNames defined in Oro\Bundle\ProductBundle\OroProductBundle'
+            - !abstract '$processorContainer defined in Oro\Bundle\ProductBundle\OroProductBundle'
 
     oro_product.event_listener.related_items_product_edit_listener:
         class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
@@ -649,10 +632,13 @@ services:
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
-        public: false
         arguments:
             - '@request_stack'
-            - '@session'
+            - !php/const Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper::VIEW_GRID
+            -
+                - !php/const Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper::VIEW_LIST
+                - !php/const Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper::VIEW_GRID
+                - !php/const Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper::VIEW_TILES
 
     Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper:
         alias: 'oro_product.datagrid_theme_helper'

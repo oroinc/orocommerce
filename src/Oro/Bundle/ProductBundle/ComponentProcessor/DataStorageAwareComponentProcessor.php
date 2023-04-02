@@ -2,114 +2,65 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles logic related to quick order process
+ * Handles logic related to quick order process and save the handling result into {@see ProductDataStorage}.
  */
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {
-    /** @var UrlGeneratorInterface */
-    protected $router;
-
-    /** @var ProductDataStorage */
-    protected $storage;
-
-    /** @var ComponentProcessorFilter */
-    protected $componentProcessorFilter;
-
-    /** @var string */
-    protected $name;
-
-    /** @var string */
-    protected $redirectRouteName;
-
-    /** @var bool */
-    protected $validationRequired = true;
-
-    /** @var string */
-    protected $acl;
-
-    /** @var string */
-    protected $scope;
-
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
-
-    /** @var TokenAccessorInterface */
-    protected $tokenAccessor;
-
-    /** @var Session */
-    protected $session;
-
-    /** @var TranslatorInterface */
-    protected $translator;
+    protected ProductDataStorage $storage;
+    protected ProductRepository $productRepository;
+    protected AuthorizationCheckerInterface $authorizationChecker;
+    protected TokenAccessorInterface $tokenAccessor;
+    protected RequestStack $requestStack;
+    protected TranslatorInterface $translator;
+    protected UrlGeneratorInterface $router;
+    private ?string $acl = null;
+    private ?string $redirectRouteName = null;
 
     public function __construct(
-        UrlGeneratorInterface $router,
         ProductDataStorage $storage,
+        ProductRepository $productRepository,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
-        Session $session,
-        TranslatorInterface $translator
+        RequestStack $requestStack,
+        TranslatorInterface $translator,
+        UrlGeneratorInterface $router,
     ) {
-        $this->router = $router;
         $this->storage = $storage;
+        $this->productRepository = $productRepository;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->translator = $translator;
+        $this->router = $router;
     }
 
-    /**
-     * @param ComponentProcessorFilterInterface $filter
-     * @return ComponentProcessorInterface
-     */
-    public function setComponentProcessorFilter(ComponentProcessorFilterInterface $filter)
-    {
-        $this->componentProcessorFilter = $filter;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return ComponentProcessorInterface
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $acl
-     */
-    public function setAcl($acl)
+    public function setAcl(string $acl): void
     {
         $this->acl = $acl;
     }
 
+    public function setRedirectRouteName(string $redirectRouteName): void
+    {
+        $this->redirectRouteName = $redirectRouteName;
+    }
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function isAllowed()
+    public function isAllowed(): bool
     {
         if (!$this->acl) {
             return true;
@@ -119,44 +70,9 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     }
 
     /**
-     * @param string $scope
+     * {@inheritDoc}
      */
-    public function setScope($scope)
-    {
-        $this->scope = $scope;
-    }
-
-    /**
-     * @param string $redirectRouteName
-     */
-    public function setRedirectRouteName($redirectRouteName)
-    {
-        $this->redirectRouteName = $redirectRouteName;
-    }
-
-    /**
-     * @param bool $validationRequired
-     * @return ComponentProcessorInterface
-     */
-    public function setValidationRequired($validationRequired)
-    {
-        $this->validationRequired = (bool)$validationRequired;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isValidationRequired()
-    {
-        return $this->validationRequired;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function process(array $data, Request $request)
+    public function process(array $data, Request $request): ?Response
     {
         $inputProductSkus = $this->getProductSkus($data);
         $data = $this->filterData($data);
@@ -166,80 +82,79 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 
         $this->storage->set($data);
 
-        if ($allowRedirect) {
-            return $this->getResponse();
+        if ($allowRedirect && $this->redirectRouteName) {
+            return new RedirectResponse($this->getRedirectUrl($this->redirectRouteName));
         }
 
         return null;
     }
 
-    /**
-     * @return null|RedirectResponse
-     */
-    protected function getResponse()
-    {
-        if ($this->redirectRouteName) {
-            return new RedirectResponse($this->getUrl($this->redirectRouteName));
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $routeName
-     * @return string
-     */
-    protected function getUrl($routeName)
+    protected function getRedirectUrl(string $routeName): string
     {
         return $this->router->generate($routeName, [ProductDataStorage::STORAGE_KEY => true]);
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function getProductSkus(array $data)
+    protected function getProductSkus(array $data): array
     {
-        return array_map(
+        return array_values(array_unique(array_map(
             function ($entityItem) {
                 return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
             },
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
-        );
+        )));
     }
 
-    protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
+    protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus): void
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
-
         if (!empty($notAllowedProductSkus)) {
-            $this->addFlashMessage($notAllowedProductSkus);
+            $message = $this->translator->trans(
+                'oro.product.frontend.quick_add.messages.not_added_products',
+                ['%count%' => \count($notAllowedProductSkus), '%sku%' => implode(', ', $notAllowedProductSkus)]
+            );
+            $this->addFlashMessage('warning', $message);
         }
     }
 
-    protected function addFlashMessage(array $skus)
+    protected function addFlashMessage(string $type, string $message): void
     {
-        $skus = array_unique($skus);
-
-        $message = $this->translator->trans(
-            'oro.product.frontend.quick_add.messages.not_added_products',
-            ['%count%' => count($skus),'%sku%' => implode(', ', $skus)]
-        );
-        $this->session->getFlashBag()->add('warning', $message);
+        $this->requestStack->getSession()->getFlashBag()->add($type, $message);
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function filterData(array $data)
+    protected function filterData(array $data): array
     {
-        if ($this->componentProcessorFilter) {
-            $filterParameters = [];
-            if ($this->scope) {
-                $filterParameters['scope'] = $this->scope;
+        $products = [];
+        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $product) {
+            $skuUppercase = mb_strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY]);
+            $products[$skuUppercase][] = $product;
+        }
+
+        $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = [];
+
+        if (empty($products)) {
+            return $data;
+        }
+
+        $searchQuery = $this->productRepository->getFilterSkuQuery(array_keys($products));
+        // Add marker `autocomplete_record_id` to be able to determine query context in listeners
+        // `autocomplete_record_id` is used to be same to Quick Order Form behaviour
+        $searchQuery->addSelect('integer.system_entity_id as autocomplete_record_id');
+
+        $searchResult = $searchQuery->getResult();
+        if (null === $searchResult) {
+            throw new \RuntimeException('Result of search query cannot be null.');
+        }
+
+        /** @var Item[] $filteredProducts */
+        $filteredProducts = $searchResult->toArray();
+        foreach ($filteredProducts as $item) {
+            $itemData = $item->getSelectedData();
+            if (isset($itemData['sku'])) {
+                $skuUppercase = mb_strtoupper($itemData['sku']);
+                foreach ($products[$skuUppercase] as $product) {
+                    $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $product;
+                }
             }
-            $data = $this->componentProcessorFilter->filterData($data, $filterParameters);
         }
 
         return $data;
