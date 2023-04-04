@@ -48,5 +48,5 @@ Feature: Process order submission with PayPal Payments Pro and enabled zero "aut
     When I go to Sales/Orders
     Then I should see following grid:
       | Order Number | Payment Status |
-      | 1            | Paid in full   |
       | 2            | Paid in full   |
+      | 1            | Paid in full   |
