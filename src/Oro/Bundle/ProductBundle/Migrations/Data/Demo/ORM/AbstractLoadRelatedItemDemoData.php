@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * The base class for fixtures that load demo data for related products.
+ */
 abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -62,8 +65,8 @@ abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implement
         $headers = fgetcsv($handler, 1000, ',');
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $productFrom = $productRepository->findOneBySku($data[0]);
-            $productTo = $productRepository->findOneBySku($data[1]);
+            $productFrom = $productRepository->findOneBy(['sku' => $data[0]]);
+            $productTo = $productRepository->findOneBy(['sku' => $data[1]]);
 
             $relationBetweenProducts = $this->getModel();
             $relationBetweenProducts->setProduct($productFrom)

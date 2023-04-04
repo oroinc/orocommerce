@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository\RelatedIte
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
@@ -27,18 +26,23 @@ class RelatedProductRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(RelatedProduct::class);
     }
 
+    private function getProductBySku(string $sku): Product
+    {
+        return self::getContainer()->get('doctrine')->getRepository(Product::class)->findOneBy(['sku' => $sku]);
+    }
+
     public function testExistsReturnTrue()
     {
-        $product3 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
-        $product1 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1));
+        $product3 = $this->getProductBySku(LoadProductData::PRODUCT_3);
+        $product1 = $this->getProductBySku(LoadProductData::PRODUCT_1);
 
         $this->assertTrue($this->repository->exists($product3, $product1));
     }
 
     public function testExistsReturnFalse()
     {
-        $product3 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
-        $product6 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_6));
+        $product3 = $this->getProductBySku(LoadProductData::PRODUCT_3);
+        $product6 = $this->getProductBySku(LoadProductData::PRODUCT_6);
 
         $this->assertFalse($this->repository->exists($product3, $product6));
     }
@@ -48,18 +52,16 @@ class RelatedProductRepositoryTest extends WebTestCase
      */
     public function testCountRelationsForProduct(string $productSku, int $numberOfRelations)
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku($productSku);
+        $product = $this->getProductBySku($productSku);
         $this->assertSame($numberOfRelations, $this->repository->countRelationsForProduct($product->getId()));
     }
 
     public function testFindAllRelatedUnidirectional()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2)),
+            $this->getProductBySku(LoadProductData::PRODUCT_1),
+            $this->getProductBySku(LoadProductData::PRODUCT_2),
         ];
         $relatedProducts = $this->repository->findRelated($product->getId(), false, 10);
 
@@ -68,10 +70,9 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindRelatedUnidirectionalWithLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
+            $this->getProductBySku(LoadProductData::PRODUCT_1)
         ];
         $relatedProducts = $this->repository->findRelated($product->getId(), false, 1);
 
@@ -80,11 +81,10 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindRelatedUnidirectionalWithoutLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2)),
+            $this->getProductBySku(LoadProductData::PRODUCT_1),
+            $this->getProductBySku(LoadProductData::PRODUCT_2),
         ];
         $relatedProducts = $this->repository->findRelated($product->getId(), false);
 
@@ -93,12 +93,11 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindRelatedBidirectional()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2)),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_4)),
+            $this->getProductBySku(LoadProductData::PRODUCT_1),
+            $this->getProductBySku(LoadProductData::PRODUCT_2),
+            $this->getProductBySku(LoadProductData::PRODUCT_4),
         ];
         $relatedProducts = $this->repository->findRelated($product->getId(), true, 10);
 
@@ -107,11 +106,10 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindRelatedBidirectionalWithLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_4));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_4);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3)),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_5)),
+            $this->getProductBySku(LoadProductData::PRODUCT_3),
+            $this->getProductBySku(LoadProductData::PRODUCT_5),
         ];
         $relatedProducts = $this->repository->findRelated($product->getId(), true, 2);
 
@@ -120,11 +118,10 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindAllRelatedIdsUnidirectional()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_1)->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_2)->getId(),
         ];
         $relatedProducts = $this->repository->findRelatedIds($product->getId(), false, 10);
 
@@ -133,10 +130,9 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindRelatedIdsUnidirectionalWithLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_1)->getId()
         ];
         $relatedProducts = $this->repository->findRelatedIds($product->getId(), false, 1);
 
@@ -145,11 +141,10 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindRelatedIdsUnidirectionalWithoutLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_1)->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_2)->getId(),
         ];
         $relatedProducts = $this->repository->findRelatedIds($product->getId(), false);
 
@@ -158,12 +153,11 @@ class RelatedProductRepositoryTest extends WebTestCase
 
     public function testFindRelatedIdsBidirectional()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_4))->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_1)->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_2)->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_4)->getId(),
         ];
         $relatedProducts = $this->repository->findRelatedIds($product->getId(), true, 10);
 
@@ -177,11 +171,6 @@ class RelatedProductRepositoryTest extends WebTestCase
             ['product-3', 2],
             ['product-4', 2],
         ];
-    }
-
-    private function getProductRepository(): ProductRepository
-    {
-        return $this->getContainer()->get('doctrine')->getRepository(Product::class);
     }
 
     /**

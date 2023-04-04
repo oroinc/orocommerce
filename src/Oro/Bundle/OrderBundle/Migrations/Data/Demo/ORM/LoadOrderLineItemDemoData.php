@@ -144,7 +144,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getOrder(EntityManagerInterface $manager, string $identifier): ?Order
     {
         if (!array_key_exists($identifier, $this->orders)) {
-            $this->orders[$identifier] = $manager->getRepository('OroOrderBundle:Order')
+            $this->orders[$identifier] = $manager->getRepository(Order::class)
                 ->findOneBy(['identifier' => $identifier]);
         }
 
@@ -154,7 +154,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getProduct(EntityManagerInterface $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
@@ -162,7 +162,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
     protected function getProductUnit(EntityManagerInterface $manager, string $code): ?ProductUnit
     {
-        return $manager->getReference('OroProductBundle:ProductUnit', $code);
+        return $manager->getReference(ProductUnit::class, $code);
     }
 
     /**

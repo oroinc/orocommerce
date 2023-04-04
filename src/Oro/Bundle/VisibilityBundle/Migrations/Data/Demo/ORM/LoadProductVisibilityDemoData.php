@@ -5,20 +5,23 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Load product visibilities demo data.
+ */
 class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoData
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [LoadCategoryVisibilityDemoData::class]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         parent::load($manager);
 
@@ -26,19 +29,17 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param array $row
-     * @return Website
+     * {@inheritDoc}
      */
-    protected function getWebsite(ObjectManager $manager, array $row)
+    protected function getWebsite(ObjectManager $manager, array $row): Website
     {
         return $this->container->get('oro_website.manager')->getDefaultWebsite();
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getDataFile()
+    protected function getDataFile(): string
     {
         return '@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/products-visibility.csv';
     }
