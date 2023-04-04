@@ -2,6 +2,7 @@ import FrontendDialogWidget from 'orofrontend/js/app/components/frontend-dialog-
 import mediator from 'oroui/js/mediator';
 import messenger from 'oroui/js/messenger';
 import _ from 'underscore';
+import $ from 'jquery';
 
 const ProductKitLineItemWidget = FrontendDialogWidget.extend({
     options: _.extend({}, FrontendDialogWidget.prototype.options, {
@@ -11,11 +12,22 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
             modal: true,
             title: null,
             resizable: false,
-            width: 'auto',
+            width: 890,
+            minWidth: 367,
+            maxWidth: 'auto',
             autoResize: true,
-            dialogClass: 'product-kit-line-item-widget-dialog'
-        }
+            dialogClass: 'product-kit-dialog'
+        },
+        actionSectionTemplate: _.template(`
+            <div data-section="<%- section %>"
+                class="product-totals-main widget-actions-section"
+                data-role="totals-section"></div>
+        `)
     }),
+
+    fullscreenViewOptions: {
+        dialogClass: 'product-kit-dialog'
+    },
 
     /**
      * @inheritdoc
@@ -61,6 +73,27 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
         }
 
         this.remove();
+    },
+
+    _renderActions: function() {
+        ProductKitLineItemWidget.__super__._renderActions.call(this);
+
+        const container = this.getActionsElement();
+
+        if (container) {
+            this.$('[data-role="shopping-list-root"]').appendTo(this.$('[data-role="totals-controls"]'));
+            this.$('[data-role="totals"]').appendTo(this.actionsEl.find('[data-role="totals-section"]'));
+            this.widget.dialog('showActionsContainer');
+        }
+    },
+
+    getActionsElement: function() {
+        if (!this.actionsEl) {
+            this.actionsEl = $('<div class="form-actions widget-actions"/>').appendTo(
+                this.widget.dialog('actionsContainer')
+            );
+        }
+        return this.actionsEl;
     }
 });
 

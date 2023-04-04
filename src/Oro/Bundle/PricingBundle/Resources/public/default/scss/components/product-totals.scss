@@ -3,7 +3,9 @@
 .product-totals {
     display: $product-totals-display;
     align-items: $product-totals-align-items;
+    flex-wrap: $product-totals-flex-wrap;
     justify-content: $product-totals-justify-content;
+    gap: $product-totals-gap;
 
     width: $product-totals-width;
     min-width: $product-totals-min-width;
@@ -15,6 +17,14 @@
         padding: $product-totals-nested-offset-inner;
     }
 
+    &__controls {
+        display: $product-totals-display;
+        align-items: $product-totals-align-items;
+        flex-wrap: $product-totals-flex-wrap;
+        justify-content: $product-totals-justify-content;
+        gap: $product-totals-gap;
+    }
+
     &__button {
         padding: $product-totals-btn-offset-inner;
     }
@@ -24,7 +34,6 @@
         background: $product-totals-wrapper-background;
         padding: $product-totals-wrapper-offset-inner;
         border-radius: $product-totals-wrapper-border-radius;
-        margin: $product-totals-wrapper-offset;
 
         &--transparent {
             background: $product-totals-wrapper-transparent-background;
@@ -39,7 +48,6 @@
 
     &__label {
         display: $product-totals-label-display;
-        min-width: $product-totals-label-min-width;
         padding: $product-totals-label-offset-inner;
     }
 
@@ -75,13 +83,41 @@
 }
 
 @include breakpoint('mobile-landscape') {
-    .product-totals {
-        flex-direction: $product-totals-mobile-landscape-flex-direction;
+    .product-totals-main {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: $product-totals-main-offset-mobile;
 
-        &__wrapper {
-            justify-content: $product-totals-wrapper-mobile-landscape-justify-content;
-            width: $product-totals-wrapper-mobile-landscape-width;
-            margin: $product-totals-wrapper-mobile-landscape-offset;
+        border-radius: $base-ui-element-border-radius;
+        background: $order-checkout-widget-container-background;
+
+        .product-totals {
+            align-items: flex-end;
+            flex-direction: column;
+
+            &__wrapper {
+                padding: 0;
+            }
+
+            &__total-price {
+                width: 100%;
+                font-size: $base-font-size--large;
+                font-weight: font-weight('bold');
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .product-totals-main {
+        .product-totals {
+            align-items: stretch;
+
+            &__controls {
+                align-items: stretch;
+                flex-direction: column;
+            }
         }
     }
 }

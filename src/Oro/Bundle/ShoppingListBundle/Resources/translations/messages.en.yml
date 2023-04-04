@@ -374,5 +374,6 @@ oro:
                                 none: None
                     submit:
                         label: Submit
+                    notes: Notes
                     subtotal:
-                        label: 'Price as configured: %subtotal%'
+                        label: 'Price as configured:'

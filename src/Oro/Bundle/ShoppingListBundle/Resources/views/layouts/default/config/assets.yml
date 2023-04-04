@@ -3,6 +3,8 @@ styles:
         - 'bundles/oroshoppinglist/default/scss/settings/global-settings.scss'
 
         - 'bundles/oroshoppinglist/default/scss/variables/matrix-order-widget-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/product-kit-items-table-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/product-item-quantity-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/shopping-lists-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/shopping-lists-popup-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/shopping-list-dropdown-config.scss'
@@ -40,6 +42,12 @@ styles:
         - 'bundles/oroshoppinglist/default/scss/components/inline-editing/line-item-editing.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-list-move-action.scss'
         - 'bundles/oroshoppinglist/default/scss/components/matrix-order-widget.scss'
+
+        - 'bundles/oroshoppinglist/default/scss/components/product-kit-dialog.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/product-kit-items.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/product-kit-items-table.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/product-item-quantity.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/product-kit-add-to-shopping-list.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-lists.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-lists-popup.scss'
         - 'bundles/oroshoppinglist/default/scss/components/my-shopping-list-owner-wrapper.scss'

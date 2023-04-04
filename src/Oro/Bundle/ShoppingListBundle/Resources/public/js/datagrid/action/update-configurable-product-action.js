@@ -34,7 +34,6 @@ const UpdateConfigurableProductAction = DialogAction.extend({
             staticPage: false,
             fullscreenMode: true,
             dialogOptions: {
-                dialogClass: 'ui-dialog--frontend',
                 allowMaximize: false,
                 allowMinimize: false,
                 modal: true,

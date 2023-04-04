@@ -102,6 +102,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         self::assertNull($form->getData());
         self::assertNull($form->get('quantity')->getData());
         self::assertNull($form->get('unit')->getData());
+        self::assertNull($form->get('notes')->getData());
         self::assertNull($form->get('kitItemLineItems')->getData());
 
         $formView = $form->createView();
@@ -125,7 +126,8 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
             ->setProduct($this->productKit)
             ->setQuantity(42.1)
             ->setUnit($this->productUnitItem)
-            ->addKitItemLineItem($kitItemLineItem);
+            ->addKitItemLineItem($kitItemLineItem)
+            ->setNotes('sample notes');
 
         $productPrices = [
             $this->productKit->getId() => ['sample_key1' => 'sample_value1'],
@@ -152,6 +154,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->assertFormContainsField('quantity', $form);
         $this->assertFormContainsField('unit', $form);
         $this->assertFormContainsField('kitItemLineItems', $form);
+        $this->assertFormContainsField('notes', $form);
         $this->assertFormOptionEqual(false, 'required', $form->get('kitItemLineItems'));
         $this->assertFormOptionEqual(false, 'allow_add', $form->get('kitItemLineItems'));
         $this->assertFormOptionEqual(false, 'allow_delete', $form->get('kitItemLineItems'));
@@ -160,6 +163,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         self::assertSame($lineItem, $form->getData());
         self::assertSame($lineItem->getQuantity(), $form->get('quantity')->getData());
         self::assertSame($lineItem->getUnit(), $form->get('unit')->getData());
+        self::assertSame($lineItem->getNotes(), $form->get('notes')->getData());
         self::assertEquals(new ArrayCollection([$kitItemLineItem]), $form->get('kitItemLineItems')->getData());
 
         $formView = $form->createView();
@@ -187,11 +191,13 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
 
+        $notes = 'sample notes';
         $form->submit(
             [
                 'quantity' => 42.2,
                 'unit' => 'each',
                 'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]],
+                'notes' => $notes,
             ]
         );
 
@@ -199,6 +205,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
         self::assertSame(42.2, $lineItem->getQuantity());
         self::assertEquals($this->productUnitEach, $lineItem->getUnit());
+        self::assertEquals($notes, $lineItem->getNotes());
         self::assertEquals($this->kitItemProduct2, $kitItemLineItem->getProduct());
         self::assertEquals(10.10, $kitItemLineItem->getQuantity());
     }

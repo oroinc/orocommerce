@@ -1,0 +1,49 @@
+{% block _product_kit_line_item_add_to_shopping_list_dropdown_widget %}
+    {% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
+    {% set buttonOptions = {
+        remove: false,
+        dataUrl: false,
+        dataAttributes: {},
+        aCss: 'btn--info ',
+        iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
+        labelInIcon: false
+    } %}
+
+    {% set newOptions = buttonOptions|merge({
+        ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
+        iCss: 'fa fa-plus fa--fw fa--as-line',
+        labelInIcon: false
+    }) %}
+
+    {% set buttonsOptions = {
+        new: newOptions,
+        current: buttonOptions,
+        existing: buttonOptions,
+        singleButtonACss : 'btn--info',
+        shoppingLists: shoppingLists,
+        componentModule: params.buttonOptions.page_component_module|default('oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view'),
+        componentOptions: {
+            'quickAddComponentPrefix': 'product-kit-add'
+        }|merge(params.buttonOptions.page_component_options|default({}))
+    } %}
+
+    {# btn-group--full #}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <div class="product-kit-add-to-shopping-list" data-role="shopping-list-root">
+        {{ UI.pinnedDropdownButton({
+            'html': buttons.getButtonsHtml(buttonsOptions),
+            'rootClassName': 'pinned-dropdown',
+            'mobileEnabled': true,
+            'dataAttributes': {
+                'layout': 'deferred-initialize'
+            },
+            'options': {
+                'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
+                'widgetName': 'productAddToDropdownButtonProcessor',
+                'truncateLength': 25,
+                'decoreClass': 'btn--info',
+                'groupContainer': '<div class="btn-group btn-group--flex"></div>',
+            }
+        }) }}
+    </div>
+{% endblock %}

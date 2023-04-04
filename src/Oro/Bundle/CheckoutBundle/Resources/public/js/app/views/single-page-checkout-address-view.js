@@ -13,7 +13,6 @@ define(function(require) {
             entityId: null,
             entityClass: 'Oro\\Bundle\\CheckoutBundle\\Entity\\Checkout',
             jsDialogWidget: 'orofrontend/js/app/components/frontend-dialog-widget',
-            dialogClass: 'ui-dialog--frontend',
             dialogRoute: 'oro_frontend_action_widget_form',
             dialogWidth: 1000,
             dialogHeight: 'auto',

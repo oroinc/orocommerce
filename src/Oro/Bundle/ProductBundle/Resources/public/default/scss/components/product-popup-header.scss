@@ -3,19 +3,21 @@
 
     display: $product-popup-header-display;
     align-items: $product-popup-header-align-items;
+    margin-right: $close-dialog-size;
 
     &-img {
-        display: $product-popup-header-img-display;
-
-        width: $product-popup-header-img-width;
-        height: $product-popup-header-img-height;
         margin: $product-popup-header-img-offset;
-        border: $product-popup-header-img-border;
     }
 }
 
 .fullscreen-popup {
     .product-popup__header {
         padding: $fullscreen-product-popup-header-offset;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-popup__header-img {
+        display: none;
     }
 }

@@ -5,6 +5,9 @@ layout:
             root: widget_content
             namespace: product_kit_line_item_widget
     actions:
+        - '@setBlockTheme':
+            themes: 'product_kit_line_item_create.html.twig'
+
         - '@setOption':
             id: product_kit_line_item_widget_wrapper
             optionName: vars
@@ -13,15 +16,27 @@ layout:
                 product: '=data["product"]'
                 shoppingList: '=data["shoppingList"]'
                 shoppingLists:  '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
+
+        - '@setOption':
+           id: product_kit_line_item_widget_form_actions_submit
+           optionName: visible
+           optionValue: false
+
+        - '@add':
+              id: product_kit_line_item_add_to_shopping_list_dropdown
+              blockType: container
+              parentId: product_kit_line_item_widget_form_actions
+
+        - '@setOption':
+              id: product_kit_line_item_add_to_shopping_list_dropdown
+              optionName: vars
+              optionValue:
+                  form: '=data["form"]'
+                  product: '=data["product"]'
+                  shoppingList: '=data["shoppingList"]'
+                  shoppingLists:  '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
+
         - '@move':
             id: widget_actions
             parentId: product_kit_line_item_widget_form_actions
-            prepend: true
-        - '@move':
-            id: product_kit_line_item_widget_form_actions_submit
-            parentId: widget_actions
-            prepend: true
-        - '@move':
-            id: product_kit_line_item_widget_form_actions_cancel
-            parentId: widget_actions
             prepend: true

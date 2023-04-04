@@ -17,6 +17,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -58,7 +59,8 @@ class ProductKitLineItemType extends AbstractType
                         ]
                     )
                     ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'])
-            );
+            )
+        ->add('notes', TextareaType::class, ['required' => false]);
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options): void

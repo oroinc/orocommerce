@@ -1,0 +1,86 @@
+/* @theme: default; */
+
+.product-item-quantity {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+
+    &--justify-end {
+        justify-content: flex-end;
+    }
+
+    &__input {
+        position: relative;
+        width: $product-item-quantity-input-width;
+        min-width: $product-item-quantity-input-width;
+
+        text-align: right;
+
+        overflow: hidden;
+
+        // an element has next select and an optional `fields-row-error` field
+        &:nth-last-child(3),
+        &:nth-last-child(4) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        &:hover,
+        &:focus,
+        &.error {
+            z-index: z('base') + 1;
+        }
+
+        // Mask to hide text overflow
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: $input-padding-y;
+
+            background-color: $input-background-color;
+        }
+    }
+
+    .select2-container,
+    .select {
+        position: relative;
+
+        min-width: $product-item-quantity-select-width;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        margin-left: -1px;
+        text-align: left;
+
+        @include ellipsis();
+
+        &:hover,
+        &:focus,
+        &.error {
+            z-index: z('base');
+        }
+
+        &.select2-container-active {
+            z-index: z('base') + 2;
+        }
+    }
+
+    .fields-row-error {
+        width: 100%;
+
+        &:empty {
+            display: none;
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .product-item-quantity {
+        &__input {
+            width: $product-item-quantity-input-width-mobile;
+            min-width: $product-item-quantity-input-width-mobile;
+        }
+    }
+}

@@ -36,13 +36,6 @@ $matrix-order-widget-state-multiline-label-wrap-width: 70px !default;
 // Form inline modifier group variables for desktop
 $matrix-order-widget-form-inline-summary-inline-strict-desktop-offset-top: 60px !default;
 
-// Dialog group variables
-$matrix-order-widget-dialog-ui-dialog-titlebar-offset-inner: 0 !default;
-$matrix-order-widget-dialog-ui-dialog-title-display: none !default;
-$matrix-order-widget-dialog-ui-widget-content-offset-inner: 0 16px !default;
-$matrix-order-widget-dialog-ui-widget-header-offset-inner: 16px 16px 0 16px !default;
-$matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner: 0 40px 20px !default;
-
 // Desktop variables
 $matrix-order-widget-dialog-max-width: 830px !default;
 $matrix-order-widget-dialog-grid-body-max-height: 310px !default;
@@ -50,11 +43,6 @@ $matrix-order-widget-dialog-grid-side-max-height: 310px !default;
 $matrix-order-widget-dialog-form-col-flex-grow: 1 !default;
 $matrix-order-widget-dialog-state-labels-above-one-line-flex-grow: 1 !default;
 $matrix-order-widget-dialog-grid-body-overflow: auto;
-
-// Dialog-fullscreen group variables
-$matrix-order-widget-dialog-fullscreen-position: static !default;
-$matrix-order-widget-dialog-fullscreen-position-ui-dialog-hidden-item: none !default;
-$matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner: 0 !default;
 
 // Grid group variables
 $matrix-order-widget-grid-overflow: hidden !default;
@@ -299,9 +287,6 @@ $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner: 10px 45px 1
 
 // Tablet-small variables
 $matrix-order-widget-dialog-item-content-tablet-small-flex-basis: 25% !default;
-$matrix-order-widget-dialog-ui-widget-content-tablet-small-offset: 0 16px 8px 16px;
-$matrix-order-widget-dialog-tablet-small-offset-bottom: $offset-y-m !default;
-$matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset: 0 15px 10px 15px !default;
 
 $matrix-order-widget-validation-failed-tablet-small-offset: 0 $offset-y-m !default;
 
