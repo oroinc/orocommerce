@@ -7,7 +7,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 {
-    private RequestDataStorageExtension $requestDataStorageExtension;
+    private ProductAvailabilityProvider $productAvailabilityProvider;
     private FeatureChecker $featureChecker;
 
     /**
@@ -35,7 +35,7 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
         RequestStack $requestStack,
         TranslatorInterface $translator,
         UrlGeneratorInterface $router,
-        RequestDataStorageExtension $requestDataStorageExtension,
+        ProductAvailabilityProvider $productAvailabilityProvider,
         FeatureChecker $featureChecker
     ) {
         parent::__construct(
@@ -47,7 +47,7 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
             $translator,
             $router
         );
-        $this->requestDataStorageExtension = $requestDataStorageExtension;
+        $this->productAvailabilityProvider = $productAvailabilityProvider;
         $this->featureChecker = $featureChecker;
     }
 
@@ -56,10 +56,10 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
      */
     public function process(array $data, Request $request): ?Response
     {
-        $isAllowedRFP = $this->requestDataStorageExtension
-            ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
+        $hasProductsAllowedForRFP = $this->productAvailabilityProvider
+            ->hasProductsAllowedForRFPByProductData($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
 
-        if (!$isAllowedRFP) {
+        if (!$hasProductsAllowedForRFP) {
             $this->addFlashMessage(
                 'warning',
                 $this->translator->trans('oro.frontend.rfp.data_storage.no_products_be_added_to_rfq')

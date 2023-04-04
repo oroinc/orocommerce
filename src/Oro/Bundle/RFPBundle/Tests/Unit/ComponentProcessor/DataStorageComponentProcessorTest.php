@@ -7,7 +7,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor;
-use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\SearchBundle\Query\Result as SearchResult;
 use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
@@ -35,8 +35,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
 
-    /** @var RequestDataStorageExtension|\PHPUnit\Framework\MockObject\MockObject */
-    private $requestDataStorageExtension;
+    /** @var ProductAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productAvailabilityProvider;
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
@@ -50,7 +50,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->productRepository = $this->createMock(ProductRepository::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->session = $this->createMock(Session::class);
-        $this->requestDataStorageExtension = $this->createMock(RequestDataStorageExtension::class);
+        $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $requestStack = $this->createMock(RequestStack::class);
@@ -73,7 +73,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
             $requestStack,
             $translator,
             $this->createMock(UrlGeneratorInterface::class),
-            $this->requestDataStorageExtension,
+            $this->productAvailabilityProvider,
             $this->featureChecker
         );
     }
@@ -83,8 +83,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
         $request = $this->createMock(Request::class);
 
-        $this->requestDataStorageExtension->expects(self::once())
-            ->method('isAllowedRFP')
+        $this->productAvailabilityProvider->expects(self::once())
+            ->method('hasProductsAllowedForRFPByProductData')
             ->with($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
             ->willReturn(false);
 
@@ -110,8 +110,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
         $request = $this->createMock(Request::class);
 
-        $this->requestDataStorageExtension->expects(self::once())
-            ->method('isAllowedRFP')
+        $this->productAvailabilityProvider->expects(self::once())
+            ->method('hasProductsAllowedForRFPByProductData')
             ->with($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
             ->willReturn(true);
 

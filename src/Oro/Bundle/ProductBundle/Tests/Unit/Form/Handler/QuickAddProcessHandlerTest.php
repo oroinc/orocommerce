@@ -102,7 +102,9 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(true)
             ->willReturn(new FormErrorIterator($form, $formErrors));
 
-        self::assertEquals(new JsonResponse($expected), $this->handler->process($form, $request));
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
+        self::assertEquals(json_encode($expected, JSON_THROW_ON_ERROR), $response->getContent());
     }
 
     public function processWhenNotValidDataProvider(): array
@@ -193,9 +195,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($quickAddRowCollection)
             ->willReturn($normalizedCollection);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'collection' => $normalizedCollection],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'collection' => $normalizedCollection], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -276,9 +280,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($quickAddRowCollection)
             ->willReturn($normalizedCollection);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'collection' => $normalizedCollection],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'collection' => $normalizedCollection], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -371,9 +377,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($quickAddRowCollection)
             ->willReturn($normalizedCollection);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'collection' => $normalizedCollection],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'collection' => $normalizedCollection], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -482,9 +490,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getFlashBag')
             ->willReturn($flashBag);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'messages' => ['error' => ['sample flash error']]],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'messages' => ['error' => ['sample flash error']]], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -588,9 +598,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ], $request)
             ->willReturn($redirectResponse);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => true, 'redirectUrl' => $redirectResponse->getTargetUrl()],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => true, 'redirectUrl' => $redirectResponse->getTargetUrl()], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 }

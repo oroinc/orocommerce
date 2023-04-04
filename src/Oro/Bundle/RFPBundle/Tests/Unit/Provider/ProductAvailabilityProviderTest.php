@@ -2,23 +2,58 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
+    /** @var ProductAvailabilityProvider */
+    private $provider;
+
+    protected function setUp(): void
+    {
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+
+        $this->provider = new ProductAvailabilityProvider(
+            $this->configManager,
+            $this->doctrine,
+            $this->aclHelper
+        );
+    }
+
+    private function getInventoryStatus(string $id): InventoryStatus
+    {
+        return new InventoryStatus($id, $id);
+    }
 
     /**
      * @dataProvider isProductApplicableForRFPDataProvider
      */
-    public function testIsProductApplicableForRFP(string $type, bool $expected)
+    public function testIsProductApplicableForRFP(string $type, bool $expected): void
     {
-        $provider = new ProductAvailabilityProvider();
-        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => $type]);
+        $product = new ProductStub(1);
+        $product->setType($type);
 
-        $this->assertEquals($expected, $provider->isProductApplicableForRFP($product));
+        $this->assertSame($expected, $this->provider->isProductApplicableForRFP($product));
     }
 
     public function isProductApplicableForRFPDataProvider(): array
@@ -31,6 +66,141 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             'configurable product' => [
                 'type' => Product::TYPE_CONFIGURABLE,
                 'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider isAllowedDataProvider
+     */
+    public function testIsProductAllowedForRFP(
+        ?InventoryStatus $inventoryStatus,
+        string $status,
+        bool $expectedResult
+    ): void {
+        $product = new ProductStub(1);
+        $product->setStatus($status);
+        $product->setInventoryStatus($inventoryStatus);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_rfp.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
+        $this->assertSame($expectedResult, $this->provider->isProductAllowedForRFP($product));
+    }
+
+    /**
+     * @dataProvider isAllowedDataProvider
+     */
+    public function testHasProductsAllowedForRFPByProductData(
+        ?InventoryStatus $inventoryStatus,
+        string $status,
+        bool $expectedResult
+    ): void {
+        $sku = 'sku42';
+        $product = new ProductStub(42);
+        $product->setStatus($status);
+        $product->setInventoryStatus($inventoryStatus);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_rfp.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($product);
+
+        $repo = $this->createMock(ProductRepository::class);
+        $repo->expects($this->once())
+            ->method('getBySkuQueryBuilder')
+            ->with($sku)
+            ->willReturn($qb);
+
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repo);
+
+        $this->aclHelper->expects($this->once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
+        $this->assertSame(
+            $expectedResult,
+            $this->provider->hasProductsAllowedForRFPByProductData([['productSku' => $sku]])
+        );
+    }
+
+    /**
+     * @dataProvider isAllowedDataProvider
+     */
+    public function testHasProductsAllowedForRFP(
+        ?InventoryStatus $inventoryStatus,
+        string $status,
+        bool $expectedResult
+    ): void {
+        $productId = 42;
+        $product = new ProductStub($productId);
+        $product->setStatus($status);
+        $product->setInventoryStatus($inventoryStatus);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_rfp.frontend_product_visibility')
+            ->willReturn(['in_stock']);
+
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($product);
+
+        $repo = $this->createMock(ProductRepository::class);
+        $repo->expects($this->once())
+            ->method('getProductsQueryBuilder')
+            ->with([$productId])
+            ->willReturn($qb);
+
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repo);
+
+        $this->aclHelper->expects($this->once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
+        $this->assertSame($expectedResult, $this->provider->hasProductsAllowedForRFP([$productId]));
+    }
+
+    public function isAllowedDataProvider(): array
+    {
+        return [
+            [
+                'inventoryStatus' => $this->getInventoryStatus('in_stock'),
+                'status' => ProductStub::STATUS_DISABLED,
+                'expectedResult' => false,
+            ],
+            [
+                'inventoryStatus' => null,
+                'status' => ProductStub::STATUS_ENABLED,
+                'expectedResult' => false,
+            ],
+            [
+                'inventoryStatus' => $this->getInventoryStatus('in_stock'),
+                'status' => ProductStub::STATUS_ENABLED,
+                'expectedResult' => true,
+            ],
+            [
+                'inventoryStatus' => $this->getInventoryStatus('out_of_stock'),
+                'status' => ProductStub::STATUS_ENABLED,
+                'expectedResult' => false,
             ],
         ];
     }

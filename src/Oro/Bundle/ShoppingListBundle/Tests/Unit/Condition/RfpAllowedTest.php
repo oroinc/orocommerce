@@ -3,20 +3,20 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class RfpAllowedTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const PROPERTY_PATH_NAME = 'lineItems';
 
-    private const PROPERTY_PATH_NAME = 'testPropertyPath';
+    /** @var ProductAvailabilityProvider */
+    private $productAvailabilityProvider;
 
     /** @var PropertyPathInterface */
     private $propertyPath;
@@ -26,74 +26,68 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $requestDataStorageExtension = $this->createMock(RequestDataStorageExtension::class);
-        $requestDataStorageExtension->expects($this->any())
-            ->method('isAllowedRFPByProductsIds')
-            ->willReturn(true);
+        $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
 
         $this->propertyPath = $this->createMock(PropertyPathInterface::class);
-        $this->propertyPath->expects($this->any())
+        $this->propertyPath->expects(self::any())
             ->method('__toString')
             ->willReturn(self::PROPERTY_PATH_NAME);
-        $this->propertyPath->expects($this->any())
+        $this->propertyPath->expects(self::any())
             ->method('getElements')
             ->willReturn([self::PROPERTY_PATH_NAME]);
 
-        $this->rfpAllowed = new RfpAllowed($requestDataStorageExtension);
+        $this->rfpAllowed = new RfpAllowed($this->productAvailabilityProvider);
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
-        $this->assertEquals('rfp_allowed', $this->rfpAllowed->getName());
+        self::assertEquals('rfp_allowed', $this->rfpAllowed->getName());
     }
 
-    public function testInitialize()
+    public function testInitialize(): void
     {
-        $this->assertInstanceOf(RfpAllowed::class, $this->rfpAllowed->initialize([$this->propertyPath]));
+        self::assertInstanceOf(RfpAllowed::class, $this->rfpAllowed->initialize([$this->propertyPath]));
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $result = $this->rfpAllowed->initialize([$this->propertyPath])->toArray();
 
-        $this->assertEquals('$' . self::PROPERTY_PATH_NAME, $result['@rfp_allowed']['parameters'][0]);
+        self::assertEquals('$' . self::PROPERTY_PATH_NAME, $result['@rfp_allowed']['parameters'][0]);
     }
 
-    public function testCompile()
+    public function testCompile(): void
     {
+        $this->rfpAllowed->initialize([$this->propertyPath]);
         $result = $this->rfpAllowed->compile('$factoryAccessor');
 
         self::assertStringContainsString('$factoryAccessor->create(\'rfp_allowed\'', $result);
     }
 
-    public function testSetContextAccessor()
+    public function testEvaluate(): void
     {
-        $contextAccessor = $this->createMock(ContextAccessorInterface::class);
-
-        $this->rfpAllowed->setContextAccessor($contextAccessor);
-
-        $this->assertInstanceOf(
-            get_class($contextAccessor),
-            ReflectionUtil::getPropertyValue($this->rfpAllowed, 'contextAccessor')
-        );
-    }
-
-    public function testEvaluates()
-    {
-        $lineItem = $this->getEntity(LineItem::class, ['id' => 1]);
-        $product = $this->getEntity(Product::class, ['id' => 2, 'sku' => '123']);
+        $lineItem = new LineItem();
+        ReflectionUtil::setId($lineItem, 1);
+        $product = new Product();
+        ReflectionUtil::setId($product, 2);
+        $product->setSku('123');
         $lineItem->setProduct($product);
         $lineItems = [$lineItem];
+        $shoppingList = new ShoppingList();
 
         $contextAccessor = $this->createMock(ContextAccessorInterface::class);
-        $contextAccessor->expects($this->any())
+        $contextAccessor->expects(self::any())
             ->method('getValue')
+            ->with(self::identicalTo($shoppingList), self::identicalTo($this->propertyPath))
             ->willReturn($lineItems);
 
-        $this->rfpAllowed->initialize([$this->propertyPath])->setContextAccessor($contextAccessor);
+        $this->productAvailabilityProvider->expects(self::any())
+            ->method('hasProductsAllowedForRFP')
+            ->with([2])
+            ->willReturn(true);
 
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 2]);
-
-        $this->assertTrue($this->rfpAllowed->evaluate($shoppingList->getLineItems()));
+        $this->rfpAllowed->initialize([$this->propertyPath]);
+        $this->rfpAllowed->setContextAccessor($contextAccessor);
+        self::assertTrue($this->rfpAllowed->evaluate($shoppingList));
     }
 }

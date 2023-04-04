@@ -4,13 +4,13 @@ namespace Oro\Bundle\ProductBundle\Form\Extension;
 
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -19,112 +19,63 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * Abstract product data storage form type extension that generates new line item and adds it to entity
+ * The base class form type extensions that pre-fill an entity
+ * with requested products taken from the product data storage.
  */
-abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension implements LoggerAwareInterface
+abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
 {
-    use LoggerAwareTrait;
+    protected RequestStack $requestStack;
+    protected ProductDataStorage $storage;
+    protected PropertyAccessorInterface $propertyAccessor;
+    protected DoctrineHelper $doctrineHelper;
+    protected AclHelper $aclHelper;
+    protected LoggerInterface $logger;
+    protected ?ProductRepository $productRepository = null;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var ProductDataStorage */
-    protected $storage;
-
-    /** @var string */
-    protected $productClass;
-
-    /** @var string */
-    protected $dataClass;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
-
-    /** @var string */
-    protected $extendedType;
-
-    /** @var ProductRepository */
-    protected $productRepository;
-
-    /** @var AclHelper */
-    protected $aclHelper;
-
-    /**
-     * @param RequestStack $requestStack
-     * @param ProductDataStorage $storage
-     * @param DoctrineHelper $doctrineHelper
-     * @param AclHelper $aclHelper
-     * @param string $productClass
-     */
     public function __construct(
         RequestStack $requestStack,
         ProductDataStorage $storage,
+        PropertyAccessorInterface $propertyAccessor,
         DoctrineHelper $doctrineHelper,
         AclHelper $aclHelper,
-        $productClass
+        LoggerInterface $logger
     ) {
         $this->requestStack = $requestStack;
         $this->storage = $storage;
+        $this->propertyAccessor = $propertyAccessor;
         $this->doctrineHelper = $doctrineHelper;
         $this->aclHelper = $aclHelper;
-        $this->productClass = $productClass;
+        $this->logger = $logger;
     }
 
     /**
-     * @param string $dataClass
-     * @return $this
+     * {@inheritDoc}
      */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($this->isStorageFull()) {
-            $builder->addEventListener(
-                FormEvents::PRE_SET_DATA,
-                function (FormEvent $event) {
-                    $entity = $event->getData();
-                    if ($entity instanceof $this->dataClass
-                        && !$this->doctrineHelper->getSingleEntityIdentifier($entity)
-                    ) {
-                        $this->fillData($entity);
-                    }
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $entity = $event->getData();
+                if (is_a($entity, $this->getEntityClass())
+                    && !$this->doctrineHelper->getSingleEntityIdentifier($entity)
+                ) {
+                    $this->fillData($entity);
                 }
-            );
+            });
         }
     }
 
     /**
-     * @return bool
+     * {@inheritDoc}
      */
-    protected function isStorageFull()
-    {
-        return $this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)
-               && $this->storage->get();
-    }
-
-    /**
-     * @param OptionsResolver $resolver
-     * @return void
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         if ($this->isStorageFull()) {
             $resolver->setNormalizer('data', function (Options $options, $value) {
-                if ($value instanceof $this->dataClass
+                if (is_a($value, $this->getEntityClass())
                     && !$this->doctrineHelper->getSingleEntityIdentifier($value)
                 ) {
                     $this->fillData($value);
@@ -135,10 +86,16 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param object $entity
-     */
-    protected function fillData($entity)
+    abstract protected function getEntityClass(): string;
+
+    protected function isStorageFull(): bool
+    {
+        return
+            $this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)
+            && $this->storage->get();
+    }
+
+    protected function fillData(object $entity): void
     {
         $data = $this->storage->get();
         $this->storage->remove();
@@ -147,25 +104,22 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
             return;
         }
 
-        if (!empty($data[ProductDataStorage::ENTITY_DATA_KEY]) &&
-            is_array($data[ProductDataStorage::ENTITY_DATA_KEY])
-        ) {
-            $this->fillEntityData($entity, $data[ProductDataStorage::ENTITY_DATA_KEY]);
+        $entityData = $data[ProductDataStorage::ENTITY_DATA_KEY] ?? null;
+        if (\is_array($entityData) && $entityData) {
+            $this->fillEntityData($entity, $entityData);
         }
 
-        if (!empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) &&
-            is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
-        ) {
-            $itemsData = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
-            $this->fillItemsData($entity, $itemsData);
+        $entityItemsData = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] ?? null;
+        if (\is_array($entityItemsData) && $entityItemsData) {
+            $this->fillItemsData($entity, $entityItemsData);
         }
     }
 
-    protected function fillItemsData($entity, array $itemsData = [])
+    protected function fillItemsData(object $entity, array $itemsData): void
     {
         $repository = $this->getProductRepository();
         foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
+            if (!\array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
                 continue;
             }
 
@@ -179,18 +133,10 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param object $entity
-     * @param array $data
-     */
-    protected function fillEntityData($entity, array $data = [])
+    protected function fillEntityData(object $entity, array $data): void
     {
         if (!$data) {
             return;
-        }
-
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         }
 
         $metadata = $this->doctrineHelper->getEntityMetadata($entity);
@@ -200,7 +146,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
                 if ($metadata->hasAssociation($property)) {
                     $associationTargetClass = $metadata->getAssociationTargetClass($property);
                     // For collections (ManyToMany, OneToMany) associations support
-                    if (is_array($value)) {
+                    if (\is_array($value)) {
                         $value = array_map(
                             function ($value) use ($associationTargetClass) {
                                 return $this->doctrineHelper->getEntityReference(
@@ -220,34 +166,40 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
 
                 $this->propertyAccessor->setValue($entity, $property, $value);
             } catch (NoSuchPropertyException $e) {
-                if (null !== $this->logger) {
-                    $this->logger->notice(
-                        'No such property {property} in the entity {entity}',
-                        [
-                            'property' => $property,
-                            'entity' => ClassUtils::getClass($entity),
-                            'exception' => $e,
-                        ]
-                    );
-                }
+                $this->logger->notice(
+                    'No such property {property} in the entity {entity}',
+                    [
+                        'property' => $property,
+                        'entity' => ClassUtils::getClass($entity),
+                        'exception' => $e,
+                    ]
+                );
             }
         }
     }
 
-    /**
-     * @param Product $product
-     * @param object $entity
-     * @param array $itemData
-     */
-    abstract protected function addItem(Product $product, $entity, array $itemData = []);
+    abstract protected function addItem(Product $product, object $entity, array $itemData): void;
 
-    /**
-     * @return ProductRepository
-     */
-    protected function getProductRepository()
+    protected function getDefaultProductUnit(Product $product): ?ProductUnit
+    {
+        /* @var ProductUnitPrecision $unitPrecision */
+        $unitPrecision = $product->getUnitPrecisions()->first();
+        if (!$unitPrecision) {
+            return null;
+        }
+
+        $unit = $unitPrecision->getUnit();
+        if (!$unit) {
+            return null;
+        }
+
+        return $unit;
+    }
+
+    protected function getProductRepository(): ProductRepository
     {
         if (!$this->productRepository) {
-            $this->productRepository = $this->doctrineHelper->getEntityRepository($this->productClass);
+            $this->productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
         }
 
         return $this->productRepository;

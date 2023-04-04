@@ -16,37 +16,30 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
+    private Quote $entity;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $requestStack = $this->createMock(RequestStack::class);
-        $this->request = $this->createMock(HttpRequest::class);
-
-        $requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-
         $this->entity = new Quote();
+
         $this->extension = new QuoteDataStorageExtension(
-            $requestStack,
+            $this->getRequestStack(),
             $this->storage,
+            PropertyAccess::createPropertyAccessor(),
             $this->doctrineHelper,
             $this->aclHelper,
-            $this->productClass
+            $this->logger
         );
-        $this->extension->setDataClass(Quote::class);
-
-        $this->setUpLoggerMock($this->extension);
 
         $this->initEntityMetadata([
             ProductUnit::class         => [
-                'identifier' => ['code'],
+                'identifier' => ['code']
             ],
             Quote::class               => [
                 'associationMappings' => [
@@ -58,8 +51,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                     ],
                     'customerUser' => [
                         'targetEntity' => CustomerUser::class,
-                    ],
-                ],
+                    ]
+                ]
             ],
             QuoteProductRequest::class => [
                 'associationMappings' => [
@@ -68,38 +61,42 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                     ],
                     'requestProductItem' => [
                         'targetEntity' => RequestProductItem::class,
-                    ],
-                ],
+                    ]
+                ]
             ],
             QuoteProductOffer::class   => [
                 'associationMappings' => [
                     'productUnit' => [
                         'targetEntity' => ProductUnit::class,
-                    ],
-                ],
-            ],
+                    ]
+                ]
+            ]
         ]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getTargetEntity(): object
+    {
+        return $this->entity;
     }
 
     /**
      * @dataProvider buildProvider
      */
-    public function testBuild(array $inputData)
+    public function testBuildForm(array $inputData): void
     {
-        /* @var Request $request */
         $request = $this->getEntity(Request::class, $inputData['requestId']);
-        /* @var RequestProductItem $requestProductItem */
         $requestProductItem = $this->getEntity(
             RequestProductItem::class,
             $inputData['requestProductItemId']
         );
 
-        $productUnit = (new ProductUnit())->setCode($inputData['productUnitCode']);
-        $product = $this->getProductEntity($inputData['productSku'], $productUnit);
+        $productUnit = $this->getProductUnit($inputData['productUnitCode']);
+        $product = $this->getProduct($inputData['productSku'], $productUnit);
 
-        /* @var Customer $customer */
         $customer = $this->getEntity(Customer::class, $inputData['customerId']);
-        /* @var CustomerUser $customerUser */
         $customerUser = $this->getEntity(CustomerUser::class, $inputData['customerUserId']);
 
         $data = [
@@ -121,18 +118,16 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                             'productUnitCode' => $productUnit->getCode(),
                             'requestProductItem' => $requestProductItem->getId(),
                         ]
-                    ],
-                ],
+                    ]
+                ]
             ]
         ];
 
-        $this->assertRequestGetCalled();
-        $this->assertStorageCalled($data);
-        $this->assertProductRepositoryCalled($product);
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsGetProductFromEntityRepository($product);
 
-        $this->entity = new Quote();
-
-        $this->extension->buildForm($this->getFormBuilder(true), []);
+        $this->extension->buildForm($this->getFormBuilder(), []);
 
         $this->assertEquals($customer, $this->entity->getCustomer());
         $this->assertEquals($customerUser, $this->entity->getCustomerUser());
@@ -182,8 +177,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                     'price' => Price::create(5, 'USD'),
                     'quantity' => 6,
                     'commentCustomer' => 'comment 7',
-                ],
-            ],
+                ]
+            ]
         ];
     }
 

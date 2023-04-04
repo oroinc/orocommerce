@@ -44,11 +44,15 @@ services:
 
     oro_sale.form.type.extension.quote_data_storage:
         class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension'
-        parent: oro_product.form.type.extension.product_data_storage.abstract
-        calls:
-            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\Quote']]
+        arguments:
+            - '@request_stack'
+            - '@oro_product.storage.product_data_storage'
+            - '@form.property_accessor'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
+            - '@logger'
         tags:
-            - { name: form.type_extension, alias: oro_sale_quote, extended_type: Oro\Bundle\SaleBundle\Form\Type\QuoteType }
+            - { name: form.type_extension }
 
     oro_sale.form.type.extension.quote_email_template:
         class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteEmailTemplateExtension'
