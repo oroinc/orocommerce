@@ -60,8 +60,9 @@ class NoDataMessagesExtensionTest extends \PHPUnit\Framework\TestCase
                     ]
                 ]
             ],
-            PropertyAccess::createPropertyAccessorWithDotSyntax()
         );
+
+        $config->setPropertyAccessor(PropertyAccess::createPropertyAccessorWithDotSyntax());
 
         $expected = [
             'entityHint' => 'stdclass.entity_plural_label',
