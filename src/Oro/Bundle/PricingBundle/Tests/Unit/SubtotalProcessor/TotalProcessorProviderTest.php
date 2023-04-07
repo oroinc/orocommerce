@@ -431,6 +431,8 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
                 'currency' => 'USD',
                 'visible' => null,
                 'data' => null,
+                'price' => [],
+                'quantity' => null,
             ],
             $totals[TotalProcessorProvider::TYPE]
         );
@@ -445,6 +447,8 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
                     'currency' => 'USD',
                     'visible' => null,
                     'data' => null,
+                    'price' => [],
+                    'quantity' => null,
                 ],
                 [
                     'type' => 'subtotal',
@@ -454,6 +458,8 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
                     'currency' => 'USD',
                     'visible' => null,
                     'data' => null,
+                    'price' => [],
+                    'quantity' => null,
                 ],
             ],
             $totals[TotalProcessorProvider::SUBTOTALS]

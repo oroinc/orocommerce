@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -14,6 +12,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitLineItemFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -38,18 +37,22 @@ class AjaxProductKitLineItemController extends AbstractController
 
     private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
 
+    private ShoppingListLineItemsHolderFactory $lineItemsHolderFactory;
+
     public function __construct(
         ProductKitAvailabilityChecker $productKitAvailabilityChecker,
         CurrentShoppingListManager $currentShoppingListManager,
         ShoppingListManager $shoppingListManager,
         ProductKitLineItemFactory $productKitLineItemFactory,
-        SubtotalProviderInterface $lineItemNotPricedSubtotalProvider
+        SubtotalProviderInterface $lineItemNotPricedSubtotalProvider,
+        ShoppingListLineItemsHolderFactory $lineItemsHolderFactory
     ) {
         $this->productKitAvailabilityChecker = $productKitAvailabilityChecker;
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->shoppingListManager = $shoppingListManager;
         $this->productKitLineItemFactory = $productKitLineItemFactory;
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
+        $this->lineItemsHolderFactory = $lineItemsHolderFactory;
     }
 
     /**
@@ -79,11 +82,10 @@ class AjaxProductKitLineItemController extends AbstractController
 
         /** @var ShoppingList|null $shoppingList */
         $shoppingList = $this->currentShoppingListManager
-            ->getForCurrentUser((int)$request->get('shoppingListId'), false);
-        $setCurrent = false;
-        if ($shoppingList === null) {
-            $shoppingList = $this->shoppingListManager->create();
-            $setCurrent = true;
+            ->getForCurrentUser((int)$request->get('shoppingListId'), true);
+
+        if ($shoppingList === null || !$this->isGranted('EDIT', $shoppingList)) {
+            throw $this->createAccessDeniedException();
         }
 
         $productKitLineItem = $this->productKitLineItemFactory->createProductKitLineItem($product);
@@ -91,13 +93,13 @@ class AjaxProductKitLineItemController extends AbstractController
         $form = $this->createForm(
             ProductKitLineItemType::class,
             $productKitLineItem,
-            ['validation_groups' => ['Default', 'add_product_kit_line_item', 'product_kit_is_available_for_purchase']]
+            ['validation_groups' => ['Default', 'add_product', 'add_product_kit_line_item']]
         );
         $form->handleRequest($request);
 
         if ($request->get('getSubtotal', false)) {
             $subtotal = $this->lineItemNotPricedSubtotalProvider
-                ->getSubtotal(new LineItemsNotPricedDTO(new ArrayCollection([$productKitLineItem])))
+                ->getSubtotal($this->lineItemsHolderFactory->createFromLineItems([$productKitLineItem]))
                 ->toArray();
 
             return new JsonResponse([
@@ -107,10 +109,6 @@ class AjaxProductKitLineItemController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($setCurrent === true) {
-                $this->currentShoppingListManager->setCurrent($shoppingList->getCustomerUser(), $shoppingList);
-            }
-
             $this->shoppingListManager->addLineItem($productKitLineItem, $shoppingList);
 
             return new JsonResponse(['success' => true, 'messages' => []]);

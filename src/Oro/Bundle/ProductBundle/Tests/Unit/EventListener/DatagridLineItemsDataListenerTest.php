@@ -104,6 +104,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         // Variables for cases 'without parent product'
         $product1 = (new ProductStub())
             ->setId(1)
+            ->setStatus(Product::STATUS_ENABLED)
             ->setSku('p1')
             ->setNames([(new ProductName())->setString($product1Name = 'Product1')]);
         $productUnit1 = (new ProductUnit())->setCode('sample_unit1');
@@ -114,10 +115,12 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
 
         // Variables for case 'with parent product'
         $parentProduct = (new ProductStub())
+            ->setStatus(Product::STATUS_ENABLED)
             ->setId(2)
             ->setNames([(new ProductName())->setString($parentProductName = 'Product2')]);
         $product2 = (new ProductStub())
             ->setId(2)
+            ->setStatus(Product::STATUS_ENABLED)
             ->setSku('p2');
         $productUnit2 = (new ProductUnit())->setCode('sample_unit2');
         $lineItemWithParent = (new ProductLineItemStub(20))
@@ -130,6 +133,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         $configurableProduct1Name = 'ConfigurableProduct1';
         $configurableProduct1 = (new ProductStub())
             ->setId(2)
+            ->setStatus(Product::STATUS_ENABLED)
             ->setNames([(new ProductName())->setString($configurableProduct1Name)])
             ->setType(Product::TYPE_CONFIGURABLE);
         $configurableProduct1Unit = (new ProductUnit())->setCode('sample_unit_of_configurable_product');
@@ -141,6 +145,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         // Variables for case 'with image'
         $productWithImage = (new ProductStub())
             ->setId(3)
+            ->setStatus(Product::STATUS_ENABLED)
             ->setSku('p3')
             ->setNames([(new ProductName())->setString($product3Name = 'Product3')]);
         $productImage = new ProductImageStub();
@@ -161,6 +166,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ->setPrecision(3);
         $productWithUnitPrecision = (new ProductStub())
             ->setId(4)
+            ->setStatus(Product::STATUS_ENABLED)
             ->setSku('p4')
             ->setNames([(new ProductName())->setString($product4Name = 'Product4')])
             ->addUnitPrecision($productUnitPrecision);
@@ -177,6 +183,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ->setSell(false);
         $productWithDisabledUnitPrecision = (new ProductStub())
             ->setId(5)
+            ->setStatus(Product::STATUS_ENABLED)
             ->setSku('p5')
             ->setNames([(new ProductName())->setString($product5Name = 'Product5')])
             ->addUnitPrecision($disabledProductUnitPrecision);
@@ -277,6 +284,20 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ],
             'without product' => [
                 'lineItem' => (new ProductLineItemStub(10))
+                    ->setQuantity(123)
+                    ->setUnit($productUnit1),
+                'productConfiguration' => [],
+                'expectedData' => [
+                    'id' => 10,
+                    'sku' => null,
+                    'name' => '',
+                    'quantity' => 123,
+                    'unit' => $productUnit1->getCode(),
+                ],
+            ],
+            'with disabled product' => [
+                'lineItem' => (new ProductLineItemStub(10))
+                    ->setProduct((new ProductStub()))
                     ->setQuantity(123)
                     ->setUnit($productUnit1),
                 'productConfiguration' => [],

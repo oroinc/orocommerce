@@ -17,6 +17,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
@@ -63,6 +65,7 @@ class LineItem implements
     CustomerVisitorOwnerAwareInterface,
     ProductLineItemInterface,
     ProductKitItemLineItemsAwareInterface,
+    ProductLineItemsHolderAwareInterface,
     ExtendEntityInterface
 {
     use UserAwareTrait;
@@ -455,5 +458,10 @@ class LineItem implements
     public function getChecksum(): string
     {
         return $this->checksum;
+    }
+
+    public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
+    {
+        return $this->shoppingList;
     }
 }

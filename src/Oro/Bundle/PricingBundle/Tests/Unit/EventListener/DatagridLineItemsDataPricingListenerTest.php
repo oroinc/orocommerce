@@ -8,7 +8,6 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
@@ -16,7 +15,13 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Stub\LineItemPriceAwareStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener;
+use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
+use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
+use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
+use Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -41,11 +46,13 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
     protected function setUp(): void
     {
         $this->lineItemNotPricedSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
+        $lineItemsHolderFactory = new ShoppingListLineItemsHolderFactory();
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $numberFormatter = $this->createMock(NumberFormatter::class);
 
         $this->listener = new DatagridLineItemsDataPricingListener(
             $this->lineItemNotPricedSubtotalProvider,
+            $lineItemsHolderFactory,
             $roundingService,
             $numberFormatter
         );
@@ -88,7 +95,7 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
             ->willReturn(null);
 
         $event
@@ -114,12 +121,12 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
             ->willReturn($subtotal);
 
         $event
             ->expects(self::exactly(2))
-            ->method('addDataForLineItem')
+            ->method('setDataForLineItem')
             ->withConsecutive(
                 [
                     $lineItems[0]->getEntityIdentifier(),
@@ -134,6 +141,9 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         $this->listener->onLineItemData($event);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testOnLineItemData(): void
     {
         $lineItem1 = $this->getLineItem(1, 10, 'item');
@@ -145,78 +155,110 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
             $lineItem3->getEntityIdentifier() => $lineItem3,
         ];
 
-        $event = new DatagridLineItemsDataEvent($lineItems, [], $this->createMock(DatagridInterface::class), []);
+        $kitItemLineItem1 = new ProductKitItemLineItemStub(1000);
+        $kitItemLineItem2 = new ProductKitItemLineItemStub(2000);
+        $event = new DatagridLineItemsDataEvent(
+            $lineItems,
+            [
+                $lineItem2->getEntityIdentifier() => [
+                    DatagridKitLineItemsDataListener::IS_KIT => true,
+                    DatagridKitLineItemsDataListener::SUB_DATA => [
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1],
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2],
+                    ],
+                ],
+            ],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
+
+        $lineItem1Subtotal = (new Subtotal())->setPrice(Price::create(111.0, self::CURRENCY_USD))->setAmount(1110.0);
+
+        $lineItem2Subtotal = (new Subtotal())->setPrice(Price::create(222.0, self::CURRENCY_USD))->setAmount(12231.234);
+        $kitItemLineItem1Subtotal = (new Subtotal())
+            ->setPrice(Price::create(1001.1234, self::CURRENCY_USD))
+            ->setAmount(1001.1234);
+        $kitItemLineItem2Subtotal = (new Subtotal())
+            ->setPrice(Price::create(0.0, self::CURRENCY_USD))
+            ->setAmount(0.0);
+        $lineItem2Subtotal
+            ->addLineItemSubtotal($kitItemLineItem1, $kitItemLineItem1Subtotal)
+            ->addLineItemSubtotal($kitItemLineItem2, $kitItemLineItem2Subtotal);
+
+        $lineItem3Subtotal = (new Subtotal())->setPrice(Price::create(0.0, self::CURRENCY_USD))->setAmount(0.0);
 
         $subtotal = new Subtotal();
-        $subtotal->setCurrency(self::CURRENCY_USD);
-        $lineItem1Hash = spl_object_hash($lineItem1);
-        $lineItem2Hash = spl_object_hash($lineItem2);
-        $lineItem3Hash = spl_object_hash($lineItem3);
-        $subtotalData = [
-            $lineItem1Hash => [
-                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 111.0,
-                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 1110.0,
-            ],
-            $lineItem2Hash => [
-                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 222.0,
-                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 22200.0,
-            ],
-            $lineItem3Hash => [
-                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 0.0,
-                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 0.0,
-            ],
-        ];
-        $subtotal->setData($subtotalData);
+        $subtotal
+            ->setCurrency(self::CURRENCY_USD)
+            ->addLineItemSubtotal($lineItem1, $lineItem1Subtotal)
+            ->addLineItemSubtotal($lineItem2, $lineItem2Subtotal)
+            ->addLineItemSubtotal($lineItem3, $lineItem3Subtotal);
 
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
             ->willReturn($subtotal);
 
         $this->listener->onLineItemData($event);
 
         self::assertSame(
             [
-                DatagridLineItemsDataPricingListener::PRICE_VALUE =>
-                    $subtotalData[$lineItem1Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE],
+                DatagridLineItemsDataPricingListener::PRICE_VALUE => $lineItem1Subtotal->getPrice()->getValue(),
                 DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
-                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE =>
-                    $subtotalData[$lineItem1Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL],
+                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $lineItem1Subtotal->getAmount(),
                 DatagridLineItemsDataPricingListener::PRICE =>
-                    $subtotalData[$lineItem1Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE] . 'USD',
-                DatagridLineItemsDataPricingListener::SUBTOTAL =>
-                    $subtotalData[$lineItem1Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL] . 'USD',
+                    $lineItem1Subtotal->getPrice()->getValue() . self::CURRENCY_USD,
+                DatagridLineItemsDataPricingListener::SUBTOTAL => $lineItem1Subtotal->getAmount() . self::CURRENCY_USD,
             ],
             $event->getDataForLineItem(1)
         );
 
         self::assertSame(
             [
-                DatagridLineItemsDataPricingListener::PRICE_VALUE =>
-                    $subtotalData[$lineItem2Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE],
+                DatagridKitLineItemsDataListener::IS_KIT => true,
+                DatagridKitLineItemsDataListener::SUB_DATA => [
+                    [
+                        DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1,
+                        DatagridLineItemsDataPricingListener::PRICE_VALUE =>
+                            $kitItemLineItem1Subtotal->getPrice()->getValue(),
+                        DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $kitItemLineItem1Subtotal->getAmount(),
+                        DatagridLineItemsDataPricingListener::PRICE =>
+                            $kitItemLineItem1Subtotal->getPrice()->getValue() . self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL =>
+                            $kitItemLineItem1Subtotal->getAmount() . self::CURRENCY_USD,
+                    ],
+                    [
+                        DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2,
+                        DatagridLineItemsDataPricingListener::PRICE_VALUE =>
+                            $kitItemLineItem2Subtotal->getPrice()->getValue(),
+                        DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $kitItemLineItem2Subtotal->getAmount(),
+                        DatagridLineItemsDataPricingListener::PRICE =>
+                            $kitItemLineItem2Subtotal->getPrice()->getValue() . self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL =>
+                            $kitItemLineItem2Subtotal->getAmount() . self::CURRENCY_USD,
+                    ],
+                ],
+                DatagridLineItemsDataPricingListener::PRICE_VALUE => $lineItem2Subtotal->getPrice()->getValue(),
                 DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
-                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE =>
-                    $subtotalData[$lineItem2Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL],
+                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $lineItem2Subtotal->getAmount(),
                 DatagridLineItemsDataPricingListener::PRICE =>
-                    $subtotalData[$lineItem2Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE] . 'USD',
-                DatagridLineItemsDataPricingListener::SUBTOTAL =>
-                    $subtotalData[$lineItem2Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL] . 'USD',
+                    $lineItem2Subtotal->getPrice()->getValue() . self::CURRENCY_USD,
+                DatagridLineItemsDataPricingListener::SUBTOTAL => $lineItem2Subtotal->getAmount() . self::CURRENCY_USD,
             ],
             $event->getDataForLineItem(2)
         );
 
         self::assertSame(
             [
-                DatagridLineItemsDataPricingListener::PRICE_VALUE =>
-                    $subtotalData[$lineItem3Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE],
+                DatagridLineItemsDataPricingListener::PRICE_VALUE => $lineItem3Subtotal->getPrice()->getValue(),
                 DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
-                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE =>
-                    $subtotalData[$lineItem3Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL],
+                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $lineItem3Subtotal->getAmount(),
                 DatagridLineItemsDataPricingListener::PRICE =>
-                    $subtotalData[$lineItem3Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE] . 'USD',
-                DatagridLineItemsDataPricingListener::SUBTOTAL =>
-                    $subtotalData[$lineItem3Hash][LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL] . 'USD',
+                    $lineItem3Subtotal->getPrice()->getValue() . self::CURRENCY_USD,
+                DatagridLineItemsDataPricingListener::SUBTOTAL => $lineItem3Subtotal->getAmount() . self::CURRENCY_USD,
             ],
             $event->getDataForLineItem(3)
         );
@@ -241,7 +283,7 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
             ->willReturn($subtotal);
 
         $this->listener->onLineItemData($event);
@@ -277,6 +319,80 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
                 DatagridLineItemsDataPricingListener::SUBTOTAL => '999USD',
             ],
             $event->getDataForLineItem(3)
+        );
+    }
+
+    public function testOnLineItemDataWhenKitItemLineItemHasNoDefinedPrice(): void
+    {
+        $kitLineItem = $this->getLineItem(1, 10, 'item');
+        $lineItems = [
+            $kitLineItem->getEntityIdentifier() => $kitLineItem,
+        ];
+
+        $kitItemLineItem1 = new ProductKitItemLineItemStub(1000);
+        $kitItemLineItem2 = new ProductKitItemLineItemStub(2000);
+        $event = new DatagridLineItemsDataEvent(
+            $lineItems,
+            [
+                $kitLineItem->getEntityIdentifier() => [
+                    DatagridKitLineItemsDataListener::IS_KIT => true,
+                    DatagridKitLineItemsDataListener::SUB_DATA => [
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1],
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2],
+                    ],
+                ],
+            ],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
+
+        $kitLineItemSubtotal = (new Subtotal())->setPrice(Price::create(111.0, self::CURRENCY_USD))->setAmount(1110.0);
+        $kitItemLineItem1Subtotal = (new Subtotal())
+            ->setPrice(Price::create(1001.1234, self::CURRENCY_USD))
+            ->setAmount(1001.1234);
+        $kitLineItemSubtotal
+            ->addLineItemSubtotal($kitItemLineItem1, $kitItemLineItem1Subtotal);
+
+        $subtotal = new Subtotal();
+        $subtotal
+            ->setCurrency(self::CURRENCY_USD)
+            ->addLineItemSubtotal($kitLineItem, $kitLineItemSubtotal);
+
+        $this->lineItemNotPricedSubtotalProvider
+            ->expects(self::once())
+            ->method('getSubtotal')
+            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
+            ->willReturn($subtotal);
+
+        $this->listener->onLineItemData($event);
+
+        self::assertSame(
+            [
+                DatagridKitLineItemsDataListener::IS_KIT => true,
+                DatagridKitLineItemsDataListener::SUB_DATA => [
+                    [
+                        DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1,
+                        DatagridLineItemsDataPricingListener::PRICE_VALUE =>
+                            $kitItemLineItem1Subtotal->getPrice()->getValue(),
+                        DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $kitItemLineItem1Subtotal->getAmount(),
+                        DatagridLineItemsDataPricingListener::PRICE =>
+                            $kitItemLineItem1Subtotal->getPrice()->getValue() . self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL =>
+                            $kitItemLineItem1Subtotal->getAmount() . self::CURRENCY_USD,
+                    ],
+                    [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2] + self::EMPTY_DATA,
+                ],
+                DatagridLineItemsDataPricingListener::PRICE_VALUE => $kitLineItemSubtotal->getPrice()->getValue(),
+                DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
+                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $kitLineItemSubtotal->getAmount(),
+                DatagridLineItemsDataPricingListener::PRICE =>
+                    $kitLineItemSubtotal->getPrice()->getValue() . self::CURRENCY_USD,
+                DatagridLineItemsDataPricingListener::SUBTOTAL =>
+                    $kitLineItemSubtotal->getAmount() . self::CURRENCY_USD,
+                DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR => true,
+            ],
+            $event->getDataForLineItem($kitLineItem->getEntityIdentifier())
         );
     }
 

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\DatagridKitItemLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -45,7 +46,7 @@ class DatagridKitLineItemsDataListener
         }
 
         if ($allKitItemLineItemsById) {
-            $kitItemLineItemsDataEvent = new DatagridLineItemsDataEvent(
+            $kitItemLineItemsDataEvent = new DatagridKitItemLineItemsDataEvent(
                 $allKitItemLineItemsById,
                 [],
                 $event->getDatagrid(),

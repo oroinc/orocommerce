@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
+use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -31,13 +30,17 @@ class ProductKitLineItemType extends AbstractType
 {
     private FrontendProductPricesDataProvider $frontendProductPricesDataProvider;
 
+    private ShoppingListLineItemsHolderFactory $lineItemsHolderFactory;
+
     private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
 
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
+        ShoppingListLineItemsHolderFactory $lineItemsHolderFactory,
         SubtotalProviderInterface $lineItemNotPricedSubtotalProvider
     ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
+        $this->lineItemsHolderFactory = $lineItemsHolderFactory;
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
     }
 
@@ -75,7 +78,7 @@ class ProductKitLineItemType extends AbstractType
                 ->getAllPricesForProducts($this->getAllProducts($productKitLineItem));
 
             $view->vars['subtotal'] = $this->lineItemNotPricedSubtotalProvider
-                ->getSubtotal(new LineItemsNotPricedDTO(new ArrayCollection([$productKitLineItem])));
+                ->getSubtotal($this->lineItemsHolderFactory->createFromLineItems([$productKitLineItem]));
         }
     }
 

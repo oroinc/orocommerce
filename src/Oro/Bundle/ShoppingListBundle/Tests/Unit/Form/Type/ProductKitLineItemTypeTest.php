@@ -6,7 +6,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -22,6 +21,8 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitItemLineItemType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType;
+use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
+use Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -53,6 +54,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->type = new ProductKitLineItemType(
             $this->frontendProductPricesDataProvider,
+            new ShoppingListLineItemsHolderFactory(),
             $this->lineItemNotPricedSubtotalProvider
         );
 
@@ -144,7 +146,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection([$lineItem])))
+            ->with(new ShoppingListLineItemsHolder(new ArrayCollection([$lineItem])))
             ->willReturn($subtotal);
 
         $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);

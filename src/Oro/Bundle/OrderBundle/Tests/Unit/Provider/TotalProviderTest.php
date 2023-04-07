@@ -115,6 +115,8 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                         'signedAmount' => 5826.97,
                         'currency' => 'EUR',
                         'visible' => null,
+                        'price' => [],
+                        'quantity' => null,
                         'data' => [
                             'baseAmount' => 6700,
                             'baseCurrency' => 'USD'
@@ -128,6 +130,8 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                             'signedAmount' => 5336.68,
                             'currency' => 'EUR',
                             'visible' => null,
+                            'price' => [],
+                            'quantity' => null,
                             'data' => [
                                 'baseAmount' => 6300,
                                 'baseCurrency' => 'USD'
@@ -157,6 +161,8 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                         'signedAmount' => 5826.97,
                         'currency' => 'USD',
                         'visible' => null,
+                        'price' => [],
+                        'quantity' => null,
                         'data' => null,
                     ],
                     TotalProcessorProvider::SUBTOTALS => [
@@ -167,6 +173,8 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                             'signedAmount' => 5336.68,
                             'currency' => 'USD',
                             'visible' => null,
+                            'price' => [],
+                            'quantity' => null,
                             'data' => null,
                         ]
                     ]

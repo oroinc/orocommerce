@@ -808,3 +808,6 @@ services:
         class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator
         arguments:
             - '@.inner'
+
+    oro_shopping_list.model.factory.shopping_list_line_items_holder:
+        class: Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory

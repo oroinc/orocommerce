@@ -4,7 +4,7 @@
 <div class="notification-container">
     <%= oroshoppinglist.renderErrors({errors: obj.errors}) %>
     <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
-    <%= oroshoppinglist.renderUpcoming({isUpcoming: isUpcoming, availabilityDate: obj.availabilityDate}) %>
+    <%= oroshoppinglist.renderUpcoming({isUpcoming: obj.isUpcoming, availabilityDate: obj.availabilityDate}) %>
 
     <% if (obj.success && obj.message) { %>
     <div class="notification--success" role="alert">

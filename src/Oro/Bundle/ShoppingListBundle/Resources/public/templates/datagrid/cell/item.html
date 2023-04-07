@@ -1,12 +1,14 @@
 <% let clipLength = 30 %>
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<% productId = typeof productId !== 'undefined' ? productId : null %>
+<% variantId = typeof variantId !== 'undefined' ? variantId : null %>
 
 <div class="product-item grid-line-items">
     <%= oroshoppinglist.renderProductItemImage({
         src: obj.image,
         srcWebp: obj.imageWebp,
         placeholder: _metadata.image_placeholder,
-        productId: typeof variantId !== 'undefined' && variantId ? variantId : productId,
+        productId: variantId ? variantId : productId,
         title: sku,
         alt: name,
         isConfigurable: obj.isConfigurable,
@@ -42,11 +44,12 @@
         <% } else if (obj._isKitItemLineItem) { %>
             <div class="grid-line-items__row-item height-as-image-mobile">
                 <div data-role="kit-item-label" class="bold"><%= obj.kitItemLabel %>:</div>
+                <% const productUrlLink = obj.isVisible ? productUrl(productId) : ''; %>
                 <% if (name.length <= clipLength) { %>
-                    <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId)}) %>
+                    <%= oroshoppinglist.renderProductItemName({...obj, link: productUrlLink}) %>
                 <% } else { %>
                 <div class="grid-line-items__clip-container">
-                    <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrl(productId)}) %>
+                    <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrlLink}) %>
                 </div>
                 <% } %>
             </div>

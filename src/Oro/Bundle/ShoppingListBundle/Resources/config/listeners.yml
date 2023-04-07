@@ -57,6 +57,16 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
 
+    oro_shopping_list.event_listener.datagrid_kit_item_line_items_data.basic:
+        class: Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataListener
+        arguments:
+            - '@oro_product.layout.data_provider.configurable_products'
+            - '@oro_locale.helper.localization'
+            - '@oro_attachment.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+
     oro_shopping_list.event_listener.datagrid_line_items_data.webp_aware:
         class: Oro\Bundle\ProductBundle\EventListener\WebpAwareDatagridLineItemsDataListener
         arguments:
@@ -66,6 +76,14 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+
+    oro_shopping_list.event_listener.datagrid_kit_item_line_items_data.webp_aware:
+        class: Oro\Bundle\ProductBundle\EventListener\WebpAwareDatagridLineItemsDataListener
+        arguments:
+            - '@oro_attachment.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
 
     oro_shopping_list.event_listener.datagrid_line_items_data.shopping_list_line_item_basic:
         class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataListener
@@ -78,13 +96,25 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
 
-    oro_shopping_list.event_listener.datagrid_line_items_data.violations:
-        class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener
+    oro_shopping_list.event_listener.datagrid_line_items_data.validation:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
         arguments:
-            - '@oro_shopping_list.validator_service.line_item'
+            - '@validator'
+            - '@oro_shopping_list.model.factory.shopping_list_line_items_holder'
+            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+
+    oro_shopping_list.event_listener.datagrid_kit_item_line_items_data.validation:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+        arguments:
+            - '@validator'
+            - '@oro_shopping_list.model.factory.shopping_list_line_items_holder'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
 
     oro_shopping_list.event_listener.datagrid_kit_line_items_data:
         class: Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener
@@ -97,15 +127,13 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
 
-    oro_shopping_list.event_listener.datagrid_kit_item_line_items_data.basic:
+    oro_shopping_list.event_listener.datagrid_kit_item_line_items_data.kit_item:
         class: Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener
         arguments:
             - '@oro_locale.helper.localization'
         tags:
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
 
     oro_shopping_list.event_listener.before_add_index:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListBeforeAddToIndexListener'
