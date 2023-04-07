@@ -9,6 +9,8 @@ use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
@@ -21,26 +23,14 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Form type for Quote Address
+ * The form type for QuoteAddress entity.
  */
 class QuoteAddressType extends AbstractType
 {
-    const NAME = 'oro_quote_address_type';
-
-    /** @var string */
-    protected $dataClass;
-
-    /** @var AddressFormatter */
-    protected $addressFormatter;
-
-    /** @var QuoteAddressManager */
-    protected $quoteAddressManager;
-
-    /** @var QuoteAddressSecurityProvider */
-    protected $quoteAddressSecurityProvider;
-
-    /** @var Serializer */
-    protected $serializer;
+    private AddressFormatter $addressFormatter;
+    private QuoteAddressManager $quoteAddressManager;
+    private QuoteAddressSecurityProvider $quoteAddressSecurityProvider;
+    private Serializer $serializer;
 
     public function __construct(
         AddressFormatter $addressFormatter,
@@ -55,9 +45,9 @@ class QuoteAddressType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $type = $options['addressType'];
         $quote = $options['quote'];
@@ -132,15 +122,15 @@ class QuoteAddressType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($options['addressType']);
-        $exceptKey = ['phone'];
+        $exceptKey = 'phone';
 
         foreach ($view->children as $key => $child) {
-            if (in_array($key, $exceptKey)) {
+            if ($key === $exceptKey) {
                 continue;
             }
 
@@ -159,55 +149,34 @@ class QuoteAddressType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired(['quote', 'addressType'])
-            ->setDefaults(['data_class' => $this->dataClass])
+            ->setDefaults(['data_class' => QuoteAddress::class])
             ->setAllowedValues('addressType', [AddressTypeEntity::TYPE_SHIPPING])
-            ->setAllowedTypes('quote', 'Oro\Bundle\SaleBundle\Entity\Quote');
+            ->setAllowedTypes('quote', Quote::class);
     }
 
     /**
-     * @param string $dataClass
+     * {@inheritDoc}
      */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return AddressType::class;
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
+        return 'oro_quote_address_type';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * @param array $addresses
-     *
-     * @return array
-     */
-    protected function getChoices(array $addresses = [])
+    private function getChoices(array $addresses = []): array
     {
         foreach ($addresses as $group => $groupAddresses) {
             array_walk(
@@ -224,12 +193,7 @@ class QuoteAddressType extends AbstractType
         return $addresses;
     }
 
-    /**
-     * @param array $addresses
-     *
-     * @return array
-     */
-    protected function getPlainData(array $addresses = [])
+    private function getPlainData(array $addresses = []): array
     {
         $data = [];
 

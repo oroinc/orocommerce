@@ -182,14 +182,14 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And I go to Sales/Orders
     Then I should see following grid:
       | Order Number | Owner    |
-      | 1            | John Doe |
-      | 1-1          | John Doe |
       | 1-2          | John Doe |
+      | 1-1          | John Doe |
+      | 1            | John Doe |
     And number of records should be 3
     When I click View "$58.00" in grid
     Then I should see "Sub-Orders"
     When I scroll to "SubOrders Grid"
     Then I should see following "SubOrders Grid" grid:
       | Order Number | Total  |
-      | 1-1          | $12.00 |
       | 1-2          | $46.00 |
+      | 1-1          | $12.00 |

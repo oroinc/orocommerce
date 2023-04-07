@@ -17,16 +17,16 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Abstract base demo fixture for loading demo product images cache.
+ * The base class for fixtures that load demo product images cache.
  */
 abstract class AbstractLoadProductImagesCacheDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    protected ContainerInterface $container;
+    use ContainerAwareTrait;
 
     /** @var GaufretteFilesystem[] */
     protected array $filesystems = [];
@@ -51,14 +51,6 @@ abstract class AbstractLoadProductImagesCacheDemoData extends AbstractFixture im
 
     /**
      * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
@@ -79,7 +71,7 @@ abstract class AbstractLoadProductImagesCacheDemoData extends AbstractFixture im
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            $product = $productRepository->findOneBySku($row['sku']);
+            $product = $productRepository->findOneBy(['sku' => $row['sku']]);
             if (!$product) {
                 continue;
             }

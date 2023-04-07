@@ -3,8 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Form\Extension;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -12,16 +10,17 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 
+/**
+ * The form type extension that pre-fill an quote with requested products taken from the product data storage.
+ */
 class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function addItem(Product $product, $entity, array $itemData = [])
+    protected function addItem(Product $product, object $entity, array $itemData): void
     {
-        if (!$entity instanceof Quote) {
-            return;
-        }
+        /** @var Quote $entity */
 
         $quoteProduct = new QuoteProduct();
         $quoteProduct->setProduct($product);
@@ -35,9 +34,9 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         $entity->addQuoteProduct($quoteProduct);
     }
 
-    protected function addItems(Product $product, QuoteProduct $quoteProduct, array $itemsData)
+    private function addItems(Product $product, QuoteProduct $quoteProduct, array $itemsData): void
     {
-        $defaultUnit = $this->getDefaultUnit($product);
+        $defaultUnit = $this->getDefaultProductUnit($product);
 
         foreach ($itemsData as $subItemData) {
             $quoteProductRequest = new QuoteProductRequest();
@@ -48,7 +47,7 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
             $this->fillEntityData($quoteProductRequest, $subItemData);
             $this->fillEntityData($quoteProductOffer, $subItemData);
 
-            if (!$defaultUnit && !$quoteProductRequest->getProductUnit()) {
+            if (null === $defaultUnit && !$quoteProductRequest->getProductUnit()) {
                 continue;
             }
 
@@ -63,28 +62,15 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
     }
 
     /**
-     * @param Product $product
-     * @return ProductUnit|null
+     * {@inheritDoc}
      */
-    protected function getDefaultUnit(Product $product)
+    protected function getEntityClass(): string
     {
-        /* @var $unitPrecision ProductUnitPrecision */
-        $unitPrecision = $product->getUnitPrecisions()->first();
-        if (!$unitPrecision) {
-            return null;
-        }
-
-        /* @var $unit ProductUnit */
-        $unit = $unitPrecision->getUnit();
-        if (!$unit) {
-            return null;
-        }
-
-        return $unit;
+        return Quote::class;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getExtendedTypes(): iterable
     {

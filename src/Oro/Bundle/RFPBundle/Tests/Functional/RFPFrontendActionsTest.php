@@ -4,7 +4,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
@@ -51,9 +50,6 @@ class RFPFrontendActionsTest extends WebTestCase
             ],
         ];
 
-        /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get('oro_rfp.processor.quick_add');
-
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
             $form->getMethod(),
@@ -62,7 +58,7 @@ class RFPFrontendActionsTest extends WebTestCase
                 'oro_product_quick_add' => [
                     '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => $products,
-                    'component' => $processor->getName(),
+                    'component' => 'oro_rfp_quick_add_processor',
                 ],
             ]
         );

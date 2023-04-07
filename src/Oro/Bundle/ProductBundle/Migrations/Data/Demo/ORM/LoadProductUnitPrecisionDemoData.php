@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loading product unit precision demo data.
@@ -19,43 +19,23 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $products = [];
-
-    /**
-     * @var array
-     */
-    protected $productUnis = [];
+    private array $products = [];
+    private array $productUnis = [];
 
     /**
      * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [LoadProductDemoData::class];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
-    {
-        return [
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/add_product_precisions.csv');
@@ -86,31 +66,24 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
         fclose($handler);
 
         $manager->flush();
+
+        $this->products = [];
+        $this->productUnis = [];
     }
 
-    /**
-     * @param EntityManagerInterface $manager
-     * @param string $sku
-     * @return Product|null
-     */
-    protected function getProductBySku(EntityManagerInterface $manager, $sku)
+    private function getProductBySku(EntityManagerInterface $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
     }
 
-    /**
-     * @param EntityManagerInterface $manager
-     * @param string $code
-     * @return ProductUnit|null
-     */
-    protected function getProductUnit(EntityManagerInterface $manager, $code)
+    private function getProductUnit(EntityManagerInterface $manager, string $code): ?ProductUnit
     {
         if (!array_key_exists($code, $this->productUnis)) {
-            $this->productUnis[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);
+            $this->productUnis[$code] = $manager->getRepository(ProductUnit::class)->find($code);
         }
 
         return $this->productUnis[$code];

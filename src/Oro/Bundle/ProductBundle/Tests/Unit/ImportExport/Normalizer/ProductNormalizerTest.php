@@ -17,9 +17,6 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /** @var string */
-    private $productClass;
-
     /** @var ProductNormalizer */
     private $productNormalizer;
 
@@ -28,9 +25,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->fieldHelper = $this->createMock(FieldHelper::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->productClass = Product::class;
         $this->productNormalizer = new ProductNormalizer($this->fieldHelper);
-        $this->productNormalizer->setProductClass($this->productClass);
         $this->productNormalizer->setEventDispatcher($this->eventDispatcher);
         $this->productNormalizer->setScalarFieldDenormalizer(new ScalarFieldDenormalizer());
     }
@@ -103,8 +98,8 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $result = $this->productNormalizer->denormalize($data, $this->productClass);
-        self::assertInstanceOf($this->productClass, $result);
+        $result = $this->productNormalizer->denormalize($data, Product::class);
+        self::assertInstanceOf(Product::class, $result);
         self::assertEquals('SKU-1', $result->getSku());
     }
 

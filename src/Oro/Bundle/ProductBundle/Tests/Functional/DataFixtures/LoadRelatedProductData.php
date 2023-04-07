@@ -40,8 +40,8 @@ class LoadRelatedProductData extends AbstractFixture implements DependentFixture
 
         foreach (self::$relatedProducts as $sku => $relatedProducts) {
             foreach ($relatedProducts as $relatedProductSku) {
-                $product = $productRepository->findOneBySku($sku);
-                $relatedProduct = $productRepository->findOneBySku($relatedProductSku);
+                $product = $productRepository->findOneBy(['sku' => $sku]);
+                $relatedProduct = $productRepository->findOneBy(['sku' => $relatedProductSku]);
 
                 $productRelation = new RelatedProduct();
                 $productRelation->setProduct($product)->setRelatedItem($relatedProduct);

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Handler;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
@@ -26,45 +26,20 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class ShoppingListLineItemHandler implements ResetInterface
 {
-    const FLUSH_BATCH_SIZE = 100;
+    private const FLUSH_BATCH_SIZE = 100;
 
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-
-    /** @var ShoppingListManager */
-    protected $shoppingListManager;
-
-    /** @var CurrentShoppingListManager */
-    protected $currentShoppingListManager;
-
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
-
-    /** @var TokenAccessorInterface */
-    protected $tokenAccessor;
-
-    /** @var FeatureChecker */
-    protected $featureChecker;
-
-    /** @var string */
-    protected $productClass;
-
-    /** @var string */
-    protected $shoppingListClass;
-
-    /** @var string */
-    protected $productUnitClass;
-
-    /** @var ProductManager */
-    protected $productManager;
-
-    /** @var AclHelper */
-    private $aclHelper;
-
+    private ManagerRegistry $doctrine;
+    private ShoppingListManager $shoppingListManager;
+    private CurrentShoppingListManager $currentShoppingListManager;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    private TokenAccessorInterface $tokenAccessor;
+    private FeatureChecker $featureChecker;
+    private ProductManager $productManager;
+    private AclHelper $aclHelper;
     private array $productUnits = [];
 
     public function __construct(
-        ManagerRegistry $managerRegistry,
+        ManagerRegistry $doctrine,
         ShoppingListManager $shoppingListManager,
         CurrentShoppingListManager $currentShoppingListManager,
         AuthorizationCheckerInterface $authorizationChecker,
@@ -73,7 +48,7 @@ class ShoppingListLineItemHandler implements ResetInterface
         ProductManager $productManager,
         AclHelper $aclHelper
     ) {
-        $this->managerRegistry = $managerRegistry;
+        $this->doctrine = $doctrine;
         $this->shoppingListManager = $shoppingListManager;
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->authorizationChecker = $authorizationChecker;
@@ -85,22 +60,23 @@ class ShoppingListLineItemHandler implements ResetInterface
 
     /**
      * @param ShoppingList $shoppingList
-     * @param array $productIds
-     * @param array $productUnitsWithQuantities
+     * @param int[]        $productIds
+     * @param array        $productUnitsWithQuantities
+     *
      * @return int Added entities count
      */
     public function createForShoppingList(
         ShoppingList $shoppingList,
         array $productIds = [],
         array $productUnitsWithQuantities = []
-    ) {
+    ): int {
         if (!$this->isAllowed($shoppingList)) {
             throw new AccessDeniedException();
         }
 
-        /** @var EntityManager $entityManager */
-        $entityManager = $this->managerRegistry->getManagerForClass($this->productClass);
-        $productsRepo = $entityManager->getRepository($this->productClass);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManagerForClass(Product::class);
+        $productsRepo = $entityManager->getRepository(Product::class);
         $unitOfWork = $entityManager->getUnitOfWork();
 
         $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
@@ -147,16 +123,17 @@ class ShoppingListLineItemHandler implements ResetInterface
     }
 
     /**
-     * @param Product $product
+     * @param Product      $product
      * @param ShoppingList $shoppingList
-     * @param array $unitsWithQuantities
+     * @param array        $unitsWithQuantities
+     *
      * @return LineItem[]|null
      */
-    protected function createLineItemsWithQuantityAndUnit(
+    private function createLineItemsWithQuantityAndUnit(
         Product $product,
         ShoppingList $shoppingList,
         array $unitsWithQuantities
-    ) {
+    ): ?array {
         $lineItems = [];
 
         foreach ($unitsWithQuantities as $unitCode => $quantity) {
@@ -176,28 +153,21 @@ class ShoppingListLineItemHandler implements ResetInterface
     private function getProductUnit(string $unitCode): ProductUnit
     {
         if (!isset($this->productUnits[$unitCode])) {
-            /** @var EntityManager $entityManager */
-            $entityManager = $this->managerRegistry->getManagerForClass($this->productUnitClass);
+            /** @var EntityManagerInterface $entityManager */
+            $entityManager = $this->doctrine->getManagerForClass(ProductUnit::class);
             $this->productUnits[$unitCode] = $entityManager->getReference(ProductUnit::class, $unitCode);
         }
 
         return $this->productUnits[$unitCode];
     }
 
-    /**
-     * @param CustomerUser $customerUser
-     * @param Product $product
-     * @return LineItem
-     */
-    public function prepareLineItemWithProduct(CustomerUser $customerUser, Product $product)
+    public function prepareLineItemWithProduct(CustomerUser $customerUser, Product $product): LineItem
     {
         $shoppingList = $this->currentShoppingListManager->getCurrent();
 
         $lineItem = new LineItem();
-        $lineItem
-            ->setProduct($product)
-            ->setCustomerUser($customerUser);
-
+        $lineItem->setProduct($product);
+        $lineItem->setCustomerUser($customerUser);
         if (null !== $shoppingList) {
             $lineItem->setShoppingList($shoppingList);
         }
@@ -205,7 +175,7 @@ class ShoppingListLineItemHandler implements ResetInterface
         return $lineItem;
     }
 
-    public function processLineItem(LineItem $lineItem, Form $form)
+    public function processLineItem(LineItem $lineItem, Form $form): void
     {
         $shoppingList = $form->get('lineItem')->get('shoppingList')->getData();
 
@@ -220,11 +190,7 @@ class ShoppingListLineItemHandler implements ResetInterface
         $this->shoppingListManager->addLineItem($lineItem, $shoppingList);
     }
 
-    /**
-     * @param ShoppingList|null $shoppingList
-     * @return bool
-     */
-    public function isAllowed(ShoppingList $shoppingList = null)
+    public function isAllowed(ShoppingList $shoppingList = null): bool
     {
         if (!$this->tokenAccessor->hasUser() && !$this->isAllowedForGuest()) {
             return false;
@@ -239,46 +205,14 @@ class ShoppingListLineItemHandler implements ResetInterface
         return $isAllowed && $this->authorizationChecker->isGranted('EDIT', $shoppingList);
     }
 
-    /**
-     * @param mixed $shoppingListId
-     * @return ShoppingList
-     */
-    public function getShoppingList($shoppingListId = null)
+    public function getShoppingList(?int $shoppingListId = null): ShoppingList
     {
         return $this->currentShoppingListManager->getForCurrentUser($shoppingListId, true);
     }
 
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
-     * @param string $shoppingListClass
-     */
-    public function setShoppingListClass($shoppingListClass)
-    {
-        $this->shoppingListClass = $shoppingListClass;
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAllowedForGuest()
+    public function isAllowedForGuest(): bool
     {
         $isAllowed = false;
-
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
             $isAllowed = $this->featureChecker->isFeatureEnabled('guest_shopping_list');
         }
@@ -286,6 +220,9 @@ class ShoppingListLineItemHandler implements ResetInterface
         return $isAllowed;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function reset(): void
     {
         $this->productUnits = [];

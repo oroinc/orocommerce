@@ -5,53 +5,62 @@ namespace Oro\Bundle\RFPBundle\ComponentProcessor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles logic related to quick order process for RFQ and save the handling result into {@see ProductDataStorage}.
+ */
 class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 {
-    /** @var RequestDataStorageExtension */
-    protected $requestDataStorageExtension;
-
-    /** @var FeatureChecker */
-    protected $featureChecker;
+    private ProductAvailabilityProvider $productAvailabilityProvider;
+    private FeatureChecker $featureChecker;
 
     /**
-     * Processor constructor.
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        UrlGeneratorInterface $router,
         ProductDataStorage $storage,
+        ProductRepository $productRepository,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
-        Session $session,
+        RequestStack $requestStack,
         TranslatorInterface $translator,
-        RequestDataStorageExtension $requestDataStorageExtension,
+        UrlGeneratorInterface $router,
+        ProductAvailabilityProvider $productAvailabilityProvider,
         FeatureChecker $featureChecker
     ) {
-        $this->requestDataStorageExtension = $requestDataStorageExtension;
+        parent::__construct(
+            $storage,
+            $productRepository,
+            $authorizationChecker,
+            $tokenAccessor,
+            $requestStack,
+            $translator,
+            $router
+        );
+        $this->productAvailabilityProvider = $productAvailabilityProvider;
         $this->featureChecker = $featureChecker;
-
-        parent::__construct($router, $storage, $authorizationChecker, $tokenAccessor, $session, $translator);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function process(array $data, Request $request)
+    public function process(array $data, Request $request): ?Response
     {
-        $isAllowedRFP = $this->requestDataStorageExtension
-            ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
-        ;
+        $hasProductsAllowedForRFP = $this->productAvailabilityProvider
+            ->hasProductsAllowedForRFPByProductData($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
 
-        if (!$isAllowedRFP) {
-            $this->session->getFlashBag()->add(
+        if (!$hasProductsAllowedForRFP) {
+            $this->addFlashMessage(
                 'warning',
                 $this->translator->trans('oro.frontend.rfp.data_storage.no_products_be_added_to_rfq')
             );
@@ -63,24 +72,17 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function isAllowed()
+    public function isAllowed(): bool
     {
         return parent::isAllowed() || $this->isAllowedForGuest();
     }
 
-    /**
-     * @return bool
-     */
-    public function isAllowedForGuest()
+    public function isAllowedForGuest(): bool
     {
-        $isAllowed = false;
-
-        if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
-            $isAllowed = $this->featureChecker->isFeatureEnabled('guest_rfp');
-        }
-
-        return $isAllowed;
+        return
+            $this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
+            && $this->featureChecker->isFeatureEnabled('guest_rfp');
     }
 }

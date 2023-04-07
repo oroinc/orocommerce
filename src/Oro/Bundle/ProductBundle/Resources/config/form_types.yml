@@ -81,18 +81,6 @@ services:
         tags:
             - { name: form.type, alias: 'oro_product_quick_add' }
 
-    oro_product.form.type.extension.product_data_storage.abstract:
-        class: 'Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension'
-        abstract: true
-        arguments:
-            - "@request_stack"
-            - "@oro_product.storage.product_data_storage"
-            - "@oro_entity.doctrine_helper"
-            - '@oro_security.acl_helper'
-            - 'Oro\Bundle\ProductBundle\Entity\Product'
-        calls:
-            - [setLogger,  ["@logger"]]
-
     oro_product.form.type.extension.integer:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension'
         tags:

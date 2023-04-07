@@ -45,16 +45,6 @@ class ProductRepositoryTest extends WebTestCase
         }, $references);
     }
 
-    public function testFindOneBySku()
-    {
-        $this->assertNull($this->getRepository()->findOneBySku(uniqid('_fake_sku_', true)));
-
-        $product = $this->getProduct(LoadProductData::PRODUCT_9);
-        $expectedProduct = $this->getRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_9));
-
-        $this->assertEquals($product->getSku(), $expectedProduct->getSku());
-    }
-
     /**
      * @dataProvider getSearchQueryBuilderDataProvider
      */

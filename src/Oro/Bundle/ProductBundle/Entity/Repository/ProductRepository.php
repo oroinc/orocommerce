@@ -39,18 +39,6 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $sku
-     *
-     * @return null|Product
-     */
-    public function findOneBySku($sku)
-    {
-        $queryBuilder = $this->getBySkuQueryBuilder($sku);
-
-        return $queryBuilder->getQuery()->getOneOrNullResult();
-    }
-
-    /**
      * @param string $pattern
      *
      * @return QueryBuilder

@@ -140,14 +140,6 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getName(): string
-    {
-        return 'oro_shopping_list_to_checkout_quick_add_processor';
-    }
-
     private function getShoppingListLabel(): string
     {
         return $this->translator->trans(

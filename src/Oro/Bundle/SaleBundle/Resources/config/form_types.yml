@@ -1,43 +1,29 @@
 services:
-    # Quote form types
     oro_sale.form.type.quote:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
         arguments:
-            - "@oro_sale.provider.quote_address_security"
+            - '@oro_sale.provider.quote_address_security'
             - '@oro_config.global'
             - '@oro_sale.form.event_listener.quote_update'
             - '@security.authorization_checker'
-        calls:
-            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\Quote']]
         tags:
             - { name: form.type, alias: oro_sale_quote }
 
     oro_sale.form.type.quote_product:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductType'
         arguments:
-            - "@translator"
-            - "@oro_product.formatter.product_unit_label"
-            - "@oro_sale.formatter.quote_product"
-            - "@doctrine"
-        calls:
-            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteProduct']]
-            - [setProductUnitClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]
+            - '@oro_product.formatter.product_unit_label'
+            - '@doctrine'
         tags:
             - { name: form.type, alias: oro_sale_quote_product }
 
     oro_sale.form.type.quote_product_offer:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType'
-        arguments:
-            - "@oro_sale.formatter.quote_product_offer"
-        calls:
-            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteProductOffer']]
         tags:
             - { name: form.type, alias: oro_sale_quote_product_offer }
 
     oro_sale.form.type.quote_product_request:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType'
-        calls:
-            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteProductRequest']]
         tags:
             - { name: form.type, alias: oro_sale_quote_product_request }
 
@@ -58,11 +44,15 @@ services:
 
     oro_sale.form.type.extension.quote_data_storage:
         class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension'
-        parent: oro_product.form.type.extension.product_data_storage.abstract
-        calls:
-            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\Quote']]
+        arguments:
+            - '@request_stack'
+            - '@oro_product.storage.product_data_storage'
+            - '@form.property_accessor'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
+            - '@logger'
         tags:
-            - { name: form.type_extension, alias: oro_sale_quote, extended_type: Oro\Bundle\SaleBundle\Form\Type\QuoteType }
+            - { name: form.type_extension }
 
     oro_sale.form.type.extension.quote_email_template:
         class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteEmailTemplateExtension'
@@ -75,19 +65,17 @@ services:
     oro_sale.form.type.quote_address:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType'
         arguments:
-            - "@oro_locale.formatter.address"
-            - "@oro_sale.manager.quote_address"
-            - "@oro_sale.provider.quote_address_security"
-            - "@oro_importexport.serializer"
+            - '@oro_locale.formatter.address'
+            - '@oro_sale.manager.quote_address'
+            - '@oro_sale.provider.quote_address_security'
+            - '@oro_importexport.serializer'
         tags:
             - { name: form.type, alias: oro_quote_address_type }
-        calls:
-            - [setDataClass, ['Oro\Bundle\SaleBundle\Entity\QuoteAddress']]
 
     oro_sale.form.type.quote_demand:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType'
         arguments:
-            - "@oro_sale.manager.quote_demand_manager"
+            - '@oro_sale.manager.quote_demand_manager'
         tags:
             - { name: form.type, alias: oro_sale_quote_demand }
 

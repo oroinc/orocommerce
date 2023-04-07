@@ -61,12 +61,4 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
 
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName(): string
-    {
-        return 'oro_shopping_list_quick_add_processor';
-    }
 }

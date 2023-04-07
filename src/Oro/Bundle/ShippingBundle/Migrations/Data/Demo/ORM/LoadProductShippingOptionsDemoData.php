@@ -5,9 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
@@ -15,55 +15,35 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loads product shipping options demo data.
+ */
 class LoadProductShippingOptionsDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    use ContainerAwareTrait;
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var array */
-    protected $products = [];
-
-    /** @var array */
-    protected $productUnits = [];
-
-    /** @var array|WeightUnit[] */
-    protected $weightUnits = [];
-
-    /** @var array|LengthUnit[] */
-    protected $lengthUnits = [];
-
-    /** @var array|FreightClass[] */
-    protected $freightClasses = [];
+    private array $products = [];
+    private array $productUnits = [];
+    private array $weightUnits = [];
+    private array $lengthUnits = [];
+    private array $freightClasses = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData'
-        ];
+        return [LoadProductDemoData::class];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
@@ -108,39 +88,33 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         fclose($handler);
 
         $manager->flush();
+
+        $this->products = [];
+        $this->productUnits = [];
+        $this->weightUnits = [];
+        $this->lengthUnits = [];
+        $this->freightClasses = [];
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $sku
-     *
-     * @return Product|null
-     */
-    protected function getProductBySku(ObjectManager $manager, $sku)
+    private function getProductBySku(ObjectManager $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $code
-     *
-     * @return ProductUnit|null
-     */
-    protected function getProductUnit(ObjectManager $manager, $code)
+    private function getProductUnit(ObjectManager $manager, string $code): ?ProductUnit
     {
         if (!array_key_exists($code, $this->productUnits)) {
-            $this->productUnits[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);
+            $this->productUnits[$code] = $manager->getRepository(ProductUnit::class)->find($code);
         }
 
         return $this->productUnits[$code];
     }
 
-    protected function setProductWeight(ProductShippingOptions $productShippingOptions, ObjectManager $manager)
+    private function setProductWeight(ProductShippingOptions $productShippingOptions, ObjectManager $manager): void
     {
         $model = new Weight();
         $model->setUnit($this->getRandomWeightUnit($manager))
@@ -148,7 +122,7 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         $productShippingOptions->setWeight($model);
     }
 
-    protected function setProductDimensions(ProductShippingOptions $productShippingOptions, ObjectManager $manager)
+    private function setProductDimensions(ProductShippingOptions $productShippingOptions, ObjectManager $manager): void
     {
         $model = Dimensions::create(
             mt_rand(1, 10),
@@ -160,16 +134,10 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         $productShippingOptions->setDimensions($model);
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return WeightUnit
-     */
-    protected function getRandomWeightUnit(ObjectManager $manager)
+    private function getRandomWeightUnit(ObjectManager $manager): WeightUnit
     {
         if (!$this->weightUnits) {
-            $this->weightUnits = $manager->getRepository('OroShippingBundle:WeightUnit')->findAll();
-
+            $this->weightUnits = $manager->getRepository(WeightUnit::class)->findAll();
             if (!count($this->weightUnits)) {
                 $this->weightUnits[] = (new WeightUnit())->setCode('demo_weight');
             }
@@ -178,16 +146,10 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         return $this->weightUnits[mt_rand(0, count($this->weightUnits) - 1)];
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return LengthUnit
-     */
-    protected function getRandomLengthUnit(ObjectManager $manager)
+    private function getRandomLengthUnit(ObjectManager $manager): LengthUnit
     {
         if (!$this->lengthUnits) {
-            $this->lengthUnits = $manager->getRepository('OroShippingBundle:LengthUnit')->findAll();
-
+            $this->lengthUnits = $manager->getRepository(LengthUnit::class)->findAll();
             if (!count($this->lengthUnits)) {
                 $unit = (new LengthUnit())->setCode('demo_length');
                 $manager->persist($unit);
@@ -198,16 +160,10 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         return $this->lengthUnits[mt_rand(0, count($this->lengthUnits) - 1)];
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return FreightClass
-     */
-    protected function getRandomFreightClass(ObjectManager $manager)
+    private function getRandomFreightClass(ObjectManager $manager): FreightClass
     {
         if (!$this->freightClasses) {
-            $this->freightClasses = $manager->getRepository('OroShippingBundle:FreightClass')->findAll();
-
+            $this->freightClasses = $manager->getRepository(FreightClass::class)->findAll();
             if (!count($this->freightClasses)) {
                 $freight = (new FreightClass())->setCode('parcel');
                 $manager->persist($freight);
