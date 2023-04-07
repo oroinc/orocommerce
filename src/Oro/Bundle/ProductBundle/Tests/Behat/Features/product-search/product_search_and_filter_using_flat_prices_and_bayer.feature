@@ -40,7 +40,7 @@ Feature: Product search and filter using flat prices and bayer
   Scenario: Create relation
     Given I proceed as the Admin
     And go to Customers/Customers
-    When I click Edit AmandaRCole in grid
+    When I click Edit Company A in grid
     And fill "Customer Form" with:
       | Price List | first price list |
     And save and close form
@@ -74,7 +74,7 @@ Feature: Product search and filter using flat prices and bayer
   Scenario: Change customer relation
     Given I proceed as the Admin
     And go to Customers/Customers
-    When I click Edit AmandaRCole in grid
+    When I click Edit Company A in grid
     And fill "Customer Form" with:
       | Price List | second price list |
     And save and close form
@@ -93,7 +93,7 @@ Feature: Product search and filter using flat prices and bayer
   Scenario: Change price list system config
     Given I proceed as the Admin
     And go to Customers/Customers
-    When I click Edit AmandaRCole in grid
+    When I click Edit Company A in grid
     And fill "Customer Form" with:
       | Price List |  |
     And save and close form

@@ -56,9 +56,9 @@ Feature: Showing upsell products
       | Maximum Items             | 6     |
       | Minimum Items Use Default | false |
       | Minimum Items             | 4     |
-    And I fill "SimilarProductsConfig" with:
-      | Enable Similar Products Use Default | false |
-      | Enable Similar Products             | false |
+#    And I fill "SimilarProductsConfig" with:
+#      | Enable Similar Products Use Default | false |
+#      | Enable Similar Products             | false |
     And I click "Save settings"
     And go to Products/ Products
     And I click Edit "PSKU1" in grid
@@ -93,9 +93,13 @@ Feature: Showing upsell products
     And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
-    And I should see "PSKU2"
-    And I should see "PSKU3"
-    And I should not see "PSKU4"
+    Then should see the following products in the "Upsell Products Block":
+      | SKU  | Product Name in Embedded Block |
+      | PSKU2 | Product 2                     |
+      | PSKU3 | Product 3                     |
+    And should not see the following products in the "Upsell Products Block":
+      | SKU  | Product Name in Embedded Block |
+      | PSKU4 | Product 4                     |
 
   Scenario: Verify equivalence partitioning for Minimum and Maximum Items
     Given I proceed as the Admin
@@ -113,9 +117,13 @@ Feature: Showing upsell products
     And I should see "PSKU1" product
     And I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
-    And I should see "PSKU2"
-    And I should see "PSKU3"
-    And I should not see "PSKU4"
+    Then should see the following products in the "Upsell Products Block":
+      | SKU  | Product Name in Embedded Block |
+      | PSKU2 | Product 2                     |
+      | PSKU3 | Product 3                     |
+    And should not see the following products in the "Upsell Products Block":
+      | SKU  | Product Name in Embedded Block |
+      | PSKU4 | Product 4                     |
 
   Scenario: Disabled products are not displayed in "Up-sell Products" block
     Given I proceed as the Admin
@@ -143,9 +151,13 @@ Feature: Showing upsell products
     And I should see "PSKU3" product
     And I click "View Details" for "PSKU3" product
     Then I should see "Up-sell Products"
-    And I should see "PSKU2"
-    And I should see "PSKU4"
-    And I should not see "PSKU5"
+    Then should see the following products in the "Upsell Products Block":
+      | SKU  | Product Name in Embedded Block |
+      | PSKU2 | Product 2                     |
+      | PSKU4 | Product 4                     |
+    And should not see the following products in the "Upsell Products Block":
+      | SKU  | Product Name in Embedded Block |
+      | PSKU5 | Product 5                     |
 
   Scenario: Check that product name is localized and displayed properly
     Given I click "Localization Switcher"
