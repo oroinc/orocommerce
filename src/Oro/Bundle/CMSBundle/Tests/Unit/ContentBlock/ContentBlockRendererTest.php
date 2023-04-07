@@ -7,24 +7,22 @@ use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockRenderer;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
 
-class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
+class ContentBlockRendererTest extends TestCase
 {
     use LoggerAwareTraitTestTrait;
 
-    /** @var ContentBlockDataProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $contentBlockDataProvider;
+    private ContentBlockDataProvider|MockObject $contentBlockDataProvider;
 
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
-    private $twig;
+    private Environment|MockObject $twig;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private LoggerInterface|MockObject $logger;
 
-    /** @var ContentBlockRenderer */
-    private $renderer;
+    private ContentBlockRenderer $renderer;
 
     protected function setUp(): void
     {
@@ -42,10 +40,10 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
         $this->assertLoggerErrorMethodCalled();
 
         $this->contentBlockDataProvider->expects($this->once())
-            ->method('getContentBlockView')
+            ->method('hasContentBlockView')
             ->with('sample-block')
-            ->willReturn(null);
-
+            ->willReturn(false)
+        ;
         $this->assertEquals('', $this->renderer->render('sample-block'));
     }
 
@@ -54,10 +52,15 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
         $blockView = new ContentBlockView('block', new ArrayCollection(), true, 'content', 'style');
 
         $this->contentBlockDataProvider->expects($this->once())
+            ->method('hasContentBlockView')
+            ->with('sample-block')
+            ->willReturn(true)
+        ;
+        $this->contentBlockDataProvider->expects($this->once())
             ->method('getContentBlockView')
             ->with('sample-block')
-            ->willReturn($blockView);
-
+            ->willReturn($blockView)
+        ;
         $this->twig->expects($this->once())
             ->method('render')
             ->with(
@@ -75,10 +78,16 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
         $blockView = new ContentBlockView('block', new ArrayCollection(), true, 'content', 'style');
 
         $this->contentBlockDataProvider->expects($this->once())
+            ->method('hasContentBlockView')
+            ->with('sample-block')
+            ->willReturn(true)
+        ;
+
+        $this->contentBlockDataProvider->expects($this->once())
             ->method('getContentBlockView')
             ->with('sample-block')
-            ->willReturn($blockView);
-
+            ->willReturn($blockView)
+        ;
 
         $this->twig->expects($this->once())
             ->method('render')
@@ -93,17 +102,22 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('', $this->renderer->render('sample-block'));
     }
 
-    public function testRenderWhenNoContentBlockView(): void
+    public function testRenderWhenContentBlockIsInvisible(): void
     {
+        $this->contentBlockDataProvider->expects($this->once())
+            ->method('hasContentBlockView')
+            ->with('sample-block')
+            ->willReturn(true)
+        ;
         $this->contentBlockDataProvider->expects($this->once())
             ->method('getContentBlockView')
             ->with('sample-block')
-            ->willReturn(null);
-
+            ->willReturn(null)
+        ;
         $this->twig->expects($this->never())
             ->method('render');
 
-        $this->assertLoggerErrorMethodCalled();
+        $this->assertLoggerNotCalled();
         $this->assertEquals('', $this->renderer->render('sample-block'));
     }
 
@@ -112,15 +126,20 @@ class ContentBlockRendererTest extends \PHPUnit\Framework\TestCase
         $blockView = new ContentBlockView('block', new ArrayCollection(), true, 'content', 'style');
 
         $this->contentBlockDataProvider->expects($this->once())
+            ->method('hasContentBlockView')
+            ->with('sample-block')
+            ->willReturn(true)
+        ;
+        $this->contentBlockDataProvider->expects($this->once())
             ->method('getContentBlockView')
             ->with('sample-block')
-            ->willReturn($blockView);
-
+            ->willReturn($blockView)
+        ;
         $this->twig->expects($this->once())
             ->method('render')
             ->with('@OroCMS/ContentBlock/widget.html.twig', ['contentBlock' => $blockView])
-            ->willReturn('sample-result');
-
+            ->willReturn('sample-result')
+        ;
         $this->assertLoggerNotCalled();
         $this->assertEquals('sample-result', $this->renderer->render('sample-block'));
     }

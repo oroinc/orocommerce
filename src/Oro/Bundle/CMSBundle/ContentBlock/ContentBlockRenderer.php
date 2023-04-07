@@ -52,13 +52,14 @@ class ContentBlockRenderer implements LoggerAwareInterface
                 throw new \RuntimeException(sprintf('Found a recursive "%s" content block renderer', $blockAlias));
             }
 
-            $contentBlockView = $this->contentBlockDataProvider->getContentBlockView($blockAlias);
-            if (!$contentBlockView) {
+            if (!$this->contentBlockDataProvider->hasContentBlockView($blockAlias)) {
                 throw new \RuntimeException(sprintf('Could not find content block "%s"', $blockAlias));
             }
 
-            $this->aliases[$blockAlias] = true;
-            $content = $this->twig->render(self::TEMPLATE, ['contentBlock' => $contentBlockView]);
+            if ($contentBlockView = $this->contentBlockDataProvider->getContentBlockView($blockAlias)) {
+                $this->aliases[$blockAlias] = true;
+                $content = $this->twig->render(self::TEMPLATE, ['contentBlock' => $contentBlockView]);
+            }
         } catch (\Exception $exception) {
             $this->logger->error(
                 sprintf('Error occurred while rendering content block %s', $blockAlias),
