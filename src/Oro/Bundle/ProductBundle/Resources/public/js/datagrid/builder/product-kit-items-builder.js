@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import OrderInputValidationEditor from 'oroproduct/js/datagrid/editor/order-input-validation-editor';
 import DecimalFormatter from 'orodatagrid/js/datagrid/formatter/decimal-formatter';
 
@@ -10,8 +11,18 @@ export default {
         const updateColumns = columns => {
             return columns.map(column => {
                 if (column.name === sortOrderColumnName && column.editable) {
-                    column.editor = OrderInputValidationEditor;
-                    column.formatter = DecimalFormatter;
+                    if (_.isDesktop()) {
+                        // for desktop version sorting via drag n drop rows is enabled
+                        // hide sort order column
+                        Object.assign(column, {
+                            editable: false,
+                            renderable: false,
+                            manageable: false
+                        });
+                    } else {
+                        column.editor = OrderInputValidationEditor;
+                        column.formatter = DecimalFormatter;
+                    }
                 }
 
                 return column;
@@ -21,24 +32,23 @@ export default {
         options.metadata.columns = updateColumns(options.metadata.columns);
 
         const updateData = data => {
-            return data.map((item, index, items) => {
-                const maxSortOrder = Math.max(...items.map(_item =>
-                    _item[sortOrderColumnName] ? Number(_item[sortOrderColumnName]) : 0
-                ));
-                item[sortOrderColumnName] = Number(item[sortOrderColumnName]) || maxSortOrder + 1;
-
+            let maxSortOrder = Math.max(
+                ...data.map(item => item[sortOrderColumnName] ? Number(item[sortOrderColumnName]) : 0)
+            );
+            return data.map(item => {
+                item[sortOrderColumnName] = Number(item[sortOrderColumnName]) || ++maxSortOrder;
                 item.constraints = options.gridBuildersOptions?.sortOrderConstraints || {};
                 return item;
             });
         };
 
-        Object.assign(options.metadata.options, {
-            comparator: sortOrderColumnName
-        });
-
         options.data.data = updateData(options.data.data);
+        const {parseResponseModels} = options.metadata.options;
         Object.assign(options.metadata.options, {
             parseResponseModels: function(resp) {
+                if (parseResponseModels) {
+                    resp = parseResponseModels.call(this, resp);
+                }
                 if ('data' in resp) {
                     // collection is bound as context to `parseResponseModels` function
                     const collection = this;

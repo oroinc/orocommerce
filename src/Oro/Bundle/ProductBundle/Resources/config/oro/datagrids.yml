@@ -1218,6 +1218,11 @@ datagrids:
         options:
             jsmodules:
                 - oroproduct/datagrid/builder/product-kit-items-builder
+                - orodatagrid/js/sort-rows-drag-n-drop/builder
+            gridBuildersOptions:
+                sortRowsDragNDropBuilder:
+                    highlightSortedItems: false
+                    renderDropZonesMenu: true
 
     kit-item-products-add-grid:
         extends: kit-item-products-base-grid
