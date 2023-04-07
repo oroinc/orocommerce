@@ -58,18 +58,27 @@ class ContentBlockDataProvider
         $this->scopeType = $scopeType;
     }
 
+    public function hasContentBlockView(string $alias): bool
+    {
+        $contentBlock = $this->getContentBlock($alias);
+        return null !== $contentBlock;
+    }
+
     public function getContentBlockView(string $alias): ?ContentBlockView
     {
         $criteria = $this->scopeManager->getCriteria($this->scopeType);
         $contentBlock = $this->getContentBlock($alias);
 
         if (null === $contentBlock) {
-            $this->logger->notice('Content block with alias "{alias}" doesn\'t exists', ['alias' => $alias]);
-
             return null;
         }
 
-        return $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria);
+        if (!$contentBlockView = $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria)) {
+            $this->logger->notice('Content block with alias "{alias}" is not visible to user.', ['alias' => $alias]);
+            return null;
+        }
+
+        return $contentBlockView;
     }
 
     private function getContentBlock(string $alias): ?ContentBlock
