@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Datagrid\Extension;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
@@ -49,15 +50,19 @@ class NoDataMessagesExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessConfigsSearchSource(): void
     {
-        $config = DatagridConfiguration::create([
-            'source' => [
-                'type' => SearchDatasource::TYPE,
-                'query' => [
-                    'select' => ['entity.id'],
-                    'from' => ['alias']
+        $config = DatagridConfiguration::create(
+            [
+                'source' => [
+                    'type' => SearchDatasource::TYPE,
+                    'query' => [
+                        'select' => ['entity.id'],
+                        'from' => ['alias']
+                    ]
                 ]
-            ]
-        ]);
+            ],
+        );
+
+        $config->setPropertyAccessor(PropertyAccess::createPropertyAccessorWithDotSyntax());
 
         $expected = [
             'entityHint' => 'stdclass.entity_plural_label',
