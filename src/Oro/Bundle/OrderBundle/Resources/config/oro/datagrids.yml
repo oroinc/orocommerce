@@ -324,8 +324,8 @@ datagrids:
                     data_name: order1.createdAt
                 updatedAt:
                     data_name: order1.updatedAt
-        default:
-            createdAt: DESC
+            default:
+                createdAt: DESC
         filters:
             columns:
                 identifier:
@@ -396,7 +396,6 @@ datagrids:
         actions:
             view:
                 acl_resource:  oro_order_view
-
         views_list: '@oro_order.datagrid.orders_view_list'
 
     suborders-grid:

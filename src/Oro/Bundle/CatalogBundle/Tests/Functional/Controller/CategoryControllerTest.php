@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -57,9 +58,7 @@ class CategoryControllerTest extends WebTestCase
             LoadCategoryData::class
         ]);
 
-        $this->localizations = $this->getContainer()->get('doctrine')
-            ->getRepository(Localization::class)
-            ->findAll();
+        $this->localizations = $this->getDoctrine()->getRepository(Localization::class)->findAll();
 
         $this->masterCatalog = $this->getRootCategory();
     }
@@ -78,7 +77,7 @@ class CategoryControllerTest extends WebTestCase
         $englishSlugPrototype = new LocalizedFallbackValue();
         $englishSlugPrototype->setString('old-english-slug')->setLocalization($englishLocalization);
 
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class);
+        $entityManager = $this->getDoctrine()->getManagerForClass(Category::class);
         $category->addSlugPrototype($englishSlugPrototype);
 
         $entityManager->persist($category);
@@ -344,7 +343,7 @@ class CategoryControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em = $this->getDoctrine()->getManager();
         $attachments = $em->getRepository(File::class)->findBy(['extension' => 'svg']);
         foreach ($attachments as $attachmentFile) {
             $url = $this->getContainer()->get('oro_attachment.manager')
@@ -434,7 +433,7 @@ class CategoryControllerTest extends WebTestCase
                 . $this->getProductBySku(LoadProductData::PRODUCT_2)->getId();
             $form['oro_catalog_category[sortOrder]'] = json_encode([
                 $this->getProductBySku(LoadProductData::PRODUCT_2)->getId() => ['categorySortOrder' => 0.2]
-            ]);
+            ], JSON_THROW_ON_ERROR);
         } else {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_4)->getId();
         }
@@ -504,7 +503,7 @@ class CategoryControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => [
                 '_token' => $crfToken,
-                'sortOrder' => json_encode($sortOrder),
+                'sortOrder' => json_encode($sortOrder, JSON_THROW_ON_ERROR),
                 'appendProducts' => $appendProduct->getId(),
                 'removeProducts' => $testProductOne->getId()
             ]
@@ -700,15 +699,16 @@ class CategoryControllerTest extends WebTestCase
 
     private function getProductBySku(string $sku): Product
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository(Product::class)
-            ->findOneBy(['sku' => $sku]);
+        return $this->getDoctrine()->getRepository(Product::class)->findOneBy(['sku' => $sku]);
     }
 
     private function getProductCategoryByProduct(Product $product): ?Category
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository(Category::class)
-            ->findOneByProduct($product);
+        return $this->getDoctrine()->getRepository(Category::class)->findOneByProduct($product);
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return self::getContainer()->get('doctrine');
     }
 }

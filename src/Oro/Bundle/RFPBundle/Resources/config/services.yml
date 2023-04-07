@@ -14,17 +14,21 @@ services:
     oro_rfp.processor.quick_add:
         class: 'Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor'
         public: true
-        parent: oro_product.component_processor.data_storage_aware.processor
         arguments:
-            - '@oro_rfp.form.type.extension.frontend_request_data_storage'
+            - '@oro_product.storage.product_data_storage'
+            - '@oro_product.website_search.repository.product'
+            - '@security.authorization_checker'
+            - '@oro_security.token_accessor'
+            - '@request_stack'
+            - '@translator'
+            - '@router'
+            - '@oro_rfp.provider.product_availability'
             - '@oro_featuretoggle.checker.feature_checker'
         calls:
-            - [setName, ['oro_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['oro_rfp_frontend_request_create']]
             - [setAcl, ['oro_rfp_frontend_request_create']]
-            - [setScope, ['rfq']]
         tags:
-            - { name: oro_product.quick_add_processor }
+            - { name: oro_product.quick_add_processor, processor_name: oro_rfp_quick_add_processor }
 
     oro_rfp.event_listener.product_db_query_restriction:
         class: 'Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener'
@@ -117,7 +121,10 @@ services:
 
     oro_rfp.provider.product_availability:
        class: Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider
-       public: false
+       arguments:
+           - '@oro_config.manager'
+           - '@doctrine'
+           - '@oro_security.acl_helper'
 
     oro_rfp.acl.voter.frontend_request:
         class: Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter

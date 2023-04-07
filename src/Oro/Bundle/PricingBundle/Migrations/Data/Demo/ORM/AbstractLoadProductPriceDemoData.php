@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Abstract class for product price demo fixtures.
+ * The base class for product price demo fixtures.
  */
 abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implements
     ContainerAwareInterface,
@@ -70,7 +70,7 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
     protected function getProductBySku(EntityManagerInterface $manager, $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
@@ -79,7 +79,7 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
     protected function getProductUnit(EntityManagerInterface $manager, $code): ?ProductUnit
     {
         if (!array_key_exists($code, $this->productUnis)) {
-            $this->productUnis[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);
+            $this->productUnis[$code] = $manager->getRepository(ProductUnit::class)->find($code);
         }
 
         return $this->productUnis[$code];

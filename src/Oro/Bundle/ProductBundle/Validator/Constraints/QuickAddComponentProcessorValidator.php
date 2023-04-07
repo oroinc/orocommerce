@@ -13,28 +13,29 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
  */
 class QuickAddComponentProcessorValidator extends ConstraintValidator
 {
-    private ComponentProcessorRegistry $componentProcessorRegistry;
+    private ComponentProcessorRegistry $processorRegistry;
 
-    public function __construct(ComponentProcessorRegistry $componentProcessorRegistry)
+    public function __construct(ComponentProcessorRegistry $processorRegistry)
     {
-        $this->componentProcessorRegistry = $componentProcessorRegistry;
+        $this->processorRegistry = $processorRegistry;
     }
 
     /**
-     * @param QuickAddComponentProcessor $constraint
+     * {@inheritDoc}
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (!is_scalar($value)) {
-            throw new UnexpectedValueException($value, 'string');
-        }
-
         if (!$constraint instanceof QuickAddComponentProcessor) {
             throw new UnexpectedTypeException($constraint, QuickAddComponentProcessor::class);
         }
 
-        if (!$this->componentProcessorRegistry->hasProcessor($value)
-            || !$this->componentProcessorRegistry->getProcessorByName($value)->isAllowed()) {
+        if (!is_scalar($value)) {
+            throw new UnexpectedValueException($value, 'string');
+        }
+
+        if (!$this->processorRegistry->hasProcessor($value)
+            || !$this->processorRegistry->getProcessor($value)->isAllowed()
+        ) {
             $this->context
                 ->buildViolation($constraint->message, ['{{ name }}' => $value])
                 ->setCode($constraint::NOT_AVAILABLE_PROCESSOR)

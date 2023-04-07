@@ -89,10 +89,10 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     And I go to Sales/Orders
     Then I should see following grid:
       | Order Number | Owner    |
-      | SimpleOrder  | John Doe |
-      | 2            | John Doe |
-      | 2-1          | John Doe |
       | 2-2          | John Doe |
+      | 2-1          | John Doe |
+      | 2            | John Doe |
+      | SimpleOrder  | John Doe |
     And number of records should be 4
     # Click on order number 2
     When I click view "$59.00" in grid
@@ -100,8 +100,8 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     When I scroll to "SubOrders Grid"
     Then I should see following "SubOrders Grid" grid:
       | Order Number | Total  |
-      | 2-1          | $13.00 |
       | 2-2          | $46.00 |
+      | 2-1          | $13.00 |
     And records in "SubOrders Grid" should be 2
     When I click view "$13.00" in grid
     Then I should see "Order #2-1"

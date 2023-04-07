@@ -7,7 +7,6 @@ use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
@@ -276,7 +275,7 @@ class QuoteControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form->remove('oro_sale_quote[quoteProducts][0]');
         foreach ($submittedData as $field => $value) {
-            $form[QuoteType::NAME . $field] = $value;
+            $form['oro_sale_quote' . $field] = $value;
         }
 
         $this->client->followRedirects(true);

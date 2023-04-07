@@ -52,7 +52,7 @@ class LoadSortOrderForProductCollectionsContentVariantsDemoData extends Abstract
         $productData = $this->getAllProductData();
         foreach ($productData as $row) {
             if ($row['new_arrival'] && $segmentsByCategoryName[$row['category']]) {
-                $product = $manager->getRepository(Product::class)->findOneBySku($row['sku']);
+                $product = $manager->getRepository(Product::class)->findOneBy(['sku' => $row['sku']]);
                 if ($product) {
                     $collectionSortOrder = (new CollectionSortOrder())
                         ->setSegment($segmentsByCategoryName[$row['category']])

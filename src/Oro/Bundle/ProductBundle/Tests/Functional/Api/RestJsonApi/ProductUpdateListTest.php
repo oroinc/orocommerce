@@ -50,12 +50,12 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
 
         $repo = $this->getEntityManager()->getRepository(Product::class);
         /** @var Product $product1 */
-        $product1 = $repo->findOneBySku('test-api-01');
+        $product1 = $repo->findOneBy(['sku' => 'test-api-01']);
         self::assertEquals('Test product 1', $product1->getName());
         self::assertEquals('Test product 1 es', $product1->getName($this->getReference('es')));
 
         /** @var Product $product2 */
-        $product2 = $repo->findOneBySku('test-api-02');
+        $product2 = $repo->findOneBy(['sku' => 'test-api-02']);
         self::assertEquals('Test product 2', $product2->getName());
 
         $responseContent = $this->updateResponseContent('create_product_list.yml', $response);
@@ -117,8 +117,9 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
             'create_configurable_list.yml'
         );
 
+        $repo = $this->getEntityManager()->getRepository(Product::class);
         /** @var Product $product */
-        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBySku('configurable-test-api-1');
+        $product = $repo->findOneBy(['sku' => 'configurable-test-api-1']);
 
         self::assertEquals('Test product', $product->getName());
         self::assertEquals('configurable', $product->getType());

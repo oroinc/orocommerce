@@ -79,6 +79,7 @@ Feature: Previously purchased products visibility
     And I save setting
     And I proceed as the Customer
     And follow "Account"
+    And I wait for 3 seconds
     And click "Previously Purchased"
     Then I should not see "Product 1"
 

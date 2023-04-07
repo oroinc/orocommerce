@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $componentRegistry;
+    private $processorRegistry;
 
     /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $validator;
@@ -50,7 +50,7 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->componentRegistry = $this->createMock(ComponentProcessorRegistry::class);
+        $this->processorRegistry = $this->createMock(ComponentProcessorRegistry::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
         $this->quickAddRowGrouper = $this->createMock(QuickAddRowGrouperInterface::class);
         $this->quickAddRowCollectionViolationsMapper = $this->createMock(QuickAddRowCollectionViolationsMapper::class);
@@ -58,7 +58,7 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
         $this->handler = new QuickAddProcessHandler(
-            $this->componentRegistry,
+            $this->processorRegistry,
             $this->validator,
             $this->quickAddRowGrouper,
             $this->quickAddRowCollectionViolationsMapper,
@@ -102,7 +102,9 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(true)
             ->willReturn(new FormErrorIterator($form, $formErrors));
 
-        self::assertEquals(new JsonResponse($expected), $this->handler->process($form, $request));
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
+        self::assertEquals(json_encode($expected, JSON_THROW_ON_ERROR), $response->getContent());
     }
 
     public function processWhenNotValidDataProvider(): array
@@ -193,9 +195,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($quickAddRowCollection)
             ->willReturn($normalizedCollection);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'collection' => $normalizedCollection],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'collection' => $normalizedCollection], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -276,9 +280,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($quickAddRowCollection)
             ->willReturn($normalizedCollection);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'collection' => $normalizedCollection],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'collection' => $normalizedCollection], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -371,9 +377,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($quickAddRowCollection)
             ->willReturn($normalizedCollection);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'collection' => $normalizedCollection],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'collection' => $normalizedCollection], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -455,8 +463,8 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('normalize');
 
         $componentProcessor = $this->createMock(ComponentProcessorInterface::class);
-        $this->componentRegistry->expects(self::once())
-            ->method('getProcessorByName')
+        $this->processorRegistry->expects(self::once())
+            ->method('getProcessor')
             ->with($formData[QuickAddType::COMPONENT_FIELD_NAME])
             ->willReturn($componentProcessor);
 
@@ -482,9 +490,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getFlashBag')
             ->willReturn($flashBag);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => false, 'messages' => ['error' => ['sample flash error']]],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => false, 'messages' => ['error' => ['sample flash error']]], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 
@@ -566,8 +576,8 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('normalize');
 
         $componentProcessor = $this->createMock(ComponentProcessorInterface::class);
-        $this->componentRegistry->expects(self::once())
-            ->method('getProcessorByName')
+        $this->processorRegistry->expects(self::once())
+            ->method('getProcessor')
             ->with($formData[QuickAddType::COMPONENT_FIELD_NAME])
             ->willReturn($componentProcessor);
 
@@ -588,9 +598,11 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ], $request)
             ->willReturn($redirectResponse);
 
+        $response = $this->handler->process($form, $request);
+        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertEquals(
-            ['success' => true, 'redirectUrl' => $redirectResponse->getTargetUrl()],
-            json_decode($this->handler->process($form, $request)->getContent(), true)
+            json_encode(['success' => true, 'redirectUrl' => $redirectResponse->getTargetUrl()], JSON_THROW_ON_ERROR),
+            $response->getContent()
         );
     }
 }

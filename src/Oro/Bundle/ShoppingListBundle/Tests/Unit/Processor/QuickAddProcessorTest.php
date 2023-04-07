@@ -56,15 +56,6 @@ class QuickAddProcessorTest extends \PHPUnit\Framework\TestCase
             $this->messageGenerator
         );
     }
-    public function testGetName(): void
-    {
-        self::assertEquals('oro_shopping_list_quick_add_processor', $this->processor->getName());
-    }
-
-    public function testIsValidationRequired(): void
-    {
-        self::assertTrue($this->processor->isValidationRequired());
-    }
 
     /**
      * @dataProvider isAllowedDataProvider

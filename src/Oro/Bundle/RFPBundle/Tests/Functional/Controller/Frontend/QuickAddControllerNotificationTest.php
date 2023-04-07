@@ -4,7 +4,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -35,17 +34,11 @@ class QuickAddControllerNotificationTest extends WebTestCase
     /**
      * @dataProvider productProvider
      */
-    public function testNotification(
-        string $processorName,
-        array $products,
-        string $expectedMessage
-    ) {
+    public function testNotification(array $products, string $expectedMessage)
+    {
         $this->markTestSkipped(
             'Waiting for new quick order page to be finished'
         );
-
-        /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get($processorName);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
 
@@ -61,7 +54,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
                 'oro_product_quick_add' => [
                     '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => $products,
-                    'component' => $processor->getName(),
+                    'component' => 'oro_rfp_quick_add_processor',
                 ],
             ]
         );
@@ -78,7 +71,6 @@ class QuickAddControllerNotificationTest extends WebTestCase
     {
         return [
             'no_products_be_added_to_rfq' => [
-                'processorName' => 'oro_rfp.processor.quick_add',
                 'products' => [
                     [
                         'productSku' => LoadProductData::PRODUCT_3,
@@ -89,7 +81,6 @@ class QuickAddControllerNotificationTest extends WebTestCase
                 'expectedMessage' => 'oro.frontend.rfp.data_storage.no_products_be_added_to_rfq',
             ],
             'cannot_be_added_to_rfq' => [
-                'processorName' => 'oro_rfp.processor.quick_add',
                 'products' => [
                     [
                         'productSku' => LoadProductData::PRODUCT_2,

@@ -67,7 +67,6 @@ class QuickAddControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
 
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
-        $processor = self::getContainer()->get('oro_shopping_list.processor.quick_add');
 
         $this->client->request(
             $form->getMethod(),
@@ -80,8 +79,8 @@ class QuickAddControllerTest extends WebTestCase
                             QuickAddRow::SKU => $product->getSku(),
                             QuickAddRow::QUANTITY => $quantity,
                         ],
-                    ]),
-                    'component' => $processor->getName(),
+                    ], JSON_THROW_ON_ERROR),
+                    'component' => 'oro_shopping_list_quick_add_processor',
                     'additional' => null,
                 ],
             ]
@@ -120,7 +119,6 @@ class QuickAddControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
 
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
-        $processor = self::getContainer()->get('oro_rfp.processor.quick_add');
         $this->client->followRedirects(false);
 
         $this->client->request(
@@ -134,8 +132,8 @@ class QuickAddControllerTest extends WebTestCase
                             QuickAddRow::SKU => $product->getSku(),
                             QuickAddRow::QUANTITY => $quantity,
                         ],
-                    ]),
-                    'component' => $processor->getName(),
+                    ], JSON_THROW_ON_ERROR),
+                    'component' => 'oro_rfp_quick_add_processor',
                     'additional' => null,
                 ],
             ]

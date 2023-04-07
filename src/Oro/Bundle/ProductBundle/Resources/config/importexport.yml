@@ -46,7 +46,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer'
         parent: oro_importexport.serializer.configurable_entity_normalizer
         calls:
-            - [setProductClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
             - [setEventDispatcher, ['@event_dispatcher']]
         tags:
             - { name: oro_importexport.normalizer, priority: -5 }

@@ -7,35 +7,20 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * The import/export normalizer for Product entities.
+ */
 class ProductNormalizer extends ConfigurableEntityNormalizer
 {
-    /**
-     * @var string
-     */
-    protected $productClass;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
     {
         $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
-     * @param Product $object
-     *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function normalize($object, string $format = null, array $context = [])
     {
@@ -50,17 +35,14 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
             unset($data['unitPrecisions']);
         }
 
-        if ($this->eventDispatcher) {
-            $event = new ProductNormalizerEvent($object, $data, $context);
-            $this->eventDispatcher->dispatch($event, ProductNormalizerEvent::NORMALIZE);
-            $data = $event->getPlainData();
-        }
+        $event = new ProductNormalizerEvent($object, $data, $context);
+        $this->eventDispatcher->dispatch($event, ProductNormalizerEvent::NORMALIZE);
 
-        return $data;
+        return $event->getPlainData();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
@@ -73,33 +55,28 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
             unset($unitPrecisionData);
         }
 
-        /**
-         * @var Product $object
-         */
+        /** @var Product $object */
         $object = parent::denormalize($data, $type, $format, $context);
 
-        if ($this->eventDispatcher) {
-            $event = new ProductNormalizerEvent($object, $data, $context);
-            $this->eventDispatcher->dispatch($event, ProductNormalizerEvent::DENORMALIZE);
-            $object = $event->getProduct();
-        }
+        $event = new ProductNormalizerEvent($object, $data, $context);
+        $this->eventDispatcher->dispatch($event, ProductNormalizerEvent::DENORMALIZE);
 
-        return $object;
+        return $event->getProduct();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
-        return is_a($data, $this->productClass);
+        return is_a($data, Product::class);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
-        return is_a($type, $this->productClass, true);
+        return is_a($type, Product::class, true);
     }
 }

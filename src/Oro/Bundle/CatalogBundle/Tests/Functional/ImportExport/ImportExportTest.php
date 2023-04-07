@@ -7,7 +7,6 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\AbstractImportExportTestCase;
 
 /**
@@ -30,13 +29,11 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->validateImportFile($strategy, $filePath);
         $this->doImport($strategy);
 
-        /** @var ProductRepository $productRepository */
-        $productRepository = $this->getRepository(Product::class);
-        $products = $productRepository->findAll();
+        $products = $this->getRepository(Product::class)->findAll();
         $this->assertCount(9, $products);
 
         /** @var Product $sku1Product */
-        $sku1Product = $productRepository->findOneBySku('sku1');
+        $sku1Product = $this->getRepository(Product::class)->findOneBy(['sku' => 'sku1']);
 
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $this->getRepository(Category::class);
@@ -76,11 +73,8 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->validateImportFile($strategy, $filePath);
         $this->doImport($strategy);
 
-        /** @var ProductRepository $productRepository */
-        $productRepository = $this->getRepository(Product::class);
-
         /** @var Product $sku1Product */
-        $sku1Product = $productRepository->findOneBySku('sku1');
+        $sku1Product = $this->getRepository(Product::class)->findOneBy(['sku' => 'sku1']);
 
         /** @var Category $categoryFirst */
         $categoryFirst = $this->getReference(LoadCategoryData::FIRST_LEVEL);

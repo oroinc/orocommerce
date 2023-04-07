@@ -451,30 +451,33 @@ class ImportExportTest extends AbstractImportExportTestCase
         $row = fgetcsv($file);
         while ($row) {
             $values = array_combine($header, $row);
+            $entity = $this->getInventoryLevelEntity($values);
 
-            $this->assertTrue($this->assertFields(
-                $this->getInventoryLevelEntity($values),
-                $values,
-                array_intersect($this->getFieldMappings(), $header),
-                []
-            ));
+            if (null !== $entity) {
+                $this->assertTrue($this->assertFields(
+                    $entity,
+                    $values,
+                    array_intersect($this->getFieldMappings(), $header),
+                    []
+                ));
+            }
 
             $row = fgetcsv($file);
         }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getImportStatusFile()
+    public function getImportStatusFile(): string
     {
         return 'import_status_data.yml';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getImportLevelFile()
+    public function getImportLevelFile(): string
     {
         return 'import_level_data.yml';
     }

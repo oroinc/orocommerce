@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddressACLData;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
@@ -16,8 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddCollectionPriceProviderTest extends WebTestCase
 {
-    private ProductRepository $productRepository;
-
     protected function setUp(): void
     {
         $this->initClient();
@@ -33,8 +31,6 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         );
 
         self::getContainer()->get('request_stack')->push($request);
-
-        $this->productRepository = self::getContainer()->get('oro_product.repository.product');
     }
 
     public function testIfCorrectPricesAreBeingAddedToRowItems(): void
@@ -88,18 +84,23 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $lineNumber = 0;
 
         $quickAddRow1 = new QuickAddRow(++$lineNumber, 'product-1', 1, 'bottle');
-        $quickAddRow1->setProduct($this->productRepository->findOneBySku('product-1'));
+        $quickAddRow1->setProduct($this->getProductBySku('product-1'));
 
         $quickAddRow2 = new QuickAddRow(++$lineNumber, 'product-2', 1, 'liter');
-        $quickAddRow2->setProduct($this->productRepository->findOneBySku('product-2'));
+        $quickAddRow2->setProduct($this->getProductBySku('product-2'));
 
         $quickAddRow3 = new QuickAddRow(++$lineNumber, 'product-4', 1, 'bottle');
-        $quickAddRow3->setProduct($this->productRepository->findOneBySku('product-4'));
+        $quickAddRow3->setProduct($this->getProductBySku('product-4'));
 
         $collection->add($quickAddRow1);
         $collection->add($quickAddRow2);
         $collection->add($quickAddRow3);
 
         return $collection;
+    }
+
+    private function getProductBySku(string $sku): Product
+    {
+        return self::getContainer()->get('doctrine')->getRepository(Product::class)->findOneBy(['sku' => $sku]);
     }
 }

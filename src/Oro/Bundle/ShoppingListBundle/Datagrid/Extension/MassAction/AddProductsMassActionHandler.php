@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
@@ -19,50 +20,40 @@ use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
  */
 class AddProductsMassActionHandler implements MassActionHandlerInterface
 {
-    /** @var MessageGenerator */
-    protected $messageGenerator;
-
-    /**  @var ShoppingListLineItemHandler */
-    protected $shoppingListLineItemHandler;
-
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-
-    /** @var ProductShoppingListsDataProvider */
-    protected $productShoppingListsDataProvider;
-
-    /** @var AclHelper */
-    private $aclHelper;
+    private MessageGenerator $messageGenerator;
+    private ShoppingListLineItemHandler $shoppingListLineItemHandler;
+    private ManagerRegistry $doctrine;
+    private ProductShoppingListsDataProvider $productShoppingListsDataProvider;
+    private AclHelper $aclHelper;
 
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
         MessageGenerator $messageGenerator,
-        ManagerRegistry $managerRegistry,
+        ManagerRegistry $doctrine,
         ProductShoppingListsDataProvider $productShoppingListsDataProvider,
         AclHelper $aclHelper
     ) {
         $this->shoppingListLineItemHandler = $shoppingListLineItemHandler;
         $this->messageGenerator = $messageGenerator;
-        $this->managerRegistry = $managerRegistry;
+        $this->doctrine = $doctrine;
         $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
         $this->aclHelper = $aclHelper;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function handle(MassActionHandlerArgs $args)
+    public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
-        $argsParser = new AddProductsMassActionArgsParser($args);
-        $shoppingList = $argsParser->getShoppingList();
-        $productIds = $argsParser->getProductIds();
+        $shoppingList = $this->getShoppingList($args);
+        $productIds = $this->getProductIds($args);
 
-        if (!$this->isAllowed($shoppingList, $productIds)) {
+        if (null === $shoppingList || !$productIds || !$this->shoppingListLineItemHandler->isAllowed()) {
             return $this->generateResponse($args);
         }
 
         /** @var EntityManagerInterface $em */
-        $em = $this->managerRegistry->getManagerForClass(ShoppingList::class);
+        $em = $this->doctrine->getManagerForClass(ShoppingList::class);
         $em->beginTransaction();
 
         try {
@@ -74,7 +65,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             $addedCnt = $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
                 $productIds,
-                $argsParser->getUnitsAndQuantities()
+                $this->getUnitsAndQuantities($args)
             );
 
             $em->commit();
@@ -91,20 +82,12 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         }
     }
 
-    /**
-     * @param MassActionHandlerArgs $args
-     * @param int $entitiesCount
-     * @param int|null $shoppingListId
-     * @param array $productsShoppingLists
-     *
-     * @return MassActionResponse
-     */
-    protected function generateResponse(
+    private function generateResponse(
         MassActionHandlerArgs $args,
-        $entitiesCount = 0,
-        $shoppingListId = null,
+        int $entitiesCount = 0,
+        ?int $shoppingListId = null,
         array $productsShoppingLists = []
-    ) {
+    ): MassActionResponse {
         $transChoiceKey = $args->getMassAction()->getOptions()->offsetGetByPath(
             '[messages][success]',
             'oro.shoppinglist.actions.add_success_message'
@@ -121,22 +104,13 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
-     * @param array $productIds
-     * @return bool
+     * @param int[] $productIds
+     *
+     * @return array [product id => ['id' => product id, 'shopping_lists' => [shopping list, ...], ...], ...]
      */
-    private function isAllowed($shoppingList, array $productIds): bool
+    private function getProductsShoppingLists(array $productIds): array
     {
-        return $shoppingList && $productIds && $this->shoppingListLineItemHandler->isAllowed();
-    }
-
-    /**
-     * @param array $productIds
-     * @return array
-     */
-    protected function getProductsShoppingLists(array $productIds)
-    {
-        $qb = $this->managerRegistry->getRepository(Product::class)->getProductsQueryBuilder($productIds);
+        $qb = $this->doctrine->getRepository(Product::class)->getProductsQueryBuilder($productIds);
         $qb->orderBy('p.id');
 
         $products = $this->aclHelper->apply($qb)->getResult();
@@ -152,5 +126,50 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         }
 
         return $productsShoppingLists;
+    }
+
+    private function getShoppingList(MassActionHandlerArgs $args): ?ShoppingList
+    {
+        $data = $args->getData();
+
+        return $data['shoppingList'] ?? null;
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getProductIds(MassActionHandlerArgs $args): array
+    {
+        $data = $args->getData();
+
+        $productIds = [];
+        if (\array_key_exists('values', $data) && $data['values'] && !$this->isAllSelected($data)) {
+            $values = explode(',', $data['values']);
+            foreach ($values as $val) {
+                $productIds[] = (int)$val;
+            }
+        }
+
+        return $productIds;
+    }
+
+    private function isAllSelected(array $data): bool
+    {
+        return \array_key_exists('inset', $data) && (int)$data['inset'] === 0;
+    }
+
+    /**
+     * @return array [product id => [unit code => quantity, ...], ...]
+     */
+    private function getUnitsAndQuantities(MassActionHandlerArgs $args): array
+    {
+        $data = $args->getData();
+
+        $unitsAndQuantities = [];
+        if (isset($data['units_and_quantities'])) {
+            $unitsAndQuantities = json_decode($data['units_and_quantities'], true);
+        }
+
+        return $unitsAndQuantities;
     }
 }

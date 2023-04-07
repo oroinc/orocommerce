@@ -202,10 +202,8 @@ class ImportExportTest extends AbstractImportExportTestCase
             implode(PHP_EOL, $jobResult->getContext()->getErrors())
         );
 
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass($productClass);
-
         /** @var Product $product */
-        $product = $em->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
+        $product = self::getContainer()->get('doctrine')->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
 
         $this->assertNotEmpty($product);
         $this->assertEquals('enabled', $product->getStatus());
@@ -272,10 +270,8 @@ class ImportExportTest extends AbstractImportExportTestCase
             $configuration
         );
 
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass($productClass);
-
         /** @var Product $product */
-        $product = $em->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
+        $product = self::getContainer()->get('doctrine')->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
 
         $this->assertNotEmpty($product);
         $this->assertNotEquals(Product::TYPE_CONFIGURABLE, $product->getType());

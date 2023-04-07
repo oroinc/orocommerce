@@ -106,6 +106,7 @@ Feature: Promotions calculations during checkout with grouping line items
     Given I proceed as the Admin
     And I login as administrator
     And I go to Sales/Orders
+    And I sort grid by "Order Number"
     Then I should see following grid:
       | Order Number | Total  |
       | 1            | $54.00 |

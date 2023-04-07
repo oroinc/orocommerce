@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository\RelatedIte
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadUpsellProductData;
@@ -24,17 +23,22 @@ class UpsellProductRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(UpsellProduct::class);
     }
 
+    private function getProductBySku(string $sku): Product
+    {
+        return self::getContainer()->get('doctrine')->getRepository(Product::class)->findOneBy(['sku' => $sku]);
+    }
+
     public function testExistsReturnTrue()
     {
-        $product3 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
-        $product1 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1));
+        $product3 = $this->getProductBySku(LoadProductData::PRODUCT_3);
+        $product1 = $this->getProductBySku(LoadProductData::PRODUCT_1);
         $this->assertTrue($this->repository->exists($product3, $product1));
     }
 
     public function testExistsReturnFalse()
     {
-        $product3 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
-        $product6 = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_6));
+        $product3 = $this->getProductBySku(LoadProductData::PRODUCT_3);
+        $product6 = $this->getProductBySku(LoadProductData::PRODUCT_6);
         $this->assertFalse($this->repository->exists($product3, $product6));
     }
 
@@ -43,17 +47,15 @@ class UpsellProductRepositoryTest extends WebTestCase
      */
     public function testCountRelationsForProduct(string $productSku, int $numberOfRelations)
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku($productSku);
+        $product = $this->getProductBySku($productSku);
         $this->assertSame($numberOfRelations, $this->repository->countRelationsForProduct($product->getId()));
     }
 
     public function testFindUpsellWithLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
+            $this->getProductBySku(LoadProductData::PRODUCT_1),
         ];
         $relatedProducts = $this->repository->findUpsell($product->getId(), 1);
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
@@ -61,11 +63,10 @@ class UpsellProductRepositoryTest extends WebTestCase
 
     public function testFindUpsellWithoutLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2)),
+            $this->getProductBySku(LoadProductData::PRODUCT_1),
+            $this->getProductBySku(LoadProductData::PRODUCT_2),
         ];
         $relatedProducts = $this->repository->findUpsell($product->getId());
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
@@ -73,10 +74,9 @@ class UpsellProductRepositoryTest extends WebTestCase
 
     public function testFindUpsellIdsUnidirectionalWithLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_1)->getId()
         ];
         $relatedProducts = $this->repository->findUpsellIds($product->getId(), 1);
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
@@ -84,11 +84,10 @@ class UpsellProductRepositoryTest extends WebTestCase
 
     public function testFindUpsellIdsUnidirectionalWithoutLimit()
     {
-        /** @var Product $product */
-        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $product = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $expectedRelatedProducts = [
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
-            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_1)->getId(),
+            $this->getProductBySku(LoadProductData::PRODUCT_2)->getId(),
         ];
         $relatedProducts = $this->repository->findUpsellIds($product->getId());
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
@@ -101,10 +100,5 @@ class UpsellProductRepositoryTest extends WebTestCase
             ['product-3', 2],
             ['product-4', 1],
         ];
-    }
-
-    private function getProductRepository(): ProductRepository
-    {
-        return $this->getContainer()->get('doctrine')->getRepository(Product::class);
     }
 }

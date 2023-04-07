@@ -104,8 +104,9 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             $manager->persist($taxCode);
             $this->addReference($code, $taxCode);
             foreach ($data['products'] as $sku) {
-                $product = $manager->getRepository(Product::class)->findOneBySku($sku);
-                if ($product) {
+                /** @var Product $product */
+                $product = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
+                if (null !== $product) {
                     $product->setTaxCode($taxCode);
                 }
             }
