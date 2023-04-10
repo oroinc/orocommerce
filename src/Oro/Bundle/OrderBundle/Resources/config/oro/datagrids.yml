@@ -811,7 +811,7 @@ datagrids:
                             join: 'Oro\Bundle\OrderBundle\Entity\Order'
                             alias: orderAlias
                             conditionType: WITH
-                            condition: CAST(calendarDate.date as DATE) = CAST(orderAlias.createdAt as DATE)
+                            condition: calendarDate.date = CAST(orderAlias.createdAt as DATE)
                         -
                             join: orderAlias.lineItems
                             alias: lineitem

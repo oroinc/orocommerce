@@ -141,7 +141,7 @@ datagrids:
                             join: Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport
                             alias: e
                             conditionType: WITH
-                            condition: e.searchDate = CAST(calendarDate.date as DATE)
+                            condition: e.searchDate = calendarDate.date
                 groupBy: e.normalizedSearchTermHash, e.searchTerm
         columns:
             timePeriod:
