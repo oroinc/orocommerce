@@ -225,3 +225,4 @@ oro:
             dialog:
                 select:
                     title: 'Select Product'
+            drop_placeholder_label: Drag your item here.
