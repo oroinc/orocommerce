@@ -700,7 +700,7 @@
             fields: fieldsMap
         }
     }) }}  data-role="content-variant-item">
-        <div class="product-kit-item__title content-variant-item-title">
+        <div class="product-kit-item__title content-variant-item-title" data-name="sortable-handle">
             <button type="button" class="btn-toggle-variant btn btn-icon btn-square-light {{ isShow ? '' : 'collapsed' }}"
                 data-toggle="collapse"
                 data-related="{{ full_name }}"
@@ -841,8 +841,11 @@
 
 {% block oro_product_kit_items_collection_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " oro-content-variant-collection variant-collection",
-        'data-role': 'collection-container'
+        class: attr.class|default('') ~ " oro-content-variant-collection variant-collection sortable-wrapper",
+        'data-role': 'collection-container',
+        'data-page-component-view': {
+            view: 'oroproduct/js/app/views/product-kit/product-kit-sorting-view'
+        }|json_encode
     }) %}
 
     {{ block('oro_collection_widget') }}
