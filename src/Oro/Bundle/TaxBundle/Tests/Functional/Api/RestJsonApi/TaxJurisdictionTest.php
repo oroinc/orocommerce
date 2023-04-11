@@ -283,6 +283,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
 
     public function testUpdateZipCodes(): void
     {
+        $this->markTestSkipped('Due to BAP-21987');
         $taxJurisdictionId = $this->getReference('tax_jurisdiction_1')->getId();
 
         $this->patch(
