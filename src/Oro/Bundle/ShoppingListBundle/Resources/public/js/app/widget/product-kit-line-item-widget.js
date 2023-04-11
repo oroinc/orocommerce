@@ -8,6 +8,7 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
     options: _.extend({}, FrontendDialogWidget.prototype.options, {
         preventModelRemoval: true,
         incrementalPosition: false,
+        desktopLoadingBar: true,
         dialogOptions: {
             modal: true,
             title: null,
@@ -20,13 +21,19 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
         },
         actionSectionTemplate: _.template(`
             <div data-section="<%- section %>"
-                class="product-totals-main widget-actions-section"
+                class="widget-actions-section"
                 data-role="totals-section"></div>
         `)
     }),
 
     fullscreenViewOptions: {
         dialogClass: 'product-kit-dialog'
+    },
+
+    listen: {
+        'shopping-list:line-items:before-response mediator': 'hide',
+        'shopping-list:line-items:update-response mediator': 'remove',
+        'shopping-list:line-items:error-response mediator': 'show'
     },
 
     /**
@@ -81,7 +88,6 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
         const container = this.getActionsElement();
 
         if (container) {
-            this.$('[data-role="shopping-list-root"]').appendTo(this.$('[data-role="totals-controls"]'));
             this.$('[data-role="totals"]').appendTo(this.actionsEl.find('[data-role="totals-section"]'));
             this.widget.dialog('showActionsContainer');
         }
@@ -94,6 +100,10 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
             );
         }
         return this.actionsEl;
+    },
+
+    _bindSubmitHandler() {
+        // nothing to do
     }
 });
 

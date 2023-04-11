@@ -26,39 +26,6 @@
         <label class="h4 label label--full" for="{{ form.notes.vars.id }}">{{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.notes'|trans }}:</label>
         {{ form_row(form.notes, {label: false}) }}
     </div>
-
-    <div class="product-totals" data-role="totals">
-        <div class="product-totals__wrapper">
-            <div class="product-totals__total-price">
-                <div class="product-totals__label">
-                    {{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.subtotal.label'|trans }}
-                </div>
-                <div class=" product-totals__total-price-value" data-role="total-price">
-                    {% if form.vars.subtotal|default(null) is not null %}
-                        {{ form.vars.subtotal.amount|default(0)|oro_format_currency({'currency': form.vars.subtotal.currency|default(null)}) }}
-                    {% else %}
-                        {{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="product-totals__controls" data-role="totals-controls">
-            <div class="product-item-quantity product-item-quantity--justify-end">
-                {{ form_row(form.quantity, {label: false, attr: {
-                    'aria-label': 'oro.product.quantity.aria_label'|trans,
-                    'class': 'product-item-quantity__input',
-                    'data-floating-error': '',
-                    'data-role': 'quantity'
-                }}) }}
-
-                {{ form_row(form.unit,{attr: {
-                    'class': 'product-item-quantity__choice',
-                    'data-role': 'unit-label'
-                }}) }}
-                <div class="fields-row-error"></div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
 {% block _oro_product_kit_line_item_kitItemLineItems_entry_label %}
@@ -76,7 +43,9 @@
                     'aria-label': 'oro.shoppinglist.productkititemlineitem.quantity.aria_label'|trans,
                     'class': 'product-item-quantity__input',
                     'data-floating-error': '',
-                    'data-role': 'quantity'
+                    'data-boundaries-element': '[role="dialog"]',
+                    'data-role': 'kit-line-item-quantity',
+                    'data-value': value.kitItem.minimumQuantity|default(1)
                 }}) }}
                 <div class="fields-row-error"></div>
             </div>
@@ -179,5 +148,14 @@
             <span class="sr-only">{{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.product_kit_item_line_item.product.choices.none'|trans }}</span>
         {% endif %}
     {% endset %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'kit-line-item-product',
+    }) %}
+    {% set relatedInputId = form.parent.parent.children.quantity.vars.id|default(null) %}
+    {% if relatedInputId %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-related-elements': '#' ~ relatedInputId
+        }) %}
+    {% endif %}
     {{ block('radio_widget') }}
 {% endblock %}

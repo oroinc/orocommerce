@@ -21,6 +21,8 @@ define(function(require) {
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
             shoppingListCreateEnabled: true,
+            shoppingListRemoveEnabled: true,
+            shoppingListUpdateEnabled: true,
             showSingleAddToShoppingListButton: true,
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
@@ -65,6 +67,10 @@ define(function(require) {
 
             this.dropdownWidget = options.dropdownWidget;
             this.$form = this.dropdownWidget.element.closest('form');
+
+            if (this.dropdownWidget.element.attr('data-form')) {
+                this.$form = $(`#${this.dropdownWidget.element.attr('data-form')}`);
+            }
 
             this.initModel(options);
 
@@ -205,7 +211,7 @@ define(function(require) {
             }
             buttons.push($button);
 
-            if (hasLineItems) {
+            if (this.options.shoppingListRemoveEnabled && hasLineItems) {
                 const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
                 $removeButton.find('a, button').attr('data-intention', 'remove');
                 buttons.push($removeButton);
@@ -352,7 +358,7 @@ define(function(require) {
             let label;
             let intention;
 
-            if (shoppingList && hasLineItems) {
+            if (this.options.shoppingListUpdateEnabled && shoppingList && hasLineItems) {
                 label = _.__('oro.shoppinglist.actions.update_shopping_list', {
                     shoppingList: shoppingList.label
                 });
@@ -431,19 +437,22 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            const self = this;
 
             mediator.execute('showLoading');
+            mediator.trigger('shopping-list:line-items:before-response', this.model);
             $.ajax({
                 type: 'POST',
                 url: routing.generate(url, urlOptions),
                 data: formData,
-                success: function(response) {
-                    mediator.trigger('shopping-list:line-items:update-response', self.model, response);
+                success: response => {
+                    mediator.trigger('shopping-list:line-items:update-response', this.model, response);
                 },
-                complete: function() {
+                error: error => {
+                    mediator.trigger('shopping-list:line-items:error-response', this.model, error);
+                },
+                complete: () => {
                     mediator.execute('hideLoading');
-                }
+                },
             });
         },
 
@@ -451,15 +460,18 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            const self = this;
 
             mediator.execute('showLoading');
+            mediator.trigger('shopping-list:line-items:before-response', this.model);
             $.ajax({
                 type: 'DELETE',
                 url: routing.generate(url, urlOptions),
                 data: formData,
-                success: function(response) {
-                    mediator.trigger('shopping-list:line-items:update-response', self.model, response);
+                success: response => {
+                    mediator.trigger('shopping-list:line-items:update-response', this.model, response);
+                },
+                error: error => {
+                    mediator.trigger('shopping-list:line-items:error-response', this.model, error);
                 },
                 complete: function() {
                     mediator.execute('hideLoading');

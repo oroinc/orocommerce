@@ -95,6 +95,11 @@
             'pageComponent': options.pageComponent,
         }) %}
     {% endif %}
+    {% if options.form is defined %}
+        {% set buttonOptions = buttonOptions|merge({
+            'form': options.form,
+        }) %}
+    {% endif %}
 
     <div class="btn-group--flex btn-group--full icons-holder btn-group--loading">
         {{ UI.clientBtn(buttonOptions) }}
@@ -106,6 +111,8 @@
     {% import _self as buttons %}
     {% set isShoppingListCreateEnabled = (feature_enabled('shopping_list_create') and is_granted('oro_shopping_list_frontend_create')) %}
     {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or not app.user %}
+    {% set shoppingListRemoveEnabled = options.shoppingListRemoveEnabled is defined ? options.shoppingListRemoveEnabled : true %}
+    {% set shoppingListUpdateEnabled = options.shoppingListUpdateEnabled is defined ? options.shoppingListUpdateEnabled : true %}
     <div class="btn-group product-add-to-shopping-list-container"
          {{ UI.renderPageComponentAttributes({
              module: 'oroui/js/app/components/view-component',
@@ -115,6 +122,8 @@
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
                  createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
                  shoppingListCreateEnabled: isShoppingListCreateEnabled,
+                 shoppingListRemoveEnabled: shoppingListRemoveEnabled,
+                 shoppingListUpdateEnabled: shoppingListUpdateEnabled,
                  showSingleAddToShoppingListButton: showSingleAddToShoppingListButton,
                  emptyMatrixAllowed: oro_config_value('oro_product.matrix_form_allow_empty')
              }|merge(options.componentOptions|default({}))

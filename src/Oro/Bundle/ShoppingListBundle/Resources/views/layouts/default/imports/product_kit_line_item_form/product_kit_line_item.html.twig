@@ -80,8 +80,58 @@
     }) %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': class_prefix ~ '__form fields-row',
-        'novalidate': 'novalidate'
+        'novalidate': 'novalidate',
+        'data-page-component-view': 'oroshoppinglist/js/app/views/product-kit-form-view',
+        'data-page-component-options': {
+            productId: product.id,
+            subtotalUrl: 'oro_shopping_list_frontend_product_kit_line_item_create'
+        }|json_encode
     }) %}
     {{ parent_block_widget(block) }}
     {{ form_widget(form._token) }}
 {% endblock %}
+
+{% block __product_kit_line_item_form__product_total_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': form.vars.id ~ 'totals',
+        '~class': ' product-totals',
+        'data-role': 'totals'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="product-totals__wrapper">
+            <div class="product-totals__total-price">
+                <div class="product-totals__label">
+                    {{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.subtotal.label'|trans }}
+                </div>
+                <div id="{{ form.vars.id ~ 'amount' }}" class="product-totals__total-price-value">
+                    {% if form.vars.subtotal|default(null) is not null %}
+                        {{ form.vars.subtotal.amount|default(0)|oro_format_currency({'currency': form.vars.subtotal.currency|default(null)}) }}
+                    {% else %}
+                        {{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="product-totals__controls" data-role="totals-controls">
+            <div class="product-item-quantity product-item-quantity--justify-end">
+                {{ form_row(form.quantity, {label: false, attr: {
+                    'aria-label': 'oro.product.quantity.aria_label'|trans,
+                    'class': 'product-item-quantity__input',
+                    'data-floating-error': '',
+                    'data-role': 'quantity',
+                    'form': form.vars.id
+                }}) }}
+
+                {{ form_row(form.unit,{attr: {
+                    'class': 'product-item-quantity__choice',
+                    'data-role': 'unit-label',
+                    'form': form.vars.id
+                }}) }}
+                <div class="fields-row-error"></div>
+            </div>
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+

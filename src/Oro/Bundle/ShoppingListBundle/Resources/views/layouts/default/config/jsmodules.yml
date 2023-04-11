@@ -55,6 +55,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
         - oroshoppinglist/js/app/views/product-kit-add-to-shopping-list-view
+        - oroshoppinglist/js/app/views/product-kits-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
     oroshoppinglist:
         - oroshoppinglist/js/app/components/shoppinglist-notes-editable-view-component
@@ -63,6 +64,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/shoppinglist-image-popover-view
         - oroshoppinglist/js/app/views/shoppinglist-notes-editable-view
         - oroshoppinglist/js/app/views/summary-wrapper-view
+        - oroshoppinglist/js/app/views/product-kit-form-view
         - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
         - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html

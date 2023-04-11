@@ -64,6 +64,16 @@
     }
 }
 
+.product-totals-main {
+    .product-totals__wrapper {
+        flex-grow: 1;
+    }
+
+    .product-totals__total-price {
+        margin-left: auto;
+    }
+}
+
 .product-item__qty,
 .line-item-form {
     .product-totals {
