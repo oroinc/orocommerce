@@ -290,7 +290,8 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             'excluded_products_grid' => 'excluded_grid',
             'add_name_field' => true,
             'add_sort_order' => false,
-            'scope_value' => 'productCollectionSegment'
+            'scope_value' => 'productCollectionSegment',
+            'tab_counter_request_method' => 'tab_counter_request_method'
         ];
 
         $hasFilters = true;
@@ -311,5 +312,6 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         $this->assertSame($hasFilters, $view->vars['hasFilters']);
         $this->assertTrue($view->vars['addNameField']);
         $this->assertSame('productCollectionSegment', $view->vars['scopeValue']);
+        $this->assertSame('tab_counter_request_method', $view->vars['tabCounterRequestMethod']);
     }
 }
