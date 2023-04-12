@@ -228,6 +228,7 @@ datagrids:
     product-collection-content-variant-grid:
         extends: product-collection-base-grid
         options:
+            requestMethod: POST
             jsmodules:
                 - oroproduct/datagrid/builder/sort-order-builder
             cellSelection:
@@ -310,18 +311,24 @@ datagrids:
 
     product-collection-add-products-to-included-grid:
         extends: product-collection-add-products-base-grid
+        options:
+            requestMethod: POST
         mass_actions:
             add:
                 event_name: product-collection-add-to-included
 
     product-collection-add-products-to-excluded-grid:
         extends: product-collection-add-products-base-grid
+        options:
+            requestMethod: POST
         mass_actions:
             add:
                 event_name: product-collection-add-to-excluded
 
     product-collection-included-products-grid:
         extends: product-collection-selected-products-grid
+        options:
+            requestMethod: POST
         actions:
             remove_from_included:
                 type:          trigger-event
@@ -338,6 +345,8 @@ datagrids:
 
     product-collection-excluded-products-grid:
         extends: product-collection-selected-products-grid
+        options:
+            requestMethod: POST
         actions:
             remove_from_excluded:
                 type:          trigger-event

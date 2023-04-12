@@ -114,6 +114,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
             'results_grid' => 'product-collection-grid',
             'included_products_grid' => 'product-collection-included-products-grid',
             'excluded_products_grid' => 'product-collection-excluded-products-grid',
+            'tab_counter_request_method' => 'POST',
             'label' => false,
             'segment_entity' => Product::class,
             'segment_columns' => ['id', 'sku'],
@@ -143,6 +144,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['scopeValue'] = $options['scope_value'];
+        $view->vars['tabCounterRequestMethod'] = $options['tab_counter_request_method'];
         $view->vars['results_grid'] = $options['results_grid'];
         $view->vars['includedProductsGrid'] = $options['included_products_grid'];
         $view->vars['excludedProductsGrid'] = $options['excluded_products_grid'];
