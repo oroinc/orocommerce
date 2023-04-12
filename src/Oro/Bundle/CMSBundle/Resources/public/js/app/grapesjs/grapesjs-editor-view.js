@@ -1173,8 +1173,10 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     rtlFallback() {
-        this.builder.LayerManager.render = _.wrap(this.builder.LayerManager.render, function(wrap) {
-            const root = wrap();
+        const {LayerManager} = this.builder;
+
+        LayerManager.render = _.wrap(LayerManager.render, wrap => {
+            const root = wrap.call(LayerManager);
 
             root.querySelectorAll('[data-toggle-select]').forEach(el => {
                 el.style.paddingRight = el.style.paddingLeft;
