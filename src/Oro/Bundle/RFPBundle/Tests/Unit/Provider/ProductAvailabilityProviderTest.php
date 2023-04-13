@@ -12,16 +12,18 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
+class ProductAvailabilityProviderTest extends TestCase
 {
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ConfigManager|MockObject */
     private $configManager;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $doctrine;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AclHelper|MockObject */
     private $aclHelper;
 
     /** @var ProductAvailabilityProvider */
@@ -38,6 +40,7 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             $this->doctrine,
             $this->aclHelper
         );
+        $this->provider->setNotAllowedProductTypes([Product::TYPE_CONFIGURABLE, Product::TYPE_KIT]);
     }
 
     private function getInventoryStatus(string $id): InventoryStatus
@@ -46,34 +49,10 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider isProductApplicableForRFPDataProvider
-     */
-    public function testIsProductApplicableForRFP(string $type, bool $expected): void
-    {
-        $product = new ProductStub(1);
-        $product->setType($type);
-
-        $this->assertSame($expected, $this->provider->isProductApplicableForRFP($product));
-    }
-
-    public function isProductApplicableForRFPDataProvider(): array
-    {
-        return [
-            'simple product' => [
-                'type' => Product::TYPE_SIMPLE,
-                'expected' => true,
-            ],
-            'configurable product' => [
-                'type' => Product::TYPE_CONFIGURABLE,
-                'expected' => false,
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider isAllowedDataProvider
      */
     public function testIsProductAllowedForRFP(
+        string $type,
         ?InventoryStatus $inventoryStatus,
         string $status,
         bool $expectedResult
@@ -81,19 +60,21 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $product = new ProductStub(1);
         $product->setStatus($status);
         $product->setInventoryStatus($inventoryStatus);
+        $product->setType($type);
 
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_rfp.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $this->assertSame($expectedResult, $this->provider->isProductAllowedForRFP($product));
+        self::assertSame($expectedResult, $this->provider->isProductAllowedForRFP($product));
     }
 
     /**
      * @dataProvider isAllowedDataProvider
      */
     public function testHasProductsAllowedForRFPByProductData(
+        string $type,
         ?InventoryStatus $inventoryStatus,
         string $status,
         bool $expectedResult
@@ -102,6 +83,7 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $product = new ProductStub(42);
         $product->setStatus($status);
         $product->setInventoryStatus($inventoryStatus);
+        $product->setType($type);
 
         $this->configManager->expects($this->any())
             ->method('get')
@@ -130,7 +112,7 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ->with($qb)
             ->willReturn($query);
 
-        $this->assertSame(
+        self::assertSame(
             $expectedResult,
             $this->provider->hasProductsAllowedForRFPByProductData([['productSku' => $sku]])
         );
@@ -140,6 +122,7 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider isAllowedDataProvider
      */
     public function testHasProductsAllowedForRFP(
+        string $type,
         ?InventoryStatus $inventoryStatus,
         string $status,
         bool $expectedResult
@@ -148,6 +131,7 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $product = new ProductStub($productId);
         $product->setStatus($status);
         $product->setInventoryStatus($inventoryStatus);
+        $product->setType($type);
 
         $this->configManager->expects($this->any())
             ->method('get')
@@ -176,28 +160,38 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ->with($qb)
             ->willReturn($query);
 
-        $this->assertSame($expectedResult, $this->provider->hasProductsAllowedForRFP([$productId]));
+        self::assertSame($expectedResult, $this->provider->hasProductsAllowedForRFP([$productId]));
     }
 
     public function isAllowedDataProvider(): array
     {
         return [
             [
+                'type' => Product::TYPE_CONFIGURABLE,
+                'inventoryStatus' => $this->getInventoryStatus('in_stock'),
+                'status' => ProductStub::STATUS_ENABLED,
+                'expectedResult' => false,
+            ],
+            [
+                'type' => Product::TYPE_SIMPLE,
                 'inventoryStatus' => $this->getInventoryStatus('in_stock'),
                 'status' => ProductStub::STATUS_DISABLED,
                 'expectedResult' => false,
             ],
             [
+                'type' => Product::TYPE_SIMPLE,
                 'inventoryStatus' => null,
                 'status' => ProductStub::STATUS_ENABLED,
                 'expectedResult' => false,
             ],
             [
+                'type' => Product::TYPE_SIMPLE,
                 'inventoryStatus' => $this->getInventoryStatus('in_stock'),
                 'status' => ProductStub::STATUS_ENABLED,
                 'expectedResult' => true,
             ],
             [
+                'type' => Product::TYPE_SIMPLE,
                 'inventoryStatus' => $this->getInventoryStatus('out_of_stock'),
                 'status' => ProductStub::STATUS_ENABLED,
                 'expectedResult' => false,

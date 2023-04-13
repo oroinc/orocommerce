@@ -112,12 +112,12 @@ services:
             - { name: oro_featuretogle.feature, feature: 'rfp' }
 
     oro_rfp.provider.quote_currency_checker:
-       class: Oro\Bundle\RFPBundle\Provider\CurrencyCheckerProvider
-       public: false
-       arguments:
-           - '@doctrine'
-       tags:
-           - { name: oro_multi_currency.currency_checker_provider }
+        class: Oro\Bundle\RFPBundle\Provider\CurrencyCheckerProvider
+        public: false
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_multi_currency.currency_checker_provider }
 
     oro_rfp.provider.product_availability:
        class: Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider
@@ -125,6 +125,11 @@ services:
            - '@oro_config.manager'
            - '@doctrine'
            - '@oro_security.acl_helper'
+       calls:
+           - setNotAllowedProductTypes:
+               -
+                   - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+                   - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_rfp.acl.voter.frontend_request:
         class: Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter

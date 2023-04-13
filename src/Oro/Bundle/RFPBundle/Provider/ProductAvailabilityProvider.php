@@ -18,6 +18,7 @@ class ProductAvailabilityProvider
     protected AclHelper $aclHelper;
     protected ?ProductRepository $productRepository = null;
     private ?array $allowedInventoryStatuses = null;
+    private array $notAllowedProductTypes = [];
 
     public function __construct(ConfigManager $configManager, ManagerRegistry $doctrine, AclHelper $aclHelper)
     {
@@ -26,14 +27,18 @@ class ProductAvailabilityProvider
         $this->aclHelper = $aclHelper;
     }
 
-    public function isProductApplicableForRFP(Product $product): bool
+    public function setNotAllowedProductTypes(array $notAllowedProductTypes): void
     {
-        return $product->getType() !== Product::TYPE_CONFIGURABLE;
+        $this->notAllowedProductTypes = $notAllowedProductTypes;
     }
 
     public function isProductAllowedForRFP(Product $product): bool
     {
         if (!$product->isEnabled()) {
+            return false;
+        }
+
+        if (\in_array($product->getType(), $this->notAllowedProductTypes, true)) {
             return false;
         }
 

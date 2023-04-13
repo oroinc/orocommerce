@@ -62,29 +62,21 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
                 continue;
             }
 
-            if (!$this->productAvailabilityProvider->isProductApplicableForRFP($product)) {
-                $this->requestStack->getSession()->getFlashBag()->add(
-                    'warning',
-                    'oro.frontend.rfp.data_storage.no_qty_products_cant_be_added_to_rfq'
-                );
-                continue;
-            }
-
-            $this->addItem($product, $entity, $dataRow);
             if (!$this->productAvailabilityProvider->isProductAllowedForRFP($product)) {
                 $canNotBeAddedToRFQ[] = $product;
+            } else {
+                $this->addItem($product, $entity, $dataRow);
             }
         }
 
-        $message = $this->twig->render(
-            '@OroRFP/Form/FlashBag/warning.html.twig',
-            [
-                'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
-                'products' => $canNotBeAddedToRFQ
-            ]
-        );
-
         if (!empty($canNotBeAddedToRFQ)) {
+            $message = $this->twig->render(
+                '@OroRFP/Form/FlashBag/warning.html.twig',
+                [
+                    'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
+                    'products' => $canNotBeAddedToRFQ
+                ]
+            );
             $this->requestStack->getSession()->getFlashBag()->add('warning', $message);
         }
     }
@@ -95,10 +87,6 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     protected function addItem(Product $product, object $entity, array $itemData): void
     {
         /** @var RFPRequest $entity */
-
-        if (!$this->productAvailabilityProvider->isProductAllowedForRFP($product)) {
-            return;
-        }
 
         $requestProduct = new RequestProduct();
 

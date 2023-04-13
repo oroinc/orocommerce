@@ -16,12 +16,18 @@ class QuickAddRowProductLoader
     private ManagerRegistry $doctrine;
     private ProductManager $productManager;
     private AclHelper $aclHelper;
+    private array $notAllowedProductTypes = [];
 
     public function __construct(ManagerRegistry $doctrine, ProductManager $productManager, AclHelper $aclHelper)
     {
         $this->doctrine = $doctrine;
         $this->productManager = $productManager;
         $this->aclHelper = $aclHelper;
+    }
+
+    public function setNotAllowedProductTypes(array $notAllowedProductTypes): void
+    {
+        $this->notAllowedProductTypes = $notAllowedProductTypes;
     }
 
     /**
@@ -42,11 +48,12 @@ class QuickAddRowProductLoader
             ->orderBy('product.organization, product.id');
         $qb = $this->productManager->restrictQueryBuilder($qb, []);
 
-        // Configurable products require additional option selection that is not implemented yet.
-        // Thus we need to hide configurable products.
-        $qb
-            ->andWhere('product.type <> :configurable_type')
-            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+        // Configurable/kit products require additional option selection is not implemented yet.
+        // Thus we need to hide configurable/kit products.
+        if (!empty($this->notAllowedProductTypes)) {
+            $qb->andWhere($qb->expr()->notIn('product.type', ':notAllowedProductTypes'))
+                ->setParameter('notAllowedProductTypes', $this->notAllowedProductTypes);
+        }
 
         return $this->aclHelper->apply($qb)->getResult();
     }
