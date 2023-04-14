@@ -177,6 +177,28 @@ Feature: Product kits management UI
     And I save form
     Then I should see "Product has been saved" flash message
 
+  Scenario: Drag and Drop sorting product kit items
+    Then I click "Product Kit 1 Toggler"
+    And I click "Product Kit 1 Toggler"
+    And I drag and drop "Draggable Product5 Row" before "Draggable Product1 Row"
+    And I drag and drop "Draggable Product3 Row" before "Draggable Product5 Row"
+    Then I should see following grid:
+      | SKU   | NAME      |
+      | PSKU7 | Product 7 |
+      | PSKU3 | Product 3 |
+      | PSKU5 | Product 5 |
+      | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
+      | PSKU4 | Product 4 |
+      | PSKU6 | Product 6 |
+    Then I drag and drop "Product Kit Item Sortable 2" before "Product Kit Item Sortable 1"
+    And I drag and drop "Product Kit Item Sortable 3" before "Product Kit Item Sortable 1"
+    And I save and close form
+    Then I should see "Kit Item 2 Edited" in the "Product Kit Item 1" element
+    And I should see "Kit Item 3" in the "Product Kit Item 2" element
+    And I should see "Kit Item 1 Edited" in the "Product Kit Item 3" element
+    And I click "Edit"
+
   Scenario: Remove all kits
     When I click "Product Kit 3 Remove Button"
     And I click "Product Kit 2 Remove Button"

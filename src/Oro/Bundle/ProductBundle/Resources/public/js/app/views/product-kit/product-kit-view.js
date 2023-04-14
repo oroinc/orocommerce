@@ -1,4 +1,5 @@
 import __ from 'orotranslation/js/translator';
+import mediator from 'oroui/js/mediator';
 import BaseView from 'oroui/js/app/views/base/view';
 import datetimeFormatter from 'orolocale/js/formatter/datetime';
 
@@ -45,6 +46,7 @@ const ProductKitView = BaseView.extend({
 
         if (target.getAttribute('data-role') === 'product-kit-form') {
             this.$el.addClass('show');
+            mediator.trigger('layout:reposition');
             this.$('[data-type="secondary"]').collapse('hide');
         }
     },
