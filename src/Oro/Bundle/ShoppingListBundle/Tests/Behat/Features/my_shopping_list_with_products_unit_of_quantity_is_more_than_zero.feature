@@ -145,7 +145,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I follow "Account"
     When I click on "Shopping Lists Navigation Link"
     And I click Edit "Shopping List 3" in grid
-    And I click "Group Similar"
+    And I click "Group Product Variants"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List Edit Grid"
     And I sort grid by "SKU"
     When I click "Edit" on row "Configurable Product 1" in grid
@@ -202,7 +202,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
     Given I follow "Account"
     And I click on "Shopping Lists Navigation Link"
     And I click View "Shopping List 3" in grid
-    And I click "Group Similar"
+    And I click "Group Product Variants"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List View Grid"
     And I sort grid by "SKU"
     Then I should see following "Frontend Customer User Shopping List View Grid" grid:

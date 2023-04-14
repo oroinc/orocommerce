@@ -8,6 +8,17 @@
     &-img {
         margin: $product-popup-header-img-offset;
     }
+
+    &-title {
+        width: 100%;
+    }
+
+    &-attributes {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        column-gap: $offset-x-m;
+    }
 }
 
 .fullscreen-popup {

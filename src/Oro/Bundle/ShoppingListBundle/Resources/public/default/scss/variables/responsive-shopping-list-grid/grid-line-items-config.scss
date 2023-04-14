@@ -2,9 +2,13 @@
 
 $grid-line-items-row-offset-x: $offset-x !default;
 $grid-line-items-line-height: 1.15 !default;
+$grid-line-items-word-break: break-word !default;
 $grid-line-items-title-font-size: $base-font-size !default;
 $grid-line-items-title-font-w: normal !default;
 $grid-line-items-field-val-offset: 2px !default;
+
+$grid-line-items-errors-color: get-color('ui', 'error-dark') !default;
+$grid-line-items-warnings-color: get-color('ui', 'warning-dark') !default;
 
 $grid-line-line-height: 1.45 !default;
 

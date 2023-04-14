@@ -452,7 +452,7 @@ define(function(require) {
                 },
                 complete: () => {
                     mediator.execute('hideLoading');
-                },
+                }
             });
         },
 

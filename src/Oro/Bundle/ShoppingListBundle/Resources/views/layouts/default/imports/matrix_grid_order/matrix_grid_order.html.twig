@@ -61,6 +61,10 @@
 {% endblock %}
 
 {% block __matrix_grid_order__header_product_attributes_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-attributes',
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
     </div>
@@ -68,7 +72,7 @@
 
 {% block __matrix_grid_order__header_product_name_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' h1 h-normal',
+        '~class': ' product-popup__header-title h1 h-normal',
     }) %}
 
     <p {{ block('block_attributes') }}>

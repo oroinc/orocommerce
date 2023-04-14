@@ -2,6 +2,8 @@
 $responsive-shopping-list-layout-background: get-color('additional', 'base') !default;
 $responsive-shopping-cell-desktop-offset: 23px !default;
 $responsive-shopping-sub-cell-desktop-offset: 18px !default;
+// Manually calculated a half of cells' height
+$responsive-shopping-cell-half-height: 28px !default;
 
 $responsive-shopping-list-notification-container-offset: 0 !default;
 $responsive-shopping-list-extension-row-top-offset: 0 !default;
@@ -14,6 +16,7 @@ $responsive-shopping-sub-row-cell-inner-offset: 8px !default;
 $responsive-shopping-sub-row-cell-desktop-inner-offset: $datagrid-body-cell-offset * .5 !default;
 
 $responsive-shopping-grid-body-cell-sku-width: 80px !default;
+
 
 // Tablet
 $responsive-shopping-group-cell-offset-tablet: 23px !default;

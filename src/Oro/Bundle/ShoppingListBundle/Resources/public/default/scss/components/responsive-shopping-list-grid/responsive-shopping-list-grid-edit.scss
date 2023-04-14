@@ -178,7 +178,7 @@
             padding-right: $responsive-shopping-body-cell-offset-x-mobile;
         }
 
-        .shift-mobile-row {
+        .shift-mobile-row:not(.shift-start-mobile-row) {
             margin-right: -$responsive-shopping-list-edit-select-row-cell-width-mobile;
         }
 
@@ -437,6 +437,20 @@
             .select-row-cell,
             .action-cell {
                 margin-left: 0;
+            }
+
+            &.sub-row-product-kit {
+                .grid-body-cell-item {
+                    width:
+                        calc(
+                            100% - #{$responsive-shopping-list-edit-sub-row-offset} -
+                            #{$responsive-shopping-list-edit-action-cell-width-mobile}
+                        );
+                }
+
+                .action-cell:empty {
+                    display: none;
+                }
             }
         }
     }

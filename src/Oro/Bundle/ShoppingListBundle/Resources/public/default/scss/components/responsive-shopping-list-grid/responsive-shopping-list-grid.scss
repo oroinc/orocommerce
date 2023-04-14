@@ -6,6 +6,10 @@
         display: none;
     }
 
+    .checkbox-placeholder {
+        width: $checkbox-size;
+    }
+
     .grid-body-cell {
         vertical-align: top;
     }
@@ -302,8 +306,6 @@
 
         .sub-row {
             position: relative;
-
-            border-bottom: $responsive-shopping-sub-row-border-mobile;
 
             .grid-cell {
                 padding-top: $responsive-shopping-body-cell-offset-y-mobile;

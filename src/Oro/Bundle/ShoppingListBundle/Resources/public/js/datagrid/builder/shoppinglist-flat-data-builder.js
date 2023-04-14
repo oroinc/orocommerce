@@ -21,6 +21,7 @@ const messageModel = item => {
         }
     };
 
+    item.row_class_name += ' has-message-row';
     item.messageModelId = messageItem.id;
     return messageItem;
 };
@@ -59,16 +60,14 @@ export const flattenData = data => {
                 itemClassName.push('group-row-has-children');
             }
 
+            if (item.isConfigurable) {
+                itemClassName.push('group-row-configurable');
+            }
+
             item.row_class_name = itemClassName.join(' ');
             item.ids = [];
             item._hasVariants = item.isConfigurable || false;
-            item._hasKitItemLineItems = item.isKit || false;
             item._isVariant = false;
-            item._isKitItemLineItem = false;
-
-            if (isError(item) || isHighlight(item)) {
-                flatData.push(messageModel(item));
-            }
 
             flatData.push(item);
 
@@ -79,16 +78,24 @@ export const flattenData = data => {
                     precisions.push(subItem.units[item.unit].precision);
                 }
 
-                if (subData.length - 1 === index) {
-                    className.push('sub-row-last');
-                }
-
                 if (isHighlight(subItem)) {
                     className.push('highlight');
                 }
 
+                if (isHighlight(item)) {
+                    className.push('parent-row-has-highlight');
+                }
+
                 if (isError(subItem)) {
                     className.push('highlight-error');
+                }
+
+                if (isError(item)) {
+                    className.push('parent-row-has-highlight-error');
+                }
+
+                if (subData.length - 1 === index) {
+                    className.push('sub-row-last');
                 }
 
                 if (subItem.filteredOut) {
@@ -100,8 +107,7 @@ export const flattenData = data => {
 
                 item.ids.push(subItem.id);
                 subItem._isVariant = item._hasVariants || false;
-                subItem._isKitItemLineItem = item._hasKitItemLineItems || false;
-                subItem._groupId = item.isKit ? item.checksum : item.productId;
+                subItem._groupId = item.productId;
                 subItem.row_class_name = className.join(' ');
                 subItem.row_attributes = {
                     'data-product-group': subItem._groupId
@@ -109,7 +115,7 @@ export const flattenData = data => {
 
                 subDataCollection.push(subItem);
 
-                if (isError(subItem) || isHighlight(subItem)) {
+                if ((isError(subItem) && subItem.sku) || isHighlight(subItem)) {
                     subDataCollection.push(messageModel(subItem));
                 }
 
@@ -130,6 +136,25 @@ export const flattenData = data => {
                 };
 
                 lastFiltered.row_class_name += ' filtered-out';
+            }
+
+            if (isError(item) || isHighlight(item)) {
+                const itemMessageModel = messageModel(item);
+                const itemMessageModelClasses = itemMessageModel.row_class_name.split(' ')
+                    .filter(className => !['group-row', 'group-row-has-children'].includes(className));
+
+                itemMessageModelClasses.push('sub-row');
+
+                itemMessageModel.row_class_name = itemMessageModelClasses.join(' ');
+
+                const prevSubItem = flatData.at(-1);
+
+                if (prevSubItem.isMessage) {
+                    prevSubItem.row_class_name = prevSubItem.row_class_name.split(' ')
+                        .filter(className => !['sub-row-last'].includes(className)).join(' ');
+                }
+
+                flatData.push(itemMessageModel);
             }
 
             flatData.push(...flatSubData);
