@@ -18,14 +18,15 @@ const ProductKitSortingView = BaseView.extend({
             containment: 'parent',
             handle: '[data-name="sortable-handle"]',
             placeholder: {
-                element: function() {
+                element: function($item) {
                     const placeholder = document.createElement('div');
                     placeholder.classList.add('product-kit-item__placeholder');
                     placeholder.innerText = __('oro.product.product_kit.drop_placeholder_label');
+                    placeholder.style.height = $item.height();
                     return placeholder;
                 },
-                update: function(container, p) {
-                    return;
+                update: function({currentItem}, placeholder) {
+                    placeholder.css('height', currentItem.height());
                 }
             },
             classes: {
@@ -36,12 +37,12 @@ const ProductKitSortingView = BaseView.extend({
         });
     },
 
-    beforePick(event, {item}) {
+    beforePick({currentTarget}, {item}) {
         item.addClass('product-kit-item__sortable-helper');
     },
 
     onStop() {
-        this.$(this.sortOrderFieldSelector).each((index, element) => element.value = index);
+        this.$(this.sortOrderFieldSelector).each((index, element) => element.value = index + 1);
     },
 
     dispose() {
