@@ -140,7 +140,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_line_item.yml', $response);
-        self::assertEquals(5, $response->headers->get('X-Include-Total-Count'));
+        self::assertEquals(6, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGetListFilteredByShoppingList()
@@ -485,8 +485,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         );
         $shoppingList = $lineItem->getShoppingList();
         self::assertEquals($shoppingListId, $shoppingList->getId());
-        self::assertCount(2, $shoppingList->getLineItems());
-        $this->assertShoppingListTotal($lineItem->getShoppingList(), 130.1, 'USD');
+        self::assertCount(3, $shoppingList->getLineItems());
+        $this->assertShoppingListTotal($lineItem->getShoppingList(), 159.7, 'USD');
     }
 
     public function testDelete()

@@ -104,6 +104,11 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: 20 }
 
+    oro_shopping_list.api.add_product_kit_item_line_item_to_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddProductKitItemLineItemToLineItem
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, priority: 41 }
+
     oro_shopping_list.api.add_line_item_to_shopping_list:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddLineItemToShoppingList
         tags:
@@ -111,6 +116,8 @@ services:
 
     oro_shopping_list.api.complete_new_line_item:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\CompleteNewLineItem
+        arguments:
+            - '@oro_shopping_list.product_kit.checksum'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 30 }
 
@@ -151,6 +158,7 @@ services:
             - '@oro_pricing.user_currency_manager'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, requestType: frontend }
+            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, requestType: frontend }
 
     oro_shopping_list.api.validate_shopping_list_limit:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateShoppingListLimit
@@ -176,6 +184,7 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: -100 }
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, priority: -100 }
 
     oro_shopping_list.api.validate_guest_shopping_list_feature:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateGuestShoppingListFeature

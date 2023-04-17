@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -14,6 +15,13 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class CompleteNewLineItem implements ProcessorInterface
 {
+    private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator;
+
+    public function __construct(LineItemChecksumGeneratorInterface $lineItemChecksumGenerator)
+    {
+        $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -29,6 +37,11 @@ class CompleteNewLineItem implements ProcessorInterface
             && null !== $shoppingList->getCustomerUser()
         ) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
+        }
+
+        $checksum = $this->lineItemChecksumGenerator->getChecksum($lineItem);
+        if ($checksum !== null) {
+            $lineItem->setChecksum($checksum);
         }
     }
 }

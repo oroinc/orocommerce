@@ -595,6 +595,11 @@ services:
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }
 
+    oro_shopping_list.access_rule.frontend_product_kit_item_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ProductKitItemLineItemAccessRule
+        tags:
+            - {name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, frontend: true}
+
     oro_shopping_list.layout.extension.shopping_list_limit_context:
         class: Oro\Bundle\ShoppingListBundle\Layout\Extension\ShoppingListLimitContextConfigurator
         arguments:
@@ -804,3 +809,11 @@ services:
 
     oro_shopping_list.model.factory.shopping_list_line_items_holder:
         class: Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory
+
+    oro_shopping_list.delete_handler.product_kit_item_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Handler\ProductKitItemLineItemDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem }

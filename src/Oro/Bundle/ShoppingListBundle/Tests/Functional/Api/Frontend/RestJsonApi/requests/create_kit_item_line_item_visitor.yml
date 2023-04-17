@@ -1,11 +1,11 @@
 data:
     type: shoppinglistkititems
-    id: '<toString(@product_kit_item1_line_item1->id)>'
     attributes:
-        quantity: 2
-        sortOrder: 0
-        currency: USD
-        value: '1.23'
+        quantity: 5
+        sortOrder: 1
+        # the "currency" and "value" should be ignored, because they are read-only fields
+        currency: EUR
+        value: '100'
     relationships:
         lineItem:
             data:
@@ -14,11 +14,11 @@ data:
         kitItem:
             data:
                 type: productkititems
-                id: '<toString(@product_kit1_item1->id)>'
+                id: '<toString(@product_kit1_item3->id)>'
         product:
             data:
                 type: products
-                id: '<toString(@product1->id)>'
+                id: '<toString(@product3->id)>'
         unit:
             data:
                 type: productunits

@@ -1,11 +1,11 @@
 data:
     type: shoppinglistkititems
-    id: '<toString(@product_kit_item1_line_item1->id)>'
+    id: new
     attributes:
-        quantity: 2
-        sortOrder: 0
+        quantity: 5
+        sortOrder: 1
         currency: USD
-        value: '1.23'
+        value: '3.21'
     relationships:
         lineItem:
             data:
@@ -14,11 +14,11 @@ data:
         kitItem:
             data:
                 type: productkititems
-                id: '<toString(@product_kit1_item1->id)>'
+                id: '<toString(@product_kit1_item3->id)>'
         product:
             data:
                 type: products
-                id: '<toString(@product1->id)>'
+                id: '<toString(@product4->id)>'
         unit:
             data:
                 type: productunits
