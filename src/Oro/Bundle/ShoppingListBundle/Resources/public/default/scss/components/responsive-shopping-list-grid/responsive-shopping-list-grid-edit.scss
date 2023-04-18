@@ -16,6 +16,30 @@
         align-items: center;
     }
 
+    .sub-row-product-kit {
+        .grid-body-cell-sku:empty {
+            &::before {
+                content: '';
+
+                position: absolute;
+                inset: 0;
+
+                height: 1px;
+
+                margin: auto;
+                transform: translateX(-50%);
+
+                background-color: $responsive-shopping-sub-row-border-mobile-color;
+            }
+        }
+
+        &.sub-row-last .grid-body-cell-sku:empty {
+            &::before {
+                bottom: $datagrid-body-cell-offset - $responsive-shopping-sub-row-cell-inner-offset;
+            }
+        }
+    }
+
     .grid-header-cell-quantity {
         text-align: center;
     }

@@ -136,7 +136,9 @@
             .grid-body-cell-quantity,
             .grid-body-cell-unit,
             .action-cell {
-                padding-top: $responsive-shopping-sub-cell-desktop-offset;
+                &:not(:empty) {
+                    padding-top: $responsive-shopping-sub-cell-desktop-offset;
+                }
             }
         }
     }

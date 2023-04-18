@@ -1,13 +1,13 @@
-import ShoppingListKitRow from 'oroshoppinglist/js/datagrid/row/shopping-list-kit-row';
+import ShoppingListProductKitSubItemRow from '../row/shopping-list-product-kit-sub-item-row';
 
 const addClass = (item, classNames = []) => {
     const classes = item.row_class_name.split(' ');
     item.row_class_name = classes.concat(classNames).join(' ');
 };
 
-const useKitRow = item => {
+const useKitSubItemRow = item => {
     if (!item.isMessage && !item.isAuxiliary) {
-        item.rowView = ShoppingListKitRow;
+        item.rowView = ShoppingListProductKitSubItemRow;
     }
 };
 
@@ -16,7 +16,6 @@ const productKitData = data => data.map(item => {
 
     if (item.isKit) {
         addClass(item, 'group-row-product-kit');
-        useKitRow(item);
     }
 
     if (!item.sku) {
@@ -32,7 +31,7 @@ const productKitData = data => data.map(item => {
         if (item.row_class_name.split(' ').includes('sub-row-last')) {
             addClass(item, 'sub-row-last-product-kit');
         }
-        useKitRow(item);
+        useKitSubItemRow(item);
     }
 
     return item;

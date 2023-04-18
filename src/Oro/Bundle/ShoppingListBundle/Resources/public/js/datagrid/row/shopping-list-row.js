@@ -1,6 +1,18 @@
 import Row from 'orodatagrid/js/datagrid/row';
 
 const ShoppingListRow = Row.extend({
+    /**
+     * Defined map of custom cell constructors of cell types or cell name
+     *
+     * {
+     *  'cell-type': CustomCellConstructor,
+     *  'cell-name': NewCustomCellConstructor
+     *  ...
+     * }
+     * @property {object}
+     */
+    cellConstructorMap: {},
+
     constructor: function ShoppingListRow(options) {
         ShoppingListRow.__super__.constructor.call(this, options);
     },
@@ -21,12 +33,30 @@ const ShoppingListRow = Row.extend({
                 const column = definitionColumn || options.model;
                 const cellOptions = rowView.getConfiguredCellOptions(column);
                 cellOptions.model = rowView.model;
-                const Cell = column.get('cell');
+                const Cell = rowView.columnCellMapping(column);
                 return new Cell(cellOptions);
             };
         }
 
         ShoppingListRow.__super__.initialize.call(this, options);
+    },
+
+    /**
+     * Match and replace cell view in depends of map configuration `cellTypesMap` and `cellNamesMap`
+     *
+     * @param {object} column
+     * @returns {object}
+     */
+    columnCellMapping(column) {
+        const {type} = column.get('metadata') || {};
+
+        if (column.get('name') in this.cellConstructorMap) {
+            return this.cellConstructorMap[column.get('name')];
+        } else if (type in this.cellConstructorMap) {
+            return this.cellConstructorMap[type];
+        } else {
+            return column.get('cell');
+        }
     },
 
     renderItem(column) {
