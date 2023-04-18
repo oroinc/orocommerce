@@ -1,0 +1,35 @@
+services:
+    Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener: '@oro_product.product_kit.event_listener.product_status_listener'
+    oro_product.product_kit.event_listener.product_status_listener:
+        class: Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener
+        arguments:
+            - '@doctrine'
+            - '@oro_product.product_kit.resolver.product_kit_status_resolver'
+            - '@oro_product.product_kit.resolver.product_kit_inventory_status_resolver'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: preUpdate, method: preUpdateProduct }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: postPersist, method: postPersistProduct }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: preRemove, method: preRemoveProduct }
+
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: postPersist, method: postPersistProductKit }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preUpdate, method: preUpdateProductKit }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preRemove, method: preRemoveProductKit }
+
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: postPersist, method: postPersistProductKitItemProduct }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: preUpdate, method: preUpdateProductKitItemProduct }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: preRemove, method: preRemoveProductKitItemProduct }
+
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
+    Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitStatusResolver: '@oro_product.product_kit.resolver.product_kit_status_resolver'
+    oro_product.product_kit.resolver.product_kit_status_resolver:
+        class: Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitStatusResolver
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitInventoryStatusResolver: '@oro_product.product_kit.resolver.product_kit_inventory_status_resolver'
+    oro_product.product_kit.resolver.product_kit_inventory_status_resolver:
+        class: Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitInventoryStatusResolver
+        arguments:
+            - '@doctrine'

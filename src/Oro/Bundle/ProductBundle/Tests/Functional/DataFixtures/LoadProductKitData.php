@@ -59,6 +59,7 @@ class LoadProductKitData extends AbstractFixture implements
                 'sku' => self::PRODUCT_KIT_1,
                 'name' => 'Product Kit with Single Kit Item',
                 'unit' => 'milliliter',
+                'status' => Product::STATUS_ENABLED,
                 'kitItems' => [
                     [
                         'label' => 'PKSKU1 - Unit of Quantity Taken from Product Kit',
@@ -76,6 +77,7 @@ class LoadProductKitData extends AbstractFixture implements
                 'sku' => self::PRODUCT_KIT_2,
                 'name' => 'Product Kit Utilizing Sort Order',
                 'unit' => 'milliliter',
+                'status' => Product::STATUS_ENABLED,
                 'kitItems' => [
                     [
                         'label' => 'PKSKU2 - Sort Order 1',
@@ -96,12 +98,13 @@ class LoadProductKitData extends AbstractFixture implements
                         'products' => ['product-3'],
                     ],
                 ],
-                'inventoryStatusId' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
             ],
             [
                 'sku' => self::PRODUCT_KIT_3,
                 'name' => 'Product Kit Utilizing Min and Max Quantity',
                 'unit' => 'milliliter',
+                'status' => Product::STATUS_ENABLED,
                 'kitItems' => [
                     [
                         'label' => 'PKSKU3 - With Min and Max Quantity',
@@ -161,6 +164,7 @@ class LoadProductKitData extends AbstractFixture implements
                 ->setAttributeFamily($defaultAttributeFamily)
                 ->setType(Product::TYPE_KIT)
                 ->setSku($productData['sku'])
+                ->setStatus($productData['status'])
                 ->addName((new ProductName())->setString($productData['name']))
                 ->setStatus(Product::STATUS_ENABLED)
                 ->setInventoryStatus($inventoryStatus)
