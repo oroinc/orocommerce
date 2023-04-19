@@ -45,9 +45,11 @@ Feature: Product collection sort order with drag n' drop
     Then I should see "Content Node has been saved" flash message
     And I should see "UiDialog" with elements:
       | Title | Sort products in Some Custom Segment Name product collection |
-    When I drag and drop "Draggable Separator Row" before "Draggable Product5 Row"
-    And I drag and drop "Draggable Product5 Row" before "Draggable Product2 Row"
+    When I drag and drop "Draggable Separator Row" down before "Draggable Product5 Row"
+    And I drag and drop "Draggable Product5 Row" up before "Draggable Product2 Row"
     And I click "Close" in "UiDialog ActionPanel" element
+    And I click "Content Variants" in scrollspy
+    And I click on "Advanced Filter"
     Then I should see following grid:
       | SORT ORDER | SKU   | NAME      |
       | 0.4        | PSKU4 | Product 4 |
@@ -64,8 +66,7 @@ Feature: Product collection sort order with drag n' drop
     # following step is skipped due to issue with waitForAjax AfterStep
     # And I drag and drop "Draggable Product2 Row" on "Drop Zone Exclude from Collection"
     And I click "Close" in "UiDialog ActionPanel" element
-    # click on scrollspy section bellow to scroll page and make products grid visible
-    And I click "Activity" in scrollspy
+    And I click "Content Variants" in scrollspy
     Then I should see following grid:
       | SORT ORDER | SKU   | NAME      |
       | 0.4        | PSKU1 | Product 1 |

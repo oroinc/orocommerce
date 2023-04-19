@@ -23,9 +23,10 @@ Feature: Category products sort order with drag n' drop
     Then I should see "Category has been saved" flash message
     And I should see "UiDialog" with elements:
       | Title | Sort products in NewCategory category |
-    When I drag and drop "Draggable Separator Row" before "Draggable Product5 Row"
-    And I drag and drop "Draggable Product5 Row" before "Draggable Product2 Row"
+    When I drag and drop "Draggable Separator Row" down before "Draggable Product5 Row"
+    And I drag and drop "Draggable Product5 Row" up before "Draggable Product2 Row"
     And I click "Close" in "UiDialog ActionPanel" element
+    And I click "Products" in scrollspy
     Then I should see following grid:
       | IN CATEGORY | SORT ORDER | SKU   | NAME      |
       | 1           | 0.4        | PSKU4 | Product 4 |
@@ -41,6 +42,7 @@ Feature: Category products sort order with drag n' drop
     And I drag and drop "Draggable Product5 Row" on "Drop Zone Remove from Sorted"
     And I drag and drop "Draggable Product2 Row" on "Drop Zone Exclude from Category"
     And I click "Close" in "UiDialog ActionPanel" element
+    And I click "Products" in scrollspy
     Then I should see following grid:
       | IN CATEGORY | SORT ORDER | SKU   | NAME      |
       | 1           | 0.4        | PSKU1 | Product 1 |
@@ -48,3 +50,44 @@ Feature: Category products sort order with drag n' drop
       | 1           |            | PSKU5 | Product 5 |
       | 0           |            | PSKU2 | Product 2 |
       | 0           |            | PSKU3 | Product 3 |
+
+  Scenario: Sort order product with drag n' drop below draggable separator
+    When I fill "Category Form" with:
+      | PSKU4             |   |
+      | In category PSKU2 | 1 |
+      | In category PSKU3 | 1 |
+    And I click "Manage sort order"
+    Then should see "Save all changes?" in confirmation dialogue
+    When I click "Submit and continue" in confirmation dialogue
+    Then I should see "Category has been saved" flash message
+    And I should see "UiDialog" with elements:
+      | Title | Sort products in NewCategory category |
+    When I drag and drop "Draggable Product4 Row" up before "Draggable Product3 Row"
+    And I click "Close" in "UiDialog ActionPanel" element
+    And I click "Products" in scrollspy
+    Then I should see following grid:
+      | IN CATEGORY | SORT ORDER | SKU   | NAME      |
+      | 1           | 0.4        | PSKU1 | Product 1 |
+      | 1           | 10.4       | PSKU2 | Product 2 |
+      | 1           | 20.4       | PSKU4 | Product 4 |
+      | 1           |            | PSKU3 | Product 3 |
+      | 1           |            | PSKU5 | Product 5 |
+    When I fill "Category Form" with:
+      | PSKU2 |   |
+      | PSKU4 |   |
+    And I click "Manage sort order"
+    Then should see "Save all changes?" in confirmation dialogue
+    When I click "Submit and continue" in confirmation dialogue
+    Then I should see "Category has been saved" flash message
+    And I should see "UiDialog" with elements:
+      | Title | Sort products in NewCategory category |
+    When I drag and drop "Draggable Product3 Row" down before "Draggable Product5 Row"
+    And I click "Close" in "UiDialog ActionPanel" element
+    And I click "Products" in scrollspy
+    Then I should see following grid:
+      | IN CATEGORY | SORT ORDER | SKU   | NAME      |
+      | 1           | 0.4        | PSKU1 | Product 1 |
+      | 1           | 10.4       | PSKU2 | Product 2 |
+      | 1           | 20.4       | PSKU4 | Product 4 |
+      | 1           | 30.4       | PSKU3 | Product 3 |
+      | 1           |            | PSKU5 | Product 5 |
