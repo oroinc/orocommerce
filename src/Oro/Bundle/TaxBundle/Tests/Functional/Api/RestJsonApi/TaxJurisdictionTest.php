@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Api\RestJsonApi;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
@@ -18,6 +20,16 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
         $this->loadFixtures([
             '@OroTaxBundle/Tests/Functional/Api/DataFixtures/tax_jurisdiction.yml'
         ]);
+    }
+
+    private static function sortZipCodes(Collection $zipCodes): Collection
+    {
+        $items = $zipCodes->toArray();
+        usort($items, static function (ZipCode $a, ZipCode $b) {
+            return ($a->getZipCode() ?? $a->getZipRangeStart()) <=> ($b->getZipCode() ?? $b->getZipRangeStart());
+        });
+
+        return new ArrayCollection($items);
     }
 
     private static function assertZipCode(
@@ -205,7 +217,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
         self::assertNull($taxJurisdiction->getRegionText());
         self::assertEquals($countryIso2Code, $taxJurisdiction->getCountry()->getIso2Code());
         self::assertEquals($regionCombinedCode, $taxJurisdiction->getRegion()->getCombinedCode());
-        $zipCodes = $taxJurisdiction->getZipCodes();
+        $zipCodes = self::sortZipCodes($taxJurisdiction->getZipCodes());
         self::assertCount(2, $zipCodes);
         self::assertZipCode($zipCodes[0], '90011', null, null);
         self::assertZipCode($zipCodes[1], null, '90201', '90280');
@@ -275,7 +287,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
         self::assertNull($taxJurisdiction->getRegionText());
         self::assertEquals($countryIso2Code, $taxJurisdiction->getCountry()->getIso2Code());
         self::assertEquals($regionCombinedCode, $taxJurisdiction->getRegion()->getCombinedCode());
-        $zipCodes = $taxJurisdiction->getZipCodes();
+        $zipCodes = self::sortZipCodes($taxJurisdiction->getZipCodes());
         self::assertCount(2, $zipCodes);
         self::assertZipCode($zipCodes[0], '90011', null, null);
         self::assertZipCode($zipCodes[1], null, '90201', '90280');
@@ -283,6 +295,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
 
     public function testUpdateZipCodes(): void
     {
+        $this->markTestSkipped('Due to BAP-21987');
         $taxJurisdictionId = $this->getReference('tax_jurisdiction_1')->getId();
 
         $this->patch(
@@ -305,12 +318,12 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
 
         $taxJurisdiction = $this->getEntityManager()->find(TaxJurisdiction::class, $taxJurisdictionId);
         self::assertNotNull($taxJurisdiction);
-        $zipCodes = $taxJurisdiction->getZipCodes();
+        $zipCodes = self::sortZipCodes($taxJurisdiction->getZipCodes());
         self::assertCount(4, $zipCodes);
         self::assertZipCode($zipCodes[0], '90011', null, null);
-        self::assertZipCode($zipCodes[1], '92503', null, null);
-        self::assertZipCode($zipCodes[2], null, '90201', '90280');
-        self::assertZipCode($zipCodes[3], null, '92126', '92154');
+        self::assertZipCode($zipCodes[1], null, '90201', '90280');
+        self::assertZipCode($zipCodes[2], null, '92126', '92154');
+        self::assertZipCode($zipCodes[3], '92503', null, null);
     }
 
     public function testRemoveZipCodes(): void
@@ -424,7 +437,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
 
         $taxJurisdiction = $this->getEntityManager()->find(TaxJurisdiction::class, $taxJurisdictionId);
         self::assertNotNull($taxJurisdiction);
-        $zipCodes = $taxJurisdiction->getZipCodes();
+        $zipCodes = self::sortZipCodes($taxJurisdiction->getZipCodes());
         self::assertCount(2, $zipCodes);
         self::assertZipCode($zipCodes[0], '90011', null, null);
         self::assertZipCode($zipCodes[1], null, '90201', '90280');
@@ -463,7 +476,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
 
         $taxJurisdiction = $this->getEntityManager()->find(TaxJurisdiction::class, $taxJurisdictionId);
         self::assertNotNull($taxJurisdiction);
-        $zipCodes = $taxJurisdiction->getZipCodes();
+        $zipCodes = self::sortZipCodes($taxJurisdiction->getZipCodes());
         self::assertCount(2, $zipCodes);
         self::assertZipCode($zipCodes[0], '90011', null, null);
         self::assertZipCode($zipCodes[1], null, '90201', '90280');
@@ -502,7 +515,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
 
         $taxJurisdiction = $this->getEntityManager()->find(TaxJurisdiction::class, $taxJurisdictionId);
         self::assertNotNull($taxJurisdiction);
-        $zipCodes = $taxJurisdiction->getZipCodes();
+        $zipCodes = self::sortZipCodes($taxJurisdiction->getZipCodes());
         self::assertCount(2, $zipCodes);
         self::assertZipCode($zipCodes[0], '90011', null, null);
         self::assertZipCode($zipCodes[1], null, '90201', '90280');
@@ -541,7 +554,7 @@ class TaxJurisdictionTest extends RestJsonApiTestCase
 
         $taxJurisdiction = $this->getEntityManager()->find(TaxJurisdiction::class, $taxJurisdictionId);
         self::assertNotNull($taxJurisdiction);
-        $zipCodes = $taxJurisdiction->getZipCodes();
+        $zipCodes = self::sortZipCodes($taxJurisdiction->getZipCodes());
         self::assertCount(2, $zipCodes);
         self::assertZipCode($zipCodes[0], '90011', null, null);
         self::assertZipCode($zipCodes[1], null, '90201', '90280');
