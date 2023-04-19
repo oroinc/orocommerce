@@ -14,7 +14,6 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -28,8 +27,6 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
-    use ProductPriceReference;
-
     private ProductPriceRepository $repository;
     private ShardManager $shardManager;
 
@@ -60,31 +57,36 @@ class ProductPriceRepositoryTest extends WebTestCase
         );
         $expected = [
             [
-                'product_id' => (string)$product1->getId(),
-                'value' => '10.0000',
-                'currency' => 'USD',
-                'unit' => 'liter',
-                'price_list_id' => $this->getReference('price_list_1')->getId(),
-            ],
-            [
-                'product_id' => (string)$product1->getId(),
+                'product_id' => $product1->getId(),
                 'value' => '12.2000',
                 'currency' => 'EUR',
-                'unit' => 'bottle',
                 'price_list_id' => $this->getReference('price_list_1')->getId(),
+                'unit' => 'bottle',
             ],
             [
-                'product_id' => (string)$product1->getId(),
+                'product_id' => $product1->getId(),
+                'value' => '10.0000',
+                'currency' => 'USD',
+                'price_list_id' => $this->getReference('price_list_1')->getId(),
+                'unit' => 'liter',
+            ],
+            [
+                'product_id' => $product1->getId(),
                 'value' => '12.2000',
                 'currency' => 'USD',
-                'unit' => 'liter',
                 'price_list_id' => $this->getReference('price_list_2')->getId(),
+                'unit' => 'liter',
             ],
         ];
-        usort($expected, [$this, 'sort']);
-        usort($actual, [$this, 'sort']);
 
-        $this->assertEquals($expected, $actual);
+        usort($actual, function (array $a, array $b) : int {
+            $aKey = sprintf('%s_%s_%s', $a['price_list_id'], $a['currency'], $a['unit']);
+            $bKey = sprintf('%s_%s_%s', $b['price_list_id'], $b['currency'], $b['unit']);
+
+            return $aKey <=> $bKey;
+        });
+
+        $this->assertSame($expected, $actual);
     }
 
     public function testFindMinByWebsiteForSort()
@@ -100,19 +102,19 @@ class ProductPriceRepositoryTest extends WebTestCase
         );
         $expected = [
             [
-                'product_id' => (string)$product1->getId(),
+                'product_id' => $product1->getId(),
                 'value' => '10.0000',
                 'currency' => 'USD',
                 'price_list_id' => $this->getReference('price_list_1')->getId(),
             ],
             [
-                'product_id' => (string)$product1->getId(),
+                'product_id' => $product1->getId(),
                 'value' => '12.2000',
                 'currency' => 'EUR',
                 'price_list_id' => $this->getReference('price_list_1')->getId(),
             ],
             [
-                'product_id' => (string)$product1->getId(),
+                'product_id' => $product1->getId(),
                 'value' => '12.2000',
                 'currency' => 'USD',
                 'price_list_id' => $this->getReference('price_list_2')->getId(),
@@ -545,18 +547,6 @@ class ProductPriceRepositoryTest extends WebTestCase
             $result = $this->repository->findByPriceList($this->shardManager, $priceList, ['id' => $price->getId()]);
             $this->assertEmpty($result);
         }
-    }
-
-    private function sort(array $a, array $b): int
-    {
-        if (!empty($a['unit']) && $a['price_list_id'] === $b['price_list_id'] && $a['currency'] === $b['currency']) {
-            return $a['unit'] > $b['unit'] ? 1 : 0;
-        }
-        if ($a['price_list_id'] === $b['price_list_id']) {
-            return $a['currency'] > $b['currency'] ? 1 : 0;
-        }
-
-        return $a['price_list_id'] > $b['price_list_id'] ? 1 : 0;
     }
 
     private function getPriceIds(array $prices): array

@@ -103,7 +103,7 @@ Feature: Checkout With Multi Shipping And Suborders Creation
       | 2-2          | $46.00 |
       | 2-1          | $13.00 |
     And records in "SubOrders Grid" should be 2
-    When I click view "$13.00" in grid
+    When I click "View" on row "$13.00" in grid "SubOrders Grid"
     Then I should see "Order #2-1"
     And I should see "Parent Order #2"
     And I should see following "BackendOrderLineItemsGrid" grid:
@@ -113,7 +113,7 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     When I click "#2"
     Then I should see "Sub-Orders"
     When I scroll to "SubOrders Grid"
-    When I click view "$46.00" in grid
+    When I click "View" on row "$46.00" in grid "SubOrders Grid"
     Then I should see "Order #2-2"
     And I should see "Parent Order #2"
     And I should see following "BackendOrderLineItemsGrid" grid:

@@ -202,6 +202,21 @@ oro_behat_extension:
           PSKU5:
             locator: '//tbody/tr[.//td[contains(text(), "PSKU5")]]//input[contains (@name,"sortOrder_")]'
             type: xpath
+          In category PSKU1:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU1")]]//input[@type="checkbox"]'
+            type: xpath
+          In category PSKU2:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU2")]]//input[@type="checkbox"]'
+            type: xpath
+          In category PSKU3:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU3")]]//input[@type="checkbox"]'
+            type: xpath
+          In category PSKU4:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU4")]]//input[@type="checkbox"]'
+            type: xpath
+          In category PSKU5:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU5")]]//input[@type="checkbox"]'
+            type: xpath
 
     Drop Zone Exclude from Category:
       selector: '.drop-zones-menu [data-zone="excludeFromCategory"]'
