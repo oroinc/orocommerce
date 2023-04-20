@@ -580,6 +580,9 @@ const GrapesjsEditorView = BaseView.extend({
             }
 
             if (!this.builder.getContainer().contains(event.target)) {
+                this.builder.getContainer().querySelectorAll(':focus').forEach(
+                    element => element.blur()
+                );
                 this.builder.getSelectedAll().forEach(selected => this.builder.selectRemove(selected));
             }
         });
