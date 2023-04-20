@@ -2223,3 +2223,8 @@ services:
                         - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
+
+    oro_product.datagrid.property.product_units:
+        class: Oro\Bundle\ProductBundle\DataGrid\Property\ProductUnitsProperty
+        # Public because used as a property callback in a datagrid.
+        public: true

@@ -93,6 +93,8 @@ services:
 
     oro_shopping_list.event_listener.datagrid_line_items_data.edit:
         class: Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataEditListener
+        arguments:
+            - '@oro_product.datagrid.property.product_units'
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
 

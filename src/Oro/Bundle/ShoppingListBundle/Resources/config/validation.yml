@@ -73,6 +73,8 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
             - Expression:
                 expression: "!this.product || !this.product.isKit() || value.count()"
                 groups: [Default, create, update, add_product, add_product_kit_line_item]
+            - Valid:
+                groups: [add_product_kit_line_item]
         checksum:
             - NotNull: ~
             - Length:
@@ -97,10 +99,11 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         subtotalValue:
             - Type:
                 type: numeric
-                groups: [create, update, add_product]
+                groups: [create, update, add_product, add_product_kit_line_item]
             - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 minMessage: 'oro.shoppinglist.subtotal.min.error.label'
                 maxMessage: 'oro.shoppinglist.subtotal.max.error.label'
+                groups: [Default, add_product_kit_line_item]
 
 Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
     constraints:

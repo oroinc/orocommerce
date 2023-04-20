@@ -49,7 +49,9 @@ oro:
             add_to_shopping_list.label: Add to Shopping List
             create_new_shopping_list.label: Create New Shopping List
             added.label: 'Product has been added to "%shoppinglist%"'
-            kit.add_to_shopping_list.label: Configure and Add to Shopping List
+            kit:
+                add_to_shopping_list.label: Configure and Add to Shopping List
+                in_shopping_lists.label: "{1} In Shopping List|]1,Inf[ In Shopping Lists"
 
         actions:
             set_current: Set as current
@@ -367,6 +369,8 @@ oro:
                 edit: 'Edit the Note'
 
             product_kit_line_item:
+                added_to_shopping_list: 'Product kit has been added to "%shoppinglist%"'
+
                 dialog_widget:
                     product_kit_item_line_item:
                         product:
@@ -377,3 +381,12 @@ oro:
                     notes: Notes
                     subtotal:
                         label: 'Price as configured:'
+
+                in_shopping_lists_widget:
+                    datagrid:
+                        columns:
+                            shopping_list.label: 'Shopping List'
+                            kit_configuration.label: 'Configuration'
+                            quantity.label: 'QTY #'
+                    button:
+                        close.label: 'Close'

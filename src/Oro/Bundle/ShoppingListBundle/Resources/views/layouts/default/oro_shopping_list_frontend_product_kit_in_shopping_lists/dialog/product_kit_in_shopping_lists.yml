@@ -1,0 +1,24 @@
+layout:
+    imports:
+        -
+            id: product_kit_in_shopping_lists
+            root: widget_content
+            namespace: product_kit_in_shopping_lists_widget
+
+    actions:
+        - '@setOption':
+            id: product_kit_in_shopping_lists_widget_wrapper
+            optionName: vars
+            optionValue:
+                product: '=data["product"]'
+
+        - '@setOption':
+              id: product_kit_in_shopping_lists_widget_datagrid
+              optionName: grid_name
+              optionValue: 'frontend-product-kit-in-shopping-lists-grid'
+
+        - '@setOption':
+              id: product_kit_in_shopping_lists_widget_datagrid
+              optionName: grid_parameters
+              optionValue:
+                  product_id: '=data["product"].getId()'

@@ -7,6 +7,7 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType;
@@ -16,7 +17,6 @@ use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFacto
 use Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitLineItemFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Controller that manages product kits line items via AJAX requests.
  */
-class AjaxProductKitLineItemController extends AbstractController
+class AjaxProductKitLineItemController extends AbstractLineItemController
 {
     private ProductKitAvailabilityChecker $productKitAvailabilityChecker;
 
@@ -84,7 +84,7 @@ class AjaxProductKitLineItemController extends AbstractController
         $shoppingList = $this->currentShoppingListManager
             ->getForCurrentUser((int)$request->get('shoppingListId'), true);
 
-        if ($shoppingList === null || !$this->isGranted('EDIT', $shoppingList)) {
+        if ($shoppingList === null || !$this->isGranted(BasicPermission::EDIT, $shoppingList)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -104,14 +104,20 @@ class AjaxProductKitLineItemController extends AbstractController
 
             return new JsonResponse([
                 'success' => true,
-                'subtotal' => $subtotal
+                'subtotal' => $subtotal,
             ]);
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->shoppingListManager->addLineItem($productKitLineItem, $shoppingList);
 
-            return new JsonResponse(['success' => true, 'messages' => []]);
+            return new JsonResponse(
+                $this->getSuccessResponse(
+                    $shoppingList,
+                    $product,
+                    'oro.frontend.shoppinglist.product_kit_line_item.added_to_shopping_list'
+                )
+            );
         }
 
         return [
@@ -120,6 +126,36 @@ class AjaxProductKitLineItemController extends AbstractController
                 'product' => $product,
                 'shoppingList' => $shoppingList,
                 'form' => $form->createView(),
+            ],
+        ];
+    }
+
+    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
+    {
+        return [
+            'success' => true,
+            'messages' => ['info' => [$this->getSuccessMessage($shoppingList, $message)]],
+            'product' => $this->getProductResponseData($product),
+            'shoppingList' => $this->getShoppingListResponseData($shoppingList),
+        ];
+    }
+
+    /**
+     * @Route(
+     *      "/in-shopping-lists/{productId}",
+     *      name="oro_shopping_list_frontend_product_kit_in_shopping_lists",
+     *      requirements={"productId"="\d+"},
+     *      methods={"GET","POST"}
+     * )
+     * @ParamConverter("product", options={"id"="productId"})
+     * @AclAncestor("oro_product_frontend_view")
+     * @Layout()
+     */
+    public function inShoppingListsAction(Product $product, Request $request): Response|array
+    {
+        return [
+            'data' => [
+                'product' => $product,
             ],
         ];
     }

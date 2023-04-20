@@ -1,0 +1,32 @@
+{% block __product_kit_shopping_lists_button__wrapper_widget %}
+    {% do block|merge_context({
+        product: product,
+        productShoppingLists: productShoppingLists
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __product_kit_shopping_lists_button__button_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'shopping-lists',
+        'data-route': 'oro_shopping_list_frontend_product_kit_in_shopping_lists',
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            'view': 'oroshoppinglist/js/app/views/product-kit-in-shopping-lists-view'
+        },
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="shopping-lists__content">
+            <div class="shopping-lists__content-wrapper">
+                <div class="shopping-lists__text">
+                    <span class="shopping-lists__cart" aria-hidden="true"></span>
+                    {{ 'oro.shoppinglist.product.kit.in_shopping_lists.label'|trans({'%count%': productShoppingLists|length}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

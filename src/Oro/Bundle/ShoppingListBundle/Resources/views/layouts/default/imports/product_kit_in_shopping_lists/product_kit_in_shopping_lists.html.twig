@@ -1,0 +1,70 @@
+{% block __product_kit_in_shopping_lists__wrapper_widget %}
+    {% set class_prefix = 'product-kit-in-shopping-lists-widget' %}
+
+    {% do block|merge_context({
+        class_prefix: class_prefix,
+        product: product
+    }) %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __product_kit_in_shopping_lists__header_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header',
+        'data-dialog-extra-header-content': ''
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __product_kit_in_shopping_lists__header_product_picture_widget %}
+    {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
+    {% set productName = product.names|localized_value %}
+    <div class="product-item product-popup__header-img">
+        <div class="product-item__image-holder--aspect-ratio product-item__image-holder--tiny">
+            <div class="product-item__preview">
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    sources: product_filtered_picture_sources(productImageData, 'product_small'),
+                    picture_attrs: attr,
+                    picture_attrs: {
+                        class: 'product-item__preview-picture'
+                    },
+                    img_attrs: {
+                        class: 'product-item__preview-image'
+                    }
+                } %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __product_kit_in_shopping_lists__header_product_attributes_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __product_kit_in_shopping_lists__header_product_name_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' h1 h-normal',
+    }) %}
+
+    <p {{ block('block_attributes') }}>
+        {{ product.names|localized_value|e }}
+    </p>
+{% endblock %}
+
+{% block __product_kit_in_shopping_lists__header_product_sku_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ 'oro.product.frontend.index.item'|trans }}
+        <span>{{ product.sku }}</span>
+    </div>
+{% endblock %}
