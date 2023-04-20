@@ -1,0 +1,62 @@
+-   sku: 2EW02
+    name: 'Touchscreen POS System'
+    description: 'This all-inclusive POS system features a 15-inch touchscreen, a credit card pin pad reader, and a receipt printer. The screen has a maximum resolution of 1024 x 768 and is water-resistant. This system gives the user full range of standard connectivity ports for retail POS and hospitality applications. It also features a high-quality and secure, all steel lock-and-key cash box '
+    category: 'POS Systems'
+    category_sort_order: '7'
+    information: "Catalog Page: 7292\nTouch screen is 15 inches\nMaximum resolution: 1024 X 768\nIncludes power chord, power adapter, VGA signal cable, USB cable\nEasily integrated with a variety of POS systems\nCash box material: steel"
+    specifications: "Width: 9”\nHeight: 7”\nWeight: 5 lb."
+    price: '469.99'
+    MSRP: '459.99'
+    MAP: '464.99'
+    unit: set
+    units:
+        -  unit: item
+           precision: 0
+           conversion_rate: 0.1
+           sell: 1
+    precision: '0'
+    type: kit
+    featured: '1'
+    new_arrival: '0'
+    page_template: ''
+    brand_id: '1'
+    kitItems:
+        -   label: 'Base Unit'
+            unit: set
+            optional: false
+            sortOrder: 1
+            minimumQuantity: 1
+            maximumQuantity: 1
+            products:
+                - 5TJ23
+                - 2RW93
+                - 1TB10 # out of stock
+        -   label: 'Barcode Scanner'
+            unit: item
+            optional: false
+            sortOrder: 2
+            minimumQuantity: 1
+            maximumQuantity: 1
+            products:
+                - 6VC22
+                - 4PJ19
+                - 7TY55
+        -   label: 'Receipt Printer(s)'
+            unit: item
+            optional: true
+            sortOrder: 3
+            minimumQuantity: 1
+            maximumQuantity: null
+            products:
+                - 8DO33
+        -   label: 'Receipt Printer(s)'
+            unit: item
+            optional: true
+            sortOrder: 4
+            minimumQuantity: 1
+            maximumQuantity: null
+            products:
+                - 1AB92 # out of stock
+                - 2LM04
+                - 2WE71
+    inventoryStatusId: in_stock

@@ -80,7 +80,7 @@ define(function(require) {
             } else {
                 return routing.generate('oro_api_shopping_list_frontend_delete_line_item', {
                     id: this.model.attributes.id,
-                    onlyCurrent: this.model.attributes.variantId ? 1 : 0
+                    onlyCurrent: this.model.attributes.variantId || this.model.attributes.isKit ? 1 : 0
                 });
             }
         }
