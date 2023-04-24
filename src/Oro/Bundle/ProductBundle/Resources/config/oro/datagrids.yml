@@ -1223,6 +1223,12 @@ datagrids:
                 sortRowsDragNDropBuilder:
                     highlightSortedItems: false
                     renderDropZonesMenu: true
+            entity_pagination: false
+            toolbarOptions:
+                hide: true
+                pageSize:
+                    items: [ 100 ]
+                    default_per_page: 100
 
     kit-item-products-add-grid:
         extends: kit-item-products-base-grid
