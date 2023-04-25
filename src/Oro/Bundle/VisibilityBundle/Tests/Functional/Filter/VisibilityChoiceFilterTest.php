@@ -28,6 +28,7 @@ class VisibilityChoiceFilterTest extends WebTestCase
         $gridParams = [
             'customer-product-visibility-grid:website[target_entity_id]' => $product->getId(),
             'customer-product-visibility-grid:website[scope_id]' => $scope->getId(),
+            'customer-product-visibility-grid:website[organization_id]' => $product->getOrganization()->getId(),
         ];
         foreach ($filter as $key => $filterValue) {
             $gridParams["customer-product-visibility-grid:website[_filter][visibility][value][$key]"] = $filterValue;

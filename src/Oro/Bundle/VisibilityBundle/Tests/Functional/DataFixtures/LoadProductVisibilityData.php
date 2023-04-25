@@ -21,23 +21,21 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadProductVisibilityData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     protected $container;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadGroups::class,
@@ -47,9 +45,9 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         // set default fallback to categories
         $configVisibilities = $manager->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
@@ -68,7 +66,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $manager->flush();
     }
 
-    protected function createProductVisibilities(ObjectManager $manager, Product $product, array $data)
+    protected function createProductVisibilities(ObjectManager $manager, Product $product, array $data): void
     {
         $productVisibility = new ProductVisibility();
         $productVisibility->setProduct($product)
@@ -90,7 +88,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         ObjectManager $manager,
         Product $product,
         array $customerGroupsData
-    ) {
+    ): void {
         foreach ($customerGroupsData as $groupReference => $customerGroupData) {
             /** @var CustomerGroup $customerGroup */
             $customerGroup = $this->getReference($groupReference);
@@ -113,7 +111,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         ObjectManager $manager,
         Product $product,
         array $customersData
-    ) {
+    ): void {
         foreach ($customersData as $customerReference => $customerData) {
             /** @var Customer $customer */
             $customer = $this->getReference($customerReference);
@@ -131,40 +129,26 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         }
     }
 
-    /**
-     * @return array
-     */
-    protected function getProductVisibilities()
+    protected function getProductVisibilities(): array
     {
         $fixturesFileName = __DIR__ . '/data/product_visibilities.yml';
 
         return Yaml::parse(file_get_contents($fixturesFileName));
     }
 
-    /**
-     * @return Scope
-     */
-    protected function getScopeForProductVisibilities()
+    protected function getScopeForProductVisibilities(): Scope
     {
         return $this->container->get('oro_scope.scope_manager')
             ->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @return Scope
-     */
-    protected function getScopeForCustomerGroupVisibilities(CustomerGroup $customerGroup)
+    protected function getScopeForCustomerGroupVisibilities(CustomerGroup $customerGroup): Scope
     {
         return $this->container->get('oro_scope.scope_manager')
             ->findOrCreate(CustomerGroupProductVisibility::VISIBILITY_TYPE, ['customerGroup' => $customerGroup]);
     }
 
-    /**
-     * @param Customer $customer
-     * @return Scope
-     */
-    protected function getScopeForCustomerVisibilities(Customer $customer)
+    protected function getScopeForCustomerVisibilities(Customer $customer): Scope
     {
         return $this->container->get('oro_scope.scope_manager')
             ->findOrCreate('customer_product_visibility', ['customer' => $customer]);
