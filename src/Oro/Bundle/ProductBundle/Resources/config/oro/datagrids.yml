@@ -1216,6 +1216,7 @@ datagrids:
                 cellClassName: 'editing-cell'
                 frontend_type: string
         options:
+            requestMethod: POST
             jsmodules:
                 - oroproduct/datagrid/builder/product-kit-items-builder
                 - orodatagrid/js/sort-rows-drag-n-drop/builder
@@ -1233,6 +1234,7 @@ datagrids:
     kit-item-products-add-grid:
         extends: kit-item-products-base-grid
         options:
+            requestMethod: POST
             toolbarOptions:
                 hide: false
                 pagination:
