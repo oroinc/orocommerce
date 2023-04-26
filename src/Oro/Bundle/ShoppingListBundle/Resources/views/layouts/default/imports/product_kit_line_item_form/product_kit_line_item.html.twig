@@ -7,6 +7,8 @@
         product: product,
         shoppingList: shoppingList,
         shoppingLists: shoppingLists,
+        lineItem: lineItem ?? null,
+        productShoppingLists: productShoppingLists ?? [],
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -74,25 +76,6 @@
         {{ 'oro.product.frontend.index.item'|trans }}
         <span>{{ product.sku }}</span>
     </span>
-{% endblock %}
-
-{% block __product_kit_line_item_form__form_start_widget %}
-    {% set form_route_name = 'oro_shopping_list_frontend_product_kit_line_item_create' %}
-    {% set form_route_parameters = form_route_parameters|merge({
-        productId: product.id,
-        shoppingListId: shoppingList is not empty ? shoppingList.id : null
-    }) %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__form fields-row',
-        'novalidate': 'novalidate',
-        'data-page-component-view': 'oroshoppinglist/js/app/views/product-kit-form-view',
-        'data-page-component-options': {
-            productId: product.id,
-            subtotalUrl: 'oro_shopping_list_frontend_product_kit_line_item_create'
-        }|json_encode
-    }) %}
-    {{ parent_block_widget(block) }}
-    {{ form_widget(form._token) }}
 {% endblock %}
 
 {% block __product_kit_line_item_form__product_total_widget %}

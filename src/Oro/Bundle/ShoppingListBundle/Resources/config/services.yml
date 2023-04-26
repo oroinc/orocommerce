@@ -817,3 +817,9 @@ services:
             - '@oro_shopping_list.manager.shopping_list_total'
         tags:
             - { name: oro_entity.delete_handler, entity: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem }
+
+    oro_shopping_list.extension.action.type.update_product_kit_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Extension\Action\Actions\UpdateProductKitLineItemAction
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: update-product-kit-line-item }

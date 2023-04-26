@@ -109,10 +109,12 @@
 {% macro getButtonsHtml(options) %}
     {% import '@OroUI/macros.html.twig' as UI %}
     {% import _self as buttons %}
-    {% set isShoppingListCreateEnabled = (feature_enabled('shopping_list_create') and is_granted('oro_shopping_list_frontend_create')) %}
+    {% set isShoppingListCreateEnabled =  (options.shoppingListCreateEnabled ?? true and feature_enabled('shopping_list_create') and is_granted('oro_shopping_list_frontend_create')) %}
     {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or not app.user %}
     {% set shoppingListRemoveEnabled = options.shoppingListRemoveEnabled is defined ? options.shoppingListRemoveEnabled : true %}
     {% set shoppingListUpdateEnabled = options.shoppingListUpdateEnabled is defined ? options.shoppingListUpdateEnabled : true %}
+    {% set shoppingListAddToEnabled = options.shoppingListAddToEnabled is defined ? options.shoppingListAddToEnabled : true %}
+
     <div class="btn-group product-add-to-shopping-list-container"
          {{ UI.renderPageComponentAttributes({
              module: 'oroui/js/app/components/view-component',
@@ -121,6 +123,7 @@
                  buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
                  createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
+                 shoppingListAddToEnabled: shoppingListAddToEnabled,
                  shoppingListCreateEnabled: isShoppingListCreateEnabled,
                  shoppingListRemoveEnabled: shoppingListRemoveEnabled,
                  shoppingListUpdateEnabled: shoppingListUpdateEnabled,
@@ -132,15 +135,17 @@
         {% if options.shoppingLists is not empty %}
             {% set existingShoppingLists = [] %}
             {% for shoppingList in options.shoppingLists %}
-                {% if shoppingList.current %}
+                {% if shoppingList.current and shoppingListAddToEnabled %}
                     {{ buttons.addToCurrentButton(options.current|merge({shoppingList: shoppingList})) }}
                 {% else %}
                     {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
                 {% endif %}
             {% endfor %}
-            {% for shoppingList in existingShoppingLists %}
-                {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
-            {% endfor %}
+            {% if shoppingListAddToEnabled %}
+                {% for shoppingList in existingShoppingLists %}
+                    {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
+                {% endfor %}
+            {% endif %}
             {% if isShoppingListCreateEnabled %}
                 {{ buttons.addToNewButton(options.new) }}
             {% endif %}

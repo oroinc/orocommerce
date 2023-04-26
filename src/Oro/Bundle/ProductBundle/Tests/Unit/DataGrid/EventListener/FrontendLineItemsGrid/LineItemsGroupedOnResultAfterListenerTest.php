@@ -18,17 +18,16 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductImageStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
+class LineItemsGroupedOnResultAfterListenerTest extends TestCase
 {
-    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attachmentManager;
+    private AttachmentManager|MockObject $attachmentManager;
 
-    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $numberFormatter;
+    private NumberFormatter|MockObject $numberFormatter;
 
-    /** @var LineItemsGroupedOnResultAfterListener */
-    private $listener;
+    private LineItemsGroupedOnResultAfterListener $listener;
 
     protected function setUp(): void
     {
@@ -47,12 +46,12 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     {
         $event = $this->createMock(OrmResultAfter::class);
         $event
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getDatagrid')
             ->willReturn($this->getDatagrid($parameters));
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getRecords');
 
         $this->listener->onResultAfter($event);
@@ -73,7 +72,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $event = new OrmResultAfter($this->getDatagrid(), [], $this->createMock(AbstractQuery::class));
         $this->listener->onResultAfter($event);
 
-        $this->assertCount(0, $event->getRecords());
+        self::assertCount(0, $event->getRecords());
     }
 
     /**
@@ -83,13 +82,13 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     {
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $resultRecord
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getValue')
             ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn($lineItemsByIds);
 
         $resultRecord
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setValue');
 
         $event = new OrmResultAfter(
@@ -109,17 +108,42 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         ];
     }
 
+    public function testOnResultAfterWhenProductKitRow(): void
+    {
+        $productKit = (new ProductStub())->setId(11)->setType(ProductStub::TYPE_KIT);
+        $lineItem = (new ProductLineItemStub(10))
+            ->setProduct($productKit);
+
+        $resultRecord = $this->createMock(ResultRecordInterface::class);
+        $resultRecord
+            ->expects(self::once())
+            ->method('getValue')
+            ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
+            ->willReturn([111 => $lineItem, 222 => $lineItem]);
+
+        $resultRecord
+            ->expects(self::never())
+            ->method('setValue');
+
+        $event = new OrmResultAfter(
+            $this->getDatagrid(['_parameters' => ['group' => true]]),
+            [$resultRecord],
+            $this->createMock(AbstractQuery::class)
+        );
+        $this->listener->onResultAfter($event);
+    }
+
     public function testOnResultAfterWhenNotLineItem(): void
     {
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $resultRecord
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getValue')
             ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn([new \stdClass(), new \stdClass()]);
 
         $resultRecord
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setValue');
 
         $event = new OrmResultAfter(
@@ -134,7 +158,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     {
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $resultRecord
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getValue')
             ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn([new ProductLineItemStub(10), new ProductLineItemStub(20)]);
@@ -150,7 +174,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $this->listener->onResultAfter($event);
 
         $resultRecord
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setValue');
     }
 
@@ -160,12 +184,12 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     public function testOnResultAfter(array $recordData, array $expectedRecordData): void
     {
         $this->numberFormatter
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('formatCurrency')
             ->willReturnCallback(static fn ($value, $currency) => $value . $currency);
 
         $this->attachmentManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(
                 static fn (File $file, string $filterName) => $file->getFilename() . '_' . $filterName
@@ -179,7 +203,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         );
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals(new ResultRecord($expectedRecordData), $resultRecord);
+        self::assertEquals(new ResultRecord($expectedRecordData), $resultRecord);
     }
 
     /**

@@ -65,11 +65,23 @@ class ProductKitLineItemFactory
         }
 
         $lineItem->setQuantity($quantity ?? $minimumQuantity);
-
-        foreach ($this->productKitItemsProvider->getKitItemsAvailableForPurchase($product) as $kitItem) {
-            $lineItem->addKitItemLineItem($this->kitItemLineItemFactory->createKitItemLineItem($kitItem));
-        }
+        $this->addKitItemLineItemsAvailableForPurchase($lineItem);
 
         return $lineItem;
+    }
+
+    public function addKitItemLineItemsAvailableForPurchase(LineItem $lineItem): void
+    {
+        foreach ($this->productKitItemsProvider->getKitItemsAvailableForPurchase($lineItem->getProduct()) as $kitItem) {
+            $isLineItemContainsKitItemLineItem = false;
+            foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                if ($kitItemLineItem->getKitItem()?->getId() === $kitItem->getId()) {
+                    $isLineItemContainsKitItemLineItem = true;
+                }
+            }
+            if ($isLineItemContainsKitItemLineItem === false) {
+                $lineItem->addKitItemLineItem($this->kitItemLineItemFactory->createKitItemLineItem($kitItem));
+            }
+        }
     }
 }

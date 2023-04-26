@@ -133,7 +133,7 @@ class ShoppingListManager
         }
     }
 
-    public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList)
+    public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList, bool $flush = true)
     {
         $func = function (LineItem $duplicate) use ($lineItem) {
             if ($lineItem->getQuantity() > 0) {
@@ -148,7 +148,9 @@ class ShoppingListManager
             ->handleLineItem($lineItem, $shoppingList, $func);
 
         $this->totalManager->recalculateTotals($shoppingList, false);
-        $this->getEntityManager()->flush();
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function getLineItem(int $lineItemId, ShoppingList $shoppingList): ?LineItem
@@ -314,8 +316,12 @@ class ShoppingListManager
      */
     private function updateLineItemQuantity(LineItem $lineItem, LineItem $duplicate)
     {
+        $quantity = $lineItem->getQuantity();
+        if ($lineItem->getProduct()?->isKit()) {
+            $quantity += $duplicate->getQuantity();
+        }
         $quantity = $this->rounding->roundQuantity(
-            $lineItem->getQuantity(),
+            $quantity,
             $duplicate->getUnit(),
             $duplicate->getProduct()
         );

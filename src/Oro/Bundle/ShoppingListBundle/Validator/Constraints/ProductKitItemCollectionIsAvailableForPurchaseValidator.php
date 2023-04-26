@@ -41,7 +41,8 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidator extends Constraint
         $productKitSku = null;
         foreach ($value as $kitItem) {
             $kitItemsCount++;
-            $constraintViolations = $validator->validate($value, null, ['product_kit_item_is_available_for_purchase']);
+            $constraintViolations = $validator
+                ->validate($kitItem, null, ['product_kit_item_is_available_for_purchase']);
             if ($constraintViolations->count() > 0) {
                 $unavailableKitItemsCount++;
 

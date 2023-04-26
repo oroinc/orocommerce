@@ -4,6 +4,7 @@ aliases:
     oro/datagrid/action/delete-product-action$: oroshoppinglist/js/datagrid/action/delete-product-action
     oro/datagrid/action/move-products-mass-action$: oroshoppinglist/js/datagrid/action/move-products-mass-action
     oro/datagrid/action/update-configurable-product-action$: oroshoppinglist/js/datagrid/action/update-configurable-product-action
+    oro/datagrid/action/update-product-kit-line-item-action$: oroshoppinglist/js/datagrid/action/update-product-kit-line-item-action
     oro/datagrid/cell/shoppinglist-html-template-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-html-template-cell
     oro/datagrid/cell/shoppinglist-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-item-cell
     oro/datagrid/cell/shoppinglist-line-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-line-item-cell
@@ -34,6 +35,7 @@ dynamic-imports:
         - oro/datagrid/action/delete-product-action
         - oro/datagrid/action/move-products-mass-action
         - oro/datagrid/action/update-configurable-product-action
+        - oro/datagrid/action/update-product-kit-line-item-action
         - oro/datagrid/cell/shoppinglist-html-template-cell
         - oro/datagrid/cell/shoppinglist-item-cell
         - oro/datagrid/cell/shoppinglist-line-item-cell

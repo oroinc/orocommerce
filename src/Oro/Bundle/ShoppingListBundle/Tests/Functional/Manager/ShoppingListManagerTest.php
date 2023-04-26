@@ -117,7 +117,7 @@ class ShoppingListManagerTest extends WebTestCase
         $this->shoppingListManager->updateLineItem($newLineItem, $shoppingList);
 
         self::assertCount(1, $shoppingList->getLineItems());
-        self::assertEquals(1, $lineItem->getQuantity());
+        self::assertEquals(2, $lineItem->getQuantity());
         self::assertEquals($previousChecksum, $lineItem->getChecksum());
     }
 

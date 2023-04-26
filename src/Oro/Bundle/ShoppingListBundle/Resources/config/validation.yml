@@ -117,20 +117,20 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
             path: quantity
-            groups: [Default, create, update]
+            groups: [Default, create, update, add_product_kit_line_item]
     properties:
         lineItem:
             - NotNull:
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
         kitItem:
             - NotNull:
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
         product:
             - NotNull:
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - Expression:
                 expression: 'this.kitItem && this.kitItem.getProducts().contains(value)'
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - AtLeastOneOf:
                 constraints:
                     - Expression:
@@ -139,7 +139,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                         expression: 'this.kitItem && this.kitItem.optional'
                 message: 'oro.shoppinglist.product_kit_item_line_item.product.status_required.message'
                 includeInternalMessages: false
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - AtLeastOneOf:
                 constraints:
                     - Expression:
@@ -148,19 +148,19 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                         expression: 'this.kitItem && !this.kitItem.optional'
                 message: 'oro.shoppinglist.product_kit_item_line_item.product.status_optional.message'
                 includeInternalMessages: false
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidEmbeddable:
                 embeddedGroups: [product_kit_item_line_item]
         quantity:
             - Expression:
                 expression: 'value && this.product'
                 message: 'oro.shoppinglist.product_kit_item_line_item.quantity.not_blank.message'
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - Type:
                 type: float
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - Sequentially:
                 constraints:
                     - Expression:
@@ -169,11 +169,10 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                     - Range:
                         minPropertyPath: 'kitItem.minimumQuantity'
                         maxPropertyPath: 'kitItem.maximumQuantity'
-                        groups: [Default, create, update]
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
         unit:
             - NotNull:
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - Sequentially:
                 constraints:
                     - Expression:
@@ -181,17 +180,17 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                         message: 'oro.shoppinglist.product_kit_item_line_item.unit.kit_item.not_blank.message'
                     - EqualTo:
                         propertyPath: kitItem.productUnit
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
         sortOrder:
             - Type:
                 type: integer
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
             - Range:
                 # Minimum of 4-byte integer value.
                 min: -2147483648
                 # Maximum of 4-byte integer value.
                 max: 2147483647
-                groups: [Default, create, update]
+                groups: [Default, create, update, add_product_kit_line_item]
 
 Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder:
     properties:

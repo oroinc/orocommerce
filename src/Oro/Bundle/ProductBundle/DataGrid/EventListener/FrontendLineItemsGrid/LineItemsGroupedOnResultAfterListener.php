@@ -47,6 +47,10 @@ class LineItemsGroupedOnResultAfterListener
             if (!$firstLineItem instanceof ProductLineItemInterface) {
                 continue;
             }
+            if ($firstLineItem->getProduct()?->isKit()) {
+                // Skips product-kit line items rows.
+                continue;
+            }
 
             $parentProduct = $firstLineItem->getParentProduct();
             if (!$parentProduct instanceof Product) {

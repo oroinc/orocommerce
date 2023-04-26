@@ -171,7 +171,6 @@ const ProductKitFormView = BaseView.extend({
             });
         } else {
             $relatedElements.attr('readonly', true);
-            $relatedElements.val('');
         }
     }
 });

@@ -6,9 +6,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\ProductKit\Factory;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
@@ -151,8 +151,8 @@ class ProductKitLineItemFactoryTest extends TestCase
         $shoppingList = (new ShoppingList())
             ->setCustomerUser($customerUser)
             ->setOrganization($organization);
-        $kitItem1 = new ProductKitItem();
-        $kitItem2 = new ProductKitItem();
+        $kitItem1 = new ProductKitItemStub(1);
+        $kitItem2 = new ProductKitItemStub(2);
 
         $this->productKitItemsProvider
             ->expects(self::once())
@@ -185,5 +185,40 @@ class ProductKitLineItemFactoryTest extends TestCase
             $expected,
             $this->factory->createProductKitLineItem($product, $productUnitItem, $quantity, $shoppingList)
         );
+    }
+
+    public function testAddKitItemLineItemsAvailableForPurchase(): void
+    {
+        $product = new ProductStub();
+        $kitItem1 = new ProductKitItemStub(1);
+        $kitItem2 = new ProductKitItemStub(2);
+
+        $this->productKitItemsProvider
+            ->expects(self::once())
+            ->method('getKitItemsAvailableForPurchase')
+            ->with($product)
+            ->willReturn([$kitItem1, $kitItem2]);
+
+        $kitItemLineItem1 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem1);
+        $kitItemLineItem2 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem2);
+
+        $this->kitItemLineItemFactory
+            ->expects(self::once())
+            ->method('createKitItemLineItem')
+            ->with($kitItem2)
+            ->willReturn($kitItemLineItem2);
+
+        $lineItem = (new LineItem())
+            ->setProduct($product)
+            ->addKitItemLineItem($kitItemLineItem1);
+
+        $this->factory->addKitItemLineItemsAvailableForPurchase($lineItem);
+
+        $kitItemLineItems = $lineItem->getKitItemLineItems();
+        self::assertCount(2, $kitItemLineItems);
+        self::assertTrue($kitItemLineItems->contains($kitItemLineItem1));
+        self::assertTrue($kitItemLineItems->contains($kitItemLineItem2));
     }
 }

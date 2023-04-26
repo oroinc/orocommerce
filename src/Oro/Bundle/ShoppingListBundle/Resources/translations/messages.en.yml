@@ -75,6 +75,8 @@ oro:
                 label: Add Shopping List item Note
             edit_notes:
                 label: Edit Shopping List item Note
+            update_product_kit_line_item:
+                label: Edit
 
         mass_actions:
             delete_line_items:
@@ -370,6 +372,7 @@ oro:
 
             product_kit_line_item:
                 added_to_shopping_list: 'Product kit has been added to "%shoppinglist%"'
+                updated_in_shopping_list: 'Product kit has been updated in "%shoppinglist%"'
 
                 dialog_widget:
                     product_kit_item_line_item:

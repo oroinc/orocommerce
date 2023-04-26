@@ -1,7 +1,7 @@
-{% block _product_kit_line_item_add_to_shopping_list_dropdown_widget %}
+{% block _product_kit_line_item_update_dropdown_widget %}
     {% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
     {% set buttonOptions = {
-        dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create',
+        dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_update',
         dataAttributes: {},
         aCss: 'btn--info ',
         iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
@@ -16,7 +16,7 @@
     }) %}
 
     {% set removeOptions = buttonOptions|merge({
-        dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create',
+        dataUrl: 'oro_api_shopping_list_frontend_delete_line_item',
         actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,
         iCss: 'fa fa-remove fa--fw fa--as-line',
         labelInIcon: false
@@ -25,14 +25,19 @@
     {% set buttonsOptions = {
         new: newOptions,
         current: buttonOptions,
-        existing: buttonOptions,
+        existing: {},
         remove: removeOptions,
-        singleButtonACss : 'btn--info',
         shoppingLists: shoppingLists,
+        shoppingListCreateEnabled: shoppingListCreateEnabled,
+        shoppingListAddToEnabled: shoppingListAddToEnabled,
         shoppingListRemoveEnabled: shoppingListRemoveEnabled,
         shoppingListUpdateEnabled: shoppingListUpdateEnabled,
         componentModule: params.buttonOptions.page_component_module|default('oroshoppinglist/js/app/views/product-kits-add-to-shopping-list-view'),
-        componentOptions: {}|merge(params.buttonOptions.page_component_options|default({}))
+        componentOptions: {
+            modelAttr: {
+                shopping_lists: productShoppingLists
+            }
+        }|merge(params.buttonOptions.page_component_options|default({})),
     } %}
 
     {% import '@OroUI/macros.html.twig' as UI %}
@@ -65,17 +70,17 @@
 {% endblock %}
 
 {% block __product_kit_line_item_form__form_start_widget %}
-    {% set form_route_name = 'oro_shopping_list_frontend_product_kit_line_item_create' %}
+    {% set form_route_name = 'oro_shopping_list_frontend_product_kit_line_item_update' %}
     {% set form_route_parameters = form_route_parameters|merge({
-        productId: product.id,
-        shoppingListId: shoppingList is not empty ? shoppingList.id : null
+        id: lineItem.id
     }) %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': class_prefix ~ '__form fields-row',
         'novalidate': 'novalidate',
         'data-page-component-view': 'oroshoppinglist/js/app/views/product-kit-form-view',
         'data-page-component-options': {
-            productId: product.id,
+            productId: lineItem.product.id,
             subtotalUrl: 'oro_shopping_list_frontend_product_kit_line_item_create'
         }|json_encode
     }) %}

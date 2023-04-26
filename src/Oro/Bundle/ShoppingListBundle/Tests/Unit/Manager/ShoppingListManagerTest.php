@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
@@ -629,6 +630,29 @@ class ShoppingListManagerTest extends TestCase
         /** @var LineItem $resultingItem */
         $resultingItem = $shoppingList->getLineItems()->first();
         self::assertEquals(5, $resultingItem->getQuantity());
+    }
+
+    public function testUpdateDuplicatedProductKitLineItem(): void
+    {
+        $productKit = (new ProductStub())
+            ->setId(11)
+            ->setType(ProductStub::TYPE_KIT);
+        $productKitLineItem = (new LineItem())
+            ->setProduct($productKit)
+            ->setUnit($this->getProductUnit('test', 1))
+            ->setQuantity(10);
+
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($productKitLineItem);
+
+        $productKitLineItemDuplicate = clone $productKitLineItem;
+        $this->manager->updateLineItem($productKitLineItemDuplicate, $shoppingList);
+
+        $lineItems = $shoppingList->getLineItems();
+        self::assertCount(1, $lineItems);
+        /** @var LineItem $resultingItem */
+        $resultingItem = $lineItems->first();
+        self::assertEquals(20, $resultingItem->getQuantity());
     }
 
     public function testUpdateLineItemWithChecksum(): void

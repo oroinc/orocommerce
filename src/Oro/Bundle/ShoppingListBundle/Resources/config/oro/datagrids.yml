@@ -636,6 +636,10 @@ datagrids:
                 type: update-configurable-product
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
                 icon: pencil-square-o
+            update_product_kit_line_item:
+                type: update-product-kit-line-item
+                label: oro.shoppinglist.actions.update_product_kit_line_item.label
+                icon: pencil-square-o
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label
@@ -846,6 +850,9 @@ datagrids:
             maximumQuantityToOrder:
                 frontend_type: number
         actions:
+            update_product_kit_line_item:
+                type: update-product-kit-line-item
+                icon: pencil-square-o
             delete:
                 type: delete-product
                 link: deleteLink

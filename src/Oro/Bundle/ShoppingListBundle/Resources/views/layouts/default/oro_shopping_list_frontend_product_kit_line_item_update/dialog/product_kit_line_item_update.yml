@@ -6,34 +6,38 @@ layout:
             namespace: product_kit_line_item_widget
     actions:
         - '@setBlockTheme':
-            themes: 'product_kit_line_item_create.html.twig'
+            themes: 'product_kit_line_item_update.html.twig'
 
         - '@setOption':
             id: product_kit_line_item_widget_wrapper
             optionName: vars
             optionValue:
                 form: '=data["form"]'
+                lineItem: '=data["lineItem"]'
                 product: '=data["product"]'
                 shoppingList: '=data["shoppingList"]'
                 shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
+                productShoppingLists: '=data.offsetExists("product") ? data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data)) : []'
 
         - '@setOption':
-           id: product_kit_line_item_widget_form_actions_submit
-           optionName: visible
-           optionValue: false
+            id: product_kit_line_item_widget_form_actions_submit
+            optionName: visible
+            optionValue: false
 
         - '@add':
-            id: product_kit_line_item_add_to_shopping_list_dropdown
+            id: product_kit_line_item_update_dropdown
             blockType: container
             parentId: product_kit_line_item_widget_product_total
 
         - '@setOption':
-            id: product_kit_line_item_add_to_shopping_list_dropdown
+            id: product_kit_line_item_update_dropdown
             optionName: vars
             optionValue:
                 form: '=data["form"]'
                 product: '=data["product"]'
                 shoppingList: '=data["shoppingList"]'
                 shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
-                shoppingListRemoveEnabled: false
-                shoppingListUpdateEnabled: false
+                shoppingListCreateEnabled: false
+                shoppingListAddToEnabled: false
+                shoppingListRemoveEnabled: true
+                shoppingListUpdateEnabled: true

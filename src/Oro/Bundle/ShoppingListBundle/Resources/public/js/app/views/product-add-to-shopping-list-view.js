@@ -21,6 +21,7 @@ define(function(require) {
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
             shoppingListCreateEnabled: true,
+            shoppingListAddToEnabled: true,
             shoppingListRemoveEnabled: true,
             shoppingListUpdateEnabled: true,
             showSingleAddToShoppingListButton: true,
@@ -172,17 +173,10 @@ define(function(require) {
                 return [$addNewButton];
             }
 
-            const currentShoppingList = this.findCurrentShoppingList();
-            this._addShippingListButtons(buttons, currentShoppingList);
-
             this.shoppingListCollection.sort();
             this.shoppingListCollection.each(function(model) {
                 const shoppingList = model.toJSON();
-                if (shoppingList.id === currentShoppingList.id) {
-                    return;
-                }
-
-                this._addShippingListButtons(buttons, shoppingList);
+                this._addShoppingListButtons(buttons, shoppingList);
             }, this);
 
             if (this.options.shoppingListCreateEnabled) {
@@ -199,7 +193,7 @@ define(function(require) {
             return buttons;
         },
 
-        _addShippingListButtons: function(buttons, shoppingList) {
+        _addShoppingListButtons: function(buttons, shoppingList) {
             let $button = $(this.options.buttonTemplate(shoppingList));
             if (!this.model) {
                 buttons.push($button);
@@ -209,7 +203,11 @@ define(function(require) {
             if (hasLineItems) {
                 $button = this.updateLabel($button, shoppingList, hasLineItems);
             }
-            buttons.push($button);
+            if (this.options.shoppingListAddToEnabled ||
+                (this.options.shoppingListUpdateEnabled && shoppingList.is_current)
+            ) {
+                buttons.push($button);
+            }
 
             if (this.options.shoppingListRemoveEnabled && hasLineItems) {
                 const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
