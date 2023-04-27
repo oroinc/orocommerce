@@ -35,20 +35,12 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
 
     private array $priceLists = ['Test', 'Test 01'];
     private array $units = ['item', 'kg' ];
-    private string $locale;
 
     protected function setUp(): void
     {
-        $this->locale = \Locale::getDefault();
         $this->formType = new ProductPriceType();
         $this->formType->setDataClass(ProductPrice::class);
         parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        \Locale::setDefault($this->locale);
-        parent::tearDown();
     }
 
     /**
@@ -95,12 +87,16 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         ProductPrice $expectedData,
         string $locale = 'en'
     ) {
+        $defaultLocale = \Locale::getDefault();
         \Locale::setDefault($locale);
-        $form = $this->factory->create(ProductPriceType::class, $defaultData, []);
+        try {
+            $form = $this->factory->create(ProductPriceType::class, $defaultData, []);
+            $this->assertEquals($defaultData, $form->getData());
+            $form->submit($submittedData);
+        } finally {
+            \Locale::setDefault($defaultLocale);
+        }
 
-        $this->assertEquals($defaultData, $form->getData());
-
-        $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
