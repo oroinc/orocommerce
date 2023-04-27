@@ -5,9 +5,8 @@ namespace Oro\Bundle\RFPBundle\Form\Extension;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
@@ -49,14 +48,19 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
      */
     protected $priceScopeCriteriaFactory;
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
+
     public function __construct(
         RequestStack $requestStack,
         ProductPriceProviderInterface $productPriceProvider,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
+        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
     ) {
         $this->requestStack = $requestStack;
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -98,29 +102,25 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     {
         /** @var array[] $lineItems */
         $lineItems = [];
-        $productsPriceCriteria = [];
-        foreach ($order->getLineItems()->toArray() as $lineItem) {
-            /** @var OrderLineItem $lineItem */
-            try {
-                $criteria = new ProductPriceCriteria(
-                    $lineItem->getProduct(),
-                    $lineItem->getProductUnit(),
-                    $lineItem->getQuantity(),
-                    $order->getCurrency()
-                );
-            } catch (\InvalidArgumentException $e) {
-                continue;
-            }
-            $lineItems[$criteria->getIdentifier()][] = $lineItem;
-            $productsPriceCriteria[] = $criteria;
-        }
+
+        $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+            $order->getLineItems(),
+            $order->getCurrency()
+        );
+
         if (count($productsPriceCriteria) === 0) {
             return;
         }
+
+        foreach ($productsPriceCriteria as $key => $productPriceCriteria) {
+            $lineItems[$productPriceCriteria->getIdentifier()][] = $order->getLineItems()->get($key);
+        }
+
         $matchedPrices = $this->productPriceProvider->getMatchedPrices(
             $productsPriceCriteria,
             $this->priceScopeCriteriaFactory->createByContext($order)
         );
+
         foreach ($matchedPrices as $identifier => $price) {
             foreach ($lineItems[$identifier] as $lineItem) {
                 $lineItem->setPrice($price);

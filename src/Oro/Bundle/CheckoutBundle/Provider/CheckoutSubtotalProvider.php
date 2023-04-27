@@ -10,6 +10,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -46,13 +47,16 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProviderInterface $productPriceProvider,
         CombinedPriceListTreeHandler $priceListTreeHandler,
         SubtotalProviderConstructorArguments $arguments,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
+        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
     ) {
         parent::__construct($arguments);
 
@@ -61,6 +65,7 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
         $this->productPriceProvider = $productPriceProvider;
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -147,22 +152,20 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
      */
     protected function prepareProductsPriceCriteria(Checkout $checkout, $currency)
     {
-        $productsPriceCriteria = [];
-        foreach ($checkout->getLineItems() as $lineItem) {
-            if ($lineItem->isPriceFixed()) {
-                continue;
-            }
-            $product = $lineItem->getProduct();
-            $productUnit = $lineItem->getProductUnit();
-            $quantity = $lineItem->getQuantity();
-            if ($product && $productUnit && $quantity) {
-                $quantity = (float)$lineItem->getQuantity();
-                $criteria = new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
-                $productsPriceCriteria[$criteria->getIdentifier()] = $criteria;
-            }
+        $results = [];
+
+        $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+            $checkout->getLineItems()->filter(
+                fn (CheckoutLineItem $lineItem) => !$lineItem->isPriceFixed()
+            ),
+            $currency
+        );
+
+        foreach ($productsPriceCriteria as $productsPriceCriterion) {
+            $results[$productsPriceCriterion->getIdentifier()] = $productsPriceCriterion;
         }
 
-        return $productsPriceCriteria;
+        return $results;
     }
 
     /**

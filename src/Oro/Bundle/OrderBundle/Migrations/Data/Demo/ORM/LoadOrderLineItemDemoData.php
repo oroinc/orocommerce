@@ -12,7 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -40,6 +40,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     /** @var array */
     protected $prices = [];
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     /**
      * {@inheritdoc}
      */
@@ -47,6 +49,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     {
         $this->container = $container;
         $this->productPriceProvider = $container->get('oro_pricing.provider.product_price');
+        $this->productPriceCriteriaFactory = $container->get('oro_pricing.product_price_criteria_factory');
     }
 
     /**
@@ -168,7 +171,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     /**
      * @param Product $product
      * @param ProductUnit $productUnit
-     * @param float $quantity
+     * @param int $quantity
      * @param string $currency
      * @param BasePriceList $priceList
      * @param Order $order
@@ -177,12 +180,12 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getPrice(
         Product $product,
         ProductUnit $productUnit,
-        $quantity,
-        $currency,
+        int $quantity,
+        string $currency,
         BasePriceList $priceList,
         Order $order
     ) {
-        $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
+        $productPriceCriteria = $this->productPriceCriteriaFactory->build($product, $productUnit, $quantity, $currency);
         $identifier = $productPriceCriteria->getIdentifier();
 
         $priceListId = $priceList->getId();

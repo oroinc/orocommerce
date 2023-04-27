@@ -13,6 +13,7 @@ services:
             - "@oro_currency.config.currency"
             - "@oro_entity.doctrine_helper"
             - '@oro_security.acl_helper'
+            - '@oro_pricing.product_price_criteria_factory'
 
     oro_sale.validator.quote_product:
         class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'

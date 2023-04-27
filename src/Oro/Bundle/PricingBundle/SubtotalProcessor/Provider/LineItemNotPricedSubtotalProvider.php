@@ -7,15 +7,14 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -53,12 +52,15 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
 
     protected ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProviderInterface $productPriceProvider,
         SubtotalProviderConstructorArguments $arguments,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
+        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
     ) {
         parent::__construct($arguments);
 
@@ -66,6 +68,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -183,34 +186,30 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     }
 
     /**
-     * @param LineItemsNotPricedAwareInterface|CustomerOwnerAwareInterface|WebsiteAwareInterface $entity
-     * @param string $currency
+     * @param LineItemsNotPricedAwareInterface $entity
+     * @param ?string $currency
      * @return ProductPriceCriteria[]
      */
-    protected function prepareProductsPriceCriteria($entity, $currency)
+    protected function prepareProductsPriceCriteria(LineItemsNotPricedAwareInterface $entity, ?string $currency): array
     {
-        $productsPriceCriteria = [];
-        foreach ($this->getLineItems($entity) as $lineItem) {
-            if ($lineItem instanceof ProductHolderInterface
-                && $lineItem instanceof ProductUnitHolderInterface
-                && $lineItem instanceof QuantityAwareInterface
-            ) {
-                $hasProduct = $lineItem->getProduct() && $lineItem->getProduct()->getId();
-                $hasProductUnitCode = $lineItem->getProductUnit() && $lineItem->getProductUnit()->getCode();
-                if ($hasProduct && $hasProductUnitCode) {
-                    $quantity = (float)$lineItem->getQuantity();
-                    $criteria = new ProductPriceCriteria(
-                        $lineItem->getProduct(),
-                        $lineItem->getProductUnit(),
-                        $quantity,
-                        $currency
-                    );
-                    $productsPriceCriteria[spl_object_hash($lineItem)] = $criteria;
-                }
+        $results = [];
+
+        $validLineItems = $this->getLineItems($entity);
+
+        $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+            $this->getLineItems($entity),
+            $currency
+        );
+
+        foreach ($validLineItems as $idx => $lineItem) {
+            if (!isset($productsPriceCriteria[$idx])) {
+                continue;
             }
+
+            $results[spl_object_hash($lineItem)] = $productsPriceCriteria[$idx];
         }
 
-        return $productsPriceCriteria;
+        return $results;
     }
 
     private function getLineItems(LineItemsNotPricedAwareInterface $entity): \Generator
@@ -222,14 +221,16 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                 }
             }
 
-            yield $lineItem;
+            if ($lineItem instanceof ProductLineItemInterface) {
+                yield $lineItem;
+            }
         }
     }
 
     /**
      * @return Subtotal
      */
-    protected function createSubtotal()
+    protected function createSubtotal(): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans(self::LABEL));

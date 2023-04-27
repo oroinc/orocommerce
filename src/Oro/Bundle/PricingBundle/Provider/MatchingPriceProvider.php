@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -27,22 +27,27 @@ class MatchingPriceProvider
     /** @var string */
     protected $productUnitClass;
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
      * @param string $productClass
      * @param string $productUnitClass
      */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         DoctrineHelper $doctrineHelper,
-        $productClass,
-        $productUnitClass
+        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory,
+        string $productClass,
+        string $productUnitClass
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->doctrineHelper = $doctrineHelper;
-        $this->productClass = (string)$productClass;
-        $this->productUnitClass = (string)$productUnitClass;
+        $this->productClass = $productClass;
+        $this->productUnitClass = $productUnitClass;
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -113,7 +118,12 @@ class MatchingPriceProvider
                 $quantity = (float)$this->getLineItemData($lineItem, 'qty');
                 $currency = (string)$this->getLineItemData($lineItem, 'currency');
 
-                $productsPriceCriteria[] = new ProductPriceCriteria($product, $unit, $quantity, $currency);
+                $productsPriceCriteria[] = $this->productPriceCriteriaFactory->build(
+                    $product,
+                    $unit,
+                    $quantity,
+                    $currency
+                );
             }
         }
 

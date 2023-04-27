@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
@@ -11,6 +12,8 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -27,19 +30,21 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     use EntityTrait;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
+    private TranslatorInterface $translator;
 
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $productPriceProvider;
+    private ProductPriceProviderInterface $productPriceProvider;
 
     /** @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceListTreeHandler;
+    private CombinedPriceListTreeHandler $priceListTreeHandler;
 
     /** @var CheckoutSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $provider;
+    private CheckoutSubtotalProvider $provider;
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
+    private FeatureChecker $featureChecker;
+
+    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
 
     protected function setUp(): void
     {
@@ -49,6 +54,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
 
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
@@ -63,7 +69,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             $this->productPriceProvider,
             $this->priceListTreeHandler,
             new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider),
-            new ProductPriceScopeCriteriaFactory()
+            new ProductPriceScopeCriteriaFactory(),
+            $this->productPriceCriteriaFactory
         );
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature('oro_price_lists_combined');
@@ -105,8 +112,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         ?string $subtotalCurrency = null,
         ?string $entityCurrency = null
     ) {
-        $customer = new Customer();
-        $website = new Website();
+        $customer = $this->createMock(Customer::class);
+        $website = $this->createMock(Website::class);
         $defaultCurrency = 'USD';
 
         $this->featureChecker->expects($this->any())
@@ -119,21 +126,26 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->with(CheckoutSubtotalProvider::LABEL)
             ->willReturn('test');
 
-        $product = $this->getProduct();
-        $productUnit = $this->getProductUnit($code, $precision);
         $this->expectsGetMatchedPrices($value, $identifier, $defaultQuantity);
 
-        $lineItem = new CheckoutLineItem();
-        $lineItem->setProduct($product)
-            ->setProductUnit($productUnit)
-            ->setQuantity($quantity);
+        $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
 
-        $entity = new Checkout();
-        $entity
-            ->setCustomer($customer)
-            ->setWebsite($website)
-            ->addLineItem($lineItem)
-            ->setCurrency($entityCurrency ?: $defaultCurrency);
+        $productPriceCriteria->method('getQuantity')->willReturn($quantity);
+        $productPriceCriteria->method('getIdentifier')->willReturn($identifier);
+
+        $this->productPriceCriteriaFactory->method('createListFromProductLineItems')->willReturn([
+            $productPriceCriteria,
+            $productPriceCriteria
+        ]);
+
+        $entity = $this->createMock(Checkout::class);
+
+        $entity->method('getCustomer')->willReturn($customer);
+        $entity->method('getWebsite')->willReturn($website);
+        $entity->method('getLineItems')->willReturn(
+            new ArrayCollection([$this->createMock(CheckoutLineItem::class)])
+        );
+        $entity->method('getCurrency')->willReturn($entityCurrency ?: $defaultCurrency);
 
         /** @var CombinedPriceList $priceList */
         $priceList = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
@@ -185,18 +197,24 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->with(CheckoutSubtotalProvider::LABEL)
             ->willReturn('test');
 
-        $product = $this->getProduct();
-        $productUnit = $this->getProductUnit($code, $precision);
         $this->expectsGetMatchedPrices($value, $identifier, $defaultQuantity);
 
-        $lineItem = new CheckoutLineItem();
-        $lineItem->setProduct($product)
-            ->setProductUnit($productUnit)
-            ->setQuantity($quantity);
+        $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
 
-        $entity = new Checkout();
-        $entity->addLineItem($lineItem)
-            ->setCurrency($entityCurrency ?: $defaultCurrency);
+        $productPriceCriteria->method('getQuantity')->willReturn($quantity);
+        $productPriceCriteria->method('getIdentifier')->willReturn($identifier);
+
+        $this->productPriceCriteriaFactory->method('createListFromProductLineItems')->willReturn([
+            $productPriceCriteria,
+            $productPriceCriteria
+        ]);
+
+        $entity = $this->createMock(Checkout::class);
+
+        $entity->method('getLineItems')->willReturn(
+            new ArrayCollection([$this->createMock(CheckoutLineItem::class)])
+        );
+        $entity->method('getCurrency')->willReturn($entityCurrency ?: $defaultCurrency);
 
         $this->priceListTreeHandler->expects($this->never())
             ->method('getPriceList');

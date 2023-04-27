@@ -149,6 +149,7 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+            - '@oro_pricing.product_price_criteria_factory'
 
     Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider:
         alias: oro_pricing.provider.frontend_product_prices
@@ -812,6 +813,7 @@ services:
         arguments:
             - '@oro_pricing.provider.product_price'
             - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.product_price_criteria_factory'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - 'Oro\Bundle\ProductBundle\Entity\ProductUnit'
 
@@ -862,6 +864,7 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.subtotal_processor.provider.arguments'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.product_price_criteria_factory'
         tags:
             - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.not_priced_subtotal, priority: 0 }
 
@@ -1220,6 +1223,7 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_pricing.product_price_criteria_factory'
 
     oro_pricing.provider.website_currency_provider:
         class: Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider
@@ -1659,3 +1663,12 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrganizationBundle\Entity\Organization', event: prePersist }
             - { name: doctrine.event_listener, event: postFlush }
+
+    oro_pricing.product_price_criteria_factory:
+        class: Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory
+        arguments:
+            - '@logger'
+            - '@oro_pricing.user_currency_manager'
+
+    Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface:
+        alias: oro_pricing.product_price_criteria_factory

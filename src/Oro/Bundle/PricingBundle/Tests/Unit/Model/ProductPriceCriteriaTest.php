@@ -5,16 +5,15 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     private function getProduct(int $id): Product
     {
-        $product = new Product();
-        ReflectionUtil::setId($product, $id);
-
-        return $product;
+        return $this->getEntity(Product::class, ['id' => $id]);
     }
 
     /**
@@ -64,15 +63,17 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
         new ProductPriceCriteria($this->getProduct(42), new ProductUnit(), 1, 'USD');
     }
 
-    /**
-     * @dataProvider constructorExceptionDataProvider
-     */
-    public function testConstructorQuantityException(mixed $quantity, string $currency)
+    public function testConstructorQuantityException()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Quantity must be numeric and more than or equal zero.');
 
-        new ProductPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), $quantity, $currency);
+        new ProductPriceCriteria(
+            $this->getProduct(42),
+            (new ProductUnit())->setCode('kg'),
+            -1,
+            'USD'
+        );
     }
 
     public function testConstructorCurrencyException()
@@ -81,16 +82,6 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('Currency must be non-empty string.');
 
         new ProductPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, '');
-    }
-
-    public function constructorExceptionDataProvider(): array
-    {
-        return [
-            [-1, 'USD'],
-            ['', 'EUR'],
-            [null, 'USD'],
-            ['1a', 'EUR']
-        ];
     }
 
     public function testGetIdentifier()
