@@ -25,10 +25,15 @@ class DecimalValidatorTest extends ConstraintValidatorTestCase
      */
     public function testValidate(string|float|int|null $value, bool $correct, string $locale = 'en')
     {
-        \Locale::setDefault($locale);
-
         $constraint = new Decimal();
-        $this->validator->validate($value, $constraint);
+
+        $defaultLocale = \Locale::getDefault();
+        \Locale::setDefault($locale);
+        try {
+            $this->validator->validate($value, $constraint);
+        } finally {
+            \Locale::setDefault($defaultLocale);
+        }
 
         if ($correct) {
             $this->assertNoViolation();

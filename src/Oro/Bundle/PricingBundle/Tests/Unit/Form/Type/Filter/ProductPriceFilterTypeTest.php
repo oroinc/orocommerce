@@ -23,16 +23,19 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 {
     /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
+    private string $defaultLocale;
 
     protected function setUp(): void
     {
-        $localeSettings = $this->createMock(LocaleSettings::class);
+        $this->defaultLocale = \Locale::getDefault();
+
         $locale = 'en';
+        \Locale::setDefault($locale);
+
+        $localeSettings = $this->createMock(LocaleSettings::class);
         $localeSettings->expects($this->any())
             ->method('getLocale')
             ->willReturn($locale);
-
-        \Locale::setDefault($locale);
 
         $this->numberFormatter = new NumberFormatter(
             $localeSettings,
@@ -60,6 +63,12 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->addExtensions($this->getExtensions())
             ->addTypeExtensions($this->getTypeExtensions())
             ->getFormFactory();
+    }
+
+    protected function tearDown(): void
+    {
+        \Locale::setDefault($this->defaultLocale);
+        parent::tearDown();
     }
 
     protected function getTypeExtensions(): array
