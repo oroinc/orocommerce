@@ -1,9 +1,5 @@
 import ShoppingListProductKitSubItemRow from '../row/shopping-list-product-kit-sub-item-row';
-
-const addClass = (item, classNames = []) => {
-    const classes = item.row_class_name.split(' ');
-    item.row_class_name = classes.concat(classNames).join(' ');
-};
+import {addClass} from './utils';
 
 const useKitSubItemRow = item => {
     if (!item.isMessage && !item.isAuxiliary) {

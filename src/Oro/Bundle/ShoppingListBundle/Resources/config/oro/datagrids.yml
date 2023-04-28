@@ -598,10 +598,6 @@ datagrids:
                     enable: true
                     editor:
                         view: oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
-                    validation_rules:
-                        Range:
-                            min: 0
-                            max: 100000000
                     validation_groups: [update]
             unit:
                 renderable: false
@@ -784,13 +780,29 @@ datagrids:
         options:
             entityHint: oro.shoppinglist.lineitem.entity_plural_label
             frontend: true
+            mass_update: false
             toolbarOptions:
                 hide: true
                 pageSize:
                     items: [ 1000 ]
                     default_per_page: 1000
             jsmodules:
+                - orodatagrid/js/datagrid/builder/html-templates-preloader
                 - oroshoppinglist/js/datagrid/builder/product-kit-in-shopping-list-plugins-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
+        inline_editing:
+            enable: true
+            mobile_enabled: true
+            entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+            plugin: 'oroshoppinglist/js/datagrid/plugins/shopping-list-inline-editing-plugin'
+            cell_editor:
+                component: 'oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component'
+            save_api_accessor:
+                http_method: PUT
+                route: oro_shopping_list_frontend_line_item_batch_update
+                query_parameter_names:
+                    - _wid
         source:
             type: orm
             query:
@@ -821,7 +833,7 @@ datagrids:
                 - name: product_id
                   default: 0
         columns:
-            shoppingList:
+            shoppingListLabel:
                 label: oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.datagrid.columns.shopping_list.label
                 data_name: shoppingListLabel
                 type: link
@@ -836,6 +848,13 @@ datagrids:
                 template: '@OroShoppingList/LineItem/Frontend/Datagrid/kit_configuration.html.twig'
             quantity:
                 label: oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.datagrid.columns.quantity.label
+                frontend_type: shoppinglist-line-item
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
+                    validation_groups: [ update ]
         properties:
             id: ~
             name:
@@ -845,13 +864,14 @@ datagrids:
                 data_name: unitCode
             units:
                 type: callback
-                frontend_type: array
+                frontend_type: row_array
                 callable: ['@oro_product.datagrid.property.product_units', 'getProductUnits']
                 params: [product]
             minimumQuantityToOrder:
                 frontend_type: number
             maximumQuantityToOrder:
                 frontend_type: number
+            shoppingListId: ~
             isKit:
                 data_name: id
                 frontend_type: boolean

@@ -57,6 +57,12 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                   message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
                   includeInternalMessages: false
                   groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
+                  payload:
+                      jsValidation:
+                          type: Range
+                          options:
+                              min: 0
+                              max: 100000000
             - NotBlank:
                 groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
         unit:

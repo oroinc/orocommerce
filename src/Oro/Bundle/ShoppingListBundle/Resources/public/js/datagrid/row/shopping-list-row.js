@@ -60,7 +60,7 @@ const ShoppingListRow = Row.extend({
     },
 
     renderItem(column) {
-        const cellView = Row.__super__.renderItem.call(this, column);
+        const cellView = ShoppingListRow.__super__.renderItem.call(this, column);
         const renderColumnName = this.model.get('renderColumnName');
         if (renderColumnName) {
             if (column.get('name') === renderColumnName) {

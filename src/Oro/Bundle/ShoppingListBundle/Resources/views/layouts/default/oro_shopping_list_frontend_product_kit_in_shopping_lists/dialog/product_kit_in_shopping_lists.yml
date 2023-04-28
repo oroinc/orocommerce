@@ -44,4 +44,4 @@ layout:
         - '@appendOption':
               id: product_kit_in_shopping_lists_widget_datagrid
               optionName: grid_render_parameters.cssClass
-              optionValue: 'responsive-product-kit-shopping-lists-grid'
+              optionValue: 'responsive-product-kit-shopping-lists-grid grid-inline-editing-quantity grid-side-effects'

@@ -1,0 +1,9 @@
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+
+<% if (obj.isUpcoming || obj.errors && obj.errors.length || obj.warnings && obj.warnings.length) { %>
+<div class="notification-container">
+    <%= oroshoppinglist.renderErrors({errors: obj.errors, obj: obj}) %>
+    <%= oroshoppinglist.renderWarnings({warnings: obj.warnings}) %>
+    <%= oroshoppinglist.renderUpcoming({isUpcoming: obj.isUpcoming, availabilityDate: obj.availabilityDate}) %>
+</div>
+<% } %>

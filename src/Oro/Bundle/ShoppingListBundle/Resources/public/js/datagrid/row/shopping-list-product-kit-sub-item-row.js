@@ -2,13 +2,17 @@ import ShoppingListRow from './shopping-list-row';
 import ShoppingListStringProductKitCell from '../cell/product-kit/shoppinglist-string-product-kit-cell';
 import ShoppingListHtmlTemplateProductKitCell from '../cell/product-kit/shoppinglist-html-template-product-kit-cell';
 import ShoppingListProductKitSelectRowCell from '../cell/product-kit/shoppinglist-product-kit-select-row-cell';
+import ShoppingListItemProductKitCell from '../cell/product-kit/shoppinglist-item-product-kit-cell';
+import ShoppingListLineItemProductKitCell from '../cell/product-kit/shoppinglist-line-item-product-kit-cell';
 
 const ShoppingListProductKitSubItemRow = ShoppingListRow.extend({
     cellConstructorMap: {
         ...ShoppingListRow.prototype.cellConstructorMap,
         'shoppinglist-string': ShoppingListStringProductKitCell,
         'shoppinglist-html-template': ShoppingListHtmlTemplateProductKitCell,
-        'massAction': ShoppingListProductKitSelectRowCell
+        'item': ShoppingListItemProductKitCell,
+        'massAction': ShoppingListProductKitSelectRowCell,
+        'quantity': ShoppingListLineItemProductKitCell
     },
 
     constructor: function ShoppingListProductKitSubItemRow(options) {
@@ -18,10 +22,6 @@ const ShoppingListProductKitSubItemRow = ShoppingListRow.extend({
     renderItem(column) {
         const cellView = ShoppingListProductKitSubItemRow.__super__.renderItem.call(this, column);
         const columnName = cellView.column.get('name');
-
-        if (columnName === 'item') {
-            cellView.$el.attr('colspan', 2);
-        }
 
         if (columnName === 'inventoryStatus') {
             cellView.$el.hide();

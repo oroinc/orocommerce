@@ -1,30 +1,8 @@
-import _ from 'underscore';
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
-
-const isHighlight = item => item.isUpcoming || (item.warnings && item.warnings.length);
-const isError = item => item.errors && item.errors.length;
-
-const messageModel = item => {
-    const messageItem = {
-        ...item,
-        id: item.id + _.uniqueId('-bind-'),
-        renderColumnName: 'item',
-        row_class_name: item.row_class_name + ' extension-row notification-row',
-        _templateKey: 'message',
-        isMessage: true,
-        isAuxiliary: true,
-        row_attributes: {
-            'aria-hidden': true
-        }
-    };
-
-    item.row_class_name += ' has-message-row';
-    item.messageModelId = messageItem.id;
-    return messageItem;
-};
+import {isHighlight, isError, messageModel} from './utils';
 
 export const flattenData = data => {
     return data.reduce((flatData, rawData) => {
@@ -47,7 +25,7 @@ export const flattenData = data => {
             item._isVariant = false;
 
             if (isError(item) || isHighlight(item)) {
-                flatData.push(messageModel(item));
+                flatData.push(messageModel(item, 'item'));
             }
         } else {
             let filteredOutVariants = 0;
@@ -116,7 +94,7 @@ export const flattenData = data => {
                 subDataCollection.push(subItem);
 
                 if ((isError(subItem) && subItem.sku) || isHighlight(subItem)) {
-                    subDataCollection.push(messageModel(subItem));
+                    subDataCollection.push(messageModel(subItem, 'item'));
                 }
 
                 return subDataCollection;
@@ -139,7 +117,7 @@ export const flattenData = data => {
             }
 
             if (isError(item) || isHighlight(item)) {
-                const itemMessageModel = messageModel(item);
+                const itemMessageModel = messageModel(item, 'item');
                 const itemMessageModelClasses = itemMessageModel.row_class_name.split(' ')
                     .filter(className => !['group-row', 'group-row-has-children'].includes(className));
 

@@ -25,6 +25,8 @@ const ShoppingListCellPopupEditorComponent = CellPopupEditorComponent.extend({
 
         const viewInstance = this.view = new View(viewOptions);
 
+        this.shoppingListId = cell.model.get('shoppingListId');
+
         viewInstance.$el.addClass('inline-editor-wrapper');
 
         const overlayOptions = $.extend(true, {}, this.OVERLAY_TOOL_DEFAULTS, {
@@ -36,7 +38,13 @@ const ShoppingListCellPopupEditorComponent = CellPopupEditorComponent.extend({
     },
 
     saveCurrentCell() {
-        return this.options.plugin.saveItems(this);
+        const routeParams = {};
+
+        if (this.shoppingListId) {
+            routeParams.id = this.shoppingListId;
+        }
+
+        return this.options.plugin.saveItems(this, routeParams);
     },
 
     isDataValid() {

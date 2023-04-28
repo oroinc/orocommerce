@@ -85,7 +85,7 @@
     }
 }
 
-.responsive-shopping-list-grid {
+.grid-side-effects {
     .grid-row {
         background-color: $shopping-list-grid-effect-background-color;
         transition: $shopping-list-grid-effect-transition;
@@ -141,8 +141,6 @@
             }
 
             + .notification-row {
-                z-index: z('hidden');
-
                 .notification-container {
                     z-index: z('base') + 1;
                     position: relative;
