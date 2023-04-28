@@ -96,7 +96,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_29';
+        return 'v1_30';
     }
 
     /**
@@ -764,6 +764,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('related_job_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addIndex(['related_job_id'], 'related_job_id_idx');
         $table->addUniqueIndex(['product_id', 'related_job_id', 'website_id'], 'prod_webs_reindex_req_uniq_idx');
     }
 
