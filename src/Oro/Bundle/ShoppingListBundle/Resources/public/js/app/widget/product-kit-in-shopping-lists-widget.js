@@ -1,32 +1,39 @@
 import FrontendDialogWidget from 'orofrontend/js/app/components/frontend-dialog-widget';
 import mediator from 'oroui/js/mediator';
 import messenger from 'oroui/js/messenger';
+import $ from 'jquery';
 import _ from 'underscore';
 
 const ProductKitInShoppingListsWidget = FrontendDialogWidget.extend({
     options: _.extend({}, FrontendDialogWidget.prototype.options, {
         preventModelRemoval: true,
         incrementalPosition: false,
-        desktopLoadingBar: true,
+        desktopLoadingBar: false,
+        actionSectionTemplate: _.template(`
+            <div data-section="<%- section %>"
+                class="dialog-actions-section"></div>
+        `),
+        actionWrapperTemplate: _.template('<div class="action-wrapper"/>'),
         dialogOptions: {
             modal: true,
             title: null,
             resizable: false,
-            width: 890,
+            width: 1120,
             minWidth: 367,
             maxWidth: 'auto',
             autoResize: true,
-            dialogClass: 'product-kit-in-shopping-lists-dialog'
+            dialogClass: 'product-kit-dialog product-kit-in-shopping-lists-dialog'
         }
     }),
 
-    fullscreenViewOptions: {
-        dialogClass: 'product-kit-in-shopping-lists-dialog'
-    },
+    fullscreenMode: false,
 
     listen: {
-        'shopping-list:line-items:before-response mediator': 'remove'
+        'widget_dialog:open mediator': 'onWidgetDialogOpen',
+        'widget_dialog:close mediator': 'onWidgetDialogClose'
     },
+
+    SUB_DIALOG_NAME: 'product-kit-line-item-dialog',
 
     /**
      * @inheritdoc
@@ -74,8 +81,35 @@ const ProductKitInShoppingListsWidget = FrontendDialogWidget.extend({
         this.remove();
     },
 
+    onWidgetDialogOpen(dialog) {
+        if (dialog.NAME === this.SUB_DIALOG_NAME) {
+            const {uiDialog, overlay} = this.widget.dialog('instance');
+
+            $(uiDialog).addClass('invisible');
+            $(overlay).addClass('invisible');
+        }
+    },
+
+    onWidgetDialogClose(dialog) {
+        if (dialog.NAME === this.SUB_DIALOG_NAME) {
+            const {uiDialog, overlay} = this.widget.dialog('instance');
+
+            $(uiDialog).removeClass('invisible');
+            $(overlay).removeClass('invisible');
+        }
+    },
+
     _bindSubmitHandler() {
         // nothing to do
+    },
+
+    getActionsElement: function() {
+        if (!this.actionsEl) {
+            this.actionsEl = $('<div class="form-actions widget-actions"/>').appendTo(
+                this.widget.dialog('actionsContainer')
+            );
+        }
+        return this.actionsEl;
     }
 });
 

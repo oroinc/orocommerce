@@ -24,6 +24,7 @@ define(function(require) {
                 resizable: false,
                 width: '100%',
                 maxWidth: 580,
+                minWidth: 375,
                 autoResize: true
             },
             update_api_accessor: {

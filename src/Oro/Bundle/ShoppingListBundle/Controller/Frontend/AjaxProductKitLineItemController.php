@@ -144,7 +144,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
                 ->toArray();
 
             return new JsonResponse([
-                'success' => true,
+                'successful' => true,
                 'subtotal' => $subtotal,
             ]);
         }

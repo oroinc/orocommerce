@@ -10,20 +10,8 @@ import DialogAction from 'oro/datagrid/action/dialog-action';
  */
 const UpdateProductKitLineItemAction = DialogAction.extend({
     widgetDefaultOptions: {
-        'type': 'dialog',
-        'multiple': false,
-        'reload-grid-name': '',
-        'options': {
-            dialogOptions: {
-                allowMaximize: false,
-                allowMinimize: false,
-                modal: true,
-                resizable: false,
-                maximizedHeightDecreaseBy: 'minimize-bar',
-                width: 800
-            },
-            fullscreenViewOptions: {}
-        }
+        type: 'product-kit-line-item',
+        multiple: false
     },
 
     /**
@@ -38,11 +26,11 @@ const UpdateProductKitLineItemAction = DialogAction.extend({
      */
     run: function() {
         this.model.set('line_item_form_enable', true);
-        this.widgetOptions.model = this.model;
+        this.widgetOptions.options.model = this.model;
         this.widgetOptions.options.initLayoutOptions = {
             productModel: this.model
         };
-        this.widgetOptions.url = this.getLink();
+        this.widgetOptions.options.url = this.getLink();
 
         UpdateProductKitLineItemAction.__super__.run.call(this);
     },

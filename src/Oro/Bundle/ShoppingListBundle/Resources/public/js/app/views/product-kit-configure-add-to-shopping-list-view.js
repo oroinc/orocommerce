@@ -1,30 +1,22 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import ElementsHelper from 'orofrontend/js/app/elements-helper';
-import ProductKitInShoppingListWidget from 'oro/product-kit-in-shopping-lists-widget';
+import ProductKitLineItemWidget from 'oro/product-kit-line-item-widget';
 import routing from 'routing';
 import $ from 'jquery';
 import _ from 'underscore';
 
-const ProductKitInShoppingListsView = BaseView.extend(_.extend({}, ElementsHelper, {
+const ProductKitConfigureAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
     events: {
         click: 'onClick'
     },
 
-    constructor: function ProductKitInShoppingListView(options) {
-        ProductKitInShoppingListView.__super__.constructor.call(this, options);
+    constructor: function ProductKitConfigureAddToShoppingListView(options) {
+        ProductKitConfigureAddToShoppingListView.__super__.constructor.call(this, options);
     },
 
     initialize: function(options) {
-        ProductKitInShoppingListsView.__super__.initialize.call(this, options);
+        ProductKitConfigureAddToShoppingListView.__super__.initialize.call(this, options);
         this.deferredInitializeCheck(options, ['productModel']);
-    },
-
-    dispose: function() {
-        if (this.disposed) {
-            return;
-        }
-
-        ProductKitInShoppingListsView.__super__.dispose.call(this);
     },
 
     deferredInitialize: function(options) {
@@ -65,18 +57,17 @@ const ProductKitInShoppingListsView = BaseView.extend(_.extend({}, ElementsHelpe
             return false;
         }
 
-        const url = $button.data('route');
+        const url = $button.data('url');
         const urlOptions = {
             productId: this.model.get('id')
         };
 
-        this.subview('popup', new ProductKitInShoppingListWidget({
+        this.subview('popup', new ProductKitLineItemWidget({
             url: routing.generate(url, urlOptions),
             model: this.model
         }));
-
         this.subview('popup').render();
     }
 }));
 
-export default ProductKitInShoppingListsView;
+export default ProductKitConfigureAddToShoppingListView;

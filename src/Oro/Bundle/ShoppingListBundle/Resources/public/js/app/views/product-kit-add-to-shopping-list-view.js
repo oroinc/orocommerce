@@ -1,74 +1,90 @@
-import BaseView from 'oroui/js/app/views/base/view';
-import ElementsHelper from 'orofrontend/js/app/elements-helper';
-import ProductKitLineItemWidget from 'oro/product-kit-line-item-widget';
+import ProductAddToShoppingListView from 'oroshoppinglist/js/app/views/product-add-to-shopping-list-view';
 import routing from 'routing';
+import mediator from 'oroui/js/mediator';
 import $ from 'jquery';
-import _ from 'underscore';
 
-const ProductKitAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
-    events: {
-        click: 'onClick'
-    },
-
+const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
+    /**
+     * @inheritdoc
+     */
     constructor: function ProductKitAddToShoppingListView(options) {
         ProductKitAddToShoppingListView.__super__.constructor.call(this, options);
     },
 
-    initialize: function(options) {
-        ProductKitAddToShoppingListView.__super__.initialize.call(this, options);
-        this.deferredInitializeCheck(options, ['productModel']);
-    },
+    /**
+     * @param {jQuery.Event} e
+     */
+    onClick: function(e) {
+        e.preventDefault();
 
-    deferredInitialize: function(options) {
-        this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
-
-        this.initModel(options);
-    },
-
-    initModel: function(options) {
-        const modelAttr = _.each(options.modelAttr, (value, attribute) => {
-            options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
-        }) || {};
-
-        this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
-        if (options.productModel) {
-            this.model = options.productModel;
-        }
-
-        if (!this.model) {
+        if (this.validateForm()) {
             return;
         }
 
-        _.each(this.modelAttr, (value, attribute) => {
-            if (!this.model.has(attribute) || modelAttr[attribute] !== undefined) {
-                this.model.set(attribute, value);
-            }
-        }, this);
+        ProductKitAddToShoppingListView.__super__.onClick.call(this, e);
     },
 
     /**
-     * @param {jQuery.Event} event
+     * Validates the form, returns true if it is valid, false otherwise
+     * @returns {boolean}
      */
-    onClick: function(event) {
-        event.preventDefault();
+    validateForm: function() {
+        return !this.$form.validate().form();
+    },
 
-        const $button = $(event.currentTarget);
-        if ($button.data('disabled')) {
-            return false;
+    addWidgetUrlOptions() {
+        if (!this.model) {
+            return {};
         }
+        return this.model.get('_widget_data') || {};
+    },
 
-        const url = $button.data('url');
-        const urlOptions = {
-            productId: this.model.get('id')
-        };
+    _addProductToShoppingList(url, urlOptions, formData) {
+        urlOptions = {...urlOptions, ...this.addWidgetUrlOptions()};
+        ProductKitAddToShoppingListView.__super__._addProductToShoppingList.call(this, url, urlOptions, formData);
+    },
 
-        this.subview('popup', new ProductKitLineItemWidget({
-            url: routing.generate(url, urlOptions),
-            model: this.model
-        }));
+    /**
+     * @inheritdoc
+     */
+    _removeLineItem: function(url, urlOptions, formData) {
+        this._removeProductFromShoppingList(url, {
+            id: urlOptions.productId,
+            ...this.addWidgetUrlOptions()
+        }, formData);
+    },
 
-        this.subview('popup').render();
+    /**
+     * @inheritdoc
+     */
+    _saveLineItem: function(url, urlOptions, formData) {
+        if (this.model && !this.model.get('line_item_form_enable')) {
+            return;
+        }
+        mediator.execute('showLoading');
+        mediator.trigger('shopping-list:line-items:before-response', this.model);
+
+        $.ajax({
+            type: 'POST',
+            url: routing.generate(
+                'oro_shopping_list_frontend_product_kit_line_item_update',
+                {
+                    id: urlOptions.productId,
+                    ...this.addWidgetUrlOptions()
+                }
+            ),
+            data: formData,
+            success: response => {
+                mediator.trigger('shopping-list:line-items:update-response', this.model, response);
+            },
+            error: error => {
+                mediator.trigger('shopping-list:line-items:error-response', this.model, error);
+            },
+            complete: () => {
+                mediator.execute('hideLoading');
+            }
+        });
     }
-}));
+});
 
 export default ProductKitAddToShoppingListView;

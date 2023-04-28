@@ -3,18 +3,32 @@ layout:
         - id: line_item_buttons_kit
           root: product_view_kit_content_container_start
 
-        - id: product_kit_shopping_lists_button
-          root: product_view_kit_content_container_end
-          namespace: product_kit
-
     actions:
+        - '@setBlockTheme':
+            themes: '@OroShoppingList/layouts/default/oro_product_frontend_product_view/add_to_shopping_list_form_kit.html.twig'
+
         - '@setOption':
-              id: line_item_form
-              optionName: visible
-              optionValue: false
+            id: line_item_form
+            optionName: visible
+            optionValue: false
+
+        - '@setOption':
+            id: product_shopping_lists
+            optionName: vars.renderShoppingLists
+            optionValue: true
+
+        - '@setOption':
+            id: product_shopping_lists_popup
+            optionName: vars.product
+            optionValue: '=data.offsetExists("product") ? data["oro_product_variant"].getProductVariantOrProduct(data)'
+
+        - '@setOption':
+            id: product_shopping_lists_popup_template
+            optionName: visible
+            optionValue: false
 
         - '@move':
-              id: product_kit_shopping_lists_button
-              parentId: product_view_kit_content_container_end
+            id: product_shopping_lists
+            parentId: product_view_kit_content_container_end
 
     conditions: 'context["product_type"] == "kit"'

@@ -47,6 +47,10 @@
 {% endblock %}
 
 {% block __product_kit_in_shopping_lists__header_product_attributes_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-attributes',
+    }) %}
+
     <div {{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
     </div>
@@ -54,7 +58,7 @@
 
 {% block __product_kit_in_shopping_lists__header_product_name_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' h1 h-normal',
+        '~class': ' product-popup__header-title h1 h-normal',
     }) %}
 
     <p {{ block('block_attributes') }}>
@@ -63,8 +67,18 @@
 {% endblock %}
 
 {% block __product_kit_in_shopping_lists__header_product_sku_widget %}
-    <div {{ block('block_attributes') }}>
+    <span {{ block('block_attributes') }}>
         {{ 'oro.product.frontend.index.item'|trans }}
         <span>{{ product.sku }}</span>
+    </span>
+{% endblock %}
+
+{% block __product_kit_in_shopping_lists__shopping_lists_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' widget-actions',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}

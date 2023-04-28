@@ -1,10 +1,18 @@
 {%- set lineItem = record.rootEntity %}
+
+<div class="product-kit-line-items">
+    <div class="product-kit-line-items__item show-in-tablet">
+        <a href="{{ path('oro_shopping_list_frontend_view', {id: lineItem.shoppingList.id}) }}">{{ value }}</a>
+    </div>
 {%- for kitItemLineItem in lineItem.kitItemLineItems %}
-    <div>{{ kitItemLineItem.kitItem.labels|localized_value|e }} <span>[x {{ kitItemLineItem.quantity }}]</span></div>
-    {% set productId = kitItemLineItem.product.id|default(0) %}
-    {% if productId and is_visible_product(productId) %}
-        <a href="{{ path('oro_product_frontend_product_view', {id: kitItemLineItem.product.id}) }}">{{ kitItemLineItem.product.names|localized_value|e }}</a>
-    {% else %}
-        {{ kitItemLineItem.product.names|localized_value|e }}
-    {% endif %}
+    <div class="product-kit-line-items__item">
+        <div><span class="product-kit-line-items__item-name">{{ kitItemLineItem.kitItem.labels|localized_value|e }}</span><span class="product-kit-line-items__item-quantity">[x {{ kitItemLineItem.quantity }}]</span></div>
+        {% set productId = kitItemLineItem.product.id|default(0) %}
+        {% if productId and is_visible_product(productId) %}
+            <a href="{{ path('oro_product_frontend_product_view', {id: kitItemLineItem.product.id}) }}">{{ kitItemLineItem.product.names|localized_value|e }}</a>
+        {% else %}
+            {{ kitItemLineItem.product.names|localized_value|e }}
+        {% endif %}
+    </div>
 {%- endfor %}
+</div>

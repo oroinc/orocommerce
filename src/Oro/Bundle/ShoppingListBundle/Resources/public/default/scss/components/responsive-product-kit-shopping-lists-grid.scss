@@ -1,0 +1,136 @@
+/* @theme: default; */
+
+.responsive-product-kit-shopping-lists-grid {
+    .show-in-tablet {
+        display: none;
+    }
+
+    .oro-datagrid {
+        margin: 0;
+        border: 1px solid $responsive-product-kit-shopping-lists-grid-border-color;
+        border-radius: $base-ui-element-border-radius;
+    }
+
+    .grid-main-container {
+        border-width: 0;
+        margin: 0;
+    }
+
+    .grid-header-cell {
+        background-color: $responsive-product-kit-shopping-lists-grid-border-color;
+        font-weight: normal;
+        border-width: 0;
+    }
+
+    .grid-body-cell {
+        vertical-align: top;
+    }
+
+    .grid-row:last-child {
+        .grid-body-cell {
+            border-width: 0;
+        }
+    }
+
+    // Hiding `...` dots
+    .action-column:empty::before {
+        content: none;
+    }
+
+    .action-cell {
+        padding-top: $responsive-shopping-cell-desktop-offset;
+        // Using a default padding as in every cell
+        padding-right: $datagrid-body-cell-offset;
+    }
+}
+
+@include breakpoint('tablet') {
+    .responsive-product-kit-shopping-lists-grid {
+        .show-in-tablet {
+            display: block;
+        }
+
+        .grid-header-cell-shoppingList,
+        .grid-body-cell-shoppingList {
+            display: none;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-product-kit-shopping-lists-grid {
+        .oro-datagrid {
+            border-width: 0;
+        }
+
+        .grid-main-container,
+        .grid-body-cell,
+        .grid-header-cell {
+            // reset default tables styles
+            width: auto;
+
+            border-width: 0;
+        }
+
+        .grid-main-container,
+        .grid-header,
+        .grid-header-row,
+        .grid-body,
+        .grid-row {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .grid-row {
+            padding-top: $responsive-product-kit-shopping-lists-grid-row-offset-mobile;
+            padding-bottom: $responsive-product-kit-shopping-lists-grid-row-offset-mobile;
+            border-bottom: $responsive-product-kit-shopping-lists-grid-border-offset-mobile;
+        }
+
+        .grid-header-row {
+            justify-content: space-around;
+            align-items: center;
+            background-color: $responsive-product-kit-shopping-lists-grid-border-color;
+        }
+
+        .grid-body-cell {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            padding-top: $responsive-product-kit-shopping-lists-grid-cell-offset-mobile;
+            padding-bottom: $responsive-product-kit-shopping-lists-grid-cell-offset-mobile;
+        }
+
+        .grid-header-cell-shoppingList,
+        .grid-body-cell-shoppingList,
+        .grid-header-cell-quantity,
+        .action-column {
+            display: none;
+        }
+
+        .grid-body-cell-quantity {
+            order: 3;
+            padding-left: 0;
+        }
+
+        .grid-body-cell-kitConfiguration {
+            display: inline-flex;
+            flex-grow: 1;
+            order: 1;
+            width: calc( 100% - #{$responsive-product-kit-shopping-lists-action-cell-width-mobile});
+            padding-left: 0;
+        }
+
+        .action-cell {
+            order: 2;
+            display: inline-flex;
+            align-items: flex-end;
+            align-self: flex-start;
+            width: $responsive-product-kit-shopping-lists-action-cell-width-mobile;
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+}

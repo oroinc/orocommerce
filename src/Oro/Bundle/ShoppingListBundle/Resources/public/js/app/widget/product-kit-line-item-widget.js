@@ -26,15 +26,15 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
         `)
     }),
 
-    fullscreenViewOptions: {
-        dialogClass: 'product-kit-dialog'
-    },
+    fullscreenMode: false,
 
     listen: {
         'shopping-list:line-items:before-response mediator': 'hide',
-        'shopping-list:line-items:update-response mediator': 'remove',
-        'shopping-list:line-items:error-response mediator': 'show'
+        'shopping-list:line-items:update-response mediator': 'onShoppingListLineItemsChange',
+        'shopping-list:line-items:error-response mediator': 'onShoppingListLineItemsChange'
     },
+
+    NAME: 'product-kit-line-item-dialog',
 
     /**
      * @inheritdoc
@@ -54,6 +54,7 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
         };
 
         ProductKitLineItemWidget.__super__.initialize.call(this, options);
+        this.model.set('_widget_data', this._getWidgetData(), {silent: true});
     },
 
     _onAdoptedFormSubmitClick: function($form, widget) {
@@ -69,7 +70,7 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
     },
 
     _onJsonContentResponse: function(response) {
-        if (response.success) {
+        if (response.successful) {
             mediator.trigger('shopping-list:refresh');
         }
 
@@ -80,6 +81,15 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
         }
 
         this.remove();
+    },
+
+    onShoppingListLineItemsChange(model, response) {
+        if (typeof response === 'string') {
+            this.show();
+            this._onContentLoad(response);
+        } else {
+            this.remove();
+        }
     },
 
     _renderActions: function() {

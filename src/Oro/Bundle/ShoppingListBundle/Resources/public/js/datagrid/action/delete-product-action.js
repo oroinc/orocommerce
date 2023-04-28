@@ -43,26 +43,43 @@ define(function(require) {
             return __(this.messages.confirm_title, this.model.toJSON());
         },
 
+        toggleLoadingOverlay() {
+            if (typeof this.model.subModels === 'function') {
+                for (const subModel of this.model.subModels()) {
+                    if (typeof subModel.toggleLoadingOverlay === 'function') {
+                        subModel.toggleLoadingOverlay(true);
+                    }
+                }
+            }
+
+            if (typeof this.model.toggleLoadingOverlay === 'function') {
+                this.model.toggleLoadingOverlay(true);
+            }
+        },
+
         /**
          * @inheritdoc
          */
         doDelete() {
             const success = __(this.messages.success, this.model.toJSON());
+            const $datagridEl = this.datagrid.$el;
 
-            for (const subModel of this.model.subModels()) {
-                subModel.toggleLoadingOverlay(true);
-            }
-
-            this.model.toggleLoadingOverlay(true);
+            $datagridEl.trigger('ajaxStart');
+            this.toggleLoadingOverlay();
             this.model.destroy({
                 url: this.getLink(),
                 wait: true,
                 reset: false,
                 uniqueOnly: true,
                 toggleLoading: false,
-                success() {
+                // to prevent main application loading bar from been shown
+                global: this.configuration.showGlobalLoadingBar ?? true,
+                success: (model, response, options) => {
                     messenger.notificationFlashMessage('success', success, {namespace: 'shopping_list'});
-                    mediator.trigger('shopping-list:refresh');
+                    mediator.trigger('shopping-list:refresh', options);
+                },
+                complete: () => {
+                    $datagridEl.trigger('ajaxComplete');
                 }
             });
         },

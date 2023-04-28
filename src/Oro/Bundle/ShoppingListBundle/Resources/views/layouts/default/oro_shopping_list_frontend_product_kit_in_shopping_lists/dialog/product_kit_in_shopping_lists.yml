@@ -22,3 +22,26 @@ layout:
               optionName: grid_parameters
               optionValue:
                   product_id: '=data["product"].getId()'
+
+        - '@setOption':
+              id: product_kit_in_shopping_lists_widget_datagrid
+              optionName: grid_render_parameters.swipeActionsGrid.enable
+              optionValue: false
+
+        - '@setOption':
+              id: product_kit_in_shopping_lists_widget_datagrid
+              optionName: grid_render_parameters.responsiveGrids.enable
+              optionValue: false
+
+        - '@appendOption':
+              id: product_kit_in_shopping_lists_widget_datagrid
+              optionName: grid_render_parameters.themeOptions
+              optionValue:
+                  cellActionsHideCount: 4
+                  cellLauncherOptions:
+                      launcherMode: 'icon-only'
+
+        - '@appendOption':
+              id: product_kit_in_shopping_lists_widget_datagrid
+              optionName: grid_render_parameters.cssClass
+              optionValue: 'responsive-product-kit-shopping-lists-grid'

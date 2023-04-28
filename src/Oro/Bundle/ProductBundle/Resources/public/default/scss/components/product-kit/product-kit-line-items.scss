@@ -1,0 +1,15 @@
+/* @theme: default; */
+
+.product-kit-line-items {
+    display: flex;
+    flex-direction: column;
+    row-gap: $offset-x-s;
+
+    &__item-name {
+        padding-right: $offset-x-m;
+    }
+
+    &__item-quantity {
+        color: $product-kit-line-items-quantity-color;
+    }
+}

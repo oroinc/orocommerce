@@ -789,6 +789,8 @@ datagrids:
                 pageSize:
                     items: [ 1000 ]
                     default_per_page: 1000
+            jsmodules:
+                - oroshoppinglist/js/datagrid/builder/product-kit-in-shopping-list-plugins-builder
         source:
             type: orm
             query:
@@ -830,6 +832,7 @@ datagrids:
                 label: oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.datagrid.columns.kit_configuration.label
                 type: twig
                 frontend_type: html
+                data_name: shoppingListLabel
                 template: '@OroShoppingList/LineItem/Frontend/Datagrid/kit_configuration.html.twig'
             quantity:
                 label: oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.datagrid.columns.quantity.label
@@ -849,6 +852,12 @@ datagrids:
                 frontend_type: number
             maximumQuantityToOrder:
                 frontend_type: number
+            isKit:
+                data_name: id
+                frontend_type: boolean
+        action_configuration:
+            delete:
+                showGlobalLoadingBar: false
         actions:
             update_product_kit_line_item:
                 type: update-product-kit-line-item

@@ -38,8 +38,8 @@
             {{ block('_oro_product_kit_line_item_kitItemLineItems_entry_label')}}
         </td>
         <td class="product-kit-items-table__cell quantity-cell">
-            <div class="product-item-quantity product-item-quantity--justify-end">
-                {{ form_row(form.quantity, {label: false, attr: {
+            <div class="product-item-quantity product-item-quantity--justify-end fields-row">
+                {{ form_widget(form.quantity, {'attr' : {
                     'aria-label': 'oro.shoppinglist.productkititemlineitem.quantity.aria_label'|trans,
                     'class': 'product-item-quantity__input',
                     'data-floating-error': '',
@@ -47,7 +47,9 @@
                     'data-role': 'kit-line-item-quantity',
                     'data-value': value.kitItem.minimumQuantity|default(1)
                 }}) }}
-                <div class="fields-row-error"></div>
+                <div class="fields-row-error">
+                    {{ form_errors(form.quantity) }}
+                </div>
             </div>
         </td>
     </tr>

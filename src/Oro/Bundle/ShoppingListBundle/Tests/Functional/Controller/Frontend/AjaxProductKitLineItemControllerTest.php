@@ -103,7 +103,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
 
         $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
-        self::assertTrue($result['success']);
+        self::assertTrue($result['successful']);
         self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $result['subtotal']['type']);
         self::assertEquals('USD', $result['subtotal']['currency']);
         self::assertEquals(30, $result['subtotal']['amount']);
@@ -141,7 +141,7 @@ class AjaxProductKitLineItemControllerTest extends WebTestCase
 
         $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
-        self::assertTrue($result['success']);
+        self::assertTrue($result['successful']);
         self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $result['subtotal']['type']);
         self::assertEquals('USD', $result['subtotal']['currency']);
         self::assertEquals(100, $result['subtotal']['amount']);

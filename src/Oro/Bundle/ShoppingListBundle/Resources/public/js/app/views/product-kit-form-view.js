@@ -170,7 +170,12 @@ const ProductKitFormView = BaseView.extend({
                 }
             });
         } else {
-            $relatedElements.attr('readonly', true);
+            if (!$el.is(':checked')) {
+                return;
+            }
+            $relatedElements.each((i, el) => {
+                $(el).val('').attr('readonly', true);
+            });
         }
     }
 });

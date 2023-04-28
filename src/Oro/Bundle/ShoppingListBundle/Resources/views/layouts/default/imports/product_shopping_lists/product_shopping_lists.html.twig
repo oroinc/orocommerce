@@ -1,5 +1,9 @@
 {% block __product_shopping_lists__shopping_lists_widget %}
-    {% if not is_configurable_product_type(product.type) and not is_kit_product_type(product.type) %}
+    {% set renderShoppingLists = renderShoppingLists is defined
+        ? renderShoppingLists
+        : is_configurable_product_type(product.type) == false and is_kit_product_type(product.type) == false
+    %}
+    {% if renderShoppingLists %}
         {% import '@OroFrontend/layouts/default/utils.html.twig' as utils %}
         {% set shoppingListsTemplate %}
             {% apply spaceless %}
@@ -156,7 +160,7 @@
                                         <div class="actions-row__item actions-row__item--separate-light">
                                             <button class="actions-row__button" type="button" title="{{ 'Edit'|trans }}"
                                                     aria-label="{{ 'oro.frontend.shoppinglist.btn.edit_aria_label'|trans }}" data-role="edit">
-                                                <span class="actions-row__icon fa-pencil" aria-hidden="true"></span>
+                                                <span class="actions-row__icon fa-pencil-square-o" aria-hidden="true"></span>
                                             </button>
                                         </div>
                                         {% if is_granted('oro_shopping_list_line_item_frontend_delete') %}
