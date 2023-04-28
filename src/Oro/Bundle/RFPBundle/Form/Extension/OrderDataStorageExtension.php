@@ -17,37 +17,15 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Create order line items based on RFP
+ * Creates order line items based on RFP.
  */
 class OrderDataStorageExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * @var string
-     */
-    protected $extendedType;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var ProductPriceProviderInterface
-     */
-    protected $productPriceProvider;
-
-    /**
-     * @var array
-     */
-    protected $productPriceCriteriaCache = [];
-
-    /**
-     * @var ProductPriceScopeCriteriaFactoryInterface
-     */
-    protected $priceScopeCriteriaFactory;
-
+    private RequestStack $requestStack;
+    private ProductPriceProviderInterface $productPriceProvider;
+    private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
     private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
 
 
@@ -64,7 +42,7 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getExtendedTypes(): iterable
     {
@@ -72,17 +50,9 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     }
 
     /**
-     * @param string $extendedType
+     * {@inheritDoc}
      */
-    public function setExtendedType($extendedType)
-    {
-        $this->extendedType = $extendedType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isApplicable()) {
             return;
@@ -95,23 +65,17 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         });
     }
 
-    /**
-     * @param Order $order
-     */
-    protected function fillData($order)
+    private function fillData(Order $order): void
     {
-        /** @var array[] $lineItems */
-        $lineItems = [];
-
         $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
             $order->getLineItems(),
             $order->getCurrency()
         );
-
-        if (count($productsPriceCriteria) === 0) {
+        if (\count($productsPriceCriteria) === 0) {
             return;
         }
 
+        $lineItems = [];
         foreach ($productsPriceCriteria as $key => $productPriceCriteria) {
             $lineItems[$productPriceCriteria->getIdentifier()][] = $order->getLineItems()->get($key);
         }
@@ -128,10 +92,14 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         }
     }
 
-    protected function isApplicable(): bool
+    private function isApplicable(): bool
     {
+        if (!$this->isFeaturesEnabled()) {
+            return false;
+        }
+
         $request = $this->requestStack->getCurrentRequest();
 
-        return $this->isFeaturesEnabled() && $request && $request->get(DataStorageInterface::STORAGE_KEY);
+        return null !== $request && $request->get(DataStorageInterface::STORAGE_KEY);
     }
 }

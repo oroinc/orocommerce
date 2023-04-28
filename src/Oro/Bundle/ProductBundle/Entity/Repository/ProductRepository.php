@@ -73,31 +73,6 @@ class ProductRepository extends ServiceEntityRepository
         return $productsQueryBuilder;
     }
 
-    /**
-     * @param array $productSkus
-     *
-     * @return QueryBuilder
-     */
-    public function getProductsIdsBySkuQueryBuilder(array $productSkus = [])
-    {
-        $productsQueryBuilder = $this
-            ->createQueryBuilder('p')
-            ->select('p.id, p.sku');
-
-        if ($productSkus) {
-            // Convert to uppercase for insensitive search in all DB
-            $upperCaseSkus = array_map('mb_strtoupper', $productSkus);
-
-            $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('p.skuUppercase', ':product_skus'))
-                ->setParameter('product_skus', $upperCaseSkus);
-        }
-
-        $productsQueryBuilder->orderBy($productsQueryBuilder->expr()->asc('p.id'));
-
-        return $productsQueryBuilder;
-    }
-
     public function getProductIdBySkuQueryBuilder(string $sku): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p')

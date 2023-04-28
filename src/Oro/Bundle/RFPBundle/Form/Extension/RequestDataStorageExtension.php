@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Extension;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -11,7 +12,6 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -31,14 +31,13 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         RequestStack $requestStack,
         ProductDataStorage $storage,
         PropertyAccessorInterface $propertyAccessor,
-        DoctrineHelper $doctrineHelper,
-        AclHelper $aclHelper,
+        ManagerRegistry $doctrine,
         LoggerInterface $logger,
         ProductAvailabilityProvider $productAvailabilityProvider,
         TranslatorInterface $translator,
         Environment $twig
     ) {
-        parent::__construct($requestStack, $storage, $propertyAccessor, $doctrineHelper, $aclHelper, $logger);
+        parent::__construct($requestStack, $storage, $propertyAccessor, $doctrine, $logger);
         $this->productAvailabilityProvider = $productAvailabilityProvider;
         $this->translator = $translator;
         $this->twig = $twig;
@@ -49,16 +48,16 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
      */
     protected function fillItemsData(object $entity, array $itemsData): void
     {
-        $repository = $this->getProductRepository();
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass($this->getEntityClass());
         $canNotBeAddedToRFQ = [];
         foreach ($itemsData as $dataRow) {
-            if (!\array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
+            $productId = $dataRow[ProductDataStorage::PRODUCT_ID_KEY] ?? null;
+            if (null === $productId) {
                 continue;
             }
-
-            $qb = $repository->getBySkuQueryBuilder($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
-            $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
-            if (!$product) {
+            $product = $em->find(Product::class, $productId);
+            if (null === $product) {
                 continue;
             }
 
@@ -76,15 +75,14 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
             }
         }
 
-        $message = $this->twig->render(
-            '@OroRFP/Form/FlashBag/warning.html.twig',
-            [
-                'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
-                'products' => $canNotBeAddedToRFQ
-            ]
-        );
-
         if (!empty($canNotBeAddedToRFQ)) {
+            $message = $this->twig->render(
+                '@OroRFP/Form/FlashBag/warning.html.twig',
+                [
+                    'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
+                    'products' => $canNotBeAddedToRFQ
+                ]
+            );
             $this->requestStack->getSession()->getFlashBag()->add('warning', $message);
         }
     }

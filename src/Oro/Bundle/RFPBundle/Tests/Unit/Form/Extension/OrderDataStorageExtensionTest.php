@@ -12,7 +12,6 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -31,25 +30,31 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    private ProductPriceProviderInterface&\PHPUnit\Framework\MockObject\MockObject $productPriceProvider;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceProvider;
 
-    private FeatureChecker&\PHPUnit\Framework\MockObject\MockObject $featureChecker;
+    /** @var ProductPriceScopeCriteriaFactory */
+    private $priceScopeCriteriaFactory;
 
-    private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
+    /** @var ProductPriceCriteriaFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceCriteriaFactory;
 
-    private OrderDataStorageExtension $extension;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+    /** @var OrderDataStorageExtension */
+    private $extension;
 
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->priceScopeCriteriaFactory = new ProductPriceScopeCriteriaFactory();
         $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->extension = new OrderDataStorageExtension(
             $this->requestStack,
@@ -95,17 +100,13 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 
         $orderLineItemsKeys = array_column($lineItemsInfo['lineItems'], 'identity');
 
-        $productPriceCriteria->method('getIdentifier')->willReturnOnConsecutiveCalls(
-            ...$orderLineItemsKeys
-        );
+        $productPriceCriteria->expects($this->any())
+            ->method('getIdentifier')
+            ->willReturnOnConsecutiveCalls(...$orderLineItemsKeys);
 
-        $this->productPriceCriteriaFactory
-            ->expects($this->once())
+        $this->productPriceCriteriaFactory->expects($this->once())
             ->method('createListFromProductLineItems')
-            ->with(
-                $this->equalTo($order->getLineItems()),
-                $this->equalTo($order->getCurrency())
-            )
+            ->with($order->getLineItems(), $order->getCurrency())
             ->willReturn(array_fill(0, count($orderLineItemsKeys), $productPriceCriteria));
 
         $this->productPriceProvider->expects($this->once())
@@ -119,17 +120,19 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(
                 FormEvents::PRE_SET_DATA,
                 $this->logicalAnd(
-                    $this->isInstanceOf('\Closure'),
+                    $this->isInstanceOf(\Closure::class),
                     $this->callback(function (\Closure $closure) use ($order) {
                         $event = $this->createMock(FormEvent::class);
                         $event->expects($this->once())
                             ->method('getData')
                             ->willReturn($order);
                         $this->assertNull($closure($event));
+
                         return true;
                     })
                 )
             );
+
         $this->extension->buildForm($builder, []);
 
         foreach ($order->getLineItems() as $lineItem) {
@@ -285,15 +288,9 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->never())
             ->method('addEventListener');
 
-        $request = $this->createMock(Request::class);
-        $request->expects($this->any())
-            ->method('get')
-            ->with(DataStorageInterface::STORAGE_KEY)
-            ->willReturn(true);
+        $this->requestStack->expects($this->never())
+            ->method('getCurrentRequest');
 
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
         $this->extension->buildForm($builder, []);
     }
 
@@ -317,10 +314,11 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $this->productPriceCriteriaFactory->method('createListFromProductLineItems')->willReturn([]);
+        $this->productPriceCriteriaFactory->expects($this->any())
+            ->method('createListFromProductLineItems')
+            ->willReturn([]);
 
-        $this->productPriceProvider
-            ->expects($this->never())
+        $this->productPriceProvider->expects($this->never())
             ->method('getMatchedPrices');
 
         $order = $this->getOrder($data);
@@ -335,6 +333,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
                         ->method('getData')
                         ->willReturn($order);
                     $closure($event);
+
                     return true;
                 })
             );

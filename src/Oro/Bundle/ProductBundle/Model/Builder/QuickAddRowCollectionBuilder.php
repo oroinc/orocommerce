@@ -7,6 +7,7 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -17,14 +18,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class QuickAddRowCollectionBuilder
 {
     private QuickAddRowInputParser $quickAddRowInputParser;
-    private QuickAddRowProductMapperInterface $quickAddRowProductMapper;
+    private ProductMapperInterface $productMapper;
 
     public function __construct(
         QuickAddRowInputParser $quickAddRowInputParser,
-        QuickAddRowProductMapperInterface $quickAddRowProductMapper
+        ProductMapperInterface $productMapper
     ) {
         $this->quickAddRowInputParser = $quickAddRowInputParser;
-        $this->quickAddRowProductMapper = $quickAddRowProductMapper;
+        $this->productMapper = $productMapper;
     }
 
     public function buildFromArray(array $products): QuickAddRowCollection
@@ -37,7 +38,9 @@ class QuickAddRowCollectionBuilder
                 );
             }
 
-            $this->quickAddRowProductMapper->mapProducts($collection);
+            if (!$collection->isEmpty()) {
+                $this->productMapper->mapProducts($collection);
+            }
         }
 
         return $collection;
@@ -70,7 +73,7 @@ class QuickAddRowCollectionBuilder
         }
 
         if (!$collection->isEmpty()) {
-            $this->quickAddRowProductMapper->mapProducts($collection);
+            $this->productMapper->mapProducts($collection);
         }
 
         return $collection;
@@ -95,7 +98,7 @@ class QuickAddRowCollectionBuilder
         }
 
         if (!$collection->isEmpty()) {
-            $this->quickAddRowProductMapper->mapProducts($collection);
+            $this->productMapper->mapProducts($collection);
         }
 
         return $collection;

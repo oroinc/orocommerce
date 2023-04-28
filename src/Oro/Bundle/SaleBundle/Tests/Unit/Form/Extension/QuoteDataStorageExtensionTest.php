@@ -24,16 +24,15 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->entity = new Quote();
+
+        parent::setUp();
 
         $this->extension = new QuoteDataStorageExtension(
             $this->getRequestStack(),
             $this->storage,
             PropertyAccess::createPropertyAccessor(),
-            $this->doctrineHelper,
-            $this->aclHelper,
+            $this->doctrine,
             $this->logger
         );
 
@@ -43,32 +42,20 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             ],
             Quote::class               => [
                 'associationMappings' => [
-                    'request' => [
-                        'targetEntity' => Request::class,
-                    ],
-                    'customer' => [
-                        'targetEntity' => Customer::class,
-                    ],
-                    'customerUser' => [
-                        'targetEntity' => CustomerUser::class,
-                    ]
+                    'request' => ['targetEntity' => Request::class],
+                    'customer' => ['targetEntity' => Customer::class],
+                    'customerUser' => ['targetEntity' => CustomerUser::class]
                 ]
             ],
             QuoteProductRequest::class => [
                 'associationMappings' => [
-                    'productUnit' => [
-                        'targetEntity' => ProductUnit::class,
-                    ],
-                    'requestProductItem' => [
-                        'targetEntity' => RequestProductItem::class,
-                    ]
+                    'productUnit' => ['targetEntity' => ProductUnit::class],
+                    'requestProductItem' => ['targetEntity' => RequestProductItem::class]
                 ]
             ],
             QuoteProductOffer::class   => [
                 'associationMappings' => [
-                    'productUnit' => [
-                        'targetEntity' => ProductUnit::class,
-                    ]
+                    'productUnit' => ['targetEntity' => ProductUnit::class]
                 ]
             ]
         ]);
@@ -77,27 +64,32 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     /**
      * {@inheritDoc}
      */
-    protected function getTargetEntity(): object
+    protected function getTargetEntity(): Quote
     {
         return $this->entity;
     }
 
-    /**
-     * @dataProvider buildProvider
-     */
-    public function testBuildForm(array $inputData): void
+    public function testBuildForm(): void
     {
-        $request = $this->getEntity(Request::class, $inputData['requestId']);
-        $requestProductItem = $this->getEntity(
-            RequestProductItem::class,
-            $inputData['requestProductItemId']
-        );
+        $requestId = 1;
+        $requestProductItemId = 2;
+        $productUnitCode = 'item';
+        $productId = 123;
+        $productSku = 'TEST SKU';
+        $customerId = 3;
+        $customerUserId = 4;
+        $price = Price::create(5, 'USD');
+        $quantity = 6;
+        $commentCustomer = 'comment 7';
 
-        $productUnit = $this->getProductUnit($inputData['productUnitCode']);
-        $product = $this->getProduct($inputData['productSku'], $productUnit);
+        $request = $this->getEntity(Request::class, $requestId);
+        $requestProductItem = $this->getEntity(RequestProductItem::class, $requestProductItemId);
 
-        $customer = $this->getEntity(Customer::class, $inputData['customerId']);
-        $customerUser = $this->getEntity(CustomerUser::class, $inputData['customerUserId']);
+        $productUnit = $this->getProductUnit($productUnitCode);
+        $product = $this->getProduct($productSku, $productUnit);
+
+        $customer = $this->getEntity(Customer::class, $customerId);
+        $customerUser = $this->getEntity(CustomerUser::class, $customerUserId);
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
@@ -107,13 +99,14 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             ],
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
-                    ProductDataStorage::PRODUCT_SKU_KEY => $inputData['productSku'],
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $productSku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                    'commentCustomer' => $inputData['commentCustomer'],
+                    'commentCustomer' => $commentCustomer,
                     'requestProductItems' => [
                         [
-                            'price' => $inputData['price'],
-                            'quantity' => $inputData['quantity'],
+                            'price' => $price,
+                            'quantity' => $quantity,
                             'productUnit' => $productUnit->getCode(),
                             'productUnitCode' => $productUnit->getCode(),
                             'requestProductItem' => $requestProductItem->getId(),
@@ -125,7 +118,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 
@@ -139,7 +132,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         $this->assertEquals($product, $quoteProduct->getProduct());
         $this->assertEquals($product->getSku(), $quoteProduct->getProductSku());
-        $this->assertEquals($inputData['commentCustomer'], $quoteProduct->getCommentCustomer());
+        $this->assertEquals($commentCustomer, $quoteProduct->getCommentCustomer());
 
         $this->assertCount(1, $quoteProduct->getQuoteProductRequests());
         $this->assertCount(1, $quoteProduct->getQuoteProductOffers());
@@ -150,8 +143,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertEquals($productUnit, $quoteProductRequest->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $quoteProductRequest->getProductUnitCode());
 
-        $this->assertEquals($inputData['quantity'], $quoteProductRequest->getQuantity());
-        $this->assertEquals($inputData['price'], $quoteProductRequest->getPrice());
+        $this->assertEquals($quantity, $quoteProductRequest->getQuantity());
+        $this->assertEquals($price, $quoteProductRequest->getPrice());
 
         /* @var QuoteProductOffer $quoteProductOffer */
         $quoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
@@ -159,27 +152,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertEquals($productUnit, $quoteProductOffer->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $quoteProductOffer->getProductUnitCode());
 
-        $this->assertEquals($inputData['quantity'], $quoteProductOffer->getQuantity());
-        $this->assertEquals($inputData['price'], $quoteProductOffer->getPrice());
-    }
-
-    public function buildProvider(): array
-    {
-        return [
-            'full data' => [
-                'data' => [
-                    'requestId' => 1,
-                    'requestProductItemId' => 2,
-                    'productUnitCode' => 'item',
-                    'productSku' => 'TEST SKU',
-                    'customerId' => 3,
-                    'customerUserId' => 4,
-                    'price' => Price::create(5, 'USD'),
-                    'quantity' => 6,
-                    'commentCustomer' => 'comment 7',
-                ]
-            ]
-        ];
+        $this->assertEquals($quantity, $quoteProductOffer->getQuantity());
+        $this->assertEquals($price, $quoteProductOffer->getPrice());
     }
 
     public function testGetExtendedTypes(): void

@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 /**
- * Adds prices to QuickAddRowCollection according to a specific criteria.
+ * Adds prices to QuickAddRowCollection according to specific criteria.
  */
 class QuickAddCollectionPriceProvider
 {

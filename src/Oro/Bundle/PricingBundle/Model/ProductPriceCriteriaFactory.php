@@ -10,47 +10,47 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * {@inheritdoc}
+ * The factory to create the ProductPriceCriteria.
  */
 class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterface
 {
+    private UserCurrencyManager $currencyManager;
     private LoggerInterface $logger;
 
-    private UserCurrencyManager $currencyManager;
-
-    public function __construct(LoggerInterface $logger, UserCurrencyManager $currencyManager)
+    public function __construct(UserCurrencyManager $currencyManager, LoggerInterface $logger)
     {
-        $this->logger = $logger;
         $this->currencyManager = $currencyManager;
+        $this->logger = $logger;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function build(
         Product $product,
         ProductUnit $productUnit,
         float $quantity,
         ?string $currency = null
     ): ProductPriceCriteria {
-        if (is_null($currency)) {
+        if (null === $currency) {
             $currency = $this->currencyManager->getUserCurrency();
         }
 
         try {
             return new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
         } catch (\InvalidArgumentException $e) {
-            $this->handleError($e->getMessage());
+            throw $this->handleError($e->getMessage());
         }
     }
 
     /**
-     * @param iterable<ProductLineItemInterface> $productLineItems
-     * @param string|null $currency
-     * @return ProductPriceCriteria[]
+     * {@inheritDoc}
      */
     public function createListFromProductLineItems(iterable $productLineItems, ?string $currency = null): array
     {
         $results = [];
 
-        if (is_null($currency)) {
+        if (null === $currency) {
             $currency = $this->currencyManager->getUserCurrency();
         }
 
@@ -65,6 +65,9 @@ class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterfac
         return $results;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function createFromProductLineItem(
         ProductLineItemInterface $productLineItem,
         ?string $currency = null
@@ -79,7 +82,7 @@ class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterfac
         );
     }
 
-    private function handleError(string $exceptionMessage): void
+    private function handleError(string $exceptionMessage): ProductPriceCriteriaBuildingFailedException
     {
         $exception = new ProductPriceCriteriaBuildingFailedException();
 
@@ -91,21 +94,19 @@ class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterfac
             ]
         );
 
-        throw $exception;
+        return $exception;
     }
 
-    private function validateProductLineItem(ProductLineItemInterface $productLineItem)
+    private function validateProductLineItem(ProductLineItemInterface $productLineItem): void
     {
-        if (is_null($productLineItem->getProduct())) {
-            $this->handleError('The product property of ProductLineItem should not be null');
+        if (null === $productLineItem->getProduct()) {
+            throw $this->handleError('The product property of ProductLineItem should not be null');
         }
-
-        if (is_null($productLineItem->getProductUnit())) {
-            $this->handleError('The product unit property of ProductLineItem should not be null');
+        if (null === $productLineItem->getProductUnit()) {
+            throw $this->handleError('The product unit property of ProductLineItem should not be null');
         }
-
-        if (is_null($productLineItem->getQuantity())) {
-            $this->handleError('The quantity property of ProductLineItem should not be null');
+        if (null === $productLineItem->getQuantity()) {
+            throw $this->handleError('The quantity property of ProductLineItem should not be null');
         }
     }
 }

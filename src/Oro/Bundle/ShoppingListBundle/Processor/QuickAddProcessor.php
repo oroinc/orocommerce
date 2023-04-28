@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Processor;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,11 +19,10 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
 
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
-        ManagerRegistry $doctrine,
-        AclHelper $aclHelper,
+        ProductMapperInterface $productMapper,
         MessageGenerator $messageGenerator
     ) {
-        parent::__construct($shoppingListLineItemHandler, $doctrine, $aclHelper);
+        parent::__construct($shoppingListLineItemHandler, $productMapper);
         $this->messageGenerator = $messageGenerator;
     }
 

@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
- * Factory for the ProductPriceCriteria instance
+ * Represents a factory to create the ProductPriceCriteria.
  */
 interface ProductPriceCriteriaFactoryInterface
 {
@@ -20,7 +20,8 @@ interface ProductPriceCriteriaFactoryInterface
 
     /**
      * @param iterable<ProductLineItemInterface> $productLineItems
-     * @param string|null $currency
+     * @param string|null                        $currency
+     *
      * @return ProductPriceCriteria[]
      */
     public function createListFromProductLineItems(iterable $productLineItems, ?string $currency = null): array;

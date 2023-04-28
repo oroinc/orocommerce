@@ -39,6 +39,14 @@ class ProductWebsiteSearchTest extends WebTestCase
         ]);
     }
 
+    /**
+     * @beforeResetClient
+     */
+    public static function afterFrontendTest(): void
+    {
+        self::getWebsiteManagerStub()->disableStub();
+    }
+
     public function testPartialIndexationAfterFullIndexation()
     {
         /** @var Product $product */
@@ -87,9 +95,6 @@ class ProductWebsiteSearchTest extends WebTestCase
         $this->assertNotEmpty($data['image_product_small']);
     }
 
-    /**
-     * @return void
-     */
     private function clearEM(): void
     {
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(ItemEntity::class);
@@ -113,15 +118,11 @@ class ProductWebsiteSearchTest extends WebTestCase
         $this->assertEquals($productCount, $this->getProductsCount());
     }
 
-    /**
-     * @return int
-     */
-    private function getProductsCount()
+    private function getProductsCount(): int
     {
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
 
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        return $searchEngine->search($query)->getRecordsCount();
+        return $this->getContainer()->get('oro_website_search.engine')->search($query)->getRecordsCount();
     }
 }

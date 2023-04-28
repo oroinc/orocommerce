@@ -108,6 +108,15 @@ const QuickAddRowView = BaseView.extend({
         return Number(this.$el.closest('[data-role="row"]').attr('data-content').match(/\[(\d+)]$/)[1]);
     },
 
+    getProductDisplayName() {
+        const sku = this.model.get('sku');
+        const productName = this.model.get('product_name');
+
+        return productName
+            ? `${sku} - ${productName}`
+            : sku;
+    },
+
     _readDOMValue(attr) {
         let value = this.$(this.attrElem[attr]).val();
         switch (attr) {
@@ -124,12 +133,19 @@ const QuickAddRowView = BaseView.extend({
         return Object.fromEntries(entries);
     },
 
-    _writeDOMValue(attr, value, silent) {
+    _writeDOMValue(attr, silent) {
         const $input = this.$(this.attrElem[attr]);
         const inputValue = this._readDOMValue(attr);
+        let value = null;
         switch (attr) {
+            case 'product':
+                value = this.getProductDisplayName();
+                break;
             case 'quantity':
-                value = QuantityHelper.formatQuantity(value, $input.data('precision'), true);
+                value = QuantityHelper.formatQuantity(this.model.get(attr), $input.data('precision'), true);
+                break;
+            default:
+                value = this.model.get(attr);
                 break;
         }
         if (value !== inputValue) {
@@ -141,12 +157,11 @@ const QuickAddRowView = BaseView.extend({
     },
 
     _writeDOMValues(silent = false) {
-        Object.keys(this.attrElem)
-            .forEach(attr => this._writeDOMValue(attr, this.model.get(attr), silent));
+        Object.keys(this.attrElem).forEach(attr => this._writeDOMValue(attr, silent));
     },
 
     updateControlValue(...attrs) {
-        attrs.forEach(attr => this._writeDOMValue(attr, this.model.get(attr)));
+        attrs.forEach(attr => this._writeDOMValue(attr));
     },
 
     onQuantityChange() {
@@ -190,7 +205,7 @@ const QuickAddRowView = BaseView.extend({
                 .data('precision', precision)
                 .inputWidget('refresh');
             // in case quantity was not written due to incompatible precision, do it again
-            this._writeDOMValue('quantity', this.model.get('quantity'), silent);
+            this._writeDOMValue('quantity', silent);
         }
     },
 

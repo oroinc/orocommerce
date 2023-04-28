@@ -41,9 +41,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->entity = new RFPRequest();
+
+        parent::setUp();
 
         $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
@@ -67,19 +67,20 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             $requestStack,
             $this->storage,
             PropertyAccess::createPropertyAccessor(),
-            $this->doctrineHelper,
-            $this->aclHelper,
+            $this->doctrine,
             $this->logger,
             $this->productAvailabilityProvider,
             $this->translator,
             $this->twig
         );
+
+        $this->initEntityMetadata([]);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getTargetEntity(): object
+    protected function getTargetEntity(): RFPRequest
     {
         return $this->entity;
     }
@@ -91,11 +92,13 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     public function testBuildForm(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
                 ]
@@ -114,10 +117,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($product)
             ->willReturn(true);
 
-        $this->expectsEntityMetadata();
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 
@@ -139,11 +141,13 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     public function testBuildFormNotAllowedForRFPProduct(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
                 ]
@@ -162,10 +166,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($product)
             ->willReturn(false);
 
-        $this->expectsEntityMetadata();
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 
@@ -174,10 +177,12 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     public function testTheIsNoDisabledProductsInRequestProductsAfterExtensionBuild(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => 3,
                 ]
@@ -194,10 +199,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($product)
             ->willReturn(true);
 
-        $this->expectsEntityMetadata();
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 
@@ -206,11 +210,13 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     public function testBuildFormNotApplicableProduct(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
                 ]
@@ -229,10 +235,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->productAvailabilityProvider->expects($this->never())
             ->method('isProductAllowedForRFP');
 
-        $this->expectsEntityMetadata();
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 
@@ -241,11 +246,13 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     public function testBuildFormWithoutUnit(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
                 ]
@@ -254,10 +261,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         $product = $this->getProduct($sku);
 
-        $this->expectsEntityMetadata();
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 

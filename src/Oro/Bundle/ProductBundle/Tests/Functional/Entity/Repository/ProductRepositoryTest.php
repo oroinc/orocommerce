@@ -14,9 +14,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolationPerTest
  */
 class ProductRepositoryTest extends WebTestCase
 {
@@ -146,30 +146,6 @@ class ProductRepositoryTest extends WebTestCase
         $result = $builder->getQuery()->getResult();
         $this->assertCount(1, $result);
         $this->assertEquals($product, $result[0]);
-    }
-
-    public function testGetProductsIdsBySku()
-    {
-        $product7 = $this->getProduct(LoadProductData::PRODUCT_7);
-        $product2 = $this->getProduct(LoadProductData::PRODUCT_2);
-        $product3 = $this->getProduct(LoadProductData::PRODUCT_3);
-
-        $result = $this->getRepository()->getProductsIdsBySkuQueryBuilder(
-            [
-                $product3->getSku(),
-                mb_strtoupper($product7->getSku()),
-                mb_strtolower($product2->getSku()),
-            ]
-        )->getQuery()->getArrayResult();
-
-        $this->assertEquals(
-            [
-                ['id' => $product2->getId(), 'sku' => $product2->getSku()],
-                ['id' => $product3->getId(), 'sku' => $product3->getSku()],
-                ['id' => $product7->getId(), 'sku' => $product7->getSku()],
-            ],
-            $result
-        );
     }
 
     public function testGetProductIdBySkuQueryBuilder(): void
