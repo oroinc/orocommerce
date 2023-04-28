@@ -1,14 +1,36 @@
-{% use '@OroPricing/layouts/default/imports/prices.html.twig' %}
-
-{% block __oro_product_price__product_price_container_widget %}
-    {{ block('product_price_container') }}
-{% endblock %}
-
 {% block __oro_product_price__product_price_component_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-price'
-    }) %}
-    {{ block('product_price_component') }}
+    {% set isRenderable = (
+        (
+            not is_configurable_product_type(product.type) and
+            not is_kit_product_type(product.type)
+        ) or
+        matrixFormType == 'none'
+    ) %}
+    {% if isRenderable %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroui/js/app/components/view-component',
+            '~data-page-component-options': {
+                view: 'oropricing/js/app/views/list-item-product-prices-view',
+                showValuePrice: showValuePrice,
+                showListedPrice: showListedPrice,
+                modelAttr: {
+                    prices: productPrices,
+                }
+            }
+        }) %}
+    {% endif %}
+    {% if productPrices is not empty or forceComponentRender %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-price product-price__main'
+        }) %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% else %}
+        <div class="product-price__not_found">
+            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_price__product_price_hint_trigger_widget %}
@@ -19,20 +41,107 @@
             })
         }) %}
     {% endif %}
-    {{ block('product_price_hint_trigger') }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price-hint-btn btn btn--link btn--size-xs',
+        'type': 'button',
+        'title': 'oro.pricing.view_all_prices'|trans,
+        'aria-label': 'oro.pricing.view_all_prices'|trans,
+        'data-name': 'prices-hint-trigger'
+    }) %}
+    <button {{ block('block_attributes') }}></button>
 {% endblock %}
+
 {% block __oro_product_price__product_prices_widget %}
-    {{ block('product_prices') }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price-hint__prices',
+        'data-name': 'prices',
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% if productPrices is not empty %}
+            {{ block_widget(block) }}
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block __oro_product_price__product_price_value_widget %}
-    {{ block('product_price_value') }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price__your'
+    }) %}
+
+    {# Clone js logic in package/commerce/src/Oro/Bundle/PricingBundle/Resources/public/templates/product/list-item-product-prices.html #}
+    <div {{ block('block_attributes') }} data-name="price">
+        <span class="product-price__label">{{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}</span>
+        {% set firstPrice = productPrices|first %}
+        <span class="product-price__main-box">
+            <span class="product-price__value" data-name="price-value" itemscope="itemscope"
+                  itemtype="http://schema.org/Offer" itemprop="offers">
+                {% apply spaceless %}
+                    {% if firstPrice %}
+                    {% set priceFormatOptions = {
+                        attributes: {
+                            fraction_digits: oro_locale_number_attribute('max_fraction_digits', 'currency')
+                        }
+                    } %}
+                    <span itemprop="priceCurrency" class="hidden" aria-hidden="true">{{ firstPrice.currency }}</span>
+                    <span itemprop="price" class="hidden" aria-hidden="true">{{ firstPrice.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}</span>
+                    {{- firstPrice.formatted_price -}}
+                    {% endif %}
+                {% endapply %}
+            </span>
+            <span> / </span>
+            <span class="product-price__unit" data-name="unit">
+                <span class="product-price__unit-full">
+                    {{ firstPrice ? firstPrice.formatted_unit }}
+                </span>
+                <span class="product-price__unit-short">
+                    {{ firstPrice ? firstPrice.unit|oro_format_short_product_unit_label }}
+                </span>
+            </span>
+        </span>
+    </div>
 {% endblock %}
 
 {% block __oro_product_price__product_price_listed_widget %}
-    {{ block('product_price_listed') }}
+    {# Clone js logic in package/commerce/src/Oro/Bundle/PricingBundle/Resources/public/templates/product/list-item-product-prices.html #}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price__listed'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <span class="product-price__listed-label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans }}</span>
+        {% set pricesPerUnits = [] %}
+        {% for price in productPrices %}
+            {% set unit = price.unit %}
+            {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
+                {% set pricesPerUnits = pricesPerUnits|merge({
+                    (unit): price
+                }) %}
+            {% endif %}
+        {% endfor %}
+        {% for price in pricesPerUnits %}
+            <span class="product-price__listed-box"
+                  title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|e('html_attr') }}">
+                <span class="product-price__listed-value">{{ price.formatted_price }}</span>
+                <span> / </span>
+                <span class="product-price__unit">
+                    <span class="product-price__unit-full">
+                        {{ price.formatted_unit}}
+                    </span>
+                    <span class="product-price__unit-short">
+                        {{ price.unit|oro_format_short_product_unit_label }}
+                    </span>
+                </span>
+            </span>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block __oro_product_price__product_price_hint_widget %}
-    {{ block('product_price_hint') }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price-hint',
+        'data-name': 'prices-hint'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}

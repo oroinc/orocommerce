@@ -4,7 +4,7 @@ layout:
             themes: '@OroPricing/layouts/default/imports/oro_product_price_table/oro_product_price_table.html.twig'
         - '@addTree':
             items:
-                __product_price_container:
+                __product_price_table_container:
                     blockType: product_prices
                     options:
                         productPrices: '=product ? data["frontend_product_prices"].getByProduct(product) : []'
@@ -18,6 +18,6 @@ layout:
                     blockType: block
             tree:
                 __root:
-                    __product_price_container:
+                    __product_price_table_container:
                         __product_price_table:
                             __product_price_table_body: ~

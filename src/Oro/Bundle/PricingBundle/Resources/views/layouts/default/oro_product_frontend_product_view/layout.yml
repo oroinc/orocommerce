@@ -8,6 +8,7 @@ layout:
                 visible: '=data["frontend_product_prices"].isShowProductPriceContainer(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 reloadEvents: ['layout-subtree:update:product']
             prepend: true
+
         - '@move':
             id: product_price_container
             parentId: product_price_subtree_update
@@ -17,5 +18,17 @@ layout:
             optionValue: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
         - '@setOption':
             id: product_price_container
+            optionName: vars.visible
+            optionValue: '=data["frontend_product_prices"].isShowProductPriceContainer(product)'
+
+        - '@move':
+            id: product_price_table_container
+            parentId: product_price_subtree_update
+        - '@setOption':
+            id: product_price_table_container
+            optionName: product
+            optionValue: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
+        - '@setOption':
+            id: product_price_table_container
             optionName: vars.visible
             optionValue: '=data["frontend_product_prices"].isShowProductPriceContainer(product)'
