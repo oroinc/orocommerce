@@ -23,6 +23,9 @@ class QuickAddRowType extends AbstractType
         $this->productUnitsProvider = $productUnitsProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // To keep select consistent with Select2 after page JS initialization have to add first empty option
@@ -58,14 +61,21 @@ class QuickAddRowType extends AbstractType
             );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view['product']->vars['componentOptions']['selectors'] = [
             'sku' => '[data-name="' . $view['sku']->vars['attr']['data-name'] . '"]',
             'displayName' => '[data-name="' . $view['product']->vars['attr']['data-name'] . '"]',
         ];
+        $view->vars['page_component_view'] = 'oroproduct/js/app/views/quick-add-row-view';
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getBlockPrefix(): string
     {
         return 'oro_product_quick_add_row';

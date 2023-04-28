@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -22,7 +23,8 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * Abstract product data storage form type extension that generates new line item and adds it to entity
+ * The base class form type extensions that pre-fill an entity
+ * with requested products taken from the product data storage.
  */
 abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension implements LoggerAwareInterface
 {
@@ -88,7 +90,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -112,13 +114,16 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
      */
     protected function isStorageFull()
     {
-        return $this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)
-               && $this->storage->get();
+        $request = $this->requestStack->getCurrentRequest();
+
+        return
+            null !== $request
+            && $request->get(ProductDataStorage::STORAGE_KEY)
+            && $this->storage->get();
     }
 
     /**
-     * @param OptionsResolver $resolver
-     * @return void
+     * {@inheritDoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -147,31 +152,28 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
             return;
         }
 
-        if (!empty($data[ProductDataStorage::ENTITY_DATA_KEY]) &&
-            is_array($data[ProductDataStorage::ENTITY_DATA_KEY])
-        ) {
-            $this->fillEntityData($entity, $data[ProductDataStorage::ENTITY_DATA_KEY]);
+        $entityData = $data[ProductDataStorage::ENTITY_DATA_KEY] ?? null;
+        if (\is_array($entityData) && $entityData) {
+            $this->fillEntityData($entity, $entityData);
         }
 
-        if (!empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) &&
-            is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
-        ) {
-            $itemsData = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
-            $this->fillItemsData($entity, $itemsData);
+        $entityItemsData = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] ?? null;
+        if (\is_array($entityItemsData) && $entityItemsData) {
+            $this->fillItemsData($entity, $entityItemsData);
         }
     }
 
     protected function fillItemsData($entity, array $itemsData = [])
     {
-        $repository = $this->getProductRepository();
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrineHelper->getEntityManagerForClass($this->dataClass);
         foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
+            $productId = $dataRow[ProductDataStorage::PRODUCT_ID_KEY] ?? null;
+            if (null === $productId) {
                 continue;
             }
-
-            $qb = $repository->getBySkuQueryBuilder($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
-            $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
-            if (!$product) {
+            $product = $em->find(Product::class, $productId);
+            if (null === $product) {
                 continue;
             }
 
@@ -194,42 +196,28 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         }
 
         $metadata = $this->doctrineHelper->getEntityMetadata($entity);
-
         foreach ($data as $property => $value) {
             try {
                 if ($metadata->hasAssociation($property)) {
                     $associationTargetClass = $metadata->getAssociationTargetClass($property);
                     // For collections (ManyToMany, OneToMany) associations support
-                    if (is_array($value)) {
-                        $value = array_map(
-                            function ($value) use ($associationTargetClass) {
-                                return $this->doctrineHelper->getEntityReference(
-                                    $associationTargetClass,
-                                    $value
-                                );
-                            },
-                            $value
-                        );
+                    if (\is_array($value)) {
+                        $elements = [];
+                        foreach ($value as $val) {
+                            $elements[] = $this->doctrineHelper->getEntityReference($associationTargetClass, $val);
+                        }
+                        $value = $elements;
                     } elseif ($value) {
-                        $value = $this->doctrineHelper->getEntityReference(
-                            $associationTargetClass,
-                            $value
-                        );
+                        $value = $this->doctrineHelper->getEntityReference($associationTargetClass, $value);
                     }
                 }
 
                 $this->propertyAccessor->setValue($entity, $property, $value);
             } catch (NoSuchPropertyException $e) {
-                if (null !== $this->logger) {
-                    $this->logger->notice(
-                        'No such property {property} in the entity {entity}',
-                        [
-                            'property' => $property,
-                            'entity' => ClassUtils::getClass($entity),
-                            'exception' => $e,
-                        ]
-                    );
-                }
+                $this->logger->notice(
+                    'No such property {property} in the entity {entity}',
+                    ['property' => $property, 'entity' => ClassUtils::getClass($entity), 'exception' => $e]
+                );
             }
         }
     }

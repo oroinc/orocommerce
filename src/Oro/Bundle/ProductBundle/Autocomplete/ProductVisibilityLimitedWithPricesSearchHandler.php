@@ -9,15 +9,8 @@ use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
  */
 class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerInterface
 {
-    /**
-     * @var SearchHandlerInterface
-     */
-    protected $productWithPricesSearchHandler;
-
-    /**
-     * @var SearchHandlerInterface
-     */
-    protected $productVisibilityLimitedSearchHandler;
+    protected SearchHandlerInterface $productWithPricesSearchHandler;
+    protected SearchHandlerInterface $productVisibilityLimitedSearchHandler;
 
     public function __construct(
         SearchHandlerInterface $productWithPricesSearchHandler,
@@ -35,13 +28,12 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
         $results = $this->productVisibilityLimitedSearchHandler->search($query, $page, $perPage, $searchById);
 
         if (\count($results['results'])) {
-            $skus = array_column($results['results'], 'sku');
-            $skus = array_map('mb_strtoupper', $skus);
-            $priceResults = $this->productWithPricesSearchHandler->search($query, $page, $perPage, $searchById);
+            $ids = array_column($results['results'], 'id');
+            $priceResults = $this->productWithPricesSearchHandler->search(implode(',', $ids), $page, $perPage, true);
             $priceResults['results'] = array_values(array_filter(
                 $priceResults['results'],
-                function ($result) use ($skus) {
-                    return \in_array(mb_strtoupper($result['sku']), $skus, true);
+                function ($result) use ($ids) {
+                    return \in_array($result['id'], $ids);
                 }
             ));
 

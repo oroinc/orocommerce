@@ -1,5 +1,4 @@
 {% block oro_product_quick_add_row_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
     {% set name = form.vars.full_name %}
     {% set disabled = form.parent.vars.disabled %}
     {% set allow_delete = form.parent.vars.allow_delete %}
@@ -13,11 +12,9 @@
          {{ block('widget_container_attributes') }}
     >
         <div class="quick-order-add__row-content"
-            {{ UI.renderPageComponentAttributes({
-                view: "oroproduct/js/app/views/quick-add-row-view",
-                name: row_component_name,
-                options: {ignoreSubPromises: true}
-            }) }}
+             data-page-component-name="{{ row_component_name }}"
+             data-page-component-view="{{ form.vars.page_component_view }}"
+             data-page-component-options="{{ {ignoreSubPromises: true}|json_encode }}"
         >
             <div class="quick-order-add__col quick-order-add__product"
                  data-page-component-init-on="click,focusin"

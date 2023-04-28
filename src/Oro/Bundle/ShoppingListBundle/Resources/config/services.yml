@@ -131,6 +131,8 @@ services:
             - '@doctrine'
             - '@oro_security.acl_helper'
             - '@oro_shopping_list.service.message_generator'
+        calls:
+            - [ setProductMapper, ['@oro_shopping_list.quick_add_product_mapper'] ]
         tags:
             - { name: oro_product.quick_add_processor }
 
@@ -149,8 +151,26 @@ services:
             - '@translator'
             - '@oro_locale.formatter.date_time'
             - 'start_quickorder_checkout'
+        calls:
+            - [ setProductMapper, ['@oro_shopping_list.quick_add_product_mapper'] ]
         tags:
             - { name: oro_product.quick_add_processor }
+
+    oro_shopping_list.quick_add_product_mapper:
+        class: 'Oro\Bundle\ProductBundle\Model\Mapping\ProductMapper'
+        arguments:
+            - '@oro_shopping_list.quick_add_product_mapper_data_accessor'
+            - '@oro_shopping_list.quick_add_product_mapper_data_loader'
+
+    oro_shopping_list.quick_add_product_mapper_data_accessor:
+        alias: oro_product.component_processor.quick_add_product_mapper_data_accessor
+
+    oro_shopping_list.quick_add_product_mapper_data_loader:
+        class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddDataLoader'
+        arguments:
+            - '@doctrine'
+            - '@oro_product.product.manager'
+            - '@oro_security.acl_helper'
 
     oro_shopping_list.service.product_data_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage'

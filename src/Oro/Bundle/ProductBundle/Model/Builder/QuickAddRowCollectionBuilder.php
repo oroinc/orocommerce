@@ -37,7 +37,9 @@ class QuickAddRowCollectionBuilder
                 );
             }
 
-            $this->quickAddRowProductMapper->mapProducts($collection);
+            if (!$collection->isEmpty()) {
+                $this->quickAddRowProductMapper->mapProducts($collection);
+            }
         }
 
         return $collection;

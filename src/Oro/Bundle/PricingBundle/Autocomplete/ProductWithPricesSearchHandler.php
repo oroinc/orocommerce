@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -115,7 +116,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $perPage = (int)$perPage > 0 ? (int)$perPage : 10;
         $perPage++;
 
-        $searchResultData = $this->getSearchResultsData($query, $page, $perPage);
+        $searchResultData = $this->getSearchResultsData($query, $page, $perPage, $searchById);
         if (empty($searchResultData)) {
             return ['results' => [], 'more' => false];
         }
@@ -136,7 +137,6 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         }
 
         $result = [];
-
         foreach ($items as $item) {
             $result[] = $this->convertItem($item);
         }
@@ -207,6 +207,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      * @param string $search
      * @param int $firstResult
      * @param int $maxResults
+     * @param bool $searchById
      *
      * @return array
      *
@@ -219,14 +220,26 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      *      ...
      * ]
      */
-    private function getSearchResultsData($search, $firstResult, $maxResults) : array
+    private function getSearchResultsData($search, $firstResult, $maxResults, $searchById) : array
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $skuList = $request->request->get('sku');
-        if ($skuList) {
-            $query = $this->productSearchRepository->getFilterSkuQuery($skuList);
+        if ($searchById) {
+            $query = $this->productSearchRepository->createQuery()
+                ->addSelect('sku')
+                ->addSelect('names_LOCALIZATION_ID as name')
+                ->addSelect('integer.system_entity_id as product_id')
+                ->addWhere(Criteria::expr()->in('integer.system_entity_id', array_filter(explode(',', $search))));
         } else {
-            $query = $this->productSearchRepository->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults);
+            $request = $this->requestStack->getCurrentRequest();
+            $skus = null !== $request ? (array)$request->request->get('sku') : [];
+            if ($skus) {
+                $query = $this->productSearchRepository->getFilterSkuQuery($skus);
+            } else {
+                $query = $this->productSearchRepository->getSearchQueryBySkuOrName(
+                    $search,
+                    $firstResult - 1,
+                    $maxResults
+                );
+            }
         }
         // Add marker `autocomplete_record_id` to be able to determine query context in listeners
         $query->addSelect('integer.system_entity_id as autocomplete_record_id');

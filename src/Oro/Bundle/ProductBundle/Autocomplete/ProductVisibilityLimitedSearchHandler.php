@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Autocomplete;
 
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -12,6 +13,8 @@ use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -19,32 +22,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
-    /** @var bool */
-    private $allowConfigurableProducts = false;
+    protected RequestStack $requestStack;
+    protected ProductManager $productManager;
+    protected FrontendHelper $frontendHelper;
+    protected ProductSearchRepository $searchRepository;
+    protected LocalizationHelper $localizationHelper;
+    protected bool $allowConfigurableProducts = false;
 
-    /** @var RequestStack */
-    private $requestStack;
-
-    /** @var ProductManager */
-    private $productManager;
-
-    /** @var FrontendHelper */
-    private $frontendHelper;
-
-    /** @var ProductSearchRepository */
-    private $searchRepository;
-
-    /** @var LocalizationHelper */
-    private $localizationHelper;
-
-    /**
-     * @param string                  $entityName
-     * @param RequestStack            $requestStack
-     * @param ProductManager          $productManager
-     * @param ProductSearchRepository $searchRepository
-     * @param LocalizationHelper      $localizationHelper
-     * @param FrontendHelper          $frontendHelper
-     */
     public function __construct(
         $entityName,
         RequestStack $requestStack,
@@ -62,7 +46,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function convertItem($item)
     {
@@ -72,7 +56,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $result[$this->idFieldName] = $this->getPropertyValue($this->idFieldName, $item);
         }
 
-        if (is_object($item) && method_exists($item, 'getSelectedData')) {
+        if (\is_object($item) && method_exists($item, 'getSelectedData')) {
             $selectedData = $item->getSelectedData();
             if (isset($selectedData['sku'], $selectedData['name'])) {
                 $result += [
@@ -103,7 +87,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function checkAllDependenciesInjected()
     {
@@ -113,32 +97,30 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
-            $params = [];
+
+        if (null !== $request && !$this->frontendHelper->isFrontendUrl($request->getPathInfo())) {
+            $params = (array)$request->get(ProductSelectType::DATA_PARAMETERS);
+            $queryBuilder = $this->getOrmSearchQuery($search, $firstResult, $maxResults, $params);
+
+            return $this->aclHelper->apply($queryBuilder)->getResult();
         }
 
-        if (!$this->frontendHelper->isFrontendUrl($request->getPathInfo())) {
-            return $this->searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params);
-        }
-
-        return $this->searchEntitiesUsingIndex($search, $firstResult, $maxResults);
+        return $this->filterSearchResult(
+            $this->getSearchQuery($search, $firstResult, $maxResults)->getResult()->getElements()
+        );
     }
 
-    /**
-     * @param $search
-     * @param $firstResult
-     * @param $maxResults
-     * @param $params
-     *
-     * @return array
-     */
-    private function searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params)
-    {
+    protected function getOrmSearchQuery(
+        string $search,
+        int $firstResult,
+        int $maxResults,
+        array $params
+    ): QueryBuilder {
         $queryBuilder = $this->getProductRepository()->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
 
@@ -147,24 +129,15 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
                 ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
         }
 
-        $query = $this->aclHelper->apply($queryBuilder);
-
-        return $query->getResult();
+        return $queryBuilder;
     }
 
-    /**
-     * @param $search
-     * @param $firstResult
-     * @param $maxResults
-     *
-     * @return \Oro\Bundle\SearchBundle\Query\Result\Item[]
-     */
-    private function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
+    protected function getSearchQuery(string $search, int $firstResult, int $maxResults): SearchQueryInterface
     {
         $request = $this->requestStack->getCurrentRequest();
-        $skuList = $request->request->get('sku');
-        if ($skuList) {
-            $searchQuery = $this->searchRepository->getFilterSkuQuery($skuList);
+        $skus = null !== $request ? (array)$request->request->get('sku') : [];
+        if ($skus) {
+            $searchQuery = $this->searchRepository->getFilterSkuQuery($skus);
         } else {
             $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
         }
@@ -177,9 +150,35 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         // Add marker `autocomplete_record_id` to be able to determine query context in listeners
         $searchQuery->addSelect('integer.system_entity_id as autocomplete_record_id');
-        $result = $searchQuery->getResult();
 
-        return $result->getElements();
+        return $searchQuery;
+    }
+
+    /**
+     * @param SearchResultItem[] $items
+     *
+     * @return SearchResultItem[]
+     */
+    protected function filterSearchResult(array $items): array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (null !== $request && \count($items) > 1 && \count((array)$request->request->get('sku')) === 1) {
+            $productName = $request->request->get('productName');
+            if ($productName) {
+                $matchedItems = [];
+                foreach ($items as $item) {
+                    $itemData = $item->getSelectedData();
+                    if ($itemData['name'] === $productName) {
+                        $matchedItems[] = $item;
+                    }
+                }
+                if ($matchedItems) {
+                    $items = $matchedItems;
+                }
+            }
+        }
+
+        return $items;
     }
 
     private function getProductRepository(): ProductRepository

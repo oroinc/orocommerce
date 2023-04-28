@@ -3,8 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Handler;
 
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,45 +23,54 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const FLUSH_BATCH_SIZE = 100;
 
-    private AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker;
+    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingListManager;
 
-    private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
+    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currentShoppingListManager;
 
-    private ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject $shoppingListManager;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    private CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject $currentShoppingListManager;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    private FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    private ProductManager|\PHPUnit\Framework\MockObject\MockObject $productManager;
+    /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $productManager;
 
-    private AclHelper|\PHPUnit\Framework\MockObject\MockObject $aclHelper;
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
 
-    private ShoppingListLineItemHandler $handler;
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityManager;
 
-    private EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
+    /** @var ShoppingListLineItemHandler */
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->productManager = $this->createMock(ProductManager::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
-        $managerRegistry = $this->getManagerRegistry();
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
         $this->handler = new ShoppingListLineItemHandler(
-            $managerRegistry,
+            $this->getDoctrine(),
             $this->shoppingListManager,
             $this->currentShoppingListManager,
             $this->authorizationChecker,
@@ -77,18 +85,20 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider idDataProvider
+     * @dataProvider getShoppingListDataProvider
      */
     public function testGetShoppingList(?int $id): void
     {
         $shoppingList = new ShoppingList();
+
         $this->currentShoppingListManager->expects(self::once())
             ->method('getForCurrentUser')
             ->willReturn($shoppingList);
+
         self::assertSame($shoppingList, $this->handler->getShoppingList($id));
     }
 
-    public function idDataProvider(): array
+    public function getShoppingListDataProvider(): array
     {
         return [[1], [null]];
     }
@@ -183,29 +193,23 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider itemDataProvider
-     */
-    public function testCreateForShoppingList(
-        array $productIds = [],
-        array $productUnitsWithQuantities = [],
-        array $expectedLineItems = []
-    ): void {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList->expects(self::any())
-            ->method('getId')
-            ->willReturn(1);
+    public function testCreateForShoppingList(): void
+    {
+        $productIds = [1, 2, 3, 4];
+        $productUnitsWithQuantities = [1 => ['item' => 5.0], 3 => ['item' => 3.0]];
+        $expectedLineItems = [
+            $this->getLineItem(5.0),
+            $this->getLineItem(1.0),
+            $this->getLineItem(3.0)
+        ];
 
         $customerUser = new CustomerUser();
         $organization = new Organization();
 
-        $shoppingList->expects(self::any())
-            ->method('getCustomerUser')
-            ->willReturn($customerUser);
-        $shoppingList->expects(self::any())
-            ->method('getOrganization')
-            ->willReturn($organization);
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, 1);
+        $shoppingList->setCustomerUser($customerUser);
+        $shoppingList->setOrganization($organization);
 
         $this->tokenAccessor->expects(self::any())
             ->method('hasUser')
@@ -220,68 +224,45 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturnArgument(0);
 
         $unitOfWork = $this->createMock(UnitOfWork::class);
-        $unitOfWork
-            ->expects(self::exactly(2))
+        $unitOfWork->expects(self::exactly(3))
             ->method('markReadOnly');
 
-        $this->entityManager
-            ->expects(self::any())
+        $this->entityManager->expects(self::any())
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
 
-        $this->shoppingListManager
-            ->expects(self::once())
+        $this->shoppingListManager->expects(self::once())
             ->method('bulkAddLineItems')
             ->with(
-                self::callback(
-                    function (array $lineItems) use ($expectedLineItems, $customerUser, $organization) {
-                        /** @var LineItem $lineItem */
-                        foreach ($lineItems as $key => $lineItem) {
-                            /** @var LineItem $expectedLineItem */
-                            $expectedLineItem = $expectedLineItems[$key];
-
-                            $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity());
-                            $this->assertEquals($customerUser, $lineItem->getCustomerUser());
-                            $this->assertEquals($organization, $lineItem->getOrganization());
-                            $this->assertInstanceOf(Product::class, $lineItem->getProduct());
-                            $this->assertInstanceOf(ProductUnit::class, $lineItem->getUnit());
-                        }
-
-                        return true;
+                self::callback(function (array $lineItems) use ($expectedLineItems, $customerUser, $organization) {
+                    /** @var LineItem $lineItem */
+                    foreach ($lineItems as $i => $lineItem) {
+                        $msg = sprintf('Expected line item index: %d.', $i);
+                        $expectedLineItem = $expectedLineItems[$i];
+                        $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity(), $msg);
+                        $this->assertSame($customerUser, $lineItem->getCustomerUser(), $msg);
+                        $this->assertSame($organization, $lineItem->getOrganization(), $msg);
+                        $this->assertInstanceOf(Product::class, $lineItem->getProduct(), $msg);
+                        $this->assertInstanceOf(ProductUnit::class, $lineItem->getUnit(), $msg);
                     }
-                ),
-                $shoppingList,
-                self::isType('integer')
-            );
 
-        $this->handler->createForShoppingList($shoppingList, $productIds, $productUnitsWithQuantities);
-    }
+                    return true;
+                }),
+                self::identicalTo($shoppingList),
+                self::FLUSH_BATCH_SIZE
+            )
+            ->willReturn(count($expectedLineItems));
 
-    public function itemDataProvider(): array
-    {
-        return [
-            'default quantity 1 is set for product with SKU2 as no info in productUnitsWithQuantities provided' => [
-                'productIds' => [1, 2],
-                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'SKU3' => ['item' => 3]],
-                'expectedLineItems' => [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(1)],
-            ],
-            'lower case sku is acceptable in productUnitsWithQuantities too' => [
-                'productIds' => [1, 2],
-                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'sku2абв' => ['item' => 3]],
-                'expectedLineItems' => [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(3)],
-            ],
-        ];
+        self::assertEquals(
+            count($expectedLineItems),
+            $this->handler->createForShoppingList($shoppingList, $productIds, $productUnitsWithQuantities)
+        );
     }
 
     public function testPrepareLineItemWithProduct(): void
     {
-        /** @var CustomerUser $user */
         $user = $this->createMock(CustomerUser::class);
-
-        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->createMock(ShoppingList::class);
-
-        /** @var Product $product */
         $product = $this->createMock(Product::class);
 
         $this->currentShoppingListManager->expects(self::once())
@@ -294,30 +275,16 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         self::assertSame($product, $item->getProduct());
     }
 
-    private function getManagerRegistry(): ManagerRegistry
+    private function getDoctrine(): ManagerRegistry
     {
-        $this->entityManager = $this->createMock(EntityManager::class);
-
         $query = $this->createMock(AbstractQuery::class);
-
-        $product1 = $this->getEntity(Product::class, [
-            'id' => 1,
-            'sku' => 'sku1',
-            'skuUppercase' => 'SKU1',
-            'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit()),
-        ]);
-
-        $product2 = $this->getEntity(Product::class, [
-            'id' => 2,
-            'sku' => 'sku2абв',
-            'skuUppercase' => 'SKU2АБВ',
-            'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit()),
-        ]);
-
-        $iterableResult = [$product1, $product2];
         $query->expects(self::any())
             ->method('toIterable')
-            ->willReturn($iterableResult);
+            ->willReturn([
+                $this->getProduct(1, 'SKU1'),
+                $this->getProduct(2, 'SKU2'),
+                $this->getProduct(3, 'SKU3')
+            ]);
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
@@ -334,23 +301,43 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->entityManager->expects(self::any())
             ->method('getReference')
             ->willReturnCallback(function (string $unit) {
-                return $this->getEntity(ProductUnit::class, ['code' => $unit]);
-            });
+                $entity = new ProductUnit();
+                $entity->setCode($unit);
 
-        $shoppingListRepository = $this->createMock(EntityRepository::class);
+                return $entity;
+            });
 
         $this->entityManager->expects(self::any())
             ->method('getRepository')
-            ->willReturnMap([
-                [ShoppingList::class, $shoppingListRepository],
-                [Product::class, $productRepository],
-            ]);
+            ->with(Product::class)
+            ->willReturn($productRepository);
 
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry->expects(self::any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($this->entityManager);
 
-        return $managerRegistry;
+        return $doctrine;
+    }
+
+    private function getProduct(int $id, string $sku): Product
+    {
+        $precision = new ProductUnitPrecision();
+        $precision->setUnit(new ProductUnit());
+
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+        $product->setSku($sku);
+        $product->setPrimaryUnitPrecision($precision);
+
+        return $product;
+    }
+
+    private function getLineItem(float $quantity): LineItem
+    {
+        $lineItem = new LineItem();
+        $lineItem->setQuantity($quantity);
+
+        return $lineItem;
     }
 }

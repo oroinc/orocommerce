@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
-use Doctrine\ORM\AbstractQuery;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -34,10 +32,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShoppingListLineItemHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $handler;
+    private $shoppingListLineItemHandler;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
+    /** @var ProductMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productMapper;
 
     /** @var MessageGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $messageGenerator;
@@ -63,9 +61,6 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dateFormatter;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
-
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
@@ -74,8 +69,8 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->handler = $this->createMock(ShoppingListLineItemHandler::class);
-        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->shoppingListLineItemHandler = $this->createMock(ShoppingListLineItemHandler::class);
+        $this->productMapper = $this->createMock(ProductMapperInterface::class);
         $this->messageGenerator = $this->createMock(MessageGenerator::class);
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
@@ -84,22 +79,17 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->actionGroup = $this->createMock(ActionGroup::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->dateFormatter = $this->createMock(DateTimeFormatterInterface::class);
-        $this->productRepository = $this->createMock(ProductRepository::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects(self::any())
-            ->method('getRepository')
-            ->with(Product::class)
-            ->willReturn($this->productRepository);
         $doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($this->em);
 
         $this->processor = new QuickAddCheckoutProcessor(
-            $this->handler,
+            $this->shoppingListLineItemHandler,
             $doctrine,
-            $this->aclHelper,
+            $this->createMock(AclHelper::class),
             $this->messageGenerator,
             $this->shoppingListManager,
             $this->shoppingListLimitManager,
@@ -109,6 +99,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             $this->dateFormatter,
             'start_shoppinglist_checkout'
         );
+        $this->processor->setProductMapper($this->productMapper);
     }
 
     public function testGetName(): void
@@ -123,7 +114,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testIsAllowed(): void
     {
-        $this->handler->expects(self::once())
+        $this->shoppingListLineItemHandler->expects(self::once())
             ->method('isAllowed')
             ->willReturn(true);
         $this->actionGroupRegistry->expects(self::once())
@@ -136,7 +127,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testIsAllowedAndNoActionGroup(): void
     {
-        $this->handler->expects(self::once())
+        $this->shoppingListLineItemHandler->expects(self::once())
             ->method('isAllowed')
             ->willReturn(true);
         $this->actionGroupRegistry->expects(self::once())
@@ -180,10 +171,14 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenCommitted(): void
     {
-        $data = $this->getProductData();
+        $data = $this->getProductData([
+            ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
+            ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
+        ]);
 
-        $productIds = ['sku1абв' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productMap = [1, 2];
+        $productIds = [1, 2];
+        $productUnitsQuantities = [1 => ['kg' => 2], 2 => ['liter' => 3]];
 
         $this->shoppingListLimitManager->expects(self::once())
             ->method('isReachedLimit')
@@ -214,24 +209,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             'redirectUrl' => $redirectUrl
         ]);
 
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects(self::once())
-            ->method('getArrayResult')
-            ->willReturn([
-                ['id' => 1, 'sku' => 'SKU1АБВ'],
-                ['id' => 2, 'sku' => 'SKU2'],
-            ]);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-
-        $this->productRepository->expects(self::once())
-            ->method('getProductsIdsBySkuQueryBuilder')
-            ->with(['sku1абв', 'sku2'])
-            ->willReturn($queryBuilder);
-
-        $this->aclHelper->expects(self::once())
-            ->method('apply')
-            ->with($queryBuilder)
-            ->willReturn($query);
+        $this->expectsMapProducts($productMap);
 
         $this->actionGroupRegistry->expects(self::once())
             ->method('findByName')
@@ -242,13 +220,81 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->willReturn($actionData);
 
-        $this->handler->expects(self::once())
+        $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
-            ->with(
-                self::isInstanceOf(ShoppingList::class),
-                array_values($productIds),
-                $productUnitsQuantities
-            )
+            ->with(self::isInstanceOf(ShoppingList::class), $productIds, $productUnitsQuantities)
+            ->willReturn(count($data));
+
+        $this->em->expects(self::once())
+            ->method('commit');
+
+        $request = new Request();
+        $request->setSession($this->createMock(Session::class));
+
+        /** @var RedirectResponse $result */
+        $result = $this->processor->process($data, $request);
+        self::assertInstanceOf(RedirectResponse::class, $result);
+        self::assertEquals($redirectUrl, $result->getTargetUrl());
+    }
+
+    public function testProcessWhenCommittedAndSameProductsCoupleOfTimes(): void
+    {
+        $data = $this->getProductData([
+            ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'item'],
+            ['productSku' => 'sku1Абв', 'productQuantity' => 3, 'productUnit' => 'kg'],
+            ['productSku' => 'sku1абВ', 'productQuantity' => 4, 'productUnit' => 'set'],
+            ['productSku' => 'sku1абв', 'productQuantity' => 5, 'productUnit' => 'item'],
+            ['productSku' => 'sku2', 'productQuantity' => 5, 'productUnit' => 'item'],
+            ['productSku' => 'sku2', 'productQuantity' => 6, 'productUnit' => 'kg'],
+        ]);
+
+        $productMap = [1, 1, 1, 1, 2, 2];
+        $productIds = [1, 2];
+        $productUnitsQuantities = [1 => ['item' => 7, 'kg' => 3, 'set' => 4], 2 => ['item' => 5, 'kg' => 6]];
+
+        $this->shoppingListLimitManager->expects(self::once())
+            ->method('isReachedLimit')
+            ->willReturn(false);
+
+        $shoppingList = new ShoppingList();
+
+        $this->shoppingListManager->expects(self::once())
+            ->method('create')
+            ->willReturn($shoppingList);
+
+        $this->em->expects(self::once())
+            ->method('persist');
+        $this->em->expects(self::once())
+            ->method('flush');
+
+        $this->dateFormatter->expects(self::once())
+            ->method('format')
+            ->willReturn('Mar 28, 2016, 2:50 PM');
+
+        $this->translator->expects(self::once())
+            ->method('trans')
+            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
+
+        $redirectUrl = '/customer/shoppingList/123';
+        $actionData = new ActionData([
+            'shoppingList' => $shoppingList,
+            'redirectUrl' => $redirectUrl
+        ]);
+
+        $this->expectsMapProducts($productMap);
+
+        $this->actionGroupRegistry->expects(self::once())
+            ->method('findByName')
+            ->with('start_shoppinglist_checkout')
+            ->willReturn($this->actionGroup);
+
+        $this->actionGroup->expects(self::once())
+            ->method('execute')
+            ->willReturn($actionData);
+
+        $this->shoppingListLineItemHandler->expects(self::once())
+            ->method('createForShoppingList')
+            ->with(self::isInstanceOf(ShoppingList::class), $productIds, $productUnitsQuantities)
             ->willReturn(count($data));
 
         $this->em->expects(self::once())
@@ -265,10 +311,14 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenCommittedWithLimit(): void
     {
-        $data = $this->getProductData();
+        $data = $this->getProductData([
+            ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
+            ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
+        ]);
 
-        $productIds = ['sku1абв' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productMap = [1, 2];
+        $productIds = [1, 2];
+        $productUnitsQuantities = [1 => ['kg' => 2], 2 => ['liter' => 3]];
 
         $this->shoppingListLimitManager->expects(self::once())
             ->method('isReachedLimit')
@@ -296,24 +346,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->em->expects(self::never())
             ->method('flush');
 
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects(self::once())
-            ->method('getArrayResult')
-            ->willReturn([
-                ['id' => 1, 'sku' => 'SKU1АБВ'],
-                ['id' => 2, 'sku' => 'SKU2'],
-            ]);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-
-        $this->productRepository->expects(self::once())
-            ->method('getProductsIdsBySkuQueryBuilder')
-            ->with(['sku1абв', 'sku2'])
-            ->willReturn($queryBuilder);
-
-        $this->aclHelper->expects(self::once())
-            ->method('apply')
-            ->with($queryBuilder)
-            ->willReturn($query);
+        $this->expectsMapProducts($productMap);
 
         $redirectUrl = 'some/url';
         $actionData = new ActionData([
@@ -330,13 +363,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->willReturn($actionData);
 
-        $this->handler->expects(self::once())
+        $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
-            ->with(
-                self::isInstanceOf(ShoppingList::class),
-                array_values($productIds),
-                $productUnitsQuantities
-            )
+            ->with(self::isInstanceOf(ShoppingList::class), $productIds, $productUnitsQuantities)
             ->willReturn(count($data));
 
         $request = new Request();
@@ -349,10 +378,14 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenActionGroupFailedWithErrors(): void
     {
-        $data = $this->getProductData();
+        $data = $this->getProductData([
+            ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
+            ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
+        ]);
 
-        $productIds = ['sku1абв' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productMap = [1, 2];
+        $productIds = [1, 2];
+        $productUnitsQuantities = [1 => ['kg' => 2], 2 => ['liter' => 3]];
 
         $shoppingList = new ShoppingList();
 
@@ -374,24 +407,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             'errors' => []
         ]);
 
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects(self::once())
-            ->method('getArrayResult')
-            ->willReturn([
-                ['id' => 1, 'sku' => 'SKU1АБВ'],
-                ['id' => 2, 'sku' => 'SKU2'],
-            ]);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-
-        $this->productRepository->expects(self::once())
-            ->method('getProductsIdsBySkuQueryBuilder')
-            ->with(['sku1абв', 'sku2'])
-            ->willReturn($queryBuilder);
-
-        $this->aclHelper->expects(self::once())
-            ->method('apply')
-            ->with($queryBuilder)
-            ->willReturn($query);
+        $this->expectsMapProducts($productMap);
 
         $this->actionGroupRegistry->expects(self::once())
             ->method('findByName')
@@ -402,13 +418,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('execute')
             ->willReturn($actionData);
 
-        $this->handler->expects(self::once())
+        $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
-            ->with(
-                self::isInstanceOf(ShoppingList::class),
-                array_values($productIds),
-                $productUnitsQuantities
-            )
+            ->with(self::isInstanceOf(ShoppingList::class), $productIds, $productUnitsQuantities)
             ->willReturn(count($data));
 
         $request = new Request();
@@ -422,7 +434,12 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenHandlerThrowsException(): void
     {
-        $data = $this->getProductData();
+        $data = $this->getProductData([
+            ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
+            ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
+        ]);
+
+        $productMap = [1, 2];
 
         $shoppingList = new ShoppingList();
         $this->shoppingListManager->expects(self::once())
@@ -437,23 +454,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects(self::once())
-            ->method('getArrayResult')
-            ->willReturn([]);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->expectsMapProducts($productMap);
 
-        $this->productRepository->expects(self::once())
-            ->method('getProductsIdsBySkuQueryBuilder')
-            ->with(['sku1абв', 'sku2'])
-            ->willReturn($queryBuilder);
-
-        $this->aclHelper->expects(self::once())
-            ->method('apply')
-            ->with($queryBuilder)
-            ->willReturn($query);
-
-        $this->handler->expects(self::once())
+        $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
             ->willThrowException(new AccessDeniedException());
 
@@ -468,10 +471,14 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWhenNoItemsCreatedForShoppingList(): void
     {
-        $data = $this->getProductData();
+        $data = $this->getProductData([
+            ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
+            ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
+        ]);
 
-        $productIds = ['sku1абв' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productMap = [1, 2];
+        $productIds = [1, 2];
+        $productUnitsQuantities = [1 => ['kg' => 2], 2 => ['liter' => 3]];
 
         $shoppingList = new ShoppingList();
 
@@ -487,32 +494,11 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects(self::once())
-            ->method('getArrayResult')
-            ->willReturn([
-                ['id' => 1, 'sku' => 'SKU1АБВ'],
-                ['id' => 2, 'sku' => 'SKU2'],
-            ]);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->expectsMapProducts($productMap);
 
-        $this->productRepository->expects(self::once())
-            ->method('getProductsIdsBySkuQueryBuilder')
-            ->with(['sku1абв', 'sku2'])
-            ->willReturn($queryBuilder);
-
-        $this->aclHelper->expects(self::once())
-            ->method('apply')
-            ->with($queryBuilder)
-            ->willReturn($query);
-
-        $this->handler->expects(self::once())
+        $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
-            ->with(
-                self::isInstanceOf(ShoppingList::class),
-                array_values($productIds),
-                $productUnitsQuantities
-            )
+            ->with(self::isInstanceOf(ShoppingList::class), $productIds, $productUnitsQuantities)
             ->willReturn(0);
 
         $this->em->expects(self::once())
@@ -522,6 +508,21 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectsFailedFlashMessage($request);
 
         self::assertNull($this->processor->process($data, $request));
+    }
+
+    private function expectsMapProducts(array $productMap): void
+    {
+        $this->productMapper->expects(self::once())
+            ->method('mapProducts')
+            ->willReturnCallback(function (ArrayCollection $collection) use ($productMap) {
+                foreach ($productMap as $i => $productId) {
+                    if (null !== $productId) {
+                        $item = $collection[$i];
+                        self::assertInstanceOf(\ArrayAccess::class, $item);
+                        $item['productId'] = $productId;
+                    }
+                }
+            });
     }
 
     private function expectsFailedFlashMessage(Request $request)
@@ -545,13 +546,8 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $request->setSession($session);
     }
 
-    private function getProductData(): array
+    private function getProductData(array $data): array
     {
-        return [
-            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
-                ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
-            ]
-        ];
+        return [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $data];
     }
 }

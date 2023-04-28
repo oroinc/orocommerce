@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Represents the entry point for the currency settings of the store frontend.
+ * Represents the entry point for the currency settings of the storefront.
  */
 class UserCurrencyManager
 {

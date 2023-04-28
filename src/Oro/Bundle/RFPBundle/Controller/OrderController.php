@@ -31,6 +31,7 @@ class OrderController extends AbstractController
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProductSku(),
+                ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()->getId(),
                 'comment' => $lineItem->getComment(),
             ];
 

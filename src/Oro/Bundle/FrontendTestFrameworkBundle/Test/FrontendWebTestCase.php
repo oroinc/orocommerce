@@ -7,7 +7,7 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * The base class for store frontend functional tests.
+ * The base class for the storefront functional tests.
  */
 abstract class FrontendWebTestCase extends WebTestCase
 {
@@ -16,18 +16,14 @@ abstract class FrontendWebTestCase extends WebTestCase
     /**
      * @beforeResetClient
      */
-    public static function afterFrontendTest()
+    public static function afterFrontendTest(): void
     {
         self::getWebsiteManagerStub()->disableStub();
     }
 
-    /**
-     * @param string $email
-     */
-    protected function updateCustomerUserSecurityToken($email)
+    protected function updateCustomerUserSecurityToken(string $email): void
     {
-        $user = $this->getContainer()
-            ->get('doctrine')
+        $user = self::getContainer()->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['email' => $email]);
 
@@ -40,6 +36,6 @@ abstract class FrontendWebTestCase extends WebTestCase
         );
 
         $this->ensureSessionIsAvailable();
-        $this->getContainer()->get('security.token_storage')->setToken($token);
+        self::getContainer()->get('security.token_storage')->setToken($token);
     }
 }

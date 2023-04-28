@@ -24,14 +24,14 @@ class RequestToQuoteDataStorage
     {
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
-                'customerUser' => $rfpRequest->getCustomerUser() ? $rfpRequest->getCustomerUser()->getId() : null,
-                'customer' => $rfpRequest->getCustomer() ? $rfpRequest->getCustomer()->getId() : null,
+                'customerUser' => $rfpRequest->getCustomerUser()?->getId(),
+                'customer' => $rfpRequest->getCustomer()?->getId(),
                 'request' => $rfpRequest->getId(),
                 'poNumber' => $rfpRequest->getPoNumber(),
                 'shipUntil' => $rfpRequest->getShipUntil(),
                 'assignedUsers' => $this->getEntitiesIds($rfpRequest->getAssignedUsers()),
                 'assignedCustomerUsers' => $this->getEntitiesIds($rfpRequest->getAssignedCustomerUsers()),
-                'website' => $rfpRequest->getWebsite() ? $rfpRequest->getWebsite()->getId() : null,
+                'website' => $rfpRequest->getWebsite()?->getId(),
             ],
         ];
 
@@ -40,6 +40,7 @@ class RequestToQuoteDataStorage
 
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY =>  $requestProduct->getProductSku(),
+                ProductDataStorage::PRODUCT_ID_KEY =>  $requestProduct->getProduct()->getId(),
                 ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
                 'commentCustomer' => $requestProduct->getComment(),
                 'requestProductItems' => $items,
@@ -57,9 +58,7 @@ class RequestToQuoteDataStorage
     {
         $items = [];
         foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
-            $productUnitCode = $requestProductItem->getProductUnit()
-                ? $requestProductItem->getProductUnit()->getCode()
-                : null;
+            $productUnitCode = $requestProductItem->getProductUnit()?->getCode();
 
             $items[] = [
                 'price' => $requestProductItem->getPrice(),

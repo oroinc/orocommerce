@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Pre-fills RFQ with requested products taken from product data storage.
+ * The form type extension that pre-fill a RFQ with requested products taken from the product data storage.
  */
 class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 {
@@ -78,20 +78,19 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function fillItemsData($entity, array $itemsData = [])
     {
-        $repository = $this->getProductRepository();
+        $em = $this->doctrineHelper->getEntityManagerForClass($this->dataClass);
         $canNotBeAddedToRFQ = [];
         foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
+            $productId = $dataRow[ProductDataStorage::PRODUCT_ID_KEY] ?? null;
+            if (null === $productId) {
                 continue;
             }
-
-            $qb = $repository->getBySkuQueryBuilder($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
-            $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
-            if (!$product) {
+            $product = $em->find(Product::class, $productId);
+            if (null === $product) {
                 continue;
             }
 
@@ -109,21 +108,20 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
             }
         }
 
-        $message = $this->container->get('twig')->render(
-            '@OroRFP/Form/FlashBag/warning.html.twig',
-            [
-                'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
-                'products' => $canNotBeAddedToRFQ
-            ]
-        );
-
         if (!empty($canNotBeAddedToRFQ)) {
+            $message = $this->container->get('twig')->render(
+                '@OroRFP/Form/FlashBag/warning.html.twig',
+                [
+                    'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
+                    'products' => $canNotBeAddedToRFQ
+                ]
+            );
             $this->session->getFlashBag()->add('warning', $message);
         }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function addItem(Product $product, $entity, array $itemData = [])
     {
@@ -134,18 +132,17 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
             return false;
         }
 
-        $requestProductItem = new RequestProductItem();
         $requestProduct = new RequestProduct();
 
         $this->fillEntityData($requestProduct, $itemData);
 
-        $requestProduct
-            ->setProduct($product)
-            ->addRequestProductItem($requestProductItem);
+        $requestProduct->setProduct($product);
 
-        if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
+        $requestProductItem = new RequestProductItem();
+        if (\array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
             $requestProductItem->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
         }
+        $requestProduct->addRequestProductItem($requestProductItem);
 
         $this->fillEntityData($requestProductItem, $itemData);
 
@@ -224,7 +221,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getExtendedTypes(): iterable
     {

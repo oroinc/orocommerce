@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -51,6 +53,9 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 
     /** @var TranslatorInterface */
     protected $translator;
+
+    /** @var ProductMapperInterface */
+    protected $productMapper;
 
     public function __construct(
         UrlGeneratorInterface $router,
@@ -146,6 +151,14 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     }
 
     /**
+     * @param ProductMapperInterface $productMapper
+     */
+    public function setProductMapper($productMapper)
+    {
+        $this->productMapper = $productMapper;
+    }
+
+    /**
      * @return bool
      */
     public function isValidationRequired()
@@ -160,9 +173,9 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     {
         $inputProductSkus = $this->getProductSkus($data);
         $data = $this->filterData($data);
-        $filteredProductSkus = $this->getProductSkus($data);
-        $this->checkNotAllowedProducts($inputProductSkus, $filteredProductSkus);
-        $allowRedirect = !empty($filteredProductSkus);
+        $allowedProductSkus = $this->getProductSkus($data);
+        $this->checkNotAllowedProducts($inputProductSkus, $allowedProductSkus);
+        $allowRedirect = !empty($allowedProductSkus);
 
         $this->storage->set($data);
 
@@ -200,12 +213,12 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
      */
     protected function getProductSkus(array $data)
     {
-        return array_map(
-            function ($entityItem) {
-                return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
-            },
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
-        );
+        $skus = [];
+        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $item) {
+            $skus[] = $item[ProductDataStorage::PRODUCT_SKU_KEY];
+        }
+
+        return array_values(array_unique($skus));
     }
 
     protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
@@ -234,7 +247,25 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
      */
     protected function filterData(array $data)
     {
-        if ($this->componentProcessorFilter) {
+        if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])) {
+            return $data;
+        }
+
+        if ($this->productMapper) {
+            $items = new ArrayCollection();
+            foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataItem) {
+                $items->add(new \ArrayObject($dataItem));
+            }
+
+            $this->productMapper->mapProducts($items);
+
+            $updatedData = [];
+            /** @var \ArrayObject $item */
+            foreach ($items as $item) {
+                $updatedData[] = $item->getArrayCopy();
+            }
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = $updatedData;
+        } elseif ($this->componentProcessorFilter) {
             $filterParameters = [];
             if ($this->scope) {
                 $filterParameters['scope'] = $this->scope;

@@ -119,23 +119,28 @@ define(function(require) {
             const resultMapping = this.resultsMapping[item];
 
             this.resetProduct();
-            this.validateProduct(resultMapping.sku);
+            this.validateProduct(this.getProductDisplayName(resultMapping));
 
-            return [resultMapping.sku, resultMapping['defaultName.string']].join(' - ');
+            return this.getProductDisplayName(resultMapping);
         },
 
         validateProduct: function(val) {
-            val = val.split(' ')[0];
+            const [sku, name] = this.parseVal(val);
 
+            this.sendValidateProductRequest({
+                name: 'oro_product_visibility_limited_with_prices',
+                per_page: 1,
+                sku: [sku],
+                productName: name,
+                query: val
+            });
+        },
+
+        sendValidateProductRequest: function(data) {
             $.ajax({
                 url: routing.generate(this.options.productBySkuRoute),
                 method: 'post',
-                data: {
-                    name: 'oro_product_visibility_limited_with_prices',
-                    per_page: 1,
-                    sku: [val],
-                    query: val
-                },
+                data: data,
                 success: response => {
                     if (this.disposed) {
                         return;
@@ -146,7 +151,7 @@ define(function(require) {
                     if (this.disposed) {
                         return;
                     }
-                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: val}});
+                    this.$el.trigger({type: 'productNotFound.autocomplete', item: {sku: data.sku[0]}});
                     this.resetProduct();
                 }
             });
@@ -160,14 +165,11 @@ define(function(require) {
                 this.previousValue = val;
                 this.resetProduct();
 
-                const needleSku = val.split(' ')[0].toUpperCase();
-                const item = _.find(response.results, function(resultItem) {
-                    return resultItem.sku.toUpperCase() === needleSku;
-                });
+                const item = this.findItem(response.results, val);
                 if (item) {
                     this.product.sku = item.sku;
                     this.product.name = item['defaultName.string'];
-                    this.product.displayName = [this.product.sku, this.product.name].join(' - ');
+                    this.product.displayName = this.getProductDisplayName(item);
                     this.$el.trigger({type: 'productFound.autocomplete', item});
                     this.previousValue = this.product.displayName;
                 } else {
@@ -179,6 +181,44 @@ define(function(require) {
                 this.previousValue = val;
                 this.resetProduct();
             }
+        },
+
+        findItem: function(items, val) {
+            const [sku, name] = this.parseVal(val);
+            let item = null;
+
+            if (name) {
+                item = _.find(items, function(resultItem) {
+                    return resultItem.sku.toUpperCase() === sku.toUpperCase() &&
+                        resultItem['defaultName.string'] === name;
+                });
+            }
+            if (!item) {
+                item = _.find(items, function(resultItem) {
+                    return resultItem.sku.toUpperCase() === sku.toUpperCase();
+                });
+            }
+
+            return item;
+        },
+
+        getProductDisplayName: function(item) {
+            return [item.sku, item['defaultName.string']].join(' - ');
+        },
+
+        parseVal: function(val) {
+            const namePos = val.indexOf(' ');
+            if (namePos === -1) {
+                return [val, null];
+            }
+
+            const sku = val.substring(val, namePos);
+            let name = val.substring(namePos + 1).trim();
+            if (name && name.indexOf('-') === 0) {
+                name = name.substring(1).trim();
+            }
+
+            return [sku, name];
         },
 
         resetProduct: function() {

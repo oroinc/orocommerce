@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ComponentProcessor;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,6 +28,9 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
 
     /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
     private $storage;
+
+    /** @var ProductMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productMapper;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
@@ -49,6 +54,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->router = $this->createMock(UrlGeneratorInterface::class);
         $this->storage = $this->createMock(ProductDataStorage::class);
+        $this->productMapper = $this->createMock(ProductMapperInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->componentProcessorFilter = $this->createMock(ComponentProcessorFilterInterface::class);
@@ -64,89 +70,66 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
             $this->translator
         );
         $this->processor->setComponentProcessorFilter($this->componentProcessorFilter);
+        $this->processor->setProductMapper($this->productMapper);
     }
 
     public function testProcessWithoutRedirectRoute()
     {
-        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
-        $this->componentProcessorFilter->expects($this->any())
-            ->method('filterData')
-            ->willReturnArgument(0);
+        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
+        $allowedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01', 'productId' => 1]]];
 
-        $this->router->expects($this->never())
-            ->method($this->anything());
+        $this->expectsFilterData($allowedData);
 
-        $this->storage->expects($this->once())
+        $this->router->expects(self::never())
+            ->method(self::anything());
+
+        $this->storage->expects(self::once())
             ->method('set')
-            ->with($data);
+            ->with($allowedData);
 
-        $this->assertNull($this->processor->process($data, new Request()));
+        self::assertNull($this->processor->process($data, new Request()));
     }
 
-    public function testProcessWithRedirectRoute()
+    public function testProcessWithRedirectRoute(): void
     {
-        $this->componentProcessorFilter->expects($this->any())
-            ->method('filterData')
-            ->willReturnArgument(0);
-        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
-        $redirectRouteName = 'redirect_route';
+        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
+        $allowedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01', 'productId' => 1]]];
+
+        $this->expectsFilterData($allowedData);
+
+        $this->storage->expects(self::once())
+            ->method('set')
+            ->with($allowedData);
+
         $redirectUrl = '/redirect/url';
-        $expectedResponseContent = (new RedirectResponse($redirectUrl))->getContent();
+        $this->expectsGenerateRedirectUrl('route', $redirectUrl);
 
-        $this->router->expects($this->once())
-            ->method('generate')
-            ->with(
-                $redirectRouteName,
-                [ProductDataStorage::STORAGE_KEY => true],
-                UrlGeneratorInterface::ABSOLUTE_PATH
-            )
-            ->willReturn($redirectUrl);
+        $response = $this->processor->process($data, new Request());
 
-        $this->storage->expects($this->once())
-            ->method('set')
-            ->with($data);
-
-        $this->processor->setRedirectRouteName($redirectRouteName);
-
-        $this->assertEquals(
-            $expectedResponseContent,
-            $this->processor->process($data, new Request())->getContent()
-        );
-    }
-
-    public function testProcessorName()
-    {
-        $name = 'test_name';
-
-        $this->assertNull($this->processor->getName());
-
-        $this->processor->setName($name);
-
-        $this->assertEquals($name, $this->processor->getName());
+        self::assertInstanceOf(RedirectResponse::class, $response);
+        self::assertEquals($redirectUrl, $response->getTargetUrl());
     }
 
     /**
-     * @dataProvider processorIsAllowedProvider
+     * @dataProvider isAllowedDataProvider
      */
-    public function testProcessorIsAllowed(?string $acl, bool $isGranted, bool $hasLoggedUser, bool $expected)
+    public function testIsAllowed(string $acl, bool $isGranted, bool $hasLoggedUser, bool $expected): void
     {
-        if (null !== $acl) {
-            $this->tokenAccessor->expects($this->any())
-                ->method('hasUser')
-                ->willReturn($hasLoggedUser);
-            $this->authorizationChecker->expects($this->any())
-                ->method('isGranted')
-                ->with($acl)->willReturn($isGranted);
-        }
+        $this->tokenAccessor->expects(self::any())
+            ->method('hasUser')
+            ->willReturn($hasLoggedUser);
+        $this->authorizationChecker->expects(self::any())
+            ->method('isGranted')
+            ->with($acl)
+            ->willReturn($isGranted);
 
         $this->processor->setAcl($acl);
-        $this->assertEquals($expected, $this->processor->isAllowed());
+        self::assertSame($expected, $this->processor->isAllowed());
     }
 
-    public function processorIsAllowedProvider(): array
+    public function isAllowedDataProvider(): array
     {
         return [
-            [null, true, false, true],
             ['fail', false, false, false],
             ['fail', true, false, false],
             ['fail', false, true, false],
@@ -154,270 +137,252 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testValidationRequired()
+    public function testIsAllowedWhenAclIsNotSet(): void
     {
-        $this->assertTrue($this->processor->isValidationRequired());
+        $this->tokenAccessor->expects(self::never())
+            ->method('hasUser');
+        $this->authorizationChecker->expects(self::never())
+            ->method('isGranted');
 
-        $this->processor->setValidationRequired(false);
-
-        $this->assertFalse($this->processor->isValidationRequired());
+        self::assertTrue($this->processor->isAllowed());
     }
 
     /**
-     * @dataProvider processorWithScopeDataProvider
+     * @dataProvider processDataProvider
      */
-    public function testProcessorWithScope(
-        string $scope,
+    public function testProcess(
         array $data,
         array $allowedData,
         string $errorMessageSkus,
-        bool $isRedirectRoute = false
-    ) {
-        $this->setupProcessorScope($scope, $data, $allowedData);
+        bool $hasRedirectRoute = false
+    ): void {
+        $this->expectsFilterData($allowedData);
 
-        $this->setupErrorMessages($errorMessageSkus);
+        $this->storage->expects(self::once())
+            ->method('set')
+            ->with($allowedData);
 
-        if ($isRedirectRoute) {
-            $this->assertProcessorReturnRedirectResponse($data);
+        $this->expectsAddFlashMessage($errorMessageSkus);
+
+        if ($hasRedirectRoute) {
+            $redirectUrl = 'url';
+            $this->expectsGenerateRedirectUrl('route', $redirectUrl);
+
+            $response = $this->processor->process($data, new Request());
+
+            self::assertInstanceOf(RedirectResponse::class, $response);
+            self::assertEquals($redirectUrl, $response->getTargetUrl());
         } else {
-            $this->assertNull($this->processor->process($data, new Request()));
+            self::assertNull($this->processor->process($data, new Request()));
         }
     }
 
-    public function processorWithScopeDataProvider(): array
+    public function processDataProvider(): array
     {
         return [
             'restricted several with redirect' => [
-                'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item'],
+                        ['productSku' => 'sku02', 'productUnit' => 'item'],
+                        ['productSku' => 'sku02', 'productUnit' => 'set'],
+                        ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
                     ],
                 ],
                 'errorMessageSkus' => 'sku02, sku03',
-                'isRedirectRoute' => true,
+                'hasRedirectRoute' => true
             ],
             'restricted one with redirect' => [
-                'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item'],
+                        ['productSku' => 'sku01', 'productUnit' => 'set'],
+                        ['productSku' => 'sku02', 'productUnit' => 'item'],
+                        ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
+                        ['productSku' => 'sku01', 'productUnit' => 'set', 'productId' => 1],
+                        ['productSku' => 'sku02', 'productUnit' => 'item', 'productId' => 2],
                     ],
                 ],
                 'errorMessageSkus' => 'sku03',
-                'isRedirectRoute' => true,
+                'hasRedirectRoute' => true
             ],
             'restricted several without redirect' => [
-                'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item'],
+                        ['productSku' => 'sku02', 'productUnit' => 'item'],
+                        ['productSku' => 'sku02', 'productUnit' => 'set'],
+                        ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
                     ],
                 ],
                 'errorMessageSkus' => 'sku02, sku03',
+                'hasRedirectRoute' => false
             ],
             'restricted one without redirect' => [
-                'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item'],
+                        ['productSku' => 'sku01', 'productUnit' => 'set'],
+                        ['productSku' => 'sku02', 'productUnit' => 'item'],
+                        ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
+                        ['productSku' => 'sku01', 'productUnit' => 'set', 'productId' => 1],
+                        ['productSku' => 'sku02', 'productUnit' => 'item', 'productId' => 2],
                     ],
                 ],
                 'errorMessageSkus' => 'sku03',
+                'hasRedirectRoute' => false
             ],
         ];
     }
 
     /**
-     * @dataProvider processorWithScopeAllRestricted
+     * @dataProvider hasRedirectRouteDataProvider
      */
-    public function testProcessorWithScopeAllRestricted(
-        string $scope,
-        array $data,
-        string $errorMessageSkus,
-        bool $isRedirectRoute = false
-    ) {
-        $filteredData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []];
+    public function testProcessAllRestricted(bool $hasRedirectRoute): void
+    {
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku01', 'productUnit' => 'item'],
+                ['productSku' => 'sku02', 'productUnit' => 'item'],
+                ['productSku' => 'sku03', 'productUnit' => 'item'],
+                ['productSku' => 'sku03', 'productUnit' => 'set'],
+            ]
+        ];
+        $allowedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []];
+        $errorMessageSkus = 'sku01, sku02, sku03';
 
-        $this->componentProcessorFilter->expects($this->any())
-            ->method('filterData')
-            ->willReturn($filteredData);
+        $this->expectsFilterData($allowedData);
 
-        $this->setupProcessorScope($scope, $data, $filteredData);
+        $this->storage->expects(self::once())
+            ->method('set')
+            ->with($allowedData);
 
-        $this->setupErrorMessages($errorMessageSkus);
+        $this->expectsAddFlashMessage($errorMessageSkus);
 
-        if ($isRedirectRoute) {
+        if ($hasRedirectRoute) {
             $this->processor->setRedirectRouteName('route');
         }
         $this->router->expects($this->never())
             ->method('generate');
 
-        $this->assertNull($this->processor->process($data, new Request()));
-    }
-
-    public function processorWithScopeAllRestricted(): array
-    {
-        return [
-            'with redirect route' => [
-                'scope' => 'test',
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
-                        ['productSku' => 'sku03'],
-                    ],
-                ],
-                'errorMessageSkus' => 'sku01, sku02, sku03',
-                'isRedirectRoute' => true,
-            ],
-            'without redirect route' => [
-                'scope' => 'test',
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
-                        ['productSku' => 'sku03'],
-                    ],
-                ],
-                'errorMessageSkus' => 'sku01, sku02, sku03',
-            ],
-        ];
+        self::assertNull($this->processor->process($data, new Request()));
     }
 
     /**
-     * @dataProvider processorWithScopeAllAllowedDataProvider
+     * @dataProvider hasRedirectRouteDataProvider
      */
-    public function testProcessorWithScopeAllAllowed(string $scope, array $data, bool $isRedirectRoute = false)
+    public function testProcessAllAllowed(bool $hasRedirectRoute): void
     {
-        $this->setupProcessorScope($scope, $data, $data);
-
-        $this->translator->expects($this->never())
-            ->method('trans');
-
-        $this->session->expects($this->never())
-            ->method('getFlashBag');
-
-        if ($isRedirectRoute) {
-            $this->assertProcessorReturnRedirectResponse($data);
-        } else {
-            $this->assertNull($this->processor->process($data, new Request()));
-        }
-    }
-
-    public function processorWithScopeAllAllowedDataProvider(): array
-    {
-        return [
-            'with redirect route' => [
-                'scope' => 'test',
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
-                    ],
-                ],
-                'isRedirectRoute' => true,
-            ],
-            'without redirect route' => [
-                'scope' => 'test',
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku01'],
-                        ['productSku' => 'sku02'],
-                        ['productSku' => 'sku03'],
-                    ],
-                ],
-            ],
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku01', 'productUnit' => 'item'],
+                ['productSku' => 'sku02', 'productUnit' => 'item'],
+                ['productSku' => 'sku02', 'productUnit' => 'set'],
+                ['productSku' => 'sku03', 'productUnit' => 'item'],
+            ]
         ];
-    }
+        $allowedData = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
+                ['productSku' => 'sku02', 'productUnit' => 'item', 'productId' => 2],
+                ['productSku' => 'sku02', 'productUnit' => 'set', 'productId' => 2],
+                ['productSku' => 'sku03', 'productUnit' => 'item', 'productId' => 3],
+            ]
+        ];
 
-    private function setupProcessorScope(string $scope, array $data, array $allowedData): void
-    {
-        $this->componentProcessorFilter->expects($this->once())
-            ->method('filterData')
-            ->with($data, ['scope' => $scope])
-            ->willReturn($allowedData);
+        $this->expectsFilterData($allowedData);
 
-        $this->storage->expects($this->once())
+        $this->storage->expects(self::once())
             ->method('set')
             ->with($allowedData);
 
-        $this->processor->setScope($scope);
+        $this->translator->expects(self::never())
+            ->method('trans');
+
+        $this->session->expects(self::never())
+            ->method('getFlashBag');
+
+        if ($hasRedirectRoute) {
+            $redirectUrl = 'url';
+            $this->expectsGenerateRedirectUrl('route', $redirectUrl);
+
+            $response = $this->processor->process($data, new Request());
+
+            self::assertInstanceOf(RedirectResponse::class, $response);
+            self::assertEquals($redirectUrl, $response->getTargetUrl());
+        } else {
+            self::assertNull($this->processor->process($data, new Request()));
+        }
     }
 
-    private function setupErrorMessages(string $errorMessageSkus): void
+    public function hasRedirectRouteDataProvider(): array
     {
-        $this->translator->expects($this->any())
+        return [[true], [false]];
+    }
+
+    private function expectsFilterData(array $allowedData): void
+    {
+        $this->productMapper->expects(self::once())
+            ->method('mapProducts')
+            ->willReturnCallback(function (ArrayCollection $collection) use ($allowedData) {
+                $collection->clear();
+                foreach ($allowedData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataItem) {
+                    $collection->add(new \ArrayObject($dataItem));
+                }
+            });
+    }
+
+    private function expectsAddFlashMessage(string $errorMessageSkus): void
+    {
+        $translatedMessage = 'translated not_added_products message';
+        $this->translator->expects(self::any())
             ->method('trans')
             ->with(
                 'oro.product.frontend.quick_add.messages.not_added_products',
                 ['%count%' => count(explode(', ', $errorMessageSkus)), '%sku%' => $errorMessageSkus]
-            );
+            )
+            ->willReturn($translatedMessage);
 
         $flashBag = $this->createMock(FlashBagInterface::class);
-        $flashBag->expects($this->once())
-            ->method('add')
-            ->with('warning');
-
-        $this->session->expects($this->once())
+        $this->session->expects(self::once())
             ->method('getFlashBag')
             ->willReturn($flashBag);
+        $flashBag->expects(self::once())
+            ->method('add')
+            ->with('warning', $translatedMessage);
     }
 
-    private function assertProcessorReturnRedirectResponse(array $data): void
+    private function expectsGenerateRedirectUrl(string $redirectRouteName, string $redirectUrl): void
     {
-        $redirectRoute = 'route';
-        $targetUrl = 'url';
+        $this->processor->setRedirectRouteName($redirectRouteName);
 
-        $this->processor->setRedirectRouteName($redirectRoute);
-
-        $this->router->expects($this->once())
+        $this->router->expects(self::once())
             ->method('generate')
-            ->with($redirectRoute, [ProductDataStorage::STORAGE_KEY => true])
-            ->willReturn($targetUrl);
-
-        $response = $this->processor->process($data, new Request());
-
-        $this->assertNotNull($response);
-        $this->assertEquals($targetUrl, $response->getTargetUrl());
+            ->with(
+                $redirectRouteName,
+                [ProductDataStorage::STORAGE_KEY => true],
+                UrlGeneratorInterface::ABSOLUTE_PATH
+            )
+            ->willReturn($redirectUrl);
     }
 }

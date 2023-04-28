@@ -14,6 +14,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles logic related to quick order process for RFQ and save the handling result into {@see ProductDataStorage}.
+ */
 class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 {
     /** @var RequestDataStorageExtension */
@@ -22,9 +25,6 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
     /** @var FeatureChecker */
     protected $featureChecker;
 
-    /**
-     * Processor constructor.
-     */
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
@@ -46,20 +46,26 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
      */
     public function process(array $data, Request $request)
     {
-        $isAllowedRFP = $this->requestDataStorageExtension
-            ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
-        ;
+        $initialStoredData = $this->storage->get();
+        $result = parent::process($data, $request);
 
-        if (!$isAllowedRFP) {
+        $productIds = [];
+        $storedData = $this->storage->get();
+        foreach ($storedData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $item) {
+            $productIds[] = $item[ProductDataStorage::PRODUCT_ID_KEY];
+        }
+
+        $hasProductsAllowedForRFP = $this->requestDataStorageExtension->isAllowedRFPByProductsIds($productIds);
+        if (!$hasProductsAllowedForRFP) {
+            $this->storage->set($initialStoredData);
             $this->session->getFlashBag()->add(
                 'warning',
                 $this->translator->trans('oro.frontend.rfp.data_storage.no_products_be_added_to_rfq')
             );
-
-            return null;
+            $result = null;
         }
 
-        return parent::process($data, $request);
+        return $result;
     }
 
     /**
