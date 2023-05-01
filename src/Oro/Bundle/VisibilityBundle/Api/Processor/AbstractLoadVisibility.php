@@ -6,7 +6,7 @@ use Doctrine\ORM\Query;
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper;
+use Oro\Bundle\VisibilityBundle\Api\VisibilityIdUtil;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\ChainProcessor\ContextInterface;
@@ -23,22 +23,19 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
     private DoctrineHelper $doctrineHelper;
     private AclHelper $aclHelper;
     private WebsiteManager $websiteManager;
-    private VisibilityIdHelper $visibilityIdHelper;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AclHelper $aclHelper,
-        WebsiteManager $websiteManager,
-        VisibilityIdHelper $visibilityIdHelper
+        WebsiteManager $websiteManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->aclHelper = $aclHelper;
         $this->websiteManager = $websiteManager;
-        $this->visibilityIdHelper = $visibilityIdHelper;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(ContextInterface $context): void
     {
@@ -50,7 +47,7 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
         }
 
         $visibility = null;
-        $visibilityId = $this->visibilityIdHelper->decodeVisibilityId(
+        $visibilityId = VisibilityIdUtil::decodeVisibilityId(
             $context->getId(),
             $context->getConfig()->getField('id')
         );
@@ -100,7 +97,7 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
      */
     protected function getId(array $visibilityId, string $propertyPath): int
     {
-        return $this->visibilityIdHelper->getId($visibilityId, $propertyPath);
+        return VisibilityIdUtil::getId($visibilityId, $propertyPath);
     }
 
     /**

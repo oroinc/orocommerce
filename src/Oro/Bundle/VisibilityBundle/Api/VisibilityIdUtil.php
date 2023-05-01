@@ -5,9 +5,9 @@ namespace Oro\Bundle\VisibilityBundle\Api;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
 
 /**
- * Provides a set methods to work with composite identifiers used in API for visibility entities.
+ * Provides a set static methods to work with composite identifiers used in API for visibility entities.
  */
-class VisibilityIdHelper
+class VisibilityIdUtil
 {
     private const DELIMITER = '-';
 
@@ -22,7 +22,7 @@ class VisibilityIdHelper
      *
      * @throws \InvalidArgumentException if an entity identifier is not valid
      */
-    public function getId(array $visibilityId, string $propertyPath): int
+    public static function getId(array $visibilityId, string $propertyPath): int
     {
         if (!isset($visibilityId[$propertyPath])) {
             throw new \InvalidArgumentException(sprintf(
@@ -44,7 +44,7 @@ class VisibilityIdHelper
      *
      * @throws \InvalidArgumentException if the given visibility identifier is not valid
      */
-    public function encodeVisibilityId(
+    public static function encodeVisibilityId(
         array $visibilityId,
         EntityDefinitionFieldConfig $idFieldConfig
     ): string {
@@ -85,7 +85,7 @@ class VisibilityIdHelper
      * @return array|null [property path => value, ...]
      *                    NULL is returned when the given ID cannot be decoded
      */
-    public function decodeVisibilityId(
+    public static function decodeVisibilityId(
         string $encodedVisibilityId,
         EntityDefinitionFieldConfig $idFieldConfig
     ): ?array {
