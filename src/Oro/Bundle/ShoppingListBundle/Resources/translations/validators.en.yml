@@ -31,6 +31,8 @@ oro:
                 inventory_status:
                     in_stock:
                         message: "This product is not in stock."
+                has_price:
+                    message: "This product has no price value."
             line_item:
                 kit_item_line_items:
                     count:

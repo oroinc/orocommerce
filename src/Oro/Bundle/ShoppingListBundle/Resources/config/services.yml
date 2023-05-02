@@ -823,3 +823,10 @@ services:
         shared: false
         tags:
             - { name: oro_datagrid.extension.action.type, type: update-product-kit-line-item }
+
+    oro_shopping_list.validator.product_kit_item_product_has_price:
+        class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPriceValidator
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices'
+        tags:
+            - { name: validator.constraint_validator }

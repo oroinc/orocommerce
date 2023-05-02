@@ -28,10 +28,13 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
                 groups: [product_kit_item_is_available_for_purchase]
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    constraints:
+        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice:
+            groups: [product_kit_item_product_is_available_for_purchase]
     properties:
         product:
             - Valid:
-                  groups: [product_kit_item_product_is_available_for_purchase]
+                groups: [product_kit_item_product_is_available_for_purchase]
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
