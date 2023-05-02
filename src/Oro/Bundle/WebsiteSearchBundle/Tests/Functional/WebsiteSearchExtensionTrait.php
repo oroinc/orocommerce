@@ -8,12 +8,9 @@ use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
-use Psr\Container\ContainerInterface;
 
 /**
- * Please use this trait if you need reindex actions in your tests.
- *
- * @method static ContainerInterface getContainer()
+ * Use this trait if you need reindex actions in your functional tests.
  */
 trait WebsiteSearchExtensionTrait
 {
@@ -74,7 +71,7 @@ trait WebsiteSearchExtensionTrait
 
     /**
      * @param string[]|string|null $class
-     * @param array $context
+     * @param array                $context
      */
     protected static function resetIndex(array|string|null $class = null, array $context = []): void
     {
@@ -83,7 +80,7 @@ trait WebsiteSearchExtensionTrait
 
     /**
      * @param string[]|string|null $class
-     * @param array $context
+     * @param array                $context
      */
     protected static function reindex(array|string|null $class = null, array $context = []): void
     {

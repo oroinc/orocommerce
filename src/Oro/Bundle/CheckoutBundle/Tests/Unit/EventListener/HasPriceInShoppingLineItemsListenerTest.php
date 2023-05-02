@@ -12,6 +12,7 @@ use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -50,16 +51,19 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
      */
     private $listener;
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $this->listener = new HasPriceInShoppingLineItemsListener(
             $this->productPriceProvider,
-            $this->userCurrencyManager,
-            $this->scopeCriteriaRequestHandler
+            $this->scopeCriteriaRequestHandler,
+            $this->productPriceCriteriaFactory
         );
     }
 
@@ -136,18 +140,40 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
             'lineItems' => $lineItems,
         ]);
 
-        $context = new ActionData(['checkout' => $checkout]);
+        $context = $this->createMock(ActionData::class);
 
-        $this->userCurrencyManager
-            ->expects($this->exactly(2))
-            ->method('getUserCurrency')
-            ->willReturn(self::CURRENCY);
+        $context->method('get')->with('checkout')->willReturn($checkout);
 
-        $criteria = new ProductPriceScopeCriteria();
+        $criteria =  $this->createMock(ProductPriceScopeCriteria::class);
+
         $this->scopeCriteriaRequestHandler
             ->expects($this->once())
             ->method('getPriceScopeCriteria')
             ->willReturn($criteria);
+
+        $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
+
+        $this->productPriceCriteriaFactory->method('createListFromProductLineItems')->willReturn([
+            $productPriceCriteria,
+            $productPriceCriteria
+        ]);
+
+        $productPriceCriteria->method('getProduct')->willReturnOnConsecutiveCalls(
+            $lineItems[0]->getProduct(),
+            $lineItems[1]->getProduct()
+        );
+
+        $productPriceCriteria->method('getQuantity')->willReturnOnConsecutiveCalls(
+            $lineItems[0]->getQuantity(),
+            $lineItems[1]->getQuantity()
+        );
+
+        $productPriceCriteria->method('getProductUnit')->willReturnOnConsecutiveCalls(
+            $lineItems[0]->getProductUnit(),
+            $lineItems[1]->getProductUnit()
+        );
+
+        $productPriceCriteria->method('getCurrency')->willReturn(self::CURRENCY);
 
         $this->productPriceProvider
             ->expects($this->once())

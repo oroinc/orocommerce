@@ -1,0 +1,24 @@
+{% block product_prices_widget %}
+    {% do block|merge_context({
+        productPrices: productPrices,
+        product: product,
+        isPriceUnitsVisible: isPriceUnitsVisible
+    }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price__container'
+    }) %}
+
+    {% set isRenderable = (
+        applicableForConfiguredProduct or
+        (
+            not is_configurable_product_type(product.type) and
+            not is_kit_product_type(product.type)
+        )
+    ) %}
+
+    {% if isRenderable %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}

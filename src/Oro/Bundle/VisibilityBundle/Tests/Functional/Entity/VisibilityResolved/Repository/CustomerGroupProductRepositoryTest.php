@@ -15,7 +15,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVis
 
 class CustomerGroupProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
 {
-    public function testInsertUpdateDeleteAndHasEntity()
+    public function testInsertUpdateDeleteAndHasEntity(): void
     {
         $repository = $this->getRepository();
 
@@ -67,7 +67,7 @@ class CustomerGroupProductRepositoryTest extends VisibilityResolvedRepositoryTes
         ];
     }
 
-    public function testInsertByProduct()
+    public function testInsertByProduct(): void
     {
         $repository = $this->getRepository();
         /** @var Product $product */

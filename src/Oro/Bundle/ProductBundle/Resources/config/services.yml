@@ -242,6 +242,20 @@ services:
             - !abstract '$processorNames defined in Oro\Bundle\ProductBundle\OroProductBundle'
             - !abstract '$processorContainer defined in Oro\Bundle\ProductBundle\OroProductBundle'
 
+    oro_product.component_processor.quick_add_product_mapper:
+        class: 'Oro\Bundle\ProductBundle\Model\Mapping\ProductMapper'
+        arguments:
+            - '@oro_product.component_processor.quick_add_product_mapper_data_accessor'
+            - '@oro_product.component_processor.quick_add_product_mapper_data_loader'
+
+    oro_product.component_processor.quick_add_product_mapper_data_accessor:
+        class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataAccessor'
+
+    oro_product.component_processor.quick_add_product_mapper_data_loader:
+        class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataLoader'
+        arguments:
+            - '@oro_product.website_search.repository.product'
+
     oro_product.event_listener.related_items_product_edit_listener:
         class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
         arguments:
@@ -518,8 +532,8 @@ services:
     oro_product.autocomplete.oro_product_visibility_limited_with_prices.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler'
         arguments:
-            - '@oro_pricing.form.autocomplete.product_with_prices.search_handler'
             - '@oro_product.autocomplete.product_visibility_limited.search_handler'
+            - '@oro_pricing.provider.formatted_product_price'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited_with_prices }
 
@@ -614,12 +628,16 @@ services:
             - '@oro_locale.formatter.number'
 
     oro_product.model.builder.quick_add_row_product_mapper:
-        class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowProductMapper'
+        class: 'Oro\Bundle\ProductBundle\Model\Mapping\ProductMapper'
         arguments:
-            - '@oro_product.model.builder.quick_add_row_product_loader'
+            - '@oro_product.model.builder.quick_add_row_product_mapper_data_accessor'
+            - '@oro_product.model.builder.quick_add_row_product_mapper_data_loader'
 
-    oro_product.model.builder.quick_add_row_product_loader:
-        class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowProductLoader'
+    oro_product.model.builder.quick_add_row_product_mapper_data_accessor:
+        class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowDataAccessor'
+
+    oro_product.model.builder.quick_add_row_product_mapper_data_loader:
+        class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowDataLoader'
         arguments:
             - '@doctrine'
             - '@oro_product.product.manager'

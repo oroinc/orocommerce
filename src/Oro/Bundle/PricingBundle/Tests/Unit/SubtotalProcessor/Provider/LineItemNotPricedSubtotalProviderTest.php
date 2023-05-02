@@ -4,12 +4,16 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
-use Oro\Bundle\PricingBundle\Provider\ProductLineItemsHolderCurrencyProvider;
-use Oro\Bundle\PricingBundle\Provider\ProductLineItemsHolderPricesProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPricedStub;
@@ -32,22 +36,29 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
 
     private LineItemNotPricedSubtotalProvider $provider;
 
-    private ProductLineItemsHolderPricesProvider|MockObject $productLineItemsHolderPricesProvider;
+    private ProductPriceProviderInterface|MockObject $productPriceProvider;
+
+    private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
+
+    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
 
     protected function setUp(): void
     {
+        $currencyManager = $this->createMock(UserCurrencyManager::class);
+        $websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
         $translator = $this->createMock(TranslatorInterface::class);
         $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $productLineItemsHolderCurrencyProvider = $this->createMock(
-            ProductLineItemsHolderCurrencyProvider::class
-        );
-        $this->productLineItemsHolderPricesProvider = $this->createMock(ProductLineItemsHolderPricesProvider::class);
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
+        $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
 
         $this->provider = new LineItemNotPricedSubtotalProvider(
             $translator,
             $roundingService,
-            $productLineItemsHolderCurrencyProvider,
-            $this->productLineItemsHolderPricesProvider
+            $this->productPriceProvider,
+            new SubtotalProviderConstructorArguments($currencyManager, $websiteCurrencyProvider),
+            $this->priceScopeCriteriaFactory,
+            $this->productPriceCriteriaFactory
         );
 
         $translator
@@ -59,8 +70,9 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
             ->method('round')
             ->willReturnCallback(static fn ($value) => round($value, 2));
 
-        $productLineItemsHolderCurrencyProvider
-            ->method('getCurrencyForLineItemsHolder')
+        $websiteCurrencyProvider
+            ->method('getWebsiteDefaultCurrency')
+            ->with(self::WEBSITE_ID)
             ->willReturn(self::CURRENCY_USD);
     }
 
@@ -80,20 +92,41 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
 
         $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
 
-        $this->productLineItemsHolderPricesProvider
-            ->expects(self::once())
-            ->method('getMatchedPricesForLineItemsHolder')
-            ->with($entity)
-            ->willReturn(
-                [
-                    $prices,
-                    [
-                        spl_object_hash($lineItem1) => $this->createProductPriceCriteria($lineItem1),
-                        spl_object_hash($lineItem2) => $this->createProductPriceCriteria($lineItem2),
-                    ],
-                    $searchScope,
-                ]
+        $productPriceCriterias = [];
+
+        $lineItems = [
+            '1-kg-3-USD' => $lineItem1,
+            '2-item-7-USD' => $lineItem2
+        ];
+
+        foreach ($lineItems as $key => $lineItem) {
+            $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
+            $productPriceCriteria->method('getIdentifier')->willReturn($key);
+
+            $productPriceCriteria->method('getQuantity')->willReturn(
+                $lineItem->getQuantity()
             );
+
+            $productPriceCriterias[spl_object_hash($lineItem)] = $productPriceCriteria;
+        }
+
+        $this->productPriceCriteriaFactory
+            ->method('createListFromProductLineItems')
+            ->willReturn(array_values($productPriceCriterias));
+
+        $this->priceScopeCriteriaFactory->expects(self::once())
+            ->method('createByContext')
+            ->with($entity)
+            ->willReturn($searchScope);
+
+        $this->productPriceProvider
+            ->expects(self::once())
+            ->method('getMatchedPrices')
+            ->with(
+                $productPriceCriterias,
+                $searchScope
+            )
+            ->willReturn($prices);
 
         $subtotal = $this->provider->getSubtotal($entity);
 
@@ -104,8 +137,6 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertIsFloat($subtotal->getAmount());
         self::assertSame(7.25, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
-        self::assertEquals($this->createLineItemSubtotal(0.099, 0.033, 3), $subtotal->getLineItemSubtotal($lineItem1));
-        self::assertEquals($this->createLineItemSubtotal(7.147, 1.021, 7), $subtotal->getLineItemSubtotal($lineItem2));
     }
 
     public function testGetSubtotalWhenHasProductKitItemLineItems(): void
@@ -133,25 +164,45 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         $prices['10-item-2-USD'] = Price::create(10.123, self::CURRENCY_USD);
         $prices['20-item-3-USD'] = Price::create(5.345, self::CURRENCY_USD);
 
-        $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $productPriceCriterias = [];
 
-        $this->productLineItemsHolderPricesProvider
-            ->expects(self::once())
-            ->method('getMatchedPricesForLineItemsHolder')
-            ->with($entity)
-            ->willReturn(
-                [
-                    $prices,
-                    [
-                        spl_object_hash($lineItem1) => $this->createProductPriceCriteria($lineItem1),
-                        spl_object_hash($lineItem2) => $this->createProductPriceCriteria($lineItem2),
-                        spl_object_hash($productKitLineItem) => $this->createProductPriceCriteria($productKitLineItem),
-                        spl_object_hash($kitItemLineItem1) => $this->createProductPriceCriteria($kitItemLineItem1),
-                        spl_object_hash($kitItemLineItem2) => $this->createProductPriceCriteria($kitItemLineItem2),
-                    ],
-                    $searchScope,
-                ]
+        $lineItems = [
+            '1-kg-3-USD' => $lineItem1,
+            '2-item-7-USD' => $lineItem2,
+            '10-item-2-USD' => $kitItemLineItem1,
+            '20-item-3-USD' => $kitItemLineItem2,
+            '3-each-2-USD' => $productKitLineItem
+        ];
+
+        foreach ($lineItems as $key => $lineItem) {
+            $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
+            $productPriceCriteria->method('getIdentifier')->willReturn($key);
+
+            $productPriceCriteria->method('getQuantity')->willReturn(
+                $lineItem->getQuantity()
             );
+
+            $productPriceCriterias[spl_object_hash($lineItem)] = $productPriceCriteria;
+        }
+
+        $this->productPriceCriteriaFactory
+            ->method('createListFromProductLineItems')
+            ->willReturn(array_values($productPriceCriterias));
+
+        $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory->expects(self::once())
+            ->method('createByContext')
+            ->with($entity)
+            ->willReturn($searchScope);
+
+        $this->productPriceProvider
+            ->expects(self::once())
+            ->method('getMatchedPrices')
+            ->with(
+                $productPriceCriterias,
+                $searchScope
+            )
+            ->willReturn($prices);
 
         $subtotal = $this->provider->getSubtotal($entity);
 
@@ -160,28 +211,30 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertEquals('test', $subtotal->getLabel());
         self::assertEquals(self::CURRENCY_USD, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
-        self::assertSame(85.79, $subtotal->getAmount());
+        self::assertSame(85.81, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
-        self::assertEquals($this->createLineItemSubtotal(0.09, 0.03, 3), $subtotal->getLineItemSubtotal($lineItem1));
-        self::assertEquals($this->createLineItemSubtotal(7.14, 1.02, 7), $subtotal->getLineItemSubtotal($lineItem2));
-        self::assertEquals(
-            $this->createLineItemSubtotal(78.558, 39.279, 2)
-                ->addLineItemSubtotal($kitItemLineItem1, $this->createLineItemSubtotal(20.246, 10.123, 2))
-                ->addLineItemSubtotal($kitItemLineItem2, $this->createLineItemSubtotal(16.035, 5.345, 3)),
-            $subtotal->getLineItemSubtotal($productKitLineItem)
-        );
-    }
-
-    private function createLineItemSubtotal(?float $amount, ?float $priceValue, ?float $quantity): Subtotal
-    {
-        return (new Subtotal())
-            ->setType(LineItemNotPricedSubtotalProvider::TYPE_LINE_ITEM)
-            ->setVisible(false)
-            ->setRemovable(false)
-            ->setPrice(Price::create($priceValue, self::CURRENCY_USD))
-            ->setQuantity($quantity)
-            ->setAmount($amount)
-            ->setCurrency(self::CURRENCY_USD);
+        self::assertEquals([
+            spl_object_hash($lineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 0.03,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 0.09,
+            ],
+            spl_object_hash($lineItem2) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 1.02,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 7.14,
+            ],
+            spl_object_hash($productKitLineItem) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 39.288,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 78.576,
+            ],
+            spl_object_hash($kitItemLineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 10.123,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 20.246,
+            ],
+            spl_object_hash($kitItemLineItem2) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 5.345,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 16.035,
+            ],
+        ], $subtotal->getData());
     }
 
     public function testGetSubtotalWhenNoPriceButHasProductKitItemLineItems(): void
@@ -205,24 +258,44 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         $prices['10-item-2-USD'] = Price::create(10.123, self::CURRENCY_USD);
         $prices['20-item-3-USD'] = Price::create(5.345, self::CURRENCY_USD);
 
-        $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $productPriceCriterias = [];
 
-        $this->productLineItemsHolderPricesProvider
-            ->expects(self::once())
-            ->method('getMatchedPricesForLineItemsHolder')
-            ->with($entity)
-            ->willReturn(
-                [
-                    $prices,
-                    [
-                        spl_object_hash($lineItem1) => $this->createProductPriceCriteria($lineItem1),
-                        spl_object_hash($productKitLineItem) => $this->createProductPriceCriteria($productKitLineItem),
-                        spl_object_hash($kitItemLineItem1) => $this->createProductPriceCriteria($kitItemLineItem1),
-                        spl_object_hash($kitItemLineItem2) => $this->createProductPriceCriteria($kitItemLineItem2),
-                    ],
-                    $searchScope,
-                ]
+        $lineItems = [
+            '1-kg-3-USD' => $lineItem1,
+            '10-item-2-USD' => $kitItemLineItem1,
+            '20-item-3-USD' => $kitItemLineItem2,
+            'wrong' => $productKitLineItem
+        ];
+
+        foreach ($lineItems as $key => $lineItem) {
+            $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
+            $productPriceCriteria->method('getIdentifier')->willReturn($key);
+
+            $productPriceCriteria->method('getQuantity')->willReturn(
+                $lineItem->getQuantity()
             );
+
+            $productPriceCriterias[spl_object_hash($lineItem)] = $productPriceCriteria;
+        }
+
+        $this->productPriceCriteriaFactory
+            ->method('createListFromProductLineItems')
+            ->willReturn(array_values($productPriceCriterias));
+
+        $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory->expects(self::once())
+            ->method('createByContext')
+            ->with($entity)
+            ->willReturn($searchScope);
+
+        $this->productPriceProvider
+            ->expects(self::once())
+            ->method('getMatchedPrices')
+            ->with(
+                $productPriceCriterias,
+                $searchScope
+            )
+            ->willReturn($prices);
 
         $subtotal = $this->provider->getSubtotal($entity);
 
@@ -231,15 +304,26 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertEquals('test', $subtotal->getLabel());
         self::assertEquals(self::CURRENCY_USD, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
-        self::assertSame(72.65, $subtotal->getAmount());
+        self::assertSame(72.67, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
-        self::assertEquals($this->createLineItemSubtotal(0.09, 0.03, 3), $subtotal->getLineItemSubtotal($lineItem1));
-        self::assertEquals(
-            $this->createLineItemSubtotal(72.562, 36.281, 2)
-                ->addLineItemSubtotal($kitItemLineItem1, $this->createLineItemSubtotal(20.246, 10.123, 2))
-                ->addLineItemSubtotal($kitItemLineItem2, $this->createLineItemSubtotal(16.035, 5.345, 3)),
-            $subtotal->getLineItemSubtotal($productKitLineItem)
-        );
+        self::assertEquals([
+            spl_object_hash($lineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 0.03,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 0.09,
+            ],
+            spl_object_hash($productKitLineItem) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 36.29,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 72.58,
+            ],
+            spl_object_hash($kitItemLineItem1) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 10.123,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 20.246,
+            ],
+            spl_object_hash($kitItemLineItem2) => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 5.345,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 16.035,
+            ],
+        ], $subtotal->getData());
     }
 
     private function createProductPriceCriteria(ProductLineItemInterface $lineItem): ProductPriceCriteria
@@ -284,28 +368,16 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
     public function testGetSubtotalWithoutLineItems(): void
     {
         $entity = new EntityNotPricedStub();
-        $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-
-        $this->productLineItemsHolderPricesProvider
-            ->expects(self::once())
-            ->method('getMatchedPricesForLineItemsHolder')
-            ->with($entity)
-            ->willReturn(
-                [
-                    [],
-                    [],
-                    $searchScope,
-                ]
-            );
 
         $subtotal = $this->provider->getSubtotal($entity);
         self::assertInstanceOf(Subtotal::class, $subtotal);
         self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals('test', $subtotal->getLabel());
-        self::assertEquals(self::CURRENCY_USD, $subtotal->getCurrency());
+        self::assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
         self::assertEquals(0, $subtotal->getAmount());
         self::assertFalse($subtotal->isVisible());
+        self::assertEquals([], $subtotal->getData());
     }
 
     public function testGetSubtotalWithWrongEntity(): void

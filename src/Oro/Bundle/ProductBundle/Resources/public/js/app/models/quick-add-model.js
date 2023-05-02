@@ -51,21 +51,6 @@ const QuickAddModel = BaseModel.extend({
         return QuickAddModel.__super__.get.call(this, attr);
     },
 
-    /**
-     * Getter for `product` attribute
-     *
-     * @return {string|*}
-     */
-    get_product() {
-        const sku = this.get('sku');
-        const productName = this.get('product_name');
-        const productOrganization = this.get('organization');
-
-        return productName
-            ? `${sku}` + (productOrganization ? `, ` + productOrganization : ``) + ` - ${productName}`
-            : sku;
-    },
-
     toBackendJSON() {
         const {sku, unit, quantity, organization, index} = this.getAttributes();
         return {sku, unit, quantity, organization, index};

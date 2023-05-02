@@ -5,28 +5,20 @@ declare(strict_types=1);
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Api;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
-use Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper;
+use Oro\Bundle\VisibilityBundle\Api\VisibilityIdUtil;
 
-class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
+class VisibilityIdUtilTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var VisibilityIdHelper */
-    private $helper;
-
-    protected function setUp(): void
-    {
-        $this->helper = new VisibilityIdHelper();
-    }
-
     public function testGetIdShouldThrowInvalidArgumentException()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The "propertyPath" item does not exist in a composite visibility identifier.');
-        $this->helper->getId([], 'propertyPath');
+        VisibilityIdUtil::getId([], 'propertyPath');
     }
 
     public function testGetId()
     {
-        self::assertSame(1, $this->helper->getId(['propertyPath' => 1], 'propertyPath'));
+        self::assertSame(1, VisibilityIdUtil::getId(['propertyPath' => 1], 'propertyPath'));
     }
 
     public function testEncodeVisibilityIdShouldNotFailIfNoDependsOnFields()
@@ -36,7 +28,7 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(null);
 
-        self::assertSame('', $this->helper->encodeVisibilityId(['propertyPath' => 1], $idFieldConfig));
+        self::assertSame('', VisibilityIdUtil::encodeVisibilityId(['propertyPath' => 1], $idFieldConfig));
     }
 
     public function testEncodeVisibilityIdShouldThrowInvalidArgumentExceptionIfNoValueForVisibilityIdentifier()
@@ -49,7 +41,7 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(['propertyPath']);
 
-        self::assertSame('', $this->helper->encodeVisibilityId(['propertyPath2' => 2], $idFieldConfig));
+        self::assertSame('', VisibilityIdUtil::encodeVisibilityId(['propertyPath2' => 2], $idFieldConfig));
     }
 
     public function testEncodeVisibilityIdShouldThrowInvalidArgumentExceptionIfNullValueForVisibilityIdentifier()
@@ -62,7 +54,7 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(['propertyPath']);
 
-        self::assertSame('', $this->helper->encodeVisibilityId(['propertyPath' => null], $idFieldConfig));
+        self::assertSame('', VisibilityIdUtil::encodeVisibilityId(['propertyPath' => null], $idFieldConfig));
     }
 
     public function testEncodeVisibilityIdShouldThrowInvalidArgumentExceptionIfNotApplicableValue()
@@ -77,7 +69,7 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(['propertyPath']);
 
-        self::assertSame('', $this->helper->encodeVisibilityId(['propertyPath' => 'abc'], $idFieldConfig));
+        self::assertSame('', VisibilityIdUtil::encodeVisibilityId(['propertyPath' => 'abc'], $idFieldConfig));
     }
 
     public function testEncodeVisibilityIdShouldThrowInvalidArgumentExceptionIfNegativeValue()
@@ -92,7 +84,7 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(['propertyPath']);
 
-        self::assertSame('', $this->helper->encodeVisibilityId(['propertyPath' => -1], $idFieldConfig));
+        self::assertSame('', VisibilityIdUtil::encodeVisibilityId(['propertyPath' => -1], $idFieldConfig));
     }
 
     public function testEncodeVisibilityIdShouldSupportZeroValueAndMultiplePropertyPaths()
@@ -102,7 +94,7 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(['propertyPath', 'propertyPath2']);
 
-        self::assertSame('0-1', $this->helper->encodeVisibilityId([
+        self::assertSame('0-1', VisibilityIdUtil::encodeVisibilityId([
             'propertyPath' => 0,
             'propertyPath2' => 1,
         ], $idFieldConfig));
@@ -115,7 +107,7 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(null);
 
-        self::assertNull($this->helper->decodeVisibilityId('propertyPath', $idFieldConfig));
+        self::assertNull(VisibilityIdUtil::decodeVisibilityId('propertyPath', $idFieldConfig));
     }
 
     public function testDecodeVisibilityId()
@@ -125,6 +117,6 @@ class VisibilityIdHelperTest extends \PHPUnit\Framework\TestCase
             ->method('getDependsOn')
             ->willReturn(null);
 
-        self::assertNull($this->helper->decodeVisibilityId('propertyPath', $idFieldConfig));
+        self::assertNull(VisibilityIdUtil::decodeVisibilityId('propertyPath', $idFieldConfig));
     }
 }

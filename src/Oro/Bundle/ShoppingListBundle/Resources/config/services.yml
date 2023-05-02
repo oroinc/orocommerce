@@ -121,8 +121,7 @@ services:
         public: true
         arguments:
             - '@oro_shopping_list.handler.shopping_list_line_item'
-            - '@doctrine'
-            - '@oro_security.acl_helper'
+            - '@oro_shopping_list.quick_add_product_mapper'
             - '@oro_shopping_list.service.message_generator'
         tags:
             - { name: oro_product.quick_add_processor, processor_name: oro_shopping_list_quick_add_processor }
@@ -132,8 +131,8 @@ services:
         public: true
         arguments:
             - '@oro_shopping_list.handler.shopping_list_line_item'
+            - '@oro_shopping_list.quick_add_product_mapper'
             - '@doctrine'
-            - '@oro_security.acl_helper'
             - '@oro_shopping_list.service.message_generator'
             - '@oro_shopping_list.manager.shopping_list'
             - '@oro_shopping_list.manager.shopping_list_limit'
@@ -144,6 +143,22 @@ services:
             - 'start_quickorder_checkout'
         tags:
             - { name: oro_product.quick_add_processor, processor_name: oro_shopping_list_to_checkout_quick_add_processor }
+
+    oro_shopping_list.quick_add_product_mapper:
+        class: 'Oro\Bundle\ProductBundle\Model\Mapping\ProductMapper'
+        arguments:
+            - '@oro_shopping_list.quick_add_product_mapper_data_accessor'
+            - '@oro_shopping_list.quick_add_product_mapper_data_loader'
+
+    oro_shopping_list.quick_add_product_mapper_data_accessor:
+        alias: oro_product.component_processor.quick_add_product_mapper_data_accessor
+
+    oro_shopping_list.quick_add_product_mapper_data_loader:
+        class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddDataLoader'
+        arguments:
+            - '@doctrine'
+            - '@oro_product.product.manager'
+            - '@oro_security.acl_helper'
 
     oro_shopping_list.service.product_data_storage:
         class: 'Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage'

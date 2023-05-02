@@ -3,7 +3,6 @@
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
 use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
-use Psr\Container\ContainerInterface;
 
 /**
  * Provides methods to change the website in functional tests.
@@ -14,20 +13,15 @@ use Psr\Container\ContainerInterface;
  *    /**
  *     * @beforeResetClient
  *     *\/
- *    public static function afterFrontendTest()
+ *    public static function afterFrontendTest(): void
  *    {
- *        $this->getWebsiteManagerStub()->disableStub();
+ *        self::getWebsiteManagerStub()->disableStub();
  *    }
  * </code>
- *
- * @method static ContainerInterface getContainer()
  */
 trait WebsiteManagerTrait
 {
-    /**
-     * @param string $websiteReference
-     */
-    protected function setCurrentWebsite($websiteReference = null)
+    protected function setCurrentWebsite(?string $websiteReference = null): void
     {
         $websiteManagerStub = self::getWebsiteManagerStub();
 

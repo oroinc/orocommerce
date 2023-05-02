@@ -54,8 +54,7 @@ services:
             - '@request_stack'
             - '@oro_product.storage.product_data_storage'
             - '@form.property_accessor'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_security.acl_helper'
+            - '@doctrine'
             - '@logger'
         tags:
             - { name: form.type_extension }

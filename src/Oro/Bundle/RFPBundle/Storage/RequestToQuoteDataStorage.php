@@ -12,26 +12,25 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
  */
 class RequestToQuoteDataStorage
 {
-    /** @var ProductDataStorage */
-    protected $storage;
+    private ProductDataStorage $storage;
 
     public function __construct(ProductDataStorage $storage)
     {
         $this->storage = $storage;
     }
 
-    public function saveToStorage(RFPRequest $rfpRequest)
+    public function saveToStorage(RFPRequest $rfpRequest): void
     {
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
-                'customerUser' => $rfpRequest->getCustomerUser() ? $rfpRequest->getCustomerUser()->getId() : null,
-                'customer' => $rfpRequest->getCustomer() ? $rfpRequest->getCustomer()->getId() : null,
+                'customerUser' => $rfpRequest->getCustomerUser()?->getId(),
+                'customer' => $rfpRequest->getCustomer()?->getId(),
                 'request' => $rfpRequest->getId(),
                 'poNumber' => $rfpRequest->getPoNumber(),
                 'shipUntil' => $rfpRequest->getShipUntil(),
                 'assignedUsers' => $this->getEntitiesIds($rfpRequest->getAssignedUsers()),
                 'assignedCustomerUsers' => $this->getEntitiesIds($rfpRequest->getAssignedCustomerUsers()),
-                'website' => $rfpRequest->getWebsite() ? $rfpRequest->getWebsite()->getId() : null,
+                'website' => $rfpRequest->getWebsite()?->getId(),
             ],
         ];
 
@@ -40,6 +39,7 @@ class RequestToQuoteDataStorage
 
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY =>  $requestProduct->getProductSku(),
+                ProductDataStorage::PRODUCT_ID_KEY =>  $requestProduct->getProduct()->getId(),
                 ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
                 'commentCustomer' => $requestProduct->getComment(),
                 'requestProductItems' => $items,
@@ -49,17 +49,11 @@ class RequestToQuoteDataStorage
         $this->storage->set($data);
     }
 
-    /**
-     * @param RequestProduct $requestProduct
-     * @return array
-     */
-    private function getRequestProductItems(RequestProduct $requestProduct)
+    private function getRequestProductItems(RequestProduct $requestProduct): array
     {
         $items = [];
         foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
-            $productUnitCode = $requestProductItem->getProductUnit()
-                ? $requestProductItem->getProductUnit()->getCode()
-                : null;
+            $productUnitCode = $requestProductItem->getProductUnit()?->getCode();
 
             $items[] = [
                 'price' => $requestProductItem->getPrice(),
@@ -73,14 +67,9 @@ class RequestToQuoteDataStorage
         return $items;
     }
 
-    /**
-     * @param Collection $collection
-     * @return array
-     */
-    protected function getEntitiesIds(Collection $collection)
+    private function getEntitiesIds(Collection $collection): array
     {
         $ids = [];
-
         foreach ($collection as $item) {
             if (method_exists($item, 'getId') && $item->getId()) {
                 $ids[] = $item->getId();

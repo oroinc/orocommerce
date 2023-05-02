@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class QuickAddRowCollectionBuilderTest extends WebTestCase
 {
     private QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder;
@@ -68,6 +71,13 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
         $this->assertQuickAddRow($collection->get(3), 3, '', 1.0, 'item', null);
         $this->assertQuickAddRow($collection->get(4), 10, 'продукт-9', 3.0, 'item', null);
         $this->assertQuickAddRow($collection->get(5), 11, 'product-kit-1', 3.0, 'milliliter', null);
+    }
+
+    public function testBuildFromArrayForEmptyData(): void
+    {
+        $collection = $this->quickAddRowCollectionBuilder->buildFromArray([]);
+
+        self::assertCount(0, $collection);
     }
 
     /**
@@ -143,6 +153,13 @@ TEXT;
         ];
     }
 
+    public function testBuildFromCopyPasteTextForEmptyData(): void
+    {
+        $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText('');
+
+        self::assertCount(0, $collection);
+    }
+
     /**
      * @dataProvider uploadedFileProvider
      */
@@ -172,5 +189,13 @@ TEXT;
         $this->expectException(UnsupportedTypeException::class);
 
         $this->quickAddRowCollectionBuilder->buildFromFile($file);
+    }
+
+    public function testBuildFromFileForEmptyData(): void
+    {
+        $file = $this->createUploadedFile('quick-order-empty.csv');
+        $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
+
+        self::assertCount(0, $collection);
     }
 }

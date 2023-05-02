@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -37,9 +38,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->entity = new RFPRequest();
+
+        parent::setUp();
 
         $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
         $translator = $this->createMock(TranslatorInterface::class);
@@ -67,34 +68,42 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             $requestStack,
             $this->storage,
             PropertyAccess::createPropertyAccessor(),
-            $this->doctrineHelper,
-            $this->aclHelper,
+            $this->doctrine,
             $this->logger,
             $this->productAvailabilityProvider,
             $translator,
             $this->twig
         );
+
+        $this->initEntityMetadata([]);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getTargetEntity(): object
+    protected function getTargetEntity(): RFPRequest
     {
         return $this->entity;
     }
 
+    private function getInventoryStatus(string $id): InventoryStatus
+    {
+        return new InventoryStatus($id, $id);
+    }
+
     public function testBuildForm(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
-                ]
-            ]
+                ],
+            ],
         ];
 
         $productUnit = $this->getProductUnit('item');
@@ -105,10 +114,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($product)
             ->willReturn(true);
 
-        $this->expectsEntityMetadata();
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 
@@ -130,15 +138,17 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     public function testBuildFormNotAllowedForRFPProduct(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
-                ]
-            ]
+                ],
+            ],
         ];
 
         $productUnit = $this->getProductUnit('item');
@@ -149,11 +159,36 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($product)
             ->willReturn(false);
 
-        $this->expectsEntityMetadata();
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
-        $this->expectsGetProductFromEntityRepository($product);
         $this->expectsWarningFlashMessage([$product]);
+        $this->expectsFindProduct($productId, $product);
+
+        $this->extension->buildForm($this->getFormBuilder(), []);
+
+        $this->assertEmpty($this->entity->getRequestProducts());
+    }
+
+    public function testBuildFormWithoutUnit(): void
+    {
+        $productId = 123;
+        $sku = 'TEST';
+        $qty = 3;
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ],
+            ],
+        ];
+
+        $product = $this->getProduct($sku);
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsFindProduct($productId, $product);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
 
@@ -169,7 +204,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
                 '@OroRFP/Form/FlashBag/warning.html.twig',
                 [
                     'message' => 'oro.frontend.rfp.data_storage.cannot_be_added_to_rfq_translated',
-                    'products' => $canNotBeAddedToRFQProducts
+                    'products' => $canNotBeAddedToRFQProducts,
                 ]
             )
             ->willReturn($warningRenderedMessage);

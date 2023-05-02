@@ -8,6 +8,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Storage\OffersDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,12 +19,8 @@ class OrderController extends AbstractController
     /**
      * @Route("/create/{id}", name="oro_rfp_request_create_order", requirements={"id"="\d+"})
      * @AclAncestor("oro_order_create")
-     *
-     * @param RFPRequest $request
-     *
-     * @return array
      */
-    public function createAction(RFPRequest $request)
+    public function createAction(RFPRequest $request): Response
     {
         $data = [ProductDataStorage::ENTITY_DATA_KEY => $this->getEntityData($request)];
 
@@ -31,6 +28,7 @@ class OrderController extends AbstractController
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProductSku(),
+                ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()->getId(),
                 'comment' => $lineItem->getComment(),
             ];
 
@@ -47,11 +45,7 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('oro_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 
-    /**
-     * @param RFPRequest $request
-     * @return array
-     */
-    protected function getEntityData(RFPRequest $request)
+    private function getEntityData(RFPRequest $request): array
     {
         $data = [];
 
@@ -73,11 +67,7 @@ class OrderController extends AbstractController
         return $data;
     }
 
-    /**
-     * @param RequestProductItem $productItem
-     * @return array
-     */
-    protected function getOfferData(RequestProductItem $productItem)
+    private function getOfferData(RequestProductItem $productItem): array
     {
         $data = [
             'quantity' => $productItem->getQuantity(),
@@ -94,9 +84,9 @@ class OrderController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),

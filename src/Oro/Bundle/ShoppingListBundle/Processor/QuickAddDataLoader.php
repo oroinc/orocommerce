@@ -1,22 +1,23 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Model\Builder;
+namespace Oro\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperDataLoaderInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
- * Loads products for {@see QuickAddRowProductMapper}.
+ * Loads information about products for the service that maps a product identifier for each data item
+ * that is received during submitting of Quick Add Form.
  */
-class QuickAddRowProductLoader
+class QuickAddDataLoader implements ProductMapperDataLoaderInterface
 {
     private ManagerRegistry $doctrine;
     private ProductManager $productManager;
     private AclHelper $aclHelper;
-    private array $notAllowedProductTypes = [];
 
     public function __construct(ManagerRegistry $doctrine, ProductManager $productManager, AclHelper $aclHelper)
     {
@@ -25,36 +26,25 @@ class QuickAddRowProductLoader
         $this->aclHelper = $aclHelper;
     }
 
-    public function setNotAllowedProductTypes(array $notAllowedProductTypes): void
-    {
-        $this->notAllowedProductTypes = $notAllowedProductTypes;
-    }
-
     /**
+     * {@inheritDoc}
+     *
      * @param string[] $skusUppercase
      *
-     * @return Product[]
+     * @return array [['id' => product id, 'sku' => product sku, 'orgId' => product organization id], ...]
      */
     public function loadProducts(array $skusUppercase): array
     {
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(Product::class);
         $qb = $em->createQueryBuilder()
-            ->select('product, primaryUnitPrecision')
+            ->select('product.id, product.sku, IDENTITY(product.organization) AS orgId')
             ->from(Product::class, 'product')
-            ->leftJoin('product.primaryUnitPrecision', 'primaryUnitPrecision')
             ->where('product.skuUppercase IN (:product_skus)')
             ->setParameter('product_skus', $skusUppercase)
             ->orderBy('product.organization, product.id');
         $qb = $this->productManager->restrictQueryBuilder($qb, []);
 
-        // Configurable/kit products require additional option selection is not implemented yet.
-        // Thus we need to hide configurable/kit products.
-        if (!empty($this->notAllowedProductTypes)) {
-            $qb->andWhere($qb->expr()->notIn('product.type', ':notAllowedProductTypes'))
-                ->setParameter('notAllowedProductTypes', $this->notAllowedProductTypes);
-        }
-
-        return $this->aclHelper->apply($qb)->getResult();
+        return $this->aclHelper->apply($qb)->getArrayResult();
     }
 }

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Represents the entry point for the localization settings of the store frontend.
+ * Represents the entry point for the localization settings of the storefront.
  */
 class UserLocalizationManager implements UserLocalizationManagerInterface
 {

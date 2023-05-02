@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,31 +20,31 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {
     protected ProductDataStorage $storage;
-    protected ProductRepository $productRepository;
+    protected ProductMapperInterface $productMapper;
     protected AuthorizationCheckerInterface $authorizationChecker;
     protected TokenAccessorInterface $tokenAccessor;
     protected RequestStack $requestStack;
     protected TranslatorInterface $translator;
-    protected UrlGeneratorInterface $router;
+    protected UrlGeneratorInterface $urlGenerator;
     private ?string $acl = null;
     private ?string $redirectRouteName = null;
 
     public function __construct(
         ProductDataStorage $storage,
-        ProductRepository $productRepository,
+        ProductMapperInterface $productMapper,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
         RequestStack $requestStack,
         TranslatorInterface $translator,
-        UrlGeneratorInterface $router,
+        UrlGeneratorInterface $urlGenerator,
     ) {
         $this->storage = $storage;
-        $this->productRepository = $productRepository;
+        $this->productMapper = $productMapper;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
         $this->requestStack = $requestStack;
         $this->translator = $translator;
-        $this->router = $router;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function setAcl(string $acl): void
@@ -76,9 +76,9 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     {
         $inputProductSkus = $this->getProductSkus($data);
         $data = $this->filterData($data);
-        $filteredProductSkus = $this->getProductSkus($data);
-        $this->checkNotAllowedProducts($inputProductSkus, $filteredProductSkus);
-        $allowRedirect = !empty($filteredProductSkus);
+        $allowedProductSkus = $this->getProductSkus($data);
+        $this->checkNotAllowedProducts($inputProductSkus, $allowedProductSkus);
+        $allowRedirect = !empty($allowedProductSkus);
 
         $this->storage->set($data);
 
@@ -91,28 +91,30 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 
     protected function getRedirectUrl(string $routeName): string
     {
-        return $this->router->generate($routeName, [ProductDataStorage::STORAGE_KEY => true]);
+        return $this->urlGenerator->generate($routeName, [ProductDataStorage::STORAGE_KEY => true]);
     }
 
     protected function getProductSkus(array $data): array
     {
-        return array_values(array_unique(array_map(
-            function ($entityItem) {
-                return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
-            },
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
-        )));
+        $skus = [];
+        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $item) {
+            $skus[] = $item[ProductDataStorage::PRODUCT_SKU_KEY];
+        }
+
+        return array_values(array_unique($skus));
     }
 
     protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus): void
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
         if (!empty($notAllowedProductSkus)) {
-            $message = $this->translator->trans(
-                'oro.product.frontend.quick_add.messages.not_added_products',
-                ['%count%' => \count($notAllowedProductSkus), '%sku%' => implode(', ', $notAllowedProductSkus)]
+            $this->addFlashMessage(
+                'warning',
+                $this->translator->trans(
+                    'oro.product.frontend.quick_add.messages.not_added_products',
+                    ['%count%' => \count($notAllowedProductSkus), '%sku%' => implode(', ', $notAllowedProductSkus)]
+                )
             );
-            $this->addFlashMessage('warning', $message);
         }
     }
 
@@ -123,39 +125,23 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 
     protected function filterData(array $data): array
     {
-        $products = [];
-        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $product) {
-            $skuUppercase = mb_strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY]);
-            $products[$skuUppercase][] = $product;
-        }
-
-        $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = [];
-
-        if (empty($products)) {
+        if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])) {
             return $data;
         }
 
-        $searchQuery = $this->productRepository->getFilterSkuQuery(array_keys($products));
-        // Add marker `autocomplete_record_id` to be able to determine query context in listeners
-        // `autocomplete_record_id` is used to be same to Quick Order Form behaviour
-        $searchQuery->addSelect('integer.system_entity_id as autocomplete_record_id');
-
-        $searchResult = $searchQuery->getResult();
-        if (null === $searchResult) {
-            throw new \RuntimeException('Result of search query cannot be null.');
+        $items = new ArrayCollection();
+        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataItem) {
+            $items->add(new \ArrayObject($dataItem));
         }
 
-        /** @var Item[] $filteredProducts */
-        $filteredProducts = $searchResult->toArray();
-        foreach ($filteredProducts as $item) {
-            $itemData = $item->getSelectedData();
-            if (isset($itemData['sku'])) {
-                $skuUppercase = mb_strtoupper($itemData['sku']);
-                foreach ($products[$skuUppercase] as $product) {
-                    $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $product;
-                }
-            }
+        $this->productMapper->mapProducts($items);
+
+        $updatedData = [];
+        /** @var \ArrayObject $item */
+        foreach ($items as $item) {
+            $updatedData[] = $item->getArrayCopy();
         }
+        $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = $updatedData;
 
         return $data;
     }

@@ -16,7 +16,7 @@ services:
         public: true
         arguments:
             - '@oro_product.storage.product_data_storage'
-            - '@oro_product.website_search.repository.product'
+            - '@oro_product.component_processor.quick_add_product_mapper'
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
             - '@request_stack'

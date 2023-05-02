@@ -72,6 +72,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeProductVisibilityToHidden(): void
     {
         $scope = $this->getScopeManager()->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
+
         $entityManager = $this->getManagerForProductVisibility();
         $visibility = $entityManager->getRepository(ProductVisibility::class)->findOneBy(
             ['product' => $this->product, 'scope' => $scope]
@@ -141,6 +142,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeProductVisibilityToCategory(): void
     {
         $scope = $this->getScopeManager()->findOrCreate('product_visiblity');
+
         $entityManager = $this->getManagerForProductVisibility();
         $visibility = $entityManager->getRepository(ProductVisibility::class)->findOneBy(
             ['scope' => $scope, 'product' => $this->product]
@@ -248,6 +250,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeCustomerProductVisibilityToHidden(): void
     {
         $scope = $this->getScopeManager()->findOrCreate('customer_product_visibility', ['customer' => $this->customer]);
+
         $entityManager = $this->getManagerForCustomerProductVisibility();
         $visibility = $entityManager->getRepository(CustomerProductVisibility::class)->findOneBy(
             ['product' => $this->product, 'scope' => $scope]
