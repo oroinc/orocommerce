@@ -7,12 +7,11 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 
 /**
- * BaseQuoteProductItem
+ * Model contains information about quote product
  *
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks()
@@ -28,7 +27,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
  *      }
  * )
  */
-class BaseQuoteProductItem implements ProductUnitHolderInterface, ProductHolderInterface
+class BaseQuoteProductItem implements ProductLineItemInterface
 {
     /**
      * @var int

@@ -16,18 +16,8 @@ services:
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
-    oro_visibility.api.visibility_id_helper:
-        class: Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper
-
-    oro_visibility.api.filter_factory.visibility_id:
-        class: Oro\Bundle\VisibilityBundle\Api\Filter\VisibilityIdFilterFactory
-        arguments:
-            - '@oro_visibility.api.visibility_id_helper'
-
     oro_visibility.api.compute_visibility_id:
         class: Oro\Bundle\VisibilityBundle\Api\Processor\ComputeVisibilityId
-        arguments:
-            - '@oro_visibility.api.visibility_id_helper'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
             - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
@@ -39,7 +29,6 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_security.acl_helper'
             - '@oro_website.manager'
-            - '@oro_visibility.api.visibility_id_helper'
             - '@oro_visibility.provider.visibility_scope_provider'
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
@@ -52,7 +41,6 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_security.acl_helper'
             - '@oro_website.manager'
-            - '@oro_visibility.api.visibility_id_helper'
             - '@oro_visibility.provider.visibility_scope_provider'
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
@@ -65,7 +53,6 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_security.acl_helper'
             - '@oro_website.manager'
-            - '@oro_visibility.api.visibility_id_helper'
             - '@oro_visibility.provider.visibility_scope_provider'
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }

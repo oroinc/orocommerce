@@ -8,11 +8,19 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class CommonUnitValueTypeTest extends FormIntegrationTestCase
 {
+    private string $defaultLocale;
+
     protected function setUp(): void
     {
-        // In case the system localization does not converge with the test.
+        $this->defaultLocale = \Locale::getDefault();
         \Locale::setDefault('en_US');
         parent::setUp();
+    }
+
+    protected function tearDown(): void
+    {
+        \Locale::setDefault($this->defaultLocale);
+        parent::tearDown();
     }
 
     public function testConfigure(): void
@@ -35,7 +43,7 @@ class CommonUnitValueTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider formDataProvider
      */
-    public function testSubmit($actual, $expected): void
+    public function testSubmit(int|float $actual, string $expected): void
     {
         $form = $this->factory->create(CommonUnitValueType::class, $actual);
 

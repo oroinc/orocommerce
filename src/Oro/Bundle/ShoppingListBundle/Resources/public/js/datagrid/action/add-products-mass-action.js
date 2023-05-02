@@ -96,8 +96,8 @@ define(function(require) {
             const unitsAndQuantities = {};
             _.each(selectionState.selectedIds, function(productModel) {
                 const attributes = productModel.attributes;
-                unitsAndQuantities[attributes.sku] = {};
-                unitsAndQuantities[attributes.sku][attributes.unit] = attributes.quantity;
+                unitsAndQuantities[attributes.id] = {};
+                unitsAndQuantities[attributes.id][attributes.unit] = attributes.quantity;
             });
 
             const selectedIds = _.map(selectionState.selectedIds, function(productModel) {

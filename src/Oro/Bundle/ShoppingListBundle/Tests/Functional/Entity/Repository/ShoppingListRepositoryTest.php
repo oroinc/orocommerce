@@ -28,15 +28,9 @@ class ShoppingListRepositoryTest extends WebTestCase
 {
     use WebsiteManagerTrait;
 
-    /** @var CustomerUser */
-    private $customerUser;
+    private CustomerUser $customerUser;
+    private AclHelper $aclHelper;
 
-    /** @var AclHelper */
-    private $aclHelper;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -44,20 +38,26 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->setCurrentWebsite('default');
 
-        $this->loadFixtures(
-            [
-                LoadShoppingListLineItems::class,
-                LoadCategoryProductData::class,
-                LoadCategoryWithEntityFallbackValuesData::class,
-                LoadShoppingListConfigurableLineItems::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadShoppingListLineItems::class,
+            LoadCategoryProductData::class,
+            LoadCategoryWithEntityFallbackValuesData::class,
+            LoadShoppingListConfigurableLineItems::class,
+        ]);
 
         $this->customerUser = $this->getCustomerUser();
         $this->aclHelper = self::getContainer()->get('oro_security.acl_helper');
 
-        $this->client->getContainer()->get('security.token_storage')
+        self::getContainer()->get('security.token_storage')
             ->setToken($this->createToken($this->customerUser));
+    }
+
+    /**
+     * @beforeResetClient
+     */
+    public static function afterFrontendTest(): void
+    {
+        self::getWebsiteManagerStub()->disableStub();
     }
 
     public function testFindAvailableForCustomerUser()
@@ -133,30 +133,19 @@ class ShoppingListRepositoryTest extends WebTestCase
         self::assertNull($shoppingList);
     }
 
-    /**
-     * @return CustomerUser
-     */
-    public function getCustomerUser()
+    private function getCustomerUser(): CustomerUser
     {
-        return self::getContainer()
-            ->get('doctrine')
+        return self::getContainer()->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadAuthCustomerUserData::AUTH_USER]);
     }
 
-    /**
-     * @return ShoppingListRepository
-     */
-    private function getRepository()
+    private function getRepository(): ShoppingListRepository
     {
         return self::getContainer()->get('doctrine')->getRepository(ShoppingList::class);
     }
 
-    /**
-     * @param CustomerUser $customerUser
-     * @return UsernamePasswordOrganizationToken
-     */
-    private function createToken(CustomerUser $customerUser)
+    private function createToken(CustomerUser $customerUser): UsernamePasswordOrganizationToken
     {
         return new UsernamePasswordOrganizationToken(
             $customerUser,
@@ -171,8 +160,7 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         $user = $this->getCustomerUser();
 
-        $doctrineHelper = self::getContainer()->get('oro_entity.doctrine_helper');
-        $website = $doctrineHelper->getEntityRepositoryForClass(Website::class)->getDefaultWebsite();
+        $website = self::getContainer()->get('doctrine')->getRepository(Website::class)->getDefaultWebsite();
         $count = $this->getRepository()->countUserShoppingLists(
             $user->getId(),
             $user->getOrganization()->getId(),

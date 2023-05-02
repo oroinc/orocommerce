@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ComponentProcessor;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SearchBundle\Query\Result as SearchResult;
-use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
-use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,8 +24,8 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
     private $storage;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
+    /** @var ProductMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productMapper;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
@@ -42,7 +40,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     private $translator;
 
     /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $router;
+    private $urlGenerator;
 
     /** @var DataStorageAwareComponentProcessor */
     private $processor;
@@ -50,12 +48,12 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->storage = $this->createMock(ProductDataStorage::class);
-        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->productMapper = $this->createMock(ProductMapperInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->session = $this->createMock(Session::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->router = $this->createMock(UrlGeneratorInterface::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
         $requestStack = $this->createMock(RequestStack::class);
         $requestStack->expects(self::any())
@@ -64,27 +62,28 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->processor = new DataStorageAwareComponentProcessor(
             $this->storage,
-            $this->productRepository,
+            $this->productMapper,
             $this->authorizationChecker,
             $this->tokenAccessor,
             $requestStack,
             $this->translator,
-            $this->router,
+            $this->urlGenerator,
         );
     }
 
     public function testProcessWithoutRedirectRoute(): void
     {
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
+        $allowedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01', 'productId' => 1]]];
 
-        $this->expectsFilterData(['SKU01'], $data);
+        $this->expectsFilterData($allowedData);
 
-        $this->router->expects(self::never())
+        $this->urlGenerator->expects(self::never())
             ->method(self::anything());
 
         $this->storage->expects(self::once())
             ->method('set')
-            ->with($data);
+            ->with($allowedData);
 
         self::assertNull($this->processor->process($data, new Request()));
     }
@@ -92,12 +91,13 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessWithRedirectRoute(): void
     {
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
+        $allowedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01', 'productId' => 1]]];
 
-        $this->expectsFilterData(['SKU01'], $data);
+        $this->expectsFilterData($allowedData);
 
         $this->storage->expects(self::once())
             ->method('set')
-            ->with($data);
+            ->with($allowedData);
 
         $redirectUrl = '/redirect/url';
         $this->expectsGenerateRedirectUrl('route', $redirectUrl);
@@ -150,12 +150,11 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
      */
     public function testProcess(
         array $data,
-        array $skus,
         array $allowedData,
         string $errorMessageSkus,
         bool $hasRedirectRoute = false
     ): void {
-        $this->expectsFilterData($skus, $allowedData);
+        $this->expectsFilterData($allowedData);
 
         $this->storage->expects(self::once())
             ->method('set')
@@ -188,10 +187,9 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
                         ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
-                'skus' => ['SKU01', 'SKU02', 'SKU03'],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01', 'productUnit' => 'item'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
                     ],
                 ],
                 'errorMessageSkus' => 'sku02, sku03',
@@ -206,12 +204,11 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
                         ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
-                'skus' => ['SKU01', 'SKU02', 'SKU03'],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01', 'productUnit' => 'item'],
-                        ['productSku' => 'sku01', 'productUnit' => 'set'],
-                        ['productSku' => 'sku02', 'productUnit' => 'item'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
+                        ['productSku' => 'sku01', 'productUnit' => 'set', 'productId' => 1],
+                        ['productSku' => 'sku02', 'productUnit' => 'item', 'productId' => 2],
                     ],
                 ],
                 'errorMessageSkus' => 'sku03',
@@ -226,10 +223,9 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
                         ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
-                'skus' => ['SKU01', 'SKU02', 'SKU03'],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01', 'productUnit' => 'item'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
                     ],
                 ],
                 'errorMessageSkus' => 'sku02, sku03',
@@ -244,12 +240,11 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
                         ['productSku' => 'sku03', 'productUnit' => 'item'],
                     ],
                 ],
-                'skus' => ['SKU01', 'SKU02', 'SKU03'],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku01', 'productUnit' => 'item'],
-                        ['productSku' => 'sku01', 'productUnit' => 'set'],
-                        ['productSku' => 'sku02', 'productUnit' => 'item'],
+                        ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
+                        ['productSku' => 'sku01', 'productUnit' => 'set', 'productId' => 1],
+                        ['productSku' => 'sku02', 'productUnit' => 'item', 'productId' => 2],
                     ],
                 ],
                 'errorMessageSkus' => 'sku03',
@@ -271,11 +266,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
                 ['productSku' => 'sku03', 'productUnit' => 'set'],
             ]
         ];
-        $skus = ['SKU01', 'SKU02', 'SKU03'];
         $allowedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []];
         $errorMessageSkus = 'sku01, sku02, sku03';
 
-        $this->expectsFilterData($skus, $allowedData);
+        $this->expectsFilterData($allowedData);
 
         $this->storage->expects(self::once())
             ->method('set')
@@ -286,7 +280,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         if ($hasRedirectRoute) {
             $this->processor->setRedirectRouteName('route');
         }
-        $this->router->expects($this->never())
+        $this->urlGenerator->expects($this->never())
             ->method('generate');
 
         self::assertNull($this->processor->process($data, new Request()));
@@ -305,13 +299,20 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
                 ['productSku' => 'sku03', 'productUnit' => 'item'],
             ]
         ];
-        $skus = ['SKU01', 'SKU02', 'SKU03'];
+        $allowedData = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku01', 'productUnit' => 'item', 'productId' => 1],
+                ['productSku' => 'sku02', 'productUnit' => 'item', 'productId' => 2],
+                ['productSku' => 'sku02', 'productUnit' => 'set', 'productId' => 2],
+                ['productSku' => 'sku03', 'productUnit' => 'item', 'productId' => 3],
+            ]
+        ];
 
-        $this->expectsFilterData($skus, $data);
+        $this->expectsFilterData($allowedData);
 
         $this->storage->expects(self::once())
             ->method('set')
-            ->with($data);
+            ->with($allowedData);
 
         $this->translator->expects(self::never())
             ->method('trans');
@@ -337,39 +338,16 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
         return [[true], [false]];
     }
 
-    private function expectsFilterData(array $skus, array $allowedData): void
+    private function expectsFilterData(array $allowedData): void
     {
-        $searchResultItems = [];
-        foreach ($allowedData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $item) {
-            $sku = $item['productSku'];
-            $skuUppercase = mb_strtoupper($sku);
-            if (!isset($searchResultItems[$skuUppercase])) {
-                $searchResultItems[$skuUppercase] = new SearchResultItem(
-                    'product',
-                    123,
-                    '/product/123',
-                    ['sku' => $sku]
-                );
-            }
-        }
-        $searchResultItems = array_values($searchResultItems);
-
-        $searchQuery = $this->createMock(SearchQueryInterface::class);
-        $this->productRepository->expects(self::once())
-            ->method('getFilterSkuQuery')
-            ->with($skus)
-            ->willReturn($searchQuery);
-        $searchResult = $this->createMock(SearchResult::class);
-        $searchQuery->expects(self::once())
-            ->method('addSelect')
-            ->with('integer.system_entity_id as autocomplete_record_id')
-            ->willReturnSelf();
-        $searchQuery->expects(self::once())
-            ->method('getResult')
-            ->willReturn($searchResult);
-        $searchResult->expects(self::once())
-            ->method('toArray')
-            ->willReturn($searchResultItems);
+        $this->productMapper->expects(self::once())
+            ->method('mapProducts')
+            ->willReturnCallback(function (ArrayCollection $collection) use ($allowedData) {
+                $collection->clear();
+                foreach ($allowedData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataItem) {
+                    $collection->add(new \ArrayObject($dataItem));
+                }
+            });
     }
 
     private function expectsAddFlashMessage(string $errorMessageSkus): void
@@ -396,7 +374,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->processor->setRedirectRouteName($redirectRouteName);
 
-        $this->router->expects(self::once())
+        $this->urlGenerator->expects(self::once())
             ->method('generate')
             ->with(
                 $redirectRouteName,

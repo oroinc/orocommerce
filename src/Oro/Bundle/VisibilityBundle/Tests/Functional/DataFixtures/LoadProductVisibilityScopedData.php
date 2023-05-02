@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadProductVisibilityScopedData extends LoadProductVisibilityData
@@ -15,9 +16,9 @@ class LoadProductVisibilityScopedData extends LoadProductVisibilityData
     protected $defaultWebsite;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->defaultWebsite = $this
             ->container
@@ -28,27 +29,27 @@ class LoadProductVisibilityScopedData extends LoadProductVisibilityData
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getScopeForProductVisibilities()
+    protected function getScopeForProductVisibilities(): Scope
     {
         return $this->container->get('oro_visibility.provider.visibility_scope_provider')
             ->getProductVisibilityScope($this->defaultWebsite);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getScopeForCustomerGroupVisibilities(CustomerGroup $customerGroup)
+    protected function getScopeForCustomerGroupVisibilities(CustomerGroup $customerGroup): Scope
     {
         return $this->container->get('oro_visibility.provider.visibility_scope_provider')
             ->getCustomerGroupProductVisibilityScope($customerGroup, $this->defaultWebsite);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getScopeForCustomerVisibilities(Customer $customer)
+    protected function getScopeForCustomerVisibilities(Customer $customer): Scope
     {
         return $this->container->get('oro_visibility.provider.visibility_scope_provider')
             ->getCustomerProductVisibilityScope($customer, $this->defaultWebsite);

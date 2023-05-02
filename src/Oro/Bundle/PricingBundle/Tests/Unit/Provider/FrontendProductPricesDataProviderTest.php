@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -32,16 +33,20 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductPriceScopeCriteriaInterface|MockObject $scopeCriteria;
 
+    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
 
         $this->provider = new FrontendProductPricesDataProvider(
             $this->productPriceProvider,
             $this->userCurrencyManager,
-            $this->scopeCriteriaRequestHandler
+            $this->scopeCriteriaRequestHandler,
+            $this->productPriceCriteriaFactory
         );
 
         $this->userCurrencyManager
@@ -54,62 +59,47 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->scopeCriteria);
     }
 
-    /**
-     * @dataProvider getDataDataProvider
-     */
-    public function testGetProductsPrices(
-        array $criteriaArray,
-        array $matchedPrices,
-        array $lineItems,
-        array $expectedResult
-    ): void {
+    public function testGetProductsPricesWhenProductsPricesCriteriaNotCreatable(): void
+    {
+        $lineItem = $this->createMock(ProductLineItem::class);
+
         $this->productPriceProvider->expects(self::once())
             ->method('getMatchedPrices')
-            ->with($criteriaArray, $this->scopeCriteria)
-            ->willReturn($matchedPrices);
+            ->with([], $this->scopeCriteria)
+            ->willReturn([]);
 
-        $result = $this->provider->getProductsMatchedPrice($lineItems);
-        self::assertEquals($expectedResult, $result);
+        $this->productPriceCriteriaFactory->method('createListFromProductLineItems')->willReturn([]);
+
+        $result = $this->provider->getProductsMatchedPrice([$lineItem]);
+
+        self::assertEmpty($result);
     }
 
-    public function getDataDataProvider(): array
+    public function testGetProductsPricesWhenProductsPricesCriteriaIsCreatable(): void
     {
-        $product = $this->getEntity(Product::class, ['id' => 42]);
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('test');
-        $quantity = 100;
+        $lineItem = $this->createMock(ProductLineItem::class);
+        $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
 
-        $lineItemWithProduct = new ProductLineItem('test');
-        $lineItemWithProduct->setProduct($product);
-        $lineItemWithProduct->setUnit($productUnit);
-        $lineItemWithProduct->setQuantity($quantity);
+        $this->productPriceCriteriaFactory
+            ->expects($this->once())
+            ->method('createListFromProductLineItems')
+            ->with([$lineItem])
+            ->willReturn([$productPriceCriteria]);
 
-        $lineItemWOProduct = new ProductLineItem('test');
-        $lineItemWOProduct->setUnit($productUnit);
-        $lineItemWOProduct->setQuantity($quantity);
+        $this->productPriceProvider->expects(self::once())
+            ->method('getMatchedPrices')
+            ->with($this->equalTo([$productPriceCriteria]), $this->scopeCriteria)
+            ->willReturn([
+                '42-test-100-USD' => 123,
+            ]);
 
-        $criteria = new ProductPriceCriteria($product, $productUnit, $quantity, self::TEST_CURRENCY);
+        $result = $this->provider->getProductsMatchedPrice([$lineItem]);
 
-        $price = new Price();
-        $price->setValue('123');
-        $price->setCurrency(self::TEST_CURRENCY);
-
-        return [
-            'line item with product' => [
-                'criteriaArray' => [$criteria],
-                'matchedPrices' => [
-                    '42-test-100-USD' => $price,
-                ],
-                'lineItems' => [$lineItemWithProduct],
-                'expectedResult' => [42 => ['test' => $price]],
-            ],
-            'line item without product' => [
-                'criteriaArray' => [],
-                'matchedPrices' => [],
-                'lineItems' => [$lineItemWOProduct],
-                'expectedResult' => [],
-            ],
-        ];
+        self::assertEquals([
+            '42' => [
+                'test' => 123
+            ]
+        ], $result);
     }
 
     /**

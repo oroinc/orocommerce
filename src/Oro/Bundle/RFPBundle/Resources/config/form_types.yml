@@ -68,8 +68,7 @@ services:
             - '@request_stack'
             - '@oro_product.storage.product_data_storage'
             - '@form.property_accessor'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_security.acl_helper'
+            - '@doctrine'
             - '@logger'
             - '@oro_rfp.provider.product_availability'
             - '@translator'
@@ -93,8 +92,9 @@ services:
             - '@request_stack'
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.product_price_criteria_factory'
         tags:
-            - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
+            - { name: form.type_extension }
             - { name: oro_featuretogle.feature, feature: rfp }
 
     oro_rfp.form.type.request_offers:

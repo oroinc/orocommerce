@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -14,25 +14,31 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 /**
- * Adds prices to QuickAddRowCollection according to a specific criteria.
+ * Adds prices to QuickAddRowCollection according to specific criteria.
  */
 class QuickAddCollectionPriceProvider
 {
     private ProductPriceProviderInterface $productPriceProvider;
-    private UserCurrencyManager $currencyManager;
-    private DoctrineHelper $doctrineHelper;
     private RoundingServiceInterface $rounding;
+
+    private UserCurrencyManager $currencyManager;
+
+    private DoctrineHelper $doctrineHelper;
+
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
 
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $currencyManager,
         DoctrineHelper $doctrineHelper,
-        RoundingServiceInterface $rounding
+        RoundingServiceInterface $rounding,
+        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
     ) {
         $this->productPriceProvider = $productPriceProvider;
+        $this->rounding = $rounding;
         $this->currencyManager = $currencyManager;
         $this->doctrineHelper = $doctrineHelper;
-        $this->rounding = $rounding;
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     public function addAllPrices(
@@ -135,11 +141,13 @@ class QuickAddCollectionPriceProvider
         $result = [];
         /** @var QuickAddRow $row */
         foreach ($validRows as $row) {
-            $result[] = new ProductPriceCriteria(
+            $result[] = $this->productPriceCriteriaFactory->build(
                 $row->getProduct(),
-                $this->doctrineHelper->getEntityReference(ProductUnit::class, $row->getUnit()),
-                $row->getQuantity(),
-                $this->currencyManager->getUserCurrency()
+                $this->doctrineHelper->getEntityReference(
+                    ProductUnit::class,
+                    $row->getUnit()
+                ),
+                $row->getQuantity()
             );
         }
 

@@ -5,7 +5,7 @@ namespace Oro\Bundle\RFPBundle\ComponentProcessor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -29,23 +29,23 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
      */
     public function __construct(
         ProductDataStorage $storage,
-        ProductRepository $productRepository,
+        ProductMapperInterface $productMapper,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
         RequestStack $requestStack,
         TranslatorInterface $translator,
-        UrlGeneratorInterface $router,
+        UrlGeneratorInterface $urlGenerator,
         ProductAvailabilityProvider $productAvailabilityProvider,
         FeatureChecker $featureChecker
     ) {
         parent::__construct(
             $storage,
-            $productRepository,
+            $productMapper,
             $authorizationChecker,
             $tokenAccessor,
             $requestStack,
             $translator,
-            $router
+            $urlGenerator
         );
         $this->productAvailabilityProvider = $productAvailabilityProvider;
         $this->featureChecker = $featureChecker;
@@ -56,19 +56,26 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
      */
     public function process(array $data, Request $request): ?Response
     {
-        $hasProductsAllowedForRFP = $this->productAvailabilityProvider
-            ->hasProductsAllowedForRFPByProductData($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
+        $initialStoredData = $this->storage->get();
+        $result = parent::process($data, $request);
 
+        $productIds = [];
+        $storedData = $this->storage->get();
+        foreach ($storedData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $item) {
+            $productIds[] = $item[ProductDataStorage::PRODUCT_ID_KEY];
+        }
+
+        $hasProductsAllowedForRFP = $this->productAvailabilityProvider->hasProductsAllowedForRFP($productIds);
         if (!$hasProductsAllowedForRFP) {
+            $this->storage->set($initialStoredData);
             $this->addFlashMessage(
                 'warning',
                 $this->translator->trans('oro.frontend.rfp.data_storage.no_products_be_added_to_rfq')
             );
-
-            return null;
+            $result = null;
         }
 
-        return parent::process($data, $request);
+        return $result;
     }
 
     /**

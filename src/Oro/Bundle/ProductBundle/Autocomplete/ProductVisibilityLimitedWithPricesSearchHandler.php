@@ -3,75 +3,76 @@
 namespace Oro\Bundle\ProductBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
+use Oro\Bundle\PricingBundle\Provider\FormattedProductPriceProvider;
 
 /**
  * Search for product with prices if results are accessible by visibility limited search.
  */
 class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerInterface
 {
-    /**
-     * @var SearchHandlerInterface
-     */
-    protected $productWithPricesSearchHandler;
+    private const RESULTS = 'results';
 
-    /**
-     * @var SearchHandlerInterface
-     */
-    protected $productVisibilityLimitedSearchHandler;
+    private SearchHandlerInterface $baseSearchHandler;
+    private FormattedProductPriceProvider $formattedProductPriceProvider;
 
     public function __construct(
-        SearchHandlerInterface $productWithPricesSearchHandler,
-        SearchHandlerInterface $productVisibilityLimitedSearchHandler
+        SearchHandlerInterface $baseSearchHandler,
+        FormattedProductPriceProvider $formattedProductPriceProvider
     ) {
-        $this->productWithPricesSearchHandler = $productWithPricesSearchHandler;
-        $this->productVisibilityLimitedSearchHandler = $productVisibilityLimitedSearchHandler;
+        $this->baseSearchHandler = $baseSearchHandler;
+        $this->formattedProductPriceProvider = $formattedProductPriceProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function search($query, $page, $perPage, $searchById = false)
     {
-        $results = $this->productVisibilityLimitedSearchHandler->search($query, $page, $perPage, $searchById);
-
-        if (\count($results['results'])) {
-            $skus = array_column($results['results'], 'sku');
-            $skus = array_map('mb_strtoupper', $skus);
-            $priceResults = $this->productWithPricesSearchHandler->search($query, $page, $perPage, $searchById);
-            $priceResults['results'] = array_values(array_filter(
-                $priceResults['results'],
-                function ($result) use ($skus) {
-                    return \in_array(mb_strtoupper($result['sku']), $skus, true);
+        $results = $this->baseSearchHandler->search($query, $page, $perPage, $searchById);
+        if (\count($results[self::RESULTS])) {
+            $ids = array_column($results[self::RESULTS], 'id');
+            $prices = $this->formattedProductPriceProvider->getFormattedProductPrices($ids);
+            $toRemove = [];
+            foreach ($results[self::RESULTS] as $i => $item) {
+                $id = $item['id'];
+                if (isset($prices[$id])) {
+                    $results[self::RESULTS][$i] = array_merge($item, $prices[$id]);
+                } else {
+                    $toRemove[] = $i;
                 }
-            ));
-
-            return $priceResults;
+            }
+            if ($toRemove) {
+                foreach ($toRemove as $i) {
+                    unset($results[self::RESULTS][$i]);
+                }
+                $results[self::RESULTS] = array_values($results[self::RESULTS]);
+            }
         }
 
         return $results;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function convertItem($item)
     {
-        return $this->productWithPricesSearchHandler->convertItem($item);
+        return $this->baseSearchHandler->convertItem($item);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getProperties()
     {
-        return $this->productWithPricesSearchHandler->getProperties();
+        return $this->baseSearchHandler->getProperties();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getEntityName()
     {
-        return $this->productWithPricesSearchHandler->getEntityName();
+        return $this->baseSearchHandler->getEntityName();
     }
 }

@@ -61,7 +61,7 @@ class ShoppingListLineItemHandler implements ResetInterface
     /**
      * @param ShoppingList $shoppingList
      * @param int[]        $productIds
-     * @param array        $productUnitsWithQuantities
+     * @param array        $productUnitsWithQuantities [product id => [unit code => quantity, ...], ...]
      *
      * @return int Added entities count
      */
@@ -81,73 +81,64 @@ class ShoppingListLineItemHandler implements ResetInterface
 
         $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
         $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, []);
-        $iterableResult = $this->aclHelper->apply($queryBuilder)->toIterable();
+        $products = $this->aclHelper->apply($queryBuilder)->toIterable();
+
         $lineItems = [[]];
-
-        $skus = array_map('mb_strtoupper', array_keys($productUnitsWithQuantities));
-        $values = array_values($productUnitsWithQuantities);
-        $productUnitsWithQuantities = array_combine($skus, $values);
-
         /** @var Product $product */
-        foreach ($iterableResult as $product) {
+        foreach ($products as $product) {
             $unitOfWork->markReadOnly($product);
-            $upperSku = mb_strtoupper($product->getSku());
-            if (isset($productUnitsWithQuantities[$upperSku])) {
+            $productId = $product->getId();
+            if (isset($productUnitsWithQuantities[$productId])) {
                 $productLineItems = $this->createLineItemsWithQuantityAndUnit(
                     $product,
                     $shoppingList,
-                    $productUnitsWithQuantities[$upperSku]
+                    $productUnitsWithQuantities[$productId]
                 );
-
                 if ($productLineItems) {
                     $lineItems[] = $productLineItems;
                 }
-
-                continue;
+            } else {
+                $lineItems[] = [
+                    $this->createLineItem($shoppingList, $product, $product->getPrimaryUnitPrecision()->getUnit())
+                ];
             }
-
-            $lineItem = (new LineItem())
-                ->setCustomerUser($shoppingList->getCustomerUser())
-                ->setOrganization($shoppingList->getOrganization())
-                ->setProduct($product)
-                ->setUnit($product->getPrimaryUnitPrecision()->getUnit());
-
-            $lineItems[] = [$lineItem];
         }
+        $lineItems = array_merge(...$lineItems);
 
-        return $this->shoppingListManager->bulkAddLineItems(
-            array_merge(...$lineItems),
-            $shoppingList,
-            self::FLUSH_BATCH_SIZE
-        );
+        return $this->shoppingListManager->bulkAddLineItems($lineItems, $shoppingList, self::FLUSH_BATCH_SIZE);
     }
 
     /**
      * @param Product      $product
      * @param ShoppingList $shoppingList
-     * @param array        $unitsWithQuantities
+     * @param array        $unitsWithQuantities [unit code => quantity, ...]
      *
-     * @return LineItem[]|null
+     * @return LineItem[]
      */
     private function createLineItemsWithQuantityAndUnit(
         Product $product,
         ShoppingList $shoppingList,
         array $unitsWithQuantities
-    ): ?array {
+    ): array {
         $lineItems = [];
-
         foreach ($unitsWithQuantities as $unitCode => $quantity) {
-            $lineItem = (new LineItem())
-                ->setCustomerUser($shoppingList->getCustomerUser())
-                ->setOrganization($shoppingList->getOrganization())
-                ->setQuantity($quantity)
-                ->setProduct($product);
-
-            $lineItem->setUnit($this->getProductUnit($unitCode));
+            $lineItem = $this->createLineItem($shoppingList, $product, $this->getProductUnit($unitCode));
+            $lineItem->setQuantity($quantity);
             $lineItems[] = $lineItem;
         }
 
         return $lineItems;
+    }
+
+    private function createLineItem(ShoppingList $shoppingList, Product $product, ProductUnit $unit): LineItem
+    {
+        $lineItem = new LineItem();
+        $lineItem->setCustomerUser($shoppingList->getCustomerUser());
+        $lineItem->setOrganization($shoppingList->getOrganization());
+        $lineItem->setProduct($product);
+        $lineItem->setUnit($unit);
+
+        return $lineItem;
     }
 
     private function getProductUnit(string $unitCode): ProductUnit

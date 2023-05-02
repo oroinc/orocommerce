@@ -22,20 +22,15 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /**
-     * @var Event
-     */
-    protected $firedEvent;
+    private ?Event $firedEvent = null;
 
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([
-            LoadFrontendProductData::class
-        ]);
+        $this->loadFixtures([LoadFrontendProductData::class]);
     }
 
-    public function testFrontendVisibilityWithZeroValue()
+    public function testFrontendVisibilityWithZeroValue(): void
     {
         $url = $this->getUrl(
             'oro_frontend_autocomplete_search',
@@ -66,34 +61,22 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             ]
         );
 
-        $dispatcher = $this->client->getContainer()->get('event_dispatcher');
-
-        /*** @var ProductSearchQueryRestrictionEvent $firedEvent */
         $this->firedEvent = null;
-
-        $dispatcher->addListener(
-            ProductSearchQueryRestrictionEvent::NAME,
-            [$this, 'eventCatcher']
-        );
+        $dispatcher = self::getContainer()->get('event_dispatcher');
+        $dispatcher->addListener(ProductSearchQueryRestrictionEvent::NAME, [$this, 'eventCatcher']);
 
         $this->client->request('GET', $url);
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
         $this->assertResultForProducts($expectedProducts, $data['results']);
 
         $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
-        $this->assertInstanceOf(
-            ProductSearchQueryRestrictionEvent::class,
-            $this->firedEvent
-        );
+        $this->assertInstanceOf(ProductSearchQueryRestrictionEvent::class, $this->firedEvent);
 
-        $dispatcher->removeListener(
-            ProductSearchQueryRestrictionEvent::NAME,
-            [$this, 'eventCatcher']
-        );
+        $dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, [$this, 'eventCatcher']);
     }
 
     public function frontendVisibilityDataProvider(): array
@@ -138,34 +121,23 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         );
 
         $this->client->restart();
-        $dispatcher = $this->getContainer()->get('event_dispatcher');
 
-        /*** @var ProductSearchQueryRestrictionEvent $firedEvent */
         $this->firedEvent = null;
-
-        $dispatcher->addListener(
-            ProductDBQueryRestrictionEvent::NAME,
-            [$this, 'eventCatcher']
-        );
+        $dispatcher = self::getContainer()->get('event_dispatcher');
+        $dispatcher->addListener(ProductDBQueryRestrictionEvent::NAME, [$this, 'eventCatcher']);
 
         $this->client->request('GET', $url);
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
         $this->assertResultForProducts($expectedProducts, $data['results']);
 
         $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
-        $this->assertInstanceOf(
-            ProductDBQueryRestrictionEvent::class,
-            $this->firedEvent
-        );
+        $this->assertInstanceOf(ProductDBQueryRestrictionEvent::class, $this->firedEvent);
 
-        $dispatcher->removeListener(
-            ProductDBQueryRestrictionEvent::NAME,
-            [$this, 'eventCatcher']
-        );
+        $dispatcher->removeListener(ProductDBQueryRestrictionEvent::NAME, [$this, 'eventCatcher']);
     }
 
     public function backendVisibilityDataProvider(): array
@@ -195,9 +167,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         ];
     }
 
-    public function testConvertItemWhenProductWithLocalizedName()
+    public function testConvertItemWhenProductWithLocalizedName(): void
     {
-        $this->client->getContainer()->get('request_stack')->push(Request::create(''));
+        self::getContainer()->get('request_stack')->push(Request::create(''));
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::AUTH_USER);
         $this->changeLocalization('en_CA');
@@ -215,18 +187,18 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         );
     }
 
-    public function testConvertItemWhenSearchItem()
+    public function testConvertItemWhenSearchItem(): void
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
 
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $originalValue = $configManager->get($key);
         $configManager->set($key, true);
         $configManager->flush();
 
-        $this->client->getContainer()->get('request_stack')->push(Request::create(''));
+        self::getContainer()->get('request_stack')->push(Request::create(''));
 
-        $searchItems = $this->client->getContainer()->get('oro_product.website_search.repository.product')
+        $searchItems = self::getContainer()->get('oro_product.website_search.repository.product')
             ->getSearchQueryBySkuOrName(LoadProductData::PRODUCT_1, 0, 1)
             ->getResult()
             ->getElements();
@@ -235,11 +207,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $result = $this->getSearchHandler()->convertItem($searchItems[0]);
 
         $selectedData = $searchItems[0]->getSelectedData();
-
-        $this->assertArrayHasKey('product_id', $selectedData);
-        $this->assertArrayHasKey('sku', $selectedData);
-        $this->assertArrayHasKey('name', $selectedData);
-
         $this->assertEquals(
             [
                 'id' => $selectedData['product_id'],
@@ -253,26 +220,19 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $configManager->flush();
     }
 
-    public function testSearchByMultipleSkus()
+    public function testSearchByMultipleSkus(): void
     {
-        $skuList = [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6];
-        $this->getContainer()
-            ->get('request_stack')
-            ->push(Request::create('', Request::METHOD_POST, ['sku' => $skuList]));
+        self::getContainer()->get('request_stack')
+            ->push(Request::create('', Request::METHOD_POST, [
+                'sku' => [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6]
+            ]));
 
-        $items = $this->getSearchHandler()->search('', 1, 5);
+        $data = $this->getSearchHandler()->search('', 1, 5);
 
-        $this->assertCount(2, $items['results']);
-
-        $actualSkuList = array_map(function ($item) {
-            return $item['sku'];
-        }, $items['results']);
-        foreach ($actualSkuList as $sku) {
-            $this->assertContains($sku, $skuList);
-        }
+        $this->assertResultForProducts(['PRODUCT_2', 'PRODUCT_6'], $data['results']);
     }
 
-    public function eventCatcher(Event $event)
+    public function eventCatcher(Event $event): void
     {
         $this->firedEvent = $event;
     }
@@ -281,48 +241,45 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
     {
         $localization = $this->getReference($localizationCode);
 
-        $this->client->getContainer()
-            ->get('oro_frontend_localization.manager.user_localization')
+        self::getContainer()->get('oro_frontend_localization.manager.user_localization')
             ->setCurrentLocalization($localization);
     }
 
     private function getSearchHandler(): ProductVisibilityLimitedSearchHandler
     {
-        return $this->client->getContainer()
-            ->get('oro_form.autocomplete.search_registry')
+        return self::getContainer()->get('oro_form.autocomplete.search_registry')
             ->getSearchHandler('oro_product_visibility_limited');
     }
 
     private function assertResultForProducts(array $productConstants, array $results): void
     {
-        static::assertCount(\count($productConstants), $results);
         foreach ($productConstants as $productConstant) {
-            $reference = \constant(\sprintf('%s::%s', LoadProductData::class, $productConstant));
+            $reference = constant(sprintf('%s::%s', LoadProductData::class, $productConstant));
 
             /** @var Product $product */
             $product = $this->getReference($reference);
             $found = false;
             foreach ($results as $result) {
                 // intentional non-strict comparison
-                if ($product->getId() == $result['id']
-                    && $product->getSku() == $result['sku']
-                    && $product->getDefaultName() == $result['defaultName.string']
+                if ($product->getId() === (int)$result['id']
+                    && $product->getSku() === $result['sku']
+                    && (string)$product->getDefaultName() === $result['defaultName.string']
                 ) {
                     $found = true;
                     break;
                 }
             }
             if (!$found) {
-                static::fail(
-                    \sprintf(
+                self::fail(
+                    sprintf(
                         "Result does not contain product '%s' (id: %s, sku: %s, defaultName.string: %s):\n",
                         $reference,
                         $product->getId(),
                         $product->getSku(),
-                        $product->getDefaultName()
+                        (string)$product->getDefaultName()
                     )
-                    . \array_reduce($results, function ($output, $item) {
-                        return $output . \sprintf(
+                    . array_reduce($results, function ($output, $item) {
+                        return $output . sprintf(
                             "id: %s, sku: %s, defaultName.string: %s\n",
                             $item['id'],
                             $item['sku'],
@@ -330,8 +287,8 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                         );
                     })
                 );
-                return;
             }
         }
+        self::assertCount(\count($productConstants), $results);
     }
 }

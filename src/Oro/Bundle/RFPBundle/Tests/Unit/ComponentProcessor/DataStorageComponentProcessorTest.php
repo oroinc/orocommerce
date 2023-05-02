@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\ComponentProcessor;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
-use Oro\Bundle\SearchBundle\Query\Result as SearchResult;
-use Oro\Bundle\SearchBundle\Query\Result\Item as SearchResultItem;
-use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -26,14 +25,17 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
     private $storage;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
+    /** @var ProductMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productMapper;
 
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
+
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlGenerator;
 
     /** @var ProductAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productAvailabilityProvider;
@@ -47,9 +49,10 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->storage = $this->createMock(ProductDataStorage::class);
-        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->productMapper = $this->createMock(ProductMapperInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->session = $this->createMock(Session::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
@@ -67,32 +70,59 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->processor = new DataStorageComponentProcessor(
             $this->storage,
-            $this->productRepository,
+            $this->productMapper,
             $this->createMock(AuthorizationCheckerInterface::class),
             $this->tokenAccessor,
             $requestStack,
             $translator,
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->urlGenerator,
             $this->productAvailabilityProvider,
             $this->featureChecker
         );
+        $this->processor->setRedirectRouteName('route');
+    }
+
+    private function expectsFilterData(array $processedData): void
+    {
+        $this->productMapper->expects(self::once())
+            ->method('mapProducts')
+            ->willReturnCallback(function (ArrayCollection $collection) use ($processedData) {
+                $collection->clear();
+                foreach ($processedData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataItem) {
+                    $collection->add(new \ArrayObject($dataItem));
+                }
+            });
+
+        $this->urlGenerator->expects(self::once())
+            ->method('generate')
+            ->with(
+                'route',
+                [ProductDataStorage::STORAGE_KEY => true],
+                UrlGeneratorInterface::ABSOLUTE_PATH
+            )
+            ->willReturn('url');
     }
 
     public function testProcessWhenRfpNotAllowed(): void
     {
+        $initialStoredData = ['key' => 'value'];
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
+        $processedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01', 'productId' => 1]]];
         $request = $this->createMock(Request::class);
 
+        $this->expectsFilterData($processedData);
+
+        $this->storage->expects(self::exactly(2))
+            ->method('get')
+            ->willReturnOnConsecutiveCalls($initialStoredData, $processedData);
+        $this->storage->expects(self::exactly(2))
+            ->method('set')
+            ->withConsecutive([$processedData], [$initialStoredData]);
+
         $this->productAvailabilityProvider->expects(self::once())
-            ->method('hasProductsAllowedForRFPByProductData')
-            ->with($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
+            ->method('hasProductsAllowedForRFP')
+            ->with([1])
             ->willReturn(false);
-
-        $this->productRepository->expects(self::never())
-            ->method('getFilterSkuQuery');
-
-        $this->storage->expects(self::never())
-            ->method('set');
 
         $flashBag = $this->createMock(FlashBag::class);
         $this->session->expects(self::once())
@@ -108,34 +138,27 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessWhenRfpAllowed(): void
     {
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
+        $processedData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01', 'productId' => 1]]];
         $request = $this->createMock(Request::class);
 
-        $this->productAvailabilityProvider->expects(self::once())
-            ->method('hasProductsAllowedForRFPByProductData')
-            ->with($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
-            ->willReturn(true);
+        $this->expectsFilterData($processedData);
 
-        $searchQuery = $this->createMock(SearchQueryInterface::class);
-        $this->productRepository->expects(self::once())
-            ->method('getFilterSkuQuery')
-            ->with(['SKU01'])
-            ->willReturn($searchQuery);
-        $searchResult = $this->createMock(SearchResult::class);
-        $searchQuery->expects(self::once())
-            ->method('getResult')
-            ->willReturn($searchResult);
-        $searchResult->expects(self::once())
-            ->method('toArray')
-            ->willReturn([new SearchResultItem('product', 1, '/product/1', ['sku' => 'sku01'])]);
-
+        $this->storage->expects(self::exactly(2))
+            ->method('get')
+            ->willReturnOnConsecutiveCalls([], $processedData);
         $this->storage->expects(self::once())
             ->method('set')
-            ->with($data);
+            ->with($processedData);
+
+        $this->productAvailabilityProvider->expects(self::once())
+            ->method('hasProductsAllowedForRFP')
+            ->with([1])
+            ->willReturn(true);
 
         $this->session->expects(self::never())
             ->method('getFlashBag');
 
-        self::assertNull($this->processor->process($data, $request));
+        self::assertInstanceOf(RedirectResponse::class, $this->processor->process($data, $request));
     }
 
     public function testIsAllowedForGuestWhenNoSecurityToken(): void

@@ -543,14 +543,6 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'rteToolbarPosUpdate', this.updateRtePosition.bind(this));
         this.listenTo(this.state, 'change', this.updatePropertyField.bind(this));
 
-        // Fix reload form when click export to zip dialog
-        this.listenTo(this.builder, 'run:export-template', () => {
-            $(this.builder.Modal.getContentEl())
-                .find('.gjs-btn-prim').on('click', e => {
-                    e.preventDefault();
-                });
-        });
-
         $(this.builder.Canvas.getBody()).on(
             'paste',
             '[contenteditable="true"]',
@@ -581,6 +573,9 @@ const GrapesjsEditorView = BaseView.extend({
             }
 
             if (!this.builder.getContainer().contains(event.target)) {
+                this.builder.getContainer().querySelectorAll(':focus').forEach(
+                    element => element.blur()
+                );
                 this.builder.getSelectedAll().forEach(selected => this.builder.selectRemove(selected));
             }
         });

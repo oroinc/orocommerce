@@ -3,19 +3,16 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\MappingException;
-use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\RuntimeReflectionService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,14 +33,14 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
     /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
     protected $storage;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
-
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $aclHelper;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    protected $doctrine;
 
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $logger;
+
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $entityManager;
 
     /** @var AbstractProductDataStorageExtension */
     protected $extension;
@@ -52,10 +49,16 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
     {
         $this->request = $this->createMock(Request::class);
         $this->storage = $this->createMock(ProductDataStorage::class);
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->request = $this->createMock(Request::class);
-        $this->aclHelper = $this->createMock(AclHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
+
+        $entityClass = get_class($this->getTargetEntity());
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with($entityClass)
+            ->willReturn($this->entityManager);
     }
 
     public function testBuildFormNoRequestParameter(): void
@@ -77,33 +80,31 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
 
     public function testBuildFormExistingEntity(): void
     {
-        $this->doctrineHelper->expects($this->any())
-            ->method('getSingleEntityIdentifier')
-            ->willReturn(1);
+        $data = [
+            ProductDataStorage::ENTITY_DATA_KEY => ['id' => 123]
+        ];
+
+        ReflectionUtil::setId($this->getTargetEntity(), 123);
 
         $this->expectsGetStorageFromRequest();
 
-        $this->storage->expects($this->any())
-            ->method('get');
+        $this->storage->expects($this->once())
+            ->method('get')
+            ->willReturn($data);
+        $this->storage->expects($this->never())
+            ->method('remove');
 
         $this->extension->buildForm($this->getFormBuilder(), []);
     }
 
     public function testBuildFormNoData(): void
     {
-        $this->doctrineHelper->expects($this->never())
-            ->method('getSingleEntityIdentifier')
-            ->willReturn(null);
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityRepository');
+        $data = [
+            ProductDataStorage::ENTITY_DATA_KEY => []
+        ];
 
         $this->expectsGetStorageFromRequest();
-
-        $this->storage->expects($this->any())
-            ->method('get')
-            ->willReturn([]);
-        $this->storage->expects($this->never())
-            ->method('remove');
+        $this->expectsGetDataFromStorage($data);
 
         $this->extension->buildForm($this->getFormBuilder(), []);
     }
@@ -114,7 +115,6 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
             ProductDataStorage::ENTITY_DATA_KEY => ['notExistsProperty' => 'some_string']
         ];
 
-        $this->expectsEntityMetadata([]);
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
 
@@ -151,81 +151,41 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
             ->method('remove');
     }
 
-    protected function expectsGetProductFromEntityRepository(Product $product): void
+    protected function expectsFindProduct(int $productId, Product $product): void
     {
-        $qb = $this->createMock(QueryBuilder::class);
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
-            ->method('getOneOrNullResult')
+        $this->entityManager->expects($this->once())
+            ->method('find')
+            ->with(Product::class, $productId)
             ->willReturn($product);
-
-        $repo = $this->createMock(ProductRepository::class);
-        $repo->expects($this->once())
-            ->method('getBySkuQueryBuilder')
-            ->willReturn($qb);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(Product::class)
-            ->willReturn($repo);
-
-        $this->aclHelper->expects($this->once())
-            ->method('apply')
-            ->with($qb)
-            ->willReturn($query);
     }
 
-    protected function expectsEntityMetadata(array $mappings = []): void
+    protected function initEntityMetadata(array $mappings): void
     {
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->expects($this->any())
-            ->method('hasAssociation')
-            ->willReturnCallback(function ($property) use ($mappings) {
-                return array_key_exists($property, $mappings);
-            });
-        $metadata->expects($this->any())
-            ->method('getAssociationTargetClass')
-            ->willReturnCallback(function ($property) use ($mappings) {
-                $this->assertArrayHasKey($property, $mappings);
-                $this->assertArrayHasKey('targetClass', $mappings[$property]);
-
-                return $mappings[$property]['targetClass'];
-            });
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityMetadata')
-            ->willReturn($metadata);
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnCallback([$this, 'getEntity']);
-    }
-
-    protected function initEntityMetadata(array $mappings = []): void
-    {
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityMetadata')
+        $this->entityManager->expects($this->any())
+            ->method('getClassMetadata')
             ->willReturnCallback(function ($object) use ($mappings) {
                 $class = is_object($object) ? ClassUtils::getClass($object) : ClassUtils::getRealClass($object);
+                $classMapping = $mappings[$class] ?? [];
 
                 $metadata = new ClassMetadata($class);
-                $metadata->setIdentifier([null]);
-
-                if (!isset($mappings[$class])) {
-                    return $metadata;
+                $identifierFieldNames = $classMapping['identifier'] ?? ['id'];
+                $metadata->setIdentifier($identifierFieldNames);
+                foreach ($identifierFieldNames as $fieldName) {
+                    $metadata->mapField(['fieldName' => $fieldName]);
                 }
-
-                $reflectionClass = new \ReflectionClass($metadata);
-                foreach ($mappings[$class] as $property => $value) {
-                    $method = $reflectionClass->getProperty($property);
-                    $method->setValue($metadata, $value);
+                if (isset($classMapping['associationMappings'])) {
+                    $metadata->associationMappings = $classMapping['associationMappings'];
                 }
+                $metadata->wakeupReflection(new RuntimeReflectionService());
 
                 return $metadata;
             });
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnCallback([$this, 'getEntity']);
+        $this->entityManager->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function (string $className, int|string $id) {
+                return $this->getEntity($className, $id);
+            });
     }
 
     abstract protected function getTargetEntity(): object;
@@ -261,28 +221,19 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         return $productUnit;
     }
 
-    public function getEntity(string $className, int|string $id, string $primaryKey = 'id'): object
+    protected function getEntity(string $className, int|string $id): object
     {
         static $entities = [];
         if (!isset($entities[$className][$id])) {
             $entities[$className][$id] = new $className();
             ReflectionUtil::setPropertyValue(
                 $entities[$className][$id],
-                $this->getPrimaryKey($className, $primaryKey),
+                $this->entityManager->getClassMetadata($className)->getSingleIdentifierFieldName(),
                 $id
             );
         }
 
         return $entities[$className][$id];
-    }
-
-    protected function getPrimaryKey(string $className, string $default = 'id'): string
-    {
-        try {
-            return $this->doctrineHelper->getEntityMetadata($className)->getSingleIdentifierFieldName() ?? $default;
-        } catch (MappingException) {
-            return $default;
-        }
     }
 
     protected function getFormBuilder(): FormBuilderInterface

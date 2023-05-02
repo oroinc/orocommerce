@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Provider;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
@@ -15,8 +15,7 @@ class ProductAvailabilityProvider
 {
     private ConfigManager $configManager;
     private ManagerRegistry $doctrine;
-    protected AclHelper $aclHelper;
-    protected ?ProductRepository $productRepository = null;
+    private AclHelper $aclHelper;
     private ?array $allowedInventoryStatuses = null;
 
     public function __construct(ConfigManager $configManager, ManagerRegistry $doctrine, AclHelper $aclHelper)
@@ -45,27 +44,16 @@ class ProductAvailabilityProvider
         return \in_array($inventoryStatus, $this->getAllowedInventoryStatuses(), true);
     }
 
-    public function hasProductsAllowedForRFPByProductData(array $products): bool
-    {
-        $repository = $this->getProductRepository();
-        foreach ($products as $product) {
-            if (!empty($product['productSku'])) {
-                $qb = $repository->getBySkuQueryBuilder($product['productSku']);
-                $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
-                if (null !== $product && $this->isProductAllowedForRFP($product)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     public function hasProductsAllowedForRFP(array $productsIds): bool
     {
-        $repository = $this->getProductRepository();
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(Product::class);
+        $qb = $em->createQueryBuilder()
+            ->from(Product::class, 'p')
+            ->select('p')
+            ->where('p.id = :id');
         foreach ($productsIds as $productId) {
-            $qb = $repository->getProductsQueryBuilder([$productId]);
+            $qb->setParameter('id', $productId);
             $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
             if (null !== $product && $this->isProductAllowedForRFP($product)) {
                 return true;
@@ -73,15 +61,6 @@ class ProductAvailabilityProvider
         }
 
         return false;
-    }
-
-    private function getProductRepository(): ProductRepository
-    {
-        if (!$this->productRepository) {
-            $this->productRepository = $this->doctrine->getRepository(Product::class);
-        }
-
-        return $this->productRepository;
     }
 
     private function getAllowedInventoryStatuses(): array

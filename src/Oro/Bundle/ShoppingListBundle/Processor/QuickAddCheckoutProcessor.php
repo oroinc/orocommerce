@@ -9,8 +9,8 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -28,6 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 {
+    private ManagerRegistry $doctrine;
     private MessageGenerator $messageGenerator;
     private ShoppingListManager $shoppingListManager;
     private ShoppingListLimitManager $shoppingListLimitManager;
@@ -43,8 +44,8 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
      */
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
+        ProductMapperInterface $productMapper,
         ManagerRegistry $doctrine,
-        AclHelper $aclHelper,
         MessageGenerator $messageGenerator,
         ShoppingListManager $shoppingListManager,
         ShoppingListLimitManager $shoppingListLimitManager,
@@ -54,7 +55,8 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         DateTimeFormatterInterface $dateFormatter,
         string $actionGroupName
     ) {
-        parent::__construct($shoppingListLineItemHandler, $doctrine, $aclHelper);
+        parent::__construct($shoppingListLineItemHandler, $productMapper);
+        $this->doctrine = $doctrine;
         $this->messageGenerator = $messageGenerator;
         $this->shoppingListManager = $shoppingListManager;
         $this->shoppingListLimitManager = $shoppingListLimitManager;

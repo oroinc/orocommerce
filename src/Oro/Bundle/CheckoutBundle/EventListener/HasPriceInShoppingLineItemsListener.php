@@ -6,8 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
@@ -24,23 +23,20 @@ class HasPriceInShoppingLineItemsListener
     private $productPriceProvider;
 
     /**
-     * @var UserCurrencyManager
-     */
-    private $userCurrencyManager;
-
-    /**
      * @var ProductPriceScopeCriteriaRequestHandler
      */
     private $scopeCriteriaRequestHandler;
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
-        UserCurrencyManager $userCurrencyManager,
-        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
+        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
     ) {
         $this->productPriceProvider = $productPriceProvider;
-        $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $conditionEvent)
@@ -102,16 +98,7 @@ class HasPriceInShoppingLineItemsListener
      */
     private function isThereAPricePresent(Collection $lineItems)
     {
-        $productsPricesCriteria = [];
-
-        foreach ($lineItems as $lineItem) {
-            $productsPricesCriteria[] = new ProductPriceCriteria(
-                $lineItem->getProduct(),
-                $lineItem->getProductUnit(),
-                $lineItem->getQuantity(),
-                $this->userCurrencyManager->getUserCurrency()
-            );
-        }
+        $productsPricesCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems($lineItems);
 
         $prices = $this->productPriceProvider
             ->getMatchedPrices($productsPricesCriteria, $this->scopeCriteriaRequestHandler->getPriceScopeCriteria());

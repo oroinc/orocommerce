@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Processor;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -17,57 +16,52 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcessorInterface
 {
     protected ShoppingListLineItemHandler $shoppingListLineItemHandler;
-    protected ManagerRegistry $doctrine;
-    protected AclHelper $aclHelper;
+    private ProductMapperInterface $productMapper;
 
     public function __construct(
         ShoppingListLineItemHandler $shoppingListLineItemHandler,
-        ManagerRegistry $doctrine,
-        AclHelper $aclHelper
+        ProductMapperInterface $productMapper
     ) {
         $this->shoppingListLineItemHandler = $shoppingListLineItemHandler;
-        $this->doctrine = $doctrine;
-        $this->aclHelper = $aclHelper;
+        $this->productMapper = $productMapper;
     }
 
     protected function fillShoppingList(ShoppingList $shoppingList, array $data): int
     {
-        $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
-        $productSkus = array_column($data, ProductDataStorage::PRODUCT_SKU_KEY);
-
-        $qb = $this->doctrine->getRepository(Product::class)->getProductsIdsBySkuQueryBuilder($productSkus);
-        $productsData = $this->aclHelper->apply($qb)->getArrayResult();
-
-        $productIds = [];
-        foreach ($productsData as $key => $productData) {
-            $productIds[$productData['sku']] = $productData['id'];
-            unset($productsData[$key]);
+        if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])) {
+            return 0;
         }
 
-        $productUnitsWithQuantities = [];
-        foreach ($data as $product) {
-            $productQuantity = $product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
+        $items = new ArrayCollection();
+        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataItem) {
+            $items->add(new \ArrayObject($dataItem));
+        }
+        $this->productMapper->mapProducts($items);
 
-            if (!isset($product[ProductDataStorage::PRODUCT_UNIT_KEY])) {
+        $productIds = [];
+        $productUnitsWithQuantities = [];
+        foreach ($items as $item) {
+            $productId = $item[ProductDataStorage::PRODUCT_ID_KEY] ?? null;
+            if (null === $productId) {
                 continue;
             }
 
-            $productUnit = $product[ProductDataStorage::PRODUCT_UNIT_KEY];
-
-            $skuUppercase = mb_strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY]);
-            if (\array_key_exists($skuUppercase, $productUnitsWithQuantities)
-                && isset($productUnitsWithQuantities[$skuUppercase][$productUnit])
-            ) {
-                $productQuantity += $productUnitsWithQuantities[$skuUppercase][$productUnit];
+            $productIds[] = $productId;
+            if (isset($item[ProductDataStorage::PRODUCT_UNIT_KEY])) {
+                $productUnit = $item[ProductDataStorage::PRODUCT_UNIT_KEY];
+                $productQuantity = $item[ProductDataStorage::PRODUCT_QUANTITY_KEY];
+                if (isset($productUnitsWithQuantities[$productId][$productUnit])) {
+                    $productQuantity += $productUnitsWithQuantities[$productId][$productUnit];
+                }
+                $productUnitsWithQuantities[$productId][$productUnit] = $productQuantity;
             }
-
-            $productUnitsWithQuantities[$skuUppercase][$productUnit] = $productQuantity;
         }
+        $productIds = array_values(array_unique($productIds));
 
         try {
             return $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
-                array_values($productIds),
+                $productIds,
                 $productUnitsWithQuantities
             );
         } catch (AccessDeniedException $e) {

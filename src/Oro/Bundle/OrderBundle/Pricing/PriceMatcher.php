@@ -4,10 +4,9 @@ namespace Oro\Bundle\OrderBundle\Pricing;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
-use Psr\Log\LoggerInterface;
 
 /**
  * Match prices by order line items.
@@ -20,17 +19,16 @@ class PriceMatcher
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
 
     public function __construct(
         MatchingPriceProvider $provider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
-        LoggerInterface $logger
+        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
     ) {
         $this->provider = $provider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-        $this->logger = $logger;
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -60,21 +58,19 @@ class PriceMatcher
 
     public function fillMatchingPrices(Order $order, array $matchedPrices = [])
     {
-        $lineItems = $order->getLineItems()->toArray();
-        array_walk(
-            $lineItems,
-            function (OrderLineItem $orderLineItem) use ($matchedPrices) {
-                $productPriceCriteria = $this->createProductPriceCriteria($orderLineItem);
-                if (!$productPriceCriteria) {
-                    return;
-                }
+        $lineItems = $order->getLineItems();
 
-                $identifier = $productPriceCriteria->getIdentifier();
-                if (array_key_exists($identifier, $matchedPrices)) {
-                    $this->fillOrderLineItemData($orderLineItem, $matchedPrices[$identifier]);
-                }
-            }
+        $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+            $lineItems,
+            $order->getCurrency()
         );
+
+        foreach ($productsPriceCriteria as $lineItemIdx => $productPriceCriteria) {
+            $identifier = $productPriceCriteria->getIdentifier();
+            if (array_key_exists($identifier, $matchedPrices)) {
+                $this->fillOrderLineItemData($lineItems->get($lineItemIdx), $matchedPrices[$identifier]);
+            }
+        }
     }
 
     public function addMatchingPrices(Order $order)
@@ -91,38 +87,6 @@ class PriceMatcher
         }
         if (null === $orderLineItem->getValue() && !empty($matchedPrice['value'])) {
             $orderLineItem->setValue((string)$matchedPrice['value']);
-        }
-    }
-
-    /**
-     * @param OrderLineItem $orderLineItem
-     * @return null|ProductPriceCriteria
-     */
-    protected function createProductPriceCriteria(OrderLineItem $orderLineItem)
-    {
-        $product = $orderLineItem->getProduct();
-        $productUnit = $orderLineItem->getProductUnit();
-
-        if (!$product || !$productUnit) {
-            return null;
-        }
-
-        try {
-            return new ProductPriceCriteria(
-                $product,
-                $productUnit,
-                $orderLineItem->getQuantity(),
-                $orderLineItem->getCurrency() ?: $orderLineItem->getOrder()->getCurrency()
-            );
-        } catch (\InvalidArgumentException $e) {
-            $this->logger->error(
-                'Got error while trying to create new ProductPriceCriteria with message: "{message}"',
-                [
-                    'message' => $e->getMessage(),
-                    'exception' => $e
-                ]
-            );
-            return null;
         }
     }
 }
