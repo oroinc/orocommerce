@@ -2,6 +2,7 @@ data:
     type: shoppinglistitems
     id: '<toString(@line_item1->id)>'
     attributes:
+        checksum: ''
         quantity: 5
         notes: null
         currency: USD
@@ -13,6 +14,8 @@ data:
                 id: '<toString(@product1->id)>'
         parentProduct:
             data: null
+        kitItems:
+            data: []
         shoppingList:
             data:
                 type: shoppinglists

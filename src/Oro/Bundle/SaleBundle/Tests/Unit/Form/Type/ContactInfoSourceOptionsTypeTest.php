@@ -7,23 +7,15 @@ use Oro\Bundle\SaleBundle\Provider\OptionsProviderInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\FormInterface;
 
 class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var OptionsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var OptionsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $customerOptionProvider;
 
-    /**
-     * @var ContactInfoSourceOptionsType
-     */
+    /** @var ContactInfoSourceOptionsType */
     private $formType;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->customerOptionProvider = $this->createMock(OptionsProviderInterface::class);
@@ -32,17 +24,12 @@ class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
-            new PreloadedExtension(
-                [
-                    ContactInfoSourceOptionsType::class => $this->formType
-                ],
-                []
-            ),
+            new PreloadedExtension([$this->formType], [])
         ];
     }
 
@@ -64,31 +51,17 @@ class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
             ->method('getOptions')
             ->willReturn($allowedOptions);
 
-        $this->doTestForm($inputOptions, $expectedOptions, $submittedData);
-    }
-
-    /**
-     * @param array $inputOptions
-     * @param array $expectedOptions
-     * @param mixed $submittedData
-     *
-     * @return FormInterface
-     */
-    protected function doTestForm(array $inputOptions, array $expectedOptions, $submittedData)
-    {
         $form = $this->factory->create(ContactInfoSourceOptionsType::class, null, $inputOptions);
         $formConfig = $form->getConfig();
 
         foreach ($expectedOptions as $key => $value) {
-            static::assertTrue($formConfig->hasOption($key));
+            self::assertTrue($formConfig->hasOption($key));
         }
 
-        static::assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
+        self::assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
         $form->submit($submittedData);
-        static::assertTrue($form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($submittedData, $form->getData());
-
-        return $form;
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($submittedData, $form->getData());
     }
 }

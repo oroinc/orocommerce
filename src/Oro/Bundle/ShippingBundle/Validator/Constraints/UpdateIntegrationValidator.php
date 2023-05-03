@@ -5,11 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
-use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Validates if shipping integration can be deleted.
@@ -17,20 +15,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class UpdateIntegrationValidator extends ConstraintValidator
 {
-    /**
-     * @var IntegrationShippingMethodFactoryInterface
-     */
-    private $shippingMethodFactory;
-
-    /**
-     * @var ShippingMethodValidatorInterface
-     */
-    private $shippingMethodValidator;
-
-    /**
-     * @var string
-     */
-    private $violationPath;
+    private IntegrationShippingMethodFactoryInterface $shippingMethodFactory;
+    private ShippingMethodValidatorInterface $shippingMethodValidator;
+    private string $violationPath;
 
     public function __construct(
         IntegrationShippingMethodFactoryInterface $shippingMethodFactory,
@@ -43,10 +30,9 @@ class UpdateIntegrationValidator extends ConstraintValidator
     }
 
     /**
-     * @param Transport  $value
-     * @param Constraint $constraint
+     * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof Transport) {
             return;
@@ -56,24 +42,15 @@ class UpdateIntegrationValidator extends ConstraintValidator
             return;
         }
 
-        $shippingMethod = $this->shippingMethodFactory->create($value->getChannel());
-        $shippingMethodValidatorResult = $this->shippingMethodValidator->validate($shippingMethod);
-
-        $this->handleValidationResult($shippingMethodValidatorResult);
-    }
-
-    private function handleValidationResult(ShippingMethodValidatorResultInterface $shippingMethodValidatorResult)
-    {
-        if ($shippingMethodValidatorResult->getErrors()->isEmpty()) {
+        $errors = $this->shippingMethodValidator
+            ->validate($this->shippingMethodFactory->create($value->getChannel()))
+            ->getErrors();
+        if ($errors->isEmpty()) {
             return;
         }
 
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
-
-        foreach ($shippingMethodValidatorResult->getErrors() as $error) {
-            $context
-                ->buildViolation($error->getMessage())
+        foreach ($errors as $error) {
+            $this->context->buildViolation($error->getMessage())
                 ->atPath($this->violationPath)
                 ->addViolation();
         }

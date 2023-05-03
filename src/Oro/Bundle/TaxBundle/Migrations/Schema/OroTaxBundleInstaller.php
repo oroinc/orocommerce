@@ -27,7 +27,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_10';
     }
 
     /**
@@ -149,6 +149,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -254,6 +255,12 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
             ['tax_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
         );
     }
 

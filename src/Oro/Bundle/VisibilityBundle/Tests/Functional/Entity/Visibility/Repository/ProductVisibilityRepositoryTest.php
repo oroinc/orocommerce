@@ -16,59 +16,46 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibil
  */
 class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
-    /**
-     * @var ProductVisibilityRepository
-     */
+    /** @var ProductVisibilityRepository */
     protected $repository;
 
-    /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertExecutor;
+    /** @var InsertFromSelectQueryExecutor */
+    private $insertExecutor;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->repository = static::getContainer()
-            ->get('oro_visibility.product_raw_repository');
+        $this->repository = self::getContainer()->get('oro_visibility.product_raw_repository');
         $this->insertExecutor = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
 
-        $this->loadFixtures(
-            [
-                LoadCategoryProductData::class,
-                LoadProductVisibilityData::class,
-            ]
-        );
+        $this->loadFixtures([LoadCategoryProductData::class, LoadProductVisibilityData::class]);
     }
 
     /**
      * @dataProvider setToDefaultWithoutCategoryDataProvider
      */
-    public function testSetToDefaultWithoutCategory($categoryName, array $expected)
+    public function testSetToDefaultWithoutCategory(string $categoryName, array $deletedCategoryProducts)
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
-        $scopes = static::getContainer()->get('oro_scope.scope_manager')
+        $scopes = self::getContainer()->get('oro_scope.scope_manager')
             ->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         foreach ($scopes as $scope) {
             $this->repository->setToDefaultWithoutCategory($this->insertExecutor, $scope);
             $actual = $this->getProductsByVisibilitiesScope($scope);
-            static::assertSameSize($expected, $actual);
+            self::assertSameSize($deletedCategoryProducts, $actual);
             foreach ($actual as $value) {
-                static::assertContains($value, $expected);
+                self::assertContains($value, $deletedCategoryProducts);
             }
         }
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function setToDefaultWithoutCategoryDataProvider()
+    public function setToDefaultWithoutCategoryDataProvider(): array
     {
         return [
             'Delete FOURTH_LEVEL2' => [
@@ -115,11 +102,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         ];
     }
 
-    /**
-     * @param Scope $scope
-     * @return array
-     */
-    protected function getProductsByVisibilitiesScope(Scope $scope)
+    private function getProductsByVisibilitiesScope(Scope $scope): array
     {
         return array_map(
             function (ProductVisibility $visibility) {

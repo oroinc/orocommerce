@@ -86,7 +86,7 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
     /**
      * {@inheritdoc}
      */
-    public function moveDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
+    public function copyDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
     {
         $columns = $this->helper->getColumns($className, $fields);
 
@@ -100,7 +100,14 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
             ),
             $fields
         );
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function moveDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
+    {
+        $this->copyDataFromTemplateTableToEntityTable($className, $identifier, $fields);
         $this->truncateTempTableForEntity($className, $identifier);
     }
 

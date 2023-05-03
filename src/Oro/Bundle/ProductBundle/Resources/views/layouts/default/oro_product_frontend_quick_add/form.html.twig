@@ -1,5 +1,4 @@
-{% block oro_product_row_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
+{% block oro_product_quick_add_row_widget %}
     {% set name = form.vars.full_name %}
     {% set disabled = form.parent.vars.disabled %}
     {% set allow_delete = form.parent.vars.allow_delete %}
@@ -13,20 +12,19 @@
          {{ block('widget_container_attributes') }}
     >
         <div class="quick-order-add__row-content"
-            {{ UI.renderPageComponentAttributes({
-                view: "oroproduct/js/app/views/quick-add-row-view",
-                name: row_component_name,
-                options: {ignoreSubPromises: true}
-            }) }}
+             data-page-component-name="{{ row_component_name }}"
+             data-page-component-view="{{ form.vars.page_component_view }}"
+             data-page-component-options="{{ {ignoreSubPromises: true}|json_encode }}"
         >
             <div class="quick-order-add__col quick-order-add__product"
                  data-page-component-init-on="click,focusin"
                  data-label="{{ 'oro.product.item_number.label'|trans }}"
             >
-                {{ form_widget(form.productDisplayName, {attr: {
+                {{ form_widget(form.product, {attr: {
                     placeholder: "oro.product.sku.placeholder",
                     'aria-label': "oro.product.sku.aria_label",
-                    'data-value': form.productDisplayName.vars.value,
+                    'data-value': form.product.vars.value,
+                    'data-required': "data-required",
                     'data-dropdown-classes':{
                         holder: 'select2-drop oro-select2__dropdown',
                         menu: 'select2-results',
@@ -34,12 +32,12 @@
                         link: 'select2-result-label'
                     }|json_encode
                 }}) }}
-                {{ form_widget(form.productSku) }}
+                {{ form_widget(form.sku) }}
             </div>
             <div class="quick-order-add__col quick-order-add__quantity"
                  data-label="{{ 'oro.product.quantity.label'|trans }}"
             >
-                {{ form_widget(form.productQuantity, {attr: {
+                {{ form_widget(form.quantity, {attr: {
                     class: ' quick-order-add__quantity-input',
                     placeholder: "oro.product.quantity.placeholder",
                     'aria-label': "oro.product.quantity.aria_label"
@@ -47,29 +45,28 @@
             </div>
             <div class="quick-order-add__col quick-order-add__unit"
                  data-label="{{ 'oro.product.productunitprecision.unit.label'|trans }}"
-                 data-validation="{{ {'QuickAddUnit': {}}|json_encode(constant('JSON_FORCE_OBJECT')) }}"
             >
-                {{ form_widget(form.productUnit, {attr: {
+                {{ form_widget(form.unit, {attr: {
                     'class': 'disabled',
                     'aria-label': 'oro.product.productunitprecision.unit.label',
                     'data-skip-input-widgets': ''
-                }|merge(form.productUnit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
+                }|merge(form.unit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields with {
                 row_component_name: row_component_name,
                 _collection_unique_prefix: form.parent.vars.unique_block_prefix
             } %}
             {% if allow_delete %}
-                <button class="btn btn--plain quick-order-add__remove-row removeRow" data-role="row-remove" type="button"
+                <button class="btn btn--plain quick-order-add__remove-row hidden removeRow" data-role="row-remove" type="button"
                         aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
                 </button>
             {% endif %}
         </div>
-        <div class="quick-order-add__error fields-row-error">{{ form_errors(form.productQuantity) }}</div>
+        <div class="quick-order-add__error fields-row-error">{{ form_errors(form.quantity) }}</div>
     </div>
 {% endblock %}
 
-{% block oro_product_row_collection_widget %}
+{% block oro_product_quick_add_row_collection_widget %}
     {% apply spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = form_widget(form.vars.prototype) %}
@@ -91,7 +88,7 @@
                 {% set collectionValidation = {
                     NotBlankGroup: {
                         message: 'oro.product.at_least_one_item'|trans,
-                        selector: '[data-name="field__product-display-name"], [data-name="field__product-sku"], [data-name="field__product-quantity"]'
+                        selector: '[data-name="field__product"], [data-name="field__sku"], [data-name="field__quantity"]'
                     }
                 } %}
                 <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element

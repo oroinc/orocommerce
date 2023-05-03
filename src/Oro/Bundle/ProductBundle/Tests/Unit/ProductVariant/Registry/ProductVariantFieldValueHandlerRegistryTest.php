@@ -8,22 +8,11 @@ use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHan
 class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductVariantFieldValueHandlerRegistry */
-    protected $registry;
+    private $registry;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->registry = new ProductVariantFieldValueHandlerRegistry();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->registry);
     }
 
     public function testGetVariantFieldValueHandlers()
@@ -67,11 +56,7 @@ class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit\Framework\Tes
         $this->registry->getVariantFieldValueHandler('unknown');
     }
 
-    /**
-     * @param string $type
-     * @return ProductVariantFieldValueHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createHandler($type)
+    private function createHandler(string $type): ProductVariantFieldValueHandlerInterface
     {
         $handler = $this->createMock(ProductVariantFieldValueHandlerInterface::class);
         $handler->expects($this->any())

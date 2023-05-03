@@ -5,38 +5,32 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerGroupDemoData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * The base class for fixtures that load product visibilities demo data.
+ */
 abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadProductDemoData::class,
@@ -46,9 +40,9 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->resetVisibilities($manager);
 
@@ -68,13 +62,13 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     /**
      * Set fallback to parent category for all products with categories
      */
-    protected function resetVisibilities(ObjectManager $manager)
+    protected function resetVisibilities(ObjectManager $manager): void
     {
         // products with categories
-        $productIds = $manager->getRepository('OroProductBundle:Product')
+        $productIds = $manager->getRepository(Product::class)
             ->createQueryBuilder('product')
             ->select('product.id')
-            ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'product MEMBER OF category.products')
+            ->innerJoin(Category::class, 'category', 'WITH', 'product MEMBER OF category.products')
             ->getQuery()
             ->getArrayResult();
         $productIds = array_map('current', $productIds);
@@ -83,7 +77,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
         }
 
         /** @var ProductVisibility[] $visibilities */
-        $visibilities = $manager->getRepository('Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility')
+        $visibilities = $manager->getRepository(ProductVisibility::class)
             ->createQueryBuilder('visibility')
             ->andWhere('IDENTITY(visibility.product) IN (:productIds)')
             ->setParameter('productIds', $productIds)
@@ -96,13 +90,10 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
         $manager->flush();
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function setProductVisibility(ObjectManager $manager, array $row)
+    protected function setProductVisibility(ObjectManager $manager, array $row): void
     {
         $scopeProvider = $this->container->get('oro_visibility.provider.visibility_scope_provider');
-        $product = $manager->getRepository('OroProductBundle:Product')->findOneBySku($row['product']);
+        $product = $manager->getRepository(Product::class)->findOneBy(['sku' => $row['product']]);
         $website = $this->getWebsite($manager, $row);
 
         if ($row['all']) {
@@ -122,7 +113,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
             $scope = $scopeProvider->getCustomerGroupProductVisibilityScope($customerGroup, $website);
             $visibility->setScope($scope);
         } else {
-            throw new \Exception("Visibility type undefined");
+            throw new \RuntimeException('Visibility type undefined');
         }
 
         $visibility->setVisibility($row['visibility'])
@@ -132,15 +123,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $row
-     * @return Website
-     */
-    abstract protected function getWebsite(ObjectManager $manager, array $row);
+    abstract protected function getWebsite(ObjectManager $manager, array $row): Website;
 
-    /**
-     * @return string
-     */
-    abstract protected function getDataFile();
+    abstract protected function getDataFile(): string;
 }

@@ -12,96 +12,33 @@ use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * Provides an interface for payment context builder
+ * Provides an interface for payment context builder.
  */
 interface PaymentContextBuilderInterface
 {
-    /**
-     * @return PaymentContextInterface
-     */
-    public function getResult();
+    public function getResult(): PaymentContextInterface;
 
-    /**
-     * @param PaymentLineItemCollectionInterface $lineItemCollection
-     *
-     * @return self
-     */
-    public function setLineItems(PaymentLineItemCollectionInterface $lineItemCollection);
+    public function setLineItems(PaymentLineItemCollectionInterface $lineItemCollection): static;
 
-    /**
-     * @param PaymentLineItemInterface $paymentLineItem
-     *
-     * @return self
-     */
-    public function addLineItem(PaymentLineItemInterface $paymentLineItem);
+    public function addLineItem(PaymentLineItemInterface $paymentLineItem): static;
 
-    /**
-     * @param AddressInterface $shippingAddress
-     *
-     * @return self
-     */
-    public function setShippingAddress(AddressInterface $shippingAddress);
+    public function setBillingAddress(?AddressInterface $billingAddress): static;
 
-    /**
-     * @param AddressInterface $shippingOrigin
-     *
-     * @return self
-     */
-    public function setShippingOrigin(AddressInterface $shippingOrigin);
+    public function setShippingAddress(?AddressInterface $shippingAddress): static;
 
-    /**
-     * @param AddressInterface $billingAddress
-     *
-     * @return self
-     */
-    public function setBillingAddress(AddressInterface $billingAddress);
+    public function setShippingOrigin(?AddressInterface $shippingOrigin): static;
 
-    /**
-     * @param string $shippingMethod
-     *
-     * @return self
-     */
-    public function setShippingMethod($shippingMethod);
+    public function setShippingMethod(?string $shippingMethod): static;
 
-    /**
-     * @param Customer $customer
-     *
-     * @return self
-     */
-    public function setCustomer(Customer $customer);
+    public function setCustomer(?Customer $customer): static;
 
-    /**
-     * @param CustomerUser $customerUser
-     *
-     * @return self
-     */
-    public function setCustomerUser(CustomerUser $customerUser);
+    public function setCustomerUser(?CustomerUser $customerUser): static;
 
-    /**
-     * @param Price $subTotal
-     *
-     * @return self
-     */
-    public function setSubTotal(Price $subTotal);
+    public function setSubTotal(?Price $subTotal): static;
 
-    /**
-     * @param string $currency
-     *
-     * @return self
-     */
-    public function setCurrency($currency);
+    public function setCurrency(?string $currency): static;
 
-    /**
-     * @param Website $website
-     *
-     * @return self
-     */
-    public function setWebsite(Website $website);
+    public function setWebsite(?Website $website): static;
 
-    /**
-     * @param float $total
-     *
-     * @return self
-     */
-    public function setTotal($total);
+    public function setTotal(?float $total): static;
 }

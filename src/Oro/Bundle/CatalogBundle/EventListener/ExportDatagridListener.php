@@ -7,8 +7,9 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\ImportExport\Datagrid\CategoryFilterInterface;
+use Oro\Bundle\CatalogBundle\ImportExport\Datagrid\CategoryFilterRegistryInterface;
 use Oro\Bundle\ImportExportBundle\Event\ExportPreGetIds;
-use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * This listener adds category filtering to query builder on product export event
@@ -16,15 +17,19 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 class ExportDatagridListener
 {
     private ManagerRegistry $doctrine;
+    private CategoryFilterRegistryInterface $categoryFilterRegistry;
+    private ?CategoryFilterInterface $categoryFilter = null;
 
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(ManagerRegistry $doctrine, CategoryFilterRegistryInterface $categoryFilterRegistry)
     {
         $this->doctrine = $doctrine;
+        $this->categoryFilterRegistry = $categoryFilterRegistry;
     }
 
     public function onBeforeExportGetIds(ExportPreGetIds $event): void
     {
         $options = $event->getOptions();
+        $this->categoryFilter = $this->categoryFilterRegistry->get($options['entityName'] ?? '');
         $categoryExpression = null;
 
         if (isset($options['categoryId'])) {
@@ -46,6 +51,7 @@ class ExportDatagridListener
             return;
         }
 
+        $this->categoryFilter->prepareQueryBuilder($event->getQueryBuilder());
         $event->getQueryBuilder()->andWhere($categoryExpression);
     }
 
@@ -64,20 +70,18 @@ class ExportDatagridListener
             $categoryIds = array_merge($repository->getChildrenIds($category), $categoryIds);
         }
 
-        $alias = QueryBuilderUtil::getSingleRootAlias($qb);
         $categoryExpression = $qb->expr()->orX();
-        $categoryExpression->add($qb->expr()->in(sprintf('%s.category', $alias), $categoryIds));
+        $categoryExpression->add($qb->expr()->in($this->categoryFilter->getFieldName($qb), $categoryIds));
 
         return $categoryExpression;
     }
 
     private function applyIncludeNotCategorizedProducts(?Expr\Base $categoryExpression, QueryBuilder $qb): ?Expr\Base
     {
-        $alias = QueryBuilderUtil::getSingleRootAlias($qb);
         if (null === $categoryExpression) {
             $categoryExpression = $qb->expr()->orX();
         }
-        $categoryExpression->add($qb->expr()->isNull(sprintf('%s.category', $alias)));
+        $categoryExpression->add($qb->expr()->isNull($this->categoryFilter->getFieldName($qb)));
 
         return $categoryExpression;
     }

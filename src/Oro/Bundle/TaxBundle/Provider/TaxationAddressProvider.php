@@ -7,6 +7,9 @@ use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use Oro\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
+/**
+ * Provides a set of methods to get billing, shipping or origin addresses.
+ */
 class TaxationAddressProvider
 {
     public function __construct(TaxationSettingsProvider $settingsProvider)
@@ -32,7 +35,7 @@ class TaxationAddressProvider
 
         $exclusion = $this->getExclusions($address);
         if ($exclusion) {
-            return $exclusion->getOption() === TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN ?
+            return $exclusion->getOption() === TaxationSettingsProvider::USE_AS_BASE_ORIGIN ?
                 $this->getOriginAddress() : $address;
         }
 

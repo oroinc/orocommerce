@@ -10,6 +10,7 @@ Feature: Featured product using segment records limit with cache
 
   Scenario: Check that featured products exist
     Given I proceed as the Guest
+    And I wait for 3 seconds
     When I go to homepage
     And I scroll to "Featured Products Block"
     Then I should see the following products in the "Featured Products Block":

@@ -10,25 +10,12 @@ class RequiredConsentFilterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RequiredConsentFilter
-     */
+    /** @var RequiredConsentFilter */
     private $filter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->filter = new RequiredConsentFilter();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->filter);
     }
 
     /**
@@ -43,10 +30,7 @@ class RequiredConsentFilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function isConsentPassedFilterProvider()
+    public function isConsentPassedFilterProvider(): array
     {
         return [
             'Mandatory consent' => [

@@ -6,26 +6,27 @@ use Knp\Menu\ItemInterface;
 use Oro\Bundle\NavigationBundle\Menu\BuilderInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 
+/**
+ * Adds "Quick Order Form" to the storefront menu.
+ */
 class QuickAddMenuBuilder implements BuilderInterface
 {
-    /**
-     * @var ComponentProcessorRegistry
-     */
-    protected $componentRegistry;
+    private ComponentProcessorRegistry $processorRegistry;
 
-    public function __construct(ComponentProcessorRegistry $componentRegistry)
+    public function __construct(ComponentProcessorRegistry $processorRegistry)
     {
-        $this->componentRegistry = $componentRegistry;
+        $this->processorRegistry = $processorRegistry;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function build(ItemInterface $menu, array $options = array(), $alias = null)
+    public function build(ItemInterface $menu, array $options = [], $alias = null)
     {
-        if (!$this->componentRegistry->hasAllowedProcessor()) {
+        if (!$this->processorRegistry->hasAllowedProcessors()) {
             return;
         }
+
         $menu
             ->addChild(
                 'oro.product.frontend.quick_add.title',

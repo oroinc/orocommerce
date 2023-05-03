@@ -13,15 +13,15 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 /**
  * @dbIsolationPerTest
+ * @property \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client $client
  */
 class ProductControllerTest extends FrontendWebTestCase
 {
     use WebsiteSearchExtensionTrait;
     use PreviouslyPurchasedFeatureTrait;
 
-    const FRONTEND_GRID_NAME = 'order-products-previously-purchased-grid';
+    private const FRONTEND_GRID_NAME = 'order-products-previously-purchased-grid';
 
-    /** {@inheritdoc} */
     protected function setUp(): void
     {
         $this->initClient(
@@ -46,7 +46,7 @@ class ProductControllerTest extends FrontendWebTestCase
     {
         $response = $this->client->requestFrontendGrid(self::FRONTEND_GRID_NAME, [], true);
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
         $this->assertCount(2, $result['data']);
 
@@ -80,7 +80,7 @@ class ProductControllerTest extends FrontendWebTestCase
 
         $response = $this->client->requestFrontendGrid(self::FRONTEND_GRID_NAME, $gridParam, true);
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
         $this->assertCount(count($expected), $result['data']);
 
@@ -89,7 +89,7 @@ class ProductControllerTest extends FrontendWebTestCase
         }
     }
 
-    public function gridParamDataProvider()
+    public function gridParamDataProvider(): array
     {
         return [
             'With sort by name desk' => [

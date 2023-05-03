@@ -4,10 +4,10 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
-use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -16,77 +16,27 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Builds QuoteProductType form
+ * The form type for QuoteProduct entity.
  */
 class QuoteProductType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_product';
-
-    /**
-     * @var UnitLabelFormatterInterface
-     */
-    protected $labelFormatter;
-
-    /**
-     * @var QuoteProductFormatter
-     */
-    protected $formatter;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @var string
-     */
-    protected $productUnitClass;
+    private UnitLabelFormatterInterface $labelFormatter;
+    private ManagerRegistry $doctrine;
 
     public function __construct(
-        TranslatorInterface $translator,
         UnitLabelFormatterInterface $labelFormatter,
-        QuoteProductFormatter $formatter,
-        ManagerRegistry $registry
+        ManagerRegistry $doctrine
     ) {
-        $this->translator = $translator;
         $this->labelFormatter = $labelFormatter;
-        $this->formatter = $formatter;
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
     /**
-     * @param string $dataClass
+     * {@inheritDoc}
      */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['page_component'] = $options['page_component'];
         $view->vars['page_component_options'] = $options['page_component_options'];
@@ -94,19 +44,17 @@ class QuoteProductType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $units = [];
-
-        /* @var $products Product[] */
+        /* @var Product[] $products */
         $products = [];
 
         $isFreeForm = false;
-
         if ($view->vars['value']) {
-            /* @var $quoteProduct QuoteProduct */
+            /* @var QuoteProduct $quoteProduct */
             $quoteProduct = $view->vars['value'];
 
             if ($quoteProduct->getProduct()) {
@@ -138,9 +86,9 @@ class QuoteProductType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('product', ProductSelectType::class, [
@@ -180,7 +128,7 @@ class QuoteProductType extends AbstractType
                 'entry_options' => [
                     'compact_units' => $options['compact_units'],
                     'allow_prices_override' => $options['allow_prices_override'],
-                ],
+                ]
             ])
             ->add('type', HiddenType::class, [
                 'data' => QuoteProduct::TYPE_REQUESTED,
@@ -195,17 +143,16 @@ class QuoteProductType extends AbstractType
             ->add('comment', TextareaType::class, [
                 'required' => false,
                 'label' => 'oro.sale.quoteproduct.comment.label',
-            ])
-        ;
+            ]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
+            'data_class' => QuoteProduct::class,
             'csrf_token_id' => 'sale_quote_product',
             'compact_units' => false,
             'allow_prices_override' => true,
@@ -216,31 +163,16 @@ class QuoteProductType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
+        return 'oro_sale_quote_product';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    private function getAllUnits(bool $isCompactUnits): array
     {
-        return self::NAME;
-    }
-
-    /**
-     * @param bool $isCompactUnits
-     * @return array
-     */
-    protected function getAllUnits($isCompactUnits)
-    {
-        $units = $this->registry->getManagerForClass($this->productUnitClass)
-            ->getRepository($this->productUnitClass)
-            ->getAllUnits()
-        ;
+        $units = $this->doctrine->getRepository(ProductUnit::class)->getAllUnits();
 
         return $this->labelFormatter->formatChoices($units, $isCompactUnits);
     }

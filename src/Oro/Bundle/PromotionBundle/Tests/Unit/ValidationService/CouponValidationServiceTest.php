@@ -13,14 +13,10 @@ class CouponValidationServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CouponUsageManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CouponUsageManager|\PHPUnit\Framework\MockObject\MockObject */
     private $couponUsageManager;
 
-    /**
-     * @var CouponValidationService
-     */
+    /** @var CouponValidationService */
     private $couponValidationService;
 
     protected function setUp(): void
@@ -119,7 +115,6 @@ class CouponValidationServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testGetViolationsCustomerUserUsageLimitExceededCoupon()
     {
-        /** @var CustomerUser $customerUser */
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42, 'email' => 'test@example.com']);
 
         $coupon = new Coupon();
@@ -161,18 +156,13 @@ class CouponValidationServiceTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isValidDataProvider
-     * @param Coupon $coupon
-     * @param boolean $isValid
      */
-    public function testIsValid(Coupon $coupon, $isValid)
+    public function testIsValid(Coupon $coupon, bool $isValid)
     {
         $this->assertEquals($isValid, $this->couponValidationService->isValid($coupon));
     }
 
-    /**
-     * @return array
-     */
-    public function isValidDataProvider()
+    public function isValidDataProvider(): array
     {
         return [
             'not valid' => [

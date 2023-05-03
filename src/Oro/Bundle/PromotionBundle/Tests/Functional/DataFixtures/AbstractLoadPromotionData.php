@@ -13,26 +13,18 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 abstract class AbstractLoadPromotionData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $userRepository = $manager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL]);
@@ -45,6 +37,7 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
 
             $promotion = new Promotion();
             $promotion->setOwner($user);
+            $promotion->setOrganization($user->getOrganization());
             $promotion->setRule($rule);
             $promotion->setUseCoupons($promotionData['useCoupons']);
 

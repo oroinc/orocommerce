@@ -34,9 +34,14 @@ class PaymentStatusManager
 
     public function updateStatus(PaymentTransaction $transaction)
     {
-        $entityClass = $transaction->getEntityClass();
-        $entityId = $transaction->getEntityIdentifier();
+        $this->updateStatusForEntity(
+            $transaction->getEntityClass(),
+            $transaction->getEntityIdentifier()
+        );
+    }
 
+    public function updateStatusForEntity(string $entityClass, int $entityId): void
+    {
         $paymentStatusEntity = $this->findPaymentStatus($entityClass, $entityId);
         if (!$paymentStatusEntity) {
             $paymentStatusEntity = $this->createPaymentStatus($entityClass, $entityId);

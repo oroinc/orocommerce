@@ -15,14 +15,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class CategoryProductsRestJsonApiResourceApiUrlResolver implements ResourceApiUrlResolverInterface
 {
-    /** @var UrlGeneratorInterface */
-    private $urlGenerator;
-
-    /** @var RestRoutesRegistry */
-    private $routesRegistry;
-
-    /** @var ValueNormalizer */
-    private $valueNormalizer;
+    private UrlGeneratorInterface $urlGenerator;
+    private RestRoutesRegistry $routesRegistry;
+    private ValueNormalizer $valueNormalizer;
 
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
@@ -43,7 +38,7 @@ class CategoryProductsRestJsonApiResourceApiUrlResolver implements ResourceApiUr
         string $resourceType,
         RequestType $requestType
     ): ?string {
-        if (!array_key_exists('categoryId', $routeParameters)) {
+        if (!\array_key_exists('categoryId', $routeParameters)) {
             return null;
         }
 

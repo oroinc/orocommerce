@@ -25,10 +25,7 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'with quantities' => [
@@ -77,28 +74,20 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
-
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
-            ->willReturnCallback(
-                function (array $options) {
-                    $this->assertArrayHasKey('data_class', $options);
-                    $this->assertEquals(MatrixCollection::class, $options['data_class']);
-                }
-            );
+            ->willReturnCallback(function (array $options) {
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertEquals(MatrixCollection::class, $options['data_class']);
+            });
 
         $type = new MatrixCollectionType();
         $type->configureOptions($resolver);
     }
 
-    /**
-     * @param bool $withQuantities
-     * @return MatrixCollection
-     */
-    private function createCollection($withQuantities = false)
+    private function createCollection(bool $withQuantities = false): MatrixCollection
     {
         $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
         $simpleProductSmallGreen = (new ProductWithSizeAndColor())->setSize('s')->setColor('green');

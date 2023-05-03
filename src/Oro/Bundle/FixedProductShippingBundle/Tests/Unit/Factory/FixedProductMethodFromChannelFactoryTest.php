@@ -11,61 +11,56 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use PHPUnit\Framework\TestCase;
 
-class FixedProductMethodFromChannelFactoryTest extends TestCase
+class FixedProductMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected IntegrationIconProviderInterface $integrationIconProvider;
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $identifierGenerator;
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected IntegrationIdentifierGeneratorInterface $identifierGenerator;
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected LocalizationHelper $localizationHelper;
+    /** @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $integrationIconProvider;
 
-    /**
-     * @var FixedProductMethodFromChannelFactory
-     */
-    protected FixedProductMethodFromChannelFactory $factory;
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $roundingService;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var ShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingCostProvider;
+
+    /** @var FixedProductMethodFromChannelFactory */
+    private $factory;
+
     protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
-
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->integrationIconProvider = $this->createMock(IntegrationIconProviderInterface::class);
+        $this->roundingService = $this->createMock(RoundingServiceInterface::class);
+        $this->shippingCostProvider = $this->createMock(ShippingCostProvider::class);
 
         $this->factory = new FixedProductMethodFromChannelFactory(
             $this->identifierGenerator,
             $this->localizationHelper,
             $this->integrationIconProvider,
-            $this->createMock(RoundingServiceInterface::class),
-            $this->createMock(ShippingCostProvider::class)
+            $this->roundingService,
+            $this->shippingCostProvider
         );
     }
 
-    public function testBuildReturnsCorrectObjectWithLabel(): void
+    public function testCreate(): void
     {
-        $label = 'test';
-        $channel = $this->getChannel();
         $identifier = 'fixed_product_1';
+        $label = 'test';
         $iconUri = 'bundles/icon-uri.png';
+        $enabled = true;
 
-        $this->integrationIconProvider
-            ->expects($this->once())
+        $channel = new Channel();
+        $channel->setTransport(new FixedProductSettings());
+        $channel->setEnabled($enabled);
+
+        $this->integrationIconProvider->expects($this->once())
             ->method('getIcon')
             ->with($channel)
             ->willReturn($iconUri);
@@ -79,23 +74,14 @@ class FixedProductMethodFromChannelFactoryTest extends TestCase
             ->with($channel)
             ->willReturn($identifier);
 
-        $method = $this->factory->create($channel);
-
-        $this->assertInstanceOf(FixedProductMethod::class, $method);
-        $this->assertSame($identifier, $method->getIdentifier());
-        $this->assertSame($label, $method->getLabel());
-        $this->assertTrue($method->isEnabled());
-        $this->assertSame($iconUri, $method->getIcon());
-    }
-
-    private function getChannel(): Channel
-    {
-        $settings = new FixedProductSettings();
-
-        $channel = new Channel();
-        $channel->setTransport($settings);
-        $channel->setEnabled(true);
-
-        return $channel;
+        $expected = new FixedProductMethod(
+            $identifier,
+            $label,
+            $iconUri,
+            $enabled,
+            $this->roundingService,
+            $this->shippingCostProvider
+        );
+        self::assertEquals($expected, $this->factory->create($channel));
     }
 }

@@ -1,0 +1,17 @@
+{% block __line_item_buttons_kit__button_widget %}
+    {% if is_kit_product_type(product.type) %}
+        {% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
+
+        {{ buttons.addToButton({
+            actionLabel: 'oro.shoppinglist.product.kit.add_to_shopping_list.label'|trans,
+            btnCss: 'btn btn--block btn--info',
+            dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create',
+            pageComponent: {
+                module: 'oroui/js/app/components/view-component',
+                options: {
+                    view: 'oroshoppinglist/js/app/views/product-kit-add-to-shopping-list-view'
+                }
+            }
+        }) }}
+    {% endif %}
+{% endblock %}

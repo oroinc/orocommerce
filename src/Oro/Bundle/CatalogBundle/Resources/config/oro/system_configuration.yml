@@ -39,6 +39,21 @@ system_configuration:
                 fileConstraints:
                     - Oro\Bundle\AttachmentBundle\Validator\Constraints\Image: ~
 
+        oro_catalog.search_autocomplete_max_categories:
+            data_type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            priority: 15
+            search_type: text
+            options:
+                label: oro.catalog.system_configuration.fields.search_autocomplete_max_categories.label
+                tooltip: oro.catalog.system_configuration.fields.search_autocomplete_max_categories.tooltip
+                required: true
+                constraints:
+                    -   NotBlank: ~
+                    -   Type: integer
+                    -   Range:
+                            min: 0
+
     tree:
         system_configuration:
             platform:
@@ -52,6 +67,14 @@ system_configuration:
                                             - oro_catalog.category_direct_url_prefix
             commerce:
                 children:
+                    product:
+                        children:
+                            product_search:
+                                children:
+                                    product_fulltext_search:
+                                        children:
+                                            - oro_catalog.search_autocomplete_max_categories
+
                     catalog:
                         priority: 900
                         children:

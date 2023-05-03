@@ -18,36 +18,75 @@ class WebsiteQueryFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->queryFactory    = $this->createMock(QueryFactoryInterface::class);
-        $this->engine          = $this->createMock(EngineInterface::class);
+        $this->queryFactory = $this->createMock(QueryFactoryInterface::class);
+        $this->engine = $this->createMock(EngineInterface::class);
     }
 
-    public function testCreate()
+    /**
+     * @dataProvider configDataProvider
+     */
+    public function testCreate(array $config, string $expectedInstance)
     {
-        $configForWebsiteSearch = [
-            'search_index' => 'website',
-            'query' => [
-                'select' => [
-                    'text.sku'
-                ],
-                'from' => [
-                    'product'
-                ]
-            ]
-        ];
-
-        $configForBackendSearch = [
-            'search_index' => null
-        ];
-
         $factory = new WebsiteQueryFactory($this->engine);
 
-        $result = $factory->create($configForBackendSearch);
+        $result = $factory->create($config);
+        $this->assertInstanceOf($expectedInstance, $result);
+    }
 
-        $this->assertInstanceOf(SearchQueryInterface::class, $result);
+    public function configDataProvider(): \Generator
+    {
+        yield [
+            [
+                'search_index' => 'website',
+                'query' => [
+                    'select' => [
+                        'text.sku',
+                    ],
+                    'from' => [
+                        'product',
+                    ],
+                ],
+            ],
+            WebsiteSearchQuery::class
+        ];
 
-        $result = $factory->create($configForWebsiteSearch);
+        yield [
+            [
+                'search_index' => 'website',
+                'query' => [
+                    'select' => [
+                        'text.sku',
+                    ],
+                    'from' => [
+                        'product',
+                    ],
+                ],
+                'hints' => ['HINT_SEARCH_TYPE']
+            ],
+            WebsiteSearchQuery::class
+        ];
 
-        $this->assertInstanceOf(WebsiteSearchQuery::class, $result);
+        yield [
+            [
+                'search_index' => 'website',
+                'query' => [
+                    'select' => [
+                        'text.sku',
+                    ],
+                    'from' => [
+                        'product',
+                    ],
+                ],
+                'hints' => ['name' => 'HINT_SEARCH_TYPE', 'value' => 'test']
+            ],
+            WebsiteSearchQuery::class
+        ];
+
+        yield [
+            [
+                'search_index' => null,
+            ],
+            SearchQueryInterface::class
+        ];
     }
 }

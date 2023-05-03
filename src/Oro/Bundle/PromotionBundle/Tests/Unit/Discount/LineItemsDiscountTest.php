@@ -15,10 +15,7 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var LineItemsDiscount
-     */
-    protected $discount;
+    private LineItemsDiscount $discount;
 
     protected function setUp(): void
     {
@@ -68,13 +65,8 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider calculateDataProvider
-     *
-     * @param array $options
-     * @param float $subtotal
-     * @param float $lineItemQuantity
-     * @param float $expectedDiscount
      */
-    public function testCalculate(array $options, $subtotal, $lineItemQuantity, $expectedDiscount)
+    public function testCalculate(array $options, float $subtotal, float $lineItemQuantity, float $expectedDiscount)
     {
         $discountLineItem = new DiscountLineItem();
         $discountLineItem->setSubtotal($subtotal);
@@ -278,9 +270,8 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider calculateZeroQtyDataProvider
-     * @param float $qty
      */
-    public function testCalculateNotPositiveQty($qty)
+    public function testCalculateNotPositiveQty(float $qty)
     {
         $discountLineItem = new DiscountLineItem();
         $discountLineItem->setSubtotal(100);
@@ -289,10 +280,7 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(0.0, $this->discount->calculate($discountLineItem));
     }
 
-    /**
-     * @return array
-     */
-    public function calculateZeroQtyDataProvider()
+    public function calculateZeroQtyDataProvider(): array
     {
         return [
             'zero qty' => [

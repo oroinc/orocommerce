@@ -14,14 +14,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class FillOrderPaymentMethod implements ProcessorInterface
 {
-    /** @var OrderPaymentContextFactory */
-    private $paymentContextFactory;
-
-    /** @var ApplicablePaymentMethodsProvider */
-    private $paymentMethodProvider;
-
-    /** @var string */
-    private $paymentMethodClass;
+    private OrderPaymentContextFactory $paymentContextFactory;
+    private ApplicablePaymentMethodsProvider $paymentMethodProvider;
+    private string $paymentMethodClass;
 
     public function __construct(
         OrderPaymentContextFactory $paymentContextFactory,
@@ -36,7 +31,7 @@ class FillOrderPaymentMethod implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 

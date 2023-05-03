@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+           themes: '@OroShoppingList/layouts/default/imports/line_item_buttons_kit/line_item_buttons_kit.html.twig'
+        - '@add':
+           id: __button
+           blockType: container
+           parentId: __root
+           options:
+            vars:
+                product: '=data["product"]'

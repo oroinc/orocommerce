@@ -137,6 +137,10 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
       groups: ['promotion']
     currency:
       groups: ['promotion']
+    shippingMethod:
+      groups: ['promotion']
+    shippingMethodType:
+      groups: ['promotion']
 
 Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal:
   attributes:

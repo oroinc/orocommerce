@@ -6,61 +6,62 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
+    private Order $entity;
+
     protected function setUp(): void
     {
+        $this->entity = new Order();
+
         parent::setUp();
 
-        $requestStack = $this->createMock(RequestStack::class);
-        $this->request = $this->createMock(Request::class);
-
-        $requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-        $this->entity = new Order();
         $this->extension = new OrderDataStorageExtension(
-            $requestStack,
+            $this->getRequestStack(),
             $this->storage,
-            $this->doctrineHelper,
-            $this->aclHelper,
-            $this->productClass
+            PropertyAccess::createPropertyAccessor(),
+            $this->doctrine,
+            $this->logger
         );
-        $this->extension->setDataClass(Order::class);
-        $this->setUpLoggerMock($this->extension);
+
+        $this->initEntityMetadata([]);
     }
 
-    public function testBuild()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getTargetEntity(): Order
     {
+        return $this->entity;
+    }
+
+    public function testBuildForm(): void
+    {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
-                ],
+                ]
             ]
         ];
-        $this->entity = new Order();
 
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('item');
+        $productUnit = $this->getProductUnit('item');
+        $product = $this->getProduct($sku, $productUnit);
 
-        $product = $this->getProductEntity($sku, $productUnit);
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsFindProduct($productId, $product);
 
-        $this->assertMetadataCalled();
-        $this->assertRequestGetCalled();
-        $this->assertStorageCalled($data);
-        $this->assertProductRepositoryCalled($product);
-
-        $this->extension->buildForm($this->getFormBuilder(true), []);
+        $this->extension->buildForm($this->getFormBuilder(), []);
 
         $this->assertCount(1, $this->entity->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -73,55 +74,53 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertEquals($qty, $lineItem->getQuantity());
     }
 
-    public function testBuildWithoutUnit()
+    public function testBuildFormWithoutUnit(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
-                ],
+                ]
             ]
         ];
-        $order = new Order();
 
-        $product = $this->getProductEntity($sku);
+        $product = $this->getProduct($sku);
 
-        $this->assertMetadataCalled();
-        $this->assertRequestGetCalled();
-        $this->assertStorageCalled($data);
-        $this->assertProductRepositoryCalled($product);
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(true), []);
+        $this->extension->buildForm($this->getFormBuilder(), []);
 
-        $this->assertEmpty($order->getLineItems());
+        $this->assertEmpty($this->getTargetEntity()->getLineItems());
     }
 
-    public function testBuildWithoutQuantity()
+    public function testBuildFormWithoutQuantity(): void
     {
+        $productId = 123;
         $sku = 'TEST';
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
-                ],
+                ]
             ]
         ];
-        $this->entity = new Order();
 
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('item');
+        $productUnit = $this->getProductUnit('item');
+        $product = $this->getProduct($sku, $productUnit);
 
-        $product = $this->getProductEntity($sku, $productUnit);
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsFindProduct($productId, $product);
 
-        $this->assertMetadataCalled();
-        $this->assertRequestGetCalled();
-        $this->assertStorageCalled($data);
-        $this->assertProductRepositoryCalled($product);
-
-        $this->extension->buildForm($this->getFormBuilder(true), []);
+        $this->extension->buildForm($this->getFormBuilder(), []);
 
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->entity->getLineItems()->first();

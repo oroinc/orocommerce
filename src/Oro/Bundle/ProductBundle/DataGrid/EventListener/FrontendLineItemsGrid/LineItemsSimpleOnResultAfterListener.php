@@ -14,31 +14,26 @@ class LineItemsSimpleOnResultAfterListener
     {
         foreach ($event->getRecords() as $record) {
             /** @var ProductLineItemInterface[] $lineItems */
-            $lineItems = $record->getValue('lineItemsByIds') ?? [];
+            $lineItems = $record->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS) ?? [];
             if (count($lineItems) !== 1) {
                 // Skips grouped rows.
                 continue;
             }
 
-            $firstLineItem = reset($lineItems);
-            if (!$firstLineItem instanceof ProductLineItemInterface) {
+            $lineItem = reset($lineItems);
+            if (!$lineItem instanceof ProductLineItemInterface) {
+                continue;
+            }
+
+            $lineItemsData = $record->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA) ?? [];
+            if (count($lineItemsData) !== 1) {
                 throw new \LogicException(
                     sprintf(
-                        'Element lineItemsByIds was expected to contain %s objects',
-                        ProductLineItemInterface::class
+                        'Element %s was expected to contain one item',
+                        LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA
                     )
                 );
             }
-
-            $lineItemsData = $record->getValue('lineItemsDataByIds') ?? [];
-            if (count($lineItemsData) !== 1) {
-                throw new \LogicException('Element lineItemsDataByIds was expected to contain one item');
-            }
-
-            $product = $firstLineItem->getProduct();
-            // 1. If configurable line item is only one, then it should be marked as simple.
-            // 2. If line item is an empty matrix configurable then it should remain marked as configurable.
-            $record->setValue('isConfigurable', $product ? $product->isConfigurable() : false);
 
             foreach (reset($lineItemsData) as $name => $value) {
                 $record->setValue($name, $value);

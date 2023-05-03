@@ -8,20 +8,17 @@ use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 class RestrictIndexEntitiesEventTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    protected $qb;
-
-    /** @var string */
-    protected $entityClass;
+    private $qb;
 
     /** @var array */
-    protected $context;
+    private $context;
 
     /** @var RestrictIndexEntityEvent */
-    protected $event;
+    private $event;
 
     protected function setUp(): void
     {
-        $this->qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $this->qb = $this->createMock(QueryBuilder::class);
         $this->context = ['website_id' => 1];
         $this->event = new RestrictIndexEntityEvent($this->qb, $this->context);
     }

@@ -21,19 +21,36 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->loadFixtures([LoadTaxRules::class]);
     }
 
+    private function getRepository(): TaxRuleRepository
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(TaxRule::class);
+    }
+
+    private function getTaxRule(string $code): TaxRule
+    {
+        return $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . $code);
+    }
+
+    private function assertContainsId(TaxRule $needle, array $haystack): void
+    {
+        $ids = [];
+        /** @var TaxRule $taxRule */
+        foreach ($haystack as $taxRule) {
+            $ids[] = $taxRule->getId();
+        }
+
+        $this->assertContains($needle->getId(), $ids);
+    }
+
     public function testFindByCountryAndProductTaxCodeAndCustomerTaxCode()
     {
-        /** @var TaxRule $taxRule */
-        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1);
+        $taxRule = $this->getTaxRule(LoadTaxRules::TAX_RULE_1);
 
-        /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByCountryAndTaxCode(
-            TaxCodes::create(
-                [
-                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
-                ]
-            ),
+            TaxCodes::create([
+                TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+            ]),
             $taxRule->getTaxJurisdiction()->getCountry()
         );
 
@@ -42,19 +59,16 @@ class TaxRuleRepositoryTest extends WebTestCase
 
     public function testFindByCountryAndRegionAndProductTaxCodeAndCustomerTaxCode()
     {
-        /** @var TaxRule $taxRule */
-        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_2);
+        $taxRule = $this->getTaxRule(LoadTaxRules::TAX_RULE_2);
 
-        /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByRegionAndTaxCode(
-            TaxCodes::create(
-                [
-                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
-                ]
-            ),
+            TaxCodes::create([
+                TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+            ]),
             $taxRule->getTaxJurisdiction()->getCountry(),
-            $taxRule->getTaxJurisdiction()->getRegion()
+            $taxRule->getTaxJurisdiction()->getRegion(),
+            null
         );
 
         $this->assertContainsId($taxRule, $result);
@@ -62,20 +76,17 @@ class TaxRuleRepositoryTest extends WebTestCase
 
     public function testFindByZipCodeAndProductTaxCodeAndCustomerTaxCode()
     {
-        /** @var TaxRule $taxRule */
-        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_4);
+        $taxRule = $this->getTaxRule(LoadTaxRules::TAX_RULE_4);
 
-        /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByZipCodeAndTaxCode(
-            TaxCodes::create(
-                [
-                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
-                ]
-            ),
+            TaxCodes::create([
+                TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+            ]),
             LoadTaxJurisdictions::ZIP_CODE,
             $taxRule->getTaxJurisdiction()->getCountry(),
-            $taxRule->getTaxJurisdiction()->getRegion()
+            $taxRule->getTaxJurisdiction()->getRegion(),
+            null
         );
 
         $this->assertContainsId($taxRule, $result);
@@ -83,41 +94,17 @@ class TaxRuleRepositoryTest extends WebTestCase
 
     public function testFindByCountryAndZipCodeAndTaxCode()
     {
-        /** @var TaxRule $taxRule */
-        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_4);
+        $taxRule = $this->getTaxRule(LoadTaxRules::TAX_RULE_4);
 
-        /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByCountryAndZipCodeAndTaxCode(
-            TaxCodes::create(
-                [
-                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
-                ]
-            ),
+            TaxCodes::create([
+                TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+            ]),
             LoadTaxJurisdictions::ZIP_CODE,
             $taxRule->getTaxJurisdiction()->getCountry()
         );
 
         $this->assertContainsId($taxRule, $result);
-    }
-
-    protected function assertContainsId(TaxRule $expectedTaxRule, array $result)
-    {
-        $ids = array_map(
-            function (TaxRule $taxRule) {
-                return $taxRule->getId();
-            },
-            $result
-        );
-
-        $this->assertTrue(in_array($expectedTaxRule->getId(), $ids, true));
-    }
-
-    /**
-     * @return TaxRuleRepository
-     */
-    protected function getRepository()
-    {
-        return $this->getContainer()->get('doctrine')->getRepository(TaxRule::class);
     }
 }

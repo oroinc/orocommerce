@@ -1,0 +1,10 @@
+initial: true
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    webCatalog:
+        name: 'Web Catalog 1'
+        organization: '@organization'
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+    webCatalogScope:
+        webCatalog: '@webCatalog'

@@ -16,6 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListConfigurableLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListProductKitLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -28,15 +29,13 @@ class LineItemRepositoryTest extends WebTestCase
 {
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures(
-            [
-                LoadShoppingListLineItems::class,
-                LoadShoppingListConfigurableLineItems::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadShoppingListProductKitLineItems::class,
+            LoadShoppingListLineItems::class,
+            LoadShoppingListConfigurableLineItems::class,
+        ]);
     }
 
     public function testFindDuplicateInShoppingList(): void
@@ -53,13 +52,63 @@ class LineItemRepositoryTest extends WebTestCase
         $repository = $this->getLineItemRepository();
 
         $duplicate = $repository->findDuplicateInShoppingList($lineItem3, $shoppingList4);
-        $this->assertTrue(null === $duplicate);
+        self::assertNull($duplicate);
 
         $duplicate = $repository->findDuplicateInShoppingList($lineItem3, $shoppingList5);
-        $this->assertFalse(null === $duplicate);
+        self::assertNotNull($duplicate);
     }
 
-    public function testGetItemsByProductAndShoppingList()
+    public function testFindDuplicateInShoppingListWhenHasDuplicate(): void
+    {
+        /** @var LineItem $lineItem1 */
+        $lineItem1 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_1);
+
+        $sameLineItem = (new LineItem())
+            ->setUnit($lineItem1->getUnit())
+            ->setProduct($lineItem1->getProduct());
+
+        self::assertEquals(
+            $lineItem1,
+            $this->getLineItemRepository()->findDuplicateInShoppingList($sameLineItem, $lineItem1->getShoppingList())
+        );
+    }
+
+    public function testFindDuplicateInShoppingListWhenShoppingListIsNull(): void
+    {
+        /** @var LineItem $lineItem */
+        $lineItem3 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_3);
+
+        self::assertNull($this->getLineItemRepository()->findDuplicateInShoppingList($lineItem3, null));
+    }
+
+    public function testFindDuplicateInShoppingListForProductKitLineItemWhenNoDuplicate(): void
+    {
+        /** @var LineItem $lineItem1 */
+        $lineItem1 = $this->getReference(LoadShoppingListProductKitLineItems::LINE_ITEM_1);
+
+        self::assertNull(
+            $this->getLineItemRepository()->findDuplicateInShoppingList($lineItem1, $lineItem1->getShoppingList())
+        );
+    }
+
+    public function testFindDuplicateInShoppingListForProductKitLineItemWhenHasDuplicate(): void
+    {
+        /** @var LineItem $lineItem1 */
+        $lineItem1 = $this->getReference(LoadShoppingListProductKitLineItems::LINE_ITEM_1);
+
+        $sameLineItem = (new LineItem())
+            ->setUnit($lineItem1->getUnit())
+            ->setProduct($lineItem1->getProduct())
+            ->addKitItemLineItem($lineItem1->getKitItemLineItems()[0])
+            ->setChecksum($lineItem1->getChecksum());
+
+        self::assertEquals(
+            $lineItem1,
+            $this->getLineItemRepository()->findDuplicateInShoppingList($sameLineItem, $lineItem1->getShoppingList())
+        );
+    }
+
+    public function testGetItemsByProductAndShoppingList(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -72,11 +121,11 @@ class LineItemRepositoryTest extends WebTestCase
 
         $lineItems = $this->getLineItemRepository()->getItemsByShoppingListAndProducts($shoppingList, [$product]);
 
-        $this->assertCount(1, $lineItems);
-        $this->assertContains($lineItem, $lineItems);
+        self::assertCount(1, $lineItems);
+        self::assertContains($lineItem, $lineItems);
     }
 
-    public function testGetOneProductLineItemsWithShoppingListNames()
+    public function testGetOneProductLineItemsWithShoppingListNames(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -92,20 +141,20 @@ class LineItemRepositoryTest extends WebTestCase
             ->getLineItemRepository()
             ->getOneProductLineItemsWithShoppingListNames($product, $customerUser);
 
-        $this->assertTrue(count($lineItems) > 1);
+        self::assertTrue(count($lineItems) > 1);
 
         $shoppingListLabelList = [];
         /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
-            $this->assertEquals($product->getSku(), $lineItem->getProduct()->getSku());
+            self::assertEquals($product->getSku(), $lineItem->getProduct()->getSku());
             $shoppingListLabelList[] = $lineItem->getShoppingList()->getLabel();
         }
 
-        $this->assertTrue(count($shoppingListLabelList) > 1);
-        $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
+        self::assertTrue(count($shoppingListLabelList) > 1);
+        self::assertContains($shoppingList->getLabel(), $shoppingListLabelList);
     }
 
-    public function testGetProductItemsWithShoppingListNames()
+    public function testGetProductItemsWithShoppingListNames(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -114,53 +163,38 @@ class LineItemRepositoryTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNames(
-            $this->getContainer()->get('oro_security.acl_helper'),
+            self::getContainer()->get('oro_security.acl_helper'),
             $product,
             $shoppingList->getCustomerUser()
         );
 
-        $this->assertTrue(count($lineItems) > 1);
+        self::assertTrue(count($lineItems) > 1);
 
         $shoppingListLabelList = [];
         $productSkuList = [];
-        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
             $productSkuList[] = $lineItem->getProduct()->getSku();
             $shoppingListLabelList[] = $lineItem->getShoppingList()->getLabel();
         }
 
-        $this->assertTrue(count($productSkuList) > 1);
-        $this->assertTrue(in_array($product->getSku(), $productSkuList));
+        self::assertTrue(count($productSkuList) > 1);
+        self::assertContains($product->getSku(), $productSkuList);
 
-        $this->assertTrue(count($shoppingListLabelList) > 1);
-        $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
+        self::assertTrue(count($shoppingListLabelList) > 1);
+        self::assertContains($shoppingList->getLabel(), $shoppingListLabelList);
     }
 
     /**
      * @dataProvider productItemsWithShoppingListNamesDataProvider
-     * @param array $productReferences
-     * @param array $shoppingListReferences
-     * @param string $userEmail
-     * @param string $roleName
      */
     public function testGetProductItemsWithShoppingListNamesForProduct7(
         array $productReferences,
         array $shoppingListReferences,
-        $userEmail,
-        $roleName
-    ) {
-        /** @var EntityRepository $userRepository */
-        $userRepository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(CustomerUser::class);
-
-        /** @var CustomerUser $customerUser */
-        $customerUser = $userRepository->findOneBy(['email' => $userEmail]);
-
-        $customerUserRoleRepository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(CustomerUserRole::class);
-        $role = $customerUserRoleRepository->findOneBy(['role' => $roleName]);
+        string $userEmail,
+        string $roleName
+    ): void {
+        $customerUser = $this->getCustomerUserRepository()->findOneBy(['email' => $userEmail]);
+        $role = $this->getCustomerUserRoleRepository()->findOneBy(['role' => $roleName]);
         $token = new UsernamePasswordOrganizationToken(
             $customerUser,
             LoadCustomerUserData::LEVEL_1_PASSWORD,
@@ -169,7 +203,7 @@ class LineItemRepositoryTest extends WebTestCase
             [$role]
         );
 
-        $tokenStorage = $this->getContainer()->get('security.token_storage');
+        $tokenStorage = self::getContainer()->get('security.token_storage');
         $tokenStorage->setToken($token);
 
         /** @var Product[] $products */
@@ -182,40 +216,39 @@ class LineItemRepositoryTest extends WebTestCase
         foreach ($productReferences as $productReference) {
             /** @var Product $product */
             $product = $this->getReference($productReference);
-            $expectedProductSkuList[$product->getSku()] = $product->getSku();
+            $productSku = $product->getSku();
+            $expectedProductSkuList[$productSku] = $productSku;
         }
 
         $expectedShoppingListLabelList = [];
         foreach ($shoppingListReferences as $shoppingListReference) {
-            $expectedShoppingListLabelList[$this->getReference($shoppingListReference)->getLabel()] =
-                $this->getReference($shoppingListReference)->getLabel();
+            $shoppingListLabel = $this->getReference($shoppingListReference)->getLabel();
+            $expectedShoppingListLabelList[$shoppingListLabel] = $shoppingListLabel;
         }
 
         $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNames(
-            $this->getContainer()->get('oro_security.acl_helper'),
+            self::getContainer()->get('oro_security.acl_helper'),
             $products
         );
 
         $shoppingListLabelList = [];
         $productSkuList = [];
-        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
-            $productSkuList[$lineItem->getProduct()->getSku()] = $lineItem->getProduct()->getSku();
-            $shoppingListLabelList[$lineItem->getShoppingList()->getLabel()] = $lineItem->getShoppingList()->getLabel();
+            $lineItemProductSku = $lineItem->getProduct()->getSku();
+            $productSkuList[$lineItemProductSku] = $lineItemProductSku;
+            $lineItemShoppingListLabel = $lineItem->getShoppingList()->getLabel();
+            $shoppingListLabelList[$lineItemShoppingListLabel] = $lineItemShoppingListLabel;
         }
 
         foreach ($expectedProductSkuList as $key => $value) {
-            static::assertEquals($productSkuList[$key], $value);
+            self::assertEquals($productSkuList[$key], $value);
         }
         foreach ($expectedShoppingListLabelList as $key => $value) {
-            static::assertEquals($shoppingListLabelList[$key], $value);
+            self::assertEquals($shoppingListLabelList[$key], $value);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function productItemsWithShoppingListNamesDataProvider()
+    public function productItemsWithShoppingListNamesDataProvider(): array
     {
         return [
             'as frontend administrator customer user has access to all shopping lists of his/her business unit' => [
@@ -243,7 +276,7 @@ class LineItemRepositoryTest extends WebTestCase
         ];
     }
 
-    public function testGetLastProductsGroupedByShoppingList()
+    public function testGetLastProductsGroupedByShoppingList(): void
     {
         $shoppingLists = [
             $this->getReference(LoadShoppingLists::SHOPPING_LIST_1),
@@ -264,7 +297,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var LineItem[] $lineItems */
         $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 2);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 $shoppingListId1 => [
                     [
@@ -291,35 +324,35 @@ class LineItemRepositoryTest extends WebTestCase
     {
         $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
 
-        $this->assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
+        self::assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
     }
 
     public function testHasEmptyMatrixWithOnlyOneConfigurableProduct(): void
     {
         $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2)->getId();
 
-        $this->assertTrue($this->getLineItemRepository()->hasEmptyMatrix($id));
+        self::assertTrue($this->getLineItemRepository()->hasEmptyMatrix($id));
     }
 
     public function testHasEmptyMatrixWithConfigurableProductAndVariant(): void
     {
         $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9)->getId();
 
-        $this->assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
+        self::assertFalse($this->getLineItemRepository()->hasEmptyMatrix($id));
     }
 
     public function testCanBeGrouped(): void
     {
         $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
 
-        $this->assertTrue($this->getLineItemRepository()->canBeGrouped($id));
+        self::assertTrue($this->getLineItemRepository()->canBeGrouped($id));
     }
 
     public function testCanBeGroupedWhenNoItemsToGroup(): void
     {
         $id = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9)->getId();
 
-        $this->assertFalse($this->getLineItemRepository()->canBeGrouped($id));
+        self::assertFalse($this->getLineItemRepository()->canBeGrouped($id));
     }
 
     public function testDeleteNotAllowedLineItemsFromShoppingList(): void
@@ -330,16 +363,19 @@ class LineItemRepositoryTest extends WebTestCase
 
         $repo = $this->getLineItemRepository();
         $deletedNumber = $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);
-        $this->assertEquals(3, $deletedNumber);
+        self::assertEquals(3, $deletedNumber);
 
-        $actual = array_map(fn (LineItem $item) => $item->getId(), $repo->findBy(['shoppingList' => $shoppingList]));
+        $actual = array_map(
+            static fn (LineItem $item) => $item->getId(),
+            $repo->findBy(['shoppingList' => $shoppingList])
+        );
         sort($actual);
 
         $expected = [
             $this->getReference(LoadShoppingListLineItems::LINE_ITEM_4)->getId(),
         ];
         sort($expected);
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public function testFindLineItemsByParentProductAndUnit(): void
@@ -354,24 +390,23 @@ class LineItemRepositoryTest extends WebTestCase
             $lineItem4->getProductUnitCode()
         );
 
-        $this->assertCount(2, $lineItems);
-        $this->assertContains($lineItem4, $lineItems);
-        $this->assertContains($lineItem5, $lineItems);
+        self::assertCount(2, $lineItems);
+        self::assertContains($lineItem4, $lineItems);
+        self::assertContains($lineItem5, $lineItems);
     }
 
-    /**
-     * @return LineItemRepository
-     */
-    protected function getLineItemRepository()
+    private function getLineItemRepository(): LineItemRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(LineItem::class);
+        return self::getContainer()->get('doctrine')->getRepository(LineItem::class);
     }
 
-    /**
-     * @return EntityRepository
-     */
-    protected function getCustomerUserRepository()
+    private function getCustomerUserRepository(): EntityRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(CustomerUser::class);
+        return self::getContainer()->get('doctrine')->getRepository(CustomerUser::class);
+    }
+
+    private function getCustomerUserRoleRepository(): EntityRepository
+    {
+        return self::getContainer()->get('doctrine')->getRepository(CustomerUserRole::class);
     }
 }

@@ -22,49 +22,46 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
+class ShoppingListManagerTest extends TestCase
 {
-    /** @var ShoppingListManager */
-    private $manager;
+    private ShoppingListManager $manager;
 
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
+    private TokenAccessorInterface|MockObject $tokenAccessor;
 
-    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteManager;
+    private WebsiteManager|MockObject $websiteManager;
 
-    /** @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $totalManager;
+    private ShoppingListTotalManager|MockObject $totalManager;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productVariantProvider;
+    private ProductVariantAvailabilityProvider|MockObject $productVariantProvider;
 
-    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $em;
+    private EntityManager|MockObject $em;
 
-    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemRepository;
+    private LineItemRepository|MockObject $lineItemRepository;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
+    private ConfigManager|MockObject $configManager;
 
-    /** @var EntityDeleteHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $deleteHandlerRegistry;
+    private EntityDeleteHandlerRegistry|MockObject $deleteHandlerRegistry;
+
+    private LineItemChecksumGeneratorInterface|MockObject $lineItemChecksumGenerator;
 
     protected function setUp(): void
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
         $this->lineItemRepository
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('findDuplicateInShoppingList')
             ->willReturnCallback(function (LineItem $lineItem, ShoppingList $shoppingList) {
                 /** @var ArrayCollection $shoppingListLineItems */
@@ -80,13 +77,13 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             });
 
         $this->em = $this->createMock(EntityManager::class);
-        $this->em->expects($this->any())
+        $this->em->expects(self::any())
             ->method('getRepository')
             ->with(LineItem::class)
             ->willReturn($this->lineItemRepository);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects($this->any())
+        $doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($this->em);
 
@@ -96,7 +93,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->productVariantProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
         $translator = $this->createMock(TranslatorInterface::class);
         $roundingService = $this->createMock(QuantityRoundingService::class);
-        $roundingService->expects($this->any())
+        $roundingService->expects(self::any())
             ->method('roundQuantity')
             ->willReturnCallback(function ($value) {
                 return round($value);
@@ -104,6 +101,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->deleteHandlerRegistry = $this->createMock(EntityDeleteHandlerRegistry::class);
+        $this->lineItemChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);
 
         $this->manager = new ShoppingListManager(
             $doctrine,
@@ -114,7 +112,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->totalManager,
             $this->productVariantProvider,
             $this->configManager,
-            $this->deleteHandlerRegistry
+            $this->deleteHandlerRegistry,
+            $this->lineItemChecksumGenerator
         );
     }
 
@@ -157,131 +156,131 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param LineItem[] $lineItems
-     * @param bool       $flush
+     * @param bool $flush
      */
     private function assertDeleteLineItems(array $lineItems, bool $flush = true): void
     {
         if ($lineItems) {
             $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
-            $this->deleteHandlerRegistry->expects($this->once())
+            $this->deleteHandlerRegistry->expects(self::once())
                 ->method('getHandler')
                 ->with(LineItem::class)
                 ->willReturn($deleteHandler);
             $deleteExpectations = [];
             $deletedRecords = [];
             foreach ($lineItems as $lineItem) {
-                $deleteExpectations[] = [$this->identicalTo($lineItem), $this->isFalse()];
+                $deleteExpectations[] = [self::identicalTo($lineItem), self::isFalse()];
                 $deletedRecords[] = ['entity' => $lineItem];
             }
-            $deleteHandler->expects($this->exactly(count($deleteExpectations)))
+            $deleteHandler->expects(self::exactly(count($deleteExpectations)))
                 ->method('delete')
                 ->withConsecutive(...$deleteExpectations)
                 ->willReturnOnConsecutiveCalls(...$deletedRecords);
             if ($flush) {
-                $deleteHandler->expects($this->once())
+                $deleteHandler->expects(self::once())
                     ->method('flushAll')
                     ->with($deletedRecords);
             } else {
-                $deleteHandler->expects($this->never())
+                $deleteHandler->expects(self::never())
                     ->method('flushAll');
             }
         } else {
-            $this->deleteHandlerRegistry->expects($this->never())
+            $this->deleteHandlerRegistry->expects(self::never())
                 ->method('getHandler')
                 ->with(LineItem::class);
         }
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
         $customerUser->setOrganization(new Organization());
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
         $website = $this->createMock(Website::class);
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->em->expects($this->never())
+        $this->em->expects(self::never())
             ->method('persist');
-        $this->em->expects($this->never())
+        $this->em->expects(self::never())
             ->method('flush');
 
         $shoppingList = $this->manager->create();
 
-        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
-        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
-        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
-        $this->assertSame($website, $shoppingList->getWebsite());
+        self::assertSame($customerUser, $shoppingList->getCustomerUser());
+        self::assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        self::assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        self::assertSame($website, $shoppingList->getWebsite());
     }
 
-    public function testCreateWithCustomerUserInParameters()
+    public function testCreateWithCustomerUserInParameters(): void
     {
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
         $customerUser->setOrganization(new Organization());
-        $this->tokenAccessor->expects($this->never())
+        $this->tokenAccessor->expects(self::never())
             ->method('getUser');
 
         $website = $this->createMock(Website::class);
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->em->expects($this->never())
+        $this->em->expects(self::never())
             ->method('persist');
-        $this->em->expects($this->never())
+        $this->em->expects(self::never())
             ->method('flush');
 
         $shoppingList = $this->manager->create(false, '', $customerUser);
 
-        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
-        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
-        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
-        $this->assertSame($website, $shoppingList->getWebsite());
+        self::assertSame($customerUser, $shoppingList->getCustomerUser());
+        self::assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        self::assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        self::assertSame($website, $shoppingList->getWebsite());
     }
 
-    public function testCreateWithFlushAndLabel()
+    public function testCreateWithFlushAndLabel(): void
     {
         $label = 'test label';
 
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
         $customerUser->setOrganization(new Organization());
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
         $website = $this->createMock(Website::class);
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->em->expects($this->once())
+        $this->em->expects(self::once())
             ->method('persist')
-            ->with($this->isInstanceOf(ShoppingList::class));
-        $this->em->expects($this->once())
+            ->with(self::isInstanceOf(ShoppingList::class));
+        $this->em->expects(self::once())
             ->method('flush');
 
         $shoppingList = $this->manager->create(true, $label);
 
-        $this->assertEquals($label, $shoppingList->getLabel());
-        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
-        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
-        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
-        $this->assertSame($website, $shoppingList->getWebsite());
+        self::assertEquals($label, $shoppingList->getLabel());
+        self::assertSame($customerUser, $shoppingList->getCustomerUser());
+        self::assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        self::assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        self::assertSame($website, $shoppingList->getWebsite());
     }
 
-    public function testCreateWhenNoCustomerUser()
+    public function testCreateWhenNoCustomerUser(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The customer user does not exist in the security context.');
 
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn(null);
 
@@ -291,14 +290,19 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider addLineItemDataProvider
      */
-    public function testAddLineItem(LineItem $lineItem)
+    public function testAddLineItem(LineItem $lineItem): void
     {
         $shoppingList = new ShoppingList();
 
+        $this->em
+            ->expects(self::exactly(2))
+            ->method('persist')
+            ->withConsecutive([$lineItem], [$shoppingList]);
+
         $this->manager->addLineItem($lineItem, $shoppingList);
-        $this->assertCount(1, $shoppingList->getLineItems());
-        $this->assertNull($lineItem->getCustomerUser());
-        $this->assertNull($lineItem->getOrganization());
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertNull($lineItem->getCustomerUser());
+        self::assertNull($lineItem->getOrganization());
     }
 
     public function addLineItemDataProvider(): array
@@ -319,7 +323,23 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testAddLineItemWithShoppingListData()
+    public function testAddLineItemWithChecksum(): void
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem = new LineItem();
+        $checksum = 'sample_checksum';
+        $this->lineItemChecksumGenerator
+            ->expects(self::once())
+            ->method('getChecksum')
+            ->with($lineItem)
+            ->willReturn($checksum);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertEquals($checksum, $lineItem->getChecksum());
+    }
+
+    public function testAddLineItemWithShoppingListData(): void
     {
         $shoppingList = new ShoppingList();
         $shoppingList->setCustomerUser(new CustomerUser());
@@ -327,52 +347,37 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $lineItem = new LineItem();
 
         $this->manager->addLineItem($lineItem, $shoppingList);
-        $this->assertCount(1, $shoppingList->getLineItems());
-        $this->assertSame($shoppingList->getCustomerUser(), $lineItem->getCustomerUser());
-        $this->assertSame($shoppingList->getOrganization(), $lineItem->getOrganization());
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertSame($shoppingList->getCustomerUser(), $lineItem->getCustomerUser());
+        self::assertSame($shoppingList->getOrganization(), $lineItem->getOrganization());
     }
 
-    public function testAddLineItemDuplicate()
+    public function testAddLineItemDuplicate(): void
     {
-        $persistedLineItems = [];
-        $this->em->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function ($obj) use (&$persistedLineItems) {
-                if ($obj instanceof LineItem) {
-                    $persistedLineItems[] = $obj;
-                }
-            });
-
         $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(2))
+            ->method('flush');
 
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
 
         $this->manager->addLineItem($lineItem, $shoppingList);
-        $this->assertCount(1, $shoppingList->getLineItems());
-        $this->assertCount(1, $persistedLineItems);
+        self::assertCount(1, $shoppingList->getLineItems());
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setQuantity(5);
         $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
-        $this->assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(1, $shoppingList->getLineItems());
         /** @var LineItem $resultingItem */
-        $resultingItem = array_shift($persistedLineItems);
-        $this->assertEquals(15, $resultingItem->getQuantity());
+        $resultingItem = $shoppingList->getLineItems()->first();
+        self::assertEquals(15, $resultingItem->getQuantity());
     }
 
-    public function testAddLineItemDuplicateAndConcatNotes()
+    public function testAddLineItemDuplicateAndConcatNotes(): void
     {
-        $persistedLineItems = [];
-        $this->em->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function ($obj) use (&$persistedLineItems) {
-                if ($obj instanceof LineItem) {
-                    $persistedLineItems[] = $obj;
-                }
-            });
-
         $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(2))
+            ->method('flush');
 
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
@@ -385,34 +390,34 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->addLineItem($lineItemDuplicate, $shoppingList, true, true);
 
-        $this->assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(1, $shoppingList->getLineItems());
 
         /** @var LineItem $resultingItem */
-        $resultingItem = array_shift($persistedLineItems);
-        $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
+        $resultingItem = $shoppingList->getLineItems()->first();
+        self::assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
     }
 
-    public function testGetLineItemExistingItem()
+    public function testGetLineItemExistingItem(): void
     {
         $shoppingList = new ShoppingList();
         $lineItem = $this->getLineItem(1);
         $lineItem->setNotes('123');
         $this->manager->addLineItem($lineItem, $shoppingList);
         $returnedLineItem = $this->manager->getLineItem(1, $shoppingList);
-        $this->assertEquals($returnedLineItem->getNotes(), $lineItem->getNotes());
+        self::assertEquals($returnedLineItem->getNotes(), $lineItem->getNotes());
     }
 
-    public function testGetLineItemNotExistingItem()
+    public function testGetLineItemNotExistingItem(): void
     {
         $shoppingList = new ShoppingList();
         $returnedLineItem = $this->manager->getLineItem(1, $shoppingList);
-        $this->assertNull($returnedLineItem);
+        self::assertNull($returnedLineItem);
     }
 
     /**
      * @dataProvider removeProductDataProvider
      */
-    public function testRemoveProduct(array $lineItems, array $relatedLineItems, bool $flush, bool $expectedFlush)
+    public function testRemoveProduct(array $lineItems, array $relatedLineItems, bool $flush, bool $expectedFlush): void
     {
         $shoppingList = $this->getShoppingList(1, true);
         foreach ($lineItems as $lineItem) {
@@ -421,7 +426,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $product = $this->getProduct(42);
 
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('getItemsByShoppingListAndProducts')
             ->with($shoppingList, [$product])
             ->willReturn($relatedLineItems);
@@ -430,7 +435,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->manager->removeProduct($shoppingList, $product, $flush);
 
-        $this->assertEquals(count($relatedLineItems), $result);
+        self::assertEquals(count($relatedLineItems), $result);
     }
 
     public function removeProductDataProvider(): array
@@ -444,27 +449,27 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 'lineItems' => [$lineItem1, $lineItem2, $lineItem3],
                 'relatedLineItems' => [$lineItem1, $lineItem3],
                 'flush' => true,
-                'expectedFlush' => true
+                'expectedFlush' => true,
             ],
             [
                 'lineItems' => [$lineItem1, $lineItem2, $lineItem3],
                 'relatedLineItems' => [],
                 'flush' => true,
-                'expectedFlush' => false
+                'expectedFlush' => false,
             ],
             [
                 'lineItems' => [$lineItem1, $lineItem2, $lineItem3],
                 'relatedLineItems' => [$lineItem2],
                 'flush' => false,
-                'expectedFlush' => false
-            ]
+                'expectedFlush' => false,
+            ],
         ];
     }
 
     /**
      * @dataProvider getSimpleProductsProvider
      */
-    public function testRemoveConfigurableProduct(array $simpleProducts, array $lineItems)
+    public function testRemoveConfigurableProduct(array $simpleProducts, array $lineItems): void
     {
         $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
         $shoppingList = $this->getShoppingList(1);
@@ -472,7 +477,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $shoppingList->addLineItem($item);
         }
 
-        $this->productVariantProvider->expects($this->once())
+        $this->productVariantProvider->expects(self::once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($simpleProducts);
@@ -480,7 +485,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $products = $simpleProducts;
         $products[] = $product;
 
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('getItemsByShoppingListAndProducts')
             ->with($shoppingList, $products)
             ->willReturn($lineItems);
@@ -488,7 +493,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertDeleteLineItems($lineItems);
 
         $result = $this->manager->removeProduct($shoppingList, $product, true);
-        $this->assertEquals(count($lineItems), $result);
+        self::assertEquals(count($lineItems), $result);
     }
 
     public function getSimpleProductsProvider(): array
@@ -496,24 +501,24 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [],
-                []
+                [],
             ],
             [
                 [
                     $this->getProduct(44, Product::TYPE_SIMPLE),
                     $this->getProduct(45, Product::TYPE_SIMPLE),
-                    $this->getProduct(46, Product::TYPE_SIMPLE)
+                    $this->getProduct(46, Product::TYPE_SIMPLE),
                 ],
                 [
                     $this->getLineItem(38),
                     $this->getLineItem(39),
-                    $this->getLineItem(40)
-                ]
-            ]
+                    $this->getLineItem(40),
+                ],
+            ],
         ];
     }
 
-    public function testBulkAddLineItems()
+    public function testBulkAddLineItems(): void
     {
         $shoppingList = new ShoppingList();
         $lineItems = [];
@@ -521,42 +526,80 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $lineItems[] = new LineItem();
         }
 
-        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 10);
-        $this->assertCount(10, $shoppingList->getLineItems());
+        $this->em
+            ->expects(self::exactly(2))
+            ->method('flush');
+
+        $this->totalManager
+            ->expects(self::once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, false);
+
+        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 5);
+        self::assertCount(10, $shoppingList->getLineItems());
     }
 
-    public function testBulkAddLineItemsWithEmptyLineItems()
+    public function testBulkAddLineItemsWithEmptyLineItems(): void
     {
-        $this->assertEquals(0, $this->manager->bulkAddLineItems([], new ShoppingList(), 10));
+        self::assertEquals(0, $this->manager->bulkAddLineItems([], new ShoppingList(), 10));
     }
 
-    public function testEdit()
+    public function testBulkAddLineItemsWithChecksum(): void
+    {
+        $shoppingList = new ShoppingList();
+        $lineItems = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $lineItems[] = (new LineItemStub())->setId($i);
+        }
+
+        $this->lineItemChecksumGenerator
+            ->expects(self::exactly(3))
+            ->method('getChecksum')
+            ->willReturnCallback(static fn (LineItem $lineItem) => 'checksum_' . $lineItem->getId());
+
+        $this->em
+            ->expects(self::once())
+            ->method('flush');
+
+        $this->totalManager
+            ->expects(self::once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, false);
+
+        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 5);
+        self::assertCount(3, $shoppingList->getLineItems());
+        self::assertEquals('checksum_1', $shoppingList->getLineItems()[0]->getChecksum());
+        self::assertEquals('checksum_2', $shoppingList->getLineItems()[1]->getChecksum());
+        self::assertEquals('checksum_3', $shoppingList->getLineItems()[2]->getChecksum());
+    }
+
+    public function testEdit(): void
     {
         $label = 'test label';
 
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
         $customerUser->setOrganization(new Organization());
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
         $website = $this->createMock(Website::class);
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $shoppingList = new ShoppingList();
 
-        $this->assertSame($shoppingList, $this->manager->edit($shoppingList, $label));
-        $this->assertEquals($label, $shoppingList->getLabel());
-        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
-        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
-        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
-        $this->assertSame($website, $shoppingList->getWebsite());
+        self::assertSame($shoppingList, $this->manager->edit($shoppingList, $label));
+        self::assertEquals($label, $shoppingList->getLabel());
+        self::assertSame($customerUser, $shoppingList->getCustomerUser());
+        self::assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        self::assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        self::assertSame($website, $shoppingList->getWebsite());
     }
 
-    public function testRemoveLineItems()
+    public function testRemoveLineItems(): void
     {
         $shoppingList = new ShoppingList();
         $lineItem1 = new LineItem();
@@ -569,7 +612,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->removeLineItems($shoppingList);
     }
 
-    public function testUpdateLineItem()
+    public function testUpdateLineItem(): void
     {
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
@@ -582,13 +625,33 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $lineItemDuplicate->setQuantity(5);
         $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
 
-        $this->assertCount(1, $shoppingList->getLineItems());
+        self::assertCount(1, $shoppingList->getLineItems());
         /** @var LineItem $resultingItem */
         $resultingItem = $shoppingList->getLineItems()->first();
-        $this->assertEquals(5, $resultingItem->getQuantity());
+        self::assertEquals(5, $resultingItem->getQuantity());
     }
 
-    public function testUpdateAndRemoveLineItem()
+    public function testUpdateLineItemWithChecksum(): void
+    {
+        $lineItem = (new LineItem())
+            ->setChecksum('sample_checksum')
+            ->setQuantity(10);
+        $shoppingList = (new ShoppingList())
+            ->addLineItem($lineItem);
+        $checksum = 'new_checksum';
+
+        $this->lineItemChecksumGenerator
+            ->expects(self::once())
+            ->method('getChecksum')
+            ->with($lineItem)
+            ->willReturn($checksum);
+
+        $this->manager->updateLineItem($lineItem, $shoppingList);
+        self::assertCount(1, $shoppingList->getLineItems());
+        self::assertEquals($checksum, $lineItem->getChecksum());
+    }
+
+    public function testUpdateAndRemoveLineItem(): void
     {
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
@@ -601,45 +664,49 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $lineItemDuplicate->setQuantity(0);
 
         $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
-        $this->deleteHandlerRegistry->expects($this->once())
+        $this->deleteHandlerRegistry->expects(self::once())
             ->method('getHandler')
             ->with(LineItem::class)
             ->willReturn($deleteHandler);
-        $deleteHandler->expects($this->once())
+        $deleteHandler->expects(self::once())
             ->method('delete')
-            ->with($this->identicalTo($lineItem));
+            ->with(self::identicalTo($lineItem));
 
         $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
     }
 
-    public function testRemoveLineItemWithSimpleProductsInItems()
+    public function testRemoveLineItemWithSimpleProductsInItems(): void
     {
-        $lineItem = (new LineItem())
+        $product1 = new Product();
+        $product2 = new Product();
+        $lineItem1 = (new LineItem())
+            ->setProduct($product1)
             ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
-        $lineItem1 = (new LineItem())
+        $lineItem2 = (new LineItem())
+            ->setProduct($product2)
             ->setUnit($this->getProductUnit('test1', 1))
             ->setQuantity(2);
 
         $shoppingList = $this->getShoppingList(1);
-        $shoppingList->addLineItem($lineItem);
         $shoppingList->addLineItem($lineItem1);
+        $shoppingList->addLineItem($lineItem2);
 
         $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
-        $this->deleteHandlerRegistry->expects($this->once())
+        $this->deleteHandlerRegistry->expects(self::once())
             ->method('getHandler')
             ->with(LineItem::class)
             ->willReturn($deleteHandler);
-        $deleteHandler->expects($this->once())
+        $deleteHandler->expects(self::once())
             ->method('delete')
-            ->with($this->identicalTo($lineItem));
+            ->with(self::identicalTo($lineItem1));
 
-        $countDeletedItems = $this->manager->removeLineItem($lineItem);
+        $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
-        $this->assertEquals(1, $countDeletedItems);
+        self::assertEquals(1, $countDeletedItems);
     }
 
-    public function testRemoveLineItemWithConfigurableProductsAndMatrixMatrixType()
+    public function testRemoveLineItemWithConfigurableProductsAndMatrixMatrixType(): void
     {
         $productUnitPrecision = new ProductUnitPrecision();
         $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
@@ -662,7 +729,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem($lineItem2);
 
         $lineItems = [$lineItem1, $lineItem2];
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('getItemsByShoppingListAndProducts')
             ->with($shoppingList, [$product])
             ->willReturn($lineItems);
@@ -671,10 +738,10 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
-        $this->assertEquals(2, $countDeletedItems);
+        self::assertEquals(2, $countDeletedItems);
     }
 
-    public function testRemoveLineItemWithConfigurableProductsAndWithFlagToDeleteOnlyCurrentItem()
+    public function testRemoveLineItemWithConfigurableProductsAndWithFlagToDeleteOnlyCurrentItem(): void
     {
         $lineItem = new LineItem();
         $lineItem->setProduct($this->getProduct(11, Product::TYPE_SIMPLE));
@@ -682,17 +749,17 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $lineItem->setUnit($this->getProductUnit('test', 1));
 
         $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
-        $this->deleteHandlerRegistry->expects($this->once())
+        $this->deleteHandlerRegistry->expects(self::once())
             ->method('getHandler')
             ->with(LineItem::class)
             ->willReturn($deleteHandler);
-        $deleteHandler->expects($this->once())
+        $deleteHandler->expects(self::once())
             ->method('delete')
-            ->with($this->identicalTo($lineItem));
+            ->with(self::identicalTo($lineItem));
 
         $countDeletedItems = $this->manager->removeLineItem($lineItem, true);
 
-        $this->assertEquals(1, $countDeletedItems);
+        self::assertEquals(1, $countDeletedItems);
     }
 
     public function testActualizeLineItemsWhenNoDeletedLineItems(): void
@@ -700,17 +767,17 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList = $this->getShoppingList(42);
         $allowedStatuses = ['in_stock'];
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_product.general_frontend_product_visibility')
             ->willReturn($allowedStatuses);
 
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('deleteNotAllowedLineItemsFromShoppingList')
             ->with($shoppingList, $allowedStatuses)
             ->willReturn(0);
 
-        $this->totalManager->expects($this->never())
+        $this->totalManager->expects(self::never())
             ->method('recalculateTotals');
 
         $this->manager->actualizeLineItems($shoppingList);
@@ -721,17 +788,17 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList = $this->getShoppingList(42);
         $allowedStatuses = ['in_stock'];
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_product.general_frontend_product_visibility')
             ->willReturn($allowedStatuses);
 
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('deleteNotAllowedLineItemsFromShoppingList')
             ->with($shoppingList, $allowedStatuses)
             ->willReturn(2);
 
-        $this->totalManager->expects($this->once())
+        $this->totalManager->expects(self::once())
             ->method('recalculateTotals')
             ->with($shoppingList, true);
 

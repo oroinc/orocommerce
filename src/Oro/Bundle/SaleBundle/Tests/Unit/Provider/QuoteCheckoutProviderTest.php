@@ -15,23 +15,20 @@ use Oro\Bundle\SaleBundle\Provider\QuoteCheckoutProvider;
 class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $managerRegistry;
+    private $managerRegistry;
 
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityManager;
+    private $entityManager;
 
     /** @var QuoteDemandRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $quoteDemandRepository;
+    private $quoteDemandRepository;
 
     /** @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutRepository;
+    private $checkoutRepository;
 
     /** @var QuoteCheckoutProvider */
-    protected $provider;
+    private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManager::class);
@@ -47,30 +44,24 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCheckoutByQuote(QuoteDemand $quoteDemand = null)
     {
-        /** @var Quote|\PHPUnit\Framework\MockObject\MockObject $quote */
         $quote = $this->createMock(Quote::class);
-        /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject $customerUser */
         $customerUser = $this->createMock(CustomerUser::class);
         $workflowName = 'test_workflow';
 
-        $this->managerRegistry
-            ->expects($this->exactly($quoteDemand ? 2 : 1))
+        $this->managerRegistry->expects($this->exactly($quoteDemand ? 2 : 1))
             ->method('getManagerForClass')
             ->willReturn($this->entityManager);
 
-        $this->quoteDemandRepository
-            ->expects($this->once())
+        $this->quoteDemandRepository->expects($this->once())
             ->method('getQuoteDemandByQuote')
             ->with($quote, $customerUser)
             ->willReturn($quoteDemand);
 
-        $this->checkoutRepository
-            ->expects($this->exactly($quoteDemand ? 1 : 0))
+        $this->checkoutRepository->expects($this->exactly($quoteDemand ? 1 : 0))
             ->method('findCheckoutByCustomerUserAndSourceCriteriaWithCurrency')
             ->with($customerUser, ['quoteDemand' => $quoteDemand], $workflowName);
 
-        $this->entityManager
-            ->expects($this->exactly($quoteDemand ? 2 : 1))
+        $this->entityManager->expects($this->exactly($quoteDemand ? 2 : 1))
             ->method('getRepository')
             ->willReturnMap([
                 [QuoteDemand::class,$this->quoteDemandRepository],
@@ -80,10 +71,7 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->getCheckoutByQuote($quote, $customerUser, $workflowName);
     }
 
-    /**
-     * @return array
-     */
-    public function quoteDemandDataProvider()
+    public function quoteDemandDataProvider(): array
     {
         return [
             'quote demand' => [

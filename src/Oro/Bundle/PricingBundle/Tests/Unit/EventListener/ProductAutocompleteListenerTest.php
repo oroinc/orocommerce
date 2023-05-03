@@ -10,6 +10,8 @@ use Oro\Bundle\PricingBundle\EventListener\ProductAutocompleteListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Result;
 
 class ProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -93,31 +95,33 @@ class ProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         $autocompleteData = [
-            'SKU1' => ['cpl_price' => null, 'pl_price' => null],
-            'SKU2' => ['cpl_price' => null, 'pl_price' => ''],
-            'SKU3' => ['cpl_price' => '', 'pl_price' => null],
-            'SKU4' => ['cpl_price' => '', 'pl_price' => ''],
-            'SKU5' => ['cpl_price' => 0, 'pl_price' => null],
-            'SKU6' => ['cpl_price' => null, 'pl_price' => 0],
-            'SKU7' => ['cpl_price' => 0, 'pl_price' => ''],
-            'SKU8' => ['cpl_price' => '', 'pl_price' => 0],
-            'SKU9' => ['cpl_price' => 10, 'pl_price' => null],
-            'SKU10' => ['cpl_price' => null, 'pl_price' => 20],
-            'SKU11' => ['cpl_price' => 30, 'pl_price' => ''],
-            'SKU12' => ['cpl_price' => '', 'pl_price' => 40],
-            'SKU13' => ['cpl_price' => 50, 'pl_price' => 60],
-            'SKU14' => ['pl_price' => null],
-            'SKU15' => ['pl_price' => ''],
-            'SKU16' => ['pl_price' => 0],
-            'SKU17' => ['pl_price' => 20],
-            'SKU18' => ['cpl_price' => null],
-            'SKU19' => ['cpl_price' => ''],
-            'SKU20' => ['cpl_price' => 0],
-            'SKU21' => ['cpl_price' => 10],
-            'SKU22' => [],
+            'products' => [
+                ['cpl_price' => null, 'pl_price' => null],
+                ['cpl_price' => null, 'pl_price' => ''],
+                ['cpl_price' => '', 'pl_price' => null],
+                ['cpl_price' => '', 'pl_price' => ''],
+                ['cpl_price' => 0, 'pl_price' => null],
+                ['cpl_price' => null, 'pl_price' => 0],
+                ['cpl_price' => 0, 'pl_price' => ''],
+                ['cpl_price' => '', 'pl_price' => 0],
+                ['cpl_price' => 10, 'pl_price' => null],
+                ['cpl_price' => null, 'pl_price' => 20],
+                ['cpl_price' => 30, 'pl_price' => ''],
+                ['cpl_price' => '', 'pl_price' => 40],
+                ['cpl_price' => 50, 'pl_price' => 60],
+                ['pl_price' => null],
+                ['pl_price' => ''],
+                ['pl_price' => 0],
+                ['pl_price' => 20],
+                ['cpl_price' => null],
+                ['cpl_price' => ''],
+                ['cpl_price' => 0],
+                ['cpl_price' => 10],
+                [],
+            ]
         ];
 
-        $event = new ProcessAutocompleteDataEvent($autocompleteData);
+        $event = new ProcessAutocompleteDataEvent($autocompleteData, 'request', new Result(new Query()));
 
         $this->listener->onProcessAutocompleteData($event);
 
@@ -136,57 +140,63 @@ class ProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new ProcessAutocompleteDataEvent(
             [
-                'SKU1' => ['cpl_price' => null, 'pl_price' => null],
-                'SKU2' => ['cpl_price' => null, 'pl_price' => ''],
-                'SKU3' => ['cpl_price' => '', 'pl_price' => null],
-                'SKU4' => ['cpl_price' => '', 'pl_price' => ''],
-                'SKU5' => ['cpl_price' => 0, 'pl_price' => null],
-                'SKU6' => ['cpl_price' => null, 'pl_price' => 0],
-                'SKU7' => ['cpl_price' => 0, 'pl_price' => ''],
-                'SKU8' => ['cpl_price' => '', 'pl_price' => 0],
-                'SKU9' => ['cpl_price' => 10, 'pl_price' => null],
-                'SKU10' => ['cpl_price' => null, 'pl_price' => 20],
-                'SKU11' => ['cpl_price' => 30, 'pl_price' => ''],
-                'SKU12' => ['cpl_price' => '', 'pl_price' => 40],
-                'SKU13' => ['cpl_price' => 50, 'pl_price' => 60],
-                'SKU14' => ['pl_price' => null],
-                'SKU15' => ['pl_price' => ''],
-                'SKU16' => ['pl_price' => 0],
-                'SKU17' => ['pl_price' => 20],
-                'SKU18' => ['cpl_price' => null],
-                'SKU19' => ['cpl_price' => ''],
-                'SKU20' => ['cpl_price' => 0],
-                'SKU21' => ['cpl_price' => 10],
-                'SKU22' => [],
-            ]
+                'products' => [
+                    ['cpl_price' => null, 'pl_price' => null],
+                    ['cpl_price' => null, 'pl_price' => ''],
+                    ['cpl_price' => '', 'pl_price' => null],
+                    ['cpl_price' => '', 'pl_price' => ''],
+                    ['cpl_price' => 0, 'pl_price' => null],
+                    ['cpl_price' => null, 'pl_price' => 0],
+                    ['cpl_price' => 0, 'pl_price' => ''],
+                    ['cpl_price' => '', 'pl_price' => 0],
+                    ['cpl_price' => 10, 'pl_price' => null],
+                    ['cpl_price' => null, 'pl_price' => 20],
+                    ['cpl_price' => 30, 'pl_price' => ''],
+                    ['cpl_price' => '', 'pl_price' => 40],
+                    ['cpl_price' => 50, 'pl_price' => 60],
+                    ['pl_price' => null],
+                    ['pl_price' => ''],
+                    ['pl_price' => 0],
+                    ['pl_price' => 20],
+                    ['cpl_price' => null],
+                    ['cpl_price' => ''],
+                    ['cpl_price' => 0],
+                    ['cpl_price' => 10],
+                    [],
+                ]
+            ],
+            'request',
+            new Result(new Query())
         );
 
         $this->listener->onProcessAutocompleteData($event);
 
         self::assertEquals(
             [
-                'SKU1' => [],
-                'SKU2' => [],
-                'SKU3' => [],
-                'SKU4' => [],
-                'SKU5' => ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
-                'SKU6' => ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
-                'SKU7' => ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
-                'SKU8' => ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
-                'SKU9' => ['price' => 10, 'currency' => 'USD', 'formatted_price' => 'USD 10'],
-                'SKU10' => ['price' => 20, 'currency' => 'USD', 'formatted_price' => 'USD 20'],
-                'SKU11' => ['price' => 30, 'currency' => 'USD', 'formatted_price' => 'USD 30'],
-                'SKU12' => ['price' => 40, 'currency' => 'USD', 'formatted_price' => 'USD 40'],
-                'SKU13' => ['price' => 50, 'currency' => 'USD', 'formatted_price' => 'USD 50'],
-                'SKU14' => [],
-                'SKU15' => [],
-                'SKU16' => ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
-                'SKU17' => ['price' => 20, 'currency' => 'USD', 'formatted_price' => 'USD 20'],
-                'SKU18' => [],
-                'SKU19' => [],
-                'SKU20' => ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
-                'SKU21' => ['price' => 10, 'currency' => 'USD', 'formatted_price' => 'USD 10'],
-                'SKU22' => [],
+                'products' => [
+                    [],
+                    [],
+                    [],
+                    [],
+                    ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
+                    ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
+                    ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
+                    ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
+                    ['price' => 10, 'currency' => 'USD', 'formatted_price' => 'USD 10'],
+                    ['price' => 20, 'currency' => 'USD', 'formatted_price' => 'USD 20'],
+                    ['price' => 30, 'currency' => 'USD', 'formatted_price' => 'USD 30'],
+                    ['price' => 40, 'currency' => 'USD', 'formatted_price' => 'USD 40'],
+                    ['price' => 50, 'currency' => 'USD', 'formatted_price' => 'USD 50'],
+                    [],
+                    [],
+                    ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
+                    ['price' => 20, 'currency' => 'USD', 'formatted_price' => 'USD 20'],
+                    [],
+                    [],
+                    ['price' => 0, 'currency' => 'USD', 'formatted_price' => 'USD 0'],
+                    ['price' => 10, 'currency' => 'USD', 'formatted_price' => 'USD 10'],
+                    [],
+                ]
             ],
             $event->getData()
         );

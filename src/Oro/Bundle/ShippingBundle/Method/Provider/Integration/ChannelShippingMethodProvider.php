@@ -2,115 +2,54 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\Provider\Integration;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
+/**
+ * Provides shipping methods for a specific integration channel type.
+ */
 class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
 {
-    /**
-     * @var string
-     */
-    private $channelType;
+    private string $channelType;
+    private IntegrationShippingMethodFactoryInterface $shippingMethodFactory;
+    private ShippingMethodLoader $shippingMethodLoader;
 
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var IntegrationShippingMethodFactoryInterface
-     */
-    private $methodFactory;
-
-    /**
-     * @var ShippingMethodInterface[]
-     */
-    private $methods = [];
-
-    /**
-     * @var Channel[]
-     */
-    private $loadedChannels = [];
-
-    /**
-     * @param string                                    $channelType
-     * @param DoctrineHelper                            $doctrineHelper
-     * @param IntegrationShippingMethodFactoryInterface $methodFactory
-     */
     public function __construct(
-        $channelType,
-        DoctrineHelper $doctrineHelper,
-        IntegrationShippingMethodFactoryInterface $methodFactory
+        string $channelType,
+        IntegrationShippingMethodFactoryInterface $shippingMethodFactory,
+        ShippingMethodLoader $shippingMethodLoader,
     ) {
         $this->channelType = $channelType;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->methodFactory = $methodFactory;
-    }
-
-    /**
-     * We need only non dirty channels for creating methods.
-     * For example if entity was changed on form submit, we will have dirty channel in Unit of work.
-     */
-    public function postLoad(Channel $channel, LifecycleEventArgs $event)
-    {
-        if ($channel->getType() === $this->channelType) {
-            $this->loadedChannels[] = $channel;
-            $this->createMethodFromChannel($channel);
-        }
+        $this->shippingMethodFactory = $shippingMethodFactory;
+        $this->shippingMethodLoader = $shippingMethodLoader;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getShippingMethods()
+    public function getShippingMethods(): array
     {
-        $this->loadChannels();
-
-        return $this->methods;
+        return $this->shippingMethodLoader->loadShippingMethods($this->channelType, $this->shippingMethodFactory);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getShippingMethod($name)
+    public function getShippingMethod(string $name): ?ShippingMethodInterface
     {
-        if ($this->hasShippingMethod($name)) {
-            return $this->getShippingMethods()[$name];
-        }
+        $shippingMethods = $this->getShippingMethods();
 
-        return null;
+        return $shippingMethods[$name] ?? null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function hasShippingMethod($name)
+    public function hasShippingMethod(string $name): bool
     {
-        return array_key_exists($name, $this->getShippingMethods());
-    }
+        $shippingMethods = $this->getShippingMethods();
 
-    private function createMethodFromChannel(Channel $channel)
-    {
-        $method = $this->methodFactory->create($channel);
-        $this->methods[$method->getIdentifier()] = $method;
-    }
-
-    /**
-     * @return ChannelRepository|\Doctrine\ORM\EntityRepository
-     */
-    private function getRepository()
-    {
-        return $this->doctrineHelper->getEntityRepository('OroIntegrationBundle:Channel');
-    }
-
-    private function loadChannels()
-    {
-        /* After fetching, all entities will be saved into $loadedChannels on postLoad call */
-        $this->getRepository()->findByTypeAndExclude($this->channelType, $this->loadedChannels);
+        return isset($shippingMethods[$name]);
     }
 }

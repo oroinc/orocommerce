@@ -63,6 +63,7 @@
     .gjs-comp-selected {
         // stylelint-disable-next-line declaration-no-important
         outline: 3px solid $secondary !important;
+        outline-offset: 0;
     }
 
     .row {
@@ -70,9 +71,9 @@
         margin-right: 0;
     }
 
-    .gjs-dashed {
+    &.gjs-dashed {
         *[data-gjs-highlightable] {
-            outline-offset: -1px;
+            outline-offset: 0;
             outline: 1px dashed rgba($primary-700, .7);
 
             &[data-gjs-type='text-style'] {
@@ -93,9 +94,5 @@
     .gjs-view-loading {
         min-height: 100px;
         position: relative;
-    }
-
-    .gjs-loader-mask {
-        @extend .loader-mask;
     }
 }

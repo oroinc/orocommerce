@@ -18,21 +18,16 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 abstract class ConfigureWYSIWYGFields implements ProcessorInterface
 {
-    public const FIELD_VALUE      = 'value';
-    public const FIELD_STYLE      = 'style';
+    public const FIELD_VALUE = 'value';
+    public const FIELD_STYLE = 'style';
     public const FIELD_PROPERTIES = 'properties';
 
-    private const WYSIWYG_FIELDS          = 'wysiwyg_fields';
+    private const WYSIWYG_FIELDS = 'wysiwyg_fields';
     private const RENDERED_WYSIWYG_FIELDS = 'rendered_wysiwyg_fields';
 
-    /** @var WYSIWYGFieldsProvider */
-    private $wysiwygFieldsProvider;
-
-    /** @var EntityFieldFilteringHelper */
-    private $entityFieldFilteringHelper;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private WYSIWYGFieldsProvider $wysiwygFieldsProvider;
+    private EntityFieldFilteringHelper $entityFieldFilteringHelper;
+    protected DoctrineHelper $doctrineHelper;
 
     public function __construct(
         WYSIWYGFieldsProvider $wysiwygFieldsProvider,
@@ -113,7 +108,7 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */
 

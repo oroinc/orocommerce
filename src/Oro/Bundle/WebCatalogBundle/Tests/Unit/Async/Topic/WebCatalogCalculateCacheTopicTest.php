@@ -47,4 +47,14 @@ class WebCatalogCalculateCacheTopicTest extends AbstractTopicTestCase
             ],
         ];
     }
+
+    public function testCreateJobName(): void
+    {
+        self::assertSame(
+            'oro.web_catalog.calculate_cache:42',
+            $this->getTopic()->createJobName([
+                WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => 42
+            ])
+        );
+    }
 }

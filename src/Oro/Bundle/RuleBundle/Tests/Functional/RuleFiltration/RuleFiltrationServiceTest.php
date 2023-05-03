@@ -8,64 +8,42 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RuleFiltrationServiceTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
     }
 
-    /**
-     * @param RuleInterface $rule
-     *
-     * @return RuleOwnerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createRuleOwnerMock(RuleInterface $rule)
+    private function createRuleOwner(RuleInterface $rule): RuleOwnerInterface
     {
-        $ruleOwnerMock = $this->createMock(RuleOwnerInterface::class);
-
-        $ruleOwnerMock
-            ->expects($this->any())
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $ruleOwner->expects($this->any())
             ->method('getRule')
             ->willReturn($rule);
 
-        return $ruleOwnerMock;
+        return $ruleOwner;
     }
 
-    /**
-     * @param bool $isEnabled
-     * @param string $expression
-     * @param int $sortOrder
-     * @param bool $isStopProcessing
-     *
-     * @return RuleInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createRuleMock($isEnabled, $expression, $sortOrder, $isStopProcessing)
-    {
-        $ruleMock = $this->createMock(RuleInterface::class);
-
-        $ruleMock
-            ->expects($this->any())
+    private function createRule(
+        bool $isEnabled,
+        string $expression,
+        int $sortOrder,
+        bool $isStopProcessing
+    ): RuleInterface {
+        $rule = $this->createMock(RuleInterface::class);
+        $rule->expects($this->any())
             ->method('isEnabled')
             ->willReturn($isEnabled);
-
-        $ruleMock
-            ->expects($this->any())
+        $rule->expects($this->any())
             ->method('getExpression')
             ->willReturn($expression);
-
-        $ruleMock
-            ->expects($this->once())
+        $rule->expects($this->once())
             ->method('getSortOrder')
             ->willReturn($sortOrder);
-
-        $ruleMock
-            ->expects($this->once())
+        $rule->expects($this->once())
             ->method('isStopProcessing')
             ->willReturn($isStopProcessing);
 
-        return $ruleMock;
+        return $rule;
     }
 
     /**
@@ -82,10 +60,7 @@ class RuleFiltrationServiceTest extends WebTestCase
         $this->assertEquals($expectedFilteredRules, $actualFilteredRules);
     }
 
-    /**
-     * @return array
-     */
-    public function ruleFiltrationProvider()
+    public function ruleFiltrationProvider(): array
     {
         return [
             'not empty result' => [
@@ -96,11 +71,11 @@ class RuleFiltrationServiceTest extends WebTestCase
                     ],
                 ],
                 'ruleOwners' => [
-                    $ruleOwnerOne = $this->createRuleOwnerMock(
-                        $this->createRuleMock(true, 'someObject.property1 = \'value1\'', 1, false)
+                    $ruleOwnerOne = $this->createRuleOwner(
+                        $this->createRule(true, 'someObject.property1 = \'value1\'', 1, false)
                     ),
-                    $ruleOwnerTwo = $this->createRuleOwnerMock(
-                        $this->createRuleMock(true, 'someObject.property2 = \'value2\'', 2, false)
+                    $ruleOwnerTwo = $this->createRuleOwner(
+                        $this->createRule(true, 'someObject.property2 = \'value2\'', 2, false)
                     ),
                 ],
                 'expectedResult' => [
@@ -111,11 +86,11 @@ class RuleFiltrationServiceTest extends WebTestCase
             'empty result' => [
                 'context' => [],
                 'ruleOwners' => [
-                    $this->createRuleOwnerMock(
-                        $this->createRuleMock(true, 'someObject.property1 = \'value1\'', 1, false)
+                    $this->createRuleOwner(
+                        $this->createRule(true, 'someObject.property1 = \'value1\'', 1, false)
                     ),
-                    $this->createRuleOwnerMock(
-                        $this->createRuleMock(true, 'someObject.property2 = \'value2\'', 2, false)
+                    $this->createRuleOwner(
+                        $this->createRule(true, 'someObject.property2 = \'value2\'', 2, false)
                     ),
                 ],
                 'expectedResult' => [

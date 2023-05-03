@@ -6,30 +6,23 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type to select a customer tax code.
+ */
 class CustomerTaxCodeAutocompleteType extends AbstractType
 {
-    const NAME = 'oro_customer_tax_code_autocomplete';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
+        return 'oro_customer_tax_code_autocomplete';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return OroEntitySelectOrCreateInlineType::class;
     }
@@ -37,14 +30,12 @@ class CustomerTaxCodeAutocompleteType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(
-            [
-                'autocomplete_alias' => 'oro_customer_tax_code',
-                'grid_name' => 'customers-tax-code-select-grid',
-                'create_form_route' => 'oro_tax_customer_tax_code_create',
-            ]
-        );
+        $resolver->setDefaults([
+            'autocomplete_alias' => 'oro_customer_tax_code',
+            'grid_name'          => 'customers-tax-code-select-grid',
+            'create_form_route'  => 'oro_tax_customer_tax_code_create'
+        ]);
     }
 }

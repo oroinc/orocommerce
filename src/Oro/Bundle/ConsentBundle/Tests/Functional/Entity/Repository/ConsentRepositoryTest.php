@@ -9,35 +9,15 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ConsentRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ConsentRepository
-     */
-    protected $repository;
+    private ConsentRepository $repository;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
+        $this->loadFixtures([LoadConsentsData::class]);
 
-        $this->loadFixtures([
-            LoadConsentsData::class,
-        ]);
-
-        $this->repository = $this
-            ->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityRepositoryForClass(Consent::class);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->repository);
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(Consent::class);
     }
 
     /**
@@ -56,19 +36,16 @@ class ConsentRepositoryTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getNonExistentConsentIdsProvider()
+    public function getNonExistentConsentIdsProvider(): array
     {
         return [
-            "No consent ids" => [
+            'No consent ids' => [
                 'checkedConsentIdsCallback' => function () {
                     return [];
                 },
                 'expectedNonExistentConsentIds' => [],
             ],
-            "No removed consent ids" => [
+            'No removed consent ids' => [
                 'checkedConsentIdsCallback' => function () {
                     return [
                         $this->getReference(LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS)->getId(),
@@ -77,7 +54,7 @@ class ConsentRepositoryTest extends WebTestCase
                 },
                 'expectedNonExistentConsentIds' => [],
             ],
-            "Several removed consent ids" => [
+            'Several removed consent ids' => [
                 'checkedConsentIdsCallback' => function () {
                     return [
                         $this->getReference(LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS)->getId(),

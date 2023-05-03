@@ -7,6 +7,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -187,6 +189,19 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             ->setCustomer($customerUser->getCustomer())
             ->setWebsite($website)
             ->setCustomerUser($customerUser);
+
+        if (isset($orderData['parentOrder'])) {
+            $order->setParent($this->getReference($orderData['parentOrder']));
+        }
+
+        if (isset($orderData['internalStatus'])) {
+            /** @var AbstractEnumValue $internalStatus */
+            $internalStatus = $manager
+                ->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
+                ->find($orderData['internalStatus']);
+
+            $order->setInternalStatus($internalStatus);
+        }
 
         $this->container->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($order, $paymentTerm);

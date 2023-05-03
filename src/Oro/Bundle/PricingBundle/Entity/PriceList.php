@@ -8,7 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 /**
  * Entity holds price list data.
@@ -27,6 +31,11 @@ use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
  *          "dataaudit"={
  *              "auditable"=true
  *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          },
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
@@ -38,14 +47,20 @@ use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
  *      }
  * )
  */
-class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterface
+class PriceList extends BasePriceList implements
+    ScheduleIntervalsAwareInterface,
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
-     * @var bool
+     * @var Organization
      *
-     * @ORM\Column(name="is_default", type="boolean")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $default = false;
+    protected $organization;
 
     /**
      * @var bool
@@ -136,28 +151,7 @@ class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterfa
     {
         $this->schedules = new ArrayCollection();
         $this->priceRules = new ArrayCollection();
-
         parent::__construct();
-    }
-
-    /**
-     * @param bool $default
-     *
-     * @return PriceList
-     */
-    public function setDefault($default)
-    {
-        $this->default = (bool)$default;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return $this->default;
     }
 
     /**
@@ -373,5 +367,23 @@ class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterfa
     public function getPriceListCurrencies(): array
     {
         return $this->getCurrencies();
+    }
+
+    /**
+     * Gets the organization the price list issued to.
+     */
+    public function getOrganization(): ?Organization
+    {
+        return $this->organization;
+    }
+
+    /**
+     * Sets the organization the price list issued to.
+     */
+    public function setOrganization(OrganizationInterface $organization): self
+    {
+        $this->organization = $organization;
+
+        return $this;
     }
 }

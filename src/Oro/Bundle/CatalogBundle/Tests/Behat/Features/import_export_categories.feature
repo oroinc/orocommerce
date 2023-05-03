@@ -148,8 +148,7 @@ Feature: Import Export Categories
     And I should see "20 existing category + empty parent id + new title of existing parent (postponed)" belongs to "existing category 20 (updated)" in tree
     And I should see "21 existing category can be updated" belongs to "All Products" in tree
     And I should see "22 new filled category" belongs to "All Products" in tree
-    And I should see "c@t+e3g,O\r=y" belongs to "All Products" in tree
-    And I should see "23 \"c@t+e3g,O\r=y\"/'with' `/` $s:p-e_c+i%a^l; {[(<\#chars&>)]}*."
+    And I should see "23 \"c@t+e3g,O\r=y\"/'with' `/` $s:p-e_c+i%a^l; {[(<\#chars&>)]}*." belongs to "All Products" in tree
     And tree level of category "category with tree level 5" is 5
 
   Scenario: Export Categories

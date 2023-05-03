@@ -60,6 +60,12 @@
         }) %}
     {% endif %}
 
+    {% if is_kit_product_type(product.type) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' is-kit',
+        }) %}
+    {% endif %}
+
     {% do block|merge_context({
         '__productUniqId': 'product-'|uniqid,
     }) %}
@@ -195,7 +201,7 @@
         '~class': ' product-item__select-row product-item__select-row--{{ class_prefix }}'
     }) %}
 
-    {% if not is_configurable_product_type(product.type) %}
+    {% if not is_configurable_product_type(product.type) and not is_kit_product_type(product.type) %}
         <div {{ block('block_attributes') }}>
             <div data-page-component-init-on="asap"
                  data-page-component-module="oroproduct/js/app/datagrid/cell/backend-select-row-cell"></div>

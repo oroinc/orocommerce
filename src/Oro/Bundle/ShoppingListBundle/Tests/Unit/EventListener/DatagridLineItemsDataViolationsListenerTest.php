@@ -77,8 +77,13 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
         $lineItem1 = $this->getEntity(LineItem::class, ['id' => 11, 'product' => $product1, 'unit' => $productUnit]);
         $lineItem2 = $this->getEntity(LineItem::class, ['id' => 22, 'product' => $product2, 'unit' => $productUnit]);
 
+        $lineItems = [
+            $lineItem1->getEntityIdentifier() => $lineItem1,
+            $lineItem2->getEntityIdentifier() => $lineItem2,
+        ];
         $event = new DatagridLineItemsDataEvent(
-            [$lineItem1, $lineItem2],
+            $lineItems,
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );

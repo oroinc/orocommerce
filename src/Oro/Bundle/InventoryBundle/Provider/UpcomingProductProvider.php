@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\InventoryBundle\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Exception\Fallback\FallbackFieldConfigurationMissingException;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackKeyException;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Provides information on product's upcoming status and availability date.
@@ -24,54 +23,38 @@ class UpcomingProductProvider
     public const IS_UPCOMING = 'isUpcoming';
     public const AVAILABILITY_DATE = 'availabilityDate';
 
-    /**
-     * @var EntityFallbackResolver
-     */
-    private $entityFallbackResolver;
-
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private EntityFallbackResolver $entityFallbackResolver;
+    private ManagerRegistry $doctrine;
+    private ConfigManager $configManager;
+    private PropertyAccessorInterface $propertyAccessor;
 
     public function __construct(
         EntityFallbackResolver $entityFallbackResolver,
-        DoctrineHelper $doctrineHelper,
-        ConfigManager $configManager
+        ManagerRegistry $doctrine,
+        ConfigManager $configManager,
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->entityFallbackResolver = $entityFallbackResolver;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
         $this->configManager = $configManager;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     public function isUpcoming(Product $product): bool
     {
-        $isUpcoming = $this->getIsUpcomingValue($product);
-
-        if (!$isUpcoming) {
+        if (!$this->getIsUpcomingValue($product)) {
             return false;
         }
 
         if (!$this->isUpcomingStatusOffPastAvailabilityDate()) {
-            return $isUpcoming;
+            return true;
         }
 
         $availabilityDate = $this->extractDate($product);
-        if ($availabilityDate && $availabilityDate < new \DateTime('now', new \DateTimeZone('UTC'))) {
-            return false;
-        }
 
-        return true;
+        return !($availabilityDate && $availabilityDate < new \DateTime('now', new \DateTimeZone('UTC')));
     }
 
-    /**
-     * @throws \LogicException
-     */
     public function getAvailabilityDate(Product $product): ?\DateTime
     {
         if (!$this->isUpcoming($product)) {
@@ -87,10 +70,11 @@ class UpcomingProductProvider
     }
 
     /**
-     * @param Product[]|iterable $products
+     * @param iterable<Product> $products
+     *
      * @return \DateTime|null
      */
-    public function getLatestAvailabilityDate($products): ?\DateTime
+    public function getLatestAvailabilityDate(iterable $products): ?\DateTime
     {
         $latestDate = null;
         foreach ($products as $product) {
@@ -104,34 +88,23 @@ class UpcomingProductProvider
         return $latestDate ? clone $latestDate : null;
     }
 
-    /**
-     * @param Product $product
-     * @return null|\DateTime
-     */
-    protected function extractDate(Product $product)
+    protected function extractDate(Product $product): ?\DateTime
     {
-        $accessor = PropertyAccess::createPropertyAccessor();
-
         /** @var EntityFieldFallbackValue|null $fallbackValue */
-        $fallbackValue = $accessor->getValue($product, self::IS_UPCOMING);
+        $fallbackValue = $this->propertyAccessor->getValue($product, self::IS_UPCOMING);
         if ($fallbackValue && !$fallbackValue->getFallback()) {
-            return $accessor->getValue($product, self::AVAILABILITY_DATE);
+            return $this->propertyAccessor->getValue($product, self::AVAILABILITY_DATE);
         }
 
-        /** @var CategoryRepository $repo */
-        $repo = $this->doctrineHelper->getEntityRepositoryForClass(Category::class);
-        $category = $repo->findOneByProduct($product);
-        if (!$category instanceof Category) {
-            return null;
-        }
-
-        do {
+        $category = $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
+        while (null !== $category) {
             /** @var EntityFieldFallbackValue|null $fallbackValue */
-            $fallbackValue = $accessor->getValue($category, self::IS_UPCOMING);
+            $fallbackValue = $this->propertyAccessor->getValue($category, self::IS_UPCOMING);
             if ($fallbackValue && !$fallbackValue->getFallback()) {
-                return $accessor->getValue($category, self::AVAILABILITY_DATE);
+                return $this->propertyAccessor->getValue($category, self::AVAILABILITY_DATE);
             }
-        } while ($category = $category->getParentCategory());
+            $category = $category->getParentCategory();
+        }
 
         return null;
     }

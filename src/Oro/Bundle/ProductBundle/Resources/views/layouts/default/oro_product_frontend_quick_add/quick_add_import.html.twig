@@ -9,7 +9,7 @@
 
 {% block _quick_add_import_form_start_widget %}
     {% set attr = {
-        'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view',
+        'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view'
     }|merge(attr) %}
     {{ block('form_start_widget') }}
 {% endblock %}
@@ -52,7 +52,7 @@
         'ariaHaspopup': true,
         'labelInIcon': false,
         'widget': {
-            'type': 'quick-add-import',
+            'type': 'dialog',
             'options': {
                 'dialogOptions': {
                     'title': 'oro.product.frontend.quick_add.import_from_file.title_dialog'|trans,

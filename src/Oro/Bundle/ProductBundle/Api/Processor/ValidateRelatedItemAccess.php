@@ -16,16 +16,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ValidateRelatedItemAccess implements ProcessorInterface
 {
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    /** @var string[] */
+    private array $productPermissions;
 
-    /** @var array */
-    private $productPermissions;
-
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param string[]                      $productPermissions
-     */
     public function __construct(AuthorizationCheckerInterface $authorizationChecker, array $productPermissions)
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -35,7 +29,7 @@ class ValidateRelatedItemAccess implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         if (!$this->authorizationChecker->isGranted('oro_related_products_edit')) {
             throw new AccessDeniedException('No access to change related products.');

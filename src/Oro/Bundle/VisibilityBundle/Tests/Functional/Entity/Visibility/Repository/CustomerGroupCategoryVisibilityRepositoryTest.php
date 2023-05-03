@@ -12,10 +12,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 
 class CustomerGroupCategoryVisibilityRepositoryTest extends WebTestCase
 {
-    /**
-     * @var CustomerGroupCategoryVisibilityRepository
-     */
-    protected $repository;
+    private CustomerGroupCategoryVisibilityRepository $repository;
 
     protected function setUp(): void
     {
@@ -25,25 +22,19 @@ class CustomerGroupCategoryVisibilityRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository(CustomerGroupCategoryVisibility::class);
 
-        $this->loadFixtures(
-            [
-                LoadGroups::class,
-                LoadCategoryData::class,
-                LoadCategoryVisibilityData::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadGroups::class,
+            LoadCategoryData::class,
+            LoadCategoryVisibilityData::class
+        ]);
     }
 
     /**
      * @dataProvider getCategoryCustomerGroupIdsByVisibilityDataProvider
-     * @param string $categoryName
-     * @param string $visibility
-     * @param array $expectedCustomerGroups
-     * @param array $restricted
      */
     public function testGetCategoryCustomerGroupIdsByVisibility(
-        $categoryName,
-        $visibility,
+        string $categoryName,
+        string $visibility,
         array $expectedCustomerGroups,
         array $restricted = null
     ) {
@@ -68,10 +59,7 @@ class CustomerGroupCategoryVisibilityRepositoryTest extends WebTestCase
         $this->assertEquals($expectedCustomerGroupIds, $customerGroupIds);
     }
 
-    /**
-     * @return array
-     */
-    public function getCategoryCustomerGroupIdsByVisibilityDataProvider()
+    public function getCategoryCustomerGroupIdsByVisibilityDataProvider(): array
     {
         return [
             'FIRST_LEVEL with HIDDEN' => [

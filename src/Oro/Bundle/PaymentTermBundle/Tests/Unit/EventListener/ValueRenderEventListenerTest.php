@@ -17,42 +17,36 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ValueRenderEventListener */
-    private $valueRenderEventListener;
-
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $associationProvider;
 
-    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $router;
+    /** @var ValueRenderEventListener */
+    private $valueRenderEventListener;
 
     protected function setUp(): void
     {
-        $this->associationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->associationProvider = $this->createMock(PaymentTermAssociationProvider::class);
 
-        $this->router = $this->createMock(RouterInterface::class);
-        $this->router->expects($this->any())->method('generate')->willReturnCallback(
-            function ($routeName, array $routeParams) {
+        $router = $this->createMock(RouterInterface::class);
+        $router->expects($this->any())
+            ->method('generate')
+            ->willReturnCallback(function ($routeName, array $routeParams) {
                 $this->assertArrayHasKey('id', $routeParams);
 
-                return $routeName.'-'.$routeParams['id'];
-            }
-        );
+                return $routeName . '-' . $routeParams['id'];
+            });
 
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                static function (string $key) {
-                    return sprintf('[trans]%s[/trans]', $key);
-                }
-            );
+            ->willReturnCallback(static function (string $key) {
+                return sprintf('[trans]%s[/trans]', $key);
+            });
 
         $this->valueRenderEventListener = new ValueRenderEventListener(
             $this->associationProvider,
             $translator,
-            $this->router
+            $router
         );
     }
 
@@ -76,7 +70,9 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
             new FieldConfigId('scope', Customer::class, 'field', 'string')
         );
 
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn(['paymentTerm']);
 
         $this->valueRenderEventListener->beforeValueRender($event);
         $this->assertSame('value', $event->getFieldViewValue());
@@ -91,8 +87,12 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
         );
 
         $paymentTerm = $this->getEntity(PaymentTerm::class, ['id' => 1, 'label' => 'pt']);
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
-        $this->associationProvider->expects($this->once())->method('getPaymentTerm')->willReturn($paymentTerm);
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn(['paymentTerm']);
+        $this->associationProvider->expects($this->once())
+            ->method('getPaymentTerm')
+            ->willReturn($paymentTerm);
 
         $this->valueRenderEventListener->beforeValueRender($event);
         $this->assertSame(['title' => 'pt', 'link' => 'oro_payment_term_view-1'], $event->getFieldViewValue());
@@ -106,8 +106,12 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
             new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
-        $this->associationProvider->expects($this->once())->method('getPaymentTerm')->willReturn(null);
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn(['paymentTerm']);
+        $this->associationProvider->expects($this->once())
+            ->method('getPaymentTerm')
+            ->willReturn(null);
 
         $this->valueRenderEventListener->beforeValueRender($event);
         $this->assertNull($event->getFieldViewValue());
@@ -122,10 +126,13 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
             new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
-        $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
+        $this->associationProvider->expects($this->exactly(2))
+            ->method('getAssociationNames')
             ->willReturnOnConsecutiveCalls(['paymentTerm'], []);
 
-        $this->associationProvider->expects($this->once())->method('getPaymentTerm')->willReturn(null);
+        $this->associationProvider->expects($this->once())
+            ->method('getPaymentTerm')
+            ->willReturn(null);
 
         $this->valueRenderEventListener->beforeValueRender($event);
         $this->assertNull($event->getFieldViewValue());
@@ -140,10 +147,13 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
             new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
-        $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
+        $this->associationProvider->expects($this->exactly(2))
+            ->method('getAssociationNames')
             ->willReturnOnConsecutiveCalls(['paymentTerm'], ['groupPaymentTerm']);
 
-        $this->associationProvider->expects($this->exactly(2))->method('getPaymentTerm')->willReturn(null);
+        $this->associationProvider->expects($this->exactly(2))
+            ->method('getPaymentTerm')
+            ->willReturn(null);
 
         $this->valueRenderEventListener->beforeValueRender($event);
         $this->assertNull($event->getFieldViewValue());
@@ -158,11 +168,13 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
             new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
-        $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
+        $this->associationProvider->expects($this->exactly(2))
+            ->method('getAssociationNames')
             ->willReturnOnConsecutiveCalls(['paymentTerm'], ['groupPaymentTerm']);
 
         $paymentTerm = $this->getEntity(PaymentTerm::class, ['id' => 4, 'label' => 'groupPaymentTerm']);
-        $this->associationProvider->expects($this->exactly(2))->method('getPaymentTerm')
+        $this->associationProvider->expects($this->exactly(2))
+            ->method('getPaymentTerm')
             ->willReturnOnConsecutiveCalls(null, $paymentTerm);
 
         $this->valueRenderEventListener->beforeValueRender($event);

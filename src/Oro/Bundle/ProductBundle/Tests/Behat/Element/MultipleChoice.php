@@ -19,7 +19,7 @@ class MultipleChoice extends BaseMultipleChoice
         $widgets = $this->getPage()
             ->findAll(
                 'css',
-                'body div.filter-box div.dropdown-menu ul.ui-multiselect-checkboxes'
+                'body div.filter-box ul.ui-multiselect-checkboxes'
             );
 
         /** @var NodeElement $widget */

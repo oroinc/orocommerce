@@ -6,10 +6,18 @@
 {% block navButtons %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
-    {% include '@OroImportExport/ImportExport/buttons_from_configuration.html.twig' with {
-        'alias': 'oro_product_index',
-        'options': { 'writer_skip_clear': true }
-    } %}
+    <div class="pull-left">
+        {% include '@OroImportExport/ImportExport/export-buttons.html.twig' with {
+            'alias': 'oro_product_index',
+            'options': { 'writer_skip_clear': true }
+        } %}
+        {% if is_granted('oro_product_create') %}
+            {% include '@OroImportExport/ImportExport/import-button.html.twig' with {
+                'alias': 'oro_product_index',
+                'options': { 'writer_skip_clear': true }
+            } %}
+        {% endif %}
+    </div>
 
     {% if is_granted('oro_product_create') %}
         <div class="btn-group pull-right">

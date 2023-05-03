@@ -22,19 +22,12 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
 {
     use EntityTrait;
 
-    /**
-     * @var DecoratedProductLineItemFactory
-     */
-    protected $factory;
+    /** @var DecoratedProductLineItemFactory */
+    private $factory;
 
-    /**
-     * @var ShippingContextToRulesValuesConverter
-     */
-    protected $shippingContextToRuleValuesConverter;
+    /** @var ShippingContextToRulesValuesConverter */
+    private $shippingContextToRuleValuesConverter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->factory = new DecoratedProductLineItemFactory(
@@ -74,10 +67,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expectedValues, $this->shippingContextToRuleValuesConverter->convert($context));
     }
 
-    /**
-     * @return array
-     */
-    public function convertDataProvider()
+    public function convertDataProvider(): array
     {
         return [
             [

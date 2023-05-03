@@ -5,19 +5,13 @@ import FullscreenFiltersAction from 'orofrontend/js/app/datafilter/actions/fulls
 import FiltersManager from 'orofilter/js/filters-manager';
 
 const isFullscreenMode = () => {
-    return viewportManager.isApplicable({
-        screenType: 'mobile-landscape'
-    });
+    return viewportManager.isApplicable('mobile-landscape');
 };
 const isCollapseMode = () => {
-    return viewportManager.isApplicable({
-        screenType: ['strict-tablet', 'strict-tablet-small']
-    });
+    return viewportManager.isApplicable(['strict-tablet', 'strict-tablet-small']);
 };
 const isDropdownMode = () => {
-    return viewportManager.isApplicable({
-        minScreenType: ['desktop']
-    });
+    return viewportManager.isApplicable(['desktop']);
 };
 
 const CustomToggleFiltersAction = FullscreenFiltersAction.extend({

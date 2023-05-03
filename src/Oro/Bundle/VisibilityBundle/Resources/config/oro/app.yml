@@ -1,5 +1,5 @@
 oro_api:
     filters:
         visibilityId:
-            factory: ['@oro_visibility.api.filter_factory.visibility_id', 'createFilter']
+            class: Oro\Bundle\VisibilityBundle\Api\Filter\VisibilityIdFilter
             supported_operators: ['=', '!=']

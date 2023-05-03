@@ -6,69 +6,65 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * This validator checks that there are no duplicated price lists.
+ */
 class UniquePriceListValidator extends ConstraintValidator
 {
-    const PRICE_LIST_KEY = 'priceList';
+    private const PRICE_LIST_KEY = 'priceList';
 
     /**
-     * Checks if the passed value is valid.
-     *
-     * @param PriceListAwareInterface[] $value The value that should be validated
-     * @param Constraint $constraint The constraint for the validation
+     * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        /** @var ExecutionContext $context */
-        $context = $this->context;
+        if (!$constraint instanceof UniquePriceList) {
+            throw new UnexpectedTypeException($constraint, UniquePriceList::class);
+        }
+
+        if (!\is_array($value)) {
+            return;
+        }
 
         $ids = [];
         foreach ($value as $index => $item) {
-            if (null === $id = $this->getPriceListId($item)) {
+            $id = $this->getPriceListId($item);
+            if (null === $id) {
                 continue;
             }
-            if (in_array($id, $ids, true)) {
-                $path = $this->getViolationPath($item, $index);
-                $context->buildViolation($constraint->message, [])
-                    ->atPath($path)
+            if (\in_array($id, $ids, true)) {
+                $this->context->buildViolation($constraint->message, [])
+                    ->atPath($this->getViolationPath($item, $index))
                     ->addViolation();
             }
             $ids[] = $id;
         }
     }
 
-    /**
-     * @param PriceListAwareInterface|array $item
-     * @return int
-     */
-    protected function getPriceListId($item)
+    private function getPriceListId(mixed $item): ?int
     {
         if ($item instanceof PriceListAwareInterface && $item->getPriceList()) {
             return $item->getPriceList()->getId();
-        } elseif (is_array($item) &&
-            array_key_exists(self::PRICE_LIST_KEY, $item) &&
-            $item[self::PRICE_LIST_KEY] instanceof PriceList
+        }
+        if (\is_array($item)
+            && \array_key_exists(self::PRICE_LIST_KEY, $item)
+            && $item[self::PRICE_LIST_KEY] instanceof PriceList
         ) {
-            /** @var PriceList $priceList */
-            $priceList = $item[self::PRICE_LIST_KEY];
-            return $priceList->getId();
+            return $item[self::PRICE_LIST_KEY]->getId();
         }
 
         return null;
     }
 
-    /**
-     * @param mixed $item
-     * @param integer $index
-     * @return string
-     */
-    protected function getViolationPath($item, $index)
+    private function getViolationPath(mixed $item, int $index): string
     {
         if ($item instanceof PriceListAwareInterface) {
-            return "[$index].".self::PRICE_LIST_KEY;
-        } elseif (is_array($item) && array_key_exists(self::PRICE_LIST_KEY, $item)) {
-            return "[$index][".self::PRICE_LIST_KEY.']';
+            return "[$index]." . self::PRICE_LIST_KEY;
+        }
+        if (\is_array($item) && \array_key_exists(self::PRICE_LIST_KEY, $item)) {
+            return "[$index][" . self::PRICE_LIST_KEY . ']';
         }
 
         return '';

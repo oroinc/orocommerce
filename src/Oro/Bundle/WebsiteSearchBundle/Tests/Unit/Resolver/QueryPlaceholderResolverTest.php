@@ -120,7 +120,7 @@ class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
     public function testReplaceInAggregations()
     {
         $query = new Query();
-        $query->addAggregate('aggregate1', 'field_name_NAME_ID', 'count');
+        $query->addAggregate('aggregate1', 'field_name_NAME_ID', 'count', ['max' => 5]);
 
         $this->placeholder->expects($this->once())
             ->method('replaceDefault')
@@ -130,7 +130,7 @@ class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
         $this->placeholderResolver->replace($query);
 
         $this->assertEquals(
-            ['aggregate1' => ['field' => 'field_name_2', 'function' => 'count']],
+            ['aggregate1' => ['field' => 'field_name_2', 'function' => 'count', 'parameters' => ['max' => 5]]],
             $query->getAggregations()
         );
     }

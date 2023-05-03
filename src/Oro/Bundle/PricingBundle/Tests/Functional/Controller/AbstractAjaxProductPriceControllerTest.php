@@ -8,31 +8,18 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
 {
-    /**
-     * @var  string
-     */
-    protected $pricesByCustomerActionUrl;
-
-    /**
-     * @var string
-     */
-    protected $matchingPriceActionUrl;
+    protected string $pricesByCustomerActionUrl;
+    protected string $matchingPriceActionUrl;
 
     /**
      * @dataProvider getProductPricesByCustomerActionDataProvider
-     *
-     * @param string $product
-     * @param array $expected
-     * @param string|null $currency
-     * @param string|null $customer
-     * @param string|null $website
      */
     public function testGetProductPricesByCustomerAction(
-        $product,
+        string $product,
         array $expected,
-        $currency = null,
-        $customer = null,
-        $website = null
+        string $currency = null,
+        string $customer = null,
+        string $website = null
     ) {
         /** @var Product $product */
         $product = $this->getReference($product);
@@ -56,7 +43,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
         $this->assertArrayHasKey($product->getId(), $data);
         $actualData = $data[$product->getId()];
@@ -76,21 +63,21 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
             $this->assertArrayHasKey($unit, $actualDataByUnits);
             $this->assertCount(count($prices), $actualDataByUnits[$unit]);
             foreach ($prices as $price) {
-                static::assertContainsEquals($price, $actualDataByUnits[$unit]);
+                self::assertContainsEquals($price, $actualDataByUnits[$unit]);
             }
         }
     }
 
     /**
      * @dataProvider getMatchingPriceActionDataProvider
-     * @param string $product
-     * @param float|int $qty
-     * @param string $unit
-     * @param string $currency
-     * @param array $expected
      */
-    public function testGetMatchingPriceAction($product, $qty, $unit, $currency, array $expected)
-    {
+    public function testGetMatchingPriceAction(
+        string $product,
+        float|int $qty,
+        string $unit,
+        string $currency,
+        array $expected
+    ) {
         /** @var Product $product */
         $product = $this->getReference($product);
 
@@ -105,8 +92,6 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        $data = json_decode($result->getContent(), true);
-
         $expectedData = [];
         if (0 !== count($expected)) {
             $expectedData = [
@@ -114,18 +99,13 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
             ];
         }
 
+        $data = self::jsonToArray($result->getContent());
         $this->assertEquals($expectedData, $data);
     }
 
-    /**
-     * @return array
-     */
-    abstract public function getProductPricesByCustomerActionDataProvider();
+    abstract public function getProductPricesByCustomerActionDataProvider(): array;
 
-    /**
-     * @return array
-     */
-    public function getMatchingPriceActionDataProvider()
+    public function getMatchingPriceActionDataProvider(): array
     {
         return [
             [

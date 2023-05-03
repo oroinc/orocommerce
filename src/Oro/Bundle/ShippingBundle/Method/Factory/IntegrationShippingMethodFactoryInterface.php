@@ -5,11 +5,10 @@ namespace Oro\Bundle\ShippingBundle\Method\Factory;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
+/**
+ * Represents a factory to create a shipping method for a specific integration channel.
+ */
 interface IntegrationShippingMethodFactoryInterface
 {
-    /**
-     * @param Channel $channel
-     * @return ShippingMethodInterface
-     */
-    public function create(Channel $channel);
+    public function create(Channel $channel): ShippingMethodInterface;
 }

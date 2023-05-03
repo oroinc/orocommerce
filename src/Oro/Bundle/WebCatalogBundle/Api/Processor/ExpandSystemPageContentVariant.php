@@ -16,11 +16,8 @@ class ExpandSystemPageContentVariant implements ProcessorInterface
 {
     private const URL_FIELD = 'url';
 
-    /** @var ObjectNormalizer */
-    private $objectNormalizer;
-
-    /** @var SystemPageRepository */
-    private $systemPageRepository;
+    private ObjectNormalizer $objectNormalizer;
+    private SystemPageRepository $systemPageRepository;
 
     public function __construct(
         ObjectNormalizer $objectNormalizer,
@@ -33,7 +30,7 @@ class ExpandSystemPageContentVariant implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

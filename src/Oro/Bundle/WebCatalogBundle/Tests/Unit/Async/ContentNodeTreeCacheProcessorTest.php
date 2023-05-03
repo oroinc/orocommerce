@@ -14,7 +14,6 @@ use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,19 +26,15 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeTreeCacheProcessor $processor;
 
-    private AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject $layoutCacheProvider;
-
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);
         $this->dumper = $this->createMock(ContentNodeTreeCacheDumper::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->layoutCacheProvider = $this->createMock(AbstractAdapter::class);
 
         $this->processor = new ContentNodeTreeCacheProcessor(
             $this->jobRunner,
-            $this->dumper,
-            $this->layoutCacheProvider
+            $this->dumper
         );
         $this->setUpLoggerMock($this->processor);
     }
@@ -82,9 +77,6 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         $this->dumper->expects(self::once())
             ->method('dump')
             ->with(self::identicalTo($node), self::identicalTo($scope));
-
-        $this->layoutCacheProvider->expects(self::once())
-            ->method('clear');
 
         self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }

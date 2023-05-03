@@ -16,21 +16,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SlugWithRedirectTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ConfirmSlugChangeFormHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $confirmSlugChangeFormHelper;
+    /** @var ConfirmSlugChangeFormHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $confirmSlugChangeFormHelper;
 
-    /**
-     * @var LocalizedSlugWithRedirectType
-     */
-    protected $formType;
+    /** @var LocalizedSlugWithRedirectType */
+    private $formType;
 
     protected function setUp(): void
     {
-        $this->confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
         $this->formType = new SlugWithRedirectType($this->confirmSlugChangeFormHelper);
 
         parent::setUp();
@@ -39,9 +33,8 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var SlugifyFormHelper $slugifyFormHelper */
         $slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
 
         return [
@@ -63,15 +56,10 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param TextSlugPrototypeWithRedirect $defaultData
-     * @param array $submittedData
-     * @param TextSlugPrototypeWithRedirect $expectedData
-     * @param array $options
      */
     public function testSubmit(
         TextSlugPrototypeWithRedirect $defaultData,
-        $submittedData,
+        array $submittedData,
         TextSlugPrototypeWithRedirect $expectedData,
         array $options = []
     ) {
@@ -92,10 +80,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'text slug prototype with redirect' => [
@@ -153,28 +138,28 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())->method('setDefaults')->with(
-            $this->callback(
-                function (array $options) {
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(
+                $this->callback(function (array $options) {
                     $this->assertEquals(TextSlugPrototypeWithRedirect::class, $options['data_class']);
                     $this->assertTrue($options['slug_suggestion_enabled']);
                     $this->assertTrue($options['create_redirect_enabled']);
                     $this->assertFalse($options['allow_slashes']);
 
                     return true;
-                }
-            )
-        );
-        $resolver->expects($this->once())->method('setRequired')->with('source_field');
+                })
+            );
+        $resolver->expects($this->once())
+            ->method('setRequired')
+            ->with('source_field');
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testBuildView()
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $options = ['someOptionName' => 'someOptionValue'];

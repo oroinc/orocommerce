@@ -2,25 +2,32 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
+ * Represents a line item in a shopping list.
+ *
  * @ORM\Table(
  *      name="oro_shopping_list_line_item",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_shopping_list_line_item_uidx",
- *              columns={"product_id", "shopping_list_id", "unit_code"}
+ *              columns={"product_id", "shopping_list_id", "unit_code", "checksum"}
  *          )
  *      }
  * )
@@ -51,12 +58,15 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      }
  * )
  */
-class LineItem extends ExtendLineItem implements
+class LineItem implements
     OrganizationAwareInterface,
     CustomerVisitorOwnerAwareInterface,
-    ProductLineItemInterface
+    ProductLineItemInterface,
+    ProductKitItemLineItemsAwareInterface,
+    ExtendEntityInterface
 {
     use UserAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var integer
@@ -98,11 +108,38 @@ class LineItem extends ExtendLineItem implements
     protected $parentProduct;
 
     /**
+     * @var Collection<ProductKitItemLineItem>
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="ProductKitItemLineItem",
+     *     mappedBy="lineItem",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
+     * @OrderBy({"sortOrder"="ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $kitItemLineItems;
+
+    /**
+     * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
+     * moving the logic of distinguishing of such line items out of the entity class.
+     *
+     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
+     */
+    protected string $checksum = '';
+
+    /**
      * @var ShoppingList
      *
      * @ORM\ManyToOne(
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
-     *      cascade={"persist"},
      *      inversedBy="lineItems"
      * )
      * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -173,6 +210,11 @@ class LineItem extends ExtendLineItem implements
      * )
      */
     protected $customerUser;
+
+    public function __construct()
+    {
+        $this->kitItemLineItems = new ArrayCollection();
+    }
 
     /**
      * @return integer
@@ -376,5 +418,42 @@ class LineItem extends ExtendLineItem implements
     public function getVisitor()
     {
         return $this->getShoppingList()->getVisitor();
+    }
+
+    /**
+     * @return Collection<ProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(ProductKitItemLineItem $productKitItemLineItem): self
+    {
+        if (!$this->kitItemLineItems->contains($productKitItemLineItem)) {
+            $productKitItemLineItem->setLineItem($this);
+            $this->kitItemLineItems->add($productKitItemLineItem);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(ProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
     }
 }

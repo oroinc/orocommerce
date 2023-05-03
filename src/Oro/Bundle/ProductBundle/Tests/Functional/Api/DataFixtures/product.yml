@@ -25,6 +25,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@piece'
         precision: 0
         sell: false
+    product1_precision3:
+        unit: '@kg'
+        precision: 0
+        sell: false
     product2_precision:
         unit: '@item'
         precision: 1
@@ -44,6 +48,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: 0
     configurable_product4_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product5_precision:
         unit: '@item'
         precision: 0
     configurable_product1_variant1_precision:
@@ -67,6 +74,22 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     configurable_product4_variant1_precision:
         unit: '@item'
         precision: 0
+    product_kit1_precision1:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+    product_kit2_precision1:
+        unit: '@each'
+        precision: 0
+        conversionRate: 1
+    product_kit2_precision2:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
+    product_kit3_precision1:
+        unit: '@item'
+        precision: 0
+        conversionRate: 1
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
@@ -88,6 +111,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Configurable Product 3'
     configurable_product4_name:
         string: 'Configurable Product 4'
+    configurable_product5_name:
+        string: 'Configurable Product 5'
     configurable_product1_variant1_name:
         string: 'Variant 1 for Configurable Product 1'
     configurable_product1_variant2_name:
@@ -102,6 +127,12 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Variant 2 for Configurable Product 3'
     configurable_product4_variant1_name:
         string: 'Variant 1 for Configurable Product 4'
+    product_kit1_name:
+        string: 'Product Kit 1'
+    product_kit2_name:
+        string: 'Product Kit 2'
+    product_kit3_name:
+        string: 'Product Kit 3'
 
 Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
     product1_short_description:
@@ -122,6 +153,8 @@ Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
     configurable_product3_short_description:
         string: 'Configurable Product 3 Short Description'
     configurable_product4_short_description:
+        string: 'Configurable Product 4 Short Description'
+    configurable_product5_short_description:
         string: 'Configurable Product 4 Short Description'
     configurable_product1_variant1_short_description:
         string: 'Variant 1 for Configurable Product 1 Short Description'
@@ -157,6 +190,8 @@ Oro\Bundle\ProductBundle\Entity\ProductDescription:
     configurable_product3_description:
         wysiwyg: 'Configurable Product 3 Description'
     configurable_product4_description:
+        wysiwyg: 'Configurable Product 4 Description'
+    configurable_product5_description:
         wysiwyg: 'Configurable Product 4 Description'
     configurable_product1_variant1_description:
         wysiwyg: 'Variant 1 for Configurable Product 1 Description'
@@ -327,7 +362,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
         primaryUnitPrecision: '@product1_precision'
-        unitPrecisions: ['@product1_precision', '@product1_precision1', '@product1_precision2']
+        unitPrecisions: ['@product1_precision', '@product1_precision1', '@product1_precision2', '@product1_precision3']
         attributeFamily: '@default_product_family'
         __calls:
             - setNames: [['@product1_name', '@product1_es_name']]
@@ -512,6 +547,27 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrEnum: '@productAttrEnum_option6'
         variantLinks:
             - '@configurable_product4_variant1_link'
+    configurable_product5:
+        sku: 'CPSKU5'
+        primaryUnitPrecision: '@configurable_product5_precision'
+        unitPrecisions: ['@configurable_product5_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            -   addName: ['@configurable_product5_name']
+            -   addShortDescription: ['@configurable_product5_short_description']
+            -   addDescription: ['@configurable_product5_description']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        testAttrBoolean: false
+        testAttrInteger: 3
+        testAttrFloat: 1.0
+        testAttrManyToOne: '@customer6'
+        organization: '@organization'
+        owner: '@business_unit'
+        type: 'configurable'
+        variantFields: ['testAttrEnum']
     configurable_product1_variant1:
         sku: 'CVPSKU1'
         primaryUnitPrecision: '@configurable_product1_variant1_precision'
@@ -649,6 +705,50 @@ Oro\Bundle\ProductBundle\Entity\Product:
         testAttrBoolean: true
         testAttrEnum: '@productAttrEnum_option6'
         parentVariantLinks: ['@configurable_product4_variant1_link']
+    product_kit1:
+        sku: 'PKSKU1'
+        type: 'kit'
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product_kit1_name']
+            - addKitItem: ['@product_kit1_item1']
+            - addKitItem: ['@product_kit1_item2']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrBoolean: false
+        inventoryStatus: '@in_stock'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: [ '@product_kit1_precision1' ]
+    product_kit2:
+        sku: 'PKSKU2'
+        type: 'kit'
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product_kit2_name']
+            - addKitItem: ['@product_kit2_item1']
+            - addKitItem: ['@product_kit2_item2']
+            - addKitItem: ['@product_kit2_item3']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrBoolean: false
+        inventoryStatus: '@in_stock'
+        primaryUnitPrecision: '@product_kit2_precision1'
+        unitPrecisions: [ '@product_kit2_precision1' ]
+    product_kit3:
+        sku: 'PKSKU3'
+        type: 'kit'
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product_kit3_name']
+            - addKitItem: ['@product_kit3_item1']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrBoolean: false
+        inventoryStatus: '@in_stock'
+        primaryUnitPrecision: '@product_kit3_precision1'
 
 Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
     configurable_product1_variant1_link:
@@ -771,3 +871,134 @@ Oro\Bundle\ProductBundle\Entity\ProductImageType:
         __construct: ['additional']
         productImage: '@product3_image2'
 
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    product_kit1_item1_label:
+        string: 'Product Kit 1 Item 1'
+    product_kit1_item1_label_es:
+        string: 'Product Kit 1 Item 1 ES'
+        localization: '@es'
+    product_kit1_item2_label:
+        string: 'Product Kit 1 Item 2'
+    product_kit1_item2_label_es:
+        string: 'Product Kit 1 Item 2 ES'
+        localization: '@es'
+    product_kit2_item1_label:
+        string: 'Product Kit 2 Item 1'
+    product_kit2_item2_label:
+        string: 'Product Kit 2 Item 2'
+    product_kit2_item3_label:
+        string: 'Product Kit 2 Item 3'
+    product_kit3_item1_label:
+        string: 'Product Kit 3 Item 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@product1'
+        sortOrder: 1
+
+    product_kit1_item1_product3:
+        kitItem: '@product_kit1_item1'
+        product: '@product3'
+        sortOrder: 2
+
+    product_kit1_item2_product3:
+        kitItem: '@product_kit1_item2'
+        product: '@product3'
+        sortOrder: 1
+
+    product_kit2_item1_product3:
+        kitItem: '@product_kit2_item1'
+        product: '@product3'
+        sortOrder: 1
+
+    product_kit2_item1_product4:
+        kitItem: '@product_kit2_item1'
+        product: '@product4'
+        sortOrder: 2
+
+    product_kit2_item2_product4:
+        kitItem: '@product_kit2_item2'
+        product: '@product4'
+        sortOrder: 1
+
+    product_kit2_item3_product1:
+        kitItem: '@product_kit2_item3'
+        product: '@product1'
+        sortOrder: 1
+
+    product_kit3_item1_product1:
+        kitItem: '@product_kit3_item1'
+        product: '@product1'
+        sortOrder: 1
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 1
+        minimumQuantity: ~
+        maximumQuantity: ~
+        productKit: '@product_kit1'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit1_item1_label']
+            - addLabel: ['@product_kit1_item1_label_es']
+            - addKitItemProduct: ['@product_kit1_item1_product1']
+            - addKitItemProduct: ['@product_kit1_item1_product3']
+
+    product_kit1_item2:
+        optional: true
+        sortOrder: 10
+        minimumQuantity: 0
+        maximumQuantity: 5
+        productKit: '@product_kit1'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit1_item2_label']
+            - addLabel: ['@product_kit1_item2_label_es']
+            - addKitItemProduct: ['@product_kit1_item2_product3']
+
+    product_kit2_item1:
+        optional: false
+        sortOrder: 1
+        minimumQuantity: ~
+        maximumQuantity: ~
+        productKit: '@product_kit2'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit2_item1_label']
+            - addKitItemProduct: ['@product_kit2_item1_product3']
+            - addKitItemProduct: ['@product_kit2_item1_product4']
+
+    product_kit2_item2:
+        optional: false
+        sortOrder: 20
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productKit: '@product_kit2'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit2_item2_label']
+            - addKitItemProduct: ['@product_kit2_item2_product4']
+
+    product_kit2_item3:
+        optional: false
+        sortOrder: 30
+        minimumQuantity: ~
+        maximumQuantity: ~
+        productKit: '@product_kit2'
+        productUnit: '@set'
+        __calls:
+            - addLabel: ['@product_kit2_item3_label']
+            - addKitItemProduct: ['@product_kit2_item3_product1']
+
+    product_kit3_item1:
+        optional: false
+        sortOrder: 10
+        minimumQuantity: ~
+        maximumQuantity: ~
+        productKit: '@product_kit3'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit3_item1_label']
+            - addKitItemProduct: ['@product_kit3_item1_product1']

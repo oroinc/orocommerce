@@ -5,7 +5,6 @@ app-modules:
     - orofrontend/js/app/modules/component-shortcuts-module
     - oronavigation/js/app/modules/navigation-module
     - oroui/js/app/modules/component-shortcuts-module
-    - oroui/js/app/modules/css-variable-module
     - oroui/js/app/modules/focus-visible
     - oroui/js/app/modules/ignore-tabbable
     - oroui/js/app/modules/init-layout
@@ -46,7 +45,7 @@ dynamic-imports:
     extra:
         - oro/product-shopping-lists-widget
         - oro/select2-component
-        - orocommercemenu/js/app/widgets/menu-traveling-widget
+        - orocommercemenu/js/app/views/menu-traveling-view
         - orocustomer/js/validator/unique-customer-user-name-and-email
         - oroform/js/app/views/form-validate-view
         - oroform/js/validator/callback

@@ -29,6 +29,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU1'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@productUnitPrevision1'
+        unitPrecisions: [ '@productUnitPrevision1' ]
         __calls:
             - addName: ['@localProduct1Name']
         inventoryStatus: '@enumInventoryStatuses'

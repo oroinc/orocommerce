@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
@@ -25,35 +23,26 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuoteProductTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /** @var QuoteProductType */
-    protected $formType;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
-    private $translator;
-
     /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
+    /** @var QuoteProductType */
+    private $formType;
+
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->repository = $this->createMock(ProductUnitRepository::class);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($this->repository);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+            ->method('getRepository')
+            ->with(ProductUnit::class)
+            ->willReturn($this->repository);
 
         $productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
         $productUnitLabelFormatter->expects($this->any())
@@ -71,13 +60,7 @@ class QuoteProductTypeTest extends AbstractTest
 
         $this->configureQuoteProductOfferFormatter();
 
-        $this->formType = new QuoteProductType(
-            $this->translator,
-            $productUnitLabelFormatter,
-            $this->quoteProductFormatter,
-            $doctrine
-        );
-        $this->formType->setDataClass(QuoteProduct::class);
+        $this->formType = new QuoteProductType($productUnitLabelFormatter, $doctrine);
 
         parent::setUp();
     }
@@ -496,28 +479,30 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function createForm(mixed $data, array $options): FormInterface
     {
-        $priceType = $this->preparePriceType();
-        $entityType = $this->prepareProductEntityType();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType = $this->prepareQuoteProductOfferType();
-        $quoteProductRequestType = $this->prepareQuoteProductRequestType();
+        return $this->factory->create(QuoteProductType::class, $data, $options);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
+    {
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductSelectType::class        => new ProductSelectTypeStub(),
-                    CurrencySelectionType::class    => new CurrencySelectionTypeStub(),
-                    PriceType::class                => $priceType,
-                    EntityType::class               => $entityType,
-                    QuoteProductOfferType::class    => $quoteProductOfferType,
-                    QuoteProductRequestType::class  => $quoteProductRequestType,
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
-                    QuantityType::class             => $this->getQuantityType(),
+                    ProductSelectType::class => new ProductSelectTypeStub(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    $this->getPriceType(),
+                    EntityType::class => $this->getProductEntityType(),
+                    new QuoteProductOfferType(),
+                    new QuoteProductRequestType(),
+                    ProductUnitSelectionType::class => $this->getProductUnitSelectionType(),
+                    $this->getQuantityType(),
                 ],
                 []
             ),

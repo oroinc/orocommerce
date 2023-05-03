@@ -6,11 +6,11 @@ use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataListener;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
+use PHPUnit\Framework\TestCase;
 
-class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataListenerTest extends TestCase
 {
-    /** @var DatagridLineItemsDataListener */
-    private $listener;
+    private DatagridLineItemsDataListener $listener;
 
     protected function setUp(): void
     {
@@ -22,7 +22,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
@@ -33,16 +33,14 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $event
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getLineItems')
             ->willReturn([new \stdClass()]);
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('addDataForLineItem');
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(sprintf('%s entity was expected, got stdClass', LineItem::class));
 
         $this->listener->onLineItemData($event);
     }
@@ -54,12 +52,12 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
         $event
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getLineItems')
             ->willReturn([$lineItem]);
 
         $event
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('addDataForLineItem')
             ->with(...$expectedArgs);
 

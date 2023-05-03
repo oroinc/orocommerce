@@ -14,11 +14,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceListRepositoryTest extends WebTestCase
 {
-    /**
-     * @var PriceList
-     */
-    protected $defaultPriceList;
-
     protected function setUp(): void
     {
         $this->initClient();
@@ -27,43 +22,15 @@ class PriceListRepositoryTest extends WebTestCase
             LoadProductPrices::class,
             LoadPriceListRelations::class
         ]);
-
-        $this->defaultPriceList = $this->getDefaultPriceList();
     }
 
-    protected function tearDown(): void
+    public function testGetCurrenciesIndexedByPriceListIds(): void
     {
-        $this->getRepository()->setDefault($this->defaultPriceList);
-        parent::tearDown();
-    }
-
-    public function testDefaultState()
-    {
-        $repository = $this->getRepository();
-
-        /** @var PriceList $priceList1 */
-        $priceList1 = $this->getReference('price_list_1');
-        $repository->setDefault($priceList1);
-        $this->assertEquals($priceList1->getId(), $this->getDefaultPriceList()->getId());
-
-        /** @var PriceList $priceList2 */
-        $priceList2 = $this->getReference('price_list_2');
-        $repository->setDefault($priceList2);
-        $this->assertEquals($priceList2->getId(), $this->getDefaultPriceList()->getId());
-    }
-
-    public function testGetDefault()
-    {
-        $this->assertEquals($this->getDefaultPriceList()->getId(), $this->getRepository()->getDefault()->getId());
-    }
-
-    public function testGetCurrenciesIndexedByPriceListIds()
-    {
-        /** @var PriceList $defaultPriceList */
-        $defaultPriceList = $this->getRepository()->findOneBy(['name' => LoadPriceListData::DEFAULT_PRICE_LIST_NAME]);
+        /** @var PriceList $priceList */
+        $priceList = $this->getRepository()->findOneBy(['name' => LoadPriceListData::PRICE_LIST_NAME]);
 
         $expectedCurrencies = [
-            $defaultPriceList->getId() => $defaultPriceList->getCurrencies(),
+            $priceList->getId() => $priceList->getCurrencies(),
         ];
 
         foreach (LoadPriceLists::getPriceListData() as $priceListData) {
@@ -74,19 +41,7 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertEquals($expectedCurrencies, $this->getRepository()->getCurrenciesIndexedByPricelistIds());
     }
 
-    /**
-     * @return PriceList
-     */
-    public function getDefaultPriceList()
-    {
-        $defaultPriceLists = $this->getRepository()->findBy(['default' => true]);
-
-        $this->assertCount(1, $defaultPriceLists);
-
-        return reset($defaultPriceLists);
-    }
-
-    public function testGetPriceListsWithRules()
+    public function testGetPriceListsWithRules(): void
     {
         $priceListsIterator = $this->getRepository()->getPriceListsWithRules();
         $expectedPriceLists = [
@@ -100,7 +55,7 @@ class PriceListRepositoryTest extends WebTestCase
         }
     }
 
-    public function testGetInvalidCurrenciesByPriceList()
+    public function testGetInvalidCurrenciesByPriceList(): void
     {
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
         /** @var PriceList $priceList */
@@ -110,7 +65,7 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertEquals(['EUR'], $currencies);
     }
 
-    public function testUpdatePriceListsActuality()
+    public function testUpdatePriceListsActuality(): void
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
@@ -120,19 +75,19 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertFalse($priceList->isActual());
     }
 
-    public function testGetActivePriceListById()
+    public function testGetActivePriceListById(): void
     {
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         $this->assertSame($priceList, $this->getRepository()->getActivePriceListById($priceList->getId()));
     }
 
-    public function testGetActivePriceListByIdForInactive()
+    public function testGetActivePriceListByIdForInactive(): void
     {
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
         $this->assertNull($this->getRepository()->getActivePriceListById($priceList->getId()));
     }
 
-    public function testGetPriceListByCustomer()
+    public function testGetPriceListByCustomer(): void
     {
         $customer = $this->getReference('customer.level_1_1');
         $website = $this->getReference('US');
@@ -143,7 +98,7 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertSame($expectedPriceList->getId(), $priceList->getId());
     }
 
-    public function testGetPriceListByCustomerGroup()
+    public function testGetPriceListByCustomerGroup(): void
     {
         $customerGroup = $this->getReference('customer_group.group1');
         $website = $this->getReference('US');
@@ -154,18 +109,12 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertSame($expectedPriceList->getId(), $priceList->getId());
     }
 
-    /**
-     * @return PriceListRepository
-     */
-    protected function getRepository()
+    private function getRepository(): PriceListRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(PriceList::class);
     }
 
-    /**
-     * @return EntityManager
-     */
-    protected function getManager()
+    private function getManager(): EntityManager
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass(PriceList::class);
     }

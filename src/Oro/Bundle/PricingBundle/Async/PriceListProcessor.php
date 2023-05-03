@@ -73,18 +73,17 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     {
         $body = $message->getBody();
         try {
-            $jobName = ResolveCombinedPriceByPriceListTopic::getName() . ':' . md5(json_encode($body));
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                $jobName,
+            $result = $this->jobRunner->runUniqueByMessage(
+                $message,
                 function (JobRunner $jobRunner, Job $job) use ($body) {
-                    $this->schedulePostCplJobs($job);
-
                     $cpl2plRepository = $this->doctrine->getRepository(CombinedPriceListToPriceList::class);
                     $allProducts = $body['product'];
                     $activeCpls = $this->getActiveCPlsByPls($cpl2plRepository, $allProducts);
+                    $activeCplIds = array_map(fn (CombinedPriceList $cpl) => $cpl->getId(), $activeCpls);
 
+                    $this->schedulePostCplJobs($job, $activeCplIds);
                     $this->addCplBuildActivity($job, $activeCpls);
+
                     foreach ($activeCpls as $cpl) {
                         $jobRunner->createDelayed(
                             sprintf('%s:cpl:%s', $job->getName(), $cpl->getName()),
@@ -124,12 +123,12 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         }
     }
 
-    private function schedulePostCplJobs(Job $job): void
+    private function schedulePostCplJobs(Job $job, array $cpls = []): void
     {
         $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
         $context->addDependentJob(
             RunCombinedPriceListPostProcessingStepsTopic::getName(),
-            ['relatedJobId' => $job->getRootJob()->getId()]
+            ['relatedJobId' => $job->getRootJob()->getId(), 'cpls' => $cpls]
         );
         $this->dependentJob->saveDependentJob($context);
     }

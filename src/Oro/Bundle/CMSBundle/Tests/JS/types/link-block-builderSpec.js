@@ -1,17 +1,20 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import LinkBlockBuilder from 'orocms/js/app/grapesjs/type-builders/link-block-builder';
+import LinkBlockBuilder from 'orocms/js/app/grapesjs/types/link-block-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
+describe('orocms/js/app/grapesjs/types/link-block-type', () => {
     let linkBlockBuilder;
     let editor;
 
     beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
@@ -70,9 +73,7 @@ describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
             mockElement.classList.add('link-block');
 
             expect(linkBlockBuilder.Model.isComponent).toBeDefined();
-            expect(linkBlockBuilder.Model.isComponent(mockElement)).toEqual({
-                type: linkBlockBuilder.componentType
-            });
+            expect(linkBlockBuilder.Model.isComponent(mockElement)).toBe(true);
             expect(linkBlockBuilder.Model.componentType).toEqual(linkBlockBuilder.componentType);
 
             expect(linkBlockBuilder.Model.prototype.defaults.tagName).toEqual('a');
@@ -80,8 +81,8 @@ describe('orocms/js/app/grapesjs/type-builders/link-block-builder', () => {
                 ['link-block']
             );
             expect(linkBlockBuilder.Model.prototype.defaults.components).toEqual([]);
-            expect(linkBlockBuilder.Model.prototype.defaults.editable).toBeFalsy();
-            expect(linkBlockBuilder.Model.prototype.defaults.droppable).toBeTruthy();
+            expect(linkBlockBuilder.Model.prototype.defaults.editable).toBe(false);
+            expect(linkBlockBuilder.Model.prototype.defaults.droppable).toBe(true);
 
             expect(linkBlockBuilder.Model.prototype.editor).toBeDefined();
             expect(linkBlockBuilder.Model.prototype.editor).toEqual(editor);

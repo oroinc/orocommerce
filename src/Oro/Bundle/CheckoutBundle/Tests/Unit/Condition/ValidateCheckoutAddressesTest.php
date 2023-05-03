@@ -5,6 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
 use Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -31,11 +33,11 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
 
     public function testInitializeInvalid()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "checkout" option');
 
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize([])
         );
     }
@@ -43,7 +45,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
     public function testInitialize()
     {
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize(['Method', new \stdClass()])
         );
     }

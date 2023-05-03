@@ -4,124 +4,108 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\CheckoutBundle\Provider\AvailableShippingMethodCheckerInterface;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    const METHOD = 'Method';
+    /** @var AvailableShippingMethodCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $availableShippingMethodChecker;
 
     /** @var CheckoutHasApplicableShippingMethods */
-    protected $condition;
-
-    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutShippingMethodsProviderMock;
+    private $condition;
 
     protected function setUp(): void
     {
-        $this->checkoutShippingMethodsProviderMock = $this
-            ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
-            ->getMock();
+        $this->availableShippingMethodChecker = $this->createMock(AvailableShippingMethodCheckerInterface::class);
 
         $this->condition = new CheckoutHasApplicableShippingMethods(
-            $this->checkoutShippingMethodsProviderMock
+            $this->availableShippingMethodChecker
         );
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
-        $this->assertEquals(CheckoutHasApplicableShippingMethods::NAME, $this->condition->getName());
+        self::assertEquals('checkout_has_applicable_shipping_methods', $this->condition->getName());
     }
 
-    public function testInitializeInvalid()
+    public function testInitializeInvalid(): void
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "checkout" option');
 
-        $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize([])
-        );
+        $this->condition->initialize([]);
     }
 
-    public function testInitialize()
+    public function testInitialize(): void
     {
-        $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize([self::METHOD, new \stdClass()])
+        self::assertSame(
+            $this->condition,
+            $this->condition->initialize(['Method', new \stdClass()])
         );
     }
 
     /**
      * @dataProvider evaluateProvider
-     *
-     * @param array $methods
-     * @param bool $expected
      */
-    public function testEvaluate($methods, $expected)
+    public function testEvaluate(bool $hasAvailableShippingMethods, bool $expected): void
     {
-        $this->checkoutShippingMethodsProviderMock->expects($this->once())
-            ->method('getApplicableMethodsViews')
-            ->willReturn($methods);
+        $checkout = $this->createMock(Checkout::class);
 
-        $this->condition->initialize(['checkout' => new Checkout()]);
-        $this->assertEquals($expected, $this->condition->evaluate([]));
+        $this->availableShippingMethodChecker->expects(self::once())
+            ->method('hasAvailableShippingMethods')
+            ->with(self::identicalTo($checkout))
+            ->willReturn($hasAvailableShippingMethods);
+
+        $this->condition->initialize(['checkout' => $checkout]);
+
+        self::assertEquals($expected, $this->condition->evaluate([]));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluateProvider()
+    public function evaluateProvider(): array
     {
         return [
-            'no_rules_no_methods' => [
-                'methods' => new ShippingMethodViewCollection(),
-                'expected' => false,
+            'no available shipping methods' => [
+                'hasAvailableShippingMethods' => false,
+                'expected' => false
             ],
-            'with_rules_no_methods' => [
-                'methods' => new ShippingMethodViewCollection(),
-                'expected' => false,
-            ],
-            'with_rules_and_methods' => [
-                'methods' => (new ShippingMethodViewCollection())
-                    ->addMethodView('flat_rate', [])
-                    ->addMethodTypeView('flat_rate', 'flat_rate_1', []),
-                'expected' => true,
+            'have available shipping methods' => [
+                'hasAvailableShippingMethods' => true,
+                'expected' => true
             ],
         ];
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $stdClass = new \stdClass();
+
         $this->condition->initialize(['checkout' => $stdClass]);
         $result = $this->condition->toArray();
 
-        $key = '@'.CheckoutHasApplicableShippingMethods::NAME;
+        $key = '@checkout_has_applicable_shipping_methods';
 
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey($key, $result);
+        self::assertIsArray($result);
+        self::assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertIsArray($resultSection);
-        $this->assertArrayHasKey('parameters', $resultSection);
-        $this->assertContains($stdClass, $resultSection['parameters']);
+        self::assertIsArray($resultSection);
+        self::assertArrayHasKey('parameters', $resultSection);
+        self::assertContains($stdClass, $resultSection['parameters']);
     }
 
-    public function testCompile()
+    public function testCompile(): void
     {
         $toStringStub = new ToStringStub();
         $options = ['checkout' => $toStringStub];
 
         $this->condition->initialize($options);
         $result = $this->condition->compile('$factory');
-        $this->assertEquals(
+
+        self::assertEquals(
             sprintf(
                 '$factory->create(\'%s\', [%s])',
-                CheckoutHasApplicableShippingMethods::NAME,
+                'checkout_has_applicable_shipping_methods',
                 $toStringStub
             ),
             $result

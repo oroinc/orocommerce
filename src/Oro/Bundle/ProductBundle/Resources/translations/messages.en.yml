@@ -3,6 +3,8 @@ oro:
         search:
             search_title:
                 title: '{0} All Products|[1,Inf] Search Results for "%text%"'
+            search_in_category:
+                title: '{0} All Products in %category%|[1,Inf] Search Results for "%text%" in %category%'
         entity_label: Product
         entity_plural_label: Products
         entity_grid_all_view_label: All %entity_plural_label%
@@ -49,9 +51,10 @@ oro:
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered.
         type:
             label: Type
-            description: Defines the type of product, "simple" / "configurable".
+            description: Defines the type of product, "simple" / "configurable" / "kit".
             simple: Simple
             configurable: Configurable
+            kit: Kit
             please_select_option: Please select option
         owner.label: Owner
         organization.label: Organization
@@ -126,6 +129,9 @@ oro:
             label:              'URL Slug'
             description:        Specifies the url slugs used for product (it is a list of localized entities to hold the localized text for each localization)
             singular_label:     'Slug Prototype'
+        kit_items:
+            label: Kit Items
+            description: Items of the product kit
 
         simplified_preview:
             message: Current content view is simplified, please check the page on the Storefront to see the actual result
@@ -338,6 +344,92 @@ oro:
             id.label: Id
             type.label: Type
             product_image.label: Type
+
+        productkititem:
+            entity_label: Product Kit Item
+            entity_plural_label: Product Kit Items
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: Stores product kit items.
+            id.label: ID
+            labels:
+                label: Label
+                description: Label of the kit item of the kit.
+            minimum_quantity:
+                label: Minimum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit.
+            maximum_quantity:
+                label: Maximum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit.
+            product_unit:
+                label: Unit of Quantity
+                description: Unit of Quantity for Minimum Quantity and Maximum Quantity values.
+            optional:
+                label: Optional
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer.
+                choices:
+                    yes: Yes
+                    no: No
+            product_kit:
+                label: Product Kit
+                description: The product of type "kit" owning the product kit item.
+            kit_item_products:
+                label: Products
+                description: The collection of one or more products. Customer will be offered a selection and will have to select one of the products from this collection before purchasing the kit (unless a kit item is marked optional).
+            sort_order:
+                label: Sort Order
+                description: Used to sort product kit item when displaying.
+            form:
+                kit_item_collection:
+                    add: Add Kit Item
+                kit_item_products:
+                    add:
+                        button:
+                            label: Add Product
+                        dialog:
+                            title: Add Product
+                        datagrid:
+                            is_selected: Selected
+                        kit_item:
+                            label: Add Kit Item
+
+        productkititemlabel:
+            entity_label: 'Product Kit Item Label'
+            entity_plural_label: 'Product Kit Item Labels'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Stores labels for the product kit items.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The fallback type'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language.'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization.'
+            kit_item:
+                label: 'Product Kit Item'
+                description: 'The related product kit item.'
+
+        productkititemproduct:
+            entity_label: 'Product Kit Item Product'
+            entity_plural_label: 'Product Kit Item Products'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Junction entity between a kit item and a product.'
+            id.label: 'ID'
+            kit_item:
+                label: 'Product Kit Item'
+                description: 'The related product kit item.'
+            product:
+                label: 'Product'
+                description: 'The related simple product.'
+            product_unit_precision:
+                label: 'Product unit precision.'
+                description: 'The product unit precision of the related product.'
+            sort_order:
+                label: 'Sort Order'
+                description: 'Used to sort kit item products when displaying.'
+
         related_products:
             label: Related Products
             no_entities: No records found
@@ -403,6 +495,7 @@ oro:
             general: General
             additional: Additional
             productVariants: Product Variants
+            kit_items: Kit Items
             inventory: Inventory
             images: Images
             design: Design
@@ -693,6 +786,8 @@ oro:
                     gallery_view.aria_label: Gallery View
                     list_view.aria_label: List View
                     compact_view.aria_label: Compact View
+                kit_item_products:
+                    remove: Remove
             mass_action:
                 get_selected_product_ids:
                     response:
@@ -717,7 +812,7 @@ oro:
                 clear: Clear All
                 copy_paste:
                     title: 'Paste your order'
-                    description: 'Copy and paste your order with the item #, quantity (and optionally units), separated by spaces, semicolons or commas.'
+                    description: 'Copy and paste your order with the item number, quantity (and optionally units), separated by spaces, semicolons or commas.'
                     placeholder: 'Copy and paste your order.'
                     continue:
                         label: Continue
@@ -857,6 +952,21 @@ oro:
                     messages:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'
+
+        collectionsortorder:
+            label:                Collection Sort Order
+            description:          Sort Order values for Product Collections (Segments)
+            entity_label:         Collection Sort Order
+            entity_plural_label:  Collection Sort Orders
+            entity_grid_all_view_label: All %entity_plural_label%
+            id:
+                label: Id
+            product:
+                label: Product
+            segment:
+                label: Segment
+            sort_order:
+                label: Sort Order
 
         override_variant_configuration:
             label: Override Product Variant Configuration
@@ -1079,6 +1189,14 @@ oro:
         contentvariant:
             product_collection_segment.label: Product Collection Segment
             product_page_product.label: Product
+        product_segment:
+            grid:
+                action:
+                    sort_products:
+                        aria_label: 'Sort products in {{ segment }} product collection'
+            sort_products:
+                dialog:
+                    title: 'Sort products in {{ segment }} product collection'
 
     feature:
         quick_add_import_help_widget:

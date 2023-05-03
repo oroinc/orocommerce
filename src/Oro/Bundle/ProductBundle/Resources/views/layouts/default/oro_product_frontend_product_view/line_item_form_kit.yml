@@ -1,0 +1,32 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/line_item_form_kit.html.twig'
+
+        - '@setOption':
+            id: product_view_container
+            optionName: attr.class
+            optionValue: 'product-kit-view'
+
+        - '@move':
+              id: product_view_specification_container
+              parentId: product_view_content_container
+              siblingId: product_view_kit_content_container
+              prepend: false
+
+        - '@addTree':
+              items:
+                  product_view_kit_content_container:
+                      blockType: container
+                  product_view_kit_content_container_start:
+                      blockType: container
+                  product_view_kit_content_container_end:
+                      blockType: container
+
+              tree:
+                  product_view_content_container:
+                      product_view_kit_content_container:
+                          product_view_kit_content_container_start: ~
+                          product_view_kit_content_container_end: ~
+
+    conditions: 'context["product_type"] == "kit"'

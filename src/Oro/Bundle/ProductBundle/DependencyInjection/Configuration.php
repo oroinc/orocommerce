@@ -82,6 +82,7 @@ class Configuration implements ConfigurationInterface
     const MICRODATA_WITHOUT_PRICES_DISABLED = 'microdata_without_prices_disabled';
     const SCHEMA_ORG_DESCRIPTION_FIELD = 'schema_org_description_field';
     const SCHEMA_ORG_DEFAULT_DESCRIPTION = 'oro_product_full_description';
+    const PRODUCT_TYPES = 'product_types';
 
     /**
      * {@inheritDoc}
@@ -215,6 +216,20 @@ class Configuration implements ConfigurationInterface
                 ]
             ]
         );
+
+        $rootNode
+            ->children()
+                ->arrayNode(self::PRODUCT_TYPES)
+                    ->scalarPrototype()
+                        ->validate()
+                            ->ifNotInArray(Product::getTypes())
+                            ->thenInvalid('Not allowed product type %s')
+                        ->end()
+                    ->end()
+                    ->cannotBeEmpty()
+                    ->defaultValue(Product::getTypes())
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }

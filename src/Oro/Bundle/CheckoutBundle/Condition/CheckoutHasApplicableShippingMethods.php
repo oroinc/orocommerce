@@ -3,31 +3,28 @@
 namespace Oro\Bundle\CheckoutBundle\Condition;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
+use Oro\Bundle\CheckoutBundle\Provider\AvailableShippingMethodCheckerInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
+/**
+ * Check applicable shipping methods for a specific checkout.
+ * Usage:
+ * @checkout_has_applicable_shipping_methods:
+ *      checkout: ~
+ */
 class CheckoutHasApplicableShippingMethods extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'checkout_has_applicable_shipping_methods';
+    private AvailableShippingMethodCheckerInterface $availableShippingMethodChecker;
+    private mixed $checkout = null;
 
-    /**
-     * @var CheckoutShippingMethodsProviderInterface
-     */
-    private $checkoutShippingMethodsProvider;
-
-    /**
-     * @var mixed
-     */
-    private $checkout;
-
-    public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
+    public function __construct(AvailableShippingMethodCheckerInterface $availableShippingMethodChecker)
     {
-        $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
+        $this->availableShippingMethodChecker = $availableShippingMethodChecker;
     }
 
     /**
@@ -35,9 +32,9 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
      */
     public function initialize(array $options)
     {
-        if (array_key_exists('checkout', $options)) {
+        if (\array_key_exists('checkout', $options)) {
             $this->checkout = $options['checkout'];
-        } elseif (array_key_exists(0, $options)) {
+        } elseif (\array_key_exists(0, $options)) {
             $this->checkout = $options[0];
         }
 
@@ -53,7 +50,7 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
      */
     public function getName()
     {
-        return self::NAME;
+        return 'checkout_has_applicable_shipping_methods';
     }
 
     /**
@@ -63,14 +60,11 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
     {
         /** @var Checkout $checkout */
         $checkout = $this->resolveValue($context, $this->checkout, false);
-
         if (null === $checkout) {
             return false;
         }
 
-        return false === $this->checkoutShippingMethodsProvider
-            ->getApplicableMethodsViews($checkout)
-            ->isEmpty();
+        return $this->availableShippingMethodChecker->hasAvailableShippingMethods($checkout);
     }
 
     /**

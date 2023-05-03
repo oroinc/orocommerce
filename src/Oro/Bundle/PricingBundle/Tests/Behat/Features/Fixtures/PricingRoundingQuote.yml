@@ -47,18 +47,28 @@ Oro\Bundle\SaleBundle\Entity\Quote:
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
   quoteProduct1:
+    __calls:
+      - addQuoteProductOffer: [ '@quoteProductOffer1' ]
     product: '@product1'
     quote: '@quote1'
   quoteProduct2:
+    __calls:
+      - addQuoteProductOffer: [ '@quoteProductOffer2' ]
     product: '@product2'
     quote: '@quote2'
   quoteProduct3:
+    __calls:
+      - addQuoteProductOffer: [ '@quoteProductOffer3' ]
     product: '@product1'
     quote: '@quote3'
   quoteProduct4:
+    __calls:
+      - addQuoteProductOffer: [ '@quoteProductOffer4' ]
     product: '@product2'
     quote: '@quote4'
   quoteProduct5:
+    __calls:
+      - addQuoteProductOffer: [ '@quoteProductOffer5' ]
     product: '@product2'
     quote: '@quote5'
 

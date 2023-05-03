@@ -29,7 +29,7 @@ class WebpAwareDatagridLineItemsDataListenerTest extends \PHPUnit\Framework\Test
 
     public function testOnLineItemDataWebpStrategyNotEnabledIfSupported(): void
     {
-        $event = new DatagridLineItemsDataEvent([], $this->createMock(DatagridInterface::class), []);
+        $event = new DatagridLineItemsDataEvent([], [], $this->createMock(DatagridInterface::class), []);
 
         $this->attachmentManager
             ->expects(self::once())
@@ -57,11 +57,12 @@ class WebpAwareDatagridLineItemsDataListenerTest extends \PHPUnit\Framework\Test
             ->setSku('p2');
 
         $lineItems = [
-            (new ProductLineItemStub(1)),
-            (new ProductLineItemStub(2))->setProduct($productWithImage),
-            (new ProductLineItemStub(3))->setProduct($product),
+            1 => (new ProductLineItemStub(1)),
+            2 => (new ProductLineItemStub(2))->setProduct($productWithImage),
+            3 => (new ProductLineItemStub(3))->setProduct($product),
         ];
-        $event = new DatagridLineItemsDataEvent($lineItems, $this->createMock(DatagridInterface::class), []);
+
+        $event = new DatagridLineItemsDataEvent($lineItems, [], $this->createMock(DatagridInterface::class), []);
 
         $this->attachmentManager
             ->expects(self::once())

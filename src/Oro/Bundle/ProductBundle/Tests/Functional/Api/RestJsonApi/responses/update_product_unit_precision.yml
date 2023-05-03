@@ -1,0 +1,16 @@
+data:
+    type: productunitprecisions
+    id: '<toString(@product1_precision2->id)>'
+    attributes:
+        precision: 0
+        conversionRate: 10
+        sell: false
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@piece->code)>'

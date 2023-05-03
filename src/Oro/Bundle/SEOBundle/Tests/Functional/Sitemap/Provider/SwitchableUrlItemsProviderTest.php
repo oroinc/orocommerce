@@ -36,28 +36,25 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
         $this->loadFixtures([LoadPageData::class, LoadSlugsData::class]);
 
         $this->canonicalUrlGenerator = $this->getContainer()->get('oro_redirect.generator.canonical_url');
-        /** @var EventDispatcherInterface $eventDispatcher */
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->configManager = self::getConfigManager('global');
-        $providerId = 'oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider';
-        $restrictionProvider = $this->getContainer()->get($providerId);
+        $this->configManager = self::getConfigManager();
 
         $this->provider = new SwitchableUrlItemsProvider(
             $this->canonicalUrlGenerator,
             $this->configManager,
-            $eventDispatcher,
+            $this->createMock(EventDispatcherInterface::class),
             $this->getContainer()->get('doctrine')
         );
         $this->provider->setType('cms_page');
         $this->provider->setEntityClass(Page::class);
         $this->provider->setChangeFrequencySettingsKey('oro_seo.sitemap_changefreq_cms_page');
         $this->provider->setPrioritySettingsKey('oro_seo.sitemap_priority_cms_page');
-        $this->provider->setProvider($restrictionProvider);
+        $this->provider->setProvider(
+            $this->getContainer()->get('oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider')
+        );
     }
 
     public function testExcludeProvider()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = 1;
 
@@ -75,7 +72,6 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
 
     public function testExcludeProviderWebsiteLevel()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = 1;
 
@@ -105,7 +101,6 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
 
     public function testGetUrlItems()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = 1;
 
@@ -126,7 +121,7 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
             $this->configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
-        static::assertContainsEquals($expectedUrlItem, $urlItems);
+        self::assertContainsEquals($expectedUrlItem, $urlItems);
 
         $this->configManager->set(self::INCLUDE_NOT_IN_WEB_CATALOG_LANDING_PAGES, true);
         $this->configManager->flush();
@@ -143,6 +138,6 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
             $this->configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
-        static::assertContainsEquals($expectedUrlItem, $urlItems);
+        self::assertContainsEquals($expectedUrlItem, $urlItems);
     }
 }

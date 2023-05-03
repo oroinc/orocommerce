@@ -3,21 +3,23 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\ShippingAddress;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class ShippingAddressTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new ShippingAddress()];
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function configureOptionDataProvider()
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty is valid' => [],
@@ -48,72 +50,72 @@ class ShippingAddressTest extends AbstractOptionTest
                 ['SHIPTOFIRSTNAME' => 1],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOFIRSTNAME" with value 1 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOFIRSTNAME" with value 1 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
             'invalid SHIPTOLASTNAME' => [
                 ['SHIPTOLASTNAME' => 1],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOLASTNAME" with value 1 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOLASTNAME" with value 1 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
             'invalid SHIPTOSTREET' => [
                 ['SHIPTOSTREET' => 1],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOSTREET" with value 1 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOSTREET" with value 1 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
             'invalid SHIPTOSTREET2' => [
                 ['SHIPTOSTREET2' => 1],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOSTREET2" with value 1 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOSTREET2" with value 1 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
             'invalid SHIPTOCITY' => [
                 ['SHIPTOCITY' => 1],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOCITY" with value 1 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOCITY" with value 1 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
             'invalid SHIPTOSTATE' => [
                 ['SHIPTOSTATE' => 1],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOSTATE" with value 1 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOSTATE" with value 1 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
             'invalid SHIPTOZIP' => [
                 ['SHIPTOZIP' => 12345],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOZIP" with value 12345 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOZIP" with value 12345 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
             'invalid SHIPTOCOUNTRY' => [
                 ['SHIPTOCOUNTRY' => 840],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SHIPTOCOUNTRY" with value 840 is expected to be of type "string", but is of type ' .
-                    '"int".',
+                    InvalidOptionsException::class,
+                    'The option "SHIPTOCOUNTRY" with value 840 is expected to be of type "string", but is of type '
+                    . '"int".',
                 ],
             ],
         ];

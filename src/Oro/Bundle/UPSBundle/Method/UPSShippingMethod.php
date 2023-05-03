@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
@@ -16,7 +15,7 @@ use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
 /**
- * UPS shipping method implementation.
+ * Represents UPS shipping method.
  */
 class UPSShippingMethod implements
     ShippingMethodInterface,
@@ -24,91 +23,39 @@ class UPSShippingMethod implements
     PricesAwareShippingMethodInterface,
     ShippingTrackingAwareInterface
 {
-    const IDENTIFIER = 'ups';
-    const OPTION_SURCHARGE = 'surcharge';
-    const REQUEST_OPTION = 'Shop';
+    public const OPTION_SURCHARGE = 'surcharge';
 
-    const TRACKING_URL = 'https://www.ups.com/WebTracking/processInputRequest?TypeOfInquiryNumber=T&InquiryNumber1=';
-    const TRACKING_REGEX = '/\b
-                            (1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} 
-                            ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|
-                            [\dT]\d\d\d ?\d\d\d\d ?\d\d\d)
-                            \b/ix';
+    private const REQUEST_OPTION = 'Shop';
 
-    /**
-     * @var UPSTransportProvider
-     */
-    protected $transportProvider;
+    private const TRACKING_URL =
+        'https://www.ups.com/WebTracking/processInputRequest?TypeOfInquiryNumber=T&InquiryNumber1=';
+    private const TRACKING_REGEX =
+        '/\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3}'
+        . ' ?[0-9A-Z]|[\dT]\d\d\d ?\d\d\d\d ?\d\d\d)\b/ix';
 
-    /**
-     * @var Channel
-     */
-    protected $channel;
-
-    /**
-     * @var PriceRequestFactory
-     */
-    protected $priceRequestFactory;
-
-    /**
-     * @var ShippingPriceCache
-     */
-    protected $cache;
-
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @var string
-     */
+    private string $identifier;
     private string $label;
+    private ?string $icon;
+    private array $types;
+    private UPSSettings $transport;
+    private UPSTransportProvider $transportProvider;
+    private PriceRequestFactory $priceRequestFactory;
+    private ShippingPriceCache $cache;
+    private bool $enabled;
 
-    /**
-     * @var string|null
-     */
-    private $icon;
-
-    /**
-     * @var array
-     */
-    private $types;
-
-    /**
-     * @var UPSSettings
-     */
-    private $transport;
-
-    /**
-     * @var bool
-     */
-    private $enabled;
-
-    /**
-     * @param string               $identifier
-     * @param string               $label
-     * @param string|null          $icon
-     * @param array                $types
-     * @param UPSSettings          $transport
-     * @param UPSTransportProvider $transportProvider
-     * @param PriceRequestFactory  $priceRequestFactory
-     * @param ShippingPriceCache   $cache
-     * @param bool                 $enabled
-     */
     public function __construct(
-        $identifier,
-        $label,
-        $icon,
+        string $identifier,
+        string $label,
+        ?string $icon,
         array $types,
         UPSSettings $transport,
         UPSTransportProvider $transportProvider,
         PriceRequestFactory $priceRequestFactory,
         ShippingPriceCache $cache,
-        $enabled
+        bool $enabled
     ) {
         $this->identifier = $identifier;
-        $this->label = (string) $label;
+        $this->label = $label;
         $this->icon = $icon;
         $this->types = $types;
         $this->transport = $transport;
@@ -121,7 +68,7 @@ class UPSShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function isGrouped()
+    public function isGrouped(): bool
     {
         return true;
     }
@@ -129,7 +76,7 @@ class UPSShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -137,7 +84,7 @@ class UPSShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -153,29 +100,28 @@ class UPSShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
 
     /**
-     * @return ShippingMethodTypeInterface[]|array
+     * {@inheritDoc}
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->types;
     }
 
     /**
-     * @param string $identifier
-     * @return UPSShippingMethodType|null
+     * {@inheritDoc}
      */
-    public function getType($identifier)
+    public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
         $methodTypes = $this->getTypes();
         if ($methodTypes !== null) {
             foreach ($methodTypes as $methodType) {
-                if ($methodType->getIdentifier() === (string)$identifier) {
+                if ($methodType->getIdentifier() === $identifier) {
                     return $methodType;
                 }
             }
@@ -185,17 +131,17 @@ class UPSShippingMethod implements
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType()
+    public function getOptionsConfigurationFormType(): ?string
     {
         return UPSShippingMethodOptionsType::class;
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
-    public function getSortOrder()
+    public function getSortOrder(): int
     {
         return 20;
     }
@@ -203,12 +149,15 @@ class UPSShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
-    {
-        $optionsDefaults = [static::OPTION_SURCHARGE => 0];
+    public function calculatePrices(
+        ShippingContextInterface $context,
+        array $methodOptions,
+        array $optionsByTypes
+    ): array {
+        $optionsDefaults = [self::OPTION_SURCHARGE => 0];
         $methodOptions = array_merge($optionsDefaults, $methodOptions);
 
-        if (count($this->getTypes()) < 1) {
+        if (\count($this->getTypes()) < 1) {
             return [];
         }
 
@@ -219,8 +168,8 @@ class UPSShippingMethod implements
             $prices[$typeId] = $price
                 ->setValue(array_sum([
                     (float)$price->getValue(),
-                    (float)$methodOptions[static::OPTION_SURCHARGE],
-                    (float)$typeOptions[static::OPTION_SURCHARGE]
+                    (float)$methodOptions[self::OPTION_SURCHARGE],
+                    (float)$typeOptions[self::OPTION_SURCHARGE]
                 ]));
         }
 
@@ -228,10 +177,9 @@ class UPSShippingMethod implements
     }
 
     /**
-     * @param string $number
-     * @return string|null
+     * {@inheritDoc}
      */
-    public function getTrackingLink($number)
+    public function getTrackingLink(string $number): ?string
     {
         if (!preg_match(self::TRACKING_REGEX, $number, $match)) {
             return null;
@@ -240,12 +188,7 @@ class UPSShippingMethod implements
         return self::TRACKING_URL . $match[0];
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param array                    $types
-     * @return array
-     */
-    private function fetchPrices(ShippingContextInterface $context, array $types)
+    private function fetchPrices(ShippingContextInterface $context, array $types): array
     {
         $prices = [];
 
@@ -265,7 +208,7 @@ class UPSShippingMethod implements
         }
 
         $notCachedTypes = array_diff($types, array_keys($prices));
-        $notCachedTypesNumber = count($notCachedTypes);
+        $notCachedTypesNumber = \count($notCachedTypes);
 
         if ($notCachedTypesNumber > 0) {
             if ($notCachedTypesNumber === 1) {

@@ -20,7 +20,7 @@ const PictureSettingsDialog = DialogWidget.extend({
         PictureSettingsDialog.__super__.constructor.apply(this, args);
     },
 
-    initialize: function({props, editor, ...options}) {
+    initialize({props, editor, ...options}) {
         this.subview('pictureSettings', new PictureSettings({
             props,
             editor,

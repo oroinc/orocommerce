@@ -5,24 +5,18 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\Type\AddressFormExtensionTestCase;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
-    use EntityTrait;
-
-    /** @var ShippingMethodsConfigsRuleDestinationType */
-    protected $formType;
-
-    /** @var AddressCountryAndRegionSubscriber */
-    protected $subscriber;
+    private AddressCountryAndRegionSubscriber $subscriber;
+    private ShippingMethodsConfigsRuleDestinationType $formType;
 
     protected function setUp(): void
     {
@@ -31,106 +25,30 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         parent::setUp();
     }
 
-    public function testGetBlockPrefix()
-    {
-        $this->assertEquals(ShippingMethodsConfigsRuleDestinationType::NAME, $this->formType->getBlockPrefix());
-    }
-
-    public function testBuildFormSubscriber()
-    {
-        $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->once())
-            ->method('addEventSubscriber')
-            ->with($this->subscriber)
-            ->willReturn($builder);
-        $builder->expects($this->any())
-            ->method('add')
-            ->willReturn($builder);
-        $builder->expects($this->any())
-            ->method('get')
-            ->willReturn($builder);
-        $this->formType->buildForm($builder, []);
-    }
-
-    public function testDefaultOptions()
-    {
-        $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class);
-        $options = $form->getConfig()->getOptions();
-        static::assertContainsEquals('region_route', $options);
-        static::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
-    }
-
     /**
-     * @dataProvider submitDataProvider
-     *
-     * @param null|ShippingMethodsConfigsRuleDestination $data
+     * {@inheritDoc}
      */
-    public function testSubmit($data)
+    protected function getExtensions(): array
     {
-        $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class, $data);
-
-        $this->assertEquals($data, $form->getData());
-
-        $form->submit([
-            'country' => 'CA',
-            'region' => 'CA-QC',
-            'postalCodes' => 'code3, code4',
+        return array_merge(parent::getExtensions(), [
+            new PreloadedExtension([$this->formType], []),
+            $this->getValidatorExtension(true)
         ]);
-
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
-
-        /** @var ShippingMethodsConfigsRuleDestination $actual */
-        $actual = $form->getData();
-        // first code not stripped, because form used model transformer that split string by comma
-        // our extension applied on pre_submit, so all string stripped
-        $expected = $this->getDestination('CA', 'CA-QC', ['code3', 'code4_stripped']);
-
-        $this->assertInstanceOf(ShippingMethodsConfigsRuleDestination::class, $actual);
-        $this->assertEquals($expected->getCountry(), $actual->getCountry());
-        $this->assertEquals($expected->getRegion(), $actual->getRegion());
-
-        $getNames = function (ShippingMethodsConfigsRuleDestinationPostalCode $code) {
-            return $code->getName();
-        };
-
-        $this->assertEquals(
-            $expected->getPostalCodes()->map($getNames)->getValues(),
-            $actual->getPostalCodes()->map($getNames)->getValues()
-        );
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
-    {
-        return [
-            'empty default form data' => [
-                'data' => null
-            ],
-            'with default form data' => [
-                'data' => $this->getDestination('US', 'US-AL', ['code1', 'code2'])
-            ]
-        ];
-    }
-
-    /**
-     * @param string $countryCode
-     * @param string $regionCode
-     * @param array $postalCodes
-     * @return ShippingMethodsConfigsRuleDestination
-     */
-    protected function getDestination($countryCode, $regionCode, array $postalCodes)
-    {
+    private function getDestination(
+        string $countryCode,
+        string $regionCode,
+        array $postalCodes
+    ): ShippingMethodsConfigsRuleDestination {
         $country = new Country($countryCode);
 
         $region = new Region($regionCode);
         $region->setCountry($country);
 
         $destination = new ShippingMethodsConfigsRuleDestination();
-        $destination->setCountry($country)
-            ->setRegion($region);
+        $destination->setCountry($country);
+        $destination->setRegion($region);
 
         foreach ($postalCodes as $code) {
             $postalCode = new ShippingMethodsConfigsRuleDestinationPostalCode();
@@ -142,22 +60,82 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         return $destination;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
+    public function testBuildFormSubscriber()
     {
-        return array_merge(
-            parent::getExtensions(),
-            [
-                new PreloadedExtension(
-                    [
-                        ShippingMethodsConfigsRuleDestinationType::class => $this->formType,
-                    ],
-                    []
-                ),
-                $this->getValidatorExtension(true)
-            ]
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::once())
+            ->method('addEventSubscriber')
+            ->with($this->subscriber)
+            ->willReturn($builder);
+        $builder->expects(self::any())
+            ->method('add')
+            ->willReturn($builder);
+        $builder->expects(self::any())
+            ->method('get')
+            ->willReturn($builder);
+        $this->formType->buildForm($builder, []);
+    }
+
+    public function testDefaultOptions()
+    {
+        $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class);
+        $options = $form->getConfig()->getOptions();
+        self::assertContainsEquals('region_route', $options);
+        self::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
+    }
+
+    /**
+     * @dataProvider submitDataProvider
+     */
+    public function testSubmit(?ShippingMethodsConfigsRuleDestination $data)
+    {
+        $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class, $data);
+
+        self::assertEquals($data, $form->getData());
+
+        $form->submit([
+            'country' => 'CA',
+            'region' => 'CA-QC',
+            'postalCodes' => 'code3, code4',
+        ]);
+
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+
+        /** @var ShippingMethodsConfigsRuleDestination $actual */
+        $actual = $form->getData();
+        // first code not stripped, because form used model transformer that split string by comma
+        // our extension applied on pre_submit, so all string stripped
+        $expected = $this->getDestination('CA', 'CA-QC', ['code3', 'code4_stripped']);
+
+        self::assertInstanceOf(ShippingMethodsConfigsRuleDestination::class, $actual);
+        self::assertEquals($expected->getCountry(), $actual->getCountry());
+        self::assertEquals($expected->getRegion(), $actual->getRegion());
+
+        $getNames = function (ShippingMethodsConfigsRuleDestinationPostalCode $code) {
+            return $code->getName();
+        };
+
+        self::assertEquals(
+            $expected->getPostalCodes()->map($getNames)->getValues(),
+            $actual->getPostalCodes()->map($getNames)->getValues()
         );
+    }
+
+    public function submitDataProvider(): array
+    {
+        return [
+            'empty default form data' => [
+                'data' => null
+            ],
+            'with default form data' => [
+                'data' => $this->getDestination('US', 'US-AL', ['code1', 'code2'])
+            ]
+        ];
+    }
+
+    public function testGetBlockPrefix()
+    {
+        self::assertEquals('oro_shipping_methods_configs_rule_destination', $this->formType->getBlockPrefix());
     }
 }

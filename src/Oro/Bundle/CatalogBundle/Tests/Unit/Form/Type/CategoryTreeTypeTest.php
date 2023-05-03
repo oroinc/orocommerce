@@ -10,21 +10,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CategoryTreeTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var AbstractTreeHandler
-     */
-    protected $treeHandler;
+    /** @var AbstractTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $treeHandler;
 
-    /**
-     * @var CategoryTreeType
-     */
-    protected $type;
+    /** @var CategoryTreeType */
+    private $type;
+
+    protected function setUp(): void
+    {
+        $this->treeHandler = $this->createMock(AbstractTreeHandler::class);
+
+        $this->type = new CategoryTreeType($this->treeHandler);
+    }
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMockBuilder(OptionsResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -41,13 +42,5 @@ class CategoryTreeTypeTest extends \PHPUnit\Framework\TestCase
     public function testGetParent()
     {
         $this->assertEquals(EntityTreeSelectType::class, $this->type->getParent());
-    }
-
-    protected function setUp(): void
-    {
-        $this->treeHandler = $this->getMockBuilder(AbstractTreeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->type = new CategoryTreeType($this->treeHandler);
     }
 }

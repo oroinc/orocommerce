@@ -7,47 +7,48 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
-use Oro\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loading demo data for taxes
+ * Loads demo data for taxes.
  */
 class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
     /**
-     * @var TaxEntitiesFactory
+     * {@inheritDoc}
      */
-    private $entitiesFactory;
-
-    public function __construct()
-    {
-        $this->entitiesFactory = new TaxEntitiesFactory();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
+            LoadProductDemoData::class,
+            LoadCustomerDemoData::class,
+            LoadCustomerGroupDemoData::class,
             LoadOrganizationAndBusinessUnitData::class
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $data = require $locator->locate('@OroTaxBundle/Migrations/Data/Demo/ORM/data/tax_table_rates.php');
@@ -61,22 +62,21 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $customerTaxCodes
-     *
-     * @return $this
-     */
-    private function loadCustomerTaxCodes(ObjectManager $manager, $customerTaxCodes)
+    private function loadCustomerTaxCodes(ObjectManager $manager, array $customerTaxCodes): void
     {
         $owner = $this->getAdminUser($manager);
         foreach ($customerTaxCodes as $code => $data) {
-            $taxCode = $this->entitiesFactory->createCustomerTaxCode($code, $data['description'], $manager, $this);
+            $taxCode = new CustomerTaxCode();
+            $taxCode->setCode($code);
+            $taxCode->setDescription($data['description']);
             $taxCode->setOwner($owner);
             $taxCode->setOrganization($owner->getOrganization());
+            $manager->persist($taxCode);
+            $this->addReference($code, $taxCode);
+
             if (isset($data['customers'])) {
                 foreach ($data['customers'] as $customerName) {
-                    $customer = $manager->getRepository('OroCustomerBundle:Customer')->findOneByName($customerName);
+                    $customer = $manager->getRepository(Customer::class)->findOneByName($customerName);
                     if (null !== $customer) {
                         $customer->setTaxCode($taxCode);
                     }
@@ -84,165 +84,129 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             }
             if (isset($data['customer_groups'])) {
                 foreach ($data['customer_groups'] as $groupName) {
-                    $group = $manager->getRepository('OroCustomerBundle:CustomerGroup')->findOneByName($groupName);
+                    $group = $manager->getRepository(CustomerGroup::class)->findOneByName($groupName);
                     if (null !== $group) {
                         $group->setTaxCode($taxCode);
                     }
                 }
             }
         }
-
-        return $this;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $productTaxCodes
-     *
-     * @return $this
-     */
-    private function loadProductTaxCodes(ObjectManager $manager, $productTaxCodes)
+    private function loadProductTaxCodes(ObjectManager $manager, array $productTaxCodes): void
     {
         $owner = $this->getAdminUser($manager);
         foreach ($productTaxCodes as $code => $data) {
-            $taxCode = $this->entitiesFactory->createProductTaxCode(
-                $code,
-                $data['description'],
-                $owner->getOrganization(),
-                $manager,
-                $this
-            );
+            $taxCode = new ProductTaxCode();
+            $taxCode->setCode($code);
+            $taxCode->setDescription($data['description']);
+            $taxCode->setOrganization($owner->getOrganization());
+            $manager->persist($taxCode);
+            $this->addReference($code, $taxCode);
             foreach ($data['products'] as $sku) {
-                $product = $manager->getRepository('OroProductBundle:Product')->findOneBySku($sku);
-                if ($product) {
+                /** @var Product $product */
+                $product = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
+                if (null !== $product) {
                     $product->setTaxCode($taxCode);
                 }
             }
         }
-
-        return $this;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $taxes
-     *
-     * @return $this
-     */
-    private function loadTaxes(ObjectManager $manager, $taxes)
+    private function loadTaxes(ObjectManager $manager, array $taxes): void
     {
         foreach ($taxes as $code => $data) {
-            $this->entitiesFactory->createTax($code, $data['rate'], $data['description'], $manager, $this);
+            $tax = new Tax();
+            $tax->setCode($code);
+            $tax->setRate($data['rate']);
+            $tax->setDescription($data['description']);
+            $manager->persist($tax);
+            $this->addReference($code, $tax);
         }
-
-        return $this;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $taxJurisdictions
-     *
-     * @return $this
-     */
-    private function loadTaxJurisdictions(ObjectManager $manager, $taxJurisdictions)
+    private function loadTaxJurisdictions(ObjectManager $manager, array $taxJurisdictions): void
     {
         foreach ($taxJurisdictions as $code => $data) {
             $country = $this->getCountryByIso2Code($manager, $data['country']);
-            $region = $this->getRegionByCountryAndCode($manager, $country, $data['state']);
 
-            $this->entitiesFactory->createTaxJurisdiction(
-                $code,
-                $data['description'],
-                $country,
-                $region,
-                $data['zip_codes'],
-                $manager,
-                $this
-            );
+            $jurisdiction = new TaxJurisdiction();
+            $jurisdiction->setCode($code);
+            $jurisdiction->setDescription($data['description']);
+            $jurisdiction->setCountry($country);
+            $jurisdiction->setRegion($this->getRegionByCountryAndCode($manager, $country, $data['state']));
+            foreach ($data['zip_codes'] as $zipCodeData) {
+                $zipCode = new ZipCode();
+                if (\is_array($zipCodeData)) {
+                    $zipCode->setZipRangeStart($zipCodeData['start']);
+                    $zipCode->setZipRangeEnd($zipCodeData['end']);
+                } else {
+                    $zipCode->setZipCode($zipCodeData);
+                }
+                $jurisdiction->addZipCode($zipCode);
+            }
+            $manager->persist($jurisdiction);
+            $this->addReference($code, $jurisdiction);
         }
-
-        return $this;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $taxRules
-     *
-     * @return $this
-     */
-    private function loadTaxRules(ObjectManager $manager, $taxRules)
+    private function loadTaxRules(ObjectManager $manager, array $taxRules): void
     {
         foreach ($taxRules as $rule) {
-            /** @var \Oro\Bundle\TaxBundle\Entity\CustomerTaxCode $customerTaxCode */
+            /** @var CustomerTaxCode $customerTaxCode */
             $customerTaxCode = $this->getReference($rule['customer_tax_code']);
-
-            /** @var \Oro\Bundle\TaxBundle\Entity\ProductTaxCode $productTaxCode */
+            /** @var ProductTaxCode $productTaxCode */
             $productTaxCode = $this->getReference($rule['product_tax_code']);
-
-            /** @var \Oro\Bundle\TaxBundle\Entity\TaxJurisdiction $taxJurisdiction */
+            /** @var TaxJurisdiction $taxJurisdiction */
             $taxJurisdiction = $this->getReference($rule['tax_jurisdiction']);
-
-            /** @var \Oro\Bundle\TaxBundle\Entity\Tax $tax */
+            /** @var Tax $tax */
             $tax = $this->getReference($rule['tax']);
 
-            $this->entitiesFactory->createTaxRule(
-                $customerTaxCode,
-                $productTaxCode,
-                $taxJurisdiction,
-                $tax,
-                isset($rule['description']) ? $rule['description'] : '',
-                $manager
-            );
+            $taxRule = new TaxRule();
+            $taxRule->setDescription($rule['description'] ?? '');
+            $taxRule->setCustomerTaxCode($customerTaxCode);
+            $taxRule->setProductTaxCode($productTaxCode);
+            $taxRule->setTaxJurisdiction($taxJurisdiction);
+            $taxRule->setTax($tax);
+            $taxRule->setOrganization($productTaxCode->getOrganization());
+            $manager->persist($taxRule);
+        }
+    }
+
+    private function getCountryByIso2Code(ObjectManager $manager, string $iso2Code): Country
+    {
+        $country = $manager->getRepository(Country::class)->findOneBy(['iso2Code' => $iso2Code]);
+        if (null === $country) {
+            throw new \RuntimeException(sprintf('%s country should exist.', $iso2Code));
         }
 
-        return $this;
+        return $country;
     }
 
-    //region Helper methods for the methods that the corresponding repositories do not have
-    /**
-     * @param ObjectManager $manager
-     * @param string $iso2Code
-     *
-     * @return Country|null
-     */
-    private function getCountryByIso2Code(ObjectManager $manager, $iso2Code)
+    private function getRegionByCountryAndCode(ObjectManager $manager, Country $country, string $code): Region
     {
-        return $manager->getRepository('OroAddressBundle:Country')->findOneBy(['iso2Code' => $iso2Code]);
+        $region = $manager->getRepository(Region::class)->findOneBy(['country' => $country, 'code' => $code]);
+        if (null === $region) {
+            throw new \RuntimeException(sprintf(
+                '%s region for %s country should exist.',
+                $code,
+                $country->getIso2Code()
+            ));
+        }
+
+        return $region;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Country $country
-     * @param string $code
-     *
-     * @return Region|null
-     */
-    private function getRegionByCountryAndCode(ObjectManager $manager, Country $country, $code)
-    {
-        return $manager->getRepository('OroAddressBundle:Region')->findOneBy(['country' => $country, 'code' => $code]);
-    }
-    //endregion
-
-    /**
-     * @param ObjectManager $manager
-     * @return User
-     * @throws \InvalidArgumentException
-     */
-    private function getAdminUser(ObjectManager $manager)
+    private function getAdminUser(ObjectManager $manager): User
     {
         $repository = $manager->getRepository(Role::class);
-        $role       = $repository->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
-
-        if (!$role) {
-            throw new \InvalidArgumentException('Administrator role should exist.');
+        $role = $repository->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
+        if (null === $role) {
+            throw new \RuntimeException(sprintf('%s role should exist.', User::ROLE_ADMINISTRATOR));
         }
-
         $user = $repository->getFirstMatchedUser($role);
-
-        if (!$user) {
-            throw new \InvalidArgumentException(
-                'Administrator user should exist to load tax codes demo data.'
-            );
+        if (null === $user) {
+            throw new \RuntimeException('An administrator user should exist.');
         }
 
         return $user;

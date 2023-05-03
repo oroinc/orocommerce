@@ -8,32 +8,32 @@ use Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
 
 class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry */
-    private $componentRegistry;
+    /** @var ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $processorRegistry;
 
     /** @var QuickAddMenuBuilder */
     private $builder;
 
     protected function setUp(): void
     {
-        $this->componentRegistry = $this->createMock(ComponentProcessorRegistry::class);
+        $this->processorRegistry = $this->createMock(ComponentProcessorRegistry::class);
 
-        $this->builder = new QuickAddMenuBuilder($this->componentRegistry);
+        $this->builder = new QuickAddMenuBuilder($this->processorRegistry);
     }
 
     /**
      * @dataProvider getBuildDataProvider
      */
-    public function testBuild(bool $hasAllowedProcessor)
+    public function testBuild(bool $hasAllowedProcessors)
     {
-        $this->componentRegistry->expects($this->once())
-            ->method('hasAllowedProcessor')
-            ->willReturn($hasAllowedProcessor);
+        $this->processorRegistry->expects(self::once())
+            ->method('hasAllowedProcessors')
+            ->willReturn($hasAllowedProcessors);
 
         $menu = $this->createMock(ItemInterface::class);
 
-        if ($hasAllowedProcessor) {
-            $menu->expects($this->once())
+        if ($hasAllowedProcessors) {
+            $menu->expects(self::once())
                 ->method('addChild')
                 ->with(
                     'oro.product.frontend.quick_add.title',
@@ -45,6 +45,9 @@ class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
                         ],
                     ]
                 );
+        } else {
+            $menu->expects(self::never())
+                ->method('addChild');
         }
 
         $this->builder->build($menu);

@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -267,7 +267,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
             );
         $args = $this->createMock(LifecycleEventArgs::class);
         $args->expects($this->any())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
 
         $this->priceRuleLexemeTriggerHandler->expects($this->once())

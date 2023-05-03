@@ -9,21 +9,16 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class RobotsTxtSitemapManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject */
     private $fileManager;
 
-    /**
-     * @var RobotsTxtSitemapManager
-     */
+    /** @var RobotsTxtSitemapManager */
     private $manager;
 
     protected function setUp(): void
     {
-        $this->fileManager = $this->getMockBuilder(RobotsTxtFileManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fileManager = $this->createMock(RobotsTxtFileManager::class);
+
         $this->manager = new RobotsTxtSitemapManager($this->fileManager);
     }
 

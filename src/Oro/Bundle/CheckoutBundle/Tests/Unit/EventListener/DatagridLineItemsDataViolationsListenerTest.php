@@ -142,8 +142,13 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
             ->with($checkout)
             ->willReturn($workflowItem);
 
+        $lineItems = [
+            $lineItem1->getEntityIdentifier() => $lineItem1,
+            $lineItem2->getEntityIdentifier() => $lineItem2,
+        ];
         $event = new DatagridLineItemsDataEvent(
-            [$lineItem1, $lineItem2],
+            $lineItems,
+            [],
             $this->getDatagridMock($checkout),
             []
         );
@@ -175,7 +180,7 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
         $this->violationsProvider
             ->expects($this->once())
             ->method('getLineItemViolationLists')
-            ->with([$lineItem1, $lineItem2], $workflowItem)
+            ->with($lineItems, $workflowItem)
             ->willReturn(['product.sku1.item' => [$violation1], 'product.sku2.item' => [$violation2, $violation3]]);
 
         $this->listener->onLineItemData($event);

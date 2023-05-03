@@ -9,265 +9,196 @@ use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizedFallbackValueCollec
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
 {
-    use EntityTrait;
-
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
     }
 
-    /**
-     * @dataProvider normalizeDataProvider
-     */
-    public function testNormalize(array $actualData, array $expectedData = []): void
+    private function getNormalizer(string $localizedFallbackValueClass): LocalizedFallbackValueCollectionNormalizer
     {
-        $actualData = $this->convertArrayToEntities($actualData);
-
-        $normalizer = new LocalizedFallbackValueCollectionNormalizer(
+        return new LocalizedFallbackValueCollectionNormalizer(
             self::getContainer()->get('doctrine'),
-            LocalizedFallbackValue::class,
+            $localizedFallbackValueClass,
             Localization::class
-        );
-
-        self::assertEquals(
-            $expectedData,
-            $normalizer->normalize(new ArrayCollection($actualData))
         );
     }
 
-    /**
-     * @return array
-     */
-    public function normalizeDataProvider(): array
+    private function getLocalizedValue(
+        ?string $fallback,
+        ?string $stringValue,
+        ?string $textValue,
+        ?string $localizationName
+    ): LocalizedFallbackValue {
+        $entity = new LocalizedFallbackValue();
+        if (null !== $fallback) {
+            $entity->setFallback($fallback);
+        }
+        if (null !== $stringValue) {
+            $entity->setString($stringValue);
+        }
+        if (null !== $textValue) {
+            $entity->setText($textValue);
+        }
+        if ('' === $localizationName) {
+            $entity->setLocalization($this->getLocalization());
+        } elseif (null !== $localizationName) {
+            $entity->setLocalization($this->getLocalization($localizationName));
+        }
+
+        return $entity;
+    }
+
+    private function getLocalization(?string $name = null): Localization
     {
-        return [
-            'without localization' => [
-                [
-                    [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'string' => 'value',
-                            'localization' => null,
-                        ],
-                    ],
-                ],
-                ['default' => ['fallback' => 'system', 'string' => 'value', 'text' => null]],
-            ],
-            'localization without name' => [
-                [
-                    [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'text' => 'value',
-                            'localization' => ['testEntity' => Localization::class],
-                        ],
-                    ],
-                ],
-                ['default' => ['fallback' => 'system', 'string' => null, 'text' => 'value']],
-            ],
-            'localization with name' => [
-                [
-                    [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'text' => 'value',
-                            'localization' => [
-                                'testEntity' => Localization::class,
-                                'testProperties' => ['name' => 'English'],
-                            ],
-                        ],
-                    ],
-                ],
-                ['English' => ['fallback' => 'system', 'string' => null, 'text' => 'value']],
-            ],
-            'mixed' => [
-                [
-                    [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'text' => 'value',
-                            'localization' => [
-                                'testEntity' => Localization::class,
-                                'testProperties' => ['name' => 'English'],
-                            ],
-                        ],
-                    ],
-                    [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'string' => 'value',
-                            'localization' => [
-                                'testEntity' => Localization::class,
-                                'testProperties' => ['name' => 'English (Canada)'],
-                            ],
-                        ],
-                    ],
-                    [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'text' => 'value',
-                            'localization' => [
-                                'testEntity' => Localization::class,
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'English' => ['fallback' => 'system', 'string' => null, 'text' => 'value'],
-                    'English (Canada)' => ['fallback' => 'system', 'string' => 'value', 'text' => null],
-                    'default' => ['fallback' => 'system', 'string' => null, 'text' => 'value'],
-                ],
-            ],
+        $entity = new Localization();
+        if (null !== $name) {
+            $entity->setName($name);
+        }
+
+        return $entity;
+    }
+
+    public function testNormalizeWithoutLocalization(): void
+    {
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', 'value', null, null)
+        ]);
+        $expectedData = [
+            'default' => ['fallback' => 'system', 'string' => 'value', 'text' => null]
         ];
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->normalize($actualData));
     }
 
-    /**
-     * @param mixed $actualData
-     * @param string $class
-     * @param array $expectedData
-     *
-     * @dataProvider denormalizeDataProvider
-     */
-    public function testDenormalize(mixed $actualData, string $class, array $expectedData): void
+    public function testNormalizeLocalizationWithoutName(): void
     {
-        $expectedData = new ArrayCollection($this->convertArrayToEntities($expectedData));
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', null, 'value', '')
+        ]);
+        $expectedData = [
+            'default' => ['fallback' => 'system', 'string' => null, 'text' => 'value']
+        ];
 
-        $normalizer = new LocalizedFallbackValueCollectionNormalizer(
-            self::getContainer()->get('doctrine'),
-            LocalizedFallbackValue::class,
-            Localization::class
-        );
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->normalize($actualData));
+    }
 
+    public function testNormalizeLocalizationWithName(): void
+    {
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', null, 'value', 'English')
+        ]);
+        $expectedData = [
+            'English' => ['fallback' => 'system', 'string' => null, 'text' => 'value']
+        ];
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->normalize($actualData));
+    }
+
+    public function testNormalizeMixed(): void
+    {
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', null, 'value', 'English'),
+            $this->getLocalizedValue('system', 'value', null, 'English (Canada)'),
+            $this->getLocalizedValue('system', null, 'value', '')
+        ]);
+        $expectedData = [
+            'English' => ['fallback' => 'system', 'string' => null, 'text' => 'value'],
+            'English (Canada)' => ['fallback' => 'system', 'string' => 'value', 'text' => null],
+            'default' => ['fallback' => 'system', 'string' => null, 'text' => 'value'],
+        ];
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->normalize($actualData));
+    }
+
+    public function testDenormalizeNotArray(): void
+    {
+        $class = LocalizedFallbackValue::class;
+        $actualData = 'value';
+        $expectedData = new ArrayCollection([]);
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
         self::assertEquals($expectedData, $normalizer->denormalize($actualData, $class));
     }
 
-    public function denormalizeDataProvider(): array
+    public function testDenormalizeWrongType(): void
     {
-        return [
-            'not an array' => [
-                'value',
-                LocalizedFallbackValue::class,
-                [],
-            ],
-            'wrong type' => [
-                [],
-                LocalizedFallbackValue::class,
-                [],
-            ],
-            'without localization' => [
-                ['default' => ['fallback' => 'system', 'string' => 'value', 'text' => null]],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
-                [
-                    'default' => [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'string' => 'value',
-                        ],
-                    ],
-                ],
-            ],
-            'localization with name, default missing' => [
-                ['English' => ['fallback' => 'system', 'string' => 'value']],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
-                [
-                    'default' => [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => null,
-                            'string' => null,
-                            'localization' => null
-                        ],
-                    ],
-                    'English' => [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'string' => 'value',
-                            'localization' => [
-                                'testEntity' => Localization::class,
-                                'testProperties' => ['name' => 'English'],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'mixed' => [
-                [
-                    'default' => ['fallback' => 'system', 'string' => 'value', 'text' => null],
-                    'English' => ['string' => 'value'],
-                    'English (Canada)' => ['fallback' => 'parent_localization', 'text' => 'value'],
-                ],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
-                [
-                    'default' => [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'string' => 'value',
-                        ],
-                    ],
-                    'English' => [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'string' => 'value',
-                            'localization' => [
-                                'testEntity' => Localization::class,
-                                'testProperties' => ['name' => 'English'],
-                            ],
-                        ],
-                    ],
-                    'English (Canada)' => [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => 'parent_localization',
-                            'text' => 'value',
-                            'localization' => [
-                                'testEntity' => Localization::class,
-                                'testProperties' => ['name' => 'English (Canada)'],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
+        $class = LocalizedFallbackValue::class;
+        $actualData = [];
+        $expectedData = new ArrayCollection([]);
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->denormalize($actualData, $class));
+    }
+
+    public function testDenormalizeWithoutLocalization(): void
+    {
+        $class = sprintf('ArrayCollection<%s>', LocalizedFallbackValue::class);
+        $actualData = [
+            'default' => ['fallback' => 'system', 'string' => 'value', 'text' => null]
         ];
+        $expectedData = new ArrayCollection([
+            'default' => $this->getLocalizedValue('system', 'value', null, null)
+        ]);
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->denormalize($actualData, $class));
+    }
+
+    public function testDenormalizeLocalizationWithNameAndDefaultMissing(): void
+    {
+        $class = sprintf('ArrayCollection<%s>', LocalizedFallbackValue::class);
+        $actualData = [
+            'English' => ['fallback' => 'system', 'string' => 'value']
+        ];
+        $expectedData = new ArrayCollection([
+            'default' => $this->getLocalizedValue(null, null, null, null),
+            'English' => $this->getLocalizedValue('system', 'value', null, 'English')
+        ]);
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->denormalize($actualData, $class));
+    }
+
+    public function testDenormalizeMixed(): void
+    {
+        $class = sprintf('ArrayCollection<%s>', LocalizedFallbackValue::class);
+        $actualData = [
+            'default' => ['fallback' => 'system', 'string' => 'value', 'text' => null],
+            'English' => ['string' => 'value'],
+            'English (Canada)' => ['fallback' => 'parent_localization', 'text' => 'value'],
+        ];
+        $expectedData = new ArrayCollection([
+            'default' => $this->getLocalizedValue('system', 'value', null, null),
+            'English' => $this->getLocalizedValue(null, 'value', null, 'English'),
+            'English (Canada)' => $this->getLocalizedValue('parent_localization', null, 'value', 'English (Canada)')
+        ]);
+
+        $normalizer = $this->getNormalizer(LocalizedFallbackValue::class);
+        self::assertEquals($expectedData, $normalizer->denormalize($actualData, $class));
     }
 
     /**
-     * @param mixed $data
-     * @param bool $expected
-     * @param array $context
-     *
      * @dataProvider supportsNormalizationDataProvider
      */
-    public function testSupportsNormalization($data, bool $expected, array $context = []): void
+    public function testSupportsNormalization(ArrayCollection|array $data, bool $expected, array $context = []): void
     {
-        $normalizer = new LocalizedFallbackValueCollectionNormalizer(
-            self::getContainer()->get('doctrine'),
-            ProductName::class,
-            Localization::class
-        );
-
+        $normalizer = $this->getNormalizer(ProductName::class);
         self::assertEquals($expected, $normalizer->supportsNormalization($data, null, $context));
-
         // trigger caches
         self::assertEquals($expected, $normalizer->supportsNormalization($data, null, $context));
     }
 
-    /**
-     * @return array
-     */
     public function supportsNormalizationDataProvider(): array
     {
         return [
@@ -292,28 +223,21 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
     }
 
     /**
-     * @param mixed $data
-     * @param string $class
-     * @param bool $expected
-     * @param array $context
-     *
-     * @dataProvider supportsdeDenormalizationDataProvider
+     * @dataProvider supportsDenormalizationDataProvider
      */
-    public function testSupportsDenormalization(mixed $data, string $class, bool $expected, array $context = []): void
-    {
-        $normalizer = new LocalizedFallbackValueCollectionNormalizer(
-            self::getContainer()->get('doctrine'),
-            ProductName::class,
-            Localization::class
-        );
-
+    public function testSupportsDenormalization(
+        ArrayCollection $data,
+        string $class,
+        bool $expected,
+        array $context = []
+    ): void {
+        $normalizer = $this->getNormalizer(ProductName::class);
         self::assertEquals($expected, $normalizer->supportsDenormalization($data, $class, null, $context));
-
         // trigger caches
         self::assertEquals($expected, $normalizer->supportsDenormalization($data, $class, null, $context));
     }
 
-    public function supportsdeDenormalizationDataProvider(): array
+    public function supportsDenormalizationDataProvider(): array
     {
         return [
             'not a collection' => [new ArrayCollection(), Product::class, false],

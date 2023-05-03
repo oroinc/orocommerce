@@ -8,10 +8,8 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 
 class RuleActionsVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RuleActionsVisibilityProvider
-     */
-    protected $provider;
+    /** @var RuleActionsVisibilityProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -19,16 +17,12 @@ class RuleActionsVisibilityProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool  $enabled
-     * @param array $actions
-     * @param array $expected
-     *
      * @dataProvider recordsDataProvider
      */
-    public function testGetActionsVisibility($enabled, array $actions, array $expected)
+    public function testGetActionsVisibility(bool $enabled, array $actions, array $expected)
     {
         $rule = $this->createMock(Rule::class);
-        $rule->expects(static::any())
+        $rule->expects(self::any())
             ->method('isEnabled')
             ->willReturn($enabled);
         $this->assertEquals(
@@ -37,10 +31,7 @@ class RuleActionsVisibilityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function recordsDataProvider()
+    public function recordsDataProvider(): array
     {
         return [
             'enabled' => [

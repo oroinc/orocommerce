@@ -124,6 +124,21 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
+{% block _order_sub_orders_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% set text %}
+        {% if text is not empty %}
+            {% for suborder in text %}
+                {{ UI.entityViewLink(suborder, suborder.identifier, 'oro_order_frontend_view') }}{%- if not loop.last -%},{%- endif -%}
+            {% endfor %}
+        {% else %}
+            {{ 'oro.ui.empty'|trans }}
+        {% endif %}
+    {% endset %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block shipping_trackings_widget %}
     {% if trackings|length > 0 %}
         <div class="oro-datagrid">

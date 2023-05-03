@@ -24,13 +24,21 @@ class LineItemRepository extends ServiceEntityRepository
      */
     public function findDuplicateInShoppingList(LineItem $lineItem, ?ShoppingList $shoppingList): ?LineItem
     {
+        $shoppingListId = $shoppingList?->getId();
+        if ($shoppingListId === null) {
+            return null;
+        }
+
         $qb = $this->createQueryBuilder('li');
-        $qb->where('li.product = :product')
+        $qb
+            ->where('li.product = :product')
             ->andWhere('li.unit = :unit')
+            ->andWhere('li.checksum = :checksum')
             ->andWhere('li.shoppingList = :shoppingList')
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
-            ->setParameter('shoppingList', $shoppingList)
+            ->setParameter('checksum', $lineItem->getChecksum())
+            ->setParameter('shoppingList', $shoppingListId)
             ->addOrderBy($qb->expr()->asc('li.id'))
             ->setMaxResults(1);
 
@@ -79,10 +87,10 @@ class LineItemRepository extends ServiceEntityRepository
 
         $qb->andWhere($qb->expr()->orX(
             $qb->expr()->isNull('li.parentProduct'),
-            $qb->expr()->in('li.parentProduct', ':products')
+            $qb->expr()->in('li.parentProduct', ':products'),
+            $qb->expr()->isNotNull('productExpr'),
+            $qb->expr()->isNotNull('parentVariantLinksExpr')
         ))
-        ->orWhere($qb->expr()->isNotNull('productExpr'))
-        ->orWhere($qb->expr()->isNotNull('parentVariantLinksExpr'))
         ->setParameter('products', $products)
         ->addOrderBy($qb->expr()->asc('li.id'));
 

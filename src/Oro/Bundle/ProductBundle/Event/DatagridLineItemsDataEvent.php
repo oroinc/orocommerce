@@ -14,38 +14,36 @@ class DatagridLineItemsDataEvent extends Event
     /** @var string */
     public const NAME = 'oro_product.datagrid_line_items_data';
 
-    /** @var string */
-    protected $name;
+    /** @var array<int,ProductLineItemInterface> */
+    protected array $lineItems;
 
-    /** @var ProductLineItemInterface[] */
-    protected $lineItems;
+    protected DatagridInterface $datagrid;
 
-    /** @var DatagridInterface */
-    protected $datagrid;
+    protected array $context;
 
-    /** @var array */
-    protected $context;
-
-    /** @var array */
-    protected $lineItemsData = [];
+    /** @var array<int,array> Arbitrary arrays of line items data indexed by ID */
+    protected array $lineItemsData = [];
 
     /**
-     * @param ProductLineItemInterface[] $lineItems
+     * @param array<int,ProductLineItemInterface> $lineItems Line items indexed by ID.
+     * @param array<int,array> $lineItemsData Arbitrary arrays of line items data indexed by ID.
      * @param DatagridInterface $datagrid
      * @param array $context
      */
     public function __construct(
         array $lineItems,
+        array $lineItemsData,
         DatagridInterface $datagrid,
         array $context
     ) {
         $this->lineItems = $lineItems;
+        $this->lineItemsData = $lineItemsData;
         $this->datagrid = $datagrid;
         $this->context = $context;
     }
 
     /**
-     * @return ProductLineItemInterface[]
+     * @return array<int,ProductLineItemInterface> Line items indexed by ID.
      */
     public function getLineItems(): array
     {

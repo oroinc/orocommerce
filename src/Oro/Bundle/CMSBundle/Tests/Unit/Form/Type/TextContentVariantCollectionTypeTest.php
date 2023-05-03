@@ -9,11 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TextContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TextContentVariantCollectionType */
-    protected $type;
+    private $type;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->type = new TextContentVariantCollectionType();
@@ -21,11 +18,7 @@ class TextContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->getMockBuilder(OptionsResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->any())
             ->method('setDefault')
             ->withConsecutive(

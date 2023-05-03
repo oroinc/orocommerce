@@ -1,5 +1,6 @@
 @ticket-BB-11551
 @ticket-BB-16275
+@fixture-OroWebCatalogBundle:empty_web_catalog.yml
 @fixture-OroCatalogBundle:all_products_page.yml
 
 Feature: All products page feature

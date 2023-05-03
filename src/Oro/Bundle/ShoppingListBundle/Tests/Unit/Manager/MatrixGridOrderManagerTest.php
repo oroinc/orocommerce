@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -18,7 +19,6 @@ use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithInSaleAndDiscount;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -200,15 +200,20 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
 
         $rowSmall = new MatrixCollectionRow();
         $rowSmall->label = 'Small';
-        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+        $rowSmall->columns = [$columnSmallRed];
 
         $rowMedium = new MatrixCollectionRow();
         $rowMedium->label = 'Medium';
-        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+        $rowMedium->columns = [1 => $columnMediumGreen];
 
         $expectedCollection = new MatrixCollection();
+        $expectedCollection->dimensions = 2;
         $expectedCollection->unit = $productUnit;
         $expectedCollection->rows = [$rowSmall, $rowMedium];
+        $expectedCollection->columns = [
+            ['value' => 'red', 'label' => 'Red'],
+            ['value' => 'green', 'label' => 'Green'],
+        ];
 
         $shoppingList = $this->getShoppingList([
             $this->getLineItem(null, $simpleProductSmallRed, 1, null, $product),
@@ -394,14 +399,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([
-                'discount' => [
-                    true => true,
-                    false => true,
-                ],
-                'inSale' => [
-                    true => true,
-                    false => true,
-                ],
+                'discount' => [true => true, false => true],
+                'inSale' => [true => true, false => true],
             ]);
         $this->variantAvailability->expects($this->exactly(2))
             ->method('getVariantFieldValues')
@@ -466,15 +465,20 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
 
         $rowYes = new MatrixCollectionRow();
         $rowYes->label = 'Yes';
-        $rowYes->columns = [$columnDiscountInSale, $columnDiscountNotInSale];
+        $rowYes->columns = [$columnDiscountInSale];
 
         $rowNo = new MatrixCollectionRow();
         $rowNo->label = 'No';
-        $rowNo->columns = [$columnNotDiscountInSale, $columnNotDiscountNotInSale];
+        $rowNo->columns = [1 => $columnNotDiscountNotInSale];
 
         $expectedCollection = new MatrixCollection();
+        $expectedCollection->dimensions = 2;
         $expectedCollection->unit = $productUnit;
         $expectedCollection->rows = [$rowYes, $rowNo];
+        $expectedCollection->columns = [
+            ['value' => 1, 'label' => 'Yes'],
+            ['value' => 0, 'label' => 'No'],
+        ];
 
         $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
     }
@@ -649,15 +653,20 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
 
         $rowSmall = new MatrixCollectionRow();
         $rowSmall->label = 'Small';
-        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+        $rowSmall->columns = [$columnSmallRed];
 
         $rowMedium = new MatrixCollectionRow();
         $rowMedium->label = 'Medium';
-        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+        $rowMedium->columns = [$columnMediumRed];
 
         $expectedCollection = new MatrixCollection();
+        $expectedCollection->dimensions = 2;
         $expectedCollection->unit = $productUnitEach;
         $expectedCollection->rows = [$rowSmall, $rowMedium];
+        $expectedCollection->columns = [
+            ['value' => 'red', 'label' => 'Red'],
+            ['value' => 'green', 'label' => 'Green'],
+        ];
 
         $shoppingList = $this->getShoppingList([
             $this->getLineItem(null, $simpleProductSmallRed, 1, $productUnitEach, $product),

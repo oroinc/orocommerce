@@ -11,6 +11,7 @@ use Oro\Bundle\ImportExportBundle\Event\LoadEntityRulesAndBackendHeadersEvent;
 use Oro\Bundle\ImportExportBundle\Event\LoadTemplateFixturesEvent;
 use Oro\Bundle\ImportExportBundle\Event\NormalizeEntityEvent;
 use Oro\Bundle\ImportExportBundle\Event\StrategyEvent;
+use Oro\Bundle\ImportExportBundle\EventListener\ImportExportHeaderModifier;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -96,15 +97,12 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->addHeader([
-            'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
-            'order' => 200,
-        ]);
-
-        $event->setRule('Tax code', [
-            'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
-            'order' => 200,
-        ]);
+        ImportExportHeaderModifier::addHeader(
+            $event,
+            sprintf('tax_code%scode', $event->getConvertDelimiter()),
+            'Tax code',
+            200
+        );
     }
 
     public function afterImportStrategy(StrategyEvent $event)

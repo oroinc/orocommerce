@@ -47,7 +47,7 @@ class ProductProcessorTest extends WebTestCase
             ->buildCache();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         self::getConfigManager()->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);
         self::getConfigManager()->set('oro_visibility.category_visibility', VisibilityInterface::VISIBLE);

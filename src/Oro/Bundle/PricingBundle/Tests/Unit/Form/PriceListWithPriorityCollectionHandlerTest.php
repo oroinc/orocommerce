@@ -7,11 +7,11 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +29,7 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\Test
 
         $this->handler = new PriceListWithPriorityCollectionHandler(
             $this->doctrineHelper,
-            new PropertyAccessor()
+            PropertyAccess::createPropertyAccessor()
         );
     }
 

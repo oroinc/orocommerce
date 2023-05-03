@@ -17,20 +17,20 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private ResolveNodeSlugsMessageFactory $factory;
+    /** @var ResolveNodeSlugsMessageFactory */
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+
         $this->factory = new ResolveNodeSlugsMessageFactory(
             $this->doctrineHelper,
             $this->configManager
@@ -39,9 +39,6 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider createMessageCreateRedirectProvider
-     * @param string $strategy
-     * @param array $nodeParams
-     * @param array $expectedMessage
      */
     public function testCreateMessageCreateRedirectAlways(
         string $strategy,
@@ -53,19 +50,12 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
             ->with('oro_redirect.redirect_generation_strategy')
             ->willReturn($strategy);
 
-        /** @var ContentNode $contentNode */
-        $contentNode = $this->getEntity(
-            ContentNode::class,
-            $nodeParams
-        );
+        $contentNode = $this->getEntity(ContentNode::class, $nodeParams);
 
         $message = $this->factory->createMessage($contentNode);
         self::assertEquals($expectedMessage, $message);
     }
 
-    /**
-     * @return array
-     */
     public function createMessageCreateRedirectProvider(): array
     {
         return [
@@ -122,9 +112,7 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
         ];
 
         $expectedContentNode = new ContentNode();
-        $repository = $this->getMockBuilder(ContentNodeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(ContentNodeRepository::class);
         $repository->expects(self::once())
             ->method('find')
             ->with($data[WebCatalogResolveContentNodeSlugsTopic::ID])
@@ -140,7 +128,6 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCreateRedirectFormMessageProvider
-     * @param bool $createRedirect
      */
     public function testGetCreateRedirectFromMessage(bool $createRedirect): void
     {
@@ -152,9 +139,6 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($createRedirect, $this->factory->getCreateRedirectFromMessage($data));
     }
 
-    /**
-     * @return array
-     */
     public function getCreateRedirectFormMessageProvider(): array
     {
         return [

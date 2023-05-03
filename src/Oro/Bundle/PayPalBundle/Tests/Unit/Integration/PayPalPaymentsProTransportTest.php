@@ -5,42 +5,41 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Integration;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProTransport;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Oro\Component\Testing\ReflectionUtil;
 
 class PayPalPaymentsProTransportTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PayPalPaymentsProTransport */
-    private $transport;
+    private PayPalPaymentsProTransport $transport;
 
     protected function setUp(): void
     {
-        $this->transport = new class() extends PayPalPaymentsProTransport {
-            public function xgetSettings(): ParameterBag
-            {
-                return $this->settings;
-            }
-        };
+        $this->transport = new PayPalPaymentsProTransport();
     }
 
     public function testInitCompiles()
     {
         $settings = new PayPalSettings();
+
         $this->transport->init($settings);
-        static::assertSame($settings->getSettingsBag(), $this->transport->xgetSettings());
+
+        self::assertSame(
+            $settings->getSettingsBag(),
+            ReflectionUtil::getPropertyValue($this->transport, 'settings')
+        );
     }
 
     public function testGetSettingsFormType()
     {
-        static::assertSame(PayPalSettingsType::class, $this->transport->getSettingsFormType());
+        self::assertSame(PayPalSettingsType::class, $this->transport->getSettingsFormType());
     }
 
     public function testGetSettingsEntityFQCN()
     {
-        static::assertSame(PayPalSettings::class, $this->transport->getSettingsEntityFQCN());
+        self::assertSame(PayPalSettings::class, $this->transport->getSettingsEntityFQCN());
     }
 
     public function testGetLabelReturnsString()
     {
-        static::assertTrue(is_string($this->transport->getLabel()));
+        self::assertIsString($this->transport->getLabel());
     }
 }

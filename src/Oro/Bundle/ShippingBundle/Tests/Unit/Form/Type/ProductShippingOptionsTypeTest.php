@@ -20,8 +20,7 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
@@ -29,10 +28,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    /** @var ProductShippingOptionsType */
-    private $formType;
+    private ProductShippingOptionsType $formType;
 
     protected function setUp(): void
     {
@@ -227,97 +223,95 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         $productShippingOptions->setProduct(new Product());
 
         if ($unitCode) {
-            $productShippingOptions->setProductUnit(
-                $this->getEntity(
-                    ProductUnit::class,
-                    [
-                        'code' => $unitCode,
-                        'defaultPrecision' => 1,
-                    ]
-                )
-            );
+            $productShippingOptions->setProductUnit($this->getProductUnit($unitCode, 1));
         }
 
         if ($weight) {
-            $productShippingOptions->setWeight(
-                $this->getEntity(
-                    Weight::class,
-                    [
-                        'value' => $weight[0],
-                        'unit' => $this->getEntity(
-                            WeightUnit::class,
-                            [
-                                'code' => $weight[1]
-                            ]
-                        ),
-                    ]
-                )
-            );
+            $productShippingOptions->setWeight($this->getWeight($weight[0], $this->getWeightUnit($weight[1])));
         }
 
         if ($dimensions) {
             $productShippingOptions->setDimensions(
-                $this->getEntity(
-                    Dimensions::class,
-                    [
-                        'value' => $this->getEntity(
-                            DimensionsValue::class,
-                            [
-                                'length' => $dimensions[0],
-                                'width' => $dimensions[1],
-                                'height' => $dimensions[2]
-                            ]
-                        ),
-                        'unit' => $this->getEntity(
-                            LengthUnit::class,
-                            [
-                                'code' => $dimensions[3]
-                            ]
-                        ),
-                    ]
+                $this->getDimensions(
+                    $this->getDimensionsValue($dimensions[0], $dimensions[1], $dimensions[2]),
+                    $this->getLengthUnit($dimensions[3])
                 )
             );
         }
 
         if ($freightClass) {
-            $productShippingOptions->setFreightClass(
-                $this->getEntity(
-                    FreightClass::class,
-                    [
-                        'code' => $freightClass,
-                    ]
-                )
-            );
+            $productShippingOptions->setFreightClass($this->getFreightClass($freightClass));
         }
 
         return $productShippingOptions;
     }
 
+    private function getProductUnit(string $code, int $defaultPrecision): ProductUnit
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($code);
+        $unit->setDefaultPrecision($defaultPrecision);
+
+        return $unit;
+    }
+
+    private function getWeightUnit(string $code): WeightUnit
+    {
+        $unit = new WeightUnit();
+        $unit->setCode($code);
+
+        return $unit;
+    }
+
+    private function getLengthUnit(string $code): LengthUnit
+    {
+        $unit = new LengthUnit();
+        $unit->setCode($code);
+
+        return $unit;
+    }
+
+    private function getFreightClass(string $code): FreightClass
+    {
+        $freightClass = new FreightClass();
+        $freightClass->setCode($code);
+
+        return $freightClass;
+    }
+
+    private function getWeight(float $value, WeightUnit $unit): Weight
+    {
+        $weight = new Weight();
+        $weight->setValue($value);
+        $weight->setUnit($unit);
+
+        return $weight;
+    }
+
+    private function getDimensions(DimensionsValue $value, LengthUnit $unit): Dimensions
+    {
+        $dimensions = new Dimensions();
+        $dimensions->setValue($value);
+        $dimensions->setUnit($unit);
+
+        return $dimensions;
+    }
+
+    private function getDimensionsValue(float $length, float $width, float $height): DimensionsValue
+    {
+        $value = new DimensionsValue();
+        $value->setLength($length);
+        $value->setWidth($width);
+        $value->setHeight($height);
+
+        return $value;
+    }
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {
-        $productUnitSelectionType = new EntityType(
-            [
-                'each' => $this->getEntity(
-                    ProductUnit::class,
-                    [
-                        'code' => 'each',
-                        'defaultPrecision' => 1,
-                    ]
-                ),
-                'item' => $this->getEntity(
-                    ProductUnit::class,
-                    [
-                        'code' => 'item',
-                        'defaultPrecision' => 1
-                    ]
-                ),
-            ],
-            ProductUnitSelectionType::NAME
-        );
-
         $weightType = new WeightType();
         $weightType->setDataClass(Weight::class);
 
@@ -330,46 +324,25 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductShippingOptionsType::class => $this->formType,
-                    WeightType::class => $weightType,
-                    DimensionsType::class => $dimensionsType,
-                    DimensionsValueType::class => $dimensionsValueType,
-                    FreightClassSelectType::class => new EntityType(
-                        [
-                            'pl' => $this->getEntity(
-                                FreightClass::class,
-                                ['code' => 'pl']
-                            )
-                        ],
-                        FreightClassSelectType::NAME
-                    ),
-                    WeightUnitSelectType::class => new EntityType(
-                        [
-                            'mg' => $this->getEntity(
-                                WeightUnit::class,
-                                ['code' => 'mg']
-                            ),
-                            'kg' => $this->getEntity(
-                                WeightUnit::class,
-                                ['code' => 'kg']
-                            )
-                        ],
-                        WeightUnitSelectType::NAME
-                    ),
-                    LengthUnitSelectType::class => new EntityType(
-                        [
-                            'mm' => $this->getEntity(
-                                LengthUnit::class,
-                                ['code' => 'mm']
-                            ),
-                            'cm' => $this->getEntity(
-                                LengthUnit::class,
-                                ['code' => 'cm']
-                            )
-                        ],
-                        LengthUnitSelectType::NAME
-                    ),
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    $this->formType,
+                    $weightType,
+                    $dimensionsType,
+                    $dimensionsValueType,
+                    FreightClassSelectType::class => new EntityTypeStub([
+                        'pl' => $this->getFreightClass('pl')
+                    ]),
+                    WeightUnitSelectType::class => new EntityTypeStub([
+                        'mg' => $this->getWeightUnit('mg'),
+                        'kg' => $this->getWeightUnit('kg')
+                    ]),
+                    LengthUnitSelectType::class => new EntityTypeStub([
+                        'mm' => $this->getLengthUnit('mm'),
+                        'cm' => $this->getLengthUnit('cm')
+                    ]),
+                    ProductUnitSelectionType::class => new EntityTypeStub([
+                        'each' => $this->getProductUnit('each', 1),
+                        'item' => $this->getProductUnit('item', 1),
+                    ]),
                 ],
                 []
             ),

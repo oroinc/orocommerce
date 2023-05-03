@@ -22,10 +22,8 @@ class UnaryNodeConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider operationDataProvider
-     * @param string $operation
-     * @param string $expected
      */
-    public function testConvert($operation, $expected)
+    public function testConvert(string $operation, string $expected)
     {
         $expr = new Expr();
         $params = [];
@@ -46,10 +44,7 @@ class UnaryNodeConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, (string)$converter->convert($node, $expr, $params, $aliasMapping));
     }
 
-    /**
-     * @return array
-     */
-    public function operationDataProvider()
+    public function operationDataProvider(): array
     {
         return [
             ['not', 'NOT(a.b)'],

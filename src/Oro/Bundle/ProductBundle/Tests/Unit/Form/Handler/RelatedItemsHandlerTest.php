@@ -15,9 +15,6 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var RelatedItemsHandler */
-    private $handler;
-
     /** @var AssignerStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $relatedAssigner;
 
@@ -26,6 +23,9 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
+
+    /** @var RelatedItemsHandler */
+    private $handler;
 
     protected function setUp(): void
     {
@@ -66,7 +66,7 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider exceptionsProvider()
+     * @dataProvider exceptionsProvider
      */
     public function testProcessErrorOnAddingProductToItself(\Exception $exception)
     {
@@ -114,10 +114,7 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function exceptionsProvider()
+    public function exceptionsProvider(): array
     {
         return [
             [new \InvalidArgumentException()],
@@ -126,15 +123,9 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param Product[] $data
-     * @return \PHPUnit\Framework\MockObject\MockObject|Form
-     */
-    private function getField($data = [])
+    private function getField(array $data = []): Form|\PHPUnit\Framework\MockObject\MockObject
     {
-        $form = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock(Form::class);
         $form->expects($this->any())
             ->method('getData')
             ->willReturn($data);
@@ -142,51 +133,35 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
         return $form;
     }
 
-    /**
-     * @param Product $product
-     * @param Product[] $productsToAdd
-     */
-    private function relatedAssignerShouldAddProducts(Product $product, array $productsToAdd)
+    private function relatedAssignerShouldAddProducts(Product $product, array $productsToAdd): void
     {
         $this->relatedAssigner->expects($this->once())
             ->method('addRelations')
             ->with($product, $productsToAdd);
     }
 
-    /**
-     * @param Product $product
-     * @param Product[] $productsToRemove
-     */
-    private function relatedAssignerShouldRemoveProducts(Product $product, array $productsToRemove)
+    private function relatedAssignerShouldRemoveProducts(Product $product, array $productsToRemove): void
     {
         $this->relatedAssigner->expects($this->once())
             ->method('removeRelations')
             ->with($product, $productsToRemove);
     }
 
-    /**
-     * @param Product $product
-     * @param Product[] $productsToAdd
-     */
-    private function upsellAssignerShouldAddProducts(Product $product, array $productsToAdd)
+    private function upsellAssignerShouldAddProducts(Product $product, array $productsToAdd): void
     {
         $this->upsellAssigner->expects($this->once())
             ->method('addRelations')
             ->with($product, $productsToAdd);
     }
 
-    /**
-     * @param Product $product
-     * @param Product[] $productsToRemove
-     */
-    private function upsellAssignerShouldRemoveProducts(Product $product, array $productsToRemove)
+    private function upsellAssignerShouldRemoveProducts(Product $product, array $productsToRemove): void
     {
         $this->upsellAssigner->expects($this->once())
             ->method('removeRelations')
             ->with($product, $productsToRemove);
     }
 
-    private function assignerShouldThrowException(\Exception $exception)
+    private function assignerShouldThrowException(\Exception $exception): void
     {
         $this->relatedAssigner->expects($this->once())
             ->method('addRelations')

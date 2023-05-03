@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
@@ -11,9 +12,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProviderInterface;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\WebCatalog\ContentVariantEntityProviderInterface;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
 
 /**
@@ -21,34 +20,21 @@ use Symfony\Component\Security\Acl\Util\ClassUtils;
  */
 class ContentVariantListener
 {
-    /**
-     * @var ContentVariantTypeRegistry
-     */
-    private $typeRegistry;
-
-    /**
-     * @var OwnershipMetadataProviderInterface
-     */
-    private $metadataProvider;
-
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
+    private ContentVariantTypeRegistry         $typeRegistry;
+    private OwnershipMetadataProviderInterface $metadataProvider;
+    private DoctrineHelper                     $doctrineHelper;
+    private PropertyAccessorInterface          $propertyAccessor;
 
     public function __construct(
         ContentVariantTypeRegistry $typeRegistry,
         OwnershipMetadataProviderInterface $metadataProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        PropertyAccessorInterface $propertyAccessor
     ) {
-        $this->typeRegistry = $typeRegistry;
+        $this->typeRegistry     = $typeRegistry;
         $this->metadataProvider = $metadataProvider;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrineHelper   = $doctrineHelper;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     public function prePersist(ContentVariant $contentVariant)
@@ -73,6 +59,7 @@ class ContentVariantListener
         }
 
         $entity = $type->getAttachedEntity($contentVariant);
+
         $businessUnit = $contentVariant->getNode()->getWebCatalog()->getOwner();
         $organization = $contentVariant->getNode()->getWebCatalog()->getOrganization();
 
@@ -85,29 +72,9 @@ class ContentVariantListener
         }
     }
 
-    /**
-     * @param object $object
-     * @param string $property
-     * @param object $value
-     */
-    private function setValue($object, $property, $value): void
+    private function setValue(object $object, string $property, object $value): void
     {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
-        try {
-            $this->propertyAccessor->setValue($object, $property, $value);
-        } catch (NoSuchPropertyException $e) {
-            try {
-                $reflectionClass = new \ReflectionClass($object);
-                $reflectionProperty = $reflectionClass->getProperty($property);
-                $reflectionProperty->setAccessible(true);
-
-                $reflectionProperty->setValue($object);
-            } catch (\ReflectionException $ex) {
-            }
-        }
+        $this->propertyAccessor->setValue($object, $property, $value);
     }
 
     /**
@@ -116,7 +83,7 @@ class ContentVariantListener
      * @param OrganizationInterface|null $organization
      */
     private function setEntityOwner(
-        $entity,
+        object $entity,
         ?BusinessUnit $businessUnit,
         ?OrganizationInterface $organization
     ): void {

@@ -4,7 +4,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -15,7 +14,6 @@ use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -24,7 +22,7 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -363,34 +361,10 @@ class RequestTypeTest extends AbstractTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {
-        $priceType = $this->preparePriceType();
-        $productSelectType = $this->prepareProductSelectType();
-        $userMultiSelectType = $this->prepareUserMultiSelectType();
-        $currencySelectionType = new CurrencySelectionTypeStub();
-        $requestProductItemType = $this->prepareRequestProductItemType();
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-        $customerMultiSelectType = $this->prepareCustomerUserMultiSelectType();
-
-        $customerSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(Customer::class, 1),
-                2 => $this->getEntity(Customer::class, 2),
-            ],
-            CustomerSelectType::NAME
-        );
-
-        $customerUserSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(CustomerUser::class, 1),
-                2 => $this->getEntity(CustomerUser::class, 2),
-            ],
-            CustomerUserSelectType::NAME
-        );
-
         $requestProductType = new RequestProductType();
         $requestProductType->setDataClass(RequestProduct::class);
 
@@ -398,17 +372,23 @@ class RequestTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     $this->formType,
-                    PriceType::class                   => $priceType,
-                    ProductSelectType::class           => $productSelectType,
-                    CustomerSelectType::class          => $customerSelectType,
-                    RequestProductType::class          => $requestProductType,
-                    UserMultiSelectType::class         => $userMultiSelectType,
-                    CustomerUserSelectType::class      => $customerUserSelectType,
-                    CurrencySelectionType::class       => $currencySelectionType,
-                    RequestProductItemType::class      => $requestProductItemType,
-                    ProductUnitSelectionType::class    => $productUnitSelectionType,
-                    CustomerUserMultiSelectType::class => $customerMultiSelectType,
-                    QuantityType::class                => $this->getQuantityType(),
+                    $this->preparePriceType(),
+                    ProductSelectType::class => $this->prepareProductSelectType(),
+                    CustomerSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(Customer::class, 1),
+                        2 => $this->getEntity(Customer::class, 2),
+                    ]),
+                    $requestProductType,
+                    UserMultiSelectType::class => $this->prepareUserMultiSelectType(),
+                    CustomerUserSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(CustomerUser::class, 1),
+                        2 => $this->getEntity(CustomerUser::class, 2),
+                    ]),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    RequestProductItemType::class => $this->prepareRequestProductItemType(),
+                    ProductUnitSelectionType::class => $this->prepareProductUnitSelectionType(),
+                    CustomerUserMultiSelectType::class => $this->prepareCustomerUserMultiSelectType(),
+                    $this->getQuantityType(),
                 ],
                 [FormType::class => [new StripTagsExtensionStub($this)]]
             ),

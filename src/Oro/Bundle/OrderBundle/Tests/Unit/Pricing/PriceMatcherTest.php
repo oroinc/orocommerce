@@ -2,46 +2,54 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Pricing;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Psr\Log\LoggerInterface;
 
 class PriceMatcherTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var PriceMatcher */
-    protected $matcher;
-
     /** @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $provider;
+    private $provider;
 
     /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceScopeCriteriaFactory;
+    private $priceScopeCriteriaFactory;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
+    /** @var PriceMatcher */
+    private $matcher;
 
-    /**
-     * {@inheritdoc}
-     */
+    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+
+    private OrderLineItem $orderLineItem;
+
+    private Order $order;
+
+    private ProductPriceCriteria $productPriceCriteria;
+
     protected function setUp(): void
     {
         $this->provider = $this->createMock(MatchingPriceProvider::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+
+        $this->order = $this->createMock(Order::class);
+        $this->orderLineItem = $this->createMock(OrderLineItem::class);
+        $this->productPriceCriteria  = $this->createMock(ProductPriceCriteria::class);
 
         $this->matcher = new PriceMatcher(
             $this->provider,
             $this->priceScopeCriteriaFactory,
-            $this->logger
+            $this->productPriceCriteriaFactory
         );
     }
 
@@ -96,8 +104,7 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
             ->willReturn($scopeCriteria);
 
         $matchedPrices = ['matched', 'prices'];
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('getMatchingPrices')
             ->with($expectedLineItemsArray, $scopeCriteria)
             ->willReturn($matchedPrices);
@@ -105,259 +112,76 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         $this->matcher->getMatchingPrices($order);
     }
 
-    /**
-     * @dataProvider orderEventAddMatchedPricesDataProvider
-     */
-    public function testAddMatchedPrices(
-        array $orderLineItems = [],
-        array $matchedPrices = [],
-        array $expectedLineItemsPrices = []
-    ) {
-        $order = new Order();
-        $order->setCurrency('USD');
-
-        array_walk(
-            $orderLineItems,
-            function (OrderLineItem $orderLineItem) use ($order) {
-                $order->addLineItem($orderLineItem);
-            }
-        );
-
-        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->priceScopeCriteriaFactory->expects($this->once())
-            ->method('createByContext')
-            ->with($order)
-            ->willReturn($scopeCriteria);
-
-        $this->provider->expects($this->once())
-            ->method('getMatchingPrices')
-            ->with($this->isType('array'), $scopeCriteria)
-            ->willReturn($matchedPrices);
-
-        $this->matcher->addMatchingPrices($order);
-
-        foreach ($order->getLineItems() as $key => $orderLineItem) {
-            $this->assertArrayHasKey($key, $expectedLineItemsPrices);
-            $this->assertEquals($expectedLineItemsPrices[$key], $orderLineItem->getValue());
-        }
-    }
-
-    public function testFillMatchingPricesWithIncorrectLineItem()
+    public function testThatOrderLinesAreFilledWithCurrencyAndValue()
     {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 1]);
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('item');
+        $identifier = 'identifier';
 
-        $lineItem1 = new OrderLineItem();
-        $lineItem1->setProduct($product);
-        $lineItem1->setQuantity(10);
-        $lineItem1->setCurrency('USD');
-        $lineItem1->setProductUnit($productUnit);
+        $orderLineItems = new ArrayCollection([$this->orderLineItem]);
 
-        $lineItem2 = new OrderLineItem();
-        $lineItem2->setProduct($product);
-        $lineItem2->setQuantity(-10);
-        $lineItem2->setProductUnit($productUnit);
-
-        $order = new Order();
-        $order->setCurrency('USD');
-        $order->addLineItem($lineItem1);
-        $order->addLineItem($lineItem2);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Got error while trying to create new ProductPriceCriteria with message: "{message}"',
-                $this->isType('array')
-            );
-
-        $matchedPrices = [
-            '1-item-10-USD' => [
+        $this->order->method('getLineItems')->willReturn($orderLineItems);
+        $this->order->method('getCurrency')->willReturn('USD');
+        $this->productPriceCriteria->method('getIdentifier')->willReturn($identifier);
+        $this->provider->method('getMatchingPrices')->willReturn([
+            $identifier => [
                 'currency' => 'USD',
-                'value' => 42
+                'value' => 123
             ]
-        ];
-        $this->matcher->fillMatchingPrices($order, $matchedPrices);
+        ]);
 
-        $this->assertEquals(42, $lineItem1->getValue());
+        $this->productPriceCriteriaFactory->expects($this->once())->method('createListFromProductLineItems')->with(
+            $this->equalTo($orderLineItems),
+            $this->equalTo('USD')
+        )->willReturn([$this->productPriceCriteria]);
+
+        $this->orderLineItem->expects($this->once())->method('setCurrency')->with('USD');
+        $this->orderLineItem->expects($this->once())->method('setValue')->with('123');
+
+        $this->matcher->addMatchingPrices($this->order);
     }
 
-    /**
-     * @dataProvider orderEventAddMatchedPricesDataProvider
-     */
-    public function testFillMatchedPrices(
-        array $orderLineItems = [],
-        array $matchedPrices = [],
-        array $expectedLineItemsPrices = []
-    ) {
-        $order = new Order();
-        $order->setCurrency('USD');
-
-        array_walk(
-            $orderLineItems,
-            function (OrderLineItem $orderLineItem) use ($order) {
-                $order->addLineItem($orderLineItem);
-            }
-        );
-
-        $this->provider->expects($this->never())->method('getMatchingPrices');
-
-        $this->matcher->fillMatchingPrices($order, $matchedPrices);
-
-        foreach ($order->getLineItems() as $key => $orderLineItem) {
-            $this->assertArrayHasKey($key, $expectedLineItemsPrices);
-            $this->assertEquals($expectedLineItemsPrices[$key], $orderLineItem->getValue());
-        }
-    }
-
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function orderEventAddMatchedPricesDataProvider()
+    public function testThatOrderLineNotFilledWithValuesWhenProductPriceCriteriaIsNotCreated()
     {
-        $product = $this->getEntity(Product::class, ['id' => 1]);
-        $invalidProduct = $this->getEntity(Product::class);
-        $productUnit = $this->getEntity(ProductUnit::class, ['code' => 'set']);
-        $invalidProductUnit = $this->getEntity(ProductUnit::class);
+        $identifier = 'identifier';
 
-        return [
-            'empty prices' => [],
-            'no matched prices' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setCurrency('USD')
-                        ->setQuantity('3'),
-                ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
-            ],
-            'without product' => [
-                [
-                    (new OrderLineItem())
-                        ->setProductUnit($productUnit)
-                        ->setCurrency('USD')
-                        ->setQuantity('3'),
-                ],
-                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
-            ],
-            'invalid product' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($invalidProduct)
-                        ->setProductUnit($productUnit)
-                        ->setCurrency('USD')
-                        ->setQuantity('3'),
-                ],
-                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null]
-            ],
-            'without productUnit' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setCurrency('USD')
-                        ->setQuantity('3'),
-                ],
-                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
-            ],
-            'invalid productUnit' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($invalidProductUnit)
-                        ->setCurrency('USD')
-                        ->setQuantity('3'),
-                ],
-                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null]
-            ],
-            'without currency' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setQuantity('3'),
-                ],
-                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
-                ['100'],
-            ],
-            'invalid currency' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setQuantity('3')
-                        ->setCurrency(''),
-                ],
-                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
-                ['100']
-            ],
-            'without quantity' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setCurrency('USD'),
-                ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
-            ],
-            'invalid quantity #1' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setQuantity('string')
-                        ->setCurrency('USD'),
-                ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null]
-            ],
-            'invalid quantity #2' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setQuantity(-2)
-                        ->setCurrency('USD'),
-                ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null]
-            ],
-            'one matched price' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setCurrency('USD')
-                        ->setQuantity('3'),
-                ],
-                [
-                    '1-set-2-USD' => ['currency' => 'USD', 'value' => 100],
-                    '1-set-3-USD' => ['currency' => 'USD', 'value' => 150],
-                ],
-                ['150'],
-            ],
-            'currency from order' => [
-                [
-                    (new OrderLineItem())
-                        ->setProduct($product)
-                        ->setProductUnit($productUnit)
-                        ->setQuantity('3'),
-                ],
-                [
-                    '1-set-2-USD' => ['currency' => 'USD', 'value' => 100],
-                    '1-set-3-USD' => ['currency' => 'USD', 'value' => 150],
-                ],
-                ['150'],
-            ],
-        ];
+        $orderLineItems = new ArrayCollection([$this->orderLineItem]);
+
+        $this->order->method('getLineItems')->willReturn($orderLineItems);
+        $this->provider->method('getMatchingPrices')->willReturn([
+            $identifier => [
+                'currency' => 'USD',
+                'value' => 123
+            ]
+        ]);
+
+        $this->productPriceCriteriaFactory->expects($this->once())
+            ->method('createListFromProductLineItems')
+            ->willReturn([]);
+        $this->orderLineItem->expects($this->never())->method('setCurrency');
+        $this->orderLineItem->expects($this->never())->method('setValue');
+
+        $this->matcher->addMatchingPrices($this->order);
+    }
+
+    public function testThatOrderLineNotFilledWithValuesWhenIdentifiersAreDifferent()
+    {
+        $identifier1 = 'identifier1';
+        $identifier2 = 'identifier2';
+
+        $this->order->method('getLineItems')->willReturn(
+            new ArrayCollection([$this->orderLineItem])
+        );
+        $this->provider->method('getMatchingPrices')->willReturn([
+            $identifier1 => []
+        ]);
+        $this->productPriceCriteria->method('getIdentifier')->willReturn($identifier2);
+
+        $this->productPriceCriteriaFactory->expects($this->once())
+            ->method('createListFromProductLineItems')
+            ->willReturn([$this->productPriceCriteria]);
+
+        $this->orderLineItem->expects($this->never())->method('setCurrency');
+        $this->orderLineItem->expects($this->never())->method('setValue');
+
+        $this->matcher->addMatchingPrices($this->order);
     }
 }

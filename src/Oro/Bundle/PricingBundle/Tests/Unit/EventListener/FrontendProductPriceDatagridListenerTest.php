@@ -126,7 +126,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                     'sorters' => [
                         'columns' => [
                             'minimal_price_sort' => [
-                                'data_name' => 'minimal_price.CPL_ID_CURRENCY',
+                                'data_name' => 'decimal.minimal_price.CPL_ID_CURRENCY',
                                 'type' => 'decimal',
                             ]
                         ]
@@ -157,7 +157,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                     'sorters' => [
                         'columns' => [
                             'minimal_price_sort' => [
-                                'data_name' => 'minimal_price.PRICE_LIST_ID_CURRENCY',
+                                'data_name' => 'decimal.minimal_price.PRICE_LIST_ID_CURRENCY',
                                 'type' => 'decimal',
                             ]
                         ]

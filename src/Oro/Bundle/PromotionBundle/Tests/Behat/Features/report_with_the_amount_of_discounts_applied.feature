@@ -11,7 +11,6 @@ Feature: Report with the amount of discounts applied
     Given I login as administrator
     And go to Sales/Orders
     And click edit Order in grid
-    And click "Add Product"
     When I fill "Order Form" with:
       | Customer      | first customer |
       | Customer User | Amanda Cole    |

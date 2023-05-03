@@ -10,19 +10,14 @@ class WeightUnitTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var WeightUnit */
-    protected $entity;
+    private $entity;
 
     protected function setUp(): void
     {
         $this->entity = new WeightUnit();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->entity);
-    }
-
-    public function testAccessors()
+    public function testGettersAndSetters()
     {
         $properties = [
             ['code', '123'],

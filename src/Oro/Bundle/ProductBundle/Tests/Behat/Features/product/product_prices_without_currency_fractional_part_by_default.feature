@@ -74,7 +74,7 @@ Feature: Product prices without currency fractional part by default
 
   Scenario: Check Quick Order Form
     Given click "Quick Order Form"
-    And fill "QuickAddForm" with:
+    And fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
     And I wait for products to load
     When type "1" in "Quick Order Form > QTY1"

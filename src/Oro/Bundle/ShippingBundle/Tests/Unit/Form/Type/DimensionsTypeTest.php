@@ -7,21 +7,19 @@ use Oro\Bundle\ShippingBundle\Form\Type\DimensionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
 use Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class DimensionsTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\Dimensions';
-
-    /** @var DimensionsType */
-    protected $formType;
+    private DimensionsType $formType;
 
     protected function setUp(): void
     {
         $this->formType = new DimensionsType();
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(Dimensions::class);
         parent::setUp();
     }
 
@@ -31,13 +29,9 @@ class DimensionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($submittedData, $expectedData, $defaultData = null)
+    public function testSubmit(array $submittedData, mixed $expectedData, mixed $defaultData = null)
     {
         $form = $this->factory->create(DimensionsType::class, $defaultData);
 
@@ -49,10 +43,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty default data' => [
@@ -81,12 +72,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param string $code
-     *
-     * @return LengthUnit
-     */
-    protected function getLengthUnit($code)
+    private function getLengthUnit(string $code): LengthUnit
     {
         $lengthUnit = new LengthUnit();
         $lengthUnit->setCode($code);
@@ -94,40 +80,29 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         return $lengthUnit;
     }
 
-    /**
-     * @param LengthUnit $lengthUnit
-     * @param float $length
-     * @param float $width
-     * @param float $height
-     *
-     * @return Dimensions
-     */
-    protected function getDimensions(LengthUnit $lengthUnit, $length, $width, $height)
+    private function getDimensions(LengthUnit $lengthUnit, int $length, int $width, int $height): Dimensions
     {
         return Dimensions::create($length, $width, $height, $lengthUnit);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         $valueType = new DimensionsValueType();
-        $valueType->setDataClass('Oro\Bundle\ShippingBundle\Model\DimensionsValue');
+        $valueType->setDataClass(DimensionsValue::class);
 
         return [
             new PreloadedExtension(
                 [
-                    DimensionsType::class => $this->formType,
-                    LengthUnitSelectType::class => new EntityType(
-                        [
-                            'm' => $this->getLengthUnit('m'),
-                            'sm' => $this->getLengthUnit('sm'),
-                            'foot' => $this->getLengthUnit('foot')
-                        ],
-                        LengthUnitSelectType::NAME
-                    ),
-                    $valueType->getName() => $valueType
+                    $this->formType,
+                    LengthUnitSelectType::class => new EntityTypeStub([
+                        'm' => $this->getLengthUnit('m'),
+                        'sm' => $this->getLengthUnit('sm'),
+                        'foot' => $this->getLengthUnit('foot')
+                    ]),
+                    $valueType
                 ],
                 []
             ),

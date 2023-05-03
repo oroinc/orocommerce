@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Mapper;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Mapper\OrderMapperDecorator;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -23,10 +24,16 @@ class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
      */
     private $orderMapperDecorator;
 
+    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+
     protected function setUp(): void
     {
         $this->orderMapper = $this->createMock(MapperInterface::class);
-        $this->orderMapperDecorator = new OrderMapperDecorator($this->orderMapper);
+        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isCouponAware'])
+            ->getMock();
+        $this->orderMapperDecorator = new OrderMapperDecorator($this->orderMapper, $this->promotionAwareHelper);
     }
 
     public function testMapWhenSourceEntityIsShoppingList()
@@ -62,6 +69,7 @@ class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
         $expectedOrder = new Order();
         $expectedOrder->addAppliedCoupon($expectedAppliedCoupon);
 
+        $this->promotionAwareHelper->expects($this->any())->method('isCouponAware')->willReturn(true);
         static::assertEquals($expectedOrder, $this->orderMapperDecorator->map($checkout, $data));
     }
 }

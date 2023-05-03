@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
+use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeType;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -19,14 +19,16 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var WebCatalogScopeExtension */
-    protected $extension;
-
     /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $scopeManager;
+    private $scopeManager;
+
+    /** @var WebCatalogScopeExtension */
+    private $extension;
 
     protected function setUp(): void
     {
+        $this->scopeManager = $this->createMock(ScopeManager::class);
+
         $this->extension = new WebCatalogScopeExtension();
 
         parent::setUp();
@@ -70,23 +72,17 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         return [
             new PreloadedExtension(
                 [
-                    ScopeType::class => new ScopeType($this->scopeManager),
-                    EntityIdentifierType::class => new EntityIdentifierTypeStub(
-                        [
-                            1 => $this->getEntity(WebCatalog::class, ['id' => 1])
-                        ]
-                    ),
+                    new ScopeType($this->scopeManager),
+                    EntityIdentifierType::class => new EntityIdentifierTypeStub([
+                        1 => $this->getEntity(WebCatalog::class, ['id' => 1])
+                    ]),
                 ],
                 [
                     ScopeType::class => [$this->extension],

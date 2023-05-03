@@ -11,8 +11,9 @@ const messageModel = item => {
     const messageItem = {
         ...item,
         id: item.id + _.uniqueId('-bind-'),
-        notificationCell: 'item',
-        row_class_name: item.row_class_name + ' notification-row',
+        renderColumnName: 'item',
+        row_class_name: item.row_class_name + ' extension-row notification-row',
+        _templateKey: 'message',
         isMessage: true,
         isAuxiliary: true,
         row_attributes: {
@@ -60,8 +61,10 @@ export const flattenData = data => {
 
             item.row_class_name = itemClassName.join(' ');
             item.ids = [];
-            item._hasVariants = true;
+            item._hasVariants = item.isConfigurable || false;
+            item._hasKitItemLineItems = item.isKit || false;
             item._isVariant = false;
+            item._isKitItemLineItem = false;
 
             if (isError(item) || isHighlight(item)) {
                 flatData.push(messageModel(item));
@@ -96,11 +99,12 @@ export const flattenData = data => {
                 }
 
                 item.ids.push(subItem.id);
-                subItem._isVariant = true;
-                subItem._groupId = item.productId;
+                subItem._isVariant = item._hasVariants || false;
+                subItem._isKitItemLineItem = item._hasKitItemLineItems || false;
+                subItem._groupId = item.isKit ? item.checksum : item.productId;
                 subItem.row_class_name = className.join(' ');
                 subItem.row_attributes = {
-                    'data-product-group': item.productId
+                    'data-product-group': subItem._groupId
                 };
 
                 subDataCollection.push(subItem);
@@ -137,11 +141,22 @@ export const flattenData = data => {
 
 const shoppingListFlatDataBuilder = {
     processDatagridOptions(deferred, options) {
+        const {
+            parseResponseModels,
+            parseResponseOptions
+        } = options.metadata.options;
+
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
+                if (parseResponseModels) {
+                    resp = parseResponseModels(resp);
+                }
                 return 'data' in resp ? flattenData(resp.data) : resp;
             },
             parseResponseOptions: (resp = {}) => {
+                if (parseResponseOptions) {
+                    resp = parseResponseOptions(resp);
+                }
                 const {options = {}} = resp;
                 return {
                     reset: false,
@@ -164,14 +179,13 @@ const shoppingListFlatDataBuilder = {
             rowView: ShoppingListRow
         };
 
-        deferred.resolve();
-        return deferred;
+        return deferred.resolve();
     },
 
     /**
      * Init() function is required
      */
-    init: (deferred, options) => {
+    init(deferred, options) {
         options.gridPromise.done(grid => {
             grid.collection.on('beforeRemove', (modelToRemove, collection, options) => {
                 if (modelToRemove.get('_isVariant')) {

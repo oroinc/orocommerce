@@ -17,7 +17,7 @@ class ValidateProductUnitLabelFields implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
         $this->validateField('label', $context);

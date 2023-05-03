@@ -103,13 +103,13 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessException(): void
     {
-        $body = ['priceLists' => [1], 'version' => 1];
+        $body = ['priceLists' => [1], 'version' => 1, 'cpls' => [1]];
         $this->assertRepositories();
 
         $exception = new \Exception('Some error');
         $this->jobRunner
             ->expects($this->once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willThrowException($exception);
 
         $this->logger
@@ -201,8 +201,8 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->jobRunner
             ->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(fn ($ownerId, $name, $closure) => $closure($this->jobRunner, $job));
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(fn ($message, $closure) => $closure($this->jobRunner, $job));
         $this->jobRunner
             ->expects($this->once())
             ->method('createDelayed')
@@ -211,7 +211,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext = $this->createMock(DependentJobContext::class);
         $dependentContext->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => [10]]);
 
         $this->dependentJob
             ->expects($this->once())
@@ -305,8 +305,8 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->jobRunner
             ->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(fn ($ownerId, $name, $closure) => $closure($this->jobRunner, $job));
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(fn ($message, $closure) => $closure($this->jobRunner, $job));
         $this->jobRunner
             ->expects($this->once())
             ->method('createDelayed')
@@ -316,7 +316,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext
             ->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => [10]]);
 
         $this->dependentJob
             ->expects($this->once())

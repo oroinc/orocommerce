@@ -51,11 +51,11 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
         $this->priceRequestFactory = $this->createMock(PriceRequestFactory::class);
         $this->cache = $this->createMock(ShippingPriceCache::class);
 
-        $shippingService = (new ShippingService())
-            ->setCode('ups_identifier')
-            ->setDescription('ups_label')
-            ->setCountry(new Country('US'));
+        $shippingService = new ShippingService();
         ReflectionUtil::setId($shippingService, 1);
+        $shippingService->setCode('ups_identifier');
+        $shippingService->setDescription('ups_label');
+        $shippingService->setCountry(new Country('US'));
 
         $this->transport->expects(self::any())
             ->method('getApplicableShippingServices')
@@ -222,7 +222,8 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
             ],
             'rightTrackingNumber' => [
                 'number' => '1Z111E111111111111',
-                'resultURL' => UPSShippingMethod::TRACKING_URL . '1Z111E111111111111',
+                'resultURL' => 'https://www.ups.com/WebTracking/processInputRequest'
+                    . '?TypeOfInquiryNumber=T&InquiryNumber1=1Z111E111111111111',
             ],
         ];
     }

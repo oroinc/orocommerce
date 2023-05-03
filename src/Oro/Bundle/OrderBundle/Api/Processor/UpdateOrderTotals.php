@@ -66,7 +66,7 @@ class UpdateOrderTotals implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         $orders = $context->get(self::ORDERS);
         foreach ($orders as [$order, $form, $orderFieldName]) {

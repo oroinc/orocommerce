@@ -28,41 +28,22 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $environment;
 
-    /**
-     * @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
-    /**
-     * @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $entityConfigProvider;
-
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $translator;
-
-    /**
-     * @var AttributeFormViewListener
-     */
+    /** @var AttributeFormViewListener */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->environment = $this->createMock(Environment::class);
         $this->attributeManager = $this->createMock(AttributeManager::class);
 
-        $this->entityConfigProvider = $this->createMock(ConfigProvider::class);
-        $this->entityConfigProvider->expects($this->any())
+        $entityConfigProvider = $this->createMock(ConfigProvider::class);
+        $entityConfigProvider->expects($this->any())
             ->method('getConfig')
             ->willReturnMap([
                 [
@@ -91,8 +72,8 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                 ],
             ]);
 
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
             ->method('trans')
             ->willReturnMap([
                 ['wysiwyg field label', [], null, null, 'translated wysiwyg field label'],
@@ -102,35 +83,29 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener = new AttributeFormViewListener(
             $this->attributeManager,
-            $this->entityConfigProvider,
-            $this->translator
+            $entityConfigProvider,
+            $translator
         );
     }
 
     /**
      * @dataProvider viewListDataProvider
-     * @param array $groupsData
-     * @param array $scrollData
-     * @param string $templateHtml
-     * @param array $expectedData
      */
     public function testViewList(
         array $groupsData,
         array $scrollData,
-        $templateHtml,
+        string $templateHtml,
         array $expectedData
     ) {
         $entity = $this->getEntity(TestActivityTarget::class, [
             'attributeFamily' => $this->getEntity(AttributeFamily::class),
         ]);
 
-        $this->environment
-            ->expects($templateHtml ? $this->once() : $this->never())
+        $this->environment->expects($templateHtml ? $this->once() : $this->never())
             ->method('render')
             ->willReturn($templateHtml);
 
-        $this->attributeManager
-            ->expects($this->once())
+        $this->attributeManager->expects($this->once())
             ->method('getGroupsWithAttributes')
             ->willReturn($groupsData);
 
@@ -141,10 +116,9 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function viewListDataProvider()
+    public function viewListDataProvider(): array
     {
         $label = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'Group1Title']);
         $group1 = $this->getEntity(AttributeGroupStub::class, ['code' => 'group1', 'label' => $label]);
@@ -605,31 +579,23 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider editDataProvider
-     *
-     * @param array $groupsData
-     * @param array $scrollData
-     * @param string $fieldName
-     * @param string $templateHtml
-     * @param array $expectedData
      */
     public function testOnEdit(
         array $groupsData,
         array $scrollData,
         string $fieldName,
-        $templateHtml,
+        string $templateHtml,
         array $expectedData
     ) {
         $entity = $this->getEntity(TestActivityTarget::class, [
             'attributeFamily' => $this->getEntity(AttributeFamily::class),
         ]);
 
-        $this->environment
-            ->expects($templateHtml ? $this->once() : $this->never())
+        $this->environment->expects($templateHtml ? $this->once() : $this->never())
             ->method('render')
             ->willReturn($templateHtml);
 
-        $this->attributeManager
-            ->expects($this->once())
+        $this->attributeManager->expects($this->once())
             ->method('getGroupsWithAttributes')
             ->willReturn($groupsData);
 
@@ -650,10 +616,9 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function editDataProvider()
+    public function editDataProvider(): array
     {
         $label = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'Group1Title']);
         $group1 = $this->getEntity(AttributeGroupStub::class, ['code' => 'group1', 'label' => $label]);

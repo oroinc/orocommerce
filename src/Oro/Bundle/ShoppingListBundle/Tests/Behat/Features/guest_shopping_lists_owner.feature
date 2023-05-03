@@ -1,4 +1,5 @@
 @ticket-BB-10050-owner
+@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroShoppingListBundle:ProductFixture.yml
 @fixture-OroShoppingListBundle:UserFixture.yml
 Feature: Guest shopping lists owner

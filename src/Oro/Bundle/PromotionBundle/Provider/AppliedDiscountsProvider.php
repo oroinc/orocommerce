@@ -6,7 +6,6 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 
 /**
  * Provides data about discounts for given Orders and OrderLineItems
@@ -18,7 +17,7 @@ class AppliedDiscountsProvider
      *
      * @see \Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts::getDiscountsAmountByOrder
      *
-     * @param Order|AppliedPromotionsAwareInterface $order
+     * @param Order $order
      *
      * @return float
      */
@@ -41,7 +40,7 @@ class AppliedDiscountsProvider
      *
      * @see \Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts::getShippingDiscountsAmountByOrder
      *
-     * @param Order|AppliedPromotionsAwareInterface $order
+     * @param Order $order
      * @return float
      */
     public function getShippingDiscountsAmountByOrder(Order $order): float
@@ -61,7 +60,6 @@ class AppliedDiscountsProvider
     public function getDiscountsAmountByLineItem(OrderLineItem $lineItem): float
     {
         $amount = 0.0;
-        /** @var AppliedPromotionsAwareInterface $order */
         $order = $lineItem->getOrder();
         foreach ($order->getAppliedPromotions() as $appliedPromotion) {
             if ($appliedPromotion->getType() === ShippingDiscount::NAME) {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Condition;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -11,31 +10,20 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 /**
- * Check applicable shipping methods
+ * Check applicable shipping methods for a specific shipping context.
  * Usage:
  * @has_applicable_shipping_methods:
- *      entity: ~
+ *      shippingContext: ~
  */
 class HasApplicableShippingMethods extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'has_applicable_shipping_methods';
+    private ShippingPriceProviderInterface $shippingPriceProvider;
+    private mixed $shippingContext = null;
 
-    /** @var ShippingMethodProviderInterface */
-    protected $shippingMethodProvider;
-
-    /** ShippingPriceProvider */
-    protected $shippingPriceProvider;
-
-    /** @var mixed */
-    protected $shippingContext;
-
-    public function __construct(
-        ShippingMethodProviderInterface $shippingMethodProvider,
-        ShippingPriceProviderInterface $shippingPriceProvider
-    ) {
-        $this->shippingMethodProvider = $shippingMethodProvider;
+    public function __construct(ShippingPriceProviderInterface $shippingPriceProvider)
+    {
         $this->shippingPriceProvider = $shippingPriceProvider;
     }
 
@@ -44,9 +32,9 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
      */
     public function initialize(array $options)
     {
-        if (array_key_exists('shippingContext', $options)) {
+        if (\array_key_exists('shippingContext', $options)) {
             $this->shippingContext = $options['shippingContext'];
-        } elseif (array_key_exists(0, $options)) {
+        } elseif (\array_key_exists(0, $options)) {
             $this->shippingContext = $options[0];
         }
 
@@ -62,7 +50,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
      */
     public function getName()
     {
-        return self::NAME;
+        return 'has_applicable_shipping_methods';
     }
 
     /**
@@ -72,13 +60,11 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     {
         /** @var ShippingContextInterface $shippingContext */
         $shippingContext = $this->resolveValue($context, $this->shippingContext, false);
-
-        $methodsData = [];
-        if (null !== $shippingContext) {
-            $methodsData = $this->shippingPriceProvider->getApplicableMethodsViews($shippingContext);
+        if (null === $shippingContext) {
+            return false;
         }
 
-        return count($methodsData) !== 0;
+        return !$this->shippingPriceProvider->getApplicableMethodsViews($shippingContext)->isEmpty();
     }
 
     /**

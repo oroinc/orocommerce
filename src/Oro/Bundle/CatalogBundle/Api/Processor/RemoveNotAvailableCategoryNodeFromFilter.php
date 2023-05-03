@@ -16,11 +16,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
 {
-    /** @var string */
-    private $filterKey;
-
-    /** @var CategoryNodeRepository */
-    private $categoryNodeRepository;
+    private string $filterKey;
+    private CategoryNodeRepository $categoryNodeRepository;
 
     public function __construct(string $filterKey, CategoryNodeRepository $categoryNodeRepository)
     {
@@ -31,7 +28,7 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 
@@ -56,7 +53,7 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
         if ($value instanceof Range) {
             throw new RuntimeException('The filter does not support the range value.');
         }
-        if (is_bool($value)) {
+        if (\is_bool($value)) {
             return;
         }
 
@@ -65,7 +62,7 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
             $context->getConfig(),
             $context->getRequestType()
         );
-        $numberOfAvailableIds = count($availableIds);
+        $numberOfAvailableIds = \count($availableIds);
         if ($numberOfAvailableIds > 1) {
             $filterValue->setValue($availableIds);
         } elseif (1 === $numberOfAvailableIds) {

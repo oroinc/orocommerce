@@ -1,0 +1,6 @@
+{%- for unitData in value -%}
+    <span data-role="unit-with-precision">
+        {{- oro_format_product_unit_precision_label(unitData.code, unitData.precision) -}}
+    </span>
+    {%- if not loop.last %},<br/>{%- endif -%}
+{%- endfor -%}

@@ -9,7 +9,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotBlankOneOfValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): NotBlankOneOfValidator
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())

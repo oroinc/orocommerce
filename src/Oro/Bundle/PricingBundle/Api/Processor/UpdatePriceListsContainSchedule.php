@@ -16,8 +16,7 @@ class UpdatePriceListsContainSchedule implements ProcessorInterface
     /** data structure: [price list id => price list, ...] */
     private const PRICE_LISTS = 'price_lists_to_update_contain_schedule';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
@@ -54,7 +53,7 @@ class UpdatePriceListsContainSchedule implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var PriceList[] $priceLists */
         $priceLists = $context->get(self::PRICE_LISTS);

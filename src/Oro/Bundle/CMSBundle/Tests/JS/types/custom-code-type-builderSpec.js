@@ -2,8 +2,9 @@ import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 import 'oroui/js/app/modules/layout-module';
+import '../fixtures/load-plugin-modules';
 
-describe('orocms/js/app/grapesjs/type-builders/custom-code-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/custom-code-type', () => {
     let grapesjsEditorView;
     let customCodeTypeBuilder;
     let editor;
@@ -65,11 +66,11 @@ describe('orocms/js/app/grapesjs/type-builders/custom-code-type-builder', () => 
 
             expect(customCodeTypeBuilder.Model.prototype.defaults.tagName).toEqual('div');
             expect(customCodeTypeBuilder.Model.prototype.defaults.type).toEqual('custom-code');
-            expect(customCodeTypeBuilder.Model.prototype.defaults.copyable).toBeFalsy();
-            expect(customCodeTypeBuilder.Model.prototype.defaults.stylable).toBeFalsy();
-            expect(customCodeTypeBuilder.Model.prototype.defaults.droppable).toBeFalsy();
+            expect(customCodeTypeBuilder.Model.prototype.defaults.copyable).toBe(false);
+            expect(customCodeTypeBuilder.Model.prototype.defaults.stylable).toBe(false);
+            expect(customCodeTypeBuilder.Model.prototype.defaults.droppable).toBe(false);
             expect(customCodeTypeBuilder.Model.prototype.defaults.traits).toEqual([]);
-            expect(customCodeTypeBuilder.Model.prototype.defaults.disableSelectorManager).toBeTruthy();
+            expect(customCodeTypeBuilder.Model.prototype.defaults.disableSelectorManager).toBe(true);
 
             expect(customCodeTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

@@ -28,15 +28,13 @@
                      'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
                  }|json_encode }}"
                  data-dom-relocation-options="{{ {
-                     responsive: [
-                         {
-                             viewport: {
-                                 maxScreenType: 'tablet',
-                             },
-                             moveTo: '[data-switcher-currency-target]'
-                         }
-                     ]
-                 }|json_encode }}">
+                    responsive: [
+                        {
+                            viewport: 'tablet',
+                            moveTo: '[data-switcher-currency-target]'
+                        }
+                    ]
+                }|json_encode }}">
                 <ul class="oro-toolbar__list">
                     {% for currency in currencies %}
                     <li class="oro-toolbar__list-item currency-switcher__item currency-switcher__item--{{ currency|lower }}">
@@ -159,10 +157,13 @@
     {% set productTierClass = productTierClass|default('btn btn--default btn--size-s product-tier-prices') %}
     {% set productTierIcon = productTierIcon|default('fa-caret-down fa--no-offset') %}
     {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
+    {% if toggleAttrValue is not defined %}
+        {% set toggleAttrValue = 'popover' %}
+    {% endif %}
 
     <button class="{{ productTierClass }}"
           data-role="price-hint-trigger"
-          data-toggle="popover"
+          {% if toggleAttrValue is not empty %}data-toggle="{{ toggleAttrValue }}"{% endif %}
           data-placement="bottom"
           data-close="false"
           data-class="prices-hint-content"

@@ -10,14 +10,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityListenerTest
 {
-    /**
-     * @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject */
     protected $preUpdateEventArgs;
 
-    /**
-     * @var BaseProductPriceEntityListener
-     */
+    /** @var BaseProductPriceEntityListener */
     protected $listener;
 
     protected function setUp(): void
@@ -27,16 +23,9 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
         parent::setUp();
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        unset($this->preUpdateEventArgs);
-    }
-
     public function testPostPersist()
     {
-        list($baseProductPrice, $product, $priceList) = $this->getEntities();
+        [$baseProductPrice, $product, $priceList] = $this->getEntities();
 
         $this->assertRecalculateByEntity(1, [], [$product], $priceList->getId());
 
@@ -45,7 +34,7 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
 
     public function testPreUpdate()
     {
-        list($baseProductPrice, $product, $priceList) = $this->getEntities();
+        [$baseProductPrice, $product, $priceList] = $this->getEntities();
 
         $this->preUpdateEventArgs->expects($this->any())
             ->method('getEntityChangeSet')
@@ -72,23 +61,17 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
 
     public function testPreRemove()
     {
-        list($baseProductPrice, $product, $priceList) = $this->getEntities();
+        [$baseProductPrice, $product, $priceList] = $this->getEntities();
 
         $this->assertRecalculateByEntity(1, [], [$product], $priceList->getId());
 
         $this->listener->preRemove($baseProductPrice);
     }
 
-    /**
-     * @return array
-     */
-    protected function getEntities()
+    protected function getEntities(): array
     {
-        /** @var BaseProductPrice $baseProductPrice */
         $baseProductPrice = $this->getEntity(BaseProductPrice::class, ['id' => 1]);
-        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
-        /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 3]);
 
         $baseProductPrice->setProduct($product);

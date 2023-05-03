@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,27 +15,65 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
+class QuickAddProcessorTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ShoppingListLineItemHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingListLineItemHandler;
+
+    /** @var ProductMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productMapper;
+
+    /** @var MessageGenerator|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageGenerator;
+
+    /** @var QuickAddProcessor */
+    private $processor;
+
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->shoppingListLineItemHandler = $this->createMock(ShoppingListLineItemHandler::class);
+        $this->productMapper = $this->createMock(ProductMapperInterface::class);
+        $this->messageGenerator = $this->createMock(MessageGenerator::class);
 
         $this->processor = new QuickAddProcessor(
-            $this->handler,
-            $this->registry,
-            $this->messageGenerator,
-            $this->aclHelper
+            $this->shoppingListLineItemHandler,
+            $this->productMapper,
+            $this->messageGenerator
         );
-        $this->processor->setProductClass(Product::class);
     }
 
     /**
-     * {@inheritdoc}
+     * @dataProvider isAllowedDataProvider
      */
-    public function getProcessorName(): string
+    public function testIsAllowed(bool $isAllowed): void
     {
-        return QuickAddProcessor::NAME;
+        $this->shoppingListLineItemHandler->expects(self::once())
+            ->method('isAllowed')
+            ->willReturn($isAllowed);
+
+        self::assertSame($isAllowed, $this->processor->isAllowed());
+    }
+
+    public function isAllowedDataProvider(): array
+    {
+        return [[false], [true]];
+    }
+
+    public function testProcessEmpty(): void
+    {
+        $data = [];
+        $request = new Request();
+
+        $this->shoppingListLineItemHandler->expects(self::never())
+            ->method('getShoppingList');
+
+        $this->productMapper->expects(self::never())
+            ->method('mapProducts');
+
+        $this->shoppingListLineItemHandler->expects(self::never())
+            ->method('createForShoppingList');
+
+        self::assertNull($this->processor->process($data, $request));
     }
 
     /**
@@ -43,13 +82,19 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
     public function testProcess(
         array $data,
         Request $request,
-        array $productIds = [],
-        array $productQuantities = [],
+        array $productMap,
+        array $productIds,
+        array $productQuantities,
         bool $failed = false
-    ) {
+    ): void {
+        // guard
+        if ($productMap) {
+            self::assertCount(count($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]), $productMap);
+        }
+
         $entitiesCount = count($data);
 
-        $this->handler->expects($this->any())
+        $this->shoppingListLineItemHandler->expects(self::any())
             ->method('getShoppingList')
             ->willReturnCallback(function ($shoppingListId) {
                 $shoppingList = new ShoppingList();
@@ -60,91 +105,60 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                 return $shoppingList;
             });
 
-        $result = [];
-        foreach ($productIds as $sku => $id) {
-            $result[] = ['id' => $id, 'sku' => $sku];
-        }
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
-            ->method('getArrayResult')
-            ->willReturn($result);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-
-        $this->productRepository->expects($this->once())
-            ->method('getProductsIdsBySkuQueryBuilder')
-            ->with(array_column($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY], 'productSku'))
-            ->willReturn($queryBuilder);
-
-        $this->aclHelper->expects($this->once())
-            ->method('apply')
-            ->with($queryBuilder)
-            ->willReturn($query);
+        $this->productMapper->expects(self::once())
+            ->method('mapProducts')
+            ->willReturnCallback(function (ArrayCollection $collection) use ($productMap) {
+                foreach ($productMap as $i => $productId) {
+                    if (null !== $productId) {
+                        $item = $collection[$i];
+                        self::assertInstanceOf(\ArrayAccess::class, $item);
+                        $item['productId'] = $productId;
+                    }
+                }
+            });
 
         if ($failed) {
-            $this->handler->expects($this->once())
+            $this->shoppingListLineItemHandler->expects(self::once())
                 ->method('createForShoppingList')
                 ->willThrowException(new AccessDeniedException());
         } else {
-            $this->handler->expects($data ? $this->once() : $this->never())
+            $this->shoppingListLineItemHandler->expects($data ? self::once() : self::never())
                 ->method('createForShoppingList')
                 ->with(
-                    $this->isInstanceOf(ShoppingList::class),
+                    self::isInstanceOf(ShoppingList::class),
                     array_values($productIds),
                     $productQuantities
                 )
                 ->willReturn($entitiesCount);
         }
 
-        if ($failed) {
-            $this->assertFlashMessage($request, true);
-        } elseif ($entitiesCount) {
-            $this->assertFlashMessage($request);
-        }
-
-        $this->processor->process($data, $request);
-    }
-
-    public function testProcessEmpty()
-    {
-        $data = [];
-        $request = new Request();
-
-        $this->handler->expects($this->never())
-            ->method('getShoppingList');
-
-        $this->productRepository->expects($this->never())
-            ->method('getProductsIdsBySkuQueryBuilder')
-            ->with([]);
-
-        $this->aclHelper->expects($this->never())
-            ->method('apply');
-
-        $this->handler->expects($this->never())
-            ->method('createForShoppingList');
-
-        $this->processor->process($data, $request);
-    }
-
-    private function assertFlashMessage(Request $request, bool $isFailedMessage = false): void
-    {
-        $message = 'test message';
-
-        $this->messageGenerator->expects($this->once())
-            ->method($isFailedMessage ? 'getFailedMessage' : 'getSuccessMessage')
-            ->willReturn($message);
-
         $flashBag = $this->createMock(FlashBagInterface::class);
-        $flashBag->expects($this->once())
-            ->method('add')
-            ->with($isFailedMessage ? 'error' : 'success', $message)
-            ->willReturn($flashBag);
-
         $session = $this->createMock(Session::class);
-        $session->expects($this->once())
+        $session->expects(self::once())
             ->method('getFlashBag')
             ->willReturn($flashBag);
-
         $request->setSession($session);
+
+        $message = 'test message';
+        if ($failed) {
+            $this->messageGenerator->expects(self::once())
+                ->method('getFailedMessage')
+                ->willReturn($message);
+            $flashBag->expects(self::once())
+                ->method('add')
+                ->with('error', $message)
+                ->willReturnSelf();
+        } elseif ($entitiesCount) {
+            $this->messageGenerator->expects(self::once())
+                ->method('getSuccessMessage')
+                ->willReturn($message);
+            $flashBag->expects(self::once())
+                ->method('add')
+                ->with('success', $message)
+                ->willReturnSelf();
+        }
+
+        self::assertNull($this->processor->process($data, $request));
     }
 
     public function processDataProvider(): array
@@ -158,8 +172,9 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ]
                 ],
                 new Request(),
-                ['sku1' => 1, 'sku2' => 2],
-                ['SKU1' => ['item' => 2], 'SKU2' => ['kg' => 3]]
+                [1, 2],
+                [1, 2],
+                [1 => ['item' => 2], 2 => ['kg' => 3]]
             ],
             'shopping list with same products couple of times' => [
                 [
@@ -167,13 +182,15 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                         ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'item'],
                         ['productSku' => 'sku1Абв', 'productQuantity' => 3, 'productUnit' => 'kg'],
                         ['productSku' => 'sku1абВ', 'productQuantity' => 4, 'productUnit' => 'set'],
+                        ['productSku' => 'sku1абв', 'productQuantity' => 5, 'productUnit' => 'item'],
                         ['productSku' => 'sku2', 'productQuantity' => 5, 'productUnit' => 'item'],
                         ['productSku' => 'sku2', 'productQuantity' => 6, 'productUnit' => 'kg'],
                     ]
                 ],
                 new Request(),
-                ['sku1абв' => 1, 'sku2' => 2],
-                ['SKU1АБВ' => ['item' => 2, 'kg' => 3, 'set' => 4], 'SKU2' => ['item' => 5, 'kg' => 6]]
+                [1, 1, 1, 1, 2, 2],
+                [1, 2],
+                [1 => ['item' => 7, 'kg' => 3, 'set' => 4], 2 => ['item' => 5, 'kg' => 6]]
             ],
             'shopping list with products skus in descending order' => [
                 [
@@ -184,7 +201,8 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                 ],
                 new Request(),
                 [],
-                ['SKU2' => ['kg' => 12], 'SKU1' => ['item' => 11]]
+                [],
+                []
             ],
             'existing shopping list' => [
                 [
@@ -194,8 +212,9 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
-                ['sku1' => 1, 'sku2' => 2],
-                ['SKU1' => ['item' => 2], 'SKU2' => ['kg' => 3]]
+                [1, 2],
+                [1, 2],
+                [1 => ['item' => 2], 2 => ['kg' => 3]]
             ],
             'ids sorting' => [
                 [
@@ -205,8 +224,9 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
-                ['sku2' => 2, 'sku1' => 1],
-                ['SKU1' => ['kg' => 2], 'SKU2' => ['item' => 3]]
+                [2, 1],
+                [2, 1],
+                [2 => ['item' => 3], 1 => ['kg' => 2]]
             ],
             'process failed' => [
                 [
@@ -216,8 +236,9 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ],
                 ],
                 new Request(),
-                ['sku1' => 1, 'sku2' => 2],
-                ['SKU1' => ['kg' => 2], 'SKU2' => ['item' => 3]],
+                [1, 2],
+                [1, 2],
+                [1 => ['kg' => 2], 2 => ['item' => 3]],
                 true
             ],
         ];

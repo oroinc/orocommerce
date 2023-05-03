@@ -51,7 +51,7 @@ services:
             - { name: form.type, alias: oro_shipping_weight }
 
     oro_shipping.form.type.shipping_methods_configs_rule:
-        class: 'Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType'
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType
         tags:
             - { name: form.type }
 
@@ -84,17 +84,17 @@ services:
             - '@form.factory'
 
     oro_shipping.form_event_subscriber.method_type_config_collection_subscriber:
-        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodTypeConfigCollectionSubscriber'
+        class: Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodTypeConfigCollectionSubscriber
         arguments:
             - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.form_event_subscriber.method_config_collection_subscriber:
-        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigCollectionSubscriber'
+        class: Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigCollectionSubscriber
         arguments:
             - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.form_event_subscriber.method_config_subscriber:
-        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber'
+        class: Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber
         arguments:
             - '@form.factory'
             - '@oro_shipping.shipping_method_provider'
@@ -128,7 +128,7 @@ services:
             - { name: form.type, alias: oro_shipping_product_shipping_options_collection }
 
     oro_shipping.form.extension.product_type:
-        class: 'Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension'
+        class: Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension
         arguments:
             - "@doctrine"
         tags:
@@ -142,9 +142,9 @@ services:
             - { name: form.type }
 
     oro_shipping.form.type.shipping_method_select:
-        class: 'Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType'
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType
         arguments:
-            - '@oro_shipping.provider.basic_shipping_methods_choices'
+            - '@oro_shipping.provider.shipping_methods_choices'
             - '@oro_shipping.provider.shipping_method_icon'
             - '@assets.packages'
         tags:

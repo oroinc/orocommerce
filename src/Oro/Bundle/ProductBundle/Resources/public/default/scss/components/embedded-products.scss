@@ -7,7 +7,6 @@
     margin: 0 $embedded-products-btn-arrow-width;
 
     &__item {
-        width: math.div(100%, $embedded-products-item-count-desktop);
         height: initial;
         display: flex;
         flex-direction: column;
@@ -18,7 +17,13 @@
             flex-direction: column;
         }
 
-        &:not(.slick-slide) {
+        // Styles that apply when tiles are disabled.
+        &:not(.tiles-item) {
+            width: math.div(100%, $embedded-products-item-count-desktop);
+        }
+
+        // We need to exclude the influence of styles when the tiles are on.
+        &:not(.slick-slide):not(.tiles-item) {
             min-width: math.div(100%, $embedded-products-item-count-desktop);
         }
     }
@@ -44,24 +49,32 @@
     }
 }
 
-@include breakpoint('strict-tablet-small') {
+@include breakpoint('tablet-small') {
     .embedded-products {
         &__item {
-            width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+            // Styles that apply when tiles are disabled.
+            &:not(.tiles-item) {
+                width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+            }
 
-            &:not(.slick-slide) {
+            // We need to exclude the influence of styles when the tiles are on.
+            &:not(.slick-slide):not(.tiles-item) {
                 min-width: math.div(100%, $embedded-products-item-width-count-tablet-small);
             }
         }
     }
 }
 
-@include breakpoint('strict-mobile-big') {
+@include breakpoint('mobile-big') {
     .embedded-products {
         &__item {
-            width: math.div(100%, $embedded-products-item-count-mobile-big);
+            // Styles that apply when tiles are disabled.
+            &:not(.tiles-item) {
+                width: math.div(100%, $embedded-products-item-count-mobile-big);
+            }
 
-            &:not(.slick-slide) {
+            // We need to exclude the influence of styles when the tiles are on.
+            &:not(.slick-slide):not(.tiles-item) {
                 min-width: math.div(100%, $embedded-products-item-count-mobile-big);
             }
         }
@@ -71,9 +84,13 @@
 @include breakpoint('mobile-landscape') {
     .embedded-products {
         &__item {
-            width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+            // Styles that apply when tiles are disabled.
+            &:not(.tiles-item) {
+                width: math.div(100%, $embedded-products-item-count-mobile-landscape);
+            }
 
-            &:not(.slick-slide) {
+            // We need to exclude the influence of styles when the tiles are on.
+            &:not(.slick-slide):not(.tiles-item) {
                 min-width: math.div(100%, $embedded-products-item-count-mobile-landscape);
             }
         }

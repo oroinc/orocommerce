@@ -2,19 +2,19 @@ services:
     oro_inventory.service.fallback_fields_form_view:
         abstract: true
         arguments:
-            - "@request_stack"
-            - "@doctrine"
-            - "@translator"
+            - '@request_stack'
+            - '@doctrine'
+            - '@translator'
 
     oro_inventory.listener.update_entity_config_relations:
-        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer'
+        class: Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer
         arguments:
             - '@oro_inventory.entity_config_relations_migration'
         tags:
             - { name: oro_entity_extend.warmer, priority: -500 }
 
     oro_inventory.entity_config_relations_migration:
-        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\EntityConfigRelationsMigration'
+        class: Oro\Bundle\InventoryBundle\CacheWarmer\EntityConfigRelationsMigration
         arguments:
             - '@doctrine'
             - '@logger'
@@ -40,21 +40,12 @@ services:
             - '@translator'
             - '@oro_locale.formatter.date_time'
 
-    oro_inventory.validator.product_row_quantity_validator:
-        class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantityValidator'
-        arguments:
-            - "@oro_inventory.validator.quantity_to_order_validator"
-            - "@oro_entity.doctrine_helper"
-            - "@oro_security.acl_helper"
-        tags:
-            - { name: validator.constraint_validator, alias: oro_warehouse_product_row_validator }
-
     oro_inventory.validator.product_quantity_to_order_limit_validator:
-        class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator'
+        class: Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator
         arguments:
-            - "@oro_inventory.validator.quantity_to_order_validator"
+            - '@oro_inventory.validator.quantity_to_order_validator'
         tags:
-            - { name: validator.constraint_validator, alias: oro_inventory_product_quantity_to_order_limit_validator }
+            - { name: validator.constraint_validator }
 
     oro_inventory.validator.checkout_ship_until_validator:
         class: Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntilValidator
@@ -62,30 +53,27 @@ services:
             - '@oro_inventory.provider.upcoming_product_provider'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
-            - { name: validator.constraint_validator, alias: oro_inventory_checkout_ship_until_validator }
+            - { name: validator.constraint_validator }
 
     oro_inventory.manager.inventory_quantity_manager:
-        class: 'Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager'
+        class: Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager
         arguments:
-            - "@oro_entity.fallback.resolver.entity_fallback_resolver"
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
 
     oro_inventory.handler.inventory_decrement_status_handler:
-        class: 'Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler'
+        class: Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler
         arguments:
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
             - '@oro_entity.doctrine_helper'
 
     oro_inventory.manager.inventory_manager:
-        class: 'Oro\Bundle\InventoryBundle\Inventory\InventoryManager'
+        class: Oro\Bundle\InventoryBundle\Inventory\InventoryManager
         public: true
         arguments:
             - '@oro_entity.doctrine_helper'
 
-    Oro\Bundle\InventoryBundle\Inventory\InventoryManager:
-        alias: 'oro_inventory.manager.inventory_manager'
-
     oro_inventory.provider.inventory_quantity:
-        class: 'Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProvider'
+        class: Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProvider
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_inventory.manager.inventory_quantity_manager'
@@ -101,8 +89,8 @@ services:
     oro_inventory.inventory.low_inventory_provider:
         class: Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider
         arguments:
-            - "@oro_entity.fallback.resolver.entity_fallback_resolver"
-            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
+            - '@doctrine'
         tags:
             - { name: layout.data_provider, alias: low_inventory }
 
@@ -110,8 +98,9 @@ services:
         class: Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider
         arguments:
              - '@oro_entity.fallback.resolver.entity_fallback_resolver'
-             - '@oro_entity.doctrine_helper'
+             - '@doctrine'
              - '@oro_config.manager'
+             - '@property_accessor'
         tags:
             - { name: layout.data_provider, alias: upcoming_product }
 
@@ -188,3 +177,9 @@ services:
                 permission: VIEW
                 entityClass: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
                 loggedUserClass: Oro\Bundle\UserBundle\Entity\User
+
+    Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrderValidator:
+        arguments:
+            - '@oro_inventory.validator.quantity_to_order_validator'
+        tags:
+            - { name: validator.constraint_validator }

@@ -5,27 +5,12 @@ namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Represents a service to handle logic related to quick order process.
+ */
 interface ComponentProcessorInterface
 {
-    /**
-     * @param array $data
-     * @param Request $request
-     * @return Response|null
-     */
-    public function process(array $data, Request $request);
+    public function process(array $data, Request $request): ?Response;
 
-    /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return bool
-     */
-    public function isValidationRequired();
-
-    /**
-     * @return boolean
-     */
-    public function isAllowed();
+    public function isAllowed(): bool;
 }

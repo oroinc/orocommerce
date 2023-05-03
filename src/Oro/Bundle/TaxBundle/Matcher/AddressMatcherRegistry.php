@@ -6,18 +6,15 @@ use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
- * The registry of services that find TaxRules by address.
+ * The registry of services that find tax rules by an address.
  */
 class AddressMatcherRegistry implements ResetInterface
 {
     /** @var string[] */
-    private $resolvableTypes;
-
-    /** @var ContainerInterface */
-    private $matcherContainer;
-
+    private array $resolvableTypes;
+    private ContainerInterface $matcherContainer;
     /** @var MatcherInterface[]|null */
-    private $matchers;
+    private ?array $matchers = null;
 
     /**
      * @param string[]           $resolvableTypes
@@ -32,7 +29,7 @@ class AddressMatcherRegistry implements ResetInterface
     /**
      * {@inheritDoc}
      */
-    public function reset()
+    public function reset(): void
     {
         $this->matchers = null;
     }
@@ -40,7 +37,7 @@ class AddressMatcherRegistry implements ResetInterface
     /**
      * @return MatcherInterface[] [resolvable type => matcher, ...]
      */
-    public function getMatchers()
+    public function getMatchers(): array
     {
         if (null === $this->matchers) {
             $this->matchers = [];
@@ -53,16 +50,10 @@ class AddressMatcherRegistry implements ResetInterface
     }
 
     /**
-     * @param string $resolvableType
-     *
-     * @return MatcherInterface
-     *
      * @throws \InvalidArgumentException ff a matcher for the given resolvable type is not registered
      */
-    public function getMatcherByType($resolvableType)
+    public function getMatcherByType(string $resolvableType): MatcherInterface
     {
-        $resolvableType = (string)$resolvableType;
-
         $matcher = null;
         if (null === $this->matchers) {
             if ($this->matcherContainer->has($resolvableType)) {

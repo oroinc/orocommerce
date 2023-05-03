@@ -59,6 +59,7 @@ class DatagridLineItemsDataEditListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new DatagridLineItemsDataEvent(
             [$lineItemId => $lineItem],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );

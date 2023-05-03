@@ -11,18 +11,13 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 /**
- * Handles logic for fetching totals based on order
+ * Handles logic for fetching totals for a specific order.
  */
 class TotalProvider
 {
-    /** @var DefaultCurrencyProviderInterface  */
-    protected $defaultCurrencyProvider;
-
-    /** @var TotalProcessorProvider  */
-    protected $pricingTotal;
-
-    /** @var RateConverterInterface  */
-    protected $rateConverter;
+    private DefaultCurrencyProviderInterface $defaultCurrencyProvider;
+    private TotalProcessorProvider $pricingTotal;
+    private RateConverterInterface $rateConverter;
 
     public function __construct(
         TotalProcessorProvider $totalProvider,
@@ -35,15 +30,10 @@ class TotalProvider
     }
 
     /**
-     * Calculate and return total with subtotals
-     * and with values in base currency converted to Array
-     * Used by Orders
-     *
-     * @param Order $order
-     * @param bool $isStatic
-     * @return array
+     * Calculates and returns a total with subtotals
+     * and with values in base currency converted to an array.
      */
-    public function getTotalWithSubtotalsWithBaseCurrencyValues(Order $order, $isStatic = true)
+    public function getTotalWithSubtotalsWithBaseCurrencyValues(Order $order, bool $isStatic = true): array
     {
         $defaultCurrency = $this->defaultCurrencyProvider->getDefaultCurrency();
         $subtotals = $this->pricingTotal->getSubtotals($order);
@@ -54,7 +44,7 @@ class TotalProvider
         }
 
         foreach ($subtotals as $item) {
-            if ($item->getType() == LineItemSubtotalProvider::TYPE
+            if ($item->getType() === LineItemSubtotalProvider::TYPE
                 && $item->getCurrency() !== $defaultCurrency
             ) {
                 $baseAmount = $isStatic ? $order->getBaseSubtotalValue() : null;
@@ -65,41 +55,31 @@ class TotalProvider
         return [
             TotalProcessorProvider::TYPE => $total->toArray(),
             TotalProcessorProvider::SUBTOTALS => $subtotals
-                ->map(
-                    function (Subtotal $subtotal) {
-                        return $subtotal->toArray();
-                    }
-                )
-                ->toArray(),
+                ->map(function (Subtotal $subtotal) {
+                    return $subtotal->toArray();
+                })
+                ->toArray()
         ];
     }
 
-    /**
-     * Set value in base currency to data
-     * @param Subtotal $total
-     * @param $defaultCurrency
-     * @param null $baseAmount
-     */
-    protected function addSubtotalBaseCurrencyConversion(Subtotal $total, $defaultCurrency, $baseAmount = null)
-    {
+    private function addSubtotalBaseCurrencyConversion(
+        Subtotal $total,
+        string $defaultCurrency,
+        ?float $baseAmount = null
+    ): void {
         if ($baseAmount) {
             $baseSubtotalValue = $baseAmount;
         } else {
-            $baseSubtotal = MultiCurrency::create(
-                $total->getAmount(),
-                $total->getCurrency()
+            $baseSubtotalValue = $this->rateConverter->getBaseCurrencyAmount(
+                MultiCurrency::create($total->getAmount(), $total->getCurrency())
             );
-            $baseSubtotalValue = $this->rateConverter->getBaseCurrencyAmount($baseSubtotal);
         }
 
-        $data = $total->getData() ? $total->getData() : [];
-        $totalData = array_merge(
-            $data,
-            [
-                'baseAmount' => $baseSubtotalValue,
-                'baseCurrency' => $defaultCurrency
-            ]
-        );
+        $data = $total->getData() ?? [];
+        $totalData = array_merge($data, [
+            'baseAmount' => $baseSubtotalValue,
+            'baseCurrency' => $defaultCurrency
+        ]);
         $total->setData($totalData);
     }
 }

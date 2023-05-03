@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -10,7 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\TempTableManipulatorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
@@ -30,31 +32,18 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class CombinedProductPriceRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
-
-    /**
-     * @var InsertFromSelectShardQueryExecutor
-     */
-    protected $insertFromSelectQueryExecutor;
-
-    /**
-     * @var TempTableManipulatorInterface
-     */
-    protected $tempTableManipulator;
+    private ShardManager $shardManager;
+    private ShardQueryExecutorInterface $insertFromSelectQueryExecutor;
+    private TempTableManipulatorInterface $tempTableManipulator;
 
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadCombinedPriceLists::class,
-                LoadProductPrices::class,
-                LoadCombinedProductPrices::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadCombinedPriceLists::class,
+            LoadProductPrices::class,
+            LoadCombinedProductPrices::class,
+        ]);
         $this->insertFromSelectQueryExecutor = $this->getContainer()
             ->get('oro_pricing.orm.multi_insert_shard_query_executor');
         $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
@@ -118,21 +107,16 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     {
         return [
             'all products' => [[]],
-            'product-1' => [['product-1']]
+            'product-1' => [['product-1']],
         ];
     }
 
     /**
      * @dataProvider insertPricesByPriceListDataProvider
-     * @param string $combinedPriceList
-     * @param string $product
-     * @param boolean $expectedExists
      */
-    public function testInsertPricesByPriceList($combinedPriceList, $product, $expectedExists)
+    public function testInsertPricesByPriceList(string $combinedPriceList, ?string $product, bool $expectedExists)
     {
-        /**
-         * @var CombinedPriceList $combinedPriceList
-         */
+        /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $products = [];
         $findBy = ['priceList' => $combinedPriceList];
@@ -174,12 +158,12 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider insertPricesByPriceListDataProvider
-     * @param string $combinedPriceList
-     * @param string $product
-     * @param boolean $expectedExists
      */
-    public function testInsertPricesByPriceListWithTempTable($combinedPriceList, $product, $expectedExists)
-    {
+    public function testInsertPricesByPriceListWithTempTable(
+        string $combinedPriceList,
+        ?string $product,
+        bool $expectedExists
+    ) {
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
 
@@ -211,6 +195,25 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 $products
             );
         }
+
+        // Move prices from temp to persistent CPL table
+        $this->tempTableManipulator->moveDataFromTemplateTableToEntityTable(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId(),
+            [
+                'product',
+                'unit',
+                'priceList',
+                'productSku',
+                'quantity',
+                'value',
+                'currency',
+                'mergeAllowed',
+                'originPriceId',
+                'id',
+            ]
+        );
+
         /** @var CombinedProductPrice[] $prices */
         $prices = $combinedProductPriceRepository->findBy($findBy);
         if ($expectedExists) {
@@ -224,10 +227,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $this->tempTableManipulator->dropTempTableForEntity(CombinedProductPrice::class, $combinedPriceList->getId());
     }
 
-    /**
-     * @return array
-     */
-    public function insertPricesByPriceListDataProvider()
+    public function insertPricesByPriceListDataProvider(): array
     {
         return [
             'test getting price lists 1' => [
@@ -248,27 +248,19 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             'test getting price list 1f' => [
                 'combinedPriceList' => '1f',
                 'product' => null,
-                'expectedExists' => true
+                'expectedExists' => true,
             ],
         ];
     }
 
-    /**
-     * @return CombinedProductPriceRepository
-     */
-    protected function getCombinedProductPriceRepository()
+    private function getCombinedProductPriceRepository(): CombinedProductPriceRepository
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository(CombinedProductPrice::class);
+        return $this->getContainer()->get('doctrine')->getRepository(CombinedProductPrice::class);
     }
 
-    /**
-     * @return CombinedPriceListToPriceListRepository
-     */
-    protected function getCombinedPriceListToPriceListRepository()
+    private function getCombinedPriceListToPriceListRepository(): CombinedPriceListToPriceListRepository
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository(CombinedPriceListToPriceList::class);
+        return $this->getContainer()->get('doctrine')->getRepository(CombinedPriceListToPriceList::class);
     }
 
     public function testFindMinByWebsiteForFilter()
@@ -371,12 +363,12 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider insertMinimalPricesByPriceListDataProvider
-     * @param string $combinedPriceList
-     * @param string $product
-     * @param array $expectedPrices
      */
-    public function testInsertMinimalPricesByPriceList($combinedPriceList, $product, array $expectedPrices)
-    {
+    public function testInsertMinimalPricesByPriceList(
+        string $combinedPriceList,
+        string $product,
+        array $expectedPrices
+    ) {
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $products = [];
@@ -420,12 +412,12 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider insertMinimalPricesByPriceListDataProvider
-     * @param string $combinedPriceList
-     * @param string $product
-     * @param array $expectedPrices
      */
-    public function testInsertMinimalPricesByPriceLists($combinedPriceList, $product, array $expectedPrices)
-    {
+    public function testInsertMinimalPricesByPriceLists(
+        string $combinedPriceList,
+        string $product,
+        array $expectedPrices
+    ) {
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $products = [];
@@ -487,10 +479,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $this->assertCount(0, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function insertMinimalPricesByPriceListDataProvider()
+    public function insertMinimalPricesByPriceListDataProvider(): array
     {
         return [
             'test getting price lists 1' => [
@@ -700,19 +689,69 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $prices);
     }
 
-    /**
-     * @param array $a
-     * @param array $b
-     * @return bool
-     */
-    protected function sort(array $a, array $b)
+    private function sort(array $a, array $b): int
     {
         if ($a['cpl'] === $b['cpl'] && $a['currency'] === $b['currency']) {
             return $a['unit'] > $b['unit'] ? 1 : 0;
-        } elseif ($a['cpl'] === $b['cpl']) {
+        }
+        if ($a['cpl'] === $b['cpl']) {
             return $a['currency'] > $b['currency'] ? 1 : 0;
         }
 
         return $a['cpl'] > $b['cpl'] ? 1 : 0;
+    }
+
+    public function testHasDuplicatePricesNoDuplicates()
+    {
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CombinedProductPrice::class);
+
+        $this->assertFalse($repo->hasDuplicatePrices());
+    }
+
+    public function testHasDuplicatePrices()
+    {
+        $this->prepareDuplicatedPrices();
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(CombinedProductPrice::class);
+
+        $this->assertTrue($repo->hasDuplicatePrices());
+    }
+
+    public function testDeleteDuplicatePricesNoDuplicates()
+    {
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(CombinedProductPrice::class);
+        $this->assertEquals(0, $repo->deleteDuplicatePrices());
+    }
+
+    public function testDeleteDuplicatePrices()
+    {
+        $this->prepareDuplicatedPrices();
+
+        /** @var CombinedProductPriceRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(CombinedProductPrice::class);
+        $this->assertGreaterThan(0, $repo->deleteDuplicatePrices());
+    }
+
+    private function prepareDuplicatedPrices(): void
+    {
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = $this->getContainer()->get('doctrine');
+        /** @var Connection $connection */
+        $connection = $doctrine->getConnection();
+        $connection->executeQuery(
+            <<<'SQL'
+INSERT INTO oro_price_product_combined 
+    (id, unit_code, product_id, combined_price_list_id, origin_price_id, product_sku, 
+     quantity, value, currency, merge_allowed)
+SELECT uuid_generate_v4(), unit_code, product_id, combined_price_list_id, origin_price_id, product_sku, 
+       quantity, value, currency, merge_allowed 
+FROM oro_price_product_combined
+SQL
+        );
     }
 }

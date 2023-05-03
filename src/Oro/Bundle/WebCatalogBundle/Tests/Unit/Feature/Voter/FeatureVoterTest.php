@@ -9,21 +9,15 @@ use Oro\Bundle\WebCatalogBundle\Feature\Voter\FeatureVoter;
 
 class FeatureVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var FeatureVoter
-     */
+    /** @var FeatureVoter */
     private $voter;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->voter = new FeatureVoter($this->configManager);
     }

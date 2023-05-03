@@ -3,13 +3,17 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\CollectionSortOrderGridType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\CollectionSortOrderGridTypeStub;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -40,7 +44,9 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
                     new ProductCollectionSegmentType(
                         $this->createMock(ProductCollectionDefinitionConverter::class),
                         $this->createMock(PropertyAccessor::class)
-                    )
+                    ),
+                    CollectionSortOrderGridType::class => new CollectionSortOrderGridTypeStub(),
+                    EntityChangesetType::class => new EntityChangesetTypeStub(),
                 ],
                 [
                     FormType::class => [new TooltipFormExtensionStub($this)]

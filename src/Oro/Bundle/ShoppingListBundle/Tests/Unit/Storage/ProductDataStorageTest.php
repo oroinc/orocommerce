@@ -11,13 +11,11 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Storage */
+    /** @var Storage|\PHPUnit\Framework\MockObject\MockObject */
     private $storage;
 
     /** @var ProductDataStorage */
@@ -35,34 +33,36 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
         $customerId = 10;
         $customerUserId = 42;
         $productSku = 'testSku';
+        $productId = 123;
         $quantity = 100;
         $comment = 'Test Comment';
         $unitCode = 'kg';
         $note = 'Note';
 
-        $customer = $this->getEntity(Customer::class, ['id' => $customerId]);
-        $customerUser = $this->getEntity(CustomerUser::class, ['id' => $customerUserId]);
+        $customer = new Customer();
+        ReflectionUtil::setId($customer, $customerId);
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, $customerUserId);
 
         $product = new Product();
+        ReflectionUtil::setId($product, $productId);
         $product->setSku($productSku);
 
         $productUnit = new ProductUnit();
         $productUnit->setCode($unitCode);
 
         $lineItem = new LineItem();
-        $lineItem
-            ->setQuantity($quantity)
-            ->setNotes($comment)
-            ->setProduct($product)
-            ->setUnit($productUnit);
+        $lineItem->setQuantity($quantity);
+        $lineItem->setNotes($comment);
+        $lineItem->setProduct($product);
+        $lineItem->setUnit($productUnit);
 
-        $shoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 1,
-            'customer' => $customer,
-            'customerUser' => $customerUser,
-            'lineItems' => [$lineItem],
-            'notes' => $note,
-        ]);
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, 1);
+        $shoppingList->setCustomer($customer);
+        $shoppingList->setCustomerUser($customerUser);
+        $shoppingList->addLineItem($lineItem);
+        $shoppingList->setNotes($note);
 
         $this->storage->expects($this->once())
             ->method('set')
@@ -79,6 +79,7 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
                     Storage::ENTITY_ITEMS_DATA_KEY => [
                         [
                             Storage::PRODUCT_SKU_KEY => $productSku,
+                            Storage::PRODUCT_ID_KEY => $productId,
                             Storage::PRODUCT_QUANTITY_KEY => $quantity,
                             'comment' => $comment,
                             'productUnit' => $unitCode,

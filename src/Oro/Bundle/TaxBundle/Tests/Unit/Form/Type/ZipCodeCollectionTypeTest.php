@@ -20,12 +20,6 @@ class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
         $this->formType = new ZipCodeCollectionType();
     }
 
-    public function testGetName()
-    {
-        $this->assertIsString($this->formType->getName());
-        $this->assertEquals('oro_tax_zip_code_collection_type', $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertIsString($this->formType->getParent());

@@ -2,3 +2,4 @@ layout:
     actions:
         - '@remove':
             id: product_view_additional_container
+    conditions: 'context["product_type"] != "kit"'

@@ -4,9 +4,12 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\PromotionBundle\Model\ExtendDiscountConfiguration;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
+ * Store discount configuration in database.
+ *
  * @ORM\Table(
  *     name="oro_promotion_discount_config",
  *     indexes={
@@ -19,8 +22,10 @@ use Oro\Bundle\PromotionBundle\Model\ExtendDiscountConfiguration;
  * @ORM\Entity()
  * @Config()
  */
-class DiscountConfiguration extends ExtendDiscountConfiguration
+class DiscountConfiguration implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var integer
      *

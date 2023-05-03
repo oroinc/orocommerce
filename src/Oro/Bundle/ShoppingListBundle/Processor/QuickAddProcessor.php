@@ -2,23 +2,39 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Processor;
 
+use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
+use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * Handles logic related to quick order process.
+ */
 class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
 {
-    const NAME = 'oro_shopping_list_quick_add_processor';
+    private MessageGenerator $messageGenerator;
+
+    public function __construct(
+        ShoppingListLineItemHandler $shoppingListLineItemHandler,
+        ProductMapperInterface $productMapper,
+        MessageGenerator $messageGenerator
+    ) {
+        parent::__construct($shoppingListLineItemHandler, $productMapper);
+        $this->messageGenerator = $messageGenerator;
+    }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function process(array $data, Request $request)
+    public function process(array $data, Request $request): ?Response
     {
         if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) ||
-            !is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
+            !\is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
         ) {
-            return;
+            return null;
         }
 
         $shoppingListId = null;
@@ -31,7 +47,8 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
         $session = $request->getSession();
         $flashBag = $session->getFlashBag();
 
-        if ($entitiesCount = $this->fillShoppingList($shoppingList, $data)) {
+        $entitiesCount = $this->fillShoppingList($shoppingList, $data);
+        if ($entitiesCount) {
             $flashBag->add(
                 'success',
                 $this->messageGenerator->getSuccessMessage($shoppingList->getId(), $entitiesCount)
@@ -39,13 +56,7 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
         } else {
             $flashBag->add('error', $this->messageGenerator->getFailedMessage());
         }
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
+        return null;
     }
 }

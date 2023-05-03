@@ -27,7 +27,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
-        unitPrecisions: []
+        unitPrecisions: [ '@precision1' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue1']
@@ -40,7 +40,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision2'
-        unitPrecisions: []
+        unitPrecisions: [ '@precision2' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue2']

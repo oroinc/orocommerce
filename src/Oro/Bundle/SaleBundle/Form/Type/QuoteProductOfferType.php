@@ -3,10 +3,10 @@
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -18,39 +18,14 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- *  Quote product offer type which represents all data related to quote offer
+ * The form type for QuoteProductOffer entity.
  */
 class QuoteProductOfferType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_product_offer';
-
     /**
-     * @var QuoteProductOfferFormatter
+     * {@inheritDoc}
      */
-    protected $formatter;
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    public function __construct(QuoteProductOfferFormatter $formatter)
-    {
-        $this->formatter = $formatter;
-    }
-
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -103,42 +78,24 @@ class QuoteProductOfferType extends AbstractType
                 ]
             );
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
-    }
-
-    public function onPreSetData(FormEvent $event)
-    {
-        $data = $event->getData();
-
-        // Do not set default price for price field value if it is not set for existing offer
-        // This is valid case when price can be empty on quote creation/modification step
-        if ($data instanceof QuoteProductOffer) {
-            $form = $event->getForm();
-
-            $form->add(
-                'price',
-                PriceType::class,
-                [
-                    'currency_empty_value' => null,
-                    'error_bubbling' => false,
-                    'required' => true,
-                    'label' => 'oro.sale.quoteproductoffer.price.label',
-                    //Price value may be not set by user while creating quote
-                    'validation_groups' => [PriceType::OPTIONAL_VALIDATION_GROUP],
-                    'match_price_on_null' => false
-                ]
-            );
-        }
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            // Do not set default price for price field value if it is not set for existing offer
+            // This is valid case when price can be empty on quote creation/modification step
+            if ($data instanceof QuoteProductOffer) {
+                FormUtils::replaceField($event->getForm(), 'price', ['match_price_on_null' => false]);
+            }
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass,
+                'data_class' => QuoteProductOffer::class,
                 'compact_units' => false,
                 'allow_prices_override' => true,
                 'csrf_token_id' => 'sale_quote_product_offer',
@@ -147,26 +104,18 @@ class QuoteProductOfferType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['allow_prices_override'] = $options['allow_prices_override'];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
+        return 'oro_sale_quote_product_offer';
     }
 }

@@ -18,6 +18,7 @@ oro_behat_extension:
         - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroShippingBundle/Tests/Behat/Features'
 

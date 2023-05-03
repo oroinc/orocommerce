@@ -15,8 +15,8 @@ Feature: Sales Orders on Shopping List view page
     And I go to Sales / Orders
     And I should see following grid:
       | Order Number | Payment Method |
-      | FirstOrder   | Payment Term   |
       | SecondOrder  |                |
+      | FirstOrder   | Payment Term   |
     And I filter "PO Number" as contains "ORD1"
     When I click view ORD1 in grid
     Then I should see 'Shopping List "Shopping list"' link with the url matches "shoppinglist/view"

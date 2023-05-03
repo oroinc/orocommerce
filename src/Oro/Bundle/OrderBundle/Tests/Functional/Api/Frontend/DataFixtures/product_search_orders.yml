@@ -1,6 +1,16 @@
 dependencies:
     - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
 
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    combinedPriceList:
+        name: 'Combined Price List'
+        enabled: true
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    first_combined_price:
+        priceList: '@combinedPriceList'
+        website: '@website'
+
 Oro\Bundle\OrderBundle\Entity\Order:
     order1:
         identifier: 'order1'

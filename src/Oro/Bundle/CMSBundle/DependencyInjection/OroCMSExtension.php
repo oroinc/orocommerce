@@ -3,17 +3,17 @@
 namespace Oro\Bundle\CMSBundle\DependencyInjection;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroCMSExtension extends Extension
 {
-    const CONTENT_RESTRICTIONS_MODE = 'mode';
-    const LAX_CONTENT_RESTRICTIONS = 'lax_restrictions';
+    private const CONTENT_RESTRICTIONS_MODE = 'mode';
+    private const LAX_CONTENT_RESTRICTIONS = 'lax_restrictions';
 
     private array $contentRestrictionModes = ['secure', 'selective', 'unsecure'];
 
@@ -25,11 +25,12 @@ class OroCMSExtension extends Extension
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration(new Configuration($this->contentRestrictionModes), $configs);
+        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        $container->prependExtensionConfig($this->getAlias(), SettingsBuilder::getSettings($config));
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('services_api.yml');
         $loader->load('form_types.yml');
@@ -37,12 +38,11 @@ class OroCMSExtension extends Extension
         $loader->load('content_widget_types.yml');
         $loader->load('controllers.yml');
         $loader->load('image_placeholder.yml');
+        $loader->load('collectors.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');
         }
-
-        $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
 
         $container->setParameter(
             sprintf(
@@ -57,10 +57,10 @@ class OroCMSExtension extends Extension
         $contentRestrictions = $config['content_restrictions'] ?? [];
         $contentRestrictionsMode = 'default';
         $laxContentRestrictions = [];
-        if (array_key_exists(self::CONTENT_RESTRICTIONS_MODE, $contentRestrictions)) {
+        if (\array_key_exists(self::CONTENT_RESTRICTIONS_MODE, $contentRestrictions)) {
             $contentRestrictionsMode = $contentRestrictions[self::CONTENT_RESTRICTIONS_MODE];
         }
-        if (array_key_exists(self::LAX_CONTENT_RESTRICTIONS, $contentRestrictions)) {
+        if (\array_key_exists(self::LAX_CONTENT_RESTRICTIONS, $contentRestrictions)) {
             $laxContentRestrictions = $contentRestrictions[self::LAX_CONTENT_RESTRICTIONS];
         }
 
@@ -72,12 +72,10 @@ class OroCMSExtension extends Extension
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
     {
-        $container->addResource(new FileResource((new \ReflectionClass(Configuration::class))->getFileName()));
-
         return new Configuration($this->contentRestrictionModes);
     }
 }

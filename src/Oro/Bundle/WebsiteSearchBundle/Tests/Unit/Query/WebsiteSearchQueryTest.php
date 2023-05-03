@@ -9,23 +9,19 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
 class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var WebsiteSearchQuery */
-    protected $websiteSearchQuery;
-
     /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $engine;
+    private $engine;
 
     /** @var Query|\PHPUnit\Framework\MockObject\MockObject */
-    protected $query;
+    private $query;
+
+    /** @var WebsiteSearchQuery */
+    private $websiteSearchQuery;
 
     protected function setUp(): void
     {
-        $this->engine = $this->getMockBuilder(EngineInterface::class)
-            ->getMock();
-
-        $this->query = $this->getMockBuilder(Query::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->engine = $this->createMock(EngineInterface::class);
+        $this->query = $this->createMock(Query::class);
 
         $this->websiteSearchQuery = new WebsiteSearchQuery(
             $this->engine,
@@ -58,9 +54,7 @@ class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
 
     public function testWebsiteQueryExecution()
     {
-        $result = $this->getMockBuilder(Result::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $result = $this->createMock(Result::class);
 
         $this->engine->expects($this->once())
             ->method('search')
@@ -108,5 +102,22 @@ class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($result2, $newQuery->getResult());
         $this->assertNotSame($query, $newQuery->getQuery());
         $this->assertEquals($query, $newQuery->getQuery());
+    }
+
+    public function testHints()
+    {
+        $query = new Query();
+        $websiteSearchQuery = new WebsiteSearchQuery($this->engine, $query);
+
+        $this->assertFalse($websiteSearchQuery->hasHint('test'));
+        $this->assertFalse($websiteSearchQuery->getHint('test'));
+
+        $websiteSearchQuery->setHint('test', 'value');
+        $websiteSearchQuery->setHint('test2', 'value2');
+        $this->assertTrue($websiteSearchQuery->hasHint('test'));
+        $this->assertTrue($websiteSearchQuery->hasHint('test2'));
+        $this->assertEquals('value', $websiteSearchQuery->getHint('test'));
+        $this->assertEquals('value2', $websiteSearchQuery->getHint('test2'));
+        $this->assertEquals(['test' => 'value', 'test2' => 'value2'], $websiteSearchQuery->getHints());
     }
 }

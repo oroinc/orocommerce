@@ -10,9 +10,7 @@ class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetPrices()
     {
-        $frontendProductPricesProvider = $this->getMockBuilder(FrontendProductPricesProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $frontendProductPricesProvider = $this->createMock(FrontendProductPricesProvider::class);
 
         $rfpProductPricesProvider = new RfpProductPricesProvider($frontendProductPricesProvider);
 
@@ -28,7 +26,8 @@ class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
             ->method('toArray')
             ->willReturn([]);
 
-        $rfpRequest->method('getRequestProducts')
+        $rfpRequest->expects($this->any())
+            ->method('getRequestProducts')
             ->willReturn($requestProductsObject);
 
         $frontendProductPricesProvider->expects($this->atLeastOnce())

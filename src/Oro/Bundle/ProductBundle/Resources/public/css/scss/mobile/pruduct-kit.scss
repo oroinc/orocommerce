@@ -1,0 +1,32 @@
+/* @theme: admin.oro; */
+
+.product-kit-control-group {
+    .oro-content-variant-collection {
+        // stylelint-disable-next-line selector-type-no-unknown
+        #{map_get($oro-form-selectors, 'inputs')} {
+            max-width: 100%;
+        }
+
+        .fallback-item-value input[type='text'] {
+            width: 100%;
+        }
+    }
+}
+
+.product-kit-item {
+    &__horizontal {
+        .attribute-item {
+            width: 100%;
+
+            &__description--ellipsis {
+                white-space: normal;
+
+                > .control-label {
+                    white-space: normal;
+
+                    @include line-clamp(3);
+                }
+            }
+        }
+    }
+}

@@ -79,10 +79,10 @@ Feature: Mandatory Consent has been added during Checkout process
     Given I proceed as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
     And click "Quick Order Form"
-    And fill "QuickAddForm" with:
+    And fill "Quick Order Form" with:
       | SKU1 | Lenovo_Vibe1_sku |
     And I wait for products to load
-    And fill "QuickAddForm" with:
+    And fill "Quick Order Form" with:
       | QTY1 | 10 |
     And click "Create Order"
     Then I should see "Agreements" in the "Checkout Step Title" element

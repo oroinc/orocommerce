@@ -9,6 +9,13 @@ class ProductProxyStub extends Product implements Proxy
 {
     protected $initialized = false;
 
+    public function __construct(?int $id = null)
+    {
+        $this->id = $id;
+
+        parent::__construct();
+    }
+
     public function setInitialized($initialized)
     {
         $this->initialized = $initialized;

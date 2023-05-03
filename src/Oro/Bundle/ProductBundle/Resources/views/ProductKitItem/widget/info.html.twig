@@ -1,0 +1,58 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+
+<div class="widget-content">
+    {% block widget_content %}
+        <div class="product-kit-view__info" data-role="kit-item-info">
+            {%- if state in ['expanded', 'both'] -%}
+                {%- block kitItemInfoExpanded -%}
+                    <div class="content-variant-item-content product-kit-view__variant collapse" data-role="kit-item-info-expanded">
+                        {{ UI.renderProperty('oro.product.productkititem.labels.label'|trans, entity.defaultLabel) }}
+                        {{ UI.renderProperty('oro.product.productkititem.optional.label'|trans, entity.optional ? 'oro.product.productkititem.optional.choices.yes'|trans : 'oro.product.productkititem.optional.choices.no'|trans) }}
+                        {{ UI.renderProperty('oro.product.productkititem.minimum_quantity.label'|trans, entity.minimumQuantity) }}
+                        {{ UI.renderProperty('oro.product.productkititem.maximum_quantity.label'|trans, entity.maximumQuantity) }}
+                        {{ UI.renderProperty('oro.product.productkititem.product_unit.label'|trans, oro_format_product_unit_precision_label(entity.productUnit.code, entity|oro_product_kit_item_unit_precision)) }}
+
+                        {{ entityConfig.renderDynamicFields(entity) }}
+
+                        <h5>{{ 'oro.product.productkititem.kit_item_products.label'|trans }}</h5>
+                        {{ dataGrid.renderGrid(
+                            'kit-item-products-view-grid',
+                            {'kitItemId': entity.id},
+                            {'enableViews': false, 'enableFilters': false}
+                        ) }}
+                    </div>
+                {% endblock kitItemInfoExpanded %}
+            {% endif %}
+
+            {%- if state in ['collapsed', 'both'] -%}
+                {%- block kitItemInfoCollapsed -%}
+                    <div class="content-variant-item-content product-kit-view__variant collapse show" data-role="kit-item-info-collapsed">
+                        <div class="product-kit-view__collapsed-attributes">
+                            {{ UI.renderProperty('oro.product.productkititem.optional.label'|trans, entity.optional ? 'oro.product.productkititem.optional.choices.yes'|trans : 'oro.product.productkititem.optional.choices.no'|trans) }}
+                            {{ UI.renderProperty('oro.product.productkititem.minimum_quantity.label'|trans, entity.minimumQuantity) }}
+                            {{ UI.renderProperty('oro.product.productkititem.maximum_quantity.label'|trans, entity.maximumQuantity) }}
+                            {{ UI.renderProperty('oro.product.productkititem.product_unit.label'|trans, oro_format_product_unit_precision_label(entity.productUnit.code, entity|oro_product_kit_item_unit_precision)) }}
+
+                            {{ entityConfig.renderDynamicFields(entity) }}
+                        </div>
+
+                        <div class="attribute-wide">
+                            {%- set kitItemProductsLinks -%}
+                                {%- for product in entity.products|slice(0, 3) -%}
+                                    <div data-role="kit-item-product-link">{{ UI.renderUrl(oro_entity_object_view_link(product), product.skuUppercase ~ ' - ' ~ product|oro_format_name) }}</div>
+                                {%- endfor -%}
+                                {% if entity.products|length > 3 %}
+                                    <div data-role="kit-item-product-link">...</div>
+                                {% endif %}
+                            {%- endset -%}
+
+                            {{ UI.renderHtmlProperty('oro.product.productkititem.kit_item_products.label'|trans, kitItemProductsLinks) }}
+                        </div>
+                    </div>
+                {%- endblock kitItemInfoCollapsed -%}
+            {%- endif -%}
+        </div>
+    {% endblock %}
+</div>

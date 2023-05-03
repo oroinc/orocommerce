@@ -8,25 +8,14 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $checkoutShippingMethodsProviderMock;
+    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutShippingMethodsProvider;
 
     protected function setUp(): void
     {
-        $this->checkoutShippingMethodsProviderMock = $this
-            ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
-            ->getMock();
+        $this->checkoutShippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
 
         parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        unset($this->checkoutShippingMethodsProviderMock);
     }
 
     public function testGetName()
@@ -48,27 +37,23 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
 
     /**
      * @dataProvider evaluateProvider
-     * @param array $methodPrice
-     * @param string $methodName
-     * @param string $typeName
-     * @param bool $expected
      */
-    public function testIsStatesEqual($methodPrice, $methodName, $typeName, $expected)
-    {
+    public function testIsStatesEqual(
+        ?Price $methodPrice,
+        string $methodName,
+        string $typeName,
+        bool $expected
+    ) {
         $this->checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
 
-        $this->checkoutShippingMethodsProviderMock
-            ->expects($this->once())
+        $this->checkoutShippingMethodsProvider->expects($this->once())
             ->method('getPrice')
             ->willReturn($methodPrice);
 
-        static::assertEquals($expected, $this->mapper->isStatesEqual($this->checkout, '', ''));
+        self::assertEquals($expected, $this->mapper->isStatesEqual($this->checkout, '', ''));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluateProvider()
+    public function evaluateProvider(): array
     {
         return [
             'wrong_method'                    => [
@@ -91,6 +76,6 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected function getMapper()
     {
-        return new ShippingMethodEnabledMapper($this->checkoutShippingMethodsProviderMock);
+        return new ShippingMethodEnabledMapper($this->checkoutShippingMethodsProvider);
     }
 }

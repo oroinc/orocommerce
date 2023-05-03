@@ -1,0 +1,39 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  localProduct1Name:
+    string: 'Product 1'
+
+  localProduct2Name:
+    string: 'Product 2'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  productUnitPrevision1:
+    unit: '@item'
+    precision: '1'
+
+  productUnitPrevision2:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    type: 'simple'
+    sku: 'PSKU1'
+    primaryUnitPrecision: '@productUnitPrevision1'
+    unitPrecisions: [ '@productUnitPrevision1' ]
+    __calls:
+      - addName: ['@localProduct1Name']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    attributeFamily: '@productAttributeFamily'
+
+  product2:
+    type: 'simple'
+    sku: 'PSKU2'
+    primaryUnitPrecision: '@productUnitPrevision2'
+    __calls:
+      - addName: ['@localProduct2Name']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    attributeFamily: '@productAttributeFamily'

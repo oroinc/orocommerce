@@ -11,9 +11,6 @@ Feature: Move node in tree
     When I go to Marketing/Web Catalogs
     And I click view "Default Web Catalog" in grid
     Then I click "Edit Content Tree"
-    When I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
     And I click "Save"
     Then I should see "Content Node has been saved" flash message
 

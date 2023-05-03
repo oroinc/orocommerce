@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @ticket-BB-19056
 @feature-BAP-19790
 @fixture-OroCMSBundle:CustomerUserFixture.yml
@@ -55,10 +55,9 @@ Feature: Content Block
     Then I should see "Content block has been saved" flash message
     When I proceed as the Buyer
     And I am on homepage
-    Then I should not see "LOREM IPSUM"
+    Then I should not see a "Homepage Slider" element
     When I signed in as AmandaRCole@example.org on the store frontend
-    Then I should see "LOREM IPSUM"
-    And I should see picture "First Image Slide Picture" element
+    Then I should see a "Homepage Slider" element
 
   Scenario: Block for different customers
     Given I proceed as the Admin
@@ -74,7 +73,7 @@ Feature: Content Block
     And click logout in user menu
     When I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    Then I should see "LOREM IPSUM"
+    Then I should see "Best-Priced Medical Supplies"
     When I signed in as NancyJSallee@example.org on the store frontend
     Then I should see "Test block"
 

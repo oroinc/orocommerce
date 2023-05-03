@@ -12,12 +12,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class LineItemTest extends \PHPUnit\Framework\TestCase
+class LineItemTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             ['id', '123'],
@@ -28,15 +29,16 @@ class LineItemTest extends \PHPUnit\Framework\TestCase
             ['notes', 'notes-test-123'],
             ['unit', new ProductUnit()],
             ['quantity', 12.5],
+            ['checksum', sha1('sample-line-item')],
             ['customerUser', new CustomerUser()],
             ['organization', new Organization()],
             ['owner', new User()],
         ];
 
-        $this->assertPropertyAccessors(new LineItem(), $properties);
+        self::assertPropertyAccessors(new LineItem(), $properties);
     }
 
-    public function testVisitor()
+    public function testVisitor(): void
     {
         $visitor = new CustomerVisitor();
         $shoppingList = new ShoppingListStub();
@@ -44,6 +46,6 @@ class LineItemTest extends \PHPUnit\Framework\TestCase
         $lineItem = new LineItem();
         $lineItem->setShoppingList($shoppingList);
 
-        $this->assertSame($visitor, $lineItem->getVisitor());
+        self::assertSame($visitor, $lineItem->getVisitor());
     }
 }

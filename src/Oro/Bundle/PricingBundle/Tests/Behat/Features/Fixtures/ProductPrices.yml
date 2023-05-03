@@ -23,6 +23,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
+        unitPrecisions: [ '@precision1' ]
         __calls:
             - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
@@ -40,18 +41,22 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         name: 'priceListForWebsite'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'
     priceListForGroup:
         name: 'priceListForGroup'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'
     priceListForCustomer:
         name: 'priceListForCustomer'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'
     priceListForCustomerGroup2:
         name: 'priceListForCustomerGroup2'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -13,64 +12,40 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PaymentContextTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Customer|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $customerMock;
+    /** @var Customer|\PHPUnit\Framework\MockObject\MockObject */
+    private $customer;
 
-    /**
-     * @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $customerUserMock;
+    /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject */
+    private $customerUser;
 
-    /**
-     * @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $lineItemsCollectionMock;
+    /** @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemsCollection;
 
-    /**
-     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $billingAddressMock;
+    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $billingAddress;
 
-    /**
-     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingAddressMock;
+    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingAddress;
 
-    /**
-     * @var Price|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $subtotalMock;
+    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
+    private $subtotal;
 
-    /**
-     * @var Checkout|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $sourceEntityMock;
+    /** @var object|\PHPUnit\Framework\MockObject\MockObject */
+    private $sourceEntity;
 
-    /**
-     * @var Website|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $websiteMock;
+    /** @var Website|\PHPUnit\Framework\MockObject\MockObject */
+    private $website;
 
     protected function setUp(): void
     {
-        $this->customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->lineItemsCollectionMock = $this->createMock(PaymentLineItemCollectionInterface::class);
-        $this->billingAddressMock = $this->createMock(AddressInterface::class);
-        $this->shippingAddressMock = $this->createMock(AddressInterface::class);
-        $this->subtotalMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->websiteMock = $this->createMock(Website::class);
+        $this->customer = $this->createMock(Customer::class);
+        $this->customerUser = $this->createMock(CustomerUser::class);
+        $this->lineItemsCollection = $this->createMock(PaymentLineItemCollectionInterface::class);
+        $this->billingAddress = $this->createMock(AddressInterface::class);
+        $this->shippingAddress = $this->createMock(AddressInterface::class);
+        $this->subtotal = $this->createMock(Price::class);
+        $this->sourceEntity = $this->createMock(\stdClass::class);
+        $this->website = $this->createMock(Website::class);
     }
 
     public function testConstructionAndGetters()
@@ -81,17 +56,17 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
         $totalAmount = 10.0;
 
         $params = [
-            PaymentContext::FIELD_CUSTOMER => $this->customerMock,
-            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUserMock,
-            PaymentContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,
-            PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddressMock,
-            PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddressMock,
+            PaymentContext::FIELD_CUSTOMER => $this->customer,
+            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUser,
+            PaymentContext::FIELD_LINE_ITEMS => $this->lineItemsCollection,
+            PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddress,
+            PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddress,
             PaymentContext::FIELD_SHIPPING_METHOD => $shippingMethod,
             PaymentContext::FIELD_CURRENCY => $currency,
-            PaymentContext::FIELD_SUBTOTAL => $this->subtotalMock,
-            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
+            PaymentContext::FIELD_SUBTOTAL => $this->subtotal,
+            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
-            PaymentContext::FIELD_WEBSITE => $this->websiteMock,
+            PaymentContext::FIELD_WEBSITE => $this->website,
             PaymentContext::FIELD_TOTAL => $totalAmount
         ];
 
@@ -112,6 +87,6 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
             PaymentContext::FIELD_TOTAL => $paymentContext->getTotal()
         ];
 
-        static::assertEquals($params, $getterValues);
+        self::assertEquals($params, $getterValues);
     }
 }

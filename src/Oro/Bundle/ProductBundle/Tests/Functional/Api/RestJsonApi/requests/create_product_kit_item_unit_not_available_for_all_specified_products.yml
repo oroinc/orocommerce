@@ -1,0 +1,66 @@
+data:
+    type: productkititems
+    id: 'productkititems3'
+    attributes:
+        optional: true
+        sortOrder: 3
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: 'productkititems3-productkititemlabels-default'
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit1->getId())>'
+        kitItemProducts:
+            data:
+                -
+                    type: productkititemproducts
+                    id: 'productkititems3-productkititemproducts1-product1'
+                -
+                    type: productkititemproducts
+                    id: 'productkititems3-productkititemproducts1-product4'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@each->getCode())>'
+included:
+    -
+        type: productkititemlabels
+        id: 'productkititems3-productkititemlabels-default'
+        attributes:
+            fallback: null
+            string: 'productkititems3-productkititemlabels-default'
+        relationships:
+            localization:
+                data: null
+    -
+        type: productkititemproducts
+        id: 'productkititems3-productkititemproducts1-product1'
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'productkititems3'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->getId())>'
+    -
+        type: productkititemproducts
+        id: 'productkititems3-productkititemproducts1-product4'
+        attributes:
+            sortOrder: 2
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'productkititems3'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product4->getId())>'

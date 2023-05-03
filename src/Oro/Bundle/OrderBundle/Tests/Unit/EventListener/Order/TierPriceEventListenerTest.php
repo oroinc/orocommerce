@@ -20,21 +20,18 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var TierPriceEventListener */
-    protected $listener;
-
-    /** @var ProductPriceScopeCriteriaFactoryInterface */
-    protected $priceScopeCriteriaFactory;
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $form;
 
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $provider;
+    private $provider;
 
-    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $form;
+    /** @var ProductPriceScopeCriteriaFactoryInterface */
+    private $priceScopeCriteriaFactory;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var TierPriceEventListener */
+    private $listener;
+
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);
@@ -44,20 +41,11 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new TierPriceEventListener($this->provider, $this->priceScopeCriteriaFactory);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->priceScopeCriteriaFactory, $this->provider, $this->form);
-    }
-
     public function testOnOrderEvent()
     {
         $customer = new Customer();
         $website = new Website();
 
-        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1]);
 
         $lineItem = new OrderLineItem();
@@ -77,8 +65,7 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $productPriceScopeCriteria = $this->getScopeCriteriaByOrder($order);
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('getPricesByScopeCriteriaAndProducts')
             ->with($productPriceScopeCriteria, [$product], [$order->getCurrency()])
             ->willReturn($prices);

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Oro\Bundle\WebCatalogBundle\Async\Topic;
 
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
+use Oro\Component\MessageQueue\Topic\JobAwareTopicInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * A topic to initiate web catalog content node cache calculation.
  */
-class WebCatalogCalculateContentNodeCacheTopic extends AbstractTopic
+class WebCatalogCalculateContentNodeCacheTopic extends AbstractTopic implements JobAwareTopicInterface
 {
     public const CONTENT_NODE_ID = 'contentNodeId';
 
@@ -30,5 +31,10 @@ class WebCatalogCalculateContentNodeCacheTopic extends AbstractTopic
             ->define(self::CONTENT_NODE_ID)
             ->required()
             ->allowedTypes('int');
+    }
+
+    public function createJobName($messageBody): string
+    {
+        return sprintf('%s:%s', self::getName(), $messageBody[self::CONTENT_NODE_ID]);
     }
 }

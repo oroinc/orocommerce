@@ -8,10 +8,10 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|ResultRecordInterface */
-    protected $record;
+    private $record;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ActionPermissionProvider */
-    protected $provider;
+    /** @var ActionPermissionProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -22,13 +22,13 @@ class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getPermissionsProvider
-     *
-     * @param bool $completed
-     * @param bool $expected
      */
-    public function testGetPermissions($completed, $expected)
+    public function testGetPermissions(bool $completed, bool $expected)
     {
-        $this->record->expects($this->once())->method('getValue')->with('completed')->willReturn($completed);
+        $this->record->expects($this->once())
+            ->method('getValue')
+            ->with('completed')
+            ->willReturn($completed);
 
         $result = $this->provider->getPermissions($this->record);
 
@@ -36,10 +36,7 @@ class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result['view']);
     }
 
-    /**
-     * @return array
-     */
-    public function getPermissionsProvider()
+    public function getPermissionsProvider(): array
     {
         return [
             'checkout not completed' => [

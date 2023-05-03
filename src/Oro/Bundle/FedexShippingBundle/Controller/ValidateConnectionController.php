@@ -10,7 +10,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,19 +45,16 @@ class ValidateConnectionController extends AbstractController
             $channel = new Channel();
         }
 
-        $form = $this->createForm(
-            ChannelType::class,
-            $channel
-        );
+        $form = $this->createForm(ChannelType::class, $channel);
         $form->handleRequest($request);
 
         /** @var FedexIntegrationSettings $settings */
         $settings = $channel->getTransport();
 
-        $request = $this
-            ->get(FedexRateServiceValidateConnectionRequestFactory::class)
-            ->create($settings);
-        $response = $this->get(FedexRateServiceSoapClient::class)->send($request, $settings);
+        $response = $this->get(FedexRateServiceSoapClient::class)->send(
+            $this->get(FedexRateServiceValidateConnectionRequestFactory::class)->create($settings),
+            $settings
+        );
 
         if (!empty($response->getPrices())) {
             return new JsonResponse([
@@ -76,9 +73,11 @@ class ValidateConnectionController extends AbstractController
     {
         if ($response->getSeverityCode() === FedexRateServiceResponse::AUTHORIZATION_ERROR) {
             return 'oro.fedex.connection_validation.result.authorization_error.message';
-        } elseif ($response->getSeverityCode() === FedexRateServiceResponse::CONNECTION_ERROR) {
+        }
+        if ($response->getSeverityCode() === FedexRateServiceResponse::CONNECTION_ERROR) {
             return 'oro.fedex.connection_validation.result.connection_error.message';
-        } elseif (empty($response->getPrices())) {
+        }
+        if (empty($response->getPrices())) {
             return 'oro.fedex.connection_validation.result.no_services_error.message';
         }
 
@@ -87,22 +86,22 @@ class ValidateConnectionController extends AbstractController
 
     private function isShippingOriginProvided(): bool
     {
-        $shippingOrigin = $this->get(ShippingOriginProvider::class)->getSystemShippingOrigin();
+        $shippingOrigin = $this->get(SystemShippingOriginProvider::class)->getSystemShippingOrigin();
 
         return $shippingOrigin->getCountry() !== null;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
                 FedexRateServiceSoapClient::class,
-                ShippingOriginProvider::class,
+                SystemShippingOriginProvider::class,
                 FedexRateServiceValidateConnectionRequestFactory::class,
             ]
         );

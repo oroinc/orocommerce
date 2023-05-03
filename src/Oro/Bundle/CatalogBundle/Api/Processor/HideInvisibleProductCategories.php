@@ -16,11 +16,8 @@ use Oro\Component\EntitySerializer\EntityConfig;
  */
 class HideInvisibleProductCategories implements ProcessorInterface
 {
-    /** @var QueryAclHelper */
-    private $queryAclHelper;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private QueryAclHelper $queryAclHelper;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(QueryAclHelper $queryAclHelper, DoctrineHelper $doctrineHelper)
     {
@@ -31,7 +28,7 @@ class HideInvisibleProductCategories implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

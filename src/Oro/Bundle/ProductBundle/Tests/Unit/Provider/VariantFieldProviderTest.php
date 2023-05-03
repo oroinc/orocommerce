@@ -22,13 +22,8 @@ class VariantFieldProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->attributeManager = $this->getMockBuilder(AttributeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->serializedFieldProvider = $this->getMockBuilder(SerializedFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeManager = $this->createMock(AttributeManager::class);
+        $this->serializedFieldProvider = $this->createMock(SerializedFieldProvider::class);
 
         $this->variantFieldProvider = new VariantFieldProvider($this->attributeManager, $this->serializedFieldProvider);
     }

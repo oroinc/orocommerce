@@ -14,26 +14,21 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class CheckoutContextDataConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutToOrderConverter;
 
-    /**
-     * @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $orderContextDataConverter;
 
-    /**
-     * @var CheckoutContextDataConverter
-     */
+    /** @var CheckoutContextDataConverter */
     private $converter;
 
     protected function setUp(): void
     {
-        $this->checkoutToOrderConverter  = $this->createMock(CheckoutToOrderConverter::class);
+        $this->checkoutToOrderConverter = $this->createMock(CheckoutToOrderConverter::class);
         $this->orderContextDataConverter = $this->createMock(ContextDataConverterInterface::class);
-        $this->converter                 = new CheckoutContextDataConverter(
+
+        $this->converter = new CheckoutContextDataConverter(
             $this->checkoutToOrderConverter,
             $this->orderContextDataConverter
         );
@@ -41,18 +36,13 @@ class CheckoutContextDataConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider supportsDataProvider
-     * @param object $entity
-     * @param boolean $isSupported
      */
-    public function testSupports($entity, $isSupported)
+    public function testSupports(object $entity, bool $isSupported)
     {
         $this->assertSame($isSupported, $this->converter->supports($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             'supported entity' => [
@@ -80,11 +70,10 @@ class CheckoutContextDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContextDataWhenThrowsException()
     {
-        $entity = new \stdClass();
         $this->expectException(UnsupportedSourceEntityException::class);
         $this->expectExceptionMessage('Source entity "stdClass" is not supported.');
 
-        $this->converter->getContextData($entity);
+        $this->converter->getContextData(new \stdClass());
     }
 
     public function testGetContextData()
@@ -93,14 +82,12 @@ class CheckoutContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
         $context = ['context' => 'data'];
 
-        $this->checkoutToOrderConverter
-            ->expects($this->any())
+        $this->checkoutToOrderConverter->expects($this->any())
             ->method('getOrder')
             ->with($checkout)
             ->willReturn($order);
 
-        $this->orderContextDataConverter
-            ->expects($this->any())
+        $this->orderContextDataConverter->expects($this->any())
             ->method('getContextData')
             ->with($order)
             ->willReturn($context);
@@ -108,13 +95,8 @@ class CheckoutContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($context, $this->converter->getContextData($checkout));
     }
 
-    /**
-     * @param string $sourceEntityClass
-     * @return Checkout
-     */
-    private function getCheckout($sourceEntityClass = ShoppingList::class)
+    private function getCheckout(?string $sourceEntityClass = ShoppingList::class): Checkout
     {
-        /** @var CheckoutSource|\PHPUnit\Framework\MockObject\MockObject $checkoutSource */
         $checkoutSource = $this->createMock(CheckoutSource::class);
         $checkoutSource->expects($this->any())
             ->method('getEntity')

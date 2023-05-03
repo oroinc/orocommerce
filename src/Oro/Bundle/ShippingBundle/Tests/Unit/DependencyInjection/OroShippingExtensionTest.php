@@ -2,20 +2,32 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController;
 use Oro\Bundle\ShippingBundle\DependencyInjection\OroShippingExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroShippingExtensionTest extends ExtensionTestCase
+class OroShippingExtensionTest extends \PHPUnit\Framework\TestCase
 {
     public function testLoad(): void
     {
-        $this->loadExtension(new OroShippingExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            ShippingMethodsConfigsRuleController::class,
-        ];
+        $extension = new OroShippingExtension();
+        $extension->load([], $container);
 
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'shipping_origin' => ['value' => [], 'scope' => 'app'],
+                        'length_units' => ['value' => ['inch', 'foot', 'cm', 'm'], 'scope' => 'app'],
+                        'weight_units' => ['value' => ['lbs', 'kg'], 'scope' => 'app'],
+                        'freight_classes' => ['value' => ['parcel'], 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_shipping')
+        );
     }
 }

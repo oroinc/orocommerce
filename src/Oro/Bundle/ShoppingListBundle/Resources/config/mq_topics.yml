@@ -1,7 +1,7 @@
 services:
-  _defaults:
-    tags:
-      - { name: oro_message_queue.topic }
+    _defaults:
+        tags:
+            - { name: oro_message_queue.topic }
 
-  Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerProductTopic: ~
-  Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerWebsiteTopic: ~
+    Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerProductTopic: ~
+    Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerWebsiteTopic: ~

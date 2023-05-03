@@ -16,11 +16,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ValidateGuestCheckoutCustomerUser implements ProcessorInterface
 {
-    /** @var GuestCheckoutChecker */
-    private $guestCheckoutChecker;
-
-    /** @var string */
-    private $associationName;
+    private GuestCheckoutChecker $guestCheckoutChecker;
+    private string $associationName;
 
     public function __construct(
         GuestCheckoutChecker $guestCheckoutChecker,
@@ -33,7 +30,7 @@ class ValidateGuestCheckoutCustomerUser implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 

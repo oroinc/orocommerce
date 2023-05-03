@@ -6,41 +6,14 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData
-    as BasicLoadPaymentMethodsConfigsRuleData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData as BaseFixture;
 
-class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRuleData implements
-    ContainerAwareInterface
+class LoadPaymentMethodsConfigsRuleData extends BaseFixture
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @param Channel $channel
-     * @return string
-     */
-    protected function getPaymentMethodIdentifier(Channel $channel)
-    {
-        return $this->container->get('oro_money_order.generator.money_order_config_identifier')
-            ->generateIdentifier($channel);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         parent::load($manager);
 
@@ -59,8 +32,14 @@ class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRu
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return array_merge(parent::getDependencies(), [__NAMESPACE__ . '\LoadMoneyOrderChannelData']);
+        return array_merge(parent::getDependencies(), [LoadMoneyOrderChannelData::class]);
+    }
+
+    private function getPaymentMethodIdentifier(Channel $channel): string
+    {
+        return $this->container->get('oro_money_order.generator.money_order_config_identifier')
+            ->generateIdentifier($channel);
     }
 }

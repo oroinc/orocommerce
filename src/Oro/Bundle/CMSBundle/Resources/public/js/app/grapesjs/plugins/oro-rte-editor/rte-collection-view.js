@@ -2,6 +2,7 @@ import {invoke, uniq} from 'underscore';
 import BaseCollectionView from 'oroui/js/app/views/base/collection-view';
 import template from 'tpl-loader!orocms/templates/plugins/rte-collection-view-template.html';
 import RteItemView from './rte-item-view';
+import {isBlockFormatted} from '../components/rte/utils/utils';
 
 const RteCollectionView = BaseCollectionView.extend({
     optionNames: BaseCollectionView.prototype.optionNames.concat([
@@ -43,7 +44,7 @@ const RteCollectionView = BaseCollectionView.extend({
      * @param {DOM.Event} events
      * @returns {RteCollectionView}
      */
-    delegateEvents: function(events) {
+    delegateEvents(events) {
         RteCollectionView.__super__.delegateEvents.call(this, events);
 
         this.$editableEl.on(`mouseup${this.eventNamespace()} keyup${this.eventNamespace()}`,
@@ -62,7 +63,7 @@ const RteCollectionView = BaseCollectionView.extend({
      * @inheritdoc
      * @returns {RteCollectionView}
      */
-    undelegateEvents: function() {
+    undelegateEvents() {
         if (this.observer) {
             this.observer.disconnect();
         }
@@ -81,7 +82,8 @@ const RteCollectionView = BaseCollectionView.extend({
                 return node.nodeType === Node.ELEMENT_NODE &&
                     node.tagName === 'SPAN' &&
                     isNotSavedSpan &&
-                    node.getAttribute('data-gjs-type') !== 'text-style';
+                    node.getAttribute('data-gjs-type') !== 'text-style' &&
+                    !isBlockFormatted(node.parentNode);
             });
 
             if (mutation.type === 'childList' && isSpanAdded.length) {

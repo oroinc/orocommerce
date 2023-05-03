@@ -4,11 +4,13 @@ namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CMSBundle\Model\ExtendContentBlock;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
@@ -37,13 +39,17 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *          }
  *     }
  * )
+ * @method LocalizedFallbackValue getDefaultTitle()
+ * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  */
-class ContentBlock extends ExtendContentBlock implements
+class ContentBlock implements
     DatesAwareInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int
@@ -137,8 +143,6 @@ class ContentBlock extends ExtendContentBlock implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->titles = new ArrayCollection();
         $this->scopes = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();

@@ -3,7 +3,8 @@
 .sidebar__menu {
     max-height: none;
     margin-top: 3px;
-    padding: 30px 15px 30px 30px;
+    padding-block: $offset-y;
+    padding-inline: 30px $offset-x;
 
     border: 0;
     background-color: $sidebar-menu-background;
@@ -13,105 +14,21 @@
     }
 
     .main-menu {
-        max-height: inherit;
-
-        display: block;
-    }
-
-    .main-menu__item {
-        min-height: initial;
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-
-        &--floated-dropdown,
-        &--centered-dropdown {
-            position: static;
-        }
-    }
-
-    .main-menu__link {
-        min-height: initial;
-        padding: 8px 0 7px;
-
-        font-size: $base-font-size--s;
-        line-height: 1.46;
-
-        text-align: left;
-
-        color: $sidebar-menu-link-color;
-
-        &:hover {
-            text-decoration: underline;
-        }
-
-        &--is-trigger {
-            &:hover {
-                text-decoration: none;
-            }
-        }
-    }
-
-    .main-menu__sublist-container {
-        width: 100%;
-
-        position: static;
-
-        background: none;
-        box-shadow: none;
-    }
-
-    &--collapsible {
-        background-color: $sidebar-menu-collapsible-background-color;
-
-        border: 0;
-
-        .main-menu {
-            margin: 0 -15px 0 -30px;
-            padding: 5px 0 0;
-
-            .main-menu__item.expanded {
-                .fa-angle-down {
-                    left: 15px;
-                }
-
-                .main-menu__sublist-container {
-                    display: block;
-                }
-            }
-
-            .main-menu__link {
-                padding: 8px 0 7px 30px;
-            }
-        }
+        flex-direction: column;
     }
 }
 
 @include breakpoint('desktop') {
     .main-menu {
-        &__item {
-            display: flex;
-            flex-wrap: wrap;
-        }
-    }
-}
-
-@include only-desktop {
-    .main-menu {
-        &__item {
-            &:hover {
-                .main-menu__sublist-container {
-                    display: none;
-                }
+        .sidebar__menu & {
+            &__link {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
-            &.show {
-                .main-menu__sublist-container {
-                    display: block;
-
-                    border-width: 0;
-                }
+            &__inner--fullheight {
+                background: none;
             }
         }
     }
@@ -120,9 +37,5 @@
 @include breakpoint('tablet') {
     .sidebar__menu {
         display: none;
-    }
-
-    .main-menu {
-        border-bottom: $main-menu-tablet-border;
     }
 }

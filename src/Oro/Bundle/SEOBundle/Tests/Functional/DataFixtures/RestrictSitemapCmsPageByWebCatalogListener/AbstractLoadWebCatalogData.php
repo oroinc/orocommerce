@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -68,7 +69,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
                 $slug->addScope($scope);
                 $slug->setOrganization($webCatalog->getOrganization());
 
-                if (method_exists($variant, $entitySetterMethod)) {
+                if (EntityPropertyInfo::methodExists($variant, $entitySetterMethod)) {
                     $variant->$entitySetterMethod($page);
                 }
 

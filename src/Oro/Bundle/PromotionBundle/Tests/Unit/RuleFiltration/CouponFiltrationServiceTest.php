@@ -11,26 +11,21 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var CouponFiltrationService
-     */
+    /** @var CouponFiltrationService */
     private $couponFiltrationService;
 
     protected function setUp(): void
@@ -45,19 +40,17 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
         $ruleOwners = [new \stdClass()];
         $context = [];
 
-        $this->filtrationService
-            ->expects($this->once())
+        $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
             ->with([], $context)
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
             });
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
-        static::assertEmpty($this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context));
+        self::assertEmpty($this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context));
     }
 
     public function testGetFilteredRuleOwnersWithNoAppliedCouponsAndRuleOwnerUsesCoupons()
@@ -66,19 +59,17 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
         $ruleOwners = [$appliedPromotion];
         $context = [];
 
-        $this->filtrationService
-            ->expects($this->once())
+        $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
             ->with([], $context)
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
             });
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
-        static::assertEmpty($this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context));
+        self::assertEmpty($this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context));
     }
 
     public function testGetFilteredRuleOwnersWithNoAppliedCouponsAndRuleOwnerNotUsesCoupons()
@@ -87,19 +78,17 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
         $ruleOwners = [$appliedPromotion];
         $context = [];
 
-        $this->filtrationService
-            ->expects($this->once())
+        $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
             ->with([$appliedPromotion], $context)
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
             });
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
-        static::assertEquals(
+        self::assertEquals(
             [$appliedPromotion],
             $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
@@ -114,38 +103,32 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
         $appliedCoupons = [(new Coupon())->setCode('XYZ')];
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection($appliedCoupons)];
 
-        $this->filtrationService
-            ->expects($this->once())
+        $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
             ->with([$appliedPromotionWithCoupon], $context)
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
             });
 
-        /** @var CouponRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $this->createMock(CouponRepository::class);
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('getPromotionsWithMatchedCoupons')
             ->with([$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon], ['XYZ'])
             ->willReturn([5]);
 
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager */
         $entityManager = $this->createMock(EntityManager::class);
 
-        $entityManager
-            ->expects($this->once())
+        $entityManager->expects($this->once())
             ->method('getRepository')
             ->with(Coupon::class)
             ->willReturn($repository);
 
-        $this->registry
-            ->expects($this->once())
+        $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with(Coupon::class)
             ->willReturn($entityManager);
 
-        static::assertEquals(
+        self::assertEquals(
             [$appliedPromotionWithCoupon],
             $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
@@ -162,19 +145,17 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$appliedCoupon])];
 
-        $this->filtrationService
-            ->expects($this->once())
+        $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
             ->with([$promotionWithCoupon], $context)
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
             });
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
-        static::assertEquals(
+        self::assertEquals(
             [$promotionWithCoupon],
             $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
@@ -187,19 +168,17 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$appliedCoupon])];
 
-        $this->filtrationService
-            ->expects($this->once())
+        $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
             ->with([$appliedPromotion], $context)
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;
             });
 
-        $this->registry
-            ->expects($this->never())
+        $this->registry->expects($this->never())
             ->method('getManagerForClass');
 
-        static::assertEquals(
+        self::assertEquals(
             [$appliedPromotion],
             $this->couponFiltrationService->getFilteredRuleOwners([$appliedPromotion], $context)
         );
@@ -207,6 +186,13 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 
     public function testFilterIsSkippable()
     {
-        $this->assertServiceSkipped($this->couponFiltrationService, $this->filtrationService);
+        $this->filtrationService->expects($this->never())
+            ->method('getFilteredRuleOwners');
+
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $this->couponFiltrationService->getFilteredRuleOwners(
+            [$ruleOwner],
+            ['skip_filters' => [get_class($this->couponFiltrationService) => true]]
+        );
     }
 }

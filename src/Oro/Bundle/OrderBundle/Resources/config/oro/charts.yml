@@ -1,0 +1,64 @@
+charts:
+    sales_orders_volume_chart:
+        label: oro.chart.multiline_chart.label
+        data_schema:
+            label:
+                name: label
+                label: 'oro.dashboard.chart.%s.label'
+                required: true
+                type: date
+                field_name: date
+            startLabel:
+                name: startLabel
+                label: 'oro.dashboard.chart.%s.start.label'
+                required: false
+                type: date
+                field_name: dateStart
+            endLabel:
+                name: endLabel
+                label: 'oro.dashboard.chart.%s.end.label'
+                required: false
+                type: date
+                field_name: dateEnd
+            value:
+                name: value
+                label: 'oro.order.dashboard.widget.sales_orders_volume.label'
+                required: true
+                field_name: amount
+                type: currency_rounded
+        xaxis:
+            mode: time
+            noTicks: 12
+        template: '@OroCharts/Chart/multiline.html.twig'
+
+    sales_orders_number_chart:
+        label: oro.chart.multiline_chart.label
+        data_schema:
+            label:
+                name: label
+                label: 'oro.dashboard.chart.%s.label'
+                required: true
+                type: date
+                field_name: date
+            startLabel:
+                name: startLabel
+                label: 'oro.dashboard.chart.%s.start.label'
+                required: false
+                type: date
+                field_name: dateStart
+            endLabel:
+                name: endLabel
+                label: 'oro.dashboard.chart.%s.end.label'
+                required: false
+                type: date
+                field_name: dateEnd
+            value:
+                name: value
+                label: 'oro.order.dashboard.widget.sales_orders_number.label'
+                required: true
+                field_name: number
+                type: integer
+        xaxis:
+            mode: time
+            noTicks: 12
+        template: '@OroCharts/Chart/multiline.html.twig'

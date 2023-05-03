@@ -9,36 +9,32 @@ use Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductHandlerListener
-     */
-    protected $listener;
+    /** @var PropertyAccessor */
+    private $propertyAccessor;
 
-    /**
-     * @var PropertyAccessor
-     */
-    protected $propertyAccessor;
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    /** @var ProductHandlerListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->propertyAccessor = $this->getMockBuilder(PropertyAccessor::class)
+            ->onlyMethods(['setValue'])
+            ->getMock();
         $this->logger = $this->createMock(LoggerInterface::class);
+
         $this->listener = new ProductHandlerListener($this->propertyAccessor, $this->logger);
     }
 
-    protected function tearDown(): void
+    private function createEvent(object $entity): AfterFormProcessEvent
     {
-        unset($this->listener);
+        return new AfterFormProcessEvent($this->createMock(FormInterface::class), $entity);
     }
 
     public function testClearVariantLinks()
@@ -46,7 +42,7 @@ class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
         $entity = new Product();
         $entity->setType(Product::TYPE_CONFIGURABLE);
 
-        $productVariantLink = $this->createProductVariantLink();
+        $productVariantLink = new ProductVariantLink();
         $entity->addVariantLink($productVariantLink);
 
         $event = $this->createEvent($entity);
@@ -68,32 +64,13 @@ class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
         $entity->variantFieldProperty = 'value';
         $entity->notVariantFieldProperty = 'value';
         $entity->setVariantFields(['variantFieldProperty']);
+        $this->propertyAccessor->expects($this->once())
+            ->method('setValue')
+            ->with($entity, 'variantFieldProperty', null);
 
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
 
-        $this->assertNull($entity->variantFieldProperty);
         $this->assertNotNull($entity->notVariantFieldProperty);
-    }
-
-    /**
-     * @param object $entity
-     * @return AfterFormProcessEvent
-     */
-    protected function createEvent($entity)
-    {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock(FormInterface::class);
-        return new AfterFormProcessEvent($form, $entity);
-    }
-
-    /**
-     * @param Product|null $parentProduct
-     * @param Product|null $product
-     * @return ProductVariantLink
-     */
-    protected function createProductVariantLink(Product $parentProduct = null, Product $product = null)
-    {
-        return new ProductVariantLink($parentProduct, $product);
     }
 }

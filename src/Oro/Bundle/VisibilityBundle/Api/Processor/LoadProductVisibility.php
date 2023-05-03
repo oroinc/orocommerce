@@ -4,7 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -14,17 +13,15 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
  */
 class LoadProductVisibility extends AbstractLoadVisibility
 {
-    /** @var VisibilityScopeProvider */
-    private $visibilityScopeProvider;
+    private VisibilityScopeProvider $visibilityScopeProvider;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AclHelper $aclHelper,
         WebsiteManager $websiteManager,
-        VisibilityIdHelper $visibilityIdHelper,
         VisibilityScopeProvider $visibilityScopeProvider
     ) {
-        parent::__construct($doctrineHelper, $aclHelper, $websiteManager, $visibilityIdHelper);
+        parent::__construct($doctrineHelper, $aclHelper, $websiteManager);
         $this->visibilityScopeProvider = $visibilityScopeProvider;
     }
 

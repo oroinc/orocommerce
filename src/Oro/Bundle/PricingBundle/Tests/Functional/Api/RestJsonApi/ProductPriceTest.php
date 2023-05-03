@@ -133,6 +133,55 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertMessagesSentForCreateRequest('price_list_3');
     }
 
+    public function testCreateWithPriceSharding()
+    {
+        if (!$this->getContainer()->getParameter('enable_price_sharding')) {
+            $this->markTestSkipped('Price sharding is not enabled.');
+        }
+
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            'product_price/create_with_price_sharding.yml'
+        );
+
+        $productPrice = $this->getProductPrice('');
+        $em = $this->getEntityManager(ProductPrice::class);
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_3');
+
+        $queryBuilder = $em->getRepository(ProductPrice::class)->createQueryBuilder('price');
+        $queryBuilder
+            ->andWhere('price.quantity = :quantity')
+            ->andWhere('price.value = :value')
+            ->andWhere('price.currency = :currency')
+            ->andWhere('price.priceList = :priceList')
+            ->andWhere('price.product = :product')
+            ->andWhere('price.unit = :unit')
+            ->setParameter('quantity', 12)
+            ->setParameter('value', 24)
+            ->setParameter('currency', 'USD')
+            ->setParameter('priceList', $priceList)
+            ->setParameter('product', $this->getReference('product-5'))
+            ->setParameter('unit', $this->getReference('product_unit.milliliter'));
+
+        $query = $queryBuilder->getQuery();
+        $query->setHint('priceList', $priceList->getId());
+        $query->setHint(
+            PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
+            self::getContainer()->get('oro_pricing.shard_manager')
+        );
+        
+        self::assertContains('product_price_', $query->getSQL());
+
+        $productPrice = $query->getOneOrNullResult();
+
+        self::assertNotNull($productPrice);
+        self::assertEquals(
+            $productPrice->getId() . '-' . $productPrice->getPriceList()->getId(),
+            $this->getResourceId($response)
+        );
+    }
+
     public function testTryToCreateDuplicate()
     {
         $this->post(

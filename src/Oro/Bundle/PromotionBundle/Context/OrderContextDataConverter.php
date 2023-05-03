@@ -20,6 +20,8 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
  */
 class OrderContextDataConverter implements ContextDataConverterInterface
 {
+    public const SUB_ORDERS = 'subOrders';
+
     /**
      * @var CriteriaDataProvider
      */
@@ -89,9 +91,10 @@ class OrderContextDataConverter implements ContextDataConverterInterface
         $customer = $this->criteriaDataProvider->getCustomer($entity);
         $customerGroup = $this->criteriaDataProvider->getCustomerGroup($entity);
 
+        // There may be cases when entities do not exist yet, so we ignore them.
         $scopeContext = [
-            'customer' => $customer,
-            'customerGroup' => $customerGroup,
+            'customer' => $customer?->getId() ? $customer : null,
+            'customerGroup' => $customerGroup?->getId() ? $customerGroup : null,
             'website' => $this->criteriaDataProvider->getWebsite($entity)
         ];
 
@@ -113,7 +116,8 @@ class OrderContextDataConverter implements ContextDataConverterInterface
             self::SHIPPING_METHOD_TYPE => $entity->getShippingMethodType(),
             self::APPLIED_COUPONS => $this->getValidateCoupons($this->entityCouponsProvider->getCoupons($entity)),
             self::PAYMENT_METHOD => reset($paymentMethods),
-            self::PAYMENT_METHODS => $paymentMethods
+            self::PAYMENT_METHODS => $paymentMethods,
+            self::SUB_ORDERS => $entity->getSubOrders()->toArray(),
         ];
     }
 

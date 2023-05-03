@@ -9,11 +9,8 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
     /** @var ProductLowInventoryThresholdFormViewListener */
-    protected $listener;
+    private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,25 +22,18 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-
-        parent::tearDown();
-    }
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function callTestMethod()
+    protected function callTestMethod(): void
     {
         $this->listener->onProductView($this->event);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExpectedScrollData()
+    protected function getExpectedScrollData(): array
     {
         return [
             ScrollData::DATA_BLOCKS => [
@@ -56,9 +46,9 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
     }
 
     /**
-     * @return Product
+     * {@inheritDoc}
      */
-    protected function getEntity()
+    protected function getEntity(): object
     {
         return new Product();
     }

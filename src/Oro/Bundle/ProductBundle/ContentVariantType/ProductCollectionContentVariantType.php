@@ -17,13 +17,12 @@ class ProductCollectionContentVariantType implements
     ContentVariantTypeInterface,
     ContentVariantEntityProviderInterface
 {
-    const TYPE = 'product_collection';
-    const PRODUCT_COLLECTION_ROUTE_NAME = 'oro_product_frontend_product_index';
-    const CONTENT_VARIANT_ID_KEY = 'contentVariantId';
-    const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
+    public const TYPE = 'product_collection';
+    public const PRODUCT_COLLECTION_ROUTE_NAME = 'oro_product_frontend_product_index';
+    public const CONTENT_VARIANT_ID_KEY = 'contentVariantId';
+    public const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
 
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
@@ -31,41 +30,41 @@ class ProductCollectionContentVariantType implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return self::TYPE;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return 'oro.product.content_variant.product_collection.label';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getFormType()
+    public function getFormType(): string
     {
         return ProductCollectionVariantType::class;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function isAllowed()
+    public function isAllowed(): bool
     {
         return $this->authorizationChecker->isGranted('oro_product_view');
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getRouteData(ContentVariantInterface $contentVariant)
+    public function getRouteData(ContentVariantInterface $contentVariant): RouteData
     {
         return new RouteData(
             self::PRODUCT_COLLECTION_ROUTE_NAME,
@@ -77,15 +76,15 @@ class ProductCollectionContentVariantType implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getApiResourceClassName()
+    public function getApiResourceClassName(): string
     {
         return ProductCollection::class;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getApiResourceIdentifierDqlExpression($alias)
     {
@@ -93,7 +92,7 @@ class ProductCollectionContentVariantType implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getAttachedEntity(ContentVariantInterface $contentVariant)
     {

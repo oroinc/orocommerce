@@ -11,6 +11,8 @@ use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\CategorySortOrderGridType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,26 +23,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * Provides functionality to create new Category instances.
+ * The form type to create new Category instances.
  */
 class CategoryType extends AbstractType
 {
-    const NAME = 'oro_catalog_category';
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @var string
-     */
-    protected $productClass;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
@@ -48,27 +35,10 @@ class CategoryType extends AbstractType
     }
 
     /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
+     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -123,9 +93,9 @@ class CategoryType extends AbstractType
                 'appendProducts',
                 EntityIdentifierType::class,
                 [
-                    'class'    => $this->productClass,
+                    'class' => Product::class,
                     'required' => false,
-                    'mapped'   => false,
+                    'mapped' => false,
                     'multiple' => true,
                 ]
             )
@@ -133,17 +103,25 @@ class CategoryType extends AbstractType
                 'removeProducts',
                 EntityIdentifierType::class,
                 [
-                    'class'    => $this->productClass,
+                    'class' => Product::class,
                     'required' => false,
-                    'mapped'   => false,
+                    'mapped' => false,
                     'multiple' => true,
+                ]
+            )
+            ->add(
+                'sortOrder',
+                CategorySortOrderGridType::class,
+                [
+                    'required' => false,
+                    'mapped' => false
                 ]
             )
             ->add(
                 'smallImage',
                 ImageType::class,
                 [
-                    'label'    => 'oro.catalog.category.small_image.label',
+                    'label' => 'oro.catalog.category.small_image.label',
                     'required' => false
                 ]
             )
@@ -151,7 +129,7 @@ class CategoryType extends AbstractType
                 'largeImage',
                 ImageType::class,
                 [
-                    'label'    => 'oro.catalog.category.large_image.label',
+                    'label' => 'oro.catalog.category.large_image.label',
                     'required' => false
                 ]
             )
@@ -166,63 +144,49 @@ class CategoryType extends AbstractType
                 'slugPrototypesWithRedirect',
                 LocalizedSlugWithRedirectType::class,
                 [
-                    'label'    => 'oro.catalog.category.slug_prototypes.label',
+                    'label' => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
                     'source_field' => 'titles',
                     'allow_slashes' => true,
                 ]
             )
-            ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
-    }
-
-    public function preSetDataListener(FormEvent $event)
-    {
-        $category = $event->getData();
-
-        if ($category instanceof Category && $category->getId()) {
-            $url = $this->urlGenerator->generate(
-                'oro_catalog_category_get_changed_slugs',
-                ['id' => $category->getId()]
-            );
-
-            $event->getForm()->add(
-                'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::class,
-                [
-                    'label'    => 'oro.catalog.category.slug_prototypes.label',
-                    'required' => false,
-                    'source_field' => 'names',
-                    'get_changed_slugs_url' => $url,
-                    'allow_slashes' => true,
-                ]
-            );
-        }
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $category = $event->getData();
+                if ($category instanceof Category && $category->getId()) {
+                    $url = $this->urlGenerator->generate(
+                        'oro_catalog_category_get_changed_slugs',
+                        ['id' => $category->getId()]
+                    );
+                    $event->getForm()->add(
+                        'slugPrototypesWithRedirect',
+                        LocalizedSlugWithRedirectType::class,
+                        [
+                            'label' => 'oro.catalog.category.slug_prototypes.label',
+                            'required' => false,
+                            'source_field' => 'names',
+                            'get_changed_slugs_url' => $url,
+                            'allow_slashes' => true,
+                        ]
+                    );
+                }
+            });
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => $this->dataClass,
-            'csrf_token_id' => 'category',
-        ]);
+        $resolver
+            ->setDefault('data_class', Category::class)
+            ->setDefault('csrf_token_id', 'category');
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
+        return 'oro_catalog_category';
     }
 }

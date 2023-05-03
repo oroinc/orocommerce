@@ -5,12 +5,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
@@ -19,16 +17,9 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
 
         $this->placeholder = new WebsiteIdPlaceholder($this->websiteManager);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->websiteManager, $this->placeholder);
     }
 
     public function testGetPlaceholder()
@@ -39,8 +30,8 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplaceDefaultWithWebsiteId()
     {
-        /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = new Website();
+        ReflectionUtil::setId($website, 1);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
@@ -69,7 +60,8 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplace()
     {
-        $this->websiteManager->expects($this->never())->method($this->anything());
+        $this->websiteManager->expects($this->never())
+            ->method($this->anything());
 
         $this->assertEquals(
             'string_1',
@@ -79,7 +71,8 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplaceWithoutValue()
     {
-        $this->websiteManager->expects($this->never())->method($this->anything());
+        $this->websiteManager->expects($this->never())
+            ->method($this->anything());
 
         $this->assertEquals(
             'string_WEBSITE_ID',

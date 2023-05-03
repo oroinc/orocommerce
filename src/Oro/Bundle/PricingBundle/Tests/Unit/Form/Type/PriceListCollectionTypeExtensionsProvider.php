@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -18,24 +18,19 @@ use Symfony\Component\Validator\Validation;
 
 class PriceListCollectionTypeExtensionsProvider extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @return array
-     */
-    public function getExtensions()
+    public function getExtensions(): array
     {
-        $entityType = new EntityTypeStub([]);
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('get')
             ->with('oro_pricing.price_strategy')
             ->willReturn(MergePricesCombiningStrategy::NAME);
+
         return [
             new PreloadedExtension(
                 [
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    EntityType::class => $entityType,
+                    EntityType::class => new EntityTypeStub(),
                 ],
                 [
                     FormType::class => [new SortableExtension()],

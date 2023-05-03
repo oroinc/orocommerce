@@ -1,11 +1,11 @@
 services:
     oro_ups.form.type.transport_settings:
-        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType'
+        class: Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType
         arguments:
             - "@oro_ups.provider.transport"
-            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_shipping.system_shipping_origin_provider'
         tags:
-            - { name: form.type, alias: oro_ups_transport_settings_type }
+            - { name: form.type }
 
     oro_ups.form.type.shipping_method_config_options:
         class: Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType

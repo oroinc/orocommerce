@@ -69,16 +69,11 @@
 }
 
 .cart-widget {
-    float: left;
-    width: 100%;
-    min-height: 62px;
-
     &__content {
+        display: flex;
+        gap: 3px;
         position: relative;
-
-        margin: 9px 5px 0 0;
         vertical-align: middle;
-
         text-align: right;
     }
 
@@ -99,8 +94,6 @@
     }
 
     &__icon {
-        margin-right: 3px;
-
         @include badge(33px);
     }
 }
@@ -158,6 +151,14 @@
             }
         }
     }
+
+    .cart-widget {
+        padding: 8px 24px;
+
+        &__content {
+            align-items: center;
+        }
+    }
 }
 
 @include breakpoint('tablet') {
@@ -172,6 +173,10 @@
     }
 
     .cart-widget {
+        &__content {
+            justify-content: center;
+        }
+
         &__icon {
             margin: 0;
         }

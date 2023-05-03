@@ -7,7 +7,6 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
-    - Oro\Bundle\PricingBundle\Tests\Functional\Api\DataFixtures\LoadCombinedPriceList
 
 Oro\Bundle\WebsiteBundle\Entity\Website:
     website1:
@@ -43,12 +42,63 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision2:
         unit: '@set'
         precision: '1'
+    product_kit1_precision1:
+        unit: '@item'
+        precision: '0'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Product 1'
     product2_name:
         string: 'Product 2'
+    product_kit1_name:
+        string: 'Product Kit 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    product_kit1_item1_label:
+        string: 'Product Kit 1 Item 1'
+    product_kit1_item2_label:
+        string: 'Product Kit 1 Item 2'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@product1'
+        sortOrder: 1
+
+    product_kit1_item1_product2:
+        kitItem: '@product_kit1_item1'
+        product: '@product2'
+        sortOrder: 2
+
+    product_kit1_item2_product2:
+        kitItem: '@product_kit1_item2'
+        product: '@product2'
+        sortOrder: 1
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 1
+        minimumQuantity: ~
+        maximumQuantity: ~
+        productKit: '@product_kit1'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit1_item1_label']
+            - addKitItemProduct: ['@product_kit1_item1_product1']
+            - addKitItemProduct: ['@product_kit1_item1_product2']
+
+    product_kit1_item2:
+        optional: true
+        sortOrder: 10
+        minimumQuantity: 0
+        maximumQuantity: 5
+        productKit: '@product_kit1'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit1_item2_label']
+            - addKitItemProduct: ['@product_kit1_item2_product2']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -71,6 +121,37 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
+    product_kit1:
+        sku: 'KIT1'
+        type: 'kit'
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product_kit1_name']
+            - addKitItem: ['@product_kit1_item1']
+            - addKitItem: ['@product_kit1_item2']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@in_stock'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: [ '@product_kit1_precision1' ]
+
+Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
+    product_kit_item1_line_item1:
+        lineItem: '@kit_line_item1'
+        kitItem: '@product_kit1_item1'
+        product: '@product1'
+        quantity: 2
+        unit: '@item'
+        sortOrder: 0
+
+    product_kit_item1_line_item2:
+        lineItem: '@kit_line_item1'
+        kitItem: '@product_kit1_item2'
+        product: '@product2'
+        quantity: 3
+        unit: '@item'
+        sortOrder: 1
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     line_item1:
@@ -92,12 +173,22 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         organization: '@organization'
         owner: '@user'
+    kit_line_item1:
+        product: '@product_kit1'
+        quantity: 2
+        unit: '@item'
+        checksum: 'kit_line_item1_checksum'
+        organization: '@organization'
+        owner: '@user'
+        __calls:
+            - addKitItemLineItem: ['@product_kit_item1_line_item1']
+            - addKitItemLineItem: ['@product_kit_item1_line_item2']
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shopping_list1:
         label: 'Shopping List 1'
         notes: 'Shopping List 1 Notes'
-        lineItems: ['@line_item1']
+        lineItems: ['@line_item1', '@kit_line_item1']
         organization: '@organization'
         website: '@website'
     shopping_list2:
@@ -114,6 +205,18 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         lineItems: ['@line_item3']
         organization: '@organization'
         website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    default_combined_price_list:
+        name: 'combined_price_list'
+        enabled: true
+        __calls:
+            -   setCurrencies: [ ['USD'] ]
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    first_combined_price:
+        priceList: '@default_combined_price_list'
+        website: '@website'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
     product1_price_item:
@@ -136,6 +239,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         unit: '@item'
         quantity: 1
         value: 2.34
+        currency: USD
+    product_kit1_price1_item:
+        priceList: '@default_combined_price_list'
+        product: '@product_kit1'
+        unit: '@item'
+        quantity: 1
+        value: 12.34
         currency: USD
 
 Oro\Bundle\CustomerBundle\Entity\CustomerVisitor:

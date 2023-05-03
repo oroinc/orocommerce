@@ -10,13 +10,11 @@ use Oro\Bundle\ConsentBundle\Form\DataTransformer\CustomerConsentsTransformer;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-
-    /** @var CustomerConsentsTransformer */
-    private $dataTransformer;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
@@ -24,15 +22,13 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $consentAcceptanceProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var CustomerConsentsTransformer */
+    private $dataTransformer;
+
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->consentAcceptanceProvider = $this->createMock(
-            ConsentAcceptanceProvider::class
-        );
+        $this->consentAcceptanceProvider = $this->createMock(ConsentAcceptanceProvider::class);
 
         $this->dataTransformer = new CustomerConsentsTransformer(
             $this->doctrineHelper,
@@ -41,34 +37,15 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->doctrineHelper);
-        unset($this->consentAcceptanceProvider);
-        unset($this->dataTransformer);
-    }
-
-    /**
      * @dataProvider transformProvider
-     *
-     * @param mixed  $consentAcceptances
-     * @param string $expectedTransformedValue
      */
-    public function testTransform($consentAcceptances, $expectedTransformedValue)
+    public function testTransform(mixed $consentAcceptances, string $expectedTransformedValue)
     {
         $transformerValue = $this->dataTransformer->transform($consentAcceptances);
-        $this->assertSame(
-            $expectedTransformedValue,
-            $transformerValue
-        );
+        $this->assertSame($expectedTransformedValue, $transformerValue);
     }
 
-    /**
-     * @return array
-     */
-    public function transformProvider()
+    public function transformProvider(): array
     {
         return [
             'Incorrect data on transformation' => [
@@ -103,22 +80,16 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider reverseTransformInvalidDataProvider
-     *
-     * @param string $invalidData
-     * @param string $exceptionMessage
      */
-    public function testReverseTransformInvalidData($invalidData, $exceptionMessage)
+    public function testReverseTransformInvalidData(string $invalidData, string $exceptionMessage)
     {
-        $this->expectException(\Symfony\Component\Form\Exception\TransformationFailedException::class);
+        $this->expectException(TransformationFailedException::class);
         $this->expectExceptionMessage($exceptionMessage);
 
         $this->dataTransformer->reverseTransform($invalidData);
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformInvalidDataProvider()
+    public function reverseTransformInvalidDataProvider(): array
     {
         return [
             'Malformed json' => [
@@ -148,37 +119,29 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
         $dataItemCount = count($consentAcceptancesReturnedByProvider + $consentAcceptancesOnCreate);
 
         if ($dataItemCount === 0) {
-            $this->consentAcceptanceProvider
-                ->expects($this->never())
+            $this->consentAcceptanceProvider->expects($this->never())
                 ->method('getCustomerConsentAcceptanceByConsentId');
         } else {
-            $this->consentAcceptanceProvider
-                ->expects($this->exactly($dataItemCount))
+            $this->consentAcceptanceProvider->expects($this->exactly($dataItemCount))
                 ->method('getCustomerConsentAcceptanceByConsentId')
-                ->willReturnCallback(
-                    function (int $id) use ($consentAcceptancesReturnedByProvider) {
-                        return $consentAcceptancesReturnedByProvider[$id] ?? null;
-                    }
-                );
+                ->willReturnCallback(function (int $id) use ($consentAcceptancesReturnedByProvider) {
+                    return $consentAcceptancesReturnedByProvider[$id] ?? null;
+                });
         }
 
         if (empty($consentAcceptancesOnCreate)) {
-            $this->doctrineHelper
-                ->expects($this->never())
+            $this->doctrineHelper->expects($this->never())
                 ->method('createEntityInstance');
-            $this->doctrineHelper
-                ->expects($this->never())
+            $this->doctrineHelper->expects($this->never())
                 ->method('getEntityReference');
         } else {
-            $this->doctrineHelper
-                ->expects($this->exactly(count($consentAcceptancesOnCreate)))
+            $this->doctrineHelper->expects($this->exactly(count($consentAcceptancesOnCreate)))
                 ->method('createEntityInstance')
                 ->willReturnCallback(function ($class) {
                     return $this->getEntity($class);
                 });
 
-            $this->doctrineHelper
-                ->expects($this->any())
+            $this->doctrineHelper->expects($this->any())
                 ->method('getEntityReference')
                 ->willReturnCallback(function ($class, $id) {
                     return $this->getEntity($class, ['id' => $id]);
@@ -189,10 +152,7 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($consentAcceptanceData, new ArrayCollection($expectedReverseTransformedValue));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformProvider()
+    public function reverseTransformProvider(): array
     {
         $consentAcceptanceReturnedByProvider = $this->getEntity(
             ConsentAcceptance::class,

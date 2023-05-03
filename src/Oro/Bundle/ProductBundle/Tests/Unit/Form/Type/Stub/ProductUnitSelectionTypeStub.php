@@ -2,34 +2,23 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductUnitSelectionTypeStub extends StubEntityType
+class ProductUnitSelectionTypeStub extends EntityTypeStub
 {
     /**
      * {@inheritDoc}
      */
-    public function __construct(array $choices = [], $name = ProductUnitSelectionType::NAME)
-    {
-        parent::__construct($choices, $name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
-        $resolver->setDefaults(
-            [
-                'compact' => false,
-                'product' => null,
-                'product_holder' => null,
-                'product_field' => 'product',
-                'sell' => null,
-            ]
-        );
+        $resolver->setDefaults([
+            'compact' => false,
+            'product' => null,
+            'product_holder' => null,
+            'product_field' => 'product',
+            'sell' => null,
+        ]);
     }
 }

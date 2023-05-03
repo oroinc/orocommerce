@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Brand;
@@ -22,7 +23,7 @@ class BrandControllerTest extends WebTestCase
     public function testGetChangedUrlsWhenSlugChanged()
     {
         $brand = $this->getFirstBrand();
-        if (method_exists($brand, 'setDefaultSlugPrototype')) {
+        if (EntityPropertyInfo::methodExists($brand, 'setDefaultSlugPrototype')) {
             $brand->setDefaultSlugPrototype('old-default-slug');
         }
 

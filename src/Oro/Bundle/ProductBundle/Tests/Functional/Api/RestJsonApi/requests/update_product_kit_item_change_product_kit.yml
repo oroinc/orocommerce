@@ -1,0 +1,8 @@
+data:
+    type: productkititems
+    id: '<toString(@product_kit1_item2->getId())>'
+    relationships:
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit2->getId())>'

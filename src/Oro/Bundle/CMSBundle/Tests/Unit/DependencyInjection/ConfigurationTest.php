@@ -3,19 +3,10 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CMSBundle\DependencyInjection\Configuration;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetConfigTreeBuilder(): void
-    {
-        $configuration = new Configuration(['secure', 'unsecure']);
-
-        $treeBuilder = $configuration->getConfigTreeBuilder();
-        $this->assertInstanceOf(TreeBuilder::class, $treeBuilder);
-    }
-
     /**
      * @dataProvider configDataProvider
      */

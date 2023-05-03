@@ -20,19 +20,13 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ImportExportTest extends AbstractImportExportTestCase
 {
-    /**
-     * @var array
-     */
-    protected $inventoryStatusOnlyHeader = [
+    private array $inventoryStatusOnlyHeader = [
         'SKU',
         'Product',
         'Inventory Status',
     ];
 
-    /**
-     * @var array
-     */
-    protected $inventoryLevelHeader = [
+    private array $inventoryLevelHeader = [
         'SKU',
         'Product',
         'Inventory Status',
@@ -60,10 +54,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->doImport($strategy);
     }
 
-    /**
-     * @return array
-     */
-    public function strategyDataProvider()
+    public function strategyDataProvider(): array
     {
         return [
             'inventory level' => ['oro_inventory.inventory_level'],
@@ -73,7 +64,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     /**
      * @param string $strategy
      */
-    protected function doImport($strategy)
+    private function doImport($strategy)
     {
         $this->client->followRedirects(false);
         $this->client->request(
@@ -102,7 +93,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     /**
      * @param string $strategy
      */
-    protected function validateImportFile($strategy)
+    private function validateImportFile($strategy)
     {
         $crawler = $this->client->request(
             'GET',
@@ -146,7 +137,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     /**
      * @return string
      */
-    protected function getImportTemplate()
+    private function getImportTemplate()
     {
         $result = $this
             ->getContainer()
@@ -236,7 +227,7 @@ class ImportExportTest extends AbstractImportExportTestCase
      * @param array $expectedHeader
      * @return array
      */
-    protected function assertExportInfluencedByProcessorChoice($exportChoice, $expectedHeader)
+    private function assertExportInfluencedByProcessorChoice($exportChoice, $expectedHeader)
     {
         $crawler = $this->client->request(
             'GET',
@@ -284,16 +275,13 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->client->submit($form);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('url', $response);
-        static::assertStringContainsString('.csv', $response['url']);
+        self::assertStringContainsString('.csv', $response['url']);
 
         $fileContent = $this->downloadFile($response['url']);
         $this->assertEquals($fileContent[0], $expectedHeader);
     }
 
-    /**
-     * @return array
-     */
-    public function exportTemplateDataProvider()
+    public function exportTemplateDataProvider(): array
     {
         return [
             ['oro_product.inventory_status_only_template', $this->inventoryStatusOnlyHeader],
@@ -305,7 +293,7 @@ class ImportExportTest extends AbstractImportExportTestCase
      * @param string $url
      * @return array
      */
-    protected function downloadFile($url)
+    private function downloadFile($url)
     {
         $this->client->request('GET', $url);
 
@@ -329,7 +317,7 @@ class ImportExportTest extends AbstractImportExportTestCase
      * @param int $numberOfColumns
      * @param int $numberOfRows
      */
-    protected function assertFileContentConsistency($fileContent, $numberOfColumns, $numberOfRows)
+    private function assertFileContentConsistency($fileContent, $numberOfColumns, $numberOfRows)
     {
         for ($i = 1; $i < count($fileContent); $i++) {
             $this->assertEquals(count($fileContent[$i]), $numberOfColumns);
@@ -338,7 +326,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertEquals($numberOfRows, count($fileContent) - 1);
     }
 
-    protected function getDefaultRequestParameters()
+    private function getDefaultRequestParameters(): array
     {
         return [
             '_widgetContainer' => 'dialog',
@@ -387,10 +375,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
     }
 
-    /**
-     * @return array
-     */
-    public function validationDataProvider()
+    public function validationDataProvider(): array
     {
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
 
@@ -466,30 +451,33 @@ class ImportExportTest extends AbstractImportExportTestCase
         $row = fgetcsv($file);
         while ($row) {
             $values = array_combine($header, $row);
+            $entity = $this->getInventoryLevelEntity($values);
 
-            $this->assertTrue($this->assertFields(
-                $this->getInventoryLevelEntity($values),
-                $values,
-                array_intersect($this->getFieldMappings(), $header),
-                []
-            ));
+            if (null !== $entity) {
+                $this->assertTrue($this->assertFields(
+                    $entity,
+                    $values,
+                    array_intersect($this->getFieldMappings(), $header),
+                    []
+                ));
+            }
 
             $row = fgetcsv($file);
         }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getImportStatusFile()
+    public function getImportStatusFile(): string
     {
         return 'import_status_data.yml';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getImportLevelFile()
+    public function getImportLevelFile(): string
     {
         return 'import_level_data.yml';
     }

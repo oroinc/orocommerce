@@ -3,7 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\EventListener\Search;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
@@ -49,7 +49,7 @@ class ProductInventoryFieldsChangedListener
 
     public function postUpdate(EntityFieldFallbackValue $value, LifecycleEventArgs $args): void
     {
-        $em = $args->getEntityManager();
+        $em = $args->getObjectManager();
         $valueId = $value->getId();
         $productId = $this->findProductId($em, $valueId);
         if (null !== $productId) {

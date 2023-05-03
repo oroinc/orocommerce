@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductCollectionSegmentTypeSubscriber;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\QueryDesignerBundle\Validator\Constraints\NotEmptyFilters;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -14,12 +14,11 @@ use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
@@ -32,6 +31,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     const DEFINITION = 'definition';
     const INCLUDED_PRODUCTS = 'includedProducts';
     const EXCLUDED_PRODUCTS = 'excludedProducts';
+    const SORT_ORDER = 'sortOrder';
     const DEFAULT_SCOPE_VALUE = 'productCollectionSegment';
 
     /**
@@ -51,7 +51,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
 
     public function __construct(
         ProductCollectionDefinitionConverter $definitionConverter,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->definitionConverter = $definitionConverter;
         $this->propertyAccessor = $propertyAccessor;
@@ -67,22 +67,17 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
             ->add(self::EXCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
             ->setDataMapper($this);
 
-        // Make segment name required for existing segments
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($options) {
-                $segment = $event->getData();
-                if ($options['add_name_field'] && $segment instanceof Segment && $segment->getId()) {
-                    FormUtils::replaceField(
-                        $event->getForm(),
-                        'name',
-                        [
-                            'required' => true,
-                            'constraints' => [new NotBlank()]
-                        ]
-                    );
-                }
-            }
+        if ($options['add_sort_order']) {
+            $builder
+                ->add(
+                    self::SORT_ORDER,
+                    CollectionSortOrderGridType::class,
+                    ['mapped' => false, 'segment' => null]
+                );
+        }
+
+        $builder->addEventSubscriber(
+            new ProductCollectionSegmentTypeSubscriber($options)
         );
     }
 
@@ -116,9 +111,11 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'add_sort_order' => false,
             'results_grid' => 'product-collection-grid',
             'included_products_grid' => 'product-collection-included-products-grid',
             'excluded_products_grid' => 'product-collection-excluded-products-grid',
+            'tab_counter_request_method' => 'POST',
             'label' => false,
             'segment_entity' => Product::class,
             'segment_columns' => ['id', 'sku'],
@@ -139,6 +136,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
                 ],
             ],
         ]);
+        $resolver->setAllowedTypes('add_sort_order', 'bool');
     }
 
     /**
@@ -147,6 +145,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['scopeValue'] = $options['scope_value'];
+        $view->vars['tabCounterRequestMethod'] = $options['tab_counter_request_method'];
         $view->vars['results_grid'] = $options['results_grid'];
         $view->vars['includedProductsGrid'] = $options['included_products_grid'];
         $view->vars['excludedProductsGrid'] = $options['excluded_products_grid'];
@@ -156,6 +155,19 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         $view->vars['segmentDefinition'] = $segmentDefinitionView->vars['value'];
         $view->vars['hasFilters'] = $this->definitionConverter->hasFilters($view->vars['segmentDefinition']);
         $view->vars['addNameField'] = $options['add_name_field'];
+
+        $segment = $view->vars['data'];
+        if ($segment instanceof Segment) {
+            $view->vars['segmentId'] = $segment->getId();
+        } else {
+            $view->vars['segmentId'] = null;
+        }
+
+        $view->vars['addSortOrder'] = $options['add_sort_order'];
+        if ($options['add_sort_order']) {
+            $sortOrderView = $view->children[self::SORT_ORDER];
+            $view->vars['sortOrderConstraints'] = $sortOrderView->vars['sortOrderConstraints'];
+        }
     }
 
     /**

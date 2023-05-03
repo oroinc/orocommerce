@@ -10,21 +10,13 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
 class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
 {
     /** @var WorkflowAwareManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $workflowAwareManager;
+    private $workflowAwareManager;
 
     protected function setUp(): void
     {
-        $this->workflowAwareManager = $this->getMockBuilder(WorkflowAwareManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->workflowAwareManager = $this->createMock(WorkflowAwareManager::class);
 
         parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        unset($this->workflowAwareManager);
     }
 
     public function testGetName()

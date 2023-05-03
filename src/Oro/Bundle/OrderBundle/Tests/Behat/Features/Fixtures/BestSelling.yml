@@ -35,10 +35,16 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         website: '@website1'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision1:
+    product1precision1:
         unit: '@item'
         precision: '1'
-    precision2:
+    product1precision2:
+        unit: '@set'
+        precision: '1'
+    product2precision1:
+        unit: '@item'
+        precision: '1'
+    product2precision2:
         unit: '@set'
         precision: '1'
 
@@ -46,9 +52,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: '5GN30'
         attributeFamily: '@defaultProductFamily'
-        primaryUnitPrecision: '@precision1'
+        primaryUnitPrecision: '@product1precision1'
         __calls:
-            - addUnitPrecision: ['@precision1', '@precision2']
+            - addUnitPrecision: ['@product1precision1', '@product1precision2']
             - addName: ['@locValue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
@@ -56,9 +62,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product2:
         sku: '9OL25'
         attributeFamily: '@defaultProductFamily'
-        primaryUnitPrecision: '@precision2'
+        primaryUnitPrecision: '@product2precision2'
         __calls:
-            - addUnitPrecision: ['@precision1', '@precision2']
+            - addUnitPrecision: ['@product2precision1', '@product2precision2']
             - addName: ['@locValue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
@@ -83,6 +89,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 10.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order2:
         organization: '@organization'
         customerUser: '@branda'
@@ -93,6 +100,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 20.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order3:
         organization: '@organization'
         customerUser: '@branda'
@@ -103,6 +111,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 30.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order4:
         organization: '@organization'
         customerUser: '@branda'
@@ -113,6 +122,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 40.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order5:
         organization: '@organization'
         customerUser: '@branda'
@@ -123,6 +133,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 50.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order6:
         organization: '@organization'
         customerUser: '@branda'
@@ -133,6 +144,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 60.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order7:
         organization: '@organization'
         customerUser: '@branda'
@@ -143,6 +155,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 70.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order8:
         organization: '@organization'
         customerUser: '@branda'
@@ -153,6 +166,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 80.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order9:
         organization: '@organization'
         customerUser: '@branda'
@@ -163,6 +177,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 90.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order10:
         organization: '@organization'
         customerUser: '@branda'
@@ -173,6 +188,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 100.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order11:
         organization: '@organization'
         customerUser: '@branda'
@@ -183,6 +199,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 110.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order12:
         organization: '@organization'
         customerUser: '@branda'
@@ -193,6 +210,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 120.0
         internal_status: '@order_internal_status_archived'
+        website: '@website1'
     order13:
         organization: '@organization'
         customerUser: '@branda'
@@ -203,6 +221,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 130.0
         internal_status: '@order_internal_status_cancelled'
+        website: '@website1'
     order14:
         organization: '@organization'
         customerUser: '@branda'
@@ -213,6 +232,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 140.0
         internal_status: '@order_internal_status_closed'
+        website: '@website1'
     order15:
         organization: '@organization'
         customerUser: '@branda'
@@ -223,6 +243,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 150.0
         internal_status: '@order_internal_status_open'
+        website: '@website1'
     order16:
         organization: '@organization'
         customerUser: '@amanda'
@@ -233,6 +254,12 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: 'USD'
         total: 160.0
         internal_status: '@order_internal_status_shipped'
+        website: '@website1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 5
+        currency: USD
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     lineitem1:
@@ -241,93 +268,109 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         quantity: '20'
         productUnit: '@item'
         order: '@order1'
+        price: '@price1'
     lineitem2:
         product: '@product2'
         productSku: '9OL25'
         quantity: '15'
         productUnit: '@set'
         order: '@order2'
+        price: '@price1'
     lineitem3:
         product: '@product2'
         productSku: '9OL25'
         quantity: '5'
         productUnit: '@item'
         order: '@order3'
+        price: '@price1'
     lineitem4:
         product: '@product1'
         productSku: '5GN30'
         quantity: '5'
         productUnit: '@item'
         order: '@order4'
+        price: '@price1'
     lineitem5:
         product: '@product2'
         productSku: '9OL25'
         quantity: '16'
         productUnit: '@item'
         order: '@order5'
+        price: '@price1'
     lineitem6:
         product: '@product2'
         productSku: '9OL25'
         quantity: '41'
         productUnit: '@item'
         order: '@order6'
+        price: '@price1'
     lineitem7:
         product: '@product2'
         productSku: '9OL25'
         quantity: '40'
         productUnit: '@set'
         order: '@order7'
+        price: '@price1'
     lineitem8:
         product: '@product1'
         productSku: '5GN30'
         quantity: '11'
         productUnit: '@set'
         order: '@order8'
+        price: '@price1'
     lineitem9:
         product: '@product2'
         productSku: '9OL25'
         quantity: '21'
         productUnit: '@item'
         order: '@order9'
+        price: '@price1'
     lineitem10:
         product: '@product2'
         productSku: '9OL25'
         quantity: '17'
         productUnit: '@set'
         order: '@order10'
+        price: '@price1'
     lineitem11:
         product: '@product2'
         productSku: '9OL25'
         quantity: '30'
         productUnit: '@item'
         order: '@order11'
+        price: '@price1'
     lineitem12:
         product: '@product2'
         productSku: '9OL25'
         quantity: '44'
         productUnit: '@set'
         order: '@order12'
+        price: '@price1'
     lineitem13:
         product: '@product2'
         productSku: '9OL25'
         quantity: '4'
         productUnit: '@item'
         order: '@order13'
+        price: '@price1'
     lineitem14:
         product: '@product2'
         productSku: '9OL25'
         quantity: '56'
         productUnit: '@set'
         order: '@order14'
+        price: '@price1'
     lineitem15:
         product: '@product2'
         productSku: '9OL25'
         quantity: '20'
         productUnit: '@item'
         order: '@order15'
+        price: '@price1'
     lineitem16:
         product: '@product2'
         productSku: '9OL25'
         quantity: '10'
         productUnit: '@set'
         order: '@order16'
+        price: '@price1'

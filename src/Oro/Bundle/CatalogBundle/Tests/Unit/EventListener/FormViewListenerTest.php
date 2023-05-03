@@ -9,6 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Component\Exception\UnexpectedTypeException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormView;
@@ -166,7 +167,7 @@ class FormViewListenerTest extends TestCase
 
     public function testOnProductViewInvalidEntity()
     {
-        $this->expectException(\Oro\Component\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $scrollData = new ScrollData();
 
         $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());

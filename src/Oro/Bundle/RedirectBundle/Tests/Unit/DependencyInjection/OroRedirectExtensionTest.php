@@ -2,26 +2,33 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\RedirectBundle\Controller\Api\Rest\RedirectController;
 use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroRedirectExtensionTest extends ExtensionTestCase
+class OroRedirectExtensionTest extends \PHPUnit\Framework\TestCase
 {
     public function testLoad(): void
     {
-        $this->loadExtension(new OroRedirectExtension());
+        $container = new ContainerBuilder();
 
-        $expectedParameters = [
-            'oro_redirect.url_cache_type',
-            'oro_redirect.url_provider_type',
-            'oro_redirect.url_storage_cache.split_deep',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
+        $extension = new OroRedirectExtension();
+        $extension->load([], $container);
 
-        $expectedDefinitions = [
-            RedirectController::class,
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'enable_direct_url' => ['value' => true, 'scope' => 'app'],
+                        'canonical_url_type' => ['value' => 'system', 'scope' => 'app'],
+                        'redirect_generation_strategy' => ['value' => 'ask', 'scope' => 'app'],
+                        'canonical_url_security_type' => ['value' => 'secure', 'scope' => 'app'],
+                        'use_localized_canonical' => ['value' => true, 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_redirect')
+        );
     }
 }

@@ -9,6 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
@@ -97,7 +98,7 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
              * Correct cache regeneration will be available only after slugs recalculation
              * so this consequence of actions is important and should be preserved
              */
-            $this->contentNodeTreeCache->deleteForNode($contentNode);
+            $this->deleteCacheForContentNode($contentNode);
 
             $this->messageProducer->send(WebCatalogCalculateCacheTopic::getName(), [
                 WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $contentNode->getWebCatalog()->getId(),
@@ -120,6 +121,16 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         }
 
         return self::ACK;
+    }
+
+    private function deleteCacheForContentNode(ContentNode $contentNode): void
+    {
+        $webCatalogRepository = $this->registry->getRepository(WebCatalog::class);
+        $scopeIds = $webCatalogRepository->getUsedScopesIds($contentNode->getWebCatalog());
+        /** @var array<array{int,int}> $scopeIdsByNodeId */
+        $scopeIdsByNodeId = array_map(static fn ($scopeId) => [$contentNode->getId(), [$scopeId]], $scopeIds);
+        // Cache is intentionally deleted separately for each scope id.
+        $this->contentNodeTreeCache->deleteMultiple($scopeIdsByNodeId);
     }
 
     public static function getSubscribedTopics(): array

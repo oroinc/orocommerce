@@ -1,7 +1,8 @@
-@container-incompatible
+@behat-test-env
 @ticket-BB-13978
 @ticket-BB-16275
 @feature-BAP-19790
+@ticket-BB-22109
 @fixture-OroProductBundle:product_listing_images.yml
 
 Feature: Product Gallery Popup On Products Catalog
@@ -65,6 +66,10 @@ Feature: Product Gallery Popup On Products Catalog
     When I click on "ProductFrontendMassActionHeadButtonTablet"
     Then I should not see an "Product Item Gallery Trigger" element
     When I click on "ProductFrontendMassActionHeadButtonTablet"
+    Then I should see an "Product Item Gallery Trigger" element
+    When I click on "ProductFrontendMassActionHeadButtonTablet"
+    And I click on "ProductFrontendSelectRowCell"
+    And I click on "ProductFrontendMassClosePanel"
     Then I should see an "Product Item Gallery Trigger" element
 
   Scenario: Check that alt attribute in product image is localized

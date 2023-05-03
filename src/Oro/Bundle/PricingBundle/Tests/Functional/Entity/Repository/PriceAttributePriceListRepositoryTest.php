@@ -24,10 +24,8 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider currencyDataProvider
-     * @param string[] $currencies
-     * @param string[] $expectedPriceAttributes
      */
-    public function testGetAttributesWithCurrencies($currencies, $expectedPriceAttributes)
+    public function testGetAttributesWithCurrencies(array $currencies, array $expectedPriceAttributes)
     {
         $qb = $this->getRepository()->getAttributesWithCurrenciesQueryBuilder($currencies);
         $priceAttributesWithCurrencies = $qb->getQuery()->getResult();
@@ -37,10 +35,7 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function currencyDataProvider()
+    public function currencyDataProvider(): array
     {
         return [
             [
@@ -68,22 +63,17 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
         $expected = [];
 
         foreach ($priceAttributePriceLists as $priceAttributePriceList) {
-            $item['id'] = $priceAttributePriceList->getId();
-            $item['name'] = $priceAttributePriceList->getName();
-            $item['fieldName'] = $priceAttributePriceList->getFieldName();
-
-            array_push($expected, $item);
+            $expected[] = [
+                'id' => $priceAttributePriceList->getId(),
+                'name' => $priceAttributePriceList->getName(),
+                'fieldName' => $priceAttributePriceList->getFieldName()
+            ];
         }
 
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @param array $attributeCurrency
-     * @param array $expectedAttributeCurrencies
-     * @return bool
-     */
-    protected function checkExistPair($attributeCurrency, $expectedAttributeCurrencies)
+    private function checkExistPair(array $attributeCurrency, array $expectedAttributeCurrencies): bool
     {
         foreach ($expectedAttributeCurrencies as $expectedAttributeCurrency) {
             if ($expectedAttributeCurrency['name'] === $attributeCurrency['name']
@@ -96,13 +86,8 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
         return false;
     }
 
-    /**
-     * @return PriceAttributePriceListRepository
-     */
-    protected function getRepository()
+    private function getRepository(): PriceAttributePriceListRepository
     {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(PriceAttributePriceList::class);
+        return $this->getContainer()->get('doctrine')->getRepository(PriceAttributePriceList::class);
     }
 }

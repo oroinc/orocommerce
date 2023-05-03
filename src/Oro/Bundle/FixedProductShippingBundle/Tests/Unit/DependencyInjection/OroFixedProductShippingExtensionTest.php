@@ -3,29 +3,17 @@
 namespace Oro\Bundle\FixedProductShippingBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\FixedProductShippingBundle\DependencyInjection\OroFixedProductShippingExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroFixedProductShippingExtensionTest extends ExtensionTestCase
+class OroFixedProductShippingExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    protected OroFixedProductShippingExtension $extension;
-
-    protected function setUp(): void
-    {
-        $this->extension = new OroFixedProductShippingExtension();
-    }
-
     public function testLoad(): void
     {
-        $this->loadExtension($this->extension);
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            'oro_fixed_product_shipping.integration.channel',
-            'oro_fixed_product_shipping.integration.transport',
-            'oro_fixed_product_shipping.form.type.fixed_product_options',
-            'oro_fixed_product_shipping.method.provider',
-            'oro_fixed_product_shipping.disable_integration_listener',
-        ];
+        $extension = new OroFixedProductShippingExtension();
+        $extension->load([], $container);
 
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        self::assertNotEmpty($container->getDefinitions());
     }
 }

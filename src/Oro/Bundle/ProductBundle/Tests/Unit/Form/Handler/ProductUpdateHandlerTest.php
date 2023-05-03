@@ -81,8 +81,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var bool */
     private $resultCallbackInvoked;
 
-    private $formHandler;
-
     /** @var ProductUpdateHandler */
     private $handler;
 
@@ -111,8 +109,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('generate')
             ->willReturn('generated_redirect_url');
 
-        $this->formHandler = new FormHandler($this->eventDispatcher, $this->doctrineHelper);
-
         $this->handler = new ProductUpdateHandler(
             $this->requestStack,
             $this->session,
@@ -128,8 +124,8 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
     private function getUpdateFactoryMock(): UpdateFactory|\PHPUnit\Framework\MockObject\MockObject
     {
-        $mock = $this->createMock(UpdateFactory::class);
-        $mock->expects(self::any())
+        $updateFactory = $this->createMock(UpdateFactory::class);
+        $updateFactory->expects(self::any())
             ->method('createUpdate')
             ->willReturnCallback(function ($entity, $form, $formHandler, $resultProvider) {
                 if ($resultProvider) {
@@ -147,11 +143,11 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
                 return (new Update())->setFormData($entity)
                     ->setFrom($form)
-                    ->setHandler($formHandler ?? $this->formHandler)
+                    ->setHandler($formHandler ?? new FormHandler($this->eventDispatcher, $this->doctrineHelper))
                     ->setTemplateDataProvider($resultProvider);
             });
 
-        return $mock;
+        return $updateFactory;
     }
 
     public function testHandleUpdateFailsWhenFormHandlerIsInvalid(): void
@@ -858,7 +854,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->with('oro.product.controller.product.saved_and_duplicated.message')
             ->willReturn($savedAndDuplicatedMessage);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ActionGroup $actionGroup */
         $actionGroup = $this->createMock(ActionGroup::class);
 
         $actionGroup->expects($this->once())

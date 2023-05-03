@@ -9,22 +9,20 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class DimensionsValueTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\DimensionsValue';
-
     /** @var DimensionsValueType */
-    protected $formType;
+    private $formType;
 
     protected function setUp(): void
     {
         $this->formType = new DimensionsValueType();
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(DimensionsValue::class);
         parent::setUp();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -42,13 +40,9 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($submittedData, $expectedData, $defaultData = null)
+    public function testSubmit(array $submittedData, mixed $expectedData, mixed $defaultData = null)
     {
         $form = $this->factory->create(DimensionsValueType::class, $defaultData);
 
@@ -60,10 +54,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty default data' => [
@@ -86,14 +77,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param float $length
-     * @param float $width
-     * @param float $height
-     *
-     * @return DimensionsValue
-     */
-    protected function getDimensionsValue($length, $width, $height)
+    private function getDimensionsValue(int $length, int $width, int $height): DimensionsValue
     {
         return DimensionsValue::create($length, $width, $height);
     }

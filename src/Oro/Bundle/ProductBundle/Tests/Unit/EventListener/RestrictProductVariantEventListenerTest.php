@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class RestrictProductVariantEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
+    private const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
@@ -19,26 +19,17 @@ class RestrictProductVariantEventListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject */
     private $modifier;
 
-    /** @var RestrictProductVariantEventListener */
-    private $listener;
-
     /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject */
     private $event;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var RestrictProductVariantEventListener */
+    private $listener;
+
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
-
-        $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->event = $this->getMockBuilder(RestrictProductVariantEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->modifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
+        $this->event = $this->createMock(RestrictProductVariantEvent::class);
 
         $this->listener = new RestrictProductVariantEventListener(
             $this->configManager,
@@ -54,7 +45,7 @@ class RestrictProductVariantEventListenerTest extends \PHPUnit\Framework\TestCas
             'status 2'
         ];
 
-        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->event->expects($this->exactly(2))
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);

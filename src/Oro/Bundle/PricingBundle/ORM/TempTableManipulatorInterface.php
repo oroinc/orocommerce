@@ -37,6 +37,13 @@ interface TempTableManipulatorInterface
     /**
      * @param string $className
      * @param int|string $identifier
+     * @param array $fields
+     */
+    public function copyDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields);
+
+    /**
+     * @param string $className
+     * @param int|string $identifier
      * @return string
      */
     public function getTempTableNameForEntity(string $className, $identifier): string;

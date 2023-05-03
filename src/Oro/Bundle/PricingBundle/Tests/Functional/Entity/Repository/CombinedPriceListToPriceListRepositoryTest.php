@@ -61,10 +61,7 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function priceListsByCombinedAndProductDataProvider()
+    public function priceListsByCombinedAndProductDataProvider(): array
     {
         return [
             'test getting price lists 1' => [
@@ -102,10 +99,7 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
         $this->assertCount($result, $cPriceLists);
     }
 
-    /**
-     * @return array
-     */
-    public function cplByPriceListProductDataProvider()
+    public function cplByPriceListProductDataProvider(): array
     {
         return [
             [

@@ -1,6 +1,3 @@
-include:
-    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
-
 Oro\Bundle\CustomerBundle\Entity\Customer:
     customer1:
         name: 'first customer'
@@ -36,7 +33,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         street: '2849 Junkins Avenue'
         city: 'Albany'
         postalCode: '31707'
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     nancyAddress1ShippingDefault:
@@ -60,7 +57,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         street: '801 Scenic Hwy'
         city: 'Haines City'
         postalCode: '33844'
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customerAddress1ShippingDefault:

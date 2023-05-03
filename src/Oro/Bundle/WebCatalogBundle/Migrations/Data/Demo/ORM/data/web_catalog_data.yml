@@ -29,6 +29,7 @@
                     isDefault: true
             children:
                 Products:
+                    setReference: "navigation_root__products"
                     defaultTitle: Products
                     defaultSlugPrototype: products
                     contentVariants:
@@ -40,6 +41,7 @@
                     parentScopeUsed: true
                     children:
                         "By Category":
+                            setReference: "navigation_root__products__by_category"
                             defaultTitle: "By Category"
                             defaultSlugPrototype: "by-category"
                             contentVariants:
@@ -56,9 +58,10 @@
                                     defaultSlugPrototype: industrial
                                     contentVariants:
                                         -
-                                            type: cms_page
+                                            type: category_page
                                             params:
-                                                title: "Haec quo modo conveniant"
+                                                title: "Lighting Products"
+                                                excludeSubcategories: false
                                             isDefault: true
                                     parentScopeUsed: true
                                     children:
@@ -189,9 +192,10 @@
                                     defaultSlugPrototype: Retail
                                     contentVariants:
                                         -
-                                            type: cms_page
+                                            type: category_page
                                             params:
-                                                title: "Haec quo modo conveniant"
+                                                title: "Retail Supplies"
+                                                excludeSubcategories: false
                                             isDefault: true
                                     parentScopeUsed: true
                                     children: ~
@@ -200,9 +204,10 @@
                             defaultSlugPrototype: "clearance"
                             contentVariants:
                                 -
-                                    type: cms_page
+                                    type: category_page
                                     params:
-                                        title: "Bonum negas esse divitias"
+                                        title: "Office Furniture"
+                                        excludeSubcategories: false
                                     isDefault: true
                             parentScopeUsed: true
                             children:
@@ -262,13 +267,14 @@
                                             isDefault: true
                                     children: ~
                 "New Arrivals":
+                    setReference: "navigation_root__new_arrivals"
                     defaultTitle: "New Arrivals"
                     defaultSlugPrototype: "new-arrivals"
                     contentVariants:
                         -
-                            type: cms_page
+                            type: product_collection
                             params:
-                                title: "Bonum negas esse divitias"
+                                title: "New Arrivals"
                             isDefault: true
                     parentScopeUsed: true
                     children:
@@ -328,13 +334,14 @@
                                     isDefault: true
                             children: ~
                 "Clearance":
+                    setReference: "navigation_root__clearance"
                     defaultTitle: "Clearance"
                     defaultSlugPrototype: "clearance"
                     contentVariants:
                         -
-                            type: cms_page
+                            type: product_collection
                             params:
-                                title: "Bonum negas esse divitias"
+                                title: "All Products"
                             isDefault: true
                     parentScopeUsed: true
                     children:

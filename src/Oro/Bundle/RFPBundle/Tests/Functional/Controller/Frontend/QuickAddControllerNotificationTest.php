@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -16,13 +14,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
-
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var ConfigManager */
-    protected $globalConfigManager;
+    private const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
     protected function setUp(): void
     {
@@ -33,29 +25,20 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->loadFixtures([LoadFrontendProductData::class]);
-        $this->configManager = self::getConfigManager('global');
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
-        $this->configManager->flush();
+
+        $configManager = self::getConfigManager();
+        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
+        $configManager->flush();
     }
 
     /**
      * @dataProvider productProvider
-     *
-     * @param string $processorName
-     * @param array $products
-     * @param string $expectedMessage
      */
-    public function testNotification(
-        $processorName,
-        array $products,
-        $expectedMessage
-    ) {
+    public function testNotification(array $products, string $expectedMessage)
+    {
         $this->markTestSkipped(
             'Waiting for new quick order page to be finished'
         );
-
-        /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get($processorName);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
 
@@ -71,27 +54,23 @@ class QuickAddControllerNotificationTest extends WebTestCase
                 'oro_product_quick_add' => [
                     '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => $products,
-                    'component' => $processor->getName(),
+                    'component' => 'oro_rfp_quick_add_processor',
                 ],
             ]
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             $this->getContainer()->get('translator')->trans($expectedMessage),
             $this->client->getResponse()->getContent()
         );
     }
 
-    /**
-     * @return array
-     */
-    public function productProvider()
+    public function productProvider(): array
     {
         return [
             'no_products_be_added_to_rfq' => [
-                'processorName' => 'oro_rfp.processor.quick_add',
                 'products' => [
                     [
                         'productSku' => LoadProductData::PRODUCT_3,
@@ -102,7 +81,6 @@ class QuickAddControllerNotificationTest extends WebTestCase
                 'expectedMessage' => 'oro.frontend.rfp.data_storage.no_products_be_added_to_rfq',
             ],
             'cannot_be_added_to_rfq' => [
-                'processorName' => 'oro_rfp.processor.quick_add',
                 'products' => [
                     [
                         'productSku' => LoadProductData::PRODUCT_2,

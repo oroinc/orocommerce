@@ -2,6 +2,7 @@ import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import TableModify from 'orocms/js/app/grapesjs/controls/table-edit/table-modify';
 import html from 'text-loader!../../fixtures/grapesjs-editor-view-fixture.html';
+import '../../fixtures/load-plugin-modules';
 
 describe('orocms/js/app/grapesjs/controls/table-edit', () => {
     let grapesjsEditorView;
@@ -64,7 +65,7 @@ describe('orocms/js/app/grapesjs/controls/table-edit', () => {
 
             expect(tableComponent.toHTML()).toEqual(
                 // eslint-disable-next-line
-                `<table class="table"><thead><tr><th><div>Header cell</div></th></tr><tr class="row"><td class="test"><div>Body cell</div></td></tr><tr><th><div>Header cell</div></th></tr></thead><tbody><tr class="row"><td class="cell"><div>Body cell</div></td></tr></tbody></table>`
+                `<table class="table"><thead><tr><th><div>oro.cms.wysiwyg.component.table.header_cell_label</div></th></tr><tr class="row"><td class="test"><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td></tr><tr><th><div>oro.cms.wysiwyg.component.table.header_cell_label</div></th></tr></thead><tbody><tr class="row"><td class="cell"><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td></tr></tbody></table>`
             );
         });
 
@@ -86,7 +87,7 @@ describe('orocms/js/app/grapesjs/controls/table-edit', () => {
 
             expect(tableComponent.toHTML()).toEqual(
                 // eslint-disable-next-line
-                `<table class="table"><thead><tr class="row"><th><div>Header cell</div></th><td class="test"><div>Body cell</div></td><th><div>Header cell</div></th></tr></thead><tbody><tr class="row"><td><div>Body cell</div></td><td class="cell"><div>Body cell</div></td><td><div>Body cell</div></td></tr></tbody></table>`
+                `<table class="table"><thead><tr class="row"><th><div>oro.cms.wysiwyg.component.table.header_cell_label</div></th><td class="test"><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td><th><div>oro.cms.wysiwyg.component.table.header_cell_label</div></th></tr></thead><tbody><tr class="row"><td><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td><td class="cell"><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td><td><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td></tr></tbody></table>`
             );
         });
 
@@ -182,7 +183,7 @@ describe('orocms/js/app/grapesjs/controls/table-edit', () => {
 
             expect(tableComponent.toHTML()).toEqual(
                 // eslint-disable-next-line
-                `<table class="table"><thead></thead><tbody><tr><td><div>Body cell</div></td></tr><tr><td><div>Body cell</div></td></tr></tbody></table>`
+                `<table class="table"><thead></thead><tbody><tr><td><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td></tr><tr><td><div>oro.cms.wysiwyg.component.table.body_cell_label</div></td></tr></tbody></table>`
             );
         });
     });

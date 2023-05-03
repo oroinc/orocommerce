@@ -64,17 +64,17 @@ services:
 
     oro_rfp.form.type.extension.frontend_request_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension'
-        public: true
-        parent: oro_product.form.type.extension.product_data_storage.abstract
-        calls:
-            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\Request']]
-            - [setConfigManager, ['@oro_config.manager']]
-            - [setSession, ['@session']]
-            - [setTranslator, ['@translator']]
-            - [setContainer, ['@service_container']]
-            - [setProductAvailabilityProvider, ['@oro_rfp.provider.product_availability']]
+        arguments:
+            - '@request_stack'
+            - '@oro_product.storage.product_data_storage'
+            - '@form.property_accessor'
+            - '@doctrine'
+            - '@logger'
+            - '@oro_rfp.provider.product_availability'
+            - '@translator'
+            - '@twig'
         tags:
-            - { name: form.type_extension, alias: oro_rfp_frontend_request, extended_type: Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType }
+            - { name: form.type_extension }
 
     oro_rfp.form.type.extension.order_line_item_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension'
@@ -92,8 +92,9 @@ services:
             - '@request_stack'
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.product_price_criteria_factory'
         tags:
-            - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
+            - { name: form.type_extension }
             - { name: oro_featuretogle.feature, feature: rfp }
 
     oro_rfp.form.type.request_offers:

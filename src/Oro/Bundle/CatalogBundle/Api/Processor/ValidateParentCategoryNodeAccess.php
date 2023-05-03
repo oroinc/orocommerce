@@ -15,8 +15,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ValidateParentCategoryNodeAccess implements ProcessorInterface
 {
-    /** @var CategoryNodeRepository */
-    private $categoryNodeRepository;
+    private CategoryNodeRepository $categoryNodeRepository;
 
     public function __construct(CategoryNodeRepository $categoryNodeRepository)
     {
@@ -26,7 +25,7 @@ class ValidateParentCategoryNodeAccess implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */
 

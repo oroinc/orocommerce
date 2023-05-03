@@ -13,9 +13,7 @@ class CouponUsageRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures([
-            LoadCouponUsageData::class
-        ]);
+        $this->loadFixtures([LoadCouponUsageData::class]);
     }
 
     public function testGetCouponUsageCount()
@@ -30,10 +28,8 @@ class CouponUsageRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getCouponUsageByCustomerUserCountDataProvider
-     * @param string $customerUser
-     * @param integer $expectedCouponUsageCount
      */
-    public function testGetCouponUsageByCustomerUserCount($customerUser, $expectedCouponUsageCount)
+    public function testGetCouponUsageByCustomerUserCount(string $customerUser, int $expectedCouponUsageCount)
     {
         $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
         $customerUser = $this->getReference($customerUser);
@@ -44,10 +40,7 @@ class CouponUsageRepositoryTest extends WebTestCase
         $this->assertEquals($expectedCouponUsageCount, $actualCount);
     }
 
-    /**
-     * @return array
-     */
-    public function getCouponUsageByCustomerUserCountDataProvider()
+    public function getCouponUsageByCustomerUserCountDataProvider(): array
     {
         return [
             [

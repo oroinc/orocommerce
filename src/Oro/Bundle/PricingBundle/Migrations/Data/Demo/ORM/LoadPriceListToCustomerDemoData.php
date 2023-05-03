@@ -3,12 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
+/**
+ * Loading price list for customer demo data.
+ */
 class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
@@ -58,12 +62,7 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
         $manager->flush();
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return Customer
-     */
-    protected function getCustomerByName(EntityManager $manager, $name)
+    protected function getCustomerByName(EntityManagerInterface $manager, string $name): Customer
     {
         if (!array_key_exists($name, $this->customers)) {
             $customer = $this->getCustomerRepository($manager)->findOneBy(['name' => $name]);
@@ -77,11 +76,7 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
         return $this->customers[$name];
     }
 
-    /**
-     * @param $manager
-     * @return EntityRepository
-     */
-    protected function getCustomerRepository(EntityManager $manager)
+    protected function getCustomerRepository(EntityManagerInterface $manager): EntityRepository
     {
         if ($this->customerRepository === null) {
             $this->customerRepository = $manager->getRepository('OroCustomerBundle:Customer');

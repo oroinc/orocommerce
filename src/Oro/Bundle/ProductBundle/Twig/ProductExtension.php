@@ -14,6 +14,7 @@ use Twig\TwigFunction;
 /**
  * Provides Twig functions related to products:
  *   - is_configurable_product_type
+ *   - is_kit_product_type
  *   - get_upsell_products_ids
  *   - get_related_products_ids
  *   - get_related_items_translation_key
@@ -34,6 +35,7 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     {
         return [
             new TwigFunction('is_configurable_product_type', [$this, 'isConfigurableType']),
+            new TwigFunction('is_kit_product_type', [$this, 'isKitType']),
             new TwigFunction('get_upsell_products_ids', [$this, 'getUpsellProductsIds']),
             new TwigFunction('get_related_products_ids', [$this, 'getRelatedProductsIds']),
             new TwigFunction('get_related_items_translation_key', [$this, 'getRelatedItemsTranslationKey']),
@@ -58,6 +60,11 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     public function isConfigurableType($productType)
     {
         return $productType === Product::TYPE_CONFIGURABLE;
+    }
+
+    public function isKitType(?string $productType): bool
+    {
+        return $productType === Product::TYPE_KIT;
     }
 
     /**

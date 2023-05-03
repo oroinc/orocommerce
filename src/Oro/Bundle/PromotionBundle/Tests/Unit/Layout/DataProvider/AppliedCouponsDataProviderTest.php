@@ -7,24 +7,20 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\AppliedCouponsDataProvider;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\AppliedCouponsAwareStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\ \PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var AppliedCouponsDataProvider
-     */
+    /** @var AppliedCouponsDataProvider */
     private $provider;
 
     protected function setUp(): void
@@ -36,8 +32,7 @@ class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetAppliedCoupons()
     {
         $coupons = $this->createMock(Collection::class);
-        /** @var AppliedCouponsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
-        $entity = $this->createMock(AppliedCouponsAwareInterface::class);
+        $entity = $this->createMock(AppliedCouponsAwareStub::class);
         $entity->expects($this->once())
             ->method('getAppliedCoupons')
             ->willReturn($coupons);
@@ -46,16 +41,14 @@ class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider trueFalseDataProvider
-     * @param bool $isEmpty
      */
-    public function testHasAppliedCoupons($isEmpty)
+    public function testHasAppliedCoupons(bool $isEmpty)
     {
         $coupons = $this->createMock(Collection::class);
         $coupons->expects($this->once())
             ->method('isEmpty')
             ->willReturn($isEmpty);
-        /** @var AppliedCouponsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
-        $entity = $this->createMock(AppliedCouponsAwareInterface::class);
+        $entity = $this->createMock(AppliedCouponsAwareStub::class);
         $entity->expects($this->once())
             ->method('getAppliedCoupons')
             ->willReturn($coupons);
@@ -63,10 +56,7 @@ class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(!$isEmpty, $this->provider->hasAppliedCoupons($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function trueFalseDataProvider()
+    public function trueFalseDataProvider(): array
     {
         return [
             [true],
@@ -82,8 +72,7 @@ class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
                 $this->getEntity(AppliedCoupon::class, ['sourcePromotionId' => 5])
             ]
         );
-        /** @var AppliedCouponsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
-        $entity = $this->createMock(AppliedCouponsAwareInterface::class);
+        $entity = $this->createMock(AppliedCouponsAwareStub::class);
         $entity->expects($this->once())
             ->method('getAppliedCoupons')
             ->willReturn($coupons);

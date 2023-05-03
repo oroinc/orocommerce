@@ -7,12 +7,13 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Model\Condition\QuoteAcceptable;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QuoteAcceptable */
-    protected $condition;
+    private $condition;
 
     protected function setUp(): void
     {
@@ -27,7 +28,7 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
 
     public function testInitializeException()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('First option should be valid property definition.');
 
         $this->condition->initialize([]);
@@ -35,12 +36,8 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider evaluateDataProvider
-     *
-     * @param array $options
-     * @param Quote|mixed $quote
-     * @param bool $expected
      */
-    public function testEvaluate(array $options, $quote, $expected)
+    public function testEvaluate(array $options, ?object $quote, bool $expected)
     {
         $errors = new ArrayCollection();
 
@@ -63,104 +60,89 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @return \Generator
-     */
-    public function evaluateDataProvider()
+    public function evaluateDataProvider(): array
     {
-        yield 'without quote and default false' => [
-            'options' => [new PropertyPath('quote')],
-            'quote' => null,
-            'expected' => false
-        ];
-
-        yield 'without quote and default true' => [
-            'options' => [new PropertyPath('quote'), true],
-            'quote' => null,
-            'expected' => true
-        ];
-
-        yield 'not acceptable quote and default false' => [
-            'options' => [new PropertyPath('quote')],
-            'quote' => $this->getQuote(),
-            'expected' => false
-        ];
-
-        yield 'not acceptable quote and default true' => [
-            'options' => [new PropertyPath('quote'), true],
-            'quote' => $this->getQuote(),
-            'expected' => false
-        ];
-
-        yield 'acceptable quote and default false' => [
-            'options' => [new PropertyPath('quote')],
-            'quote' => $this->getQuote(true),
-            'expected' => true
-        ];
-
-        yield 'acceptable quote and default true' => [
-            'options' => [new PropertyPath('quote'), true],
-            'quote' => $this->getQuote(true),
-            'expected' => true
-        ];
-
-        yield 'quoteDemand without quote and default false' => [
-            'options' => [new PropertyPath('quote')],
-            'quote' => $this->getQuoteDemand(true, false),
-            'expected' => false
-        ];
-
-        yield 'quoteDemand without quote and default true' => [
-            'options' => [new PropertyPath('quote'), true],
-            'quote' => $this->getQuoteDemand(true, false),
-            'expected' => true
-        ];
-
-        yield 'quoteDemand with not acceptable quote and default false' => [
-            'options' => [new PropertyPath('quote')],
-            'quote' => $this->getQuoteDemand(false),
-            'expected' => false
-        ];
-
-        yield 'quoteDemand with not acceptable quote and default true' => [
-            'options' => [new PropertyPath('quote'), true],
-            'quote' => $this->getQuoteDemand(false),
-            'expected' => false
-        ];
-
-        yield 'quoteDemand with acceptable quote and default false' => [
-            'options' => [new PropertyPath('quote')],
-            'quote' => $this->getQuoteDemand(true),
-            'expected' => true
-        ];
-
-        yield 'quoteDemand with acceptable quote and default true' => [
-            'options' => [new PropertyPath('quote'), true],
-            'quote' => $this->getQuoteDemand(true),
-            'expected' => true
+        return [
+            'without quote and default false' => [
+                'options' => [new PropertyPath('quote')],
+                'quote' => null,
+                'expected' => false
+            ],
+            'without quote and default true' => [
+                'options' => [new PropertyPath('quote'), true],
+                'quote' => null,
+                'expected' => true
+            ],
+            'not acceptable quote and default false' => [
+                'options' => [new PropertyPath('quote')],
+                'quote' => $this->getQuote(),
+                'expected' => false
+            ],
+            'not acceptable quote and default true' => [
+                'options' => [new PropertyPath('quote'), true],
+                'quote' => $this->getQuote(),
+                'expected' => false
+            ],
+            'acceptable quote and default false' => [
+                'options' => [new PropertyPath('quote')],
+                'quote' => $this->getQuote(true),
+                'expected' => true
+            ],
+            'acceptable quote and default true' => [
+                'options' => [new PropertyPath('quote'), true],
+                'quote' => $this->getQuote(true),
+                'expected' => true
+            ],
+            'quoteDemand without quote and default false' => [
+                'options' => [new PropertyPath('quote')],
+                'quote' => $this->getQuoteDemand(true, false),
+                'expected' => false
+            ],
+            'quoteDemand without quote and default true' => [
+                'options' => [new PropertyPath('quote'), true],
+                'quote' => $this->getQuoteDemand(true, false),
+                'expected' => true
+            ],
+            'quoteDemand with not acceptable quote and default false' => [
+                'options' => [new PropertyPath('quote')],
+                'quote' => $this->getQuoteDemand(false),
+                'expected' => false
+            ],
+            'quoteDemand with not acceptable quote and default true' => [
+                'options' => [new PropertyPath('quote'), true],
+                'quote' => $this->getQuoteDemand(false),
+                'expected' => false
+            ],
+            'quoteDemand with acceptable quote and default false' => [
+                'options' => [new PropertyPath('quote')],
+                'quote' => $this->getQuoteDemand(true),
+                'expected' => true
+            ],
+            'quoteDemand with acceptable quote and default true' => [
+                'options' => [new PropertyPath('quote'), true],
+                'quote' => $this->getQuoteDemand(true),
+                'expected' => true
+            ]
         ];
     }
 
-    /**
-     * @param bool $isAcceptable
-     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getQuote($isAcceptable = false)
+    private function getQuote(bool $isAcceptable = false): Quote
     {
         $quote = $this->createMock(Quote::class);
-        $quote->expects($this->any())->method('isAcceptable')->willReturn($isAcceptable);
-        $quote->expects($this->any())->method('getQid')->willReturn(42);
-        $quote->expects($this->any())->method('getQuoteProducts')->willReturn([]);
+        $quote->expects($this->any())
+            ->method('isAcceptable')
+            ->willReturn($isAcceptable);
+        $quote->expects($this->any())
+            ->method('getQid')
+            ->willReturn(42);
+        $quote->expects($this->any())
+            ->method('getQuoteProducts')
+            ->willReturn([]);
 
         return $quote;
     }
 
-    /**
-     * @param bool $isAcceptable
-     * @param bool $withQuote
-     * @return QuoteDemand|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getQuoteDemand($isAcceptable = false, $withQuote = true)
+    private function getQuoteDemand(bool $isAcceptable, bool $withQuote = true): QuoteDemand
     {
         $quoteDemand = new QuoteDemand();
         if ($withQuote) {

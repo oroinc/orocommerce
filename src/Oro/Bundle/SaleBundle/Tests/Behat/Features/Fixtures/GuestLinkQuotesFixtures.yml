@@ -11,6 +11,8 @@ Oro\Bundle\SaleBundle\Entity\Quote:
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     quoteProduct1:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOffer1' ]
         product: '@product1'
         quote: '@quote1'
 

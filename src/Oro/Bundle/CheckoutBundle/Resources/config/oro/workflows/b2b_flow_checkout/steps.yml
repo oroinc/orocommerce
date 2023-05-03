@@ -57,6 +57,7 @@ workflows:
                     - verify_payment
                     - finish_checkout
                     - payment_error
+                    - paid_partially
                     - back_to_enter_credentials
                     - back_to_customer_consents
                     - back_to_billing_address

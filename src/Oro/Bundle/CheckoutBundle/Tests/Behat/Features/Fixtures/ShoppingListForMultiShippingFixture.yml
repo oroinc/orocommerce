@@ -1,0 +1,45 @@
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'List 1'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+    lineitem2:
+        product: '@product2'
+        quantity: '10'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+    lineitem3:
+        product: '@product3'
+        quantity: '10'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+    lineitem4:
+        product: '@product4'
+        quantity: '10'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        shoppingList: '@shoppinglist'
+        currency: 'USD'
+        subtotalValue: '50'
+        valid: true

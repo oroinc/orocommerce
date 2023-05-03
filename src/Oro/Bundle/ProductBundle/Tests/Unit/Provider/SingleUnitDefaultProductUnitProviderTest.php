@@ -9,28 +9,19 @@ use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class SingleUnitDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $singleUnitService;
 
-    /**
-     * @var DefaultProductUnitProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DefaultProductUnitProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $enabledProvider;
 
-    /**
-     * @var SingleUnitDefaultProductUnitProvider
-     */
+    /** @var SingleUnitDefaultProductUnitProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->singleUnitService = $this->getMockBuilder(SingleUnitModeServiceInterface::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->enabledProvider = $this->getMockBuilder(DefaultProductUnitProviderInterface::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->singleUnitService = $this->createMock(SingleUnitModeServiceInterface::class);
+        $this->enabledProvider = $this->createMock(DefaultProductUnitProviderInterface::class);
 
         $this->provider = new SingleUnitDefaultProductUnitProvider($this->singleUnitService, $this->enabledProvider);
     }

@@ -13,11 +13,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class GuestCheckoutChecker
 {
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var FeatureChecker */
-    private $featureChecker;
+    private TokenStorageInterface $tokenStorage;
+    private FeatureChecker $featureChecker;
 
     public function __construct(TokenStorageInterface $tokenStorage, FeatureChecker $featureChecker)
     {

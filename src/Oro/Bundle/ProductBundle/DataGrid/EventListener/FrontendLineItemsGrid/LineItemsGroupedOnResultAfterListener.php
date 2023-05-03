@@ -37,7 +37,7 @@ class LineItemsGroupedOnResultAfterListener
 
         foreach ($event->getRecords() as $record) {
             /** @var ProductLineItemInterface[] $lineItems */
-            $lineItems = $record->getValue('lineItemsByIds') ?? [];
+            $lineItems = $record->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS) ?? [];
             if (count($lineItems) <= 1) {
                 // Skips simple line items rows.
                 continue;
@@ -45,12 +45,7 @@ class LineItemsGroupedOnResultAfterListener
 
             $firstLineItem = reset($lineItems);
             if (!$firstLineItem instanceof ProductLineItemInterface) {
-                throw new \LogicException(
-                    sprintf(
-                        'Element lineItemsByIds was expected to contain %s objects',
-                        ProductLineItemInterface::class
-                    )
-                );
+                continue;
             }
 
             $parentProduct = $firstLineItem->getParentProduct();
@@ -60,12 +55,13 @@ class LineItemsGroupedOnResultAfterListener
 
             $parentProductId = $parentProduct->getId();
             $displayedLineItemsIds = explode(',', $record->getValue('displayedLineItemsIds') ?? '');
-            $lineItemsData = $record->getValue('lineItemsDataByIds') ?? [];
+            $lineItemsData = $record->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA) ?? [];
             $firstLineItemData = reset($lineItemsData);
             $unitCode = $firstLineItem->getProductUnitCode();
             $configurableRecordId = $parentProductId . '_' . $unitCode;
 
             $recordData = [
+                'isConfigurable' => true,
                 'id' => $configurableRecordId,
                 'productId' => $parentProductId,
                 'sku' => null,

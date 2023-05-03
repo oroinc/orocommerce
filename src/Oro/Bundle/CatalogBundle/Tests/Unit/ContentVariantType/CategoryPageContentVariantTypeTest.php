@@ -14,14 +14,10 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
-    /**
-     * @var CategoryPageContentVariantType
-     */
+    /** @var CategoryPageContentVariantType */
     private $type;
 
     protected function setUp(): void
@@ -55,15 +51,11 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getRouteDataProvider
-     *
-     * @param ContentVariantStub $contentVariant
-     * @param bool $expectedIncludeSubcategories
-     * @param bool $expectedOverrideVariantConfiguration
      */
     public function testGetRouteData(
         ContentVariantStub $contentVariant,
-        $expectedIncludeSubcategories,
-        $expectedOverrideVariantConfiguration
+        bool $expectedIncludeSubcategories,
+        bool $expectedOverrideVariantConfiguration
     ) {
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => 42]);
@@ -96,10 +88,7 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getRouteDataProvider()
+    public function getRouteDataProvider(): array
     {
         return [
             'include subcategories' => [

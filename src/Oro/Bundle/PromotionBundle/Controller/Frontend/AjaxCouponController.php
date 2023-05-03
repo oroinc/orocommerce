@@ -5,9 +5,9 @@ namespace Oro\Bundle\PromotionBundle\Controller\Frontend;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler;
 use Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +51,9 @@ class AjaxCouponController extends AbstractController
     public function removeCouponAction($entityClass, $entityId, AppliedCoupon $appliedCoupon)
     {
         $entity = $this->get(EntityRoutingHelper::class)->getEntity($entityClass, $entityId);
-        if (!$entity instanceof AppliedCouponsAwareInterface) {
+        /** @var PromotionAwareEntityHelper $promotionAwareHelper */
+        $promotionAwareHelper = $this->container->get(PromotionAwareEntityHelper::class);
+        if (!$promotionAwareHelper->isCouponAware($entity)) {
             throw new BadRequestHttpException('Unsupported entity class ' . ClassUtils::getClass($entity));
         }
 
@@ -68,6 +70,7 @@ class AjaxCouponController extends AbstractController
         return array_merge(
             parent::getSubscribedServices(),
             [
+                PromotionAwareEntityHelper::class,
                 FrontendCouponHandler::class,
                 EntityRoutingHelper::class,
                 FrontendCouponRemoveHandler::class,

@@ -16,9 +16,6 @@ class ProductControllerTest extends WebTestCase
 {
     use SEOFrontendTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient(
@@ -35,10 +32,8 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider viewDataProvider
-     * @param string $product
-     * @param array $metaTags
      */
-    public function testView($product, array $metaTags)
+    public function testView(string $product, array $metaTags)
     {
         $product = $this->getProduct($product);
 
@@ -51,10 +46,7 @@ class ProductControllerTest extends WebTestCase
         $this->checkSEOFrontendMetaTags($crawler, $metaTags);
     }
 
-    /**
-     * @return array
-     */
-    public function viewDataProvider()
+    public function viewDataProvider(): array
     {
         $title1 = $this->getMetaContent(LoadProductData::PRODUCT_1, LoadProductMetaData::META_TITLES);
         $description1 = $this->getMetaContent(LoadProductData::PRODUCT_1, LoadProductMetaData::META_DESCRIPTIONS);
@@ -83,7 +75,7 @@ class ProductControllerTest extends WebTestCase
     /**
      * @dataProvider indexDataProvider
      */
-    public function testIndex($category, array $metaTags)
+    public function testIndex(string $category, array $metaTags)
     {
         $category = $this->getCategory($category);
 
@@ -96,10 +88,7 @@ class ProductControllerTest extends WebTestCase
         $this->checkSEOFrontendMetaTags($crawler, $metaTags);
     }
 
-    /**
-     * @return array
-     */
-    public function indexDataProvider()
+    public function indexDataProvider(): array
     {
         $description1 = $this->getMetaContent(LoadCategoryData::FIRST_LEVEL, LoadCategoryMetaData::META_DESCRIPTIONS);
         $keywords1 = $this->getMetaContent(LoadCategoryData::FIRST_LEVEL, LoadCategoryMetaData::META_KEYWORDS);
@@ -122,29 +111,17 @@ class ProductControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $reference
-     * @return Category
-     */
-    protected function getCategory($reference)
+    private function getCategory(string $reference): Category
     {
         return $this->getReference($reference);
     }
 
-    /**
-     * @param string $reference
-     * @return Product
-     */
-    protected function getProduct($reference)
+    private function getProduct(string $reference): Product
     {
         return $this->getReference($reference);
     }
 
-    /**
-     * @param string $entity
-     * @return array
-     */
-    protected function getMetadataArray($entity)
+    private function getMetadataArray(string $entity): array
     {
         if (str_contains($entity, 'product')) {
             return LoadProductMetaData::$metadata;

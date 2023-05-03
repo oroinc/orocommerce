@@ -10,38 +10,17 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class ProductPriceCriteria
 {
-    /**
-     * @var Product
-     */
-    protected $product;
+    protected Product $product;
 
-    /**
-     * @var ProductUnit
-     */
-    protected $productUnit;
+    protected ProductUnit $productUnit;
 
-    /**
-     * @var float
-     */
-    protected $quantity;
+    protected float $quantity;
 
-    /**
-     * @var string
-     */
-    protected $currency;
+    protected string $currency;
 
-    /**
-     * @var string|null
-     */
-    private $identifier;
+    private string $identifier;
 
-    /**
-     * @param Product $product
-     * @param ProductUnit $productUnit
-     * @param float $quantity
-     * @param string $currency
-     */
-    public function __construct(Product $product, ProductUnit $productUnit, $quantity, $currency)
+    public function __construct(Product $product, ProductUnit $productUnit, float $quantity, string $currency)
     {
         if (!$product->getId()) {
             throw new \InvalidArgumentException('Product must have id.');
@@ -53,7 +32,7 @@ class ProductPriceCriteria
         }
         $this->productUnit = $productUnit;
 
-        if (!is_numeric($quantity) || $quantity < 0) {
+        if ($quantity < 0) {
             throw new \InvalidArgumentException('Quantity must be numeric and more than or equal zero.');
         }
         $this->quantity = $quantity;
@@ -64,44 +43,29 @@ class ProductPriceCriteria
         $this->currency = $currency;
     }
 
-    /**
-     * @return Product
-     */
-    public function getProduct()
+    public function getProduct(): Product
     {
         return $this->product;
     }
 
-    /**
-     * @return ProductUnit
-     */
-    public function getProductUnit()
+    public function getProductUnit(): ProductUnit
     {
         return $this->productUnit;
     }
 
-    /**
-     * @return float
-     */
-    public function getQuantity()
+    public function getQuantity(): float
     {
         return $this->quantity;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
-        if (!$this->identifier) {
+        if (!isset($this->identifier)) {
             $this->identifier = sprintf(
                 '%s-%s-%s-%s',
                 $this->getProduct()->getId(),

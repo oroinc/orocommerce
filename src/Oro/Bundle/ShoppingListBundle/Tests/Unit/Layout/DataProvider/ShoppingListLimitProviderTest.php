@@ -7,14 +7,10 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 
 class ShoppingListLimitProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
     private $manager;
 
-    /**
-     * @var ShoppingListLimitProvider
-     */
+    /** @var ShoppingListLimitProvider */
     private $provider;
 
     protected function setUp(): void
@@ -34,10 +30,7 @@ class ShoppingListLimitProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($result, $this->provider->isOnlyOneEnabled());
     }
 
-    /**
-     * @return array
-     */
-    public function isOnlyOneEnabledProvider()
+    public function isOnlyOneEnabledProvider(): array
     {
         return [
             [true],

@@ -2,29 +2,50 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
 use Oro\Bundle\TaxBundle\Matcher\CountryZipCodeMatcher;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Component\Testing\ReflectionUtil;
 
-class CountryZipCodeMatcherTest extends AbstractMatcherTest
+class CountryZipCodeMatcherTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var TaxRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxRuleRepository;
+
     /** @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject */
     private $countryMatcher;
 
+    /** @var CountryZipCodeMatcher */
+    private $matcher;
+
     protected function setUp(): void
     {
-        parent::setUp();
-
+        $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);
         $this->countryMatcher = $this->createMock(CountryMatcher::class);
 
-        $this->matcher = new CountryZipCodeMatcher($this->doctrineHelper, TaxRule::class);
-        $this->matcher->setCountryMatcher($this->countryMatcher);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(TaxRule::class)
+            ->willReturn($this->taxRuleRepository);
+
+        $this->matcher = new CountryZipCodeMatcher($doctrine, $this->countryMatcher);
+    }
+
+    private function getTaxRule(int $id): TaxRule
+    {
+        $taxRule = new TaxRule();
+        ReflectionUtil::setId($taxRule, $id);
+
+        return $taxRule;
     }
 
     /**

@@ -40,4 +40,6 @@ layout:
             parentId: product_view_related_items_container
             blockType: container
             prepend: false
+            options:
+                visible: '=data["oro_product_upsell_products"].getRelatedItems(data["product"])'
     conditions: '!context["is_mobile"]'

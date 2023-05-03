@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Provider;
 
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Try to extract address (AddressInterface object) by object and property
@@ -13,10 +13,10 @@ class AddressExtractor
 {
     const PROPERTY_PATH = 'billingAddress';
 
-    /** @var PropertyAccessor */
+    /** @var PropertyAccessorInterface */
     protected $propertyAccessor;
 
-    public function __construct(PropertyAccessor $propertyAccessor)
+    public function __construct(PropertyAccessorInterface $propertyAccessor)
     {
         $this->propertyAccessor = $propertyAccessor;
     }

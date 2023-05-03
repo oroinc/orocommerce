@@ -46,15 +46,6 @@ operations:
         routes:
             - oro_product_frontend_quick_add
 
-    oro_shoppinglist_frontend_quick_add_import_to_shoppinglist:
-        extends: oro_shoppinglist_frontend_products_add_to_shoppinglist_base
-        routes:
-            - oro_product_frontend_quick_add_import
-            - oro_product_frontend_quick_add_copy_paste
-        button_options:
-            page_component_options:
-                quickAddComponentPrefix: 'quick-add-import'
-
     oro_shoppinglist_frontend_addlineitem:
         extends: oro_shoppinglist_lineitem_base
         label: oro.shoppinglist.product.add_to_shopping_list.label
@@ -205,7 +196,6 @@ operations:
                 attribute: $.result.shoppingListHasEmptyMatrix
         preconditions:
             '@and':
-                - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
                 - '@has_elements': $lineItems
                 - '@rfp_allowed': $lineItems
                 - '@acl_granted': [VIEW, $.data]
@@ -357,6 +347,8 @@ operations:
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
                           - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\Product']]]
                           - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]]
+                          - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem']]]
+                          - [[collection], [propertyName, [kitItemLineItems]]]
                     - '@assign_value': [$.newShoppingList.label, $.newName]
                     - '@assign_value': [$.newShoppingList.current, false]
                     - '@flush_entity': $.newShoppingList

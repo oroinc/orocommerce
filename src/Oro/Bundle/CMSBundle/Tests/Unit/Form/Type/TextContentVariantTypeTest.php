@@ -16,9 +16,9 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
     use WysiwygAwareTestTrait;
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -46,10 +46,6 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param TextContentVariant $existingData
-     * @param array $submittedData
-     * @param TextContentVariant $expectedData
      */
     public function testSubmit(
         TextContentVariant $existingData,

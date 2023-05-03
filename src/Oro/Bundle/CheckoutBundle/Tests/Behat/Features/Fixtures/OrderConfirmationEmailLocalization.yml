@@ -1,0 +1,148 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision{1..15}:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  productName{1..15}:
+    string: 'Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product{1..15}:
+    sku: 'PSKU<current()>'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision<current()>'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - addName: ['@productName<current()>']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+  pricelist:
+    name: 'pricelist'
+    __calls:
+      - setCurrencies: [['USD']]
+    active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+  priceListToWebsite1:
+    pricelist: '@pricelist'
+    website: '@website1'
+    sortOrder: 100
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  productPrice{1..15}:
+    pricelist: '@pricelist'
+    product: '@product<current()>'
+    productSku: '@product<current()>->getSku'
+    quantity: 1
+    unit: '@item'
+    value: '<current()>'
+    currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+  priceListToProduct{1..15}:
+    product: '@product<current()>'
+    pricelist: '@pricelist'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+  shoppinglist1:
+    label: 'List 1'
+    customer: '@customer'
+    customerUser: '@amanda'
+    organization: '@organization'
+    website: '@website1'
+  shoppinglist2:
+    label: 'List 2'
+    customer: '@customer'
+    customerUser: '@amanda'
+    organization: '@organization'
+    website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+  lineitems1_{1..5}:
+    product: '@product<current()>'
+    quantity: '1'
+    unit: '@item'
+    customerUser: '@amanda'
+    shoppingList: '@shoppinglist1'
+    organization: '@organization'
+
+  lineitems2_{1..15}:
+    product: '@product<current()>'
+    quantity: '1'
+    unit: '@item'
+    customerUser: '@amanda'
+    shoppingList: '@shoppinglist2'
+    organization: '@organization'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+  paymentRule:
+    name: 'Default'
+    enabled: true
+    sortOrder: 1
+  shippingRule:
+    name: 'Default'
+    enabled: true
+    sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+  shippingMethodTypeConfig:
+    type: 'primary'
+    enabled: true
+    options:
+      price: 200
+      type: 'per_order'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+  shippingMethodsConfigsRule:
+    rule: '@shippingRule'
+    currency: 'USD'
+    organization: '@organization'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+  shippingMethodConfig:
+    method: '<("flat_rate_".@flatRateIntegration->getId())>'
+    typeConfigs: ['@shippingMethodTypeConfig']
+    methodConfigsRule: '@shippingMethodsConfigsRule'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+  paymentMethodConfig:
+    type: '<("payment_term_".@paymentTermIntegration->getId())>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+  paymentMethodsConfigsRule:
+    rule: '@paymentRule'
+    methodConfigs: ['@paymentMethodConfig']
+    currency: 'USD'
+    organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+  address:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'Fifth avenue'
+    city: 'Berlin'
+    postalCode: '10115'
+    frontendOwner: '@amanda'
+    owner: '@admin'
+    __calls:
+      - setDefaults: ['@shippingType', '@billingType']
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+  billing:
+    address: '@address'
+    type: '@billingType'
+    default: true
+  shipping:
+    address: '@address'
+    type: '@shippingType'
+    default: true

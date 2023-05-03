@@ -3,7 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 
 use Doctrine\Inflector\Rules\English\InflectorFactory;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Job\JobResult;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
@@ -18,32 +18,22 @@ abstract class AbstractImportExportTestCase extends WebTestCase
 {
     /**
      * Return the name of the file that contains data to be tested for import statuses
-     *
-     * @return string
      */
-    abstract public function getImportStatusFile();
+    abstract public function getImportStatusFile(): string;
 
     /**
      * Return the name of the file that contains data to be tested for import inventory levels
-     *
-     * @return string
      */
-    abstract public function getImportLevelFile();
+    abstract public function getImportLevelFile(): string;
 
-    /**
-     * @return array
-     */
-    public function inventoryStatusDataProvider()
+    public function inventoryStatusDataProvider(): array
     {
         $filePath = $this->getFilePath() . $this->getImportStatusFile();
 
         return Yaml::parse(file_get_contents($filePath));
     }
 
-    /**
-     * @return array
-     */
-    public function inventoryLevelsDataProvider()
+    public function inventoryLevelsDataProvider(): array
     {
         $filePath = $this->getFilePath() . $this->getImportLevelFile();
 
@@ -52,18 +42,13 @@ abstract class AbstractImportExportTestCase extends WebTestCase
 
     /**
      * Return bundle relative path where test data is found
-     * @return string
      */
-    protected function getFilePath()
+    protected function getFilePath(): string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
     }
 
-    /**
-     * @param $filePath
-     * @return JobResult
-     */
-    protected function makeImport($filePath)
+    protected function makeImport(string $filePath): JobResult
     {
         $this->cleanUpReader();
 
@@ -75,21 +60,17 @@ abstract class AbstractImportExportTestCase extends WebTestCase
             ],
         ];
 
-        $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+        return $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
             ProcessorRegistry::TYPE_IMPORT,
             JobExecutor::JOB_IMPORT_FROM_CSV,
             $configuration
         );
-
-        return $jobResult;
     }
 
     /**
      * Return an array of mapping between import header and object and the fields where data should be stored
-     *
-     * @return array
      */
-    protected function getFieldMappings()
+    protected function getFieldMappings(): array
     {
         return [
             'SKU' => 'product:sku',
@@ -99,56 +80,34 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $values
-     *
-     * @return null|InventoryLevel
-     */
-    protected function getInventoryLevelEntity($values = [])
+    protected function getInventoryLevelEntity(array $values = []): ?InventoryLevel
     {
-        /** @var EntityRepository $productRepository */
-        $productRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(Product::class);
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = self::getContainer()->get('doctrine');
 
-        /** @var EntityRepository $productUnitPrecisionRepository */
-        $productUnitPrecisionRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(ProductUnitPrecision::class);
+        $product = $doctrine->getRepository(Product::class)->findOneBy(['sku' => $values['SKU']]);
 
-        /** @var EntityRepository $warehouseInventoryRepository */
-        $warehouseInventoryRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(InventoryLevel::class);
-
-        $product = $productRepository->findOneBy(['sku' => $values['SKU']]);
-
-        $unit = isset($values['Unit']) ? $values['Unit'] : null;
-        if (!$unit) {
-            $productUnitPrecision = $product->getPrimaryUnitPrecision();
+        $unit = $values['Unit'] ?? null;
+        if ($unit) {
+            $productUnitPrecision = $doctrine->getRepository(ProductUnitPrecision::class)->findOneBy([
+                'product' => $product,
+                'unit' => $unit
+            ]);
         } else {
-            $productUnitPrecision = $productUnitPrecisionRepository->findOneBy(
-                [
-                    'product' => $product,
-                    'unit' => $unit
-                ]
-            );
+            $productUnitPrecision = $product->getPrimaryUnitPrecision();
         }
 
-        return $warehouseInventoryRepository->findOneBy(
-            [
-                'product' => $product,
-                'productUnitPrecision' => $productUnitPrecision
-            ]
-        );
+        return $doctrine->getRepository(InventoryLevel::class)->findOneBy([
+            'product' => $product,
+            'productUnitPrecision' => $productUnitPrecision
+        ]);
     }
 
     /**
      * Retrieves the value for a field of the object, field which is specified in the $fieldMap
      * in the form 'objectField:someField'
-     *
-     * @param $object
-     * @param $fieldMap
-     * @return mixed
      */
-    protected function getValue($object, $fieldMap)
+    protected function getValue(object $object, string $fieldMap): mixed
     {
         $objectFields = explode(':', $fieldMap);
 
@@ -163,14 +122,8 @@ abstract class AbstractImportExportTestCase extends WebTestCase
     /**
      * Verify if the entity contains the expected values for the fields mentioned in the
      * $fieldsMapping list.
-     *
-     * @param $entity
-     * @param $data
-     * @param $fieldsMapping
-     * @param array $options
-     * @return bool
      */
-    protected function assertFields($entity, $data, $fieldsMapping, $options = [])
+    protected function assertFields(object $entity, array $data, array $fieldsMapping, array $options = []): bool
     {
         foreach ($fieldsMapping as $name => $fieldMap) {
             if (!isset($data[$name])) {
@@ -182,7 +135,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
             }
 
             $value = $data[$name];
-            if (isset($options['singularize']) && array_search($name, $options['singularize']) !== false) {
+            if (isset($options['singularize']) && in_array($name, $options['singularize'], true)) {
                 $value = (new InflectorFactory())->build()->singularize($value);
             }
 
@@ -195,7 +148,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
     /**
      * Cleanup reader of errors after each import
      */
-    protected function cleanUpReader()
+    protected function cleanUpReader(): void
     {
         $reader = $this->getContainer()->get('oro_importexport.reader.csv');
         ReflectionUtil::setPropertyValue($reader, 'file', null);

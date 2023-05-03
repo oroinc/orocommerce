@@ -17,9 +17,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const USER_CURRENCY = 'USD';
-
     use EntityTrait;
+
+    private const USER_CURRENCY = 'USD';
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
@@ -33,9 +33,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceProvider */
     private $gridProductPriceProvider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -46,16 +43,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             $this->productPriceProvider,
             $this->priceFormatter,
             $this->doctrineHelper
-        );
-    }
-
-    protected function tearDown(): void
-    {
-        unset(
-            $this->doctrineHelper,
-            $this->productPriceProvider,
-            $this->priceFormatter,
-            $this->gridProductPriceProvider
         );
     }
 
@@ -73,12 +60,11 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
-        $result = $this->gridProductPriceProvider
-            ->getPricesForProductsByPriceList(
-                [],
-                $productScopeCriteria,
-                self::USER_CURRENCY
-            );
+        $result = $this->gridProductPriceProvider->getPricesForProductsByPriceList(
+            [],
+            $productScopeCriteria,
+            self::USER_CURRENCY
+        );
 
         $this->assertEquals([], $result);
     }
@@ -123,12 +109,11 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ];
             });
 
-        $combinedPricesForProductsByPriceList = $this->gridProductPriceProvider
-            ->getPricesForProductsByPriceList(
-                [new ResultRecord(['id' => 1])],
-                $productScopeCriteria,
-                self::USER_CURRENCY
-            );
+        $combinedPricesForProductsByPriceList = $this->gridProductPriceProvider->getPricesForProductsByPriceList(
+            [new ResultRecord(['id' => 1])],
+            $productScopeCriteria,
+            self::USER_CURRENCY
+        );
 
         $this->assertEquals(
             $expected,

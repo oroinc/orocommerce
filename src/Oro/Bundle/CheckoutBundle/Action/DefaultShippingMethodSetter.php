@@ -5,26 +5,25 @@ namespace Oro\Bundle\CheckoutBundle\Action;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
+/**
+ * Sets a default shipping method and a shipping cost for a checkout.
+ */
 class DefaultShippingMethodSetter
 {
-    /**
-     * @var CheckoutShippingMethodsProviderInterface
-     */
-    private $checkoutShippingMethodsProvider;
+    private CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider;
 
     public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
     {
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
-    public function setDefaultShippingMethod(Checkout $checkout)
+    public function setDefaultShippingMethod(Checkout $checkout): void
     {
         if ($checkout->getShippingMethod()) {
             return;
         }
 
         $methodsDataCollection = $this->checkoutShippingMethodsProvider->getApplicableMethodsViews($checkout);
-
         if ($methodsDataCollection->isEmpty()) {
             return;
         }

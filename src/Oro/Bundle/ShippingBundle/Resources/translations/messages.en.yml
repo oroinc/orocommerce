@@ -148,6 +148,9 @@ oro:
                 title: Delete integration
                 button.okText: Delete
 
+        multi_shipping_method:
+            label: Multi Shipping
+
     weight_unit.lbs:
         label:
             full: pound

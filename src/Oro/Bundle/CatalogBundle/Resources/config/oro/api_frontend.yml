@@ -164,6 +164,7 @@ api:
             documentation_resource: '@OroCatalogBundle/Resources/doc/api_frontend/product.md'
             fields:
                 category: ~
+                category_sort_order: ~
             filters:
                 fields:
                     rootCategory:
@@ -180,3 +181,6 @@ api:
                     property_path: integer.category_id
                     target_class: Oro\Bundle\CatalogBundle\Entity\Category
                     target_type: to-one
+                category_sort_order:
+                    data_type: float
+                    property_path: float.category_sort_order

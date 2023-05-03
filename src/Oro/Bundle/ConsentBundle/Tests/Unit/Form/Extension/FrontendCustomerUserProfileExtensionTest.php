@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
@@ -15,9 +15,8 @@ use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserProfileType;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Component\TestUtils\ORM\Mocks\UnitOfWork;
+use Oro\Component\Testing\Unit\ORM\Mocks\UnitOfWorkMock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -26,8 +25,6 @@ use Symfony\Component\Form\FormInterface;
 
 class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
@@ -40,9 +37,6 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
     /** @var FrontendCustomerUserProfileExtension */
     private $extension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
@@ -170,7 +164,7 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $consentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 1]);
+        $consentAcceptance = new ConsentAcceptance();
         $acceptedConsents = $this->getCollection([$consentAcceptance]);
 
         // Decline accepted consent
@@ -193,7 +187,7 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
             ->method('isValid')
             ->willReturn(false);
 
-        $consentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 1]);
+        $consentAcceptance = new ConsentAcceptance();
         $acceptedConsents = $this->getCollection([$consentAcceptance]);
 
         // Decline accepted consent
@@ -210,19 +204,16 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
 
     private function getCollection(array $items = []): PersistentCollection
     {
-        $uow = new UnitOfWork();
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
-        $em->method('getUnitOfWork')
-            ->willReturn($uow);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
+            ->method('getUnitOfWork')
+            ->willReturn(new UnitOfWorkMock());
 
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $collection = new PersistentCollection($em, $metadata, new ArrayCollection($items));
-
+        $collection = new PersistentCollection(
+            $em,
+            $this->createMock(ClassMetadata::class),
+            new ArrayCollection($items)
+        );
         $collection->takeSnapshot();
 
         return $collection;

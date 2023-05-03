@@ -3,10 +3,11 @@
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -25,10 +26,7 @@ class ProductBySkuValidator extends ConstraintValidator
      */
     private $aclHelper;
 
-    /**
-     * @var PropertyAccessor
-     */
-    protected $propertyAccessor;
+    protected ?PropertyAccessorInterface $propertyAccessor = null;
 
     public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
@@ -63,12 +61,12 @@ class ProductBySkuValidator extends ConstraintValidator
     }
 
     /**
-     * @return PropertyAccessor
+     * @return PropertyAccessorInterface
      */
     protected function getPropertyAccessor()
     {
         if (!$this->propertyAccessor) {
-            $this->propertyAccessor = new PropertyAccessor();
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         }
         return $this->propertyAccessor;
     }

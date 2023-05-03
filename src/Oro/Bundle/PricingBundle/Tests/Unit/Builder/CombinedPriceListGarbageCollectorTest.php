@@ -11,13 +11,16 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToWebsiteRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 
 class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,6 +32,9 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
 
     /** @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $triggerHandler;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
 
     /** @var CombinedPriceListGarbageCollector */
     private $garbageCollector;
@@ -42,53 +48,113 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
         $this->nativeQueryExecutorHelper = $this->createMock(NativeQueryExecutorHelper::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->garbageCollector = new CombinedPriceListGarbageCollector(
             $this->registry,
             $this->configManager,
             $this->triggerHandler,
-            $this->nativeQueryExecutorHelper
+            $this->nativeQueryExecutorHelper,
+            $this->logger
         );
     }
 
     public function testCleanCombinedPriceLists()
     {
         $this->assertConfigManagerCalls();
+        [$combinedProductPriceRepository] = $this->assertRepositories();
+        $combinedProductPriceRepository
+            ->expects($this->once())
+            ->method('hasDuplicatePrices')
+            ->willReturn(false);
+        $combinedProductPriceRepository
+            ->expects($this->never())
+            ->method('deleteDuplicatePrices');
 
+        $this->logger
+            ->expects($this->never())
+            ->method('log');
+
+        $this->garbageCollector->cleanCombinedPriceLists([1]);
+    }
+
+    public function testCleanCombinedPriceListsWithLog(): void
+    {
+        [$combinedProductPriceRepository] = $this->assertRepositories();
+        $this->assertConfigManagerCalls();
+
+        $combinedProductPriceRepository
+            ->expects($this->any())
+            ->method('hasDuplicatePrices')
+            ->willReturn(true);
+        $combinedProductPriceRepository
+            ->expects($this->any())
+            ->method('deleteDuplicatePrices')
+            ->with([1])
+            ->willReturn(5);
+
+        $this->logger
+            ->expects($this->once())
+            ->method('log');
+
+        $this->garbageCollector->cleanCombinedPriceLists([1]);
+    }
+
+    private function assertRepositories(): array
+    {
         $cplRepository = $this->createMock(CombinedPriceListRepository::class);
-        $cplRepository->expects($this->once())
+        $cplRepository
+            ->expects($this->once())
             ->method('scheduleUnusedPriceListsRemoval')
             ->with($this->nativeQueryExecutorHelper, [1, 2]);
 
         $customerRelationRepository = $this->createMock(CombinedPriceListToCustomerRepository::class);
-        $customerRelationRepository->expects($this->once())
+        $customerRelationRepository
+            ->expects($this->once())
             ->method('deleteInvalidRelations');
+
         $customerGroupRelationRepository = $this->createMock(CombinedPriceListToCustomerGroupRepository::class);
-        $customerGroupRelationRepository->expects($this->once())
+        $customerGroupRelationRepository
+            ->expects($this->once())
             ->method('deleteInvalidRelations');
+
         $websiteRelationRepository = $this->createMock(CombinedPriceListToWebsiteRepository::class);
-        $websiteRelationRepository->expects($this->once())
+        $websiteRelationRepository
+            ->expects($this->once())
             ->method('deleteInvalidRelations');
 
         $cplActivationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
-        $cplActivationRuleRepository->expects($this->once())
+        $cplActivationRuleRepository
+            ->expects($this->once())
             ->method('deleteExpiredRules')
             ->with($this->isInstanceOf(\DateTime::class));
-        $cplActivationRuleRepository->expects($this->once())
+
+        $cplActivationRuleRepository
+            ->expects($this->once())
             ->method('deleteUnlinkedRules')
             ->with([2]);
+
+        $combinedProductPriceRepository = $this->createMock(CombinedProductPriceRepository::class);
 
         $this->registry->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
                 [CombinedPriceList::class, null, $cplRepository],
+                [CombinedProductPrice::class, null, $combinedProductPriceRepository],
                 [CombinedPriceListToCustomer::class, null, $customerRelationRepository],
                 [CombinedPriceListToCustomerGroup::class, null, $customerGroupRelationRepository],
                 [CombinedPriceListToWebsite::class, null, $websiteRelationRepository],
                 [CombinedPriceListActivationRule::class, null, $cplActivationRuleRepository],
             ]);
 
-        $this->garbageCollector->cleanCombinedPriceLists();
+        return [
+            $combinedProductPriceRepository,
+            $cplRepository,
+            $customerRelationRepository,
+            $customerGroupRelationRepository,
+            $websiteRelationRepository,
+            $cplActivationRuleRepository
+        ];
     }
 
     public function testHasPriceListsScheduledForRemoval()

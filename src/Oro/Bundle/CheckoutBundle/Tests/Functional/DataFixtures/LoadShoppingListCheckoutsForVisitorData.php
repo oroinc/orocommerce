@@ -18,21 +18,21 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
 {
     use EnabledPaymentMethodIdentifierTrait;
 
-    const CHECKOUT_1 = 'checkout_1';
-    const CHECKOUT_2 = 'checkout_2';
-    const CHECKOUT_3 = 'checkout_3';
+    public const CHECKOUT_1 = 'checkout_1';
+    public const CHECKOUT_2 = 'checkout_2';
+    public const CHECKOUT_3 = 'checkout_3';
 
-    const SHOPPING_LIST_1 = 'shopping_list_1';
-    const SHOPPING_LIST_2 = 'shopping_list_2';
-    const SHOPPING_LIST_3 = 'shopping_list_3';
+    public const SHOPPING_LIST_1 = 'shopping_list_1';
+    public const SHOPPING_LIST_2 = 'shopping_list_2';
+    public const SHOPPING_LIST_3 = 'shopping_list_3';
 
-    const CUSTOMER_VISITOR_1 = 'customer_visitor_1';
-    const CUSTOMER_VISITOR_2 = 'customer_visitor_2';
+    public const CUSTOMER_VISITOR_1 = 'customer_visitor_1';
+    public const CUSTOMER_VISITOR_2 = 'customer_visitor_2';
 
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->createCustomerVisitor($manager, self::CUSTOMER_VISITOR_1)
             ->addShoppingList($this->createShoppingList($manager, self::SHOPPING_LIST_1));
@@ -48,7 +48,7 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    protected function getData()
+    protected function getData(): array
     {
         $paymentTermIdentifier = $this->getPaymentMethodIdentifier($this->container);
 
@@ -69,17 +69,17 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getWorkflowName()
+    protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
 
     /**
-     * @return Checkout
+     * {@inheritDoc}
      */
-    protected function createCheckout()
+    protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
@@ -87,7 +87,7 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    protected function getCheckoutSourceName()
+    protected function getCheckoutSourceName(): string
     {
         return 'shoppingList';
     }
@@ -95,7 +95,7 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),
@@ -107,13 +107,7 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
         );
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string        $reference
-     *
-     * @return CustomerVisitor
-     */
-    private function createCustomerVisitor(ObjectManager $manager, $reference)
+    private function createCustomerVisitor(ObjectManager $manager, string $reference): CustomerVisitor
     {
         $visitor = new CustomerVisitor();
         $visitor->setSessionId(md5(time()));
@@ -124,13 +118,7 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
         return $visitor;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string        $reference
-     *
-     * @return ShoppingList
-     */
-    private function createShoppingList(ObjectManager $manager, $reference)
+    private function createShoppingList(ObjectManager $manager, string $reference): ShoppingList
     {
         $customerUser = $this->getDefaultCustomerUser($manager);
 

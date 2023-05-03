@@ -375,7 +375,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     }
 
     /**
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getSourcePaymentTransaction()
     {

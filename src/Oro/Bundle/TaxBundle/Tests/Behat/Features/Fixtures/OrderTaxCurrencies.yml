@@ -4,10 +4,10 @@ include:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist_shipping'
-        default: true
         __calls:
             - setCurrencies: [['USD','EUR']]
         active: true
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceListProductRelation:
@@ -36,6 +36,7 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
         customerTaxCode: '@customer_tax_code_non_exempt'
         tax: '@tax_berlin_sales'
         taxJurisdiction: '@tax_jurisdiction_berlin'
+        organization: '@organization'
 
 Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
     tax_jurisdiction_berlin:

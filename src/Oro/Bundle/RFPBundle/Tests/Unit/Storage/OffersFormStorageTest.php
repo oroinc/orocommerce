@@ -7,7 +7,7 @@ use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OffersFormStorage */
-    protected $storage;
+    private $storage;
 
     protected function setUp(): void
     {
@@ -22,10 +22,7 @@ class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $this->storage->getData($storageData));
     }
 
-    /**
-     * @return array
-     */
-    public function dataDataProvider()
+    public function dataDataProvider(): array
     {
         return [
             [[], []],
@@ -52,19 +49,13 @@ class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider rawDataDataProvider
-     *
-     * @param array $storageData
-     * @param string $expectedData
      */
-    public function testGetRawData(array $storageData, $expectedData)
+    public function testGetRawData(array $storageData, string $expectedData)
     {
         $this->assertEquals($expectedData, $this->storage->getRawData($storageData));
     }
 
-    /**
-     * @return array
-     */
-    public function rawDataDataProvider()
+    public function rawDataDataProvider(): array
     {
         return [
             [[null], 'a:1:{i:0;N;}'],

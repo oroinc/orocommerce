@@ -11,20 +11,14 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CategoryDefaultProductUnitProvider
-     */
-    protected $defaultProductUnitProvider;
+    /** @var CategoryDefaultProductUnitProvider */
+    private $defaultProductUnitProvider;
 
-    /**
-     * @var array
-     */
-    protected $categoryPrecision = ['code' => 'set', 'precision' => 2];
+    /** @var array */
+    private $categoryPrecision = ['code' => 'set', 'precision' => 2];
 
-    /**
-     * @var array
-     */
-    protected $categories;
+    /** @var array */
+    private $categories;
 
     protected function setUp(): void
     {
@@ -91,7 +85,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
      * @param int $precision
      * @return ProductUnitPrecision
      */
-    protected function createProductUnitPrecision($code, $precision)
+    private function createProductUnitPrecision($code, $precision)
     {
         if (!$code || !$precision) {
             return null;
@@ -102,10 +96,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
         return $productUnitPrecision->setUnit($productUnit)->setPrecision($precision);
     }
 
-    /**
-     * @return array
-     */
-    public function productUnitDataProvider()
+    public function productUnitDataProvider(): array
     {
         return [
             'noCategory' => [

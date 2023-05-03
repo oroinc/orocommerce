@@ -1,0 +1,17 @@
+data:
+    Jan 1, 2023 - Jan 4, 2023:
+        -
+            date: '2023-01-01'
+            amount: 2468.0
+        -
+            date: '2023-01-02'
+            amount: 2468.0
+        -
+            date: '2023-01-03'
+            amount: 1234.0
+        -
+            date: '2023-01-04'
+            amount: 1234.0
+
+calculatedDateRangeLabels:
+    - 'Jan 1, 2023 - Jan 4, 2023'

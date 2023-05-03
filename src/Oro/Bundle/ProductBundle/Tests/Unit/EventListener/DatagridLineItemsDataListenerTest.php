@@ -7,6 +7,7 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -16,14 +17,13 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductImageStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ConfigurableProductProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $configurableProductProvider;
+    private ConfigurableProductProvider|MockObject $configurableProductProvider;
 
-    /** @var DatagridLineItemsDataListener */
-    private $listener;
+    private DatagridLineItemsDataListener $listener;
 
     protected function setUp(): void
     {
@@ -85,7 +85,8 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productConfiguration);
 
         $event = new DatagridLineItemsDataEvent(
-            [$lineItem],
+            [$lineItem->getEntityIdentifier() => $lineItem],
+            [],
             $this->createMock(DatagridInterface::class),
             []
         );
@@ -124,6 +125,18 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ->setProduct($product2)
             ->setQuantity(456)
             ->setUnit($productUnit2);
+
+        // Variables for case 'with configurable product'
+        $configurableProduct1Name = 'ConfigurableProduct1';
+        $configurableProduct1 = (new ProductStub())
+            ->setId(2)
+            ->setNames([(new ProductName())->setString($configurableProduct1Name)])
+            ->setType(Product::TYPE_CONFIGURABLE);
+        $configurableProduct1Unit = (new ProductUnit())->setCode('sample_unit_of_configurable_product');
+        $lineItemWithConfigurableProduct = (new ProductLineItemStub(20))
+            ->setProduct($configurableProduct1)
+            ->setQuantity(1)
+            ->setUnit($configurableProduct1Unit);
 
         // Variables for case 'with image'
         $productWithImage = (new ProductStub())
@@ -184,6 +197,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
                     'name' => $product1Name,
                     'quantity' => $lineItemWithoutParent->getQuantity(),
                     'unit' => $productUnit1->getCode(),
+                    'isConfigurable' => false,
                 ],
             ],
             'with parent product' => [
@@ -199,6 +213,21 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
                     'quantity' => $lineItemWithParent->getQuantity(),
                     'unit' => $productUnit2->getCode(),
                     'productConfiguration' => ['sample_field' => 'sample_value'],
+                    'isConfigurable' => false,
+                ],
+            ],
+            'with configurable product' => [
+                'lineItem' => $lineItemWithConfigurableProduct,
+                'productConfiguration' => [],
+                'expectedData' => [
+                    'id' => $lineItemWithConfigurableProduct->getEntityIdentifier(),
+                    'productId' => $parentProduct->getId(),
+                    'sku' => $configurableProduct1->getSku(),
+                    'image' => '',
+                    'name' => $configurableProduct1Name,
+                    'quantity' => $lineItemWithConfigurableProduct->getQuantity(),
+                    'unit' => $configurableProduct1Unit->getCode(),
+                    'isConfigurable' => true,
                 ],
             ],
             'with image' => [
@@ -212,6 +241,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
                     'name' => $product3Name,
                     'quantity' => $lineItemWithImage->getQuantity(),
                     'unit' => $productUnit3->getCode(),
+                    'isConfigurable' => false,
                 ],
             ],
             'with unit precision' => [
@@ -228,6 +258,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
                     'units' => [
                         $productUnit4->getCode() => ['precision' => $productUnitPrecision->getPrecision()],
                     ],
+                    'isConfigurable' => false,
                 ],
             ],
             'with disabled unit precision' => [
@@ -241,6 +272,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
                     'name' => $product5Name,
                     'quantity' => $lineItemWithDisabledUnitPrecision->getQuantity(),
                     'unit' => $productUnit5->getCode(),
+                    'isConfigurable' => false,
                 ],
             ],
             'without product' => [

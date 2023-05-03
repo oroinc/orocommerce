@@ -7,6 +7,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\CommerceMenuBundle\Migrations\Schema\OroCommerceMenuBundleInstaller;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -36,6 +37,7 @@ class OroCatalogBundleInstaller implements
 
     const ORO_CATALOG_CATEGORY_TABLE_NAME = 'oro_catalog_category';
     const ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'oro_category_def_prod_opts';
+    const ORO_PRODUCT_TABLE_NAME = 'oro_product';
     const ORO_PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
@@ -65,7 +67,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_19';
+        return 'v1_21';
     }
 
     /**
@@ -116,8 +118,11 @@ class OroCatalogBundleInstaller implements
         $this->addCategoryImageAssociation($schema, 'smallImage', self::MIME_TYPES);
 
         $this->addCategoryProductRelation($schema);
+        $this->addCategoryMenuUpdateRelation($schema);
 
         $this->addContentVariantTypes($schema);
+
+        $this->createProductCategorySortOrder($schema);
     }
 
     /**
@@ -461,6 +466,54 @@ class OroCatalogBundleInstaller implements
                 'view' => ['is_displayable' => false],
                 'merge' => ['display' => false],
                 'importexport' => ['excluded' => true],
+            ]
+        );
+    }
+
+    /**
+     * Adds category_sort_order field to oro_product table & related extended field
+     * @param Schema $schema
+     * @return void
+     */
+    protected function createProductCategorySortOrder(Schema $schema): void
+    {
+        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_PRODUCT_TABLE_NAME);
+        if (!$table->hasColumn('category_sort_order')) {
+            $table->addColumn('category_sort_order', 'float', [
+                'notnull' => false,
+                'default' => null,
+                'oro_options' => [
+                    'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'importexport' => ['excluded' => true],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                    'form' => ['is_enabled' => false],
+                    'email' => ['available_in_template' => false],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                ],
+            ]);
+        }
+    }
+
+    protected function addCategoryMenuUpdateRelation(Schema $schema): void
+    {
+        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $targetTable = $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $targetTable,
+            'category',
+            $table,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'on_delete' => 'CASCADE',
+                ],
+                'form' => ['is_enabled' => false],
             ]
         );
     }

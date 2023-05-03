@@ -65,7 +65,7 @@ class ProductTaxCodeGridListenerTest extends \PHPUnit\Framework\TestCase
                             'autocomplete_api_accessor' => [
                                 'class' => 'oroui/js/tools/search-api-accessor',
                                 'label_field_name' => 'code',
-                                'search_handler_name' => 'oro_product_tax_code_entity_search'
+                                'search_handler_name' => 'oro_product_tax_code'
                             ],
                             'save_api_accessor' => [
                                 'route' => 'oro_api_patch_product_tax_code',

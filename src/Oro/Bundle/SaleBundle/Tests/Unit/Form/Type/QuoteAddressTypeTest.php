@@ -6,6 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\Type\AddressFormExtensionTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
@@ -15,7 +16,6 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
@@ -25,20 +25,20 @@ use Symfony\Component\Validator\ConstraintViolation;
 
 class QuoteAddressTypeTest extends AddressFormExtensionTestCase
 {
-    /** @var QuoteAddressType */
-    private $formType;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressSecurityProvider */
-    private $quoteAddressSecurityProvider;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressManager */
+    /** @var QuoteAddressManager|\PHPUnit\Framework\MockObject\MockObject */
     private $quoteAddressManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Serializer */
+    /** @var QuoteAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $quoteAddressSecurityProvider;
+
+    /** @var Serializer|\PHPUnit\Framework\MockObject\MockObject */
     private $serializer;
 
     /** @var TypedOrderAddressCollection|\PHPUnit\Framework\MockObject\MockObject */
     private $addressCollection;
+
+    /** @var QuoteAddressType */
+    private $formType;
 
     protected function setUp(): void
     {
@@ -52,8 +52,8 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
         $this->quoteAddressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
         $this->quoteAddressManager = $this->createMock(QuoteAddressManager::class);
         $this->serializer = $this->createMock(Serializer::class);
-
         $this->addressCollection = $this->createMock(TypedOrderAddressCollection::class);
+
         $this->quoteAddressManager->expects($this->any())
             ->method('getGroupedAddresses')
             ->willReturn($this->addressCollection);
@@ -64,15 +64,14 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
             $this->quoteAddressSecurityProvider,
             $this->serializer
         );
-        $this->formType->setDataClass(QuoteAddress::class);
 
         parent::setUp();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return array_merge(
             [new PreloadedExtension([$this->formType], [])],
@@ -379,7 +378,12 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
     public function testFinishView()
     {
         $view = new FormView();
-        $view->children = ['country' => new FormView(), 'city' => new FormView(), 'customerAddress' => new FormView()];
+        $view->children = [
+            'country' => new FormView(),
+            'city' => new FormView(),
+            'phone' => new FormView(),
+            'customerAddress' => new FormView()
+        ];
 
         $this->addressCollection->expects($this->once())
             ->method('toArray')
@@ -405,6 +409,9 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
             $this->assertArrayNotHasKey('data-required', $view->offsetGet($childName)->vars['attr']);
             $this->assertArrayNotHasKey('label_attr', $view->offsetGet($childName)->vars);
         }
+
+        $this->assertArrayNotHasKey('disabled', $view->offsetGet('phone')->vars);
+        $this->assertArrayNotHasKey('required', $view->offsetGet('phone')->vars);
 
         $this->assertFalse($view->offsetGet('customerAddress')->vars['disabled']);
         $this->assertFalse($view->offsetGet('customerAddress')->vars['required']);

@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Context;
 
+/**
+ * Represents a factory to create a shipping context based on a specific entity.
+ */
 interface ShippingContextFactoryInterface
 {
-    /**
-     * @param object $entity
-     *
-     * @return ShippingContextInterface
-     */
-    public function create($entity);
+    public function create(object $entity): ShippingContextInterface;
 }

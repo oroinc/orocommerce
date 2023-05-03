@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -56,9 +58,7 @@ class CategoryControllerTest extends WebTestCase
             LoadCategoryData::class
         ]);
 
-        $this->localizations = $this->getContainer()->get('doctrine')
-            ->getRepository(Localization::class)
-            ->findAll();
+        $this->localizations = $this->getDoctrine()->getRepository(Localization::class)->findAll();
 
         $this->masterCatalog = $this->getRootCategory();
     }
@@ -67,7 +67,7 @@ class CategoryControllerTest extends WebTestCase
     {
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        if (method_exists($category, 'setDefaultSlugPrototype')) {
+        if (EntityPropertyInfo::methodExists($category, 'setDefaultSlugPrototype')) {
             $category->setDefaultSlugPrototype('old-default-slug');
         }
 
@@ -77,7 +77,7 @@ class CategoryControllerTest extends WebTestCase
         $englishSlugPrototype = new LocalizedFallbackValue();
         $englishSlugPrototype->setString('old-english-slug')->setLocalization($englishLocalization);
 
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class);
+        $entityManager = $this->getDoctrine()->getManagerForClass(Category::class);
         $category->addSlugPrototype($englishSlugPrototype);
 
         $entityManager->persist($category);
@@ -343,7 +343,7 @@ class CategoryControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em = $this->getDoctrine()->getManager();
         $attachments = $em->getRepository(File::class)->findBy(['extension' => 'svg']);
         foreach ($attachments as $attachmentFile) {
             $url = $this->getContainer()->get('oro_attachment.manager')
@@ -431,6 +431,9 @@ class CategoryControllerTest extends WebTestCase
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
                 . $this->getProductBySku(LoadProductData::PRODUCT_2)->getId();
+            $form['oro_catalog_category[sortOrder]'] = json_encode([
+                $this->getProductBySku(LoadProductData::PRODUCT_2)->getId() => ['categorySortOrder' => 0.2]
+            ], JSON_THROW_ON_ERROR);
         } else {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_4)->getId();
         }
@@ -449,6 +452,9 @@ class CategoryControllerTest extends WebTestCase
         self::assertStringContainsString($longDescription, $html);
         self::assertStringContainsString($smallImage->getFilename(), $html);
         self::assertStringContainsString($largeImage->getFilename(), $html);
+        if ($parentId === $this->masterCatalog->getId()) {
+            self::assertStringContainsString('"categorySortOrder":"0.2"', $html);
+        }
         $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
@@ -486,15 +492,18 @@ class CategoryControllerTest extends WebTestCase
         $testProductThree = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $testProductFour = $this->getProductBySku(LoadProductData::PRODUCT_4);
         $appendProduct = $testProductThree;
+        $sortOrder = [$testProductTwo->getId() => ['categorySortOrder' => 0.22]];
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $appendProduct = $testProductFour;
+            $sortOrder = [$appendProduct->getId() => ['categorySortOrder' => 0.4]];
         }
         $crfToken = $this->getCsrfToken('category')->getValue();
         $params = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => [
                 '_token' => $crfToken,
+                'sortOrder' => json_encode($sortOrder, JSON_THROW_ON_ERROR),
                 'appendProducts' => $appendProduct->getId(),
                 'removeProducts' => $testProductOne->getId()
             ]
@@ -542,6 +551,14 @@ class CategoryControllerTest extends WebTestCase
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
             $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
             $productThreeCategory = $this->getProductCategoryByProduct($testProductThree);
+            $this->assertEquals(
+                0.22,
+                $this->getProductBySku(LoadProductData::PRODUCT_2)->getCategorySortOrder()
+            );
+            $this->assertEquals(
+                null,
+                $this->getProductBySku(LoadProductData::PRODUCT_3)->getCategorySortOrder()
+            );
 
             $this->assertCategoryDefaultLocalized(
                 $productThreeCategory,
@@ -560,6 +577,10 @@ class CategoryControllerTest extends WebTestCase
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $productFourCategory = $this->getProductCategoryByProduct($testProductFour);
+            $this->assertEquals(
+                0.4,
+                $this->getProductBySku(LoadProductData::PRODUCT_4)->getCategorySortOrder()
+            );
 
             $this->assertCategoryDefaultLocalized(
                 $productFourCategory,
@@ -678,15 +699,16 @@ class CategoryControllerTest extends WebTestCase
 
     private function getProductBySku(string $sku): Product
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository(Product::class)
-            ->findOneBy(['sku' => $sku]);
+        return $this->getDoctrine()->getRepository(Product::class)->findOneBy(['sku' => $sku]);
     }
 
     private function getProductCategoryByProduct(Product $product): ?Category
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository(Category::class)
-            ->findOneByProduct($product);
+        return $this->getDoctrine()->getRepository(Category::class)->findOneByProduct($product);
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return self::getContainer()->get('doctrine');
     }
 }

@@ -81,7 +81,7 @@ define(function(require) {
         /**
          * Check existing component types
          */
-        resolveRestriction: function() {
+        resolveRestriction() {
             const Components = this.editor.Components;
             const BlockManager = this.editor.BlockManager;
             const componentTypes = Components.componentTypes;
@@ -122,7 +122,7 @@ define(function(require) {
          * @param {Node|Node[]} element
          * @returns {Array}
          */
-        getTags: function(element, mirror = false) {
+        getTags(element, mirror = false) {
             if (Array.isArray(element)) {
                 return element.reduce((res, child) => _.uniq([
                     ...res,
@@ -137,7 +137,7 @@ define(function(require) {
          * @param {string} domain
          * @returns {boolean}
          */
-        isAllowedDomain: function(domain) {
+        isAllowedDomain(domain) {
             const allowedIframeDomains = this.editor.getAllowedIframeDomains();
             if (allowedIframeDomains === null) {
                 return true;
@@ -157,7 +157,7 @@ define(function(require) {
          * @param {string|array} type
          * @returns {boolean}
          */
-        isAllowedTag: function(type) {
+        isAllowedTag(type) {
             return this.allowTags === false || this.contains(type) || type === '';
         },
 
@@ -166,7 +166,7 @@ define(function(require) {
          * @param tags
          * @returns {*}
          */
-        isAllow: function(tags) {
+        isAllow(tags) {
             if (_.isString(tags)) {
                 return this.isAllowedTag(tags);
             }
@@ -203,7 +203,7 @@ define(function(require) {
          * Check HTML template
          * @param template
          */
-        checkTemplate: function(template) {
+        checkTemplate(template) {
             return _.every(this.getTags(this.stringToNodes(stripRestrictedAttrs(template))), function(tag) {
                 const isAllowed = this.isAllowedTag(tag);
                 if (!isAllowed) {
@@ -219,7 +219,7 @@ define(function(require) {
          * @param {Boolean} nativeOut
          * @returns {[]}
          */
-        validate: function(template, nativeOut = false) {
+        validate(template, nativeOut = false) {
             const restricted = [];
 
             try {

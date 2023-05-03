@@ -8,9 +8,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 abstract class AbstractPayPalConfigTest extends AbstractPaymentConfigTestCase
 {
-    /**
-     * @var PayPalConfigInterface
-     */
+    /** @var PayPalConfigInterface */
     protected $config;
 
     public function testIsTestMode()

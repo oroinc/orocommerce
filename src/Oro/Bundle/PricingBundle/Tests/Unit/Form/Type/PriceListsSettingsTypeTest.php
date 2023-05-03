@@ -9,30 +9,31 @@ use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class PriceListsSettingsTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $provider = new PriceListCollectionTypeExtensionsProvider();
+        return (new PriceListCollectionTypeExtensionsProvider())->getExtensions();
+    }
 
-        return $provider->getExtensions();
+    private function getPriceList(int $id): PriceList
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
+
+        return $priceList;
     }
 
     public function testSubmit()
     {
-        /** @var PriceList $pl1 */
-        $pl1 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
-
-        /** @var PriceList $pl2 */
-        $pl2 = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 2]);
+        $pl1 = $this->getPriceList(1);
+        $pl2 = $this->getPriceList(2);
 
         $form = $this->factory->create(
             PriceListsSettingsType::class,
@@ -45,7 +46,7 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             ],
             [
                 PriceListsSettingsType::PRICE_LIST_RELATION_CLASS
-                    => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite',
+                    => PriceListToWebsite::class,
                 PriceListsSettingsType::FALLBACK_CHOICES => [
                     'oro.pricing.fallback.config.label' =>
                         PriceListWebsiteFallback::CONFIG,

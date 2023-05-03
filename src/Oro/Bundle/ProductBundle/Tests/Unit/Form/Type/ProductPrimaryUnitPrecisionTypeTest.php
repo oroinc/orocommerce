@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -19,45 +19,35 @@ use Symfony\Component\Validator\Validation;
 
 class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductPrimaryUnitPrecisionType
-     */
-    protected $formType;
+    private array $units = ['item', 'kg'];
 
-    /**
-     * @var array
-     */
-    protected $units = ['item', 'kg'];
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitLabelFormatter;
 
-    /**
-     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productUnitLabelFormatter;
+    /** @var ProductPrimaryUnitPrecisionType */
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+
         $this->formType = new ProductPrimaryUnitPrecisionType();
         $this->formType->setDataClass(ProductUnitPrecision::class);
-        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub($this->prepareChoices());
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    EntityType::class => $entityType
+                    new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    EntityType::class => new EntityTypeStub($this->prepareChoices())
                 ],
                 [
                     FormType::class => [new IntegerExtension()]
@@ -68,16 +58,12 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param ProductUnitPrecision $defaultData
-     * @param array $expectedOptions
-     * @param array|ProductUnitPrecision $submittedData
-     * @param ProductUnitPrecision $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
         ProductUnitPrecision $defaultData,
         array $expectedOptions,
-        $submittedData,
+        array $submittedData,
         ProductUnitPrecision $expectedData
     ) {
         $form = $this->factory->create(ProductPrimaryUnitPrecisionType::class, $defaultData, []);
@@ -92,7 +78,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    protected function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
+    private function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
     {
         foreach ($expectedConfig as $key => $value) {
             $this->assertTrue($actualConfig->hasOption($key));
@@ -100,10 +86,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'existing unit precision' => [
@@ -148,10 +131,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareChoices()
+    private function prepareChoices(): array
     {
         $choices = [];
         foreach ($this->units as $unitCode) {

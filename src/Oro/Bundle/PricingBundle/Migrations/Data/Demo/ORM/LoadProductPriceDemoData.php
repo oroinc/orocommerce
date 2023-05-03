@@ -3,12 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 
+/**
+ * Loading product price demo data.
+ */
 class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
     /**
@@ -110,12 +114,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         }
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return PriceList|null
-     */
-    protected function getPriceList(EntityManager $manager, $name)
+    protected function getPriceList(EntityManagerInterface $manager, string $name): ?PriceList
     {
         if (!array_key_exists($name, $this->priceLists)) {
             $this->priceLists[$name] = $manager->getRepository('OroPricingBundle:PriceList')

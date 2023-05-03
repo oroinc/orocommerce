@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -17,7 +18,6 @@ class PriceListTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             $this->createPriceList(),
             [
-                ['default', false],
                 ['active', true],
                 ['productAssignmentRule', 'test rule'],
             ]
@@ -125,5 +125,16 @@ class PriceListTest extends \PHPUnit\Framework\TestCase
         $priceList->setPriceListCurrencies(null);
 
         static::assertEmpty($priceList->getPriceListCurrencies());
+    }
+
+    public function testOrganization()
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $priceList = $this->createPriceList();
+        self::assertNull($priceList->getOrganization());
+
+        $priceList->setOrganization($organization);
+        self::assertSame($organization, $priceList->getOrganization());
     }
 }

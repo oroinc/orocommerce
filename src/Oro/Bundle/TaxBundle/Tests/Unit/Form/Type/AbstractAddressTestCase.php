@@ -2,25 +2,19 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
-use Symfony\Component\Form\AbstractType;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\Type\AddressFormExtensionTestCase;
 
 abstract class AbstractAddressTestCase extends AddressFormExtensionTestCase
 {
     /**
      * @dataProvider submitDataProvider
-     * @param bool $isValid
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(
-        $isValid,
-        $defaultData,
-        $viewData,
+        bool $isValid,
+        mixed $defaultData,
+        mixed $viewData,
         array $submittedData,
-        $expectedData
+        array $expectedData
     ) {
         $form = $this->factory->create($this->getFormTypeClass(), $defaultData);
 
@@ -37,13 +31,7 @@ abstract class AbstractAddressTestCase extends AddressFormExtensionTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    abstract public function submitDataProvider();
+    abstract public function submitDataProvider(): array;
 
-    /**
-     * @return AbstractType
-     */
-    abstract protected function getFormTypeClass();
+    abstract protected function getFormTypeClass(): string;
 }

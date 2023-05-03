@@ -15,11 +15,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class PrepareAddShoppingListItemsFormData implements ProcessorInterface
 {
-    /** @var EntityInstantiator */
-    private $entityInstantiator;
-
-    /** @var ValidatorInterface */
-    private $validator;
+    private EntityInstantiator $entityInstantiator;
+    private ValidatorInterface $validator;
 
     public function __construct(EntityInstantiator $entityInstantiator, ValidatorInterface $validator)
     {
@@ -30,7 +27,7 @@ class PrepareAddShoppingListItemsFormData implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ChangeSubresourceContext $context */
 

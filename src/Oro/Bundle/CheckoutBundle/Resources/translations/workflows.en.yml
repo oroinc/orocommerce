@@ -93,6 +93,10 @@ oro:
                     label: 'Customer consents'
                 consents_available:
                     label: 'Is consents available'
+                line_items_shipping_methods:
+                    label: 'Line items shipping methods'
+                grouped_line_items:
+                    label: 'Grouped line items'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
@@ -224,6 +228,8 @@ oro:
                 payment_error:
                     label: 'Payment error'
                     warning_message: ''
+                paid_partially:
+                    label: 'Paid partially'
 
         b2b_flow_checkout_single_page:
             label: 'Single Page Checkout'
@@ -346,3 +352,5 @@ oro:
                 payment_error:
                     label: 'Payment error'
                     warning_message: ''
+                paid_partially:
+                    label: 'Paid partially'

@@ -7,7 +7,11 @@
     '%entityName%': 'oro.order.entity_label'|trans
 } }) %}
 
-{% set formAction = entity.id ? path('oro_order_update', { 'id': entity.id }) : path('oro_order_create')  %}
+{% if saveFormAction is defined %}
+    {% set formAction = path(saveFormAction.route, saveFormAction.parameters) %}
+{% else %}
+    {% set formAction = entity.id ? path('oro_order_update', { 'id': entity.id }) : path('oro_order_create')  %}
+{% endif %}
 
 {% form_theme form with ['@OroOrder/Form/fields.html.twig'] %}
 
@@ -28,6 +32,12 @@
         {% set html = html ~ UI.saveAndStayButton({
             'route' : 'oro_order_update',
             'params': {'id': '$id'}
+        }) %}
+    {% endif %}
+    {% if returnAction is defined and is_granted(returnAction.aclRole) %}
+        {% set html = html ~ UI.saveAndReturnButton({
+            'route': returnAction.route,
+            'params': returnAction.parameters
         }) %}
     {% endif %}
     {% set html = html ~ placeholder('order_update_additional_nav_buttons', {entity: entity}) %}

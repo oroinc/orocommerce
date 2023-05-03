@@ -1,0 +1,10 @@
+services:
+    Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository:
+        parent: oro_entity.abstract_repository
+        tags:
+            - { name: doctrine.repository_service }
+
+    Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchTermReportRepository:
+        parent: oro_entity.abstract_repository
+        tags:
+            - { name: doctrine.repository_service }

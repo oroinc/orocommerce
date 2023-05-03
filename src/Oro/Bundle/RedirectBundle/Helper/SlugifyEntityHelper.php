@@ -58,7 +58,8 @@ class SlugifyEntityHelper
     public function fillFromSourceField(Collection $localizedSources, Collection $localizedSlugs): void
     {
         foreach ($localizedSources as $localizedSource) {
-            if (!$localizedSource->getString()) {
+            // We are not passing default localized value that is with null location and null string(imported).
+            if (!$localizedSource->getString() && $localizedSource->getLocalization() !== null) {
                 continue;
             }
 
@@ -70,7 +71,9 @@ class SlugifyEntityHelper
 
             if (!$localizedSlug) {
                 $localizedSlug = LocalizedFallbackValue::createFromAbstract($localizedSource);
-                $localizedSlug->setString($this->slugGenerator->slugify($localizedSource->getString()));
+                if ($localizedSource->getString() !== null) {
+                    $localizedSlug->setString($this->slugGenerator->slugify($localizedSource->getString()));
+                }
                 $localizedSlugs->add($localizedSlug);
             }
         }

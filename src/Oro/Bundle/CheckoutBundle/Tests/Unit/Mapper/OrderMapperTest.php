@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -16,24 +17,24 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class OrderMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    private OrderMapper $mapper;
+    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldHelper;
 
-    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTermAssociationProvider;
 
-    private PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject $paymentTermAssociationProvider;
+    /** @var OrderMapper */
+    private $mapper;
 
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);
 
         $this->mapper = new OrderMapper(
             $this->fieldHelper,
@@ -48,7 +49,8 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityFields')
             ->with(
                 Order::class,
-                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
                 | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
             )
             ->willReturn(
@@ -104,7 +106,8 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityFields')
             ->with(
                 Order::class,
-                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
                 | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
             )
             ->willReturn([]);
@@ -128,7 +131,8 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityFields')
             ->with(
                 Order::class,
-                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
                 | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
             )
             ->willReturn(

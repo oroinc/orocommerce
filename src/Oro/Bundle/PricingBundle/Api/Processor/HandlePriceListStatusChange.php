@@ -53,7 +53,7 @@ class HandlePriceListStatusChange implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         $priceListStatuses = $context->get(self::PRICE_LIST_INITIAL_STATUSES);
         /** @var PriceList $priceList */

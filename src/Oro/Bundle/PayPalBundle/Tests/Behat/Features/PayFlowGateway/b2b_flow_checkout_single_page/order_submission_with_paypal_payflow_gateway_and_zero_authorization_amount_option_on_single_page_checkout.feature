@@ -3,7 +3,7 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 @ticket-BB-13932
-
+@behat-test-env
 Feature: Order submission with PayPal PayFlow Gateway and zero "authorization amount" option on single page checkout
 
   In order to check that PayPal PayFlow Gateway and zero "authorization amount" option works on single page checkout

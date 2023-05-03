@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 class DimensionsTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DimensionsTransformer */
-    protected $transformer;
+    private $transformer;
 
     protected function setUp(): void
     {
@@ -17,20 +17,14 @@ class DimensionsTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Dimensions|null $value
-     * @param Dimensions|null $expected
-     *
      * @dataProvider reverseTransformDataProvider
      */
-    public function testReverseTransform($value, $expected)
+    public function testReverseTransform(Dimensions|string|null $value, ?Dimensions $expected)
     {
         $this->assertEquals($expected, $this->transformer->reverseTransform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformDataProvider()
+    public function reverseTransformDataProvider(): array
     {
         $dimension = $this->getDimensions($this->getLengthUnit('m'), 2, 4, 6);
 
@@ -63,20 +57,14 @@ class DimensionsTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Dimensions|null $value
-     * @param Dimensions|null $expected
-     *
      * @dataProvider transformDataProvider
      */
-    public function testTransform($value, $expected)
+    public function testTransform(Dimensions|string|null $value, Dimensions|string|null $expected)
     {
         $this->assertEquals($expected, $this->transformer->transform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function transformDataProvider()
+    public function transformDataProvider(): array
     {
         $dimension = $this->getDimensions($this->getLengthUnit('m'), 2, 4, 6);
 
@@ -100,11 +88,7 @@ class DimensionsTransformerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $code
-     * @return LengthUnit
-     */
-    protected function getLengthUnit($code)
+    private function getLengthUnit(string $code): LengthUnit
     {
         $lengthUnit = new LengthUnit();
         $lengthUnit->setCode($code);
@@ -112,15 +96,12 @@ class DimensionsTransformerTest extends \PHPUnit\Framework\TestCase
         return $lengthUnit;
     }
 
-    /**
-     * @param null|LengthUnit $lengthUnit
-     * @param float $length
-     * @param float $width
-     * @param float $height
-     * @return Dimensions
-     */
-    protected function getDimensions($lengthUnit, $length, $width, $height)
-    {
+    private function getDimensions(
+        ?LengthUnit $lengthUnit,
+        int|string|null $length,
+        ?int $width,
+        ?int $height
+    ): Dimensions {
         return Dimensions::create($length, $width, $height, $lengthUnit);
     }
 }

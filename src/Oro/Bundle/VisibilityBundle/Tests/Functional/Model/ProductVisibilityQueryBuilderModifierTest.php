@@ -28,20 +28,16 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
     private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
-    /** @var ProductVisibilityQueryBuilderModifier */
-    private $modifier;
-
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
+    /** @var ProductVisibilityQueryBuilderModifier */
+    private $modifier;
+
     /**
      * @dataProvider modifyDataProvider
-     *
-     * @param string $configValue
-     * @param string|null $user
-     * @param array $expectedData
      */
-    public function testModify($configValue, $user, $expectedData)
+    public function testModify(string $configValue, ?string $user, array $expectedData)
     {
         $this->setUpForModifyMethodTests();
 
@@ -74,10 +70,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         }, $queryBuilder->getQuery()->execute()));
     }
 
-    /**
-     * @return array
-     */
-    public function modifyDataProvider()
+    public function modifyDataProvider(): array
     {
         return [
             'config visible' => [

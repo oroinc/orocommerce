@@ -15,6 +15,7 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadSegmentData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\TaxBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadOrderTaxesData;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadOrderPromotionalDiscountsData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -38,10 +39,16 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         $rule = new Rule();
         $rule->setName('test rule');
         $rule->setSortOrder(1);
+
         $discountConfiguration = new DiscountConfiguration();
         $discountConfiguration->setType('amount');
+
+        /** @var User $user */
+        $user = $this->getReference('user');
+
         $promotion = new Promotion();
-        $promotion->setOwner($this->getReference('user'));
+        $promotion->setOwner($user);
+        $promotion->setOrganization($user->getOrganization());
         $promotion->setRule($rule);
         $promotion->setDiscountConfiguration($discountConfiguration);
         $promotion->setProductsSegment($this->getReference(LoadSegmentData::PRODUCT_DYNAMIC_EMPTY_SEGMENT));

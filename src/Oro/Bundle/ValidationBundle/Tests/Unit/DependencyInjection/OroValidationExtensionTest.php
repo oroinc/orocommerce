@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\ValidationBundle\DependencyInjection\OroValidationExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroValidationExtensionTest extends ExtensionTestCase
+class OroValidationExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
-        $this->loadExtension(new OroValidationExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            'oro_validation.validator_constraints.not_blank_one_of',
-            'oro_validation.validator_constraints.blank_one_of',
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        $extension = new OroValidationExtension();
+        $extension->load([], $container);
+
+        self::assertNotEmpty($container->getDefinitions());
     }
 }

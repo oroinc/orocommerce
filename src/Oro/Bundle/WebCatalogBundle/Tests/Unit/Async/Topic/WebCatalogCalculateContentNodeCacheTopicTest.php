@@ -39,8 +39,18 @@ class WebCatalogCalculateContentNodeCacheTopicTest extends AbstractTopicTestCase
                 'body' => [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => new \stdClass()],
                 'exceptionClass' => InvalidOptionsException::class,
                 'exceptionMessage' => '/The option "contentNodeId" with value stdClass is expected '
-                    . 'to be of type "int"/',
+                    .'to be of type "int"/',
             ],
         ];
+    }
+
+    public function testCreateJobName(): void
+    {
+        self::assertSame(
+            'oro.web_catalog.calculate_cache.content_node:42',
+            $this->getTopic()->createJobName([
+                WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => 42
+            ])
+        );
     }
 }

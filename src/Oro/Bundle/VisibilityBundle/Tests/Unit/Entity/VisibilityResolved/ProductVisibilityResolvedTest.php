@@ -15,36 +15,23 @@ class ProductVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var ProductVisibilityResolved */
-    protected $entity;
+    private $entity;
 
     /** @var Product */
-    protected $product;
+    private $product;
 
     /** @var Scope */
-    protected $scope;
+    private $scope;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->product = new Product();
         $this->scope = new Scope();
+
         $this->entity = new ProductVisibilityResolved($this->scope, $this->product);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->entity, $this->product, $this->scope);
-    }
-
-    /**
-     * Test setters getters
-     */
-    public function testAccessors()
+    public function testGettersAndSetters()
     {
         $entity = new ProductVisibilityResolved(new Scope, new Product());
 

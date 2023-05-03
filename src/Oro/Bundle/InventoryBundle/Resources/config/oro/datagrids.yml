@@ -28,6 +28,7 @@ datagrids:
                 label:         oro.inventory.inventorylevel.quantity.label
                 frontend_type: string # can't use decimal because of inappropriate formatter
                 editable:      true
+                cellClassName: 'editing-cell'
             productUnit:
                 label:         oro.product.productunit.entity_label
                 type:          twig
@@ -172,6 +173,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_units_provider->getAvailableProductUnits"
+                            translatable_options: false
                             multiple: true
         options:
             jsmodules:

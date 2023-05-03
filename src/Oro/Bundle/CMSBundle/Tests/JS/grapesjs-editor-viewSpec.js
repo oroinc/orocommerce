@@ -1,9 +1,9 @@
 import 'jquery.validate';
 import 'jasmine-jquery';
 import 'oroui/js/app/modules/input-widgets';
-import 'orocms/js/app/modules/grapesjs-module';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!./fixtures/grapesjs-editor-view-fixture.html';
+import './fixtures/load-plugin-modules';
 
 describe('orocms/js/app/grapesjs/grapesjs-editor-view', () => {
     let grapesjsEditorView;
@@ -34,7 +34,7 @@ describe('orocms/js/app/grapesjs/grapesjs-editor-view', () => {
         });
 
         it('check default content', () => {
-            expect(grapesjsEditorView.builder.getHtml()).toEqual('Default content');
+            expect(grapesjsEditorView.builder.getHtml()).toEqual('<div>Default content</div>');
         });
 
         it('check container should be created', () => {

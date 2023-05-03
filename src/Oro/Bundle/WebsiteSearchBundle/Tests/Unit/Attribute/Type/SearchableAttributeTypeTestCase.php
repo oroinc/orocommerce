@@ -11,8 +11,8 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCase
 {
-    const CLASS_NAME = Item::class;
-    const FIELD_NAME = 'test_field_name';
+    protected const CLASS_NAME = Item::class;
+    protected const FIELD_NAME = 'test_field_name';
 
     /** @var FieldConfigModel */
     protected $attribute;
@@ -52,10 +52,7 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
         return new $className($this->attributeType);
     }
 
-    /**
-     * @param string $className
-     */
-    protected function assertClassName($className)
+    protected function assertClassName(string $className): void
     {
         $this->assertTrue(
             is_a(
@@ -73,10 +70,8 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider configurationMethodsProvider
-     *
-     * @param string $method
      */
-    public function testAttributeConfigurationInterfaceMethods($method)
+    public function testAttributeConfigurationInterfaceMethods(string $method)
     {
         $result = 'test_value';
 
@@ -88,10 +83,7 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
         $this->assertSame($result, $this->getSearchableAttributeType()->$method($this->attribute));
     }
 
-    /**
-     * @return array
-     */
-    public function configurationMethodsProvider()
+    public function configurationMethodsProvider(): array
     {
         return [
             ['isSearchable'],
@@ -102,10 +94,8 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider valueMethodsProvider
-     *
-     * @param string $method
      */
-    public function testAttributeValueInterfaceMethods($method)
+    public function testAttributeValueInterfaceMethods(string $method)
     {
         $result = 'test_value';
         $originalValue = new \stdClass();
@@ -121,10 +111,7 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
         );
     }
 
-    /**
-     * @return array
-     */
-    public function valueMethodsProvider()
+    public function valueMethodsProvider(): array
     {
         return [
             ['getSearchableValue'],

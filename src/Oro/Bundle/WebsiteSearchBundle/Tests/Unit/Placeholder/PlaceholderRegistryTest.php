@@ -15,14 +15,19 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
         $this->registry = new PlaceholderRegistry();
     }
 
-    protected function tearDown(): void
+    private function getPlaceholder(string $placeholderName): PlaceholderInterface
     {
-        unset($this->registry);
+        $placeholder = $this->createMock(PlaceholderInterface::class);
+        $placeholder->expects($this->any())
+            ->method('getPlaceholder')
+            ->willReturn($placeholderName);
+
+        return $placeholder;
     }
 
     public function testAddPlaceholder()
     {
-        $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
+        $placeholder = $this->getPlaceholder('TEST_PLACEHOLDER');
 
         $this->registry->addPlaceholder($placeholder);
 
@@ -31,8 +36,8 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testAddPlaceholderWithReplace()
     {
-        $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
-        $placeholder2 = $this->preparePlaceholder('TEST_PLACEHOLDER');
+        $placeholder = $this->getPlaceholder('TEST_PLACEHOLDER');
+        $placeholder2 = $this->getPlaceholder('TEST_PLACEHOLDER');
 
         $this->registry->addPlaceholder($placeholder);
         $this->registry->addPlaceholder($placeholder2);
@@ -42,7 +47,7 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPlaceholder()
     {
-        $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
+        $placeholder = $this->getPlaceholder('TEST_PLACEHOLDER');
 
         $this->registry->addPlaceholder($placeholder);
 
@@ -55,7 +60,7 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Placeholder "UNKNOWN_PLACEHOLDER" does not exist.');
 
-        $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
+        $placeholder = $this->getPlaceholder('TEST_PLACEHOLDER');
         $this->registry->addPlaceholder($placeholder);
 
         $this->registry->getPlaceholder('UNKNOWN_PLACEHOLDER');
@@ -63,8 +68,8 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPlaceholders()
     {
-        $placeholder = $this->preparePlaceholder('TEST_PLACEHOLDER');
-        $placeholder2 = $this->preparePlaceholder('TEST_PLACEHOLDER2');
+        $placeholder = $this->getPlaceholder('TEST_PLACEHOLDER');
+        $placeholder2 = $this->getPlaceholder('TEST_PLACEHOLDER2');
 
         $this->registry->addPlaceholder($placeholder);
         $this->registry->addPlaceholder($placeholder2);
@@ -77,20 +82,5 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
             ],
             $this->registry->getPlaceholders()
         );
-    }
-
-    /**
-     * @param string $placeholderName
-     * @return PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function preparePlaceholder($placeholderName)
-    {
-        $placeholder = $this->createMock(PlaceholderInterface::class);
-
-        $placeholder->expects($this->any())
-            ->method('getPlaceholder')
-            ->willReturn($placeholderName);
-
-        return $placeholder;
     }
 }

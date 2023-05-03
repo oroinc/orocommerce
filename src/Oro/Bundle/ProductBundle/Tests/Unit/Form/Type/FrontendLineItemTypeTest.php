@@ -7,7 +7,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
@@ -21,8 +20,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
 
     private const UNITS = ['item', 'kg'];
 
-    /** @var FrontendLineItemType */
-    private $type;
+    private FrontendLineItemType $type;
 
     protected function setUp(): void
     {
@@ -34,16 +32,16 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $productUnitSelection = new ProductUnitSelectionTypeStub($this->prepareProductUnitSelectionChoices());
-
         return [
             new PreloadedExtension(
                 [
                     $this->type,
-                    ProductUnitSelectionType::class => $productUnitSelection,
-                    QuantityType::class => $this->getQuantityType(),
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
+                        $this->prepareProductUnitSelectionChoices()
+                    ),
+                    $this->getQuantityType(),
                 ],
                 []
             )

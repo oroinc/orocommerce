@@ -11,7 +11,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductCollection
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class ReindexProductsByAttributesProcessorTest extends WebTestCase
 {
@@ -20,23 +19,13 @@ class ReindexProductsByAttributesProcessorTest extends WebTestCase
 
     private ReindexProductsByAttributesProcessor $processor;
 
-    private ManagerRegistry $managerRegistry;
-
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->initClient();
-
         self::purgeMessageQueue();
+        $this->loadFixtures([LoadProductCollectionData::class]);
 
-        $this->loadFixtures([
-            LoadProductCollectionData::class,
-        ]);
-
-        $this->processor = self::getContainer()
-            ->get('oro_product.async.reindex_products_by_attributes_processor');
-
-        $this->managerRegistry = self::getContainer()
-            ->get('doctrine');
+        $this->processor = self::getContainer()->get('oro_product.async.reindex_products_by_attributes_processor');
     }
 
     public function testProcess(): void
@@ -48,12 +37,14 @@ class ReindexProductsByAttributesProcessorTest extends WebTestCase
         self::ensureItemsLoaded(Product::class, 0);
 
         /** @var AttributeGroupRelation $attr */
-        $attr = $this->managerRegistry->getRepository(AttributeGroupRelation::class)->findOneBy([]);
+        $attr = self::getContainer()->get('doctrine')
+            ->getRepository(AttributeGroupRelation::class)
+            ->findOneBy([]);
 
         $entityConfigFieldId = $attr->getEntityConfigFieldId();
 
         /** @var Product[] $products */
-        $products = $this->managerRegistry
+        $products = self::getContainer()->get('doctrine')
             ->getRepository(Product::class)
             ->getProductIdsByAttributesId([$entityConfigFieldId]);
 

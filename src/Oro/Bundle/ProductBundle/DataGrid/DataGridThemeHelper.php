@@ -2,83 +2,71 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid;
 
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Provides a methods to get current theme from request.
+ * Provides a methods to get current theme for a storefront datagrid from the current request.
  */
 class DataGridThemeHelper
 {
-    const GRID_THEME_PARAM_NAME = 'row-view';
+    public const GRID_THEME_PARAM_NAME = 'row-view';
 
-    const VIEW_LIST = 'no-image-view';
-    const VIEW_GRID = 'list-view';
-    const VIEW_TILES = 'gallery-view';
+    public const VIEW_LIST = 'no-image-view';
+    public const VIEW_GRID = 'list-view';
+    public const VIEW_TILES = 'gallery-view';
 
-    const SESSION_KEY = 'frontend-product-grid-view';
+    private const SESSION_KEY = 'frontend-product-grid-view';
 
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    private RequestStack $requestStack;
+    private string $defaultView;
+    private array $views;
 
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
-
-    public function __construct(RequestStack $requestStack, SessionInterface $session)
+    public function __construct(RequestStack $requestStack, string $defaultView, array $views)
     {
         $this->requestStack = $requestStack;
-        $this->session = $session;
+        $this->defaultView = $defaultView;
+        $this->views = $views;
     }
 
-    /**
-     * @param string $gridName
-     * @return null|string
-     */
-    public function getTheme(string $gridName)
+    public function getTheme(string $gridName): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return $this->getDefaultView();
+        if (null === $request) {
+            return $this->defaultView;
         }
-        $viewName = $this->getDefaultView();
+
+        $session = $this->getSession();
+        if (null === $session) {
+            return $this->defaultView;
+        }
+
+        $viewName = $this->defaultView;
         $gridParams = $request->query->get($gridName);
-        if (is_array($gridParams) && array_key_exists(self::GRID_THEME_PARAM_NAME, $gridParams)) {
-            $viewName = $gridParams[self::GRID_THEME_PARAM_NAME];
-            if (!in_array($viewName, $this->getViewList())) {
-                $viewName = $this->getDefaultView();
+        if (\is_array($gridParams) && \array_key_exists(self::GRID_THEME_PARAM_NAME, $gridParams)) {
+            $gridViewName = $gridParams[self::GRID_THEME_PARAM_NAME];
+            if (\in_array($gridViewName, $this->views, true)) {
+                $viewName = $gridViewName;
             }
-            $this->session->set(self::SESSION_KEY, $viewName);
-        /**
-         * Value of option "Display view" is one for all frontend product grids
-         * In case when user won't change this option value, we get current state from session
-         */
-        } elseif ($this->session->has(self::SESSION_KEY)) {
-            $viewName = $this->session->get(self::SESSION_KEY);
+            $session->set(self::SESSION_KEY, $viewName);
+            /**
+             * Value of option "Display view" is one for all frontend product grids
+             * In case when user won't change this option value, we get current state from session
+             */
+        } elseif ($session->has(self::SESSION_KEY)) {
+            $viewName = $session->get(self::SESSION_KEY);
         }
+
         return $viewName;
     }
 
-    /**
-     * @return string
-     */
-    protected function getDefaultView()
+    private function getSession(): ?SessionInterface
     {
-        return self::VIEW_GRID;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getViewList()
-    {
-        return [
-            self::VIEW_LIST,
-            self::VIEW_GRID,
-            self::VIEW_TILES,
-        ];
+        try {
+            return $this->requestStack->getSession();
+        } catch (SessionNotFoundException) {
+            return null;
+        }
     }
 }

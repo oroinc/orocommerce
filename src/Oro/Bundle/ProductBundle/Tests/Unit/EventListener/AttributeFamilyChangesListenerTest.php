@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\AttributeFamilyChangesListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Component\TestUtils\ORM\Mocks\UnitOfWork;
+use Oro\Component\Testing\Unit\ORM\Mocks\UnitOfWorkMock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -20,22 +20,19 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RequestStack */
-    protected $requestStack;
+    private $requestStack;
 
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $repository;
+    private $repository;
 
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityManager;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    private $entityManager;
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dispatcher;
+    private $dispatcher;
 
     /** @var AttributeFamilyChangesListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
@@ -49,15 +46,15 @@ class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class)
             ->willReturn($this->repository);
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($this->entityManager);
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->listener = new AttributeFamilyChangesListener($this->requestStack, $this->registry, $this->dispatcher);
+        $this->listener = new AttributeFamilyChangesListener($this->requestStack, $doctrine, $this->dispatcher);
     }
 
     public function testFlushWithoutRequest()
@@ -79,11 +76,8 @@ class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider flushDataProvider
-     *
-     * @param array $productIds
-     * @param bool $expected
      */
-    public function testFlush(array $productIds, $expected)
+    public function testFlush(array $productIds, bool $expected)
     {
         $this->requestStack->push(new Request());
 
@@ -105,7 +99,7 @@ class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
         $group2 = new AttributeGroup();
         $group2->setAttributeFamily($family2)->addAttributeRelation($relation2);
 
-        $uow = new UnitOfWork();
+        $uow = new UnitOfWorkMock();
         $uow->addInsertion($relation1)->addInsertion(new \stdClass());
         $uow->addDeletion($relation2)->addDeletion(new \stdClass());
 
@@ -131,10 +125,7 @@ class AttributeFamilyChangesListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->postFlush();
     }
 
-    /**
-     * @return array
-     */
-    public function flushDataProvider()
+    public function flushDataProvider(): array
     {
         return [
             'with related products' => [

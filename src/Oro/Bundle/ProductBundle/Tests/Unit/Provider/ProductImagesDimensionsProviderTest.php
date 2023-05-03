@@ -10,36 +10,24 @@ use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 
 class ProductImagesDimensionsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $imageTypeProvider;
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $imageTypeProvider;
 
-    /**
-     * @var ProductImagesDimensionsProvider
-     */
-    protected $productImagesDimensionsProvider;
+    /** @var ProductImagesDimensionsProvider */
+    private $productImagesDimensionsProvider;
 
-    /**
-     * @var ProductImage|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productImage;
+    /** @var ProductImage|\PHPUnit\Framework\MockObject\MockObject */
+    private $productImage;
 
-    /**
-     * @var ProductImageType|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productImageType;
+    /** @var ProductImageType|\PHPUnit\Framework\MockObject\MockObject */
+    private $productImageType;
 
-    /**
-     * @var ThemeImageType|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $themeImageType;
+    /** @var ThemeImageType|\PHPUnit\Framework\MockObject\MockObject */
+    private $themeImageType;
 
     protected function setUp(): void
     {
-        $this->imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
         $this->productImagesDimensionsProvider = new ProductImagesDimensionsProvider($this->imageTypeProvider);
         $this->productImage = $this->createMock(ProductImage::class);
         $this->productImageType = $this->createMock(ProductImageType::class);
@@ -48,36 +36,20 @@ class ProductImagesDimensionsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDimensionsForProductImage()
     {
-        $this->themeImageType
-            ->expects(static::once())
+        $this->themeImageType->expects(self::once())
             ->method('getDimensions')
-            ->willReturn(
-                [
-                    ProductImageType::TYPE_MAIN
-                ]
-            );
+            ->willReturn([ProductImageType::TYPE_MAIN]);
 
-        $this->productImageType
-            ->expects(static::once())
+        $this->productImageType->expects(self::once())
             ->method('getType')
             ->willReturn(ProductImageType::TYPE_MAIN);
 
-        $this->productImage
-            ->expects(static::once())
+        $this->productImage->expects(self::once())
             ->method('getTypes')
-            ->willReturn(
-                [
-                    $this->productImageType
-                ]
-            );
-        $this->imageTypeProvider
-            ->expects(static::once())
+            ->willReturn([$this->productImageType]);
+        $this->imageTypeProvider->expects(self::once())
             ->method('getImageTypes')
-            ->willReturn(
-                [
-                    ProductImageType::TYPE_MAIN => $this->themeImageType
-                ]
-            );
+            ->willReturn([ProductImageType::TYPE_MAIN => $this->themeImageType]);
 
         $result = $this->productImagesDimensionsProvider->getDimensionsForProductImage($this->productImage);
 

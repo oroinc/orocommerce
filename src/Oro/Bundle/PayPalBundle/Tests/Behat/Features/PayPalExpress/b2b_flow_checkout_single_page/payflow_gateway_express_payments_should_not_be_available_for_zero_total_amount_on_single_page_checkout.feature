@@ -3,6 +3,7 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPayPalBundle:PayPalExpressProduct.yml
 @fixture-OroPromotionBundle:100-percent-promotions-with-coupons.yml
+@behat-test-env
 Feature: Payflow Gateway Express payments should not be available for zero total amount on single page checkout
   In order to purchase goods using PayPal
   As a buyer

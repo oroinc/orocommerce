@@ -19,11 +19,11 @@ class Client extends BaseClient
     public function request(
         string $method,
         string $uri,
-        array $parameters = [],
-        array $files = [],
-        array $server = [],
+        array  $parameters = [],
+        array  $files = [],
+        array  $server = [],
         string $content = null,
-        bool $changeHistory = true
+        bool   $changeHistory = true
     ) {
         $crawler = parent::request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
 

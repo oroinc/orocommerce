@@ -76,24 +76,22 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         return $this->dispatchNormalize($object, $result, $context, Events::AFTER_NORMALIZE_ENTITY);
     }
 
-    /**
-     * @param InventoryLevel $inventoryLevel
-     * @return float|int
-     */
     protected function getQuantity(InventoryLevel $inventoryLevel)
     {
-        $productUnit = $inventoryLevel->getProductUnitPrecision()
-            ? $inventoryLevel->getProductUnitPrecision()->getUnit()
-            : null;
+        $productUnit = $inventoryLevel->getProductUnitPrecision()?->getUnit();
+        $quantity = $inventoryLevel->getQuantity();
+
         if (!$productUnit) {
-            return $inventoryLevel->getQuantity();
+            return $quantity;
         }
 
-        return $this->roundingService->roundQuantity(
-            $inventoryLevel->getQuantity(),
-            $productUnit,
-            $inventoryLevel->getProduct()
-        );
+        $precision = $productUnit->getDefaultPrecision();
+
+        if ($inventoryLevel->getProduct()) {
+            $precision = (int) $inventoryLevel->getProductUnitPrecision()->getPrecision();
+        }
+
+        return $this->roundingService->round($quantity, $precision);
     }
 
     /**

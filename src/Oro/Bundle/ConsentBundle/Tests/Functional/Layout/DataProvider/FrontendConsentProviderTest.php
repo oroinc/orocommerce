@@ -26,9 +26,6 @@ class FrontendConsentProviderTest extends WebTestCase
 
     private FrontendConsentProvider $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -41,14 +38,6 @@ class FrontendConsentProviderTest extends WebTestCase
         $this->enableConsentFeature();
 
         $this->provider = $this->getContainer()->get('oro_consent.layout.data_provider.consent');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->provider);
     }
 
     /**

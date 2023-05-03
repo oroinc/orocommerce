@@ -9,95 +9,37 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * The basic implementation of shipping context builder.
+ */
 class BasicShippingContextBuilder implements ShippingContextBuilderInterface
 {
-    /**
-     * @var AddressInterface
-     */
-    private $shippingAddress;
+    private object $sourceEntity;
+    private mixed $sourceEntityIdentifier;
+    private ?ShippingLineItemCollectionInterface $lineItems = null;
+    private ?AddressInterface $billingAddress = null;
+    private ?AddressInterface $shippingAddress = null;
+    private ?AddressInterface $shippingOrigin = null;
+    private ?string $paymentMethod = null;
+    private ?Customer $customer = null;
+    private ?CustomerUser $customerUser = null;
+    private ?Price $subTotal = null;
+    private ?string $currency = null;
+    private ?Website $website = null;
 
-    /**
-     * @var AddressInterface
-     */
-    private $shippingOrigin;
-
-    /**
-     * @var string
-     */
-    private $currency;
-
-    /**
-     * @var Price
-     */
-    private $subTotal;
-
-    /**
-     * @var object
-     */
-    private $sourceEntity;
-
-    /**
-     * @var string
-     */
-    private $sourceEntityIdentifier;
-
-    /**
-     * @var ShippingLineItemCollectionInterface
-     */
-    private $lineItems;
-
-    /**
-     * @var AddressInterface
-     */
-    private $billingAddress;
-
-    /**
-     * @var string
-     */
-    private $paymentMethod;
-
-    /**
-     * @var Customer
-     */
-    private $customer;
-
-    /**
-     * @var CustomerUser
-     */
-    private $customerUser;
-
-    /**
-     * @var ShippingOriginProvider
-     */
-    private $shippingOriginProvider;
-
-    /**
-     * @var Website
-     */
-    private $website;
-
-    /**
-     * @param object $sourceEntity
-     * @param string $sourceEntityIdentifier
-     * @param ShippingOriginProvider $shippingOriginProvider
-     */
-    public function __construct(
-        $sourceEntity,
-        $sourceEntityIdentifier,
-        ShippingOriginProvider $shippingOriginProvider
-    ) {
+    public function __construct(object $sourceEntity, mixed $sourceEntityIdentifier)
+    {
         $this->sourceEntity = $sourceEntity;
         $this->sourceEntityIdentifier = $sourceEntityIdentifier;
-        $this->shippingOriginProvider = $shippingOriginProvider;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getResult()
+    public function getResult(): ShippingContextInterface
     {
         $params = $this->getMandatoryParams();
         $params += $this->getOptionalParams();
@@ -108,17 +50,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setShippingOrigin(AddressInterface $shippingOrigin)
-    {
-        $this->shippingOrigin = $shippingOrigin;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setLineItems(ShippingLineItemCollectionInterface $lineItemCollection)
+    public function setLineItems(ShippingLineItemCollectionInterface $lineItemCollection): static
     {
         $this->lineItems = $lineItemCollection;
 
@@ -128,7 +60,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setBillingAddress(AddressInterface $billingAddress)
+    public function setBillingAddress(?AddressInterface $billingAddress): static
     {
         $this->billingAddress = $billingAddress;
 
@@ -138,7 +70,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setShippingAddress(AddressInterface $shippingAddress)
+    public function setShippingAddress(?AddressInterface $shippingAddress): static
     {
         $this->shippingAddress = $shippingAddress;
 
@@ -148,7 +80,17 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setPaymentMethod($paymentMethod)
+    public function setShippingOrigin(?AddressInterface $shippingOrigin): static
+    {
+        $this->shippingOrigin = $shippingOrigin;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPaymentMethod(?string $paymentMethod): static
     {
         $this->paymentMethod = $paymentMethod;
 
@@ -158,7 +100,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCustomer(Customer $customer)
+    public function setCustomer(?Customer $customer): static
     {
         $this->customer = $customer;
 
@@ -168,7 +110,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCustomerUser(CustomerUser $customerUser)
+    public function setCustomerUser(?CustomerUser $customerUser): static
     {
         $this->customerUser = $customerUser;
 
@@ -178,7 +120,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setSubTotal(Price $subTotal)
+    public function setSubTotal(?Price $subTotal): static
     {
         $this->subTotal = $subTotal;
 
@@ -188,7 +130,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCurrency($currency)
+    public function setCurrency(?string $currency): static
     {
         $this->currency = $currency;
 
@@ -198,34 +140,23 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(?Website $website): static
     {
         $this->website = $website;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    protected function getMandatoryParams()
+    private function getMandatoryParams(): array
     {
-        $shippingOrigin = $this->shippingOrigin ?? $this->shippingOriginProvider->getSystemShippingOrigin();
-
-        $params = [
-            ShippingContext::FIELD_SHIPPING_ORIGIN => $shippingOrigin,
+        return [
             ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
             ShippingContext::FIELD_LINE_ITEMS => $this->lineItems,
         ];
-
-        return $params;
     }
 
-    /**
-     * @return array
-     */
-    protected function getOptionalParams()
+    private function getOptionalParams(): array
     {
         $optionalParams = [
             ShippingContext::FIELD_CURRENCY => $this->currency,
@@ -236,6 +167,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
             ShippingContext::FIELD_CUSTOMER => $this->customer,
             ShippingContext::FIELD_CUSTOMER_USER => $this->customerUser,
             ShippingContext::FIELD_WEBSITE => $this->website,
+            ShippingContext::FIELD_SHIPPING_ORIGIN => $this->shippingOrigin,
         ];
 
         // Exclude NULL elements.

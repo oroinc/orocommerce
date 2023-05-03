@@ -35,7 +35,8 @@ class ContentVariantUrlItemsProviderTest extends WebTestCase
             $this->getReference(LoadWebCatalogData::CATALOG_1)->getId()
         );
         $configManager->flush();
-        self::getContainer()->get('oro_web_catalog.cache')->clear();
+        self::getContainer()->get('oro_web_catalog.cache.merged')->clear();
+        self::getContainer()->get('oro_web_catalog.cache.root')->clear();
     }
 
     public function testGetUrlItems()

@@ -1,0 +1,215 @@
+services:
+    oro_checkout.provider.multi_shipping_config:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider
+        public: true
+        arguments:
+            - '@oro_config.manager'
+
+    oro_checkout.layout.provider.group_line_items:
+        class: Oro\Bundle\CheckoutBundle\Layout\DataProvider\MultiShipping\GroupLineItemsDataProvider
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.line_item_group_title'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.provider.grouped_line_items'
+        tags:
+            - { name: layout.data_provider, alias: oro_checkout_group_line_items }
+
+    oro_checkout.layout.provider.continue_transition_button_data:
+        class: Oro\Bundle\CheckoutBundle\Layout\DataProvider\MultiShipping\ContinueTransitionButtonDataProvider
+        arguments:
+            - '@oro_checkout.layout.data_provider.transition'
+        tags:
+            - { name: layout.data_provider, alias: oro_checkout_continue_transition_data }
+
+    oro_checkout.layout.extension.multi_shipping_context:
+        class: Oro\Bundle\CheckoutBundle\Layout\Extension\MultiShippingContextConfigurator
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+        tags:
+            - { name: layout.context_configurator }
+
+    oro_checkout.provider.multi_shipping.line_item_group_title:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemGroupTitleProvider
+        arguments:
+            - { 'product.id': 'product.sku' }
+            - '@property_accessor'
+            - '@oro_entity.entity_name_resolver'
+            - '@translator'
+
+    oro_checkout.condition.line_items_shipping_method_has_enabled_shipping_rules:
+        class: Oro\Bundle\CheckoutBundle\Condition\LineItemsShippingMethodsHasEnabledShippingRules
+        arguments:
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@oro_checkout.provider.checkout_line_items'
+        tags:
+            - { name: oro_action.condition, alias: line_items_shipping_methods_has_enabled_shipping_rules }
+
+    oro_checkout.workflow_state.condition.is_multi_shipping_enabled:
+        class: Oro\Bundle\CheckoutBundle\Condition\IsMultiShippingEnabled
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+        tags:
+            - { name: oro_action.condition, alias: is_multishipping_enabled }
+
+    oro_checkout.workflow_state.condition.is_line_items_shipping_methods_update_required:
+        class: Oro\Bundle\CheckoutBundle\Condition\IsLineItemsShippingMethodsUpdateRequired
+        tags:
+            - { name: oro_action.condition, alias: is_line_items_shipping_methods_update_required }
+
+    oro_checkout.action.split_checkout_line_items:
+        class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\SplitCheckoutAction
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@oro_checkout.splitter.checkout_splitter'
+            - '@oro_checkout.provider.grouped_line_items'
+        tags:
+            - { name: oro_action.action, alias: split_checkout }
+
+    oro_checkout.action.actualize_line_items_by_unpaid_suborders:
+        class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\ActualizeLineItemsByUnpaidSubordersAction
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@oro_payment.provider.payment_status'
+            - '@oro_checkout.provider.checkout_line_items'
+        tags:
+            - { name: oro_action.action, alias: actualize_line_items_by_unpaid_suborders }
+
+    oro_checkout.provider.multi_shipping.default_shipping_method:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider
+        arguments:
+            - '@oro_shipping.multi_shipping.method_provider'
+
+    oro_checkout.action.multi_shipping.default_shipping_method_setter:
+        class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingMethodSetter
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.default_shipping_method'
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@doctrine'
+            - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
+
+    oro_checkout.provider.multi_shipping.sub_order_owner:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProvider
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.sub_order_organization'
+            - '@oro_config.manager'
+            - '@property_accessor'
+            - '@oro_security.owner.ownership_metadata_provider'
+            - '@doctrine'
+
+    oro_checkout.provider.multi_shipping.sub_order_organization:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProvider
+        public: true
+
+    oro_checkout.provider.grouped_line_items:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.grouped_line_items_provider'
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+
+    oro_checkout.shipping_method.multi_shipping_provider:
+        class: Oro\Bundle\CheckoutBundle\Shipping\Method\MultiShippingCheckoutShippingMethodsProvider
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.default_shipping_method'
+            - '@oro_checkout.provider.shipping_context'
+
+    oro_checkout.splitter.checkout_splitter:
+        class: Oro\Bundle\CheckoutBundle\Splitter\MultiShipping\CheckoutSplitter
+        arguments:
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+
+    oro_checkout.provider.multi_shipping.grouped_line_items_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupLineItemsByConfiguredFields
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@property_accessor'
+            - '@oro_entity.doctrine_helper'
+
+    oro_checkout.provider.multi_shipping.single_line_item_shipping_price:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\SingleLineItemShippingPriceProvider
+        arguments:
+            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.provider.shipping_context'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.method.org_provider'
+
+    oro_checkout.provider.multi_shipping.available_line_item_shipping_methods:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.provider.multi_shipping.default_shipping_method'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.method.org_provider'
+
+    oro_checkout.factory.multi_shipping.checkout_factory:
+        class: Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactory
+        arguments:
+            -
+                - 'owner'
+                - 'billingAddress'
+                - 'currency'
+                - 'customerNotes'
+                - 'customer'
+                - 'customerUser'
+                - 'deleted'
+                - 'completed'
+                - 'registeredCustomerUser'
+                - 'shippingAddress'
+                - 'source'
+                - 'website'
+                - 'shippingMethod'
+                - 'shippingMethodType'
+                - 'paymentMethod'
+                - 'poNumber'
+                - 'shipUntil'
+                - 'organization'
+            - '@property_accessor'
+
+    oro_checkout.manager.multi_shipping.checkout_line_items_shipping:
+        class: Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.available_line_item_shipping_methods'
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_checkout.provider.multi_shipping.single_line_item_shipping_price'
+
+    oro_checkout.event_listener.fronetnd_checkout_line_items:
+        class: Oro\Bundle\CheckoutBundle\EventListener\FrontendCheckoutLineItemsDatagridEventListener
+        arguments:
+            - '@doctrine'
+            - '@oro_checkout.provider.multi_shipping.available_line_item_shipping_methods'
+            - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkout-line-items-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter }
+
+    oro_checkout.provider.multi_shipping.total.promotion_subtotal_decorator:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\Total\PromotionSubtotalProviderDecorator
+        decorates: oro_promotion.provider.subtotal_provider
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.total.promotion_subtotal_decorator.inner'
+            - '@oro_currency.rounding.price_rounding_service'
+            - '@oro_checkout.provider.multi_shipping.split_entities_provider'
+
+    oro_checkout.provider.multi_shipping.promotion.split_checkout:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitCheckoutProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_checkout.splitter.checkout_splitter'
+            - '@oro_checkout.provider.grouped_line_items'
+            - '@oro_checkout.provider.multi_shipping_config'
+
+    oro_checkout.provider.main_order_promotion_discounts_provider_decorator:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\Promotion\MainOrderPromotionDiscountsProviderDecorator
+        decorates: oro_promotion.provider.promotion_discounts_provider
+        arguments:
+            - '@.inner'
+
+    oro_checkout.provider.multi_shipping.split_entities_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProvider
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.promotion.split_checkout'

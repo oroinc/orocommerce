@@ -3,12 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Async\Topic;
 
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
+use Oro\Component\MessageQueue\Topic\JobAwareTopicInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Combine prices for active and ready to rebuild Combined Price List based on the price version.
  */
-class ResolveCombinedPriceByVersionedPriceListTopic extends AbstractTopic
+class ResolveCombinedPriceByVersionedPriceListTopic extends AbstractTopic implements JobAwareTopicInterface
 {
     private const NAME = 'oro_pricing.price_lists.cpl.resolve_prices_by_version';
 
@@ -35,5 +36,10 @@ class ResolveCombinedPriceByVersionedPriceListTopic extends AbstractTopic
             ->info('List of price lists.')
             ->required()
             ->allowedTypes('int[]');
+    }
+
+    public function createJobName($messageBody): string
+    {
+        return self::getName() . ':v' . $messageBody['version'];
     }
 }

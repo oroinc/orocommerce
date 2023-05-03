@@ -41,3 +41,10 @@ services:
             - '@oro_checkout.form.data_transformer.order_address_to_address_identifier'
         tags:
             - { name: form.type }
+
+    oro_checkout.form.type.line_items_shipping_methods:
+        class: Oro\Bundle\CheckoutBundle\Form\Type\LineItemShippingMethodsType
+        arguments:
+            - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
+        tags:
+            - { name: form.type }

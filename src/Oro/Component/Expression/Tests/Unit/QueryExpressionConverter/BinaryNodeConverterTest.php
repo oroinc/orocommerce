@@ -23,11 +23,8 @@ class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider operationDataProvider
-     *
-     * @param string $operation
-     * @param string $expected
      */
-    public function testConvert($operation, $expected)
+    public function testConvert(string $operation, string $expected)
     {
         $expr = new Expr();
         $params = [];
@@ -42,22 +39,17 @@ class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
 
         $mainConverter->expects($this->any())
             ->method('convert')
-            ->willReturnMap(
-                [
-                    [$left, $expr, $params, $aliasMapping, 'a.b'],
-                    [$right, $expr, $params, $aliasMapping, 'c.d']
-                ]
-            );
+            ->willReturnMap([
+                [$left, $expr, $params, $aliasMapping, 'a.b'],
+                [$right, $expr, $params, $aliasMapping, 'c.d']
+            ]);
 
         $node = new BinaryNode($left, $right, $operation);
         $this->assertEquals($expected, (string)$converter->convert($node, $expr, $params, $aliasMapping));
         $this->assertArrayNotHasKey(QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION, $params);
     }
 
-    /**
-     * @return array
-     */
-    public function operationDataProvider()
+    public function operationDataProvider(): array
     {
         return [
             ['and', 'a.b AND c.d'],
@@ -81,14 +73,13 @@ class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider operationWithValueDataProvider
-     *
-     * @param string $operation
-     * @param string $expected
-     * @param array $params
-     * @param string $convertedValue
      */
-    public function testConvertWithValue($operation, $expected, array $params, $convertedValue)
-    {
+    public function testConvertWithValue(
+        string $operation,
+        string $expected,
+        array $params,
+        string $convertedValue
+    ) {
         $expr = new Expr();
         $aliasMapping = [];
 
@@ -101,12 +92,10 @@ class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
 
         $mainConverter->expects($this->any())
             ->method('convert')
-            ->willReturnMap(
-                [
-                    [$left, $expr, $params, $aliasMapping, 'a.b'],
-                    [$right, $expr, $params, $aliasMapping, $convertedValue]
-                ]
-            );
+            ->willReturnMap([
+                [$left, $expr, $params, $aliasMapping, 'a.b'],
+                [$right, $expr, $params, $aliasMapping, $convertedValue]
+            ]);
 
         $node = new BinaryNode($left, $right, $operation);
         $this->assertEquals($expected, (string)$converter->convert($node, $expr, $params, $aliasMapping));
@@ -149,26 +138,22 @@ class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
         $mainConverter = $this->createMock(QueryExpressionConverterInterface::class);
 
         $left = $this->createMock(NodeInterface::class);
-        $right = $this->getMockBuilder(ValueNode::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $right = $this->createMock(ValueNode::class);
         $converter = new BinaryNodeConverter();
         $converter->setConverter($mainConverter);
 
         $mainConverter->expects($this->any())
             ->method('convert')
-            ->willReturnMap(
+            ->willReturnMap([
+                [$left, $expr, $params, $aliasMapping, 'a.b'],
                 [
-                    [$left, $expr, $params, $aliasMapping, 'a.b'],
-                    [
-                        $right,
-                        $expr,
-                        array_merge($params, [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true]),
-                        $aliasMapping,
-                        ':_vn0'
-                    ]
+                    $right,
+                    $expr,
+                    array_merge($params, [QueryExpressionConverterInterface::REQUIRE_PARAMETRIZATION => true]),
+                    $aliasMapping,
+                    ':_vn0'
                 ]
-            );
+            ]);
 
         $node = new BinaryNode($left, $right, 'in');
         $this->assertEquals('a.b IN(:_vn0)', (string)$converter->convert($node, $expr, $params, $aliasMapping));
@@ -187,9 +172,7 @@ class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
         $mainConverter = $this->createMock(QueryExpressionConverterInterface::class);
 
         $left = $this->createMock(NodeInterface::class);
-        $right = $this->getMockBuilder(ValueNode::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $right = $this->createMock(ValueNode::class);
         $converter = new BinaryNodeConverter();
         $converter->setConverter($mainConverter);
 

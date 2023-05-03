@@ -10,31 +10,29 @@ use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
 class QuoteProductOfferMatcherTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QuoteProductOfferMatcher */
-    protected $matcher;
+    private $matcher;
 
     protected function setUp(): void
     {
         $this->matcher = new QuoteProductOfferMatcher();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->matcher);
-    }
-
     /**
      * @dataProvider matchDataProvider
      */
-    public function testMatch($quoteProduct, $unitCode, $quantity, $expectedResult)
-    {
+    public function testMatch(
+        QuoteProduct $quoteProduct,
+        ?string $unitCode,
+        ?string $quantity,
+        ?QuoteProductOffer $expectedResult
+    ) {
         $this->assertEquals($expectedResult, $this->matcher->match($quoteProduct, $unitCode, $quantity));
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function matchDataProvider()
+    public function matchDataProvider(): array
     {
         return [
             'empty quote product' => [
@@ -357,16 +355,12 @@ class QuoteProductOfferMatcherTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $offers
-     * @return QuoteProduct
-     */
-    protected function createQuoteProduct(array $offers = [])
+    private function createQuoteProduct(array $offers = []): QuoteProduct
     {
         $quoteProduct = new QuoteProduct();
 
         foreach ($offers as $offer) {
-            list($unitCode, $quantity, $allowIncrements) = $offer;
+            [$unitCode, $quantity, $allowIncrements] = $offer;
 
             $offer = $this->createQuoteProductOffer($unitCode, $quantity, $allowIncrements);
 
@@ -377,14 +371,11 @@ class QuoteProductOfferMatcherTest extends \PHPUnit\Framework\TestCase
         return $quoteProduct;
     }
 
-    /**
-     * @param string $unitCode
-     * @param float $quantity
-     * @param bool $allowIncrements
-     * @return QuoteProductOffer
-     */
-    protected function createQuoteProductOffer($unitCode, $quantity, $allowIncrements)
-    {
+    private function createQuoteProductOffer(
+        string $unitCode,
+        float $quantity,
+        bool $allowIncrements
+    ): QuoteProductOffer {
         $unit = new ProductUnit();
         $unit->setCode($unitCode);
 

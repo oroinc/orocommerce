@@ -203,6 +203,133 @@ action_groups:
 
             - '@flush_entity': $.order
 
+    b2b_flow_checkout_create_child_orders:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            order:
+                type: Oro\Bundle\OrderBundle\Entity\Order
+            groupedLineItemsIds:
+                type: array
+        actions:
+            - '@split_checkout':
+                attribute: $.splitCheckouts
+                checkout: $.checkout
+                groupedLineItems: $.groupedLineItemsIds
+            - '@get_class_name':
+                object: $.checkout.sourceEntity.sourceDocument
+                attribute: $.sourceDocumentEntityClassName
+
+            # Prepare child order identifier data.
+            - '@assign_value': [$.loopIndex, 0]
+            - '@add_string_suffix':
+                attribute: $.childOrderIdentifierTemplate
+                string: $.order.identifier
+                stringSuffix: '-'
+
+            - '@traverse':
+                array: $.splitCheckouts
+                key: $.groupingPath
+                value: $.splitCheckout
+                actions:
+                    - '@increase_value': [$.loopIndex, 1]
+                    - '@add_string_suffix':
+                        attribute: $.childOrderIdentifier
+                        string: $.childOrderIdentifierTemplate
+                        stringSuffix: $.loopIndex
+                    - '@call_service_method':
+                        service: oro_checkout.provider.multi_shipping.sub_order_owner
+                        method: getOwner
+                        attribute: $.childOrderOwner
+                        method_parameters:
+                            - $.splitCheckout.lineItems
+                            - $.groupingPath
+                    - '@call_service_method':
+                          service: oro_checkout.provider.multi_shipping.sub_order_organization
+                          method: getOrganization
+                          attribute: $.childOrderOrganization
+                          method_parameters:
+                              - $.splitCheckout.lineItems
+                              - $.groupingPath
+
+                    - '@call_service_method':
+                        service: oro_payment_term.provider.payment_term
+                        method: getCurrentPaymentTerm
+                        attribute: $.paymentTerm
+
+                    - '@duplicate':
+                        target: $.splitCheckout.billingAddress
+                        attribute: $.billingAddress
+                        settings:
+                            - [[setNull], [propertyName, [id]]]
+                            - [[keep], [propertyName, [customerAddress]]]
+                            - [[keep], [propertyName, [customerUserAddress]]]
+                            - [[keep], [propertyName, [city]]]
+                            - [[keep], [propertyName, [country]]]
+                            - [[keep], [propertyName, [region]]]
+                            - [[keep], [propertyName, [organization]]]
+                            - [[shallowCopy], [propertyType, ['\DateTime']]]
+                    - '@flush_entity': $.billingAddress
+                    - '@duplicate':
+                        target: $.splitCheckout.shippingAddress
+                        attribute: $.shippingAddress
+                        settings:
+                            - [[setNull], [propertyName, [id]]]
+                            - [[keep], [propertyName, [customerAddress]]]
+                            - [[keep], [propertyName, [customerUserAddress]]]
+                            - [[keep], [propertyName, [city]]]
+                            - [[keep], [propertyName, [country]]]
+                            - [[keep], [propertyName, [region]]]
+                            - [[keep], [propertyName, [organization]]]
+                            - [[shallowCopy], [propertyType, ['\DateTime']]]
+                    - '@flush_entity': $.shippingAddress
+
+                    # Update checkout shipping price to provide correct shipping price for order.
+                    - '@run_action_group':
+                        action_group: oro_update_shipping_price
+                        parameters_mapping:
+                            checkout: $.splitCheckout
+                    - '@get_order_line_items':
+                        attribute: $.orderLineItems
+                        checkout: $.splitCheckout
+                    - '@create_order':
+                        attribute: $.childOrder
+                        checkout: $.splitCheckout
+                        data:
+                            billingAddress: $.billingAddress
+                            shippingAddress: $.shippingAddress
+                            sourceEntityClass: $.sourceDocumentEntityClassName
+                            paymentTerm: $.paymentTerm
+                            lineItems: $.orderLineItems
+
+                    - '@assign_value': [$.childOrder.parent, $.order]
+                    - '@assign_value': [$.childOrder.owner, $.childOrderOwner]
+                    - '@assign_value': [$.childOrder.organization, $.childOrderOrganization]
+                    - '@assign_value': [$.childOrder.identifier, $.childOrderIdentifier]
+
+                    - '@call_service_method':
+                        service: oro_order.order.total.total_helper
+                        method: fill
+                        method_parameters:
+                            - $.childOrder
+
+                    - '@flush_entity':
+                        entity: $.childOrder
+
+            - '@call_service_method':
+                service: oro_promotion.applied_promotion_manager
+                method: createAppliedPromotions
+                method_parameters: [$.order, true]
+
+            - '@call_service_method':
+                service: oro_order.order.total.total_helper
+                method: fill
+                method_parameters:
+                    - $.order
+
+            - '@flush_entity':
+                  entity: $.order
+
     b2b_flow_checkout_purchase:
         parameters:
             checkout:
@@ -231,11 +358,17 @@ action_groups:
                 route_parameters:
                     id: $.checkout.id
                     transition: 'payment_error'
-
+            - '@assign_url':
+                attribute: $.partiallyPaidUrl
+                route: oro_checkout_frontend_checkout
+                route_parameters:
+                    id: $.checkout.id
+                    transition: 'paid_partially'
             - '@copy_values':
                 - $.paymentTransactionOptions
                 -   successUrl: $.successUrl
                     failureUrl: $.failureUrl
+                    partiallyPaidUrl: $.partiallyPaidUrl
                     failedShippingAddressUrl: $.failedShippingAddressUrl
                     checkoutId: $.checkout.id
                 - $.transactionOptions

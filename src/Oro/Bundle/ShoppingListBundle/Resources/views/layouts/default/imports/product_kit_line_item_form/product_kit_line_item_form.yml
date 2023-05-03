@@ -1,0 +1,52 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: 'product_kit_line_item.html.twig'
+        - '@setFormTheme':
+              themes: 'product_kit_line_item_form.html.twig'
+        - '@addTree':
+              items:
+                  __wrapper:
+                      blockType: container
+                  __header_wrapper:
+                      blockType: container
+                  __header_product_picture:
+                      blockType: block
+                  __header_product_attributes:
+                      blockType: container
+                  __header_product_name:
+                      blockType: block
+                  __header_product_sku:
+                      blockType: block
+                  __form_start:
+                      blockType: form_start
+                  __form_errors:
+                      blockType: form_errors
+                  __form_fields:
+                      blockType: form_fields
+                      options:
+                          render_rest: false
+                  __form_actions:
+                      blockType: container
+                  __form_actions_submit:
+                      blockType: button
+                      options:
+                          action: submit
+                          text: 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.submit.label'
+                          style: auto
+                  __form_end:
+                      blockType: form_end
+              tree:
+                  __root:
+                      __wrapper:
+                          __header_wrapper:
+                              __header_product_picture: ~
+                              __header_product_attributes:
+                                  __header_product_name: ~
+                                  __header_product_sku: ~
+                          __form_start: ~
+                          __form_errors: ~
+                          __form_fields: ~
+                          __form_actions:
+                              __form_actions_submit: ~
+                          __form_end: ~

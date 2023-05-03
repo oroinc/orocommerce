@@ -8,37 +8,29 @@ use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Basic\BasicQuoteDema
 
 class BasicQuoteDemandSubtotalsCalculatorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $totalProcessorProviderMock;
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $totalProcessorProvider;
 
-    /**
-     * @var BasicQuoteDemandSubtotalsCalculator
-     */
+    /** @var BasicQuoteDemandSubtotalsCalculator */
     private $basicQuoteDemandSubtotalsCalculator;
 
     protected function setUp(): void
     {
-        $this->totalProcessorProviderMock = $this->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);
 
-        $this->basicQuoteDemandSubtotalsCalculator =
-            new BasicQuoteDemandSubtotalsCalculator($this->totalProcessorProviderMock);
+        $this->basicQuoteDemandSubtotalsCalculator = new BasicQuoteDemandSubtotalsCalculator(
+            $this->totalProcessorProvider
+        );
     }
 
     public function testCalculateSubtotals()
     {
-        $quoteDemandMock = $this->getMockBuilder(QuoteDemand::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteDemand = $this->createMock(QuoteDemand::class);
 
-        $this->totalProcessorProviderMock
-            ->expects($this->once())
+        $this->totalProcessorProvider->expects($this->once())
             ->method('getTotalWithSubtotalsAsArray')
-            ->with($quoteDemandMock);
+            ->with($quoteDemand);
 
-        $this->basicQuoteDemandSubtotalsCalculator->calculateSubtotals($quoteDemandMock);
+        $this->basicQuoteDemandSubtotalsCalculator->calculateSubtotals($quoteDemand);
     }
 }

@@ -3,8 +3,9 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
+use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierTypeStub;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
@@ -22,7 +23,6 @@ use Oro\Bundle\WebCatalogBundle\Form\Extension\ContentNodeTypeExtension;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -38,20 +38,17 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var ContentNodeTypeExtension */
-    protected $extension;
+    /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $typeRegistry;
 
-    /** @var ContentVariantTypeRegistry|MockObject */
-    protected $typeRegistry;
+    /** @var OwnershipMetadataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $metadataProvider;
 
-    /** @var OwnershipMetadataProviderInterface|MockObject */
-    protected $metadataProvider;
-
-    /** @var DoctrineHelper|MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var RouterInterface|MockObject */
-    protected $router;
+    /** @var ContentNodeTypeExtension */
+    private $extension;
 
     protected function setUp(): void
     {
@@ -63,7 +60,7 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
             $this->typeRegistry,
             $this->metadataProvider,
             $this->doctrineHelper,
-            new PropertyAccessor()
+            PropertyAccess::createPropertyAccessor()
         );
 
         parent::setUp();
@@ -138,21 +135,17 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $this->router = $this->createMock(RouterInterface::class);
-
         return [
             new PreloadedExtension(
                 [
-                    ContentNodeType::class => new ContentNodeType($this->router),
-                    EntityIdentifierType::class => new EntityIdentifierTypeStub(
-                        [
-                            1 => $this->getEntity(ContentNode::class, ['id' => 1])
-                        ]
-                    ),
+                    new ContentNodeType($this->createMock(RouterInterface::class)),
+                    EntityIdentifierType::class => new EntityIdentifierTypeStub([
+                        1 => $this->getEntity(ContentNode::class, ['id' => 1])
+                    ]),
                 ],
                 [
                     ContentNodeType::class => [$this->extension],
@@ -162,20 +155,12 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return ContentNode
-     */
     private function createContentNode(): ContentNode
     {
-        /** @var ContentNode $node */
         $node = $this->getEntity(ContentNode::class, ['id' => 123]);
-        /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 234]);
-        /** @var Organization $organization */
         $organization = $this->getEntity(Organization::class, ['id' => 345]);
-        /** @var ContentVariant $contentVariant */
         $contentVariant = $this->getEntity(ContentVariant::class, ['id' => 456]);
-        /** @var Segment $segment */
 
         $contentVariant->setType(ProductPageContentVariantType::TYPE);
 
@@ -185,19 +170,14 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
         return $node;
     }
 
-    /**
-     * @param $product
-     * @param $contentVariant
-     * @return ProductPageContentVariantType
-     */
-    private function createProductPageContentVariantType($product, $contentVariant): ProductPageContentVariantType
-    {
-        /** @var ProductCollectionContentVariantType|MockObject */
+    private function createProductPageContentVariantType(
+        Product $product,
+        ContentVariant $contentVariant
+    ): ProductPageContentVariantType {
         $authorizationChecker = $this->createMock(AuthorizationChecker::class);
         $propertyAccessor = $this->createMock(PropertyAccessor::class);
         $ppContentVariantType = new ProductPageContentVariantType($authorizationChecker, $propertyAccessor);
 
-        /** @var Product $product */
         $anotherOrganization = $this->getEntity(Organization::class, ['id' => 3456]);
         $product->setOrganization($anotherOrganization);
         $propertyAccessor->expects($this->once())
@@ -208,14 +188,10 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
         return $ppContentVariantType;
     }
 
-    /**
-     * @param object $segment
-     * @param $contentVariant
-     * @return mixed
-     */
-    private function createProductCollectionContentVariantType(object $segment, $contentVariant)
-    {
-        /** @var ProductCollectionContentVariantType|MockObject */
+    private function createProductCollectionContentVariantType(
+        object $segment,
+        ContentVariant $contentVariant
+    ): ProductCollectionContentVariantType {
         $pcContentVariantType = $this->createMock(ProductCollectionContentVariantType::class);
 
         $anotherOrganization = $this->getEntity(Organization::class, ['id' => 3456]);
@@ -231,7 +207,7 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
     private function assertFillOrganizationForNewEntitiesCalls(
         object $attachedEntity,
         int $ownership
-    ) {
+    ): void {
         $metadata = $this->createMock(OwnershipMetadataInterface::class);
 
         $this->metadataProvider->expects($this->once())

@@ -633,3 +633,27 @@ data:
                     - { type: products, id: '<toString(@configurable_product3->id)>' }
             images:
                 data: []
+    -
+        type: products
+        id: '<toString(@product_kit1->id)>'
+        attributes:
+            sku: PKSKU1
+            createdAt: '@product_kit1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product_kit1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: kit
+            name: 'Product Kit 1'
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+            kitItems:
+                data:
+                    - { type: productkititems, id: '<toString(@product_kit1_item1->id)>' }
+                    - { type: productkititems, id: '<toString(@product_kit1_item2->id)>' }

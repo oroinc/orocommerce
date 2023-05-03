@@ -200,6 +200,12 @@ api:
                             page_size: -1 # disable paging
                         get_relationship:
                             page_size: -1 # disable paging
+                kitItems:
+                    actions:
+                        get_subresource:
+                            page_size: -1 # disable paging
+                        get_relationship:
+                            page_size: -1 # disable paging
 
         Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_search.md'
@@ -358,3 +364,71 @@ api:
                 delete_list: false
                 get_subresource: false
                 get_relationship: false
+
+        Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_kit_item.md'
+            fields:
+                label:
+                    data_type: localizedFallbackValue:labels
+                productKit:
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-one
+                kitItemProducts:
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct
+                    target_type: to-many
+                    max_results: -1
+                productUnit:
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductUnit
+                    target_type: to-one
+                minimumQuantity:
+                    data_type: float
+                maximumQuantity:
+                    data_type: float
+                optional:
+                    data_type: boolean
+                sortOrder:
+                    data_type: integer
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            subresources:
+                productKit:
+                    actions:
+                        get_subresource: true
+                        get_relationship: true
+                kitItemProducts:
+                    actions:
+                        get_subresource:
+                            page_size: -1 # disable paging
+                        get_relationship:
+                            page_size: -1 # disable paging
+                productUnit:
+                    actions:
+                        get_subresource: true
+                        get_relationship: true
+
+        Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_kit_item_product.md'
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            fields:
+                productUnitPrecision:
+                    exclude: true
+            subresources:
+                kitItem:
+                    actions:
+                        get_subresource: true
+                        get_relationship: true
+                        update_relationship: false
+                        delete_relationship: false
+                product:
+                    actions:
+                        get_subresource: true
+                        get_relationship: true
+                        update_relationship: false
+                        delete_relationship: false

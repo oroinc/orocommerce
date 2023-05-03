@@ -1,0 +1,344 @@
+data:
+    type: products
+    id: '<toString(@product_kit1->id)>'
+    attributes:
+        category_sort_order: null
+        sku: PKSKU1
+        variantAttributeNames: {  }
+        createdAt: '@product_kit1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@product_kit1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        productType: kit
+        featured: false
+        newArrival: false
+        name: 'Product Kit 1'
+        shortDescription: null
+        description: null
+        productAttributes:
+            testAttrString: null
+            testAttrBoolean: false
+            testAttrFloat: 1.6
+            testAttrMoney: null
+            testAttrDateTime: null
+            testAttrManyToOne:
+                id: '<toString(@customer6->id)>'
+                targetValue: 'Company 6'
+            testToOneId: null
+            testAttrMultiEnum: []
+            testAttrManyToMany: []
+            testToManyId: []
+        unitPrecisions:
+            -
+                unit: item
+                precision: 0
+                conversionRate: 1
+                default: true
+        url: null
+        urls: {  }
+        prices: {  }
+        lowInventory: false
+        upcoming: false
+        availabilityDate: null
+        metaTitle: null
+        metaDescription: null
+        metaKeywords: null
+    relationships:
+        images:
+            data: []
+        productFamily:
+            data:
+                type: productfamilies
+                id: '<toString(@default_product_family->id)>'
+        kitItems:
+            data:
+                -
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+                -
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->id)>'
+        category:
+            data: null
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
+        variantProducts:
+            data: []
+        parentProducts:
+            data: []
+included:
+    -
+        type: products
+        id: '<toString(@product1->id)>'
+        attributes:
+            category_sort_order: null
+            sku: PSKU1
+            variantAttributeNames: {  }
+            createdAt: '@product1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: simple
+            featured: false
+            newArrival: true
+            name: 'Product 1'
+            shortDescription: 'Product 1 Short Description'
+            description: '<style type="text/css">.test {color: red}</style>Product 1 Description. Twig Expr: "test".'
+            productAttributes:
+                testAttrString: 'string attribute'
+                testAttrBoolean: true
+                testAttrFloat: 1.23
+                testAttrMoney: '1.2300'
+                testAttrDateTime: '2010-06-15T20:20:30Z'
+                testAttrManyToOne:
+                    id: '<toString(@customer1->id)>'
+                    targetValue: 'Company 1'
+                testToOneId:
+                    id: US
+                    targetValue: US
+                testAttrMultiEnum:
+                    -
+                        id: option1
+                        targetValue: 'Option 1'
+                    -
+                        id: option2
+                        targetValue: 'Option 2'
+                testAttrManyToMany:
+                    -
+                        id: '<toString(@customer_user1->id)>'
+                        targetValue: 'John Edgar Doo'
+                    -
+                        id: '<toString(@customer_user2->id)>'
+                        targetValue: 'Amanda Cole'
+                testToManyId:
+                    -
+                        id: DE
+                        targetValue: DE
+                    -
+                        id: MX
+                        targetValue: MX
+                wysiwyg: '<style type="text/css">.test {color: red}</style>Product 1 WYSIWYG Text. Twig Expr: "test".'
+                wysiwygAttr: '<style type="text/css">.test {color: red}</style>Product 1 WYSIWYG Attr Text. Twig Expr: "test".'
+            unitPrecisions:
+                -
+                    unit: item
+                    precision: 0
+                    conversionRate: 1
+                    default: true
+                -
+                    unit: set
+                    precision: 1
+                    conversionRate: 10
+                    default: false
+            url: /product1_slug_default
+            urls:
+                -
+                    url: /product1_slug_en_CA
+                    localizationId: '<toString(@en_CA->id)>'
+                -
+                    url: /product1_slug_es
+                    localizationId: '<toString(@es->id)>'
+            prices:
+                -
+                    price: '12.9900'
+                    currencyId: USD
+                    quantity: '1'
+                    unit: item
+                -
+                    price: '11.0000'
+                    currencyId: USD
+                    quantity: '10'
+                    unit: item
+            lowInventory: true
+            upcoming: true
+            availabilityDate: '2119-01-20T20:30:00Z'
+            metaTitle: 'Product 1 Meta Title'
+            metaDescription: 'Product 1 Meta Description'
+            metaKeywords: 'Product 1 Meta Keywords'
+        relationships:
+            images:
+                data:
+                    -
+                        type: productimages
+                        id: '<toString(@product1_image1->id)>'
+                    -
+                        type: productimages
+                        id: '<toString(@product1_image2->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+            kitItems:
+                data: []
+            category:
+                data: null
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            variantProducts:
+                data: []
+            parentProducts:
+                data: []
+    -
+        type: productkititemproducts
+        id: '<toString(@product_kit1_item1_product1->id)>'
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+    -
+        type: products
+        id: '<toString(@product3->id)>'
+        attributes:
+            category_sort_order: null
+            sku: PSKU3
+            variantAttributeNames: {  }
+            createdAt: '@product3->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product3->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: simple
+            featured: false
+            newArrival: false
+            name: 'Product 3'
+            shortDescription: 'Product 3 Short Description'
+            description: 'Product 3 Description'
+            unitPrecisions:
+                -
+                    unit: item
+                    precision: 1
+                    conversionRate: 1
+                    default: true
+            url: /product3_slug_default
+            urls:
+                -
+                    url: /product3_slug_default
+                    localizationId: '<toString(@en_CA->id)>'
+                -
+                    url: /product3_slug_default
+                    localizationId: '<toString(@es->id)>'
+            prices:
+                -
+                    price: '10.0000'
+                    currencyId: USD
+                    quantity: '1'
+                    unit: item
+            lowInventory: false
+            upcoming: false
+            availabilityDate: null
+            metaTitle: 'Product 3 Meta Title'
+            metaDescription: 'Product 3 Meta Description'
+            metaKeywords: 'Product 3 Meta Keywords'
+        relationships:
+            images:
+                data:
+                    -
+                        type: productimages
+                        id: '<toString(@product3_image1->id)>'
+                    -
+                        type: productimages
+                        id: '<toString(@product3_image2->id)>'
+                    -
+                        type: productimages
+                        id: '<toString(@product3_image3->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+            kitItems:
+                data: []
+            category:
+                data: null
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@out_of_stock->id)>'
+            variantProducts:
+                data: []
+            parentProducts:
+                data: []
+    -
+        type: productkititemproducts
+        id: '<toString(@product_kit1_item1_product3->id)>'
+        attributes:
+            sortOrder: 2
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+    -
+        type: productkititems
+        id: '<toString(@product_kit1_item1->id)>'
+        attributes:
+            sortOrder: 1
+            optional: false
+            minimumQuantity: null
+            maximumQuantity: null
+            createdAt: '@product_kit1_item1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product_kit1_item1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            label: 'Product Kit 1 Item 1'
+        relationships:
+            productKit:
+                data:
+                    type: products
+                    id: '<toString(@product_kit1->id)>'
+            kitItemProducts:
+                data:
+                    -
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product1->id)>'
+                    -
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: productkititemproducts
+        id: '<toString(@product_kit1_item2_product3->id)>'
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+    -
+        type: productkititems
+        id: '<toString(@product_kit1_item2->id)>'
+        attributes:
+            sortOrder: 10
+            optional: true
+            minimumQuantity: 0
+            maximumQuantity: 5
+            createdAt: '@product_kit1_item2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product_kit1_item2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            label: 'Product Kit 1 Item 2'
+        relationships:
+            productKit:
+                data:
+                    type: products
+                    id: '<toString(@product_kit1->id)>'
+            kitItemProducts:
+                data:
+                    -
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item2_product3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

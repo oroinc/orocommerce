@@ -59,4 +59,12 @@ class ReindexRequestItemProductsByRelatedJobIdTopicTest extends AbstractTopicTes
             ]
         ];
     }
+
+    public function testCreateJobName(): void
+    {
+        self::assertSame(
+            'oro_product.reindex_request_item_products_by_related_job:42',
+            $this->getTopic()->createJobName(['relatedJobId' => 42])
+        );
+    }
 }

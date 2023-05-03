@@ -1,58 +1,39 @@
 <?php
-declare(strict_types=1);
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\SaleBundle\DependencyInjection\OroSaleExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroSaleExtensionTest extends ExtensionTestCase
+class OroSaleExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    protected function buildContainerMock(): ContainerBuilder
-    {
-        $containerBuilder = parent::buildContainerMock();
-
-        $containerBuilder
-            ->expects(static::once())
-            ->method('getParameter')
-            ->with('kernel.bundles')
-            ->willReturn(['OroShippingBundle' => []]);
-
-        return $containerBuilder;
-    }
-
     public function testLoad(): void
     {
-        $this->loadExtension(new OroSaleExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            // validators
-            'oro_sale.validator.quote_product',
-            // form types
-            'oro_sale.form.type.quote_product',
-            'oro_sale.form.type.quote_product_offer',
-            'oro_sale.form.type.quote_product_collection',
-            'oro_sale.form.type.quote_product_offer_collection',
-            // twig extensions
-            'oro_sale.twig.quote',
-            // event listeners
-            'oro_sale.quote_event_listener.possible_shipping_methods',
-            // services
-            'oro_sale.quote_demand.subtotals_calculator_main',
-            'oro_sale.quote.selected_offers_shipping_context_factory',
-            'oro_sale.quote.first_offers_shipping_context_factory',
-            'oro_sale.quote.shipping_configuration_factory',
-            'oro_sale.quote.configured_shipping_price_provider',
-            'oro_sale.quote.configured_shipping_price_provider_overridden_decorator',
-            'oro_sale.quote.configured_shipping_price_provider_allow_unlisted_decorator',
-            'oro_sale.quote.configured_shipping_price_provider_method_locked_decorator',
-            'oro_sale.quote_demand.subtotals_calculator_shipping_cost_decorator',
-            'oro_sale.quote.shipping_line_items_converter_first_offers',
-            'oro_sale.quote.shipping_line_items_converter_selected_offers',
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        $extension = new OroSaleExtension();
+        $extension->load([], $container);
 
-        $this->assertExtensionConfigsLoaded(['oro_sale']);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'backend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
+                        'contact_info_source_display' => ['value' => 'dont_display', 'scope' => 'app'],
+                        'contact_details' => ['value' => '', 'scope' => 'app'],
+                        'allow_user_configuration' => ['value' => true, 'scope' => 'app'],
+                        'available_user_options' => ['value' => [], 'scope' => 'app'],
+                        'contact_info_user_option' => ['value' => '', 'scope' => 'app'],
+                        'contact_info_manual_text' => ['value' => '', 'scope' => 'app'],
+                        'guest_contact_info_text' => ['value' => '', 'scope' => 'app'],
+                        'enable_guest_quote' => ['value' => false, 'scope' => 'app'],
+                        'quote_frontend_feature_enabled' => ['value' => true, 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_sale')
+        );
     }
 }

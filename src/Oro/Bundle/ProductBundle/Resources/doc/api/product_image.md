@@ -207,7 +207,7 @@ Delete a specific product image record.
 
 ### delete_list
 
-Delete a collection of order records.
+Delete a collection of product image records.
 
 {@inheritdoc}
 

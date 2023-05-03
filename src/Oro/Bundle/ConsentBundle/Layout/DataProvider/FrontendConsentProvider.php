@@ -16,12 +16,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class FrontendConsentProvider implements FeatureToggleableInterface
 {
-    private const CUSTOMER_CONSENTS_STEP = 'customer_consents';
-
     use FeatureCheckerHolderTrait;
 
-    private ConsentDataProvider $provider;
+    private const CUSTOMER_CONSENTS_STEP = 'customer_consents';
 
+    private ConsentDataProvider $provider;
     private TokenStorageInterface $tokenStorage;
 
     public function __construct(ConsentDataProvider $provider, TokenStorageInterface $tokenStorage)

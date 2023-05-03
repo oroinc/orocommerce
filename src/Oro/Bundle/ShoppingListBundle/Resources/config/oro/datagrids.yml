@@ -351,19 +351,12 @@ datagrids:
                         - 100
                 placement:
                     bottom: true
+            hiddenLineItems: null
         source:
             type: orm
             query:
                 select:
-                    - >
-                        (
-                            CASE WHEN parentProduct.id IS NOT NULL
-                            THEN
-                                true
-                            ELSE
-                                CASE WHEN product.type = 'configurable' THEN true ELSE false END
-                            END
-                        ) as isConfigurable
+                    - COALESCE(parentProduct.type, product.type) as type
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
                     - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
@@ -439,6 +432,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                            translatable_options: false
                             multiple: true
                     label:            oro.frontend.shoppinglist.lineitem.filter.inventory_status.label
                 quantity:
@@ -450,12 +444,14 @@ datagrids:
                     data_name:        lineItem.unit
                     label:            oro.frontend.shoppinglist.lineitem.filter.unit.label
                     options:
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
                         field_options:
+                            translatable_options: false
                             multiple: true
-                        field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
         properties:
             productId: ~
             variantId: ~
+            kitItemLabel: ~
             name: ~
             image: ~
             imageWebp: ~
@@ -463,6 +459,8 @@ datagrids:
             initialSubtotal: ~
             discount: ~
             isConfigurable:
+                frontend_type: boolean
+            isKit:
                 frontend_type: boolean
             isUpcoming:
                 frontend_type: boolean
@@ -757,6 +755,8 @@ datagrids:
                     data_name: unitCode
                     options:
                         field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+                        field_options:
+                            translatable_options: false
         properties:
             id: ~
             productId: ~

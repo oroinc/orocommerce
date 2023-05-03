@@ -15,7 +15,7 @@ class ValidateConnectionControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
     }
 
     public function testValidateConnectionActionNoShippingOptions()
@@ -25,11 +25,10 @@ class ValidateConnectionControllerTest extends WebTestCase
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => 0])
         );
 
-        //@codingStandardsIgnoreStart
         $this->assertResponseHasErrorMessage(
-            'No shipping origin options provided. Please, fill them in System Configuration -> Shipping -> Shipping Origin'
+            'No shipping origin options provided.'
+            . ' Please, fill them in System Configuration -> Shipping -> Shipping Origin'
         );
-        //@codingStandardsIgnoreEnd
     }
 
     public function testValidateConnectionActionAuthorizationError()
@@ -69,8 +68,8 @@ class ValidateConnectionControllerTest extends WebTestCase
         );
         $this->assertResponseHasErrorMessage(
             'No services are available for current configuration,'
-            .' make sure that Shipping Origin configuration is correct in'
-            .' System Configuration -> Shipping -> Shipping Origin'
+            . ' make sure that Shipping Origin configuration is correct in'
+            . ' System Configuration -> Shipping -> Shipping Origin'
         );
     }
 
@@ -84,13 +83,10 @@ class ValidateConnectionControllerTest extends WebTestCase
             $this->getRequestFormData(SoapClientStub::OK_OPTION)
         );
 
-        $result = static::getJsonResponseContent($this->client->getResponse(), 200);
+        $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
-        static::assertTrue($result['success']);
-        static::assertEquals(
-            'Connection is valid',
-            $result['message']
-        );
+        self::assertTrue($result['success']);
+        self::assertEquals('Connection is valid', $result['message']);
     }
 
     private function getRequestFormData(string $key): array
@@ -116,10 +112,9 @@ class ValidateConnectionControllerTest extends WebTestCase
         ];
     }
 
-    private function setConfigShippingOrigin()
+    private function setConfigShippingOrigin(): void
     {
-        $configManager = self::getConfigManager('global');
-
+        $configManager = self::getConfigManager();
         $configManager->set(
             'oro_shipping.shipping_origin',
             (new ShippingOrigin())
@@ -132,14 +127,11 @@ class ValidateConnectionControllerTest extends WebTestCase
         $configManager->flush();
     }
 
-    private function assertResponseHasErrorMessage(string $message)
+    private function assertResponseHasErrorMessage(string $message): void
     {
-        $result = static::getJsonResponseContent($this->client->getResponse(), 200);
+        $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
-        static::assertFalse($result['success']);
-        static::assertEquals(
-            $message,
-            $result['message']
-        );
+        self::assertFalse($result['success']);
+        self::assertEquals($message, $result['message']);
     }
 }

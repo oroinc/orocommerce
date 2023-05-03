@@ -5,11 +5,13 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Async\Topic;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchResetIndexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProviderInterface;
 use Oro\Component\MessageQueue\Test\AbstractTopicTestCase;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
 
@@ -24,6 +26,12 @@ class WebsiteSearchResetTopicTest extends AbstractTopicTestCase
     protected function setUp(): void
     {
         $mappingProvider = $this->createMock(SearchMappingProvider::class);
+        $reindexationWebsiteProvider = $this->createMock(ReindexationWebsiteProviderInterface::class);
+        $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+
+        $tokenAccessor->expects(self::any())
+            ->method('getOrganization')
+            ->willReturn(null);
 
         $mappingProvider
             ->expects(self::any())
@@ -42,7 +50,13 @@ class WebsiteSearchResetTopicTest extends AbstractTopicTestCase
 
         $managerRegistry = $this->createMock(ManagerRegistry::class);
 
-        $this->indexerInputValidator = new IndexerInputValidator($websiteProvider, $mappingProvider, $managerRegistry);
+        $this->indexerInputValidator = new IndexerInputValidator(
+            $websiteProvider,
+            $mappingProvider,
+            $managerRegistry,
+            $reindexationWebsiteProvider,
+            $tokenAccessor
+        );
 
         parent::setUp();
     }

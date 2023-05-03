@@ -17,51 +17,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class PriceListRepository extends BasePriceListRepository
 {
-    protected function dropDefaults()
-    {
-        $qb = $this->createQueryBuilder('pl');
-
-        $qb
-            ->update()
-            ->set('pl.default', ':defaultValue')
-            ->setParameter('defaultValue', false)
-            ->where($qb->expr()->eq('pl.default', ':oldValue'))
-            ->setParameter('oldValue', true)
-            ->getQuery()
-            ->execute();
-    }
-
-    public function setDefault(PriceList $priceList)
-    {
-        $this->dropDefaults();
-
-        $qb = $this->createQueryBuilder('pl');
-
-        $qb
-            ->update()
-            ->set('pl.default', ':newValue')
-            ->setParameter('newValue', true)
-            ->where($qb->expr()->eq('pl', ':entity'))
-            ->setParameter('entity', $priceList)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @return PriceList
-     */
-    public function getDefault()
-    {
-        $qb = $this->createQueryBuilder('pl');
-
-        return $qb
-            ->where($qb->expr()->eq('pl.default', ':default'))
-            ->setParameter('default', true)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
     /**
      * @return array in format
      * [
@@ -70,7 +25,7 @@ class PriceListRepository extends BasePriceListRepository
      * ]
      * where keys 1 and 5 are pricelist ids to which currencies belong
      */
-    public function getCurrenciesIndexedByPricelistIds()
+    public function getCurrenciesIndexedByPricelistIds(): array
     {
         $qb = $this->createQueryBuilder('priceList');
 
@@ -89,10 +44,7 @@ class PriceListRepository extends BasePriceListRepository
         return $currencies;
     }
 
-    /**
-     * @return BufferedQueryResultIteratorInterface
-     */
-    public function getPriceListsWithRules()
+    public function getPriceListsWithRules(): BufferedQueryResultIteratorInterface
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb->select('priceList, priceRule')
@@ -108,13 +60,9 @@ class PriceListRepository extends BasePriceListRepository
         return new BufferedQueryResultIterator($qb);
     }
 
-    /**
-     * @param array|PriceList[] $priceLists
-     * @param bool $actual
-     */
-    public function updatePriceListsActuality(array $priceLists, $actual)
+    public function updatePriceListsActuality(array $priceLists, bool $actual): void
     {
-        if (count($priceLists)) {
+        if (\count($priceLists)) {
             $qb = $this->_em->createQueryBuilder();
             $qb->update($this->_entityName, 'priceList');
             $qb->set('priceList.actual', ':actual')
@@ -126,23 +74,15 @@ class PriceListRepository extends BasePriceListRepository
         }
     }
 
-    /**
-     * @param int $priceListId
-     * @return PriceList|null
-     */
-    public function getActivePriceListById(int $priceListId)
+    public function getActivePriceListById(int $priceListId): ?PriceList
     {
         return $this->findOneBy(['id' => $priceListId, 'active' => true]);
     }
 
     /**
-     * @param Customer $customer
-     * @param Website $website
-     * @param bool $isActive
-     * @return null|PriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByCustomer(Customer $customer, Website $website, $isActive = true)
+    public function getPriceListByCustomer(Customer $customer, Website $website, bool $isActive = true): ?PriceList
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -165,14 +105,13 @@ class PriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @param CustomerGroup $customerGroup
-     * @param Website $website
-     * @param bool $isActive
-     * @return null|PriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByCustomerGroup(CustomerGroup $customerGroup, Website $website, bool $isActive = true)
-    {
+    public function getPriceListByCustomerGroup(
+        CustomerGroup $customerGroup,
+        Website $website,
+        bool $isActive = true
+    ): ?PriceList {
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(

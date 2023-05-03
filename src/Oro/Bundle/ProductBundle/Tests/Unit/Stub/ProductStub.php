@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Stub;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -68,5 +69,12 @@ class ProductStub extends Product
     public function getDefaultSlugPrototype(): ?LocalizedFallbackValue
     {
         return $this->getDefaultFallbackValue($this->slugPrototypes);
+    }
+
+    public function setUnitPrecisions(Collection $collection): self
+    {
+        $this->unitPrecisions = $collection;
+
+        return $this;
     }
 }

@@ -10,15 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxProviderTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderRegistry */
+    /** @var TaxProviderRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
     /** @var TaxProviderType */
     private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->registry = $this->createMock(TaxProviderRegistry::class);
@@ -26,17 +23,14 @@ class TaxProviderTypeTest extends \PHPUnit\Framework\TestCase
         $this->formType = new TaxProviderType($this->registry);
     }
 
-    /**
-     * @param string $label
-     *
-     * @return TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getProviderMock($label)
+    private function getProvider(string $label): TaxProviderInterface
     {
-        $mock = $this->createMock(TaxProviderInterface::class);
-        $mock->expects($this->once())->method('getLabel')->willReturn($label);
+        $taxProvider = $this->createMock(TaxProviderInterface::class);
+        $taxProvider->expects($this->once())
+            ->method('getLabel')
+            ->willReturn($label);
 
-        return $mock;
+        return $taxProvider;
     }
 
     public function testConfigureOptions()
@@ -44,8 +38,8 @@ class TaxProviderTypeTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->once())
             ->method('getProviders')
             ->willReturn([
-                'name1' => $this->getProviderMock('label1'),
-                'name2' => $this->getProviderMock('label2')
+                'name1' => $this->getProvider('label1'),
+                'name2' => $this->getProvider('label2')
             ]);
 
         $resolver = new OptionsResolver();

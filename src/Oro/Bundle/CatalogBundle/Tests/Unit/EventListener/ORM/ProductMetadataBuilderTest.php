@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class ProductMetadataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductMetadataBuilder */
-    protected $builder;
+    private $builder;
 
     protected function setUp(): void
     {
@@ -32,10 +32,7 @@ class ProductMetadataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->builder->supports($config));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             'unsupported config id' => [

@@ -23,8 +23,7 @@ class ConfigureSeparateWYSIWYGFields extends ConfigureWYSIWYGFields
 {
     private const RAW_FIELD_SUFFIX = 'Raw';
 
-    /** @var ResourcesProvider */
-    private $resourcesProvider;
+    private ResourcesProvider $resourcesProvider;
 
     public function __construct(
         WYSIWYGFieldsProvider $wysiwygFieldsProvider,

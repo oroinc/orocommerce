@@ -14,8 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class UpdateOrderDiscountValue implements ProcessorInterface
 {
-    /** @var RoundingServiceInterface */
-    private $rounding;
+    private RoundingServiceInterface $rounding;
 
     public function __construct(RoundingServiceInterface $rounding)
     {
@@ -25,7 +24,7 @@ class UpdateOrderDiscountValue implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 

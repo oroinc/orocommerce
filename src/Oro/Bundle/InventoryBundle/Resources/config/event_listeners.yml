@@ -121,7 +121,6 @@ services:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onShoppingListStart }
             - { name: kernel.event_listener, event: extendable_condition.checkout, method: onCheckoutConditionCheck }
-            - { name: kernel.event_listener, event: quick_add_row_collection.validate, method: onQuickAddRowCollectionValidate }
 
     oro_inventory.event_listener.line_item_validation_listener:
         class: Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener
@@ -160,20 +159,12 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
 
-    oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
-        class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
-        arguments:
-            - '@oro_product.layout.data_provider.quick_add_collection'
-        tags:
-            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_copy_paste, method: onCopyPasteRFPFormSubmitCheck }
-            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_import, method: onQuickAddImportRFPFormSubmitCheck }
-
     oro_inventory.event_listener.create_order_listener:
         class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener
         arguments:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_inventory.handler.inventory_decrement_status_handler'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
@@ -190,7 +181,7 @@ services:
         class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener
         arguments:
             - '@oro_inventory.manager.inventory_quantity_manager'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@translator'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:

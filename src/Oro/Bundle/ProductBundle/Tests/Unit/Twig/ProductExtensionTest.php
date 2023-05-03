@@ -8,25 +8,22 @@ use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ProductExtensionTest extends \PHPUnit\Framework\TestCase
+class ProductExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var AutocompleteFieldsProvider */
-    private $autocompleteFieldsProvider;
+    private MockObject|AutocompleteFieldsProvider $autocompleteFieldsProvider;
 
-    /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $relatedProductFinderStrategy;
+    private FinderStrategyInterface|MockObject $relatedProductFinderStrategy;
 
-    /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $upsellProductFinderStrategy;
+    private FinderStrategyInterface|MockObject $upsellProductFinderStrategy;
 
-    /** @var RelatedItemConfigHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $relatedItemConfigHelper;
+    private RelatedItemConfigHelper|MockObject $relatedItemConfigHelper;
 
-    /** @var ProductExtension */
-    private $extension;
+    private ProductExtension $extension;
 
     protected function setUp(): void
     {
@@ -47,15 +44,29 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testIsConfigurableSimple(): void
     {
-        $this->assertFalse(
-            $this->callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_SIMPLE])
+        self::assertFalse(
+            self::callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_SIMPLE])
         );
     }
 
     public function testIsConfigurable(): void
     {
-        $this->assertTrue(
-            $this->callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_CONFIGURABLE])
+        self::assertTrue(
+            self::callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_CONFIGURABLE])
+        );
+    }
+
+    public function testIsKitWhenSimple(): void
+    {
+        self::assertFalse(
+            self::callTwigFunction($this->extension, 'is_kit_product_type', [Product::TYPE_SIMPLE])
+        );
+    }
+
+    public function testIsKitWhenKit(): void
+    {
+        self::assertTrue(
+            self::callTwigFunction($this->extension, 'is_kit_product_type', [Product::TYPE_KIT])
         );
     }
 
@@ -63,13 +74,13 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $ids = [2, 3, 4];
 
-        $this->upsellProductFinderStrategy->expects($this->once())
+        $this->upsellProductFinderStrategy->expects(self::once())
             ->method('findIds')
             ->willReturn($ids);
 
-        $this->assertSame(
+        self::assertSame(
             $ids,
-            $this->callTwigFunction($this->extension, 'get_upsell_products_ids', [new Product()])
+            self::callTwigFunction($this->extension, 'get_upsell_products_ids', [new Product()])
         );
     }
 
@@ -77,27 +88,27 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $ids = [2, 3, 4];
 
-        $this->relatedProductFinderStrategy->expects($this->once())
+        $this->relatedProductFinderStrategy->expects(self::once())
             ->method('findIds')
             ->willReturn($ids);
 
-        $this->assertSame(
+        self::assertSame(
             $ids,
-            $this->callTwigFunction($this->extension, 'get_related_products_ids', [new Product()])
+            self::callTwigFunction($this->extension, 'get_related_products_ids', [new Product()])
         );
     }
 
-    public function testGetRelatedItemsTranslationKeyReturnsTranslationKey()
+    public function testGetRelatedItemsTranslationKeyReturnsTranslationKey(): void
     {
         $translationKey = 'translation_key';
 
-        $this->relatedItemConfigHelper->expects($this->once())
+        $this->relatedItemConfigHelper->expects(self::once())
             ->method('getRelatedItemsTranslationKey')
             ->willReturn($translationKey);
 
-        $this->assertEquals(
+        self::assertEquals(
             $translationKey,
-            $this->callTwigFunction($this->extension, 'get_related_items_translation_key', [])
+            self::callTwigFunction($this->extension, 'get_related_items_translation_key', [])
         );
     }
 }

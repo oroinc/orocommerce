@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAddType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -19,19 +19,12 @@ class CouponAddTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var CouponAddType
-     */
+    /** @var CouponAddType */
     private $formType;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -42,23 +35,17 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var Coupon $coupon */
         $coupon1 = $this->getEntity(Coupon::class, ['id' => 1]);
-
-        /** @var Coupon $coupon */
         $coupon2 = $this->getEntity(Coupon::class, ['id' => 2]);
 
         return [
             new PreloadedExtension(
                 [
-                    CouponAddType::class => $this->formType,
-                    CouponAutocompleteType::class => new EntityType(
-                        ['coupon1' => $coupon1],
-                        CouponAutocompleteType::NAME
-                    ),
-                    EntityIdentifierType::class => new EntityType([1 => $coupon1, 2 => $coupon2]),
+                    $this->formType,
+                    CouponAutocompleteType::class => new EntityTypeStub(['coupon1' => $coupon1]),
+                    EntityIdentifierType::class => new EntityTypeStub([1 => $coupon1, 2 => $coupon2]),
                 ],
                 []
             ),
@@ -93,10 +80,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty data' => [
@@ -125,7 +109,6 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $entityId = 777;
         $entity = $this->getEntity(Order::class, ['id' => $entityId]);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')

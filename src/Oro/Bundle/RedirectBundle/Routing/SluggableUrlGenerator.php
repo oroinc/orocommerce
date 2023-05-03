@@ -8,6 +8,7 @@ use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Component\Routing\UrlUtil;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
@@ -50,6 +51,11 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
      */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
+        if (preg_match('/\W/', $name)) {
+            throw new RouteNotFoundException('Unable to generate a URL for the named route'.
+                ' as such route does not fit [a-zA-Z0-9_] regexp.');
+        }
+
         UrlParameterHelper::normalizeNumericTypes($parameters);
 
         if ($referenceType === self::ABSOLUTE_PATH) {

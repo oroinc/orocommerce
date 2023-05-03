@@ -11,7 +11,7 @@ Feature: Rounding of prices for products in the quick order form
   Scenario: Add product to quick order form and check total price
     Given I login as AmandaRCole@example.org buyer
     And click "Quick Order Form"
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | SKU |
       | QTY1 | 5   |
     And I wait for products to load

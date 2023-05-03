@@ -46,4 +46,4 @@ layout:
             optionName: use_slider
             optionValue: false
 
-    conditions: '!context["is_mobile"]'
+    conditions: '!context["is_mobile"] && context["product_type"] != "kit"'

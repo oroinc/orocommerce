@@ -4,29 +4,21 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\Type\AddressFormExtensionTestCase;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\ShippingOrigin';
+    private ShippingOriginType $formType;
 
-    /**
-     * @var ShippingOriginType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->formType = new ShippingOriginType(new AddressCountryAndRegionSubscriberStub());
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(ShippingOrigin::class);
         parent::setUp();
     }
 
@@ -36,7 +28,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'data_class' => self::DATA_CLASS,
+                'data_class' => ShippingOrigin::class,
                 'csrf_token_id' => 'shipping_origin'
             ]);
 
@@ -49,15 +41,14 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
     }
 
     /**
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $options
-     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($submittedData, $expectedData, $defaultData = null, $options = [])
-    {
+    public function testSubmit(
+        array $submittedData,
+        mixed $expectedData,
+        mixed $defaultData = null,
+        array $options = []
+    ) {
         $form = $this->factory->create(ShippingOriginType::class, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -68,10 +59,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty data' => [
@@ -130,25 +118,15 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
         ];
     }
 
-    /**
-     * @param string $countryCode
-     * @param boolean $linkRegionCountry
-     * @param string $regionCode
-     * @param string $postalCode
-     * @param string $city
-     * @param string $street
-     * @param string $street2
-     * @return ShippingOrigin
-     */
-    protected function getShippingOrigin(
-        $countryCode = null,
-        $linkRegionCountry = null,
-        $regionCode = null,
-        $postalCode = null,
-        $city = null,
-        $street = null,
-        $street2 = null
-    ) {
+    private function getShippingOrigin(
+        string $countryCode = null,
+        bool $linkRegionCountry = null,
+        string $regionCode = null,
+        string $postalCode = null,
+        string $city = null,
+        string $street = null,
+        string $street2 = null
+    ): ShippingOrigin {
         $shippingOrigin = new ShippingOrigin();
 
         if ($countryCode) {
@@ -188,9 +166,9 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return array_merge(parent::getExtensions(), [
             new PreloadedExtension(

@@ -59,7 +59,7 @@ class LineItemsMatrixFormOnResultAfterListener
     private function getConfigurableProduct(ResultRecordInterface $record): Product
     {
         /** @var ProductLineItemInterface[] $firstLineItem */
-        $lineItems = $record->getValue('lineItemsByIds') ?? [];
+        $lineItems = $record->getValue(LineItemsDataOnResultAfterListener::LINE_ITEMS) ?? [];
         $firstLineItem = reset($lineItems);
         if (!$firstLineItem instanceof ProductLineItemInterface) {
             throw new \LogicException(

@@ -3,44 +3,32 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\EntityExtendBundle\Decorator\OroPropertyAccessorBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class DefaultVisibilityListenerTest extends WebTestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var Product
-     */
-    protected $product;
-
-    /**
-     * @var Category
-     */
-    protected $category;
-
-    /**
-     * @var Customer
-     */
-    protected $customer;
-
-    /**
-     * @var CustomerGroup
-     */
-    protected $customerGroup;
+    private Product $product;
+    private Category $category;
+    private Customer $customer;
+    private CustomerGroup $customerGroup;
 
     protected function setUp(): void
     {
@@ -60,11 +48,9 @@ class DefaultVisibilityListenerTest extends WebTestCase
     }
 
     /**
-     * @param string $entityClass
-     * @param array $parameters
      * @dataProvider onFlushDataProvider
      */
-    public function testOnFlushVisibility($entityClass, array $parameters)
+    public function testOnFlushVisibility(string $entityClass, array $parameters)
     {
         $entityManager = $this->getManager($entityClass);
 
@@ -74,7 +60,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
         /** @var VisibilityInterface $entity */
         $entity = $this->findOneBy($entityClass, $properties);
         if (!$entity) {
-            $entity = $this->getEntity($entityClass, $properties);
+            $entity = $this->createEntity($entityClass, $properties);
         }
         $entity->setVisibility(VisibilityInterface::VISIBLE);
         $entityManager->persist($entity);
@@ -98,56 +84,53 @@ class DefaultVisibilityListenerTest extends WebTestCase
         $properties = $this->getProperties($parameters);
 
         // persisted with default visibility
-        $entity = $this->getEntity($entityClass, $properties);
+        $entity = $this->createEntity($entityClass, $properties);
         $entity->setVisibility($entity::getDefault($entity->getTargetEntity()));
         $entityManager->persist($entity);
         $entityManager->flush();
         $this->assertNull($this->findOneBy($entityClass, $properties));
     }
 
-    /**
-     * @return array
-     */
-    public function onFlushDataProvider()
+    public function onFlushDataProvider(): array
     {
         return [
             'category visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility',
+                'entityClass' => CategoryVisibility::class,
                 'parameters' => [
                     'category' => 'category',
                     'scope' => ['category_visibility', []]
                 ],
             ],
             'customer category visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility',
+                'entityClass' => CustomerCategoryVisibility::class,
                 'parameters' => [
                     'category' => 'category',
                     'scope' => ['customer_category_visibility', ['customer']]
                 ],
             ],
             'customer group category visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility',
+                'entityClass' => CustomerGroupCategoryVisibility::class,
                 'parameters' => [
                     'category' => 'category',
                     'scope' => ['customer_group_category_visibility', ['customerGroup']]
                 ],
             ],
             'product visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility',
+                'entityClass' => ProductVisibility::class,
                 'parameters' => [
                     'product' => 'product',
                     'scope' => [ProductVisibility::VISIBILITY_TYPE, []]
                 ],
             ],
             'customer product visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility',
+                'entityClass' => CustomerProductVisibility::class,
                 'parameters' => [
                     'product' => 'product',
                     'scope' => ['customer_product_visibility', ['customer']]
                 ],
             ],
             'customer group product visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility',
+                'entityClass' => CustomerGroupProductVisibility::class,
                 'parameters' => [
                     'product' => 'product',
                     'scope' => [CustomerGroupProductVisibility::VISIBILITY_TYPE, ['customerGroup']]
@@ -157,17 +140,13 @@ class DefaultVisibilityListenerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $parameters
-     * @return array
-     */
-    protected function getProperties(array $parameters)
+    private function getProperties(array $parameters): array
     {
         $registry = $this->getContainer()->get('doctrine');
         $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         $properties = [];
         foreach ($parameters as $key => $parameter) {
-            if ($key == 'scope') {
+            if ($key === 'scope') {
                 $scope = $scopeManager->findOrCreate($parameter[0], $parameter[1]);
                 $properties[$key] = $scope;
             } else {
@@ -182,35 +161,38 @@ class DefaultVisibilityListenerTest extends WebTestCase
         return $properties;
     }
 
-    /**
-     * @param string $entityClass
-     * @return ObjectManager
-     */
-    protected function getManager($entityClass)
+    private function getManager(string $entityClass): EntityManagerInterface
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass($entityClass);
     }
 
-    /**
-     * @param string $entityClass
-     * @param array $criteria
-     * @return object|null
-     */
-    protected function findOneBy($entityClass, array $criteria)
+    private function findOneBy(string $entityClass, array $criteria): ?object
     {
         return $this->getManager($entityClass)->getRepository($entityClass)->findOneBy($criteria);
     }
 
-    /**
-     * @param object $expected
-     * @param object $actual
-     */
-    protected function assertEntitiesSame($expected, $actual)
+    private function createEntity(string $entityClass, array $properties): object
+    {
+        $entity = new $entityClass();
+        $propertyAccessor = $this->getPropertyAccessor();
+        foreach ($properties as $name => $val) {
+            $propertyAccessor->setValue($entity, $name, $val);
+        }
+
+        return $entity;
+    }
+
+    private function assertEntitiesSame(object $expected, object $actual): void
     {
         $propertyAccessor = $this->getPropertyAccessor();
         $this->assertEquals(
             $propertyAccessor->getValue($expected, 'id'),
             $propertyAccessor->getValue($actual, 'id')
         );
+    }
+
+    private function getPropertyAccessor(): PropertyAccessorInterface
+    {
+        return (new OroPropertyAccessorBuilder())->getPropertyAccessor();
     }
 }

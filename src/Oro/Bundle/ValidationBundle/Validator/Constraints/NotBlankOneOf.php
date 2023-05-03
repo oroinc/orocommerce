@@ -4,20 +4,17 @@ namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * This constraint is used to check that one of fields is required.
+ */
 class NotBlankOneOf extends Constraint
 {
-    /**
-     * @var string
-     */
-    public $message = 'One of fields: %fields% is required';
+    public string $message = 'One of fields: %fields% is required';
+
+    public array $fields = [];
 
     /**
-     * @var array
-     */
-    public $fields = [];
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getTargets()
     {

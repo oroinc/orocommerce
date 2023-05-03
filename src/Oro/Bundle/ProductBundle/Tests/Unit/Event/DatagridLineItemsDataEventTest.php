@@ -3,25 +3,27 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DatagridLineItemsDataEventTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataEventTest extends TestCase
 {
-    /** @var ProductLineItemInterface */
-    private $lineItem1;
+    private const LINE_ITEM_1_ID = 10;
+    private const LINE_ITEM_2_ID = 20;
+    private const LINE_ITEM_3_ID = 30;
 
-    /** @var ProductLineItemInterface */
-    private $lineItem2;
+    private ProductLineItemInterface|MockObject $lineItem1;
 
-    /** @var ProductLineItemInterface */
-    private $lineItem3;
+    private ProductLineItemInterface|MockObject $lineItem2;
 
-    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $datagrid;
+    private ProductLineItemInterface|MockObject $lineItem3;
 
-    /** @var DatagridLineItemsDataEvent */
-    private $event;
+    private DatagridInterface|MockObject $datagrid;
+
+    private DatagridLineItemsDataEvent $event;
 
     protected function setUp(): void
     {
@@ -30,12 +32,20 @@ class DatagridLineItemsDataEventTest extends \PHPUnit\Framework\TestCase
         $this->lineItem3 = $this->createMock(ProductLineItemInterface::class);
         $this->datagrid = $this->createMock(DatagridInterface::class);
         $this->datagrid
-            ->expects($this->any())
             ->method('getName')
             ->willReturn('test-grid');
 
         $this->event = new DatagridLineItemsDataEvent(
-            [$this->lineItem1, $this->lineItem2, $this->lineItem3],
+            [
+                self::LINE_ITEM_1_ID => $this->lineItem1,
+                self::LINE_ITEM_2_ID => $this->lineItem2,
+                self::LINE_ITEM_3_ID => $this->lineItem3
+            ],
+            [
+                self::LINE_ITEM_1_ID => ['type' => Product::TYPE_SIMPLE],
+                self::LINE_ITEM_2_ID => ['type' => Product::TYPE_CONFIGURABLE],
+                self::LINE_ITEM_3_ID => ['type' => Product::TYPE_KIT]
+            ],
             $this->datagrid,
             ['context']
         );
@@ -43,44 +53,61 @@ class DatagridLineItemsDataEventTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLineItems(): void
     {
-        $this->assertSame([$this->lineItem1, $this->lineItem2, $this->lineItem3], $this->event->getLineItems());
+        self::assertSame(
+            [
+                self::LINE_ITEM_1_ID => $this->lineItem1,
+                self::LINE_ITEM_2_ID => $this->lineItem2,
+                self::LINE_ITEM_3_ID => $this->lineItem3
+            ],
+            $this->event->getLineItems()
+        );
     }
 
     public function testGetDatagrid(): void
     {
-        $this->assertSame($this->datagrid, $this->event->getDatagrid());
+        self::assertSame($this->datagrid, $this->event->getDatagrid());
     }
 
     public function testGetContext(): void
     {
-        $this->assertSame(['context'], $this->event->getContext());
+        self::assertSame(['context'], $this->event->getContext());
     }
 
     public function testLineItemData(): void
     {
-        $this->assertEquals([], $this->event->getDataForLineItem(42));
+        self::assertEquals(['type' => Product::TYPE_SIMPLE], $this->event->getDataForLineItem(self::LINE_ITEM_1_ID));
 
-        $this->event->addDataForLineItem(42, ['name' => 'value1']);
-        $this->assertEquals(['name' => 'value1'], $this->event->getDataForLineItem(42));
-
-        $this->event->addDataForLineItem(42, ['name' => 'value2']);
-        $this->assertEquals(['name' => 'value2'], $this->event->getDataForLineItem(42));
-
-        $this->event->setDataForLineItem(42, ['name2' => 'value2', 'name3' => 'value3']);
-        $this->assertEquals(
-            ['name2' => 'value2', 'name3' => 'value3'],
-            $this->event->getDataForLineItem(42)
+        $this->event->addDataForLineItem(self::LINE_ITEM_1_ID, ['name' => 'value1']);
+        self::assertEquals(
+            ['name' => 'value1', 'type' => Product::TYPE_SIMPLE],
+            $this->event->getDataForLineItem(self::LINE_ITEM_1_ID)
         );
 
-        $this->assertEquals(
-            [42 => ['name2' => 'value2', 'name3' => 'value3']],
+        $this->event->addDataForLineItem(self::LINE_ITEM_1_ID, ['name' => 'value2']);
+        self::assertEquals(
+            ['name' => 'value2', 'type' => Product::TYPE_SIMPLE],
+            $this->event->getDataForLineItem(self::LINE_ITEM_1_ID)
+        );
+
+        $this->event->setDataForLineItem(self::LINE_ITEM_1_ID, ['name2' => 'value2', 'name3' => 'value3']);
+        self::assertEquals(
+            ['name2' => 'value2', 'name3' => 'value3'],
+            $this->event->getDataForLineItem(self::LINE_ITEM_1_ID)
+        );
+
+        self::assertEquals(
+            [
+                self::LINE_ITEM_1_ID => ['name2' => 'value2', 'name3' => 'value3'],
+                self::LINE_ITEM_2_ID => ['type' => Product::TYPE_CONFIGURABLE],
+                self::LINE_ITEM_3_ID => ['type' => Product::TYPE_KIT],
+            ],
             $this->event->getDataForAllLineItems()
         );
     }
 
     public function testGetName(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             DatagridLineItemsDataEvent::NAME . '.test-grid',
             $this->event->getName()
         );

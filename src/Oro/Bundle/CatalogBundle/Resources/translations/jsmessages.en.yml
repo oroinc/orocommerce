@@ -1,1 +1,8 @@
 "oro.catalog.jstree.add_new_root_warning": "You can not create new root category."
+oro.catalog:
+    drop_zones:
+        excludeFromCategory: 'Exclude from Category'
+    product:
+        sort_products:
+            dialog:
+                limit_warning: 'There are more than {{ limit }} products assigned to this category. Only the first {{ limit }} products are shown here.'

@@ -6,11 +6,13 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
-use Oro\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -27,14 +29,16 @@ class VirtualFieldsProductDecorator
     private Product $product;
     private FieldHelper $fieldHelper;
     private static array $values = [];
-    private static ?PropertyAccessor $propertyAccessor = null;
+    private static ?PropertyAccessorInterface $propertyAccessor = null;
     private CacheInterface $cacheProvider;
+    private ConfigProvider $attributeProvider;
 
     public function __construct(
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
         FieldHelper $fieldHelper,
         CacheInterface $cacheProvider,
+        ConfigProvider $attributeProvider,
         array $products,
         Product $product
     ) {
@@ -42,6 +46,7 @@ class VirtualFieldsProductDecorator
         $this->converter = $converter;
         $this->fieldHelper = $fieldHelper;
         $this->cacheProvider = $cacheProvider;
+        $this->attributeProvider = $attributeProvider;
         $this->products = $products;
         $this->product = $product;
     }
@@ -53,7 +58,7 @@ class VirtualFieldsProductDecorator
         );
         return $this->cacheProvider->get($cacheKey, function () use ($name) {
             if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
-                return $this->getPropertyAccessor()->getValue($this->product, $name);
+                return $this->getReadablePropertyValue($name);
             } else {
                 $field = $this->getRelationField($name);
                 if (!$field) {
@@ -64,6 +69,33 @@ class VirtualFieldsProductDecorator
                 return $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
             }
         });
+    }
+
+    protected function getReadablePropertyValue(string $name)
+    {
+        $propertyValue = $this->getPropertyAccessor()->getValue($this->product, $name);
+
+        if ($propertyValue) {
+            return $propertyValue;
+        }
+
+        $field = $this->getRelationField($name);
+
+        /**
+         * If its dynamic attribute and its value is empty
+         * for expression language proper work we need to return attribute stub
+         */
+        if ($field && $this->fieldHelper->isSingleDynamicAttribute($field)) {
+            // AbstractEnumValue array equivalent
+            $propertyValue = [
+                'id'       => null,
+                'name'     => null,
+                'priority' => 0,
+                'default'  => false,
+            ];
+        }
+
+        return $propertyValue;
     }
 
     /**
@@ -77,6 +109,11 @@ class VirtualFieldsProductDecorator
             EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS
         );
         foreach ($fields as $field) {
+            $originalField = $this->getOriginalFieldName($field['name']);
+            if ($originalField && $originalField === $name) {
+                return $field;
+            }
+
             if ($field['name'] === $name) {
                 return $field;
             }
@@ -239,14 +276,23 @@ class VirtualFieldsProductDecorator
     }
 
     /**
-     * @return PropertyAccessor
+     * @return PropertyAccessorInterface
      */
     protected function getPropertyAccessor()
     {
         if (!static::$propertyAccessor) {
-            static::$propertyAccessor = new PropertyAccessor();
+            static::$propertyAccessor = PropertyAccess::createPropertyAccessor();
         }
 
         return static::$propertyAccessor;
+    }
+
+    protected function getOriginalFieldName(string $fieldName): ?string
+    {
+        if ($this->attributeProvider->hasConfig(Product::class, $fieldName)) {
+            return $this->attributeProvider->getConfig(Product::class, $fieldName)->get('field_name');
+        }
+
+        return null;
     }
 }

@@ -1,6 +1,5 @@
 @regression
 @ticket-BB-21413
-@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:single_product.yml
 Feature: Allowed inventory statuses should be applied when set only at website level
 

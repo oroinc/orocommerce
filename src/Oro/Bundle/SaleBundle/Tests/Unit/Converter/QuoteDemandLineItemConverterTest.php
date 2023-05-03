@@ -16,31 +16,22 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 class QuoteDemandLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QuoteDemandLineItemConverter */
-    protected $converter;
+    private $converter;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->converter = new QuoteDemandLineItemConverter();
     }
 
     /**
-     * @param bool $expected
-     * @param mixed $source
-     *
      * @dataProvider isSourceSupportedDataProvider
      */
-    public function testIsSourceSupported($expected, $source)
+    public function testIsSourceSupported(bool $expected, mixed $source)
     {
         $this->assertEquals($expected, $this->converter->isSourceSupported($source));
     }
 
-    /**
-     * @return array
-     */
-    public function isSourceSupportedDataProvider()
+    public function isSourceSupportedDataProvider(): array
     {
         return [
             'positive' => ['expected' => true, 'source' => $this->createMock(QuoteDemand::class)],
@@ -50,7 +41,6 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvert()
     {
-        /** @var QuoteDemand|\PHPUnit\Framework\MockObject\MockObject $quoteDemand */
         $quoteDemand = $this->createMock(QuoteDemand::class);
         $quoteProductDemand = $this->createMock(QuoteProductDemand::class);
         $quoteProductOffer = $this->createMock(QuoteProductOffer::class);
@@ -96,7 +86,8 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit\Framework\TestCase
         $quoteProductOffer->expects($this->any())
             ->method('getProductUnitCode')
             ->willReturn('UNIT_CODE');
-        $quoteProductOffer->expects($this->never())->method('getQuantity');
+        $quoteProductOffer->expects($this->never())
+            ->method('getQuantity');
         $quoteProductOffer->expects($this->any())
             ->method('getPrice')
             ->willReturn($price);
@@ -124,7 +115,6 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertWithFreeFormProduct()
     {
-        /** @var QuoteDemand|\PHPUnit\Framework\MockObject\MockObject $quoteDemand */
         $quoteDemand = $this->createMock(QuoteDemand::class);
         $quoteProductDemand = $this->createMock(QuoteProductDemand::class);
         $quoteProductOffer = $this->createMock(QuoteProductOffer::class);

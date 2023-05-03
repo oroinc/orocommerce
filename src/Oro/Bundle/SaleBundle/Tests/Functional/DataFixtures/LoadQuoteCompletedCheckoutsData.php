@@ -15,12 +15,12 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
 {
     use EnabledPaymentMethodIdentifierTrait;
 
-    const CHECKOUT_1 = 'checkout.1';
+    public const CHECKOUT_1 = 'checkout.1';
 
     /**
      * {@inheritDoc}
      */
-    protected function getData()
+    protected function getData(): array
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -32,7 +32,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
                 'checkout' => ['payment_method' => $this->getPaymentMethodIdentifier($this->container)],
                 'completed' => true,
                 'completedData' => [
-                    'itemsCount' => count($order->getLineItems()),
+                    'itemsCount' => \count($order->getLineItems()),
                     'orders' => [
                         [
                             'entityAlias' => 'order',
@@ -49,17 +49,17 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getWorkflowName()
+    protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
 
     /**
-     * @return Checkout
+     * {@inheritDoc}
      */
-    protected function createCheckout()
+    protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
@@ -67,7 +67,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    protected function getCheckoutSourceName()
+    protected function getCheckoutSourceName(): string
     {
         return 'quoteDemand';
     }
@@ -75,7 +75,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),

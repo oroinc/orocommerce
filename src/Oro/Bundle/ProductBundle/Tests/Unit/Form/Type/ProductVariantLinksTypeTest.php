@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -132,16 +132,16 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $this->initProducts();
 
         return [
             new PreloadedExtension([
                 $this->formType,
-                EntityIdentifierType::class => new EntityType($this->products)
+                EntityIdentifierType::class => new EntityTypeStub($this->products)
             ], [])
         ];
     }

@@ -3,6 +3,11 @@ oro_product:
     type:         annotation
     prefix:       /product
 
+oro_product_kit_item:
+    resource:     "@OroProductBundle/Controller/ProductKitItemController.php"
+    type:         annotation
+    prefix:       /product-kit-item
+
 oro_product_unit_ajax:
     resource:     "@OroProductBundle/Controller/AjaxProductUnitController.php"
     type:         annotation
@@ -12,6 +17,12 @@ oro_product_grid_count_ajax:
     resource:     "@OroProductBundle/Controller/AjaxGetProductsCountController.php"
     type:         annotation
     prefix:       /product-grid
+
+
+oro_product_product_collection_content_variant:
+    resource:     "@OroProductBundle/Controller/ProductCollectionContentVariantController.php"
+    type:         annotation
+    prefix:       /product-collection-content-variant/
 
 oro_product_frontend_product:
     resource: "@OroProductBundle/Controller/Frontend/ProductController.php"
@@ -66,7 +77,6 @@ oro_product_frontend_export:
     prefix: /export/products
     options:
         frontend: true
-
 
 #
 # OLD REST API ROUTES

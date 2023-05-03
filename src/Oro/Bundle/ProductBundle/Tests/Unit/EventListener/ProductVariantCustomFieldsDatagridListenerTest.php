@@ -27,22 +27,22 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
 {
     use PropertyAccessTrait;
 
-    const PRODUCT_ID = 1;
-    const SIZE = 'L';
+    private const PRODUCT_ID = 1;
+    private const SIZE = 'L';
 
-    const FIELD_COLOR = 'color';
-    const FIELD_SIZE = 'size';
+    private const FIELD_COLOR = 'color';
+    private const FIELD_SIZE = 'size';
 
-    const LABEL_COLOR = 'Color';
-    const LABEL_SIZE = 'Size';
+    private const LABEL_COLOR = 'Color';
+    private const LABEL_SIZE = 'Size';
 
-    const PRODUCT_CLASS = 'productClass';
-    const PRODUCT_ALIAS = 'product';
+    private const PRODUCT_CLASS = 'productClass';
+    private const PRODUCT_ALIAS = 'product';
 
-    const PRODUCT_VARIANT_LINK_CLASS = 'productVariantLinkClass';
-    const PRODUCT_VARIANT_LINK_ALIAS = 'productVariantLinkAlias';
+    private const PRODUCT_VARIANT_LINK_CLASS = 'productVariantLinkClass';
+    private const PRODUCT_VARIANT_LINK_ALIAS = 'productVariantLinkAlias';
 
-    const DATAGRID_NAME = 'Datagrid name';
+    private const DATAGRID_NAME = 'Datagrid name';
 
     /** @var DatagridConfiguration */
     private $config;
@@ -57,16 +57,16 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
     private $parameterBag;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CustomFieldProvider */
-    protected $customFieldProvider;
+    private $customFieldProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|VariantFieldProvider */
-    protected $variantFieldProvider;
+    private $variantFieldProvider;
 
     /** @var array|string[] */
-    protected $variantFields = [self::FIELD_SIZE];
+    private $variantFields = [self::FIELD_SIZE];
 
     /** @var array */
-    protected $productEntityCustomFields = [
+    private $productEntityCustomFields = [
         self::FIELD_COLOR => [
             'name' => self::FIELD_COLOR,
             'label' => self::LABEL_COLOR,
@@ -78,22 +78,13 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
     ];
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productRepository = $this
-            ->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
 
         $this->customFieldProvider->expects($this->any())
             ->method('getEntityCustomFields')
@@ -105,9 +96,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         $this->config = DatagridConfiguration::create($initConfig);
         $this->parameterBag = new ParameterBag();
 
-        $this->variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->variantFieldProvider = $this->createMock(VariantFieldProvider::class);
 
         $this->listener = new ProductVariantCustomFieldsDatagridListener(
             $this->doctrineHelper,
@@ -415,10 +404,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
 
     public function testOnBuildAfterEditGrid()
     {
-        $attributeFamilyRepository = $this
-            ->getMockBuilder(AttributeFamilyRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
@@ -455,10 +441,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
 
     public function testOnBuildAfterEditGridWithNoFamily()
     {
-        $attributeFamilyRepository = $this
-            ->getMockBuilder(AttributeFamilyRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
@@ -474,7 +457,8 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         $datagridConfig = DatagridConfiguration::create($config);
 
         $this->setParameterBag();
-        $this->variantFieldProvider->expects($this->never())->method('getVariantFields');
+        $this->variantFieldProvider->expects($this->never())
+            ->method('getVariantFields');
         $this->listener->onBuildAfterEditGrid($this->prepareBuildAfterEvent($datagridConfig));
     }
 
@@ -489,29 +473,17 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         $this->setValueByPath($config, sprintf('[filters][columns][%s]', $field), ['someSettings']);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @return BuildBefore
-     */
-    private function prepareBuildBeforeEvent(DatagridConfiguration $config)
+    private function prepareBuildBeforeEvent(DatagridConfiguration $config): BuildBefore
     {
-        return new BuildBefore($this->prepareDatagrid(), $config);
+        return new BuildBefore($this->getDatagrid(), $config);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @return BuildAfter
-     */
-    private function prepareBuildAfterEvent(DatagridConfiguration $config)
+    private function prepareBuildAfterEvent(DatagridConfiguration $config): BuildAfter
     {
-        return new BuildAfter($this->prepareDatagrid($config));
+        return new BuildAfter($this->getDatagrid($config));
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @return DatagridInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function prepareDatagrid(DatagridConfiguration $config = null)
+    private function getDatagrid(DatagridConfiguration $config = null): DatagridInterface
     {
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->any())
@@ -540,10 +512,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
             ->willReturn($product);
     }
 
-    /**
-     * @return array
-     */
-    private function getInitConfig()
+    private function getInitConfig(): array
     {
         $initConfig = [];
         $this->setValueByPath($initConfig, '[source][query][from]', [
