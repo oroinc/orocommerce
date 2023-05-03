@@ -688,17 +688,24 @@
     {% set collapseFormId = 'collapse-form-' ~ id %}
     {% set collapseViewId = 'collapse-view-' ~ id %}
     {% set isShow = value.id is null or form.vars.name == '0' %}
+    {% set viewOptions = {
+        fieldsNamespace: form.vars.full_name,
+        kitItemId: value.id,
+        fields: fieldsMap
+    } %}
+
+    {% if form.children.sortOrder is defined %}
+        {% set viewOptions = viewOptions|merge({
+            sortOrderFieldSelector: '[name$="[' ~ form.children.sortOrder.vars.name ~ ']"]'
+        }) %}
+    {% endif %}
 
     {% apply spaceless %}
     <div class="product-kit-item content-variant-item
         {{ form.vars.valid ? '' : 'has-error'}}
         {{ isShow ? 'show' : '' }}" {{ UI.renderPageComponentAttributes({
         view: 'oroproduct/js/app/views/product-kit/product-kit-view',
-        options: {
-            fieldsNamespace: form.vars.full_name,
-            kitItemId: value.id,
-            fields: fieldsMap
-        }
+        options: viewOptions
     }) }}  data-role="content-variant-item">
         <div class="product-kit-item__title content-variant-item-title" data-name="sortable-handle">
             <button type="button" class="btn-toggle-variant btn btn-icon btn-square-light {{ isShow ? '' : 'collapsed' }}"
