@@ -48,6 +48,7 @@ services:
     oro_pricing.user_currency_manager:
         class: 'Oro\Bundle\PricingBundle\Manager\UserCurrencyManager'
         public: true
+        lazy: true
         arguments:
             - '@session'
             - '@security.token_storage'
