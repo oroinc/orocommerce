@@ -12,17 +12,10 @@
     }
 
     &frame {
-        width: calc(100% - 16px);
-        height: calc(100% - 16px);
-        top: 8px;
-        left: 8px;
-        right: 8px;
-        bottom: auto;
-        box-sizing: content-box;
-        transition: width 1s, height 1s;
+        transition: $devices-transition;
 
         &-wrapper {
-            transition: width 1s, height 1s;
+            transition: $devices-transition;
         }
     }
 
@@ -30,13 +23,6 @@
         background-color: $canvas-bg-color;
         padding: 8px;
         width: calc(77% - 14px);
-
-        .gjs-highlighter,
-        .gjs-highlighter-sel {
-            margin-left: -2px;
-            margin-top: -2px;
-            outline-offset: 0;
-        }
 
         ##{$app-prefix}tools,
         .#{$app-prefix}tools {

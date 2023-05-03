@@ -10,6 +10,9 @@ wysiwyg_canvas:
     inputs:
         # Settings
         - 'bundles/oroui/css/scss/settings/global-settings.scss'
+        
+        # Variables
+        - 'bundles/orocms/css/scss/variables/grapesjs-variables.scss'
 
         - 'bundles/oroui/css/scss/oro/loading/loading-mask.scss'
         - 'bundles/orocms/css/scss/grapesjs/grapesjs-canvas-styles.scss'

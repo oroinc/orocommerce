@@ -65,45 +65,7 @@ define(function(require) {
             this.$builderIframe = $(Canvas.getFrameEl());
             this.$framesArea = $(Canvas.canvasView.framesArea);
 
-            Commands.extend('core:component-select', {
-                updateBadge(el, pos, opts = {}) {
-                    const {canvas} = this;
-                    const frame = canvas.canvasView.framesArea.querySelector('.gjs-frame');
-                    const badge = this.getBadge(opts);
-
-                    const {y: badgeY} = badge.getBoundingClientRect();
-                    const {y: frameY} = frame.getBoundingClientRect();
-                    const {height: elHeight} = el.getBoundingClientRect();
-
-                    if (frameY - badgeY > 0) {
-                        badge.style.top = `${elHeight}px`;
-                    }
-                },
-
-                updateToolbarPos(pos) {
-                    const unit = 'px';
-                    const toolbarEl = this.canvas.getToolbarEl();
-                    const iframeEl = this.canvas.getFrameEl();
-                    const {el} = this.getElSelected();
-                    const {height: elHeight} = el.getBoundingClientRect();
-
-                    toolbarEl.style.top = `${pos.top}${unit}`;
-                    toolbarEl.style.left = `${pos.left}${unit}`;
-                    toolbarEl.style.opacity = '';
-
-                    const {left: iframeLeft, top: iframeTop} = iframeEl.getBoundingClientRect();
-                    const {left, top} = toolbarEl.getBoundingClientRect();
-
-                    if (iframeLeft > left) {
-                        toolbarEl.style.left = 0;
-                    }
-
-                    if (iframeTop - top > 0) {
-                        toolbarEl.style.top = `${elHeight}px`;
-                    }
-                }
-            });
-
+            this.renderDeviceDecoration();
             this.initButtons();
 
             this.listenTo(mediator, 'grapesjs:theme:change', this.initButtons.bind(this));
@@ -121,11 +83,13 @@ define(function(require) {
                     const canvas = editor.Canvas.getElement();
 
                     canvas.classList.add(sender.id);
+                    editor.Canvas.deviceDecorator.classList.add(sender.id);
                 },
                 stop(editor, sender) {
                     const canvas = editor.Canvas.getElement();
 
                     canvas.classList.remove(sender.id);
+                    editor.Canvas.deviceDecorator.classList.remove(sender.id);
                 }
             });
         },
@@ -148,6 +112,19 @@ define(function(require) {
                     }
                 }
             });
+        },
+
+        renderDeviceDecoration() {
+            const {Canvas} = this.builder;
+            const {canvasView} = Canvas;
+
+            const deviceDecorator = document.createElement('div');
+            deviceDecorator.classList.add('gjs-canvas-device-decorator');
+
+            canvasView.$el.before(deviceDecorator);
+
+            Canvas.deviceDecorator = deviceDecorator;
+            this.deviceDecorator = deviceDecorator;
         },
 
         adjustCurrentDeviceWidth() {
@@ -319,46 +296,51 @@ define(function(require) {
         },
 
         updateSelectedElement(model, deviceName) {
-            const selected = this.builder.getSelected();
+            const {Devices} = this.builder;
+            const currentDevice = Devices.getSelected();
+
+            this.deviceDecorator.style.setProperty('--device-width', currentDevice.get('width'));
+            this.deviceDecorator.style.setProperty('--device-height', currentDevice.get('height'));
+
             const iframe = this.$builderIframe[0];
             const iframeWrapper = this.$framesArea.find('.gjs-frame-wrapper');
             const editorConf = this.builder.getConfig();
 
             editorConf.el.style.height = editorConf.height;
 
+            $(this.canvasEl).css({
+                height: ''
+            });
+
             iframeWrapper.one('transitionend.' + this.cid, () => {
                 if (iframeWrapper[0].offsetHeight >= (parseInt(editorConf.height) - this.canvasEl.offsetTop)) {
                     const styleEditor = getComputedStyle(editorConf.el);
-                    const styleCanvas = getComputedStyle(this.canvasEl);
-                    const height = [iframe.offsetHeight, this.canvasEl.offsetTop, styleEditor['padding-top'],
-                        styleEditor['padding-bottom'], styleCanvas['padding-top'], styleCanvas['padding-bottom']]
-                        .reduce((a, b) => a + parseInt(b), 0);
+                    const styleDevice = getComputedStyle(this.deviceDecorator);
+                    const height = [
+                        this.deviceDecorator.offsetHeight,
+                        styleDevice['padding-top'],
+                        styleDevice['padding-bottom'],
+                        styleDevice['margin-top'],
+                        styleDevice['margin-bottom'],
+                        styleDevice['top'],
+                        styleEditor['padding-top'],
+                        styleEditor['padding-bottom']
+                    ].reduce((a, b) => a + parseInt(b), 0);
 
                     editorConf.el.style.height = height + 'px';
                 } else {
                     editorConf.el.style.height = editorConf.height;
                 }
 
-                const leftOffset = parseInt(iframeWrapper.css('margin-left')) +
-                    parseInt(iframeWrapper.css('border-left-width'));
-                const topOffset = parseInt(iframeWrapper.css('margin-top')) +
-                    parseInt(iframeWrapper.css('border-top-width'));
-
                 $(this.canvasEl).find('#gjs-cv-tools').css({
-                    width: iframe.clientWidth,
-                    height: iframe.clientHeight,
-                    marginLeft: leftOffset
+                    height: iframe.clientHeight
                 });
 
-                $(this.canvasEl).find('#gjs-tools, .gjs-tools:not(.gjs-tools-gl)').css({
-                    marginTop: -topOffset,
-                    marginLeft: -leftOffset
+                $(this.canvasEl).css({
+                    height: iframe.clientHeight
                 });
 
-                if (selected) {
-                    this.builder.selectRemove(selected);
-                    this.builder.selectAdd(selected);
-                }
+                this.builder.trigger('change:canvasOffset');
             });
         },
 
@@ -368,6 +350,8 @@ define(function(require) {
             }
 
             clearInterval(this._intervalId);
+
+            this.deviceDecorator.remove();
 
             this.$builderIframe.off(`.${this.cid}`);
             this.$framesArea.off(`.${this.cid}`);
