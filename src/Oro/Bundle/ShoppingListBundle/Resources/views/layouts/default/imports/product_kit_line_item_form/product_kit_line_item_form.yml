@@ -15,6 +15,8 @@ layout:
                   __header_product_attributes:
                       blockType: container
                   __header_product_name:
+                      blockType: container
+                  __header_product_name_text:
                       blockType: block
                   __header_product_sku:
                       blockType: block
@@ -44,7 +46,8 @@ layout:
                           __header_wrapper:
                               __header_product_picture: ~
                               __header_product_attributes:
-                                  __header_product_name: ~
+                                  __header_product_name:
+                                    __header_product_name_text: ~
                                   __header_product_sku: ~
                           __form_start: ~
                           __form_errors: ~

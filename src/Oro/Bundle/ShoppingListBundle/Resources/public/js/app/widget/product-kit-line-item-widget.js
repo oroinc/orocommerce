@@ -8,7 +8,6 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
     options: _.extend({}, FrontendDialogWidget.prototype.options, {
         preventModelRemoval: true,
         incrementalPosition: false,
-        desktopLoadingBar: true,
         dialogOptions: {
             modal: true,
             title: null,

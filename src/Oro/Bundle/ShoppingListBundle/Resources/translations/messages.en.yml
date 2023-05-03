@@ -384,6 +384,8 @@ oro:
                     notes: Notes
                     subtotal:
                         label: 'Price as configured:'
+                dialog_widget_update:
+                    title: 'Editing "%product%" in "%shoppinglist%"'
 
                 in_shopping_lists_widget:
                     datagrid:

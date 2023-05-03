@@ -8,7 +8,6 @@ const ProductKitInShoppingListsWidget = FrontendDialogWidget.extend({
     options: _.extend({}, FrontendDialogWidget.prototype.options, {
         preventModelRemoval: true,
         incrementalPosition: false,
-        desktopLoadingBar: false,
         actionSectionTemplate: _.template(`
             <div data-section="<%- section %>"
                 class="dialog-actions-section"></div>

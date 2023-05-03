@@ -111,10 +111,7 @@ const ProductKitFormView = BaseView.extend({
                 productId: urlHelper.encodeURI(this.productId),
                 getSubtotal: true
             }),
-            // to prevent main application loading bar from been shown
-            global: false,
             beforeSend: () => {
-                this.$el.trigger('ajaxStart');
                 this._activeAjaxActions++;
                 $(`#${this.$el.attr('id')}totals`).addClass(this.maskClass);
             },
@@ -138,7 +135,6 @@ const ProductKitFormView = BaseView.extend({
                 }
                 this._activeAjaxActions--;
                 if (this._activeAjaxActions === 0) {
-                    this.$el.trigger('ajaxComplete');
                     $(`#${this.$el.attr('id')}totals`).removeClass(this.maskClass);
                 }
             }

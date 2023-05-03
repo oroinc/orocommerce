@@ -66,9 +66,11 @@
         '~class': ' product-popup__header-title h1 h-normal',
     }) %}
 
-    <p {{ block('block_attributes') }}>
-        {{ product.names|localized_value|e }}
-    </p>
+    <p {{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+{% endblock %}
+
+{% block __product_kit_line_item_form__header_product_name_text_widget %}
+    {{ product.names|localized_value|e }}
 {% endblock %}
 
 {% block __product_kit_line_item_form__header_product_sku_widget %}

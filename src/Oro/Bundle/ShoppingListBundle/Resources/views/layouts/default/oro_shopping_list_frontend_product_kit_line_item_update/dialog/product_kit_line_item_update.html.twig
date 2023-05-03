@@ -69,6 +69,13 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
+{% block __product_kit_line_item_form__header_product_name_text_widget %}
+    {{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget_update.title'|trans({
+        '%product%': product.names|localized_value|e,
+        '%shoppinglist%': shoppingList.label
+    }) }}
+{% endblock %}
+
 {% block __product_kit_line_item_form__form_start_widget %}
     {% set form_route_name = 'oro_shopping_list_frontend_product_kit_line_item_update' %}
     {% set form_route_parameters = form_route_parameters|merge({
