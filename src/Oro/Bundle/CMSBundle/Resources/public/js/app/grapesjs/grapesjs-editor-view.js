@@ -1172,7 +1172,7 @@ const GrapesjsEditorView = BaseView.extend({
             }
         }
 
-        if (pos.top < 0 && frameHeight > (pos.canvasOffsetTop + targetHeight)) {
+        if (pos.top < 0 && frameHeight > (pos.canvasOffsetTop + targetHeight + $el.height())) {
             pos.top += $el.outerHeight() + targetHeight;
         }
 
