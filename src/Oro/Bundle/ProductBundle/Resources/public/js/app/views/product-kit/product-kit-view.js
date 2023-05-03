@@ -6,11 +6,15 @@ import datetimeFormatter from 'orolocale/js/formatter/datetime';
 const ProductKitView = BaseView.extend({
     autoRender: true,
 
-    optionNames: BaseView.prototype.optionNames.concat(['fieldsNamespace', 'fields', 'kitItemId']),
+    optionNames: BaseView.prototype.optionNames.concat([
+        'fieldsNamespace', 'fields', 'kitItemId', 'sortOrderFieldSelector'
+    ]),
 
     fields: null,
 
     kitItemId: null,
+
+    sortOrderFieldSelector: null,
 
     events: {
         'change input[name], select': 'onChangeInputs',
@@ -26,6 +30,18 @@ const ProductKitView = BaseView.extend({
         ProductKitView.__super__.render.call(this);
 
         this.updateFields();
+
+        if (!this.kitItemId && this.sortOrderFieldSelector) {
+            this.$(this.sortOrderFieldSelector).val(this.getMaxSortOrder() + 1);
+        }
+    },
+
+    getMaxSortOrder() {
+        return Math.max(
+            ...this.$el.closest('[data-role="collection-container"]')
+                .find(this.sortOrderFieldSelector)
+                .toArray().map(field => parseFloat(field.value))
+        );
     },
 
     validate() {
