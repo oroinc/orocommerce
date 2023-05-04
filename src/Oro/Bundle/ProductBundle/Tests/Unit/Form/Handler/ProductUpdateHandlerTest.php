@@ -97,7 +97,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
         $this->actionGroupRegistry = $this->createMock(ActionGroupRegistry::class);
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->relatedItemsHandler = $this->createMock(RelatedItemsHandler::class);
-
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->resultCallbackInvoked = false;
 
         $this->requestStack->expects($this->any())
@@ -111,7 +113,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler = new ProductUpdateHandler(
             $this->requestStack,
-            $this->session,
             $this->router,
             $this->doctrineHelper,
             $this->getUpdateFactoryMock()
@@ -908,7 +909,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $handler = new ProductUpdateHandler(
             $this->requestStack,
-            $this->session,
             $this->router,
             $this->doctrineHelper,
             $this->getUpdateFactoryMock()
@@ -956,7 +956,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $handler = new ProductUpdateHandler(
             $this->requestStack,
-            $this->session,
             $this->router,
             $this->doctrineHelper,
             $this->getUpdateFactoryMock()
@@ -1001,7 +1000,6 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
 
         $handler = new ProductUpdateHandler(
             $this->requestStack,
-            $this->session,
             $this->router,
             $this->doctrineHelper,
             $this->getUpdateFactoryMock()

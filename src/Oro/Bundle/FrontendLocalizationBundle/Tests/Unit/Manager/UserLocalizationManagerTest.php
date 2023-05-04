@@ -15,6 +15,8 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteBundle\Tests\Unit\Stub\WebsiteStub;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -31,6 +33,9 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private Session $session;
+
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private RequestStack $requestStack;
 
     /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     private TokenStorageInterface $tokenStorage;
@@ -55,15 +60,19 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->localizationManager = $this->createMock(LocalizationManager::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
 
         $this->userLocalizationManager = new UserLocalizationManager(
-            $this->session,
+            $this->requestStack,
             $this->tokenStorage,
             $this->doctrine,
             $this->configManager,
@@ -264,6 +273,16 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(UserLocalizationManager::SESSION_LOCALIZATIONS)
             ->willReturn($sessionLocalizations);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::exactly(2))
+            ->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects($this->exactly(2))
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::exactly(2))
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
 
         $this->localizationManager->expects(self::once())
             ->method('getLocalizations')
@@ -309,7 +328,16 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->session->expects(self::never())
             ->method('get');
-
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects(self::once())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
         $this->localizationManager->expects(self::once())
             ->method('getLocalizations')
             ->with([$localization->getId()])
@@ -473,6 +501,16 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
                 UserLocalizationManager::SESSION_LOCALIZATIONS,
                 [2 => 3, $website->getId() => $localization->getId()]
             );
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::exactly(2))
+            ->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects(self::exactly(2))
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::exactly(2))
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
 
         $this->userLocalizationManager->setCurrentLocalization($localization);
     }

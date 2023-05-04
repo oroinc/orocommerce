@@ -7,7 +7,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -19,21 +19,12 @@ class PriceCalculationPrecisionSystemConfigListener
     private const NOTICE_TEXT_TRANS_KEY = 'oro.pricing.system_configuration.fields.price_calculation_precision.notice';
     private const MESSAGE_TYPE = 'warning';
 
-    private ManagerRegistry $registry;
-    private RuleCache $cache;
-    private Session $session;
-    private TranslatorInterface $translator;
-
     public function __construct(
-        ManagerRegistry $registry,
-        RuleCache $cache,
-        Session $session,
-        TranslatorInterface $translator
+        private ManagerRegistry $registry,
+        private RuleCache $cache,
+        private RequestStack $requestStack,
+        private TranslatorInterface $translator
     ) {
-        $this->registry = $registry;
-        $this->cache = $cache;
-        $this->session = $session;
-        $this->translator = $translator;
     }
 
     public function updateAfter(ConfigUpdateEvent $event): void
@@ -68,6 +59,9 @@ class PriceCalculationPrecisionSystemConfigListener
             $this->translator->trans(self::NOTICE_TEXT_TRANS_KEY),
             PriceListScheduleRecalculateCommand::getDefaultName()
         );
-        $this->session->getFlashBag()->add(self::MESSAGE_TYPE, $message);
+        $request = $this->requestStack->getCurrentRequest();
+        if (null !== $request && $request->hasSession()) {
+            $request->getSession()->getFlashBag()->add(self::MESSAGE_TYPE, $message);
+        }
     }
 }

@@ -10,6 +10,7 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -18,6 +19,9 @@ class PayflowListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
+
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethodProvider;
@@ -31,10 +35,14 @@ class PayflowListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->listener = new PayflowListener($this->session, $this->paymentMethodProvider);
+        $this->listener = new PayflowListener($this->requestStack, $this->paymentMethodProvider);
         $this->listener->setLogger($this->logger);
     }
 

@@ -8,6 +8,7 @@ use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener;
 use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -16,6 +17,9 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
+
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
     /** @var PaymentTransaction */
     private $paymentTransaction;
@@ -29,10 +33,14 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->paymentTransaction = new PaymentTransaction();
         $this->messageProvider = $this->createMock(PaymentResultMessageProviderInterface::class);
 
-        $this->listener = new RedirectListener($this->session, $this->messageProvider);
+        $this->listener = new RedirectListener($this->requestStack, $this->messageProvider);
     }
 
     /**

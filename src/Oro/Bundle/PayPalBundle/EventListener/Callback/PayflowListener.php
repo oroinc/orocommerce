@@ -8,24 +8,19 @@ use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Payflow listener class.
+ */
 class PayflowListener
 {
     use LoggerAwareTrait;
 
-    /** @var Session */
-    protected $session;
-
-    /**
-     * @var PaymentMethodProviderInterface
-     */
-    protected $paymentMethodProvider;
-
-    public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
-    {
-        $this->session = $session;
-        $this->paymentMethodProvider = $paymentMethodProvider;
+    public function __construct(
+        private RequestStack $requestStack,
+        private PaymentMethodProviderInterface $paymentMethodProvider
+    ) {
     }
 
     public function onError(AbstractCallbackEvent $event)
@@ -43,7 +38,7 @@ class PayflowListener
         $response = new Response($event->getData());
 
         if (in_array($response->getResult(), [ResponseStatusMap::SECURE_TOKEN_EXPIRED], true)) {
-            $this->session->getFlashBag()->set('warning', 'oro.paypal.result.token_expired');
+            $this->requestStack->getSession()->getFlashBag()->set('warning', 'oro.paypal.result.token_expired');
         }
     }
 

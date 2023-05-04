@@ -10,6 +10,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository;
 use Oro\Bundle\PricingBundle\EventListener\PriceCalculationPrecisionSystemConfigListener;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,6 +34,11 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
     private $session;
 
     /**
+     * @var RequestStack|MockObject
+     */
+    private $requestStack;
+
+    /**
      * @var TranslatorInterface|MockObject
      */
     private $translator;
@@ -43,12 +50,16 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->cache = $this->createMock(RuleCache::class);
         $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->listener = new PriceCalculationPrecisionSystemConfigListener(
             $this->registry,
             $this->cache,
-            $this->session,
+            $this->requestStack,
             $this->translator
         );
     }
@@ -120,7 +131,16 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
         $this->session->expects($this->once())
             ->method('getFlashBag')
             ->willReturn($flashBag);
-
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects($this->once())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
         $repo = $this->createMock(PriceRuleRepository::class);
         $repo->expects($this->once())
             ->method('getRuleIds')
