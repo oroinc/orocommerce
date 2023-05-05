@@ -1,7 +1,7 @@
 OroCommerce
 ===========
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oroinc/orocommerce/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/oroinc/orocommerce/?branch=master) [![Travis CI build status](https://travis-ci.org/oroinc/orocommerce.svg?branch=master)](https://travis-ci.org/oroinc/orocommerce)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oroinc/orocommerce/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/oroinc/orocommerce/?branch=master)
 
 What is OroCommerce?
 ------------
