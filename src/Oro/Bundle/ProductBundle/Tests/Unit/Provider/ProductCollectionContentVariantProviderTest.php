@@ -9,10 +9,8 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 class ProductCollectionContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductsContentVariantProvider
-     */
-    protected $provider;
+    /** @var ProductsContentVariantProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -33,15 +31,13 @@ class ProductCollectionContentVariantProviderTest extends \PHPUnit\Framework\Tes
 
     public function testGetLocalizedValues()
     {
-        /** @var ContentNodeInterface $node */
-        $node = $this->getMockBuilder(ContentNodeInterface::class)->getMock();
+        $node = $this->createMock(ContentNodeInterface::class);
         $this->assertEquals([], $this->provider->getLocalizedValues($node));
     }
 
     public function testGetValues()
     {
-        /** @var ContentNodeInterface $node */
-        $node = $this->getMockBuilder(ContentNodeInterface::class)->getMock();
+        $node = $this->createMock(ContentNodeInterface::class);
         $this->assertEquals([], $this->provider->getValues($node));
     }
 }

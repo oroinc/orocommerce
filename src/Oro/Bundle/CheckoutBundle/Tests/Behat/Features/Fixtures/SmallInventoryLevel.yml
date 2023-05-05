@@ -3,3 +3,4 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
         product: '@product'
         productUnitPrecision: '@precision'
         quantity: 1
+        organization: '@organization'

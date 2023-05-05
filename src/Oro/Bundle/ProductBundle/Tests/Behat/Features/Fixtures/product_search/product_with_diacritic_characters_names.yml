@@ -1,0 +1,20 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    localProductName:
+        string: 'Bürocontainer'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        type: 'simple'
+        sku: 'PSKUB'
+        primaryUnitPrecision: '@productUnitPrecision'
+        __calls:
+            - addName: ['@localProductName']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'

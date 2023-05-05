@@ -10,27 +10,21 @@ use Oro\Bundle\ProductBundle\Visibility\BasicProductUnitFieldsSettings;
 
 class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var BasicProductUnitFieldsSettings
-     */
+    /** @var BasicProductUnitFieldsSettings */
     private $settings;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->settings = new BasicProductUnitFieldsSettings($this->doctrineHelper);
     }
 
     public function testIsProductUnitSelectionVisible()
     {
-        /** @var Product $product */
         $product = $this->createMock(Product::class);
         $this->assertTrue($this->settings->isProductUnitSelectionVisible($product));
     }
@@ -51,10 +45,7 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->settings->isAddingAdditionalUnitsToProductAvailable($product));
     }
 
-    /**
-     * @return array
-     */
-    public function productsDataProvider()
+    public function productsDataProvider(): array
     {
         return [
             [null],
@@ -70,8 +61,7 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
             $this->createMock(ProductUnit::class),
         ];
 
-        $repository = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()->getMock();
+        $repository = $this->createMock(ProductUnitRepository::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')

@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -30,7 +31,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     private $registry;
 
-    public function __construct(PropertyAccessor $propertyAccessor, ManagerRegistry $registry)
+    public function __construct(PropertyAccessorInterface $propertyAccessor, ManagerRegistry $registry)
     {
         $this->propertyAccessor = $propertyAccessor;
         $this->registry = $registry;

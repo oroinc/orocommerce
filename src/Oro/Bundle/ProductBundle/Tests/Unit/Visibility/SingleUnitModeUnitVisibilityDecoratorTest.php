@@ -8,27 +8,19 @@ use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
 class SingleUnitModeUnitVisibilityDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $decoratedVisibility;
 
-    /**
-     * @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $singleUnitService;
 
-    /**
-     * @var SingleUnitModeUnitVisibilityDecorator
-     */
+    /** @var SingleUnitModeUnitVisibilityDecorator */
     private $visibility;
 
     protected function setUp(): void
     {
         $this->decoratedVisibility = $this->createMock(UnitVisibilityInterface::class);
-
-        $this->singleUnitService = $this->getMockBuilder(SingleUnitModeServiceInterface::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->singleUnitService = $this->createMock(SingleUnitModeServiceInterface::class);
 
         $this->visibility = new SingleUnitModeUnitVisibilityDecorator(
             $this->decoratedVisibility,
@@ -56,10 +48,7 @@ class SingleUnitModeUnitVisibilityDecoratorTest extends \PHPUnit\Framework\TestC
         $this->assertSame($codeVisibility, $this->visibility->isUnitCodeVisible($code));
     }
 
-    /**
-     * @return array
-     */
-    public function isUnitCodeVisibleDataProvider()
+    public function isUnitCodeVisibleDataProvider(): array
     {
         return [
             [true],

@@ -2,292 +2,288 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-/**
- * @SuppressWarnings(PHPMD)
- */
 class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|SessionInterface
-     */
-    protected $session;
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
+    private $request;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface
-     */
-    protected $tokenAccessor;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListTreeHandler
-     */
-    protected $priceListTreeHandler;
+    /** @var PriceListRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Request
-     */
-    protected $request;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|RequestStack
-     */
-    protected $requestStack;
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
 
-    /**
-     * @var PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $repository;
+    /** @var PriceListRequestHandler */
+    private $handler;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
-
-    /**
-     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $em;
-
-    /**
-     * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $relationsProvider;
-
-    /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $websiteManager;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);
-        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
+        $this->repository = $this->createMock(PriceListRepository::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->request = $this->createMock(Request::class);
-        $this->request->expects($this->any())->method('hasSession')->willReturn(true);
-        $this->request->expects($this->any())->method('getSession')->willReturn($this->session);
+        $this->request->expects(self::any())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->request->expects(self::any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->requestStack = $this->createMock(RequestStack::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
-        $this->repository = $this->createMock(PriceListRepository::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->relationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
-        $this->websiteManager = $this->createMock(WebsiteManager::class);
-    }
-
-    protected function tearDown(): void
-    {
-        unset(
-            $this->session,
-            $this->tokenAccessor,
-            $this->priceListTreeHandler,
-            $this->handler,
-            $this->request,
+        $this->handler = new PriceListRequestHandler(
             $this->requestStack,
-            $this->repository,
-            $this->relationsProvider
+            $this->doctrine,
+            $this->aclHelper
         );
     }
 
-    /**
-     * @return PriceListRequestHandler
-     */
-    protected function createHandler()
+    private function initEntityManager(): void
     {
-        return new PriceListRequestHandler($this->requestStack, $this->registry);
-    }
-
-    protected function initEm()
-    {
-        $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->any())
+        $this->doctrine->expects(self::any())
             ->method('getRepository')
-            ->willReturn($this->repository);
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
             ->with(PriceList::class)
-            ->willReturn($em);
+            ->willReturn($this->repository);
     }
 
-    public function testGetPriceListWithoutRequest()
+    public function testGetPriceListWithoutRequest(): void
     {
         $priceList = $this->getPriceList(2);
 
-        $this->initEm();
-        $this->repository->expects($this->once())
-            ->method('getDefault')
-            ->willReturn($priceList);
-        $this->repository->expects($this->never())->method('find');
+        $this->initEntityManager();
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
 
-        $this->assertSame($priceList, $this->createHandler()->getPriceList());
+        $this->repository->expects(self::once())
+            ->method('createQueryBuilder')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('orderBy')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('setMaxResults')
+            ->willReturn($qb);
+
+        $this->aclHelper->expects(static::once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
+        $query->expects(self::once())
+            ->method('getOneOrNullResult')
+            ->willReturn($priceList);
+
+        self::assertSame($priceList, $this->handler->getPriceList());
     }
 
-    public function testGetPriceList()
+    public function testGetPriceList(): void
     {
-        $this->initEm();
-        $this->requestStack->expects($this->any())
+        $priceList = $this->getPriceList(2);
+
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+
+        $this->initEntityManager();
+        $this->requestStack->expects(self::exactly(2))
             ->method('getCurrentRequest')
             ->willReturn($this->request);
 
-        $priceList = $this->getPriceList(2);
-
-        $this->request->expects($this->exactly(2))->method('get')->with(PriceListRequestHandler::PRICE_LIST_KEY)
+        $this->request->expects(self::exactly(2))
+            ->method('get')
+            ->with(PriceListRequestHandler::PRICE_LIST_KEY)
             ->willReturn($priceList->getId());
 
-        $this->repository->expects($this->once())->method('find')->with($priceList->getId())->willReturn($priceList);
-        $this->repository->expects($this->never())->method('getDefault');
-        $handler = $this->createHandler();
-        $this->assertSame($priceList, $handler->getPriceList());
+        $this->repository->expects(self::once())
+            ->method('createQueryBuilder')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('where')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('setParameter')
+            ->willReturn($qb);
+
+        $this->aclHelper->expects(static::once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
+        $query->expects(self::once())
+            ->method('getOneOrNullResult')
+            ->willReturn($priceList);
+
+        $handler = $this->handler;
+        self::assertSame($priceList, $handler->getPriceList());
 
         // cache
-        $this->assertSame($priceList, $handler->getPriceList());
+        self::assertSame($priceList, $handler->getPriceList());
     }
 
-    public function testDefaultPriceListNotFound()
+    public function testPriceListNotFound(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Default PriceList not found');
+        $this->expectExceptionMessage('PriceList not found');
 
-        $this->initEm();
-        $this->repository->expects($this->once())->method('getDefault')->willReturn(null);
-        $this->repository->expects($this->never())->method('find');
-        $this->createHandler()->getPriceList();
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+
+        $this->initEntityManager();
+
+        $this->repository->expects(self::once())
+            ->method('createQueryBuilder')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('orderBy')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('setMaxResults')
+            ->willReturn($qb);
+
+        $this->aclHelper->expects(static::once())
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
+        $query->expects(self::once())
+            ->method('getOneOrNullResult')
+            ->willReturn(null);
+
+        $this->handler->getPriceList();
     }
 
-    public function testGetPriceListNotFound()
+    public function testGetPriceListNotFound(): void
     {
         $priceList = $this->getPriceList(2);
 
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
-        $this->request->expects($this->once())->method('get')->with(PriceListRequestHandler::PRICE_LIST_KEY)
+        $qb = $this->createMock(QueryBuilder::class);
+        $query = $this->createMock(AbstractQuery::class);
+
+        $this->initEntityManager();
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(PriceListRequestHandler::PRICE_LIST_KEY)
             ->willReturn($priceList->getId());
 
-        $this->initEm();
-        $this->repository->expects($this->once())->method('find')->with($priceList->getId())->willReturn(null);
-        $this->repository->expects($this->once())->method('getDefault')->willReturn($priceList);
-        $this->assertSame($priceList, $this->createHandler()->getPriceList());
+        $this->repository->expects(self::exactly(2))
+            ->method('createQueryBuilder')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('where')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('setParameter')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('setMaxResults')
+            ->willReturn($qb);
+
+        $qb->expects(self::once())
+            ->method('orderBy')
+            ->willReturn($qb);
+
+        $this->aclHelper->expects(static::exactly(2))
+            ->method('apply')
+            ->with($qb)
+            ->willReturn($query);
+
+        $query->expects(self::exactly(2))
+            ->method('getOneOrNullResult')
+            ->willReturnOnConsecutiveCalls(null, $priceList);
+
+        self::assertSame($priceList, $this->handler->getPriceList());
     }
 
-    public function testGetPriceListCurrenciesWithoutRequest()
+    public function testGetPriceListCurrenciesWithoutRequest(): void
     {
         $priceList = $this->getPriceList(2, ['USD']);
-        $this->requestStack->expects($this->any())
+        $this->requestStack->expects(self::any())
             ->method('getCurrentRequest')
             ->willReturn(null);
-        $this->assertSame(['USD'], $this->createHandler()->getPriceListSelectedCurrencies($priceList));
+        self::assertSame(['USD'], $this->handler->getPriceListSelectedCurrencies($priceList));
     }
 
     /**
      * @dataProvider getPriceListCurrenciesDataProvider
-     *
-     * @param string $paramValue
-     * @param array $currencies
-     * @param array $expected
      */
-    public function testGetPriceListCurrenciesWithRequest($paramValue, array $currencies = [], array $expected = [])
-    {
-        $this->requestStack->expects($this->any())
+    public function testGetPriceListCurrenciesWithRequest(
+        mixed $paramValue,
+        array $currencies = [],
+        array $expected = []
+    ): void {
+        $this->requestStack->expects(self::any())
             ->method('getCurrentRequest')
             ->willReturn($this->request);
 
-        $this->request->expects($this->atLeastOnce())
+        $this->request->expects(self::atLeastOnce())
             ->method('get')
-            ->willReturnMap(
-                [
-                    [PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, $paramValue],
-                ]
-            );
+            ->willReturnMap([
+                [PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, $paramValue],
+            ]);
 
-        $this->assertEquals(
+        self::assertEquals(
             $expected,
-            $this->createHandler()->getPriceListSelectedCurrencies($this->getPriceList(42, $currencies))
+            $this->handler->getPriceListSelectedCurrencies($this->getPriceList(42, $currencies))
         );
     }
 
-    /**
-     * @dataProvider getPriceListKeysDataProvider
-     *
-     * @param mixed $paramValue
-     */
-    public function testGetPriceListCurrenciesWithRequestValueInvalid($paramValue)
+    public function testGetPriceListCurrenciesWithSessionParam(): void
     {
-        $priceList = $this->getPriceList(2);
-
-        $this->initEm();
-        $this->repository->expects($this->once())
-            ->method('getDefault')
-            ->willReturn($priceList);
-
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($this->request);
 
-        $this->request->expects($this->once())
-            ->method('get')
-            ->with(PriceListRequestHandler::PRICE_LIST_KEY)
-            ->willReturn($paramValue);
-
-        $this->assertSame($priceList, $this->createHandler()->getPriceList());
-    }
-
-    /**
-     * @return array
-     */
-    public function getPriceListKeysDataProvider()
-    {
-        return [
-            'passing boolean value should return null' => [true],
-            'no decimals are allowed' => [5.5],
-            'no strings are allowed' => ['string'],
-            'even string which could be casted to int' => ['22'],
-        ];
-    }
-
-    public function testGetPriceListCurrenciesWithSessionParam()
-    {
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-
-        $this->session->expects($this->once())
+        $this->session->expects(self::once())
             ->method('has')
             ->with(PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY)
             ->willReturn(true);
 
-        $this->session->expects($this->once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with(PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY)
             ->willReturn('USD');
 
-        $this->assertEquals(
+        self::assertEquals(
             ['USD'],
-            $this->createHandler()->getPriceListSelectedCurrencies($this->getPriceList(42, ['USD', 'EUR']))
+            $this->handler->getPriceListSelectedCurrencies($this->getPriceList(42, ['USD', 'EUR']))
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceListCurrenciesDataProvider()
+    public function getPriceListCurrenciesDataProvider(): array
     {
         return [
             'no currencies on initial state' => [
@@ -328,42 +324,34 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetShowTierPricesWithoutRequest()
+    public function testGetShowTierPricesWithoutRequest(): void
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn(null);
 
-        $this->assertFalse($this->createHandler()->getShowTierPrices());
+        self::assertFalse($this->handler->getShowTierPrices());
     }
 
     /**
      * @dataProvider getGetShowTierPricesDataProvider
-     *
-     * @param mixed $paramValue
-     * @param bool $expected
      */
-    public function testGetShowTierPricesWithRequest($paramValue, $expected)
+    public function testGetShowTierPricesWithRequest(mixed $paramValue, bool $expected)
     {
-        $this->requestStack->expects($this->any())
+        $this->requestStack->expects(self::any())
             ->method('getCurrentRequest')
             ->willReturn($this->request);
 
-        $this->request->expects($this->atLeastOnce())
+        $this->request->expects(self::atLeastOnce())
             ->method('get')
-            ->willReturnMap(
-                [
-                    [PriceListRequestHandler::TIER_PRICES_KEY, null, $paramValue],
-                ]
-            );
+            ->willReturnMap([
+                [PriceListRequestHandler::TIER_PRICES_KEY, null, $paramValue],
+            ]);
 
-        $this->assertEquals($expected, $this->createHandler()->getShowTierPrices());
+        self::assertEquals($expected, $this->handler->getShowTierPrices());
     }
 
-    /**
-     * @return array
-     */
-    public function getGetShowTierPricesDataProvider()
+    public function getGetShowTierPricesDataProvider(): array
     {
         return [
             [
@@ -393,14 +381,10 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int $id
-     * @param array $currencies
-     * @return PriceList
-     */
-    protected function getPriceList($id, array $currencies = [])
+    private function getPriceList(int $id, array $currencies = []): PriceList
     {
-        $priceList = $this->getEntity(PriceList::class, ['id' => $id]);
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
         $priceList->setCurrencies($currencies);
 
         return $priceList;

@@ -10,24 +10,17 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 
 class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingMethodProviderMock;
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
 
-    /**
-     * @var ShippingMethodViewFactory
-     */
+    /** @var ShippingMethodViewFactory */
     private $shippingMethodViewFactory;
 
     protected function setUp(): void
     {
-        $this->shippingMethodProviderMock = $this
-            ->getMockBuilder(ShippingMethodProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
-        $this->shippingMethodViewFactory = new ShippingMethodViewFactory($this->shippingMethodProviderMock);
+        $this->shippingMethodViewFactory = new ShippingMethodViewFactory($this->shippingMethodProvider);
     }
 
     public function testCreateMethodView()
@@ -75,28 +68,21 @@ class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
         $label = 'someLabel';
         $sortOrder = 5;
 
-        $methodMock = $this->getMockBuilder(ShippingMethodInterface::class)->getMock();
-
-        $methodMock
-            ->expects($this->once())
+        $method = $this->createMock(ShippingMethodInterface::class);
+        $method->expects($this->once())
             ->method('getLabel')
             ->willReturn($label);
-
-        $methodMock
-            ->expects($this->once())
+        $method->expects($this->once())
             ->method('isGrouped')
             ->willReturn($isGrouped);
-
-        $methodMock
-            ->expects($this->once())
+        $method->expects($this->once())
             ->method('getSortOrder')
             ->willReturn($sortOrder);
 
-        $this->shippingMethodProviderMock
-            ->expects($this->once())
+        $this->shippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
-            ->willReturn($methodMock);
+            ->willReturn($method);
 
         $expected = [
             'identifier' => $methodId,
@@ -114,8 +100,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $methodId = 'someMethodId';
 
-        $this->shippingMethodProviderMock
-            ->expects($this->once())
+        $this->shippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
             ->willReturn(null);
@@ -133,30 +118,23 @@ class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
         $sortOrder = 5;
         $price = Price::create(5, 'USD');
 
-        $methodTypeMock = $this->getMockBuilder(ShippingMethodTypeInterface::class)->getMock();
-
-        $methodTypeMock
-            ->expects($this->once())
+        $methodType = $this->createMock(ShippingMethodTypeInterface::class);
+        $methodType->expects($this->once())
             ->method('getLabel')
             ->willReturn($label);
-
-        $methodTypeMock
-            ->expects($this->once())
+        $methodType->expects($this->once())
             ->method('getSortOrder')
             ->willReturn($sortOrder);
 
-        $methodMock = $this->getMockBuilder(ShippingMethodInterface::class)->getMock();
-
-        $methodMock
-            ->expects($this->once())
+        $method = $this->createMock(ShippingMethodInterface::class);
+        $method->expects($this->once())
             ->method('getType')
-            ->willReturn($methodTypeMock);
+            ->willReturn($methodType);
 
-        $this->shippingMethodProviderMock
-            ->expects($this->once())
+        $this->shippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
-            ->willReturn($methodMock);
+            ->willReturn($method);
 
         $expected = [
             'identifier' => $methodTypeId,
@@ -180,8 +158,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
         $methodTypeId = 'someMethodTypeId';
         $price = Price::create(5, 'USD');
 
-        $this->shippingMethodProviderMock
-            ->expects($this->once())
+        $this->shippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
             ->willReturn(null);
@@ -201,18 +178,15 @@ class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
         $methodTypeId = 'someMethodTypeId';
         $price = Price::create(5, 'USD');
 
-        $methodMock = $this->getMockBuilder(ShippingMethodInterface::class)->getMock();
-
-        $methodMock
-            ->expects($this->once())
+        $method = $this->createMock(ShippingMethodInterface::class);
+        $method->expects($this->once())
             ->method('getType')
             ->willReturn(null);
 
-        $this->shippingMethodProviderMock
-            ->expects($this->once())
+        $this->shippingMethodProvider->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
-            ->willReturn($methodMock);
+            ->willReturn($method);
 
         $actual = $this->shippingMethodViewFactory->createMethodTypeViewByShippingMethodAndPrice(
             $methodId,

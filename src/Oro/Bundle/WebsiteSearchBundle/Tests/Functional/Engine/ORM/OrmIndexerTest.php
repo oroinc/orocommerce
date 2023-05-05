@@ -3,13 +3,11 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
@@ -34,9 +32,6 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     /** @var OrmIndexer */
     protected $indexer;
 
-    /** @var ManagerRegistry */
-    private $doctrine;
-
     public static function checkSearchEngine(WebTestCase $webTestCase)
     {
         $engine = $webTestCase->getContainer()
@@ -47,12 +42,18 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         }
     }
 
-    protected function preSetUp()
+    /**
+     * {@inheritDoc}
+     */
+    protected function preSetUp(): void
     {
         $this->checkEngine();
     }
 
-    protected function preTearDown()
+    /**
+     * {@inheritDoc}
+     */
+    protected function preTearDown(): void
     {
         $this->checkEngine();
     }
@@ -63,9 +64,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getResultItems(array $options)
+    protected function getResultItems(array $options): array
     {
         return $this->getRepository(Item::class)->findBy(['alias' => $options['alias']]);
     }
@@ -74,28 +75,26 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     {
         parent::setUp();
 
-        $this->mappingProviderMock = $this->getMockBuilder(SearchMappingProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->mappingProvider = $this->createMock(SearchMappingProvider::class);
 
-        /** @var WebsiteRepository $repo */
-        $repo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepository(Website::class);
         $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
         $websiteProvider->expects($this->any())
             ->method('getWebsiteIds')
-            ->willReturnCallback(function () use ($repo) {
-                return $repo->getWebsiteIdentifiers();
+            ->willReturnCallback(function () {
+                return $this->doctrineHelper->getEntityRepositoryForClass(Website::class)->getWebsiteIdentifiers();
             });
 
         $inputValidator = new IndexerInputValidator(
             $websiteProvider,
-            $this->mappingProviderMock,
-            self::getContainer()->get('doctrine')
+            $this->mappingProvider,
+            self::getContainer()->get('doctrine'),
+            $this->getContainer()->get('oro_website_search.reindexation_website_provider'),
+            $this->getContainer()->get('oro_security.token_accessor'),
         );
 
         $this->indexer = new OrmIndexer(
             $this->doctrineHelper,
-            $this->mappingProviderMock,
+            $this->mappingProvider,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
             $this->getContainer()->get('oro_website_search.engine.text_filtered_index_data'),
             $this->getContainer()->get('oro_website_search.placeholder_decorator'),
@@ -105,7 +104,6 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         );
 
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
-        $this->doctrine = $this->getContainer()->get('doctrine');
     }
 
     protected function tearDown(): void
@@ -114,9 +112,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function assertItemsCount($expectedCount)
+    protected function assertItemsCount(int $expectedCount): void
     {
         $this->assertEntityCount($expectedCount, Item::class);
     }
@@ -139,7 +137,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     private function getRepository(string $entity): EntityRepository
     {
-        return $this->doctrine->getRepository($entity, 'search');
+        return $this->getContainer()->get('doctrine')->getRepository($entity, 'search');
     }
 
     public function testResetIndexOfCertainClass()
@@ -175,8 +173,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     public function testDeleteWhenEntityIdsArrayIsEmpty()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock
-            ->expects($this->never())
+        $this->mappingProvider->expects($this->never())
             ->method('getEntityAlias');
 
         $this->indexer->delete([], [AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]]);
@@ -191,8 +188,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     public function testDeleteWhenProductEntitiesForSpecificWebsiteRemoved()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);
@@ -220,8 +216,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     public function testDeleteWhenProductEntitiesForSpecificWebsiteRemovedWithABatch()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);
@@ -249,8 +244,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     public function testDeleteWhenProductEntitiesForAllWebsitesRemoved()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);
@@ -291,8 +285,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     public function testReindexForDeletedEntity()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);
@@ -303,7 +296,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->indexer->reindex(TestProduct::class);
         $removedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $removedProductId = $removedProduct->getId();
-        $em = $this->doctrineHelper->getEntityManager(TestProduct::class);
+        $em = $this->doctrineHelper->getEntityManagerForClass(TestProduct::class);
         $em->remove($removedProduct);
         $em->flush();
         $this->indexer->reindex(
@@ -323,8 +316,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     {
         $this->loadFixtures([LoadItemData::class]);
 
-        $this->mappingProviderMock
-            ->expects($this->once())
+        $this->mappingProvider->expects($this->once())
             ->method('getEntityClasses')
             ->willReturn([TestProduct::class, TestEmployee::class]);
 
@@ -344,8 +336,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->setGetEntityConfigExpectation();
         $this->setListener();
 
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('getEntityClasses')
             ->willReturn([TestProduct::class]);
 

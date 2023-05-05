@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutWorkflowStatesListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -12,32 +13,21 @@ class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit\Framework\TestCa
 {
     use EntityTrait;
 
-    const CHECKOUT_WORKFLOW_STATE_CLASS = 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState';
+    private const CHECKOUT_WORKFLOW_STATE_CLASS = CheckoutWorkflowState::class;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var CheckoutWorkflowStateRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutWorkflowStateRepository;
+    /** @var CheckoutWorkflowStateRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutWorkflowStateRepository;
 
-    /**
-     * @var RemoveCheckoutWorkflowStatesListener
-     */
-    protected $listener;
+    /** @var RemoveCheckoutWorkflowStatesListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->checkoutWorkflowStateRepository = $this->getMockBuilder(CheckoutWorkflowStateRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->checkoutWorkflowStateRepository = $this->createMock(CheckoutWorkflowStateRepository::class);
 
         $this->listener = new RemoveCheckoutWorkflowStatesListener(
             $this->doctrineHelper,
@@ -45,28 +35,18 @@ class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit\Framework\TestCa
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->checkoutWorkflowStateRepository, $this->doctrineHelper);
-    }
-
     public function testPreRemove()
     {
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
             ->with(self::CHECKOUT_WORKFLOW_STATE_CLASS)
             ->willReturn($this->checkoutWorkflowStateRepository);
 
         $checkout = $this->getEntity(Checkout::class, ['id' => 1]);
 
-        $this->checkoutWorkflowStateRepository
-            ->expects($this->once())
+        $this->checkoutWorkflowStateRepository->expects($this->once())
             ->method('deleteEntityStates')
-            ->with(
-                1,
-                'Oro\Bundle\CheckoutBundle\Entity\Checkout'
-            );
+            ->with(1, Checkout::class);
 
         $this->listener->preRemove($checkout);
     }

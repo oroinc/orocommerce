@@ -8,53 +8,45 @@ use Oro\Bundle\TaxBundle\Entity\Tax;
 
 class LoadTaxes extends AbstractFixture
 {
-    const TAX_1 = 'TAX1';
-    const TAX_2 = 'TAX2';
-    const TAX_3 = 'TAX3';
-    const TAX_4 = 'TAX4';
+    public const REFERENCE_PREFIX = 'tax';
 
-    const DESCRIPTION_1 = 'Tax description 1';
-    const DESCRIPTION_2 = 'Tax description 2';
-    const DESCRIPTION_3 = 'Tax description 3';
-    const DESCRIPTION_4 = 'Tax description 4';
+    public const TAX_1 = 'TAX1';
+    public const TAX_2 = 'TAX2';
+    public const TAX_3 = 'TAX3';
+    public const TAX_4 = 'TAX4';
 
-    const RATE_1 = 0.104;
-    const RATE_2 = 0.2;
-    const RATE_3 = 0.075;
-    const RATE_4 = 0.9;
-
-    const REFERENCE_PREFIX = 'tax';
+    private const DATA = [
+        self::TAX_1 => [
+            'description' => 'Tax description 1',
+            'rate'        => 0.104
+        ],
+        self::TAX_2 => [
+            'description' => 'Tax description 2',
+            'rate'        => 0.2
+        ],
+        self::TAX_3 => [
+            'description' => 'Tax description 3',
+            'rate'        => 0.075
+        ],
+        self::TAX_4 => [
+            'description' => 'Tax description 4',
+            'rate'        => 0.9
+        ]
+    ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $this->createTax($manager, self::TAX_1, self::DESCRIPTION_1, self::RATE_1);
-        $this->createTax($manager, self::TAX_2, self::DESCRIPTION_2, self::RATE_2);
-        $this->createTax($manager, self::TAX_3, self::DESCRIPTION_3, self::RATE_3);
-        $this->createTax($manager, self::TAX_4, self::DESCRIPTION_4, self::RATE_4);
-
+        foreach (self::DATA as $code => $item) {
+            $tax = new Tax();
+            $tax->setCode($code);
+            $tax->setDescription($item['description']);
+            $tax->setRate($item['rate']);
+            $manager->persist($tax);
+            $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $tax);
+        }
         $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string        $code
-     * @param string        $description
-     * @param int           $rate
-     * @return Tax
-     */
-    protected function createTax(ObjectManager $manager, $code, $description, $rate)
-    {
-        $tax = new Tax();
-        $tax->setCode($code);
-        $tax->setDescription($description);
-        $tax->setRate($rate);
-
-        $manager->persist($tax);
-        $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $tax);
-
-        return $tax;
     }
 }

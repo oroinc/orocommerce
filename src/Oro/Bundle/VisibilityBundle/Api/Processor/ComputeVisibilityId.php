@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
-use Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper;
+use Oro\Bundle\VisibilityBundle\Api\VisibilityIdUtil;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -12,18 +12,10 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeVisibilityId implements ProcessorInterface
 {
-    /** @var VisibilityIdHelper */
-    private $visibilityIdHelper;
-
-    public function __construct(VisibilityIdHelper $visibilityIdHelper)
-    {
-        $this->visibilityIdHelper = $visibilityIdHelper;
-    }
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -37,7 +29,7 @@ class ComputeVisibilityId implements ProcessorInterface
             $visibilityId[$propertyPath] = $context->getResultFieldValueByPropertyPath($propertyPath, $data);
         }
 
-        $data['id'] = $this->visibilityIdHelper->encodeVisibilityId($visibilityId, $idFieldConfig);
+        $data['id'] = VisibilityIdUtil::encodeVisibilityId($visibilityId, $idFieldConfig);
         $context->setData($data);
     }
 }

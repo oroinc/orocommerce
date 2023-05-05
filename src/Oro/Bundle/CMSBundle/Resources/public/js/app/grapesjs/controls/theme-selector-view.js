@@ -30,13 +30,13 @@ define(function(require) {
             ThemeSelector.__super__.constructor.call(this, options);
         },
 
-        initialize: function(options) {
+        initialize(options) {
             this.setCurrentTheme();
 
             ThemeSelector.__super__.initialize.call(this, options);
         },
 
-        render: function() {
+        render() {
             const data = this.getTemplateData();
             const template = this.getTemplateFunction();
             const html = template(data);
@@ -45,7 +45,7 @@ define(function(require) {
             this.$el.inputWidget('seekAndCreate');
         },
 
-        getTemplateData: function() {
+        getTemplateData() {
             const options = _.reduce(this.themes, function(options, theme) {
                 options[theme.name] = theme.label;
                 return options;
@@ -57,13 +57,13 @@ define(function(require) {
             };
         },
 
-        filterItems: function(str) {
+        filterItems(str) {
             this.$el.find('[data-role="filterable-item"]').each(function(index, el) {
                 $(el).toggle($(el).text().toLowerCase().indexOf(str.toLowerCase()) !== -1);
             });
         },
 
-        setCurrentTheme: function(key) {
+        setCurrentTheme(key) {
             if (key) {
                 _.each(this.themes, function(theme) {
                     theme.active = theme.name === key;
@@ -75,7 +75,7 @@ define(function(require) {
             });
         },
 
-        onClick: function(e) {
+        onClick(e) {
             const key = $(e.target).data('key');
             if (key === this.currentTheme) {
                 return;
@@ -87,7 +87,7 @@ define(function(require) {
             this.render();
         },
 
-        onInput: function(e) {
+        onInput(e) {
             this.filterItems(e.target.value);
         }
     });

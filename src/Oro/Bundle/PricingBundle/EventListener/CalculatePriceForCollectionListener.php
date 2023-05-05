@@ -7,19 +7,12 @@ use Oro\Bundle\PricingBundle\Provider\QuickAddCollectionPriceProvider;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 
 /**
- * Adds price info to price provider
+ * Adds prices to QuickAddRowCollection.
  */
 class CalculatePriceForCollectionListener
 {
-    /**
-     * @var ProductPriceScopeCriteriaRequestHandler
-     */
-    private $scopeCriteriaRequestHandler;
-
-    /**
-     * @var QuickAddCollectionPriceProvider
-     */
-    private $quickAddCollectionPriceProvider;
+    private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler;
+    private QuickAddCollectionPriceProvider $quickAddCollectionPriceProvider;
 
     public function __construct(
         QuickAddCollectionPriceProvider $quickAddCollectionPriceProvider,
@@ -29,12 +22,12 @@ class CalculatePriceForCollectionListener
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
     }
 
-    public function onQuickAddRowsCollectionReady(QuickAddRowsCollectionReadyEvent $quickAddRowsCollectionReadyEvent)
-    {
+    public function onQuickAddRowsCollectionReady(
+        QuickAddRowsCollectionReadyEvent $quickAddRowsCollectionReadyEvent
+    ): void {
         $quickAddRowsCollection = $quickAddRowsCollectionReadyEvent->getCollection();
-
         if (!$quickAddRowsCollection->isEmpty()) {
-            $this->quickAddCollectionPriceProvider->addPrices(
+            $this->quickAddCollectionPriceProvider->addAllPrices(
                 $quickAddRowsCollection,
                 $this->scopeCriteriaRequestHandler->getPriceScopeCriteria()
             );

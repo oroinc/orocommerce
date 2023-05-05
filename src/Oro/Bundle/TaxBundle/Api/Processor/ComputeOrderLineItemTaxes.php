@@ -31,11 +31,8 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
         OrderLineItemTaxesProvider::TAXES
     ];
 
-    /** @var OrderLineItemTaxesProvider */
-    private $lineItemTaxesProvider;
-
-    /** @var ValueTransformer */
-    private $valueTransformer;
+    private OrderLineItemTaxesProvider $lineItemTaxesProvider;
+    private ValueTransformer $valueTransformer;
 
     public function __construct(
         OrderLineItemTaxesProvider $lineItemTaxesProvider,
@@ -48,7 +45,7 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -75,7 +72,7 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
         foreach ($data as $key => $item) {
             $lineItemId = $item[$lineItemIdFieldName];
             $lineItemTaxes = [];
-            if (array_key_exists($lineItemId, $allTaxes)) {
+            if (\array_key_exists($lineItemId, $allTaxes)) {
                 $lineItemTaxes = $allTaxes[$lineItemId];
             }
             foreach (self::FIELD_NAMES as $fieldName) {
@@ -88,14 +85,7 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
         return $data;
     }
 
-    /**
-     * @param array  $lineItemTaxes
-     * @param string $fieldName
-     * @param array  $normalizationContext
-     *
-     * @return mixed
-     */
-    private function getFieldValue(array $lineItemTaxes, string $fieldName, array $normalizationContext)
+    private function getFieldValue(array $lineItemTaxes, string $fieldName, array $normalizationContext): mixed
     {
         $result = $lineItemTaxes[$fieldName] ?? null;
         if (OrderLineItemTaxesProvider::TAXES !== $fieldName) {

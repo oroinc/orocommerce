@@ -17,15 +17,12 @@ class OrderTaxesProvider
 {
     public const TOTAL_INCLUDING_TAX = 'totalIncludingTax';
     public const TOTAL_EXCLUDING_TAX = 'totalExcludingTax';
-    public const TOTAL_TAX_AMOUNT    = 'totalTaxAmount';
+    public const TOTAL_TAX_AMOUNT = 'totalTaxAmount';
 
     private const TAXES_CONTEXT_KEY = '_taxes';
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var TaxationSettingsProvider */
-    private $taxationSettingsProvider;
+    private DoctrineHelper $doctrineHelper;
+    private TaxationSettingsProvider $taxationSettingsProvider;
 
     public function __construct(DoctrineHelper $doctrineHelper, TaxationSettingsProvider $taxationSettingsProvider)
     {
@@ -60,7 +57,7 @@ class OrderTaxesProvider
             $allTaxes = $this->loadTaxes($orderIds);
             foreach ($orderIds as $orderId) {
                 $taxes = [];
-                if (array_key_exists($orderId, $allTaxes)) {
+                if (\array_key_exists($orderId, $allTaxes)) {
                     $taxes = $allTaxes[$orderId];
                 }
 
@@ -87,17 +84,10 @@ class OrderTaxesProvider
         return $result;
     }
 
-    /**
-     * @param array  $taxes
-     * @param string $valueType
-     * @param string $valueName
-     *
-     * @return mixed
-     */
-    private function getTaxValue(array $taxes, string $valueType, string $valueName)
+    private function getTaxValue(array $taxes, string $valueType, string $valueName): mixed
     {
         $result = null;
-        if (!empty($taxes[$valueType]) && array_key_exists($valueName, $taxes[$valueType])) {
+        if (!empty($taxes[$valueType]) && \array_key_exists($valueName, $taxes[$valueType])) {
             $result = $taxes[$valueType][$valueName];
         }
 

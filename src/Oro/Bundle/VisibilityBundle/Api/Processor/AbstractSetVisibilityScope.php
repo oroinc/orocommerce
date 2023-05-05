@@ -25,14 +25,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class AbstractSetVisibilityScope implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
-
-    /** @var TranslatorInterface */
-    private $translator;
+    private DoctrineHelper $doctrineHelper;
+    private WebsiteManager $websiteManager;
+    private TranslatorInterface $translator;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -47,7 +42,7 @@ abstract class AbstractSetVisibilityScope implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 
@@ -75,11 +70,17 @@ abstract class AbstractSetVisibilityScope implements ProcessorInterface
 
     abstract protected function getExistingVisibilitySearchCriteria(VisibilityInterface $entity, Scope $scope): array;
 
+    abstract protected function isExistingVisibilityCheckApplicable(VisibilityInterface $entity): bool;
+
     private function isVisibilityExists(
         string $visibilityEntityClass,
         VisibilityInterface $entity,
         Scope $scope
     ): bool {
+        if (!$this->isExistingVisibilityCheckApplicable($entity)) {
+            return false;
+        }
+
         $criteria = $this->getExistingVisibilitySearchCriteria($entity, $scope);
         $qb = $this->doctrineHelper->createQueryBuilder($visibilityEntityClass, 'e')
             ->select('e.id');

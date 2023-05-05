@@ -16,44 +16,27 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingMethodValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingMethodValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $parentShippingMethodValidator;
 
-    /**
-     * @var Common\CommonShippingMethodValidatorResultErrorFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Common\CommonShippingMethodValidatorResultErrorFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $errorFactory;
 
-    /**
-     * @var NonDeletableMethodTypeIdentifiersProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var NonDeletableMethodTypeIdentifiersProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $nonDeletableTypeIdentifiersProvider;
 
-    /**
-     * @var MethodTypeLabelsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MethodTypeLabelsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $methodTypeLabelsProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var Validator\EnabledShippingMethodsByRules\EnabledShippingMethodsByRulesShippingMethodValidatorDecorator
-     */
+    /** @var Validator\EnabledShippingMethodsByRules\EnabledShippingMethodsByRulesShippingMethodValidatorDecorator */
     private $validator;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->parentShippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);
@@ -80,35 +63,35 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
 
     public function testValidateNoIdentifier()
     {
-        $method = $this->getShippingMethodMock();
+        $method = $this->createMock(ShippingMethodInterface::class);
 
         $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
 
-        $this->parentShippingMethodValidator->expects(static::once())
+        $this->parentShippingMethodValidator->expects(self::once())
             ->method('validate')
             ->with($method)
             ->willReturn($result);
 
-        $this->nonDeletableTypeIdentifiersProvider->expects(static::once())
+        $this->nonDeletableTypeIdentifiersProvider->expects(self::once())
             ->method('getMethodTypeIdentifiers')
             ->with($method)
             ->willReturn([]);
 
-        static::assertSame($result, $this->validator->validate($method));
+        self::assertSame($result, $this->validator->validate($method));
     }
 
     public function testValidateLabelException()
     {
         $methodId = 'method_1';
 
-        $method = $this->getShippingMethodMock();
-        $method->expects(static::once())
+        $method = $this->createMock(ShippingMethodInterface::class);
+        $method->expects(self::once())
             ->method('getIdentifier')
             ->willReturn($methodId);
 
         $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
 
-        $this->parentShippingMethodValidator->expects(static::once())
+        $this->parentShippingMethodValidator->expects(self::once())
             ->method('validate')
             ->with($method)
             ->willReturn($result);
@@ -117,7 +100,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
             'type_1',
         ];
 
-        $this->nonDeletableTypeIdentifiersProvider->expects(static::once())
+        $this->nonDeletableTypeIdentifiersProvider->expects(self::once())
             ->method('getMethodTypeIdentifiers')
             ->with($method)
             ->willReturn($typeIdentifiers);
@@ -126,12 +109,12 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
 
         $exception = new InvalidArgumentException($errorMessage);
 
-        $this->methodTypeLabelsProvider->expects(static::once())
+        $this->methodTypeLabelsProvider->expects(self::once())
             ->method('getLabels')
             ->with($methodId, $typeIdentifiers)
             ->willThrowException($exception);
 
-        $this->logger->expects(static::once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 $errorMessage,
@@ -141,21 +124,21 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
                 ]
             );
 
-        static::assertSame($result, $this->validator->validate($method));
+        self::assertSame($result, $this->validator->validate($method));
     }
 
     public function testValidate()
     {
         $methodId = 'method_1';
 
-        $method = $this->getShippingMethodMock();
-        $method->expects(static::once())
+        $method = $this->createMock(ShippingMethodInterface::class);
+        $method->expects(self::once())
             ->method('getIdentifier')
             ->willReturn($methodId);
 
         $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
 
-        $this->parentShippingMethodValidator->expects(static::once())
+        $this->parentShippingMethodValidator->expects(self::once())
             ->method('validate')
             ->with($method)
             ->willReturn($result);
@@ -170,19 +153,19 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
             'Label 2',
         ];
 
-        $this->nonDeletableTypeIdentifiersProvider->expects(static::once())
+        $this->nonDeletableTypeIdentifiersProvider->expects(self::once())
             ->method('getMethodTypeIdentifiers')
             ->with($method)
             ->willReturn($typeIdentifiers);
 
-        $this->methodTypeLabelsProvider->expects(static::once())
+        $this->methodTypeLabelsProvider->expects(self::once())
             ->method('getLabels')
             ->with($methodId, $typeIdentifiers)
             ->willReturn($typeLabels);
 
         $translatedMessage = 'validation message';
 
-        $this->translator->expects(static::once())
+        $this->translator->expects(self::once())
             ->method('trans')
             ->with(
                 'oro.shipping.method_type.used.error',
@@ -190,21 +173,17 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
             )
             ->willReturn($translatedMessage);
 
-        $clonedAndBuiltErrorCollection = $this->createErrorCollectionMock($result, $translatedMessage);
+        $clonedAndBuiltErrorCollection = $this->createErrorCollection($result, $translatedMessage);
 
-        $errorResult = $this->createErrorResultMock($result, $clonedAndBuiltErrorCollection);
+        $errorResult = $this->createErrorResult($result, $clonedAndBuiltErrorCollection);
 
-        static::assertSame($errorResult, $this->validator->validate($method));
+        self::assertSame($errorResult, $this->validator->validate($method));
     }
 
-    /**
-     * @param \PHPUnit\Framework\MockObject\MockObject $result
-     * @param string                                         $translatedMessage
-     *
-     * @return Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createErrorCollectionMock(\PHPUnit\Framework\MockObject\MockObject $result, $translatedMessage)
-    {
+    private function createErrorCollection(
+        ShippingMethodValidatorResultInterface|\PHPUnit\Framework\MockObject\MockObject $result,
+        string $translatedMessage
+    ): Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface {
         $errorCollection = $this->createMock(
             Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface::class
         );
@@ -213,27 +192,27 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
             Builder\Common\CommonShippingMethodValidatorResultErrorCollectionBuilderInterface::class
         );
 
-        $errorCollection->expects(static::once())
+        $errorCollection->expects(self::once())
             ->method('createCommonBuilder')
             ->willReturn($builder);
 
-        $result->expects(static::any())
+        $result->expects(self::any())
             ->method('getErrors')
             ->willReturn($errorCollection);
 
         $error = $this->createMock(Validator\Result\Error\ShippingMethodValidatorResultErrorInterface::class);
 
-        $this->errorFactory->expects(static::once())
+        $this->errorFactory->expects(self::once())
             ->method('createError')
             ->with($translatedMessage)
             ->willReturn($error);
 
-        $builder->expects(static::once())
+        $builder->expects(self::once())
             ->method('cloneAndBuild')
             ->with($errorCollection)
             ->willReturn($builder);
 
-        $builder->expects(static::once())
+        $builder->expects(self::once())
             ->method('addError')
             ->with($error)
             ->willReturn($builder);
@@ -242,66 +221,32 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
             Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface::class
         );
 
-        $builder->expects(static::once())
+        $builder->expects(self::once())
             ->method('getCollection')
             ->willReturn($clonedAndBuiltErrorCollection);
 
         return $clonedAndBuiltErrorCollection;
     }
 
-    /**
-     * @param \PHPUnit\Framework\MockObject\MockObject                                                $result
-     * @param Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $errorCollection
-     *
-     * @return ShippingMethodValidatorResultInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createErrorResultMock(
-        \PHPUnit\Framework\MockObject\MockObject $result,
+    private function createErrorResult(
+        ShippingMethodValidatorResultInterface|\PHPUnit\Framework\MockObject\MockObject $result,
         Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $errorCollection
-    ) {
+    ): ShippingMethodValidatorResultInterface {
         $resultFactory = $this->createMock(
             Validator\Result\Factory\Common\CommonShippingMethodValidatorResultFactoryInterface::class
         );
 
-        $result->expects(static::once())
+        $result->expects(self::once())
             ->method('createCommonFactory')
             ->willReturn($resultFactory);
 
         $errorResult = $this->createMock(ShippingMethodValidatorResultInterface::class);
 
-        $resultFactory->expects(static::once())
+        $resultFactory->expects(self::once())
             ->method('createErrorResult')
             ->with($errorCollection)
             ->willReturn($errorResult);
 
         return $errorResult;
-    }
-
-    /**
-     * @param string   $methodIdentifier
-     * @param string[] $methodTypeIdentifiers
-     *
-     * @return string[]
-     */
-    private function getShippingMethodTypesLabels($methodIdentifier, array $methodTypeIdentifiers)
-    {
-        try {
-            return $this->methodTypeLabelsProvider->getLabels($methodIdentifier, $methodTypeIdentifiers);
-        } catch (InvalidArgumentException $exception) {
-            $this->logger->error($exception->getMessage(), [
-                'method_identifier' => $methodIdentifier,
-                'type_identifiers' => $methodTypeIdentifiers,
-            ]);
-
-            return [];
-        }
-    }
-
-    /**
-     * @return ShippingMethodInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getShippingMethodMock()
-    {
-        return $this->createMock(ShippingMethodInterface::class);
     }
 }

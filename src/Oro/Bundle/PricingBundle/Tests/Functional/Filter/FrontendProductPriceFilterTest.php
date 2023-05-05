@@ -15,16 +15,14 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
     {
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
-        $this->loadFixtures(
-            [
-                LoadCombinedProductPrices::class,
-                LoadCustomerUserData::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadCombinedProductPrices::class,
+            LoadCustomerUserData::class,
+        ]);
     }
 
     /**
-     * @dataProvider testProductGridProvider
+     * @dataProvider productGridProvider
      */
     public function testProductGrid(array $expected, array $filter)
     {
@@ -41,10 +39,7 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
         $this->assertSame($expected, array_column($result['data'], 'sku'));
     }
 
-    /**
-     * @return array
-     */
-    public function testProductGridProvider()
+    public function productGridProvider(): array
     {
         $sort = 'frontend-product-search-grid[_sort_by]';
         $filter = 'frontend-product-search-grid[_filter]';

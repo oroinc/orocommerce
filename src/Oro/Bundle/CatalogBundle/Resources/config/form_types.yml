@@ -3,9 +3,6 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryType'
         arguments:
             - '@router'
-        calls:
-            - [setDataClass, ['Oro\Bundle\CatalogBundle\Entity\Category']]
-            - [setProductClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
         tags:
             - { name: form.type, alias: oro_catalog_category }
 
@@ -53,3 +50,8 @@ services:
         class: Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType
         tags:
             - { name: form.type, alias: oro_catalog_category_page_variant }
+
+    oro_catalog.form.type.category_products_type:
+        class: Oro\Bundle\CatalogBundle\Form\Type\CategoryProductsType
+        tags:
+            - { name: form.type }

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 use Doctrine\ORM\Query;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListForDefaultWebsite;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -37,6 +38,7 @@ class ProductRepositoryTest extends WebTestCase
 
         $this->loadFixtures([
             LoadFrontendProductData::class,
+            LoadCombinedPriceListForDefaultWebsite::class
         ]);
 
         $this->configManager = self::getConfigManager('global');

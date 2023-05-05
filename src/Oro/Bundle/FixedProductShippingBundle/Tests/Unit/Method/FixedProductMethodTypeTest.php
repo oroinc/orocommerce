@@ -9,41 +9,31 @@ use Oro\Bundle\FixedProductShippingBundle\Method\FixedProductMethodType;
 use Oro\Bundle\FixedProductShippingBundle\Provider\ShippingCostProvider;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\TestCase;
 
-class FixedProductMethodTypeTest extends TestCase
+class FixedProductMethodTypeTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const LABEL = 'Fixed Product';
 
-    public const LABEL = 'Fixed Product';
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $roundingService;
 
-    /**
-     * @var FixedProductMethodType
-     */
-    protected FixedProductMethodType $fixedProductType;
+    /** @var ShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingCostProvider;
 
-    /**
-     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected RoundingServiceInterface $roundingService;
-
-    /**
-     * @var ShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected ShippingCostProvider $shippingCostProvider;
+    /** @var FixedProductMethodType */
+    private $fixedProductType;
 
     protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
+        $this->shippingCostProvider = $this->createMock(ShippingCostProvider::class);
+
         $this->roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);
         $this->roundingService->expects($this->any())
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
-
-        $this->shippingCostProvider = $this->createMock(ShippingCostProvider::class);
 
         $this->fixedProductType = new FixedProductMethodType(
             self::LABEL,
@@ -76,10 +66,6 @@ class FixedProductMethodTypeTest extends TestCase
     }
 
     /**
-     * @param array $options
-     * @param float $shippingCost
-     * @param float $expectedPrice
-     *
      * @dataProvider ruleConfigProvider
      */
     public function testCalculatePrice(array $options, float $shippingCost, float $expectedPrice): void
@@ -107,9 +93,6 @@ class FixedProductMethodTypeTest extends TestCase
         $this->assertEquals($context->getCurrency(), $price->getCurrency());
     }
 
-    /**
-     * @return array
-     */
     public function ruleConfigProvider(): array
     {
         return [

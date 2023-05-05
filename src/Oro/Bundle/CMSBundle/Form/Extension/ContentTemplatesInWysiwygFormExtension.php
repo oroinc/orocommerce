@@ -54,6 +54,8 @@ class ContentTemplatesInWysiwygFormExtension extends AbstractTypeExtension
         $isContentTemplatesEnabled = $options['content_templates']['enabled'] ?? false;
         if ($isContentTemplatesEnabled) {
             $pageComponentOptions = json_decode($view->vars['attr']['data-page-component-options'] ?? '', true);
+            $pageComponentOptions['builderPlugins']['content-templates']['jsmodule'] =
+                'orocms/js/app/grapesjs/plugins/content-templates';
             $pageComponentOptions['builderPlugins']['content-templates']['contentTemplatesData'] =
                 $this->contentTemplatesForWysiwygPreviewProvider->getContentTemplatesList();
             $view->vars['attr']['data-page-component-options'] = json_encode($pageComponentOptions);

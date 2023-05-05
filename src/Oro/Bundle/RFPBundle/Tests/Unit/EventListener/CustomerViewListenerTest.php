@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
 use Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\RFPBundle\EventListener\CustomerViewListener;
 
 class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
 {
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    protected $featureChecker;
-
     /** @var CustomerViewListener */
     protected $customerViewListener;
 
@@ -18,53 +16,47 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     {
         parent::setUp();
 
-        $this->featureChecker = $this->createFeatureChecker(true);
+        $featureChecker = $this->createMock(FeatureChecker::class);
+        $featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->willReturn(true);
 
-        $this->customerViewListener->setFeatureChecker($this->featureChecker);
+        $this->customerViewListener->setFeatureChecker($featureChecker);
         $this->customerViewListener->addFeature('rfp');
     }
 
     public function testOnCustomerViewDisabledFeature()
     {
-        $this->featureChecker = $this->createFeatureChecker(false);
-        $this->customerViewListener->setFeatureChecker($this->featureChecker);
+        $featureChecker = $this->createMock(FeatureChecker::class);
+        $featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->willReturn(false);
 
         $this->requestStack->expects($this->never())
             ->method('getCurrentRequest');
+
+        $this->customerViewListener->setFeatureChecker($featureChecker);
         $this->customerViewListener->onCustomerView($this->event);
     }
 
     public function testOnCustomerUserViewDisabledFeature()
     {
-        $this->featureChecker = $this->createFeatureChecker(false);
-        $this->customerViewListener->setFeatureChecker($this->featureChecker);
+        $featureChecker = $this->createMock(FeatureChecker::class);
+        $featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->willReturn(false);
 
         $this->requestStack->expects($this->never())
             ->method('getCurrentRequest');
+
+        $this->customerViewListener->setFeatureChecker($featureChecker);
         $this->customerViewListener->onCustomerUserView($this->event);
-    }
-
-    /**
-     * @param bool $isFeatureEnabled
-     * @return \PHPUnit\Framework\MockObject\MockObject|FeatureChecker
-     */
-    protected function createFeatureChecker($isFeatureEnabled)
-    {
-        $featureChecker = $this->getMockBuilder(FeatureChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $featureChecker->expects($this->any())
-            ->method('isFeatureEnabled')
-            ->willReturn($isFeatureEnabled);
-
-        return $featureChecker;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function createListenerToTest()
+    protected function createListenerToTest(): AbstractCustomerViewListener
     {
         return new CustomerViewListener(
             $this->translator,
@@ -76,7 +68,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerViewTemplate()
+    protected function getCustomerViewTemplate(): string
     {
         return '@OroRFP/Customer/rfp_view.html.twig';
     }
@@ -84,7 +76,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerLabel()
+    protected function getCustomerLabel(): string
     {
         return 'oro.rfp.datagrid.customer.label';
     }
@@ -92,7 +84,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserViewTemplate()
+    protected function getCustomerUserViewTemplate(): string
     {
         return '@OroRFP/CustomerUser/rfp_view.html.twig';
     }
@@ -100,7 +92,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserLabel()
+    protected function getCustomerUserLabel(): string
     {
         return 'oro.rfp.datagrid.customer_user.label';
     }

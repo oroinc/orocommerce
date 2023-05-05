@@ -13,14 +13,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class ComputeWYSIWYGAttributes implements ProcessorInterface
 {
-    /** @var WYSIWYGFieldsProvider */
-    private $wysiwygFieldsProvider;
-
-    /** @var WYSIWYGValueRenderer */
-    private $wysiwygValueRenderer;
-
-    /** @var string */
-    private $attributesFieldName;
+    private WYSIWYGFieldsProvider $wysiwygFieldsProvider;
+    private WYSIWYGValueRenderer $wysiwygValueRenderer;
+    private string $attributesFieldName;
 
     public function __construct(
         WYSIWYGFieldsProvider $wysiwygFieldsProvider,
@@ -35,7 +30,7 @@ class ComputeWYSIWYGAttributes implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

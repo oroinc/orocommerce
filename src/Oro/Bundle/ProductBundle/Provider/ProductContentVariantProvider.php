@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Mix into contentVariant query information about simple products & variants, for Product variant.
+ */
 class ProductContentVariantProvider implements ContentVariantProviderInterface
 {
     /**
@@ -55,5 +58,13 @@ class ProductContentVariantProvider implements ContentVariantProviderInterface
     public function getRecordId(array $item)
     {
         return $item['productId'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRecordSortOrder(array $item)
+    {
+        return null;
     }
 }

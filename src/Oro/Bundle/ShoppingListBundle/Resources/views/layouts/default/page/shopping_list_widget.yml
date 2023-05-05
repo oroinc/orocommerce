@@ -29,6 +29,16 @@ layout:
                         productsMatchedPrices: '=data["shopping_list_limit_provider"].isOnlyOneEnabled() ? data["oro_shopping_list_products"].getMatchedPrices(shoppingLists) : []'
                 main_menu_shopping_lists_dropdown_item:
                     blockType: shopping_list_dropdown_item
+                main_menu_shopping_lists_dropdown_item_image:
+                    blockType: block
+                main_menu_shopping_lists_dropdown_item_product_base:
+                    blockType: container
+                main_menu_shopping_lists_dropdown_item_product_base_total:
+                    blockType: block
+                main_menu_shopping_lists_dropdown_item_product_base_title:
+                    blockType: block
+                main_menu_shopping_lists_dropdown_item_product_base_sku:
+                    blockType: block
                 main_menu_shopping_lists_dropdown_create:
                     blockType: shopping_list_dropdown_create
                     options:
@@ -42,7 +52,12 @@ layout:
                     header_row_shopping_toggle:
                         main_menu_shopping_dropdown:
                             main_menu_shopping_lists_dropdown_container:
-                                main_menu_shopping_lists_dropdown_item: ~
+                                main_menu_shopping_lists_dropdown_item:
+                                    main_menu_shopping_lists_dropdown_item_image: ~
+                                    main_menu_shopping_lists_dropdown_item_product_base:
+                                        main_menu_shopping_lists_dropdown_item_product_base_total: ~
+                                        main_menu_shopping_lists_dropdown_item_product_base_title: ~
+                                        main_menu_shopping_lists_dropdown_item_product_base_sku: ~
                         main_menu_shopping_lists_dropdown_create: ~
 
         - '@setOption':

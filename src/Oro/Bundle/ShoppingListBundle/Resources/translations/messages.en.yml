@@ -49,6 +49,7 @@ oro:
             add_to_shopping_list.label: Add to Shopping List
             create_new_shopping_list.label: Create New Shopping List
             added.label: 'Product has been added to "%shoppinglist%"'
+            kit.add_to_shopping_list.label: Configure and Add to Shopping List
 
         actions:
             set_current: Set as current
@@ -139,6 +140,12 @@ oro:
             unit:
                 label: Unit
                 description: The unit of quantity the product to be purchased in.
+            kit_item_line_items:
+                label: Kit Item Line Items
+                description: Stores the collection of kit item line items when the line item product is a kit.
+            checksum:
+                label: Checksum
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
             organization.label: Organization
             owner.label: Owner
             customer_user.label: Customer User
@@ -160,6 +167,33 @@ oro:
             action:
                 save: Save
                 cancel: Cancel
+
+        productkititemlineitem:
+            entity_label: Shopping List Kit Item Line Item
+            entity_plural_label: Shopping List Kit Item Line Items
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_frontend_grid_all_view_label: All %entity_plural_label%
+            entity_description: Represents the line item of the product kit item in the shopping list
+            id.label: ID
+            line_item:
+                label: Shopping List Line Item
+                description: The related shopping list line item
+            kit_item:
+                label: Product Kit Item
+                description: The related product kit item
+            product:
+                label: Product
+                description: The kit item product to be purchased
+            quantity:
+                label: Quantity
+                description: The quantity of product kit item units to be purchased
+                aria_label: Product Kit Item Quantity
+            unit:
+                label: Unit of Quantity
+                description: The unit of quantity of the kit item product to be purchased in
+            sort_order:
+                label: Sort Order
+                description: Used to sort kit item line item products when displaying
 
         system_configuration:
             groups:
@@ -331,3 +365,14 @@ oro:
                 apply: 'Apply changes in the Note'
                 decline: 'Decline changes in the Note'
                 edit: 'Edit the Note'
+
+            product_kit_line_item:
+                dialog_widget:
+                    product_kit_item_line_item:
+                        product:
+                            choices:
+                                none: None
+                    submit:
+                        label: Submit
+                    subtotal:
+                        label: 'Price as configured: %subtotal%'

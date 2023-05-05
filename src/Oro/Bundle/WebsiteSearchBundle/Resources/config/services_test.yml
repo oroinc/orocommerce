@@ -5,3 +5,12 @@ services:
     oro_website_search.tests.provider.search_mapping:
         alias: oro_website_search.provider.search_mapping
         public: true
+
+    oro_website_search.tests.api.skipped_entity_provider:
+        class: Oro\Bundle\ApiBundle\Tests\Functional\Environment\SkippedEntityProvider
+        decorates: oro_api.tests.skipped_entity_provider
+        arguments:
+            - '@.inner'
+        calls:
+            - [addSkippedEntity, ['Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory']]
+            - [addSkippedEntity, ['Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport']]

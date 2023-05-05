@@ -5,36 +5,38 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Driver;
 use Oro\Bundle\SearchBundle\Engine\EngineParameters;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverFactory;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class CustomerPartialUpdateDriverFactoryTest extends TestCase
+class CustomerPartialUpdateDriverFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    private EngineParameters $engineParametersBagMock;
+    /** @var EngineParameters|\PHPUnit\Framework\MockObject\MockObject */
+    private $engineParametersBag;
 
-    private ServiceLocator $locatorMock;
+    /** @var ServiceLocator|\PHPUnit\Framework\MockObject\MockObject */
+    private $locator;
 
     protected function setUp(): void
     {
-        $this->engineParametersBagMock = self::createMock(EngineParameters::class);
-        $this->engineParametersBagMock->method('getEngineName')
+        $this->engineParametersBag = $this->createMock(EngineParameters::class);
+        $this->engineParametersBag->expects(self::any())
+            ->method('getEngineName')
             ->willReturn('search_engine_name');
 
-        $this->locatorMock = self::createMock(ServiceLocator::class);
+        $this->locator = $this->createMock(ServiceLocator::class);
     }
 
     public function testCustomerPartialUpdateDriverInstanceReturned()
     {
-        $customerPartialUpdateDriverMock = self::createMock(CustomerPartialUpdateDriverInterface::class);
-        $this->locatorMock->expects(self::once())
+        $customerPartialUpdateDriverMock = $this->createMock(CustomerPartialUpdateDriverInterface::class);
+        $this->locator->expects(self::once())
             ->method('get')
-            ->with($this->engineParametersBagMock->getEngineName())
+            ->with($this->engineParametersBag->getEngineName())
             ->willReturn($customerPartialUpdateDriverMock);
 
         self::assertEquals(
             $customerPartialUpdateDriverMock,
-            CustomerPartialUpdateDriverFactory::create($this->locatorMock, $this->engineParametersBagMock)
+            CustomerPartialUpdateDriverFactory::create($this->locator, $this->engineParametersBag)
         );
     }
 
@@ -43,21 +45,18 @@ class CustomerPartialUpdateDriverFactoryTest extends TestCase
      */
     public function testWrongCustomerPartialUpdateDriverInstanceTypeReturned($engine)
     {
-        $this->locatorMock->expects(self::once())
+        $this->locator->expects(self::once())
             ->method('get')
-            ->with($this->engineParametersBagMock->getEngineName())
+            ->with($this->engineParametersBag->getEngineName())
             ->willReturn($engine);
 
         $this->expectException(UnexpectedTypeException::class);
 
-        CustomerPartialUpdateDriverFactory::create($this->locatorMock, $this->engineParametersBagMock);
+        CustomerPartialUpdateDriverFactory::create($this->locator, $this->engineParametersBag);
     }
 
-    /**
-     * @return array
-     */
     public function wrongCustomerPartialUpdateDriverInstancesProvider(): array
     {
-        return ['scalar' => ['test string'], 'array' => [[]], 'object' => [new \StdClass()]];
+        return ['scalar' => ['test string'], 'array' => [[]], 'object' => [new \stdClass()]];
     }
 }

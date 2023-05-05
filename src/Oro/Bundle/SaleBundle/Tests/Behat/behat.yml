@@ -70,6 +70,7 @@ oro_behat_extension:
           LineItemFreeFormProduct2: 'oro_sale_quote[quoteProducts][1][freeFormProduct]'
           LineItemPrice2: 'oro_sale_quote[quoteProducts][1][quoteProductOffers][0][price][value]'
           LineItemQuantity2: 'oro_sale_quote[quoteProducts][1][quoteProductOffers][0][quantity]'
+          LineItemPrice3: 'oro_sale_quote[quoteProducts][2][quoteProductOffers][0][price][value]'
           Overridden shipping cost amount: 'oro_sale_quote[overriddenShippingCostAmount][value]'
           Shipping Address:
             locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_sale_quote")]/input'
@@ -78,6 +79,9 @@ oro_behat_extension:
               type: 'css'
               locator: 'input[name^="oro_sale_quote_shipUntil"]'
           Valid Until: 'oro_sale_quote[validUntil]'
+          Price of Line Item Secondary Offer: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][1][price][value]'
+          Quantity of Line Item Secondary Offer: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][1][quantity]'
+          Unit of Line Item Secondary Offer: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][1][productUnit]'
 
     Quote Shipping Address State Selector:
       selector:
@@ -111,7 +115,7 @@ oro_behat_extension:
 
     Add Offer line item2:
       selector:
-        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//a[text()="Add Offer"]'
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//button[text()="Add Offer"]'
         type: xpath
 
     Select Shipping Address element:

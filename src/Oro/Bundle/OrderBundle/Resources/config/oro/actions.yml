@@ -313,13 +313,25 @@ operations:
                 maximizedHeightDecreaseBy: minimize-bar
 
     oro_order_payment_transaction_cancel:
-        label: oro.payment.cancel
+        label: oro.payment.cancel_authorization
         button_options:
             icon: fa-close
         applications: [default]
         datagrids:
             - order-payment-transactions-grid
         order: 30
+        attributes:
+            noteMessage:
+                label: oro.order.action.note_message.label
+                type: string
+        form_options:
+            attribute_fields:
+                noteMessage:
+                    form_type: Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType
+                    options:
+                        required: true
+                        constraints:
+                            - NotBlank: ~
         preactions:
             - '@assign_constant_value':
                   attribute: $.paymentMethodAction
@@ -351,6 +363,7 @@ operations:
                   where:
                       id: $.data.entityIdentifier
                   attribute: $.order
+            - '@assign_value': [$.transactionOptions, []]
         preconditions:
             '@and':
                 - '@acl_granted': ['CANCEL_PAYMENTS', $.order]
@@ -368,29 +381,140 @@ operations:
                             transaction: $.data
         actions:
             - '@payment_transaction_cancel':
-                  paymentTransaction: $.data
-                  transactionOptions: []
-                  attribute: $.result
-            - '@flash_message':
-                  conditions:
-                      '@equal': ['$.result[successful]', true]
-                  message: oro.order.payment_transaction.cancel.result.success
-                  message_parameters:
-                      'amount': $.amountWithCurrency
-                  type: 'success'
+                paymentTransaction: $.data
+                transactionOptions: $.transactionOptions
+                attribute: $.result
+            - '@tree':
+                conditions:
+                    '@equal': ['$.result[successful]', true]
+                actions:
+                    - '@translate':
+                        id: 'oro.order.payment_transaction.note.cancel_authorization.default_message'
+                        attribute: $.noteDefaultMessage
+                    - '@add_string_suffix':
+                        attribute: $.note
+                        string: $.noteDefaultMessage
+                        stringSuffix: $.noteMessage
+                    - '@create_note': [$.note, $.order]
+                    - '@flash_message':
+                        message: oro.order.payment_transaction.cancel.result.success
+                        message_parameters:
+                            'amount': $.amountWithCurrency
+                        type: 'success'
             - '@flash_message':
                   conditions:
                       '@equal': ['$.result[successful]', false]
                   message: '$.result[message]'
                   type: 'error'
         frontend_options:
-            confirmation:
-                title: oro.order.payment_transaction.cancel.title
-                message: oro.order.payment_transaction.cancel.message
-                message_parameters:
-                    amount: $.amountWithCurrency
+            title: oro.order.payment_transaction.cancel.title
+            template: '@OroOrder/Action/cancelTransaction.html.twig'
+            options:
+                allowMaximize: false
                 okText: oro.order.payment_transaction.cancel.button.okText
-                component: oroui/js/standart-confirmation
+                cancelText: oro.order.payment_transaction.cancel.button.resetText
+
+    oro_order_payment_transaction_refund:
+        label: oro.payment.refund
+        button_options:
+            icon: fa-share
+        applications: [default]
+        datagrids:
+            - order-payment-transactions-grid
+        order: 40
+        attributes:
+            noteMessage:
+                label: oro.order.action.note_message.label
+                type: string
+        form_options:
+            attribute_fields:
+                noteMessage:
+                    form_type: Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType
+                    options:
+                        required: true
+                        constraints:
+                            - NotBlank: ~
+        preactions:
+            - '@assign_constant_value':
+                  attribute: $.paymentMethodAction
+                  value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::CAPTURE
+            - '@assign_constant_value':
+                  attribute: $.refundAction
+                  value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::REFUND
+            - '@call_service_method':
+                  service: oro_payment.payment_method.composite_provider
+                  method: getPaymentMethod
+                  method_parameters: [$.data.paymentMethod]
+                  attribute: $.paymentMethod
+            - '@call_method':
+                  conditions:
+                      '@not_empty': $.paymentMethod
+                  parameters:
+                      attribute: $.isActionSupported
+                      object: $.paymentMethod
+                      method: supports
+                      method_parameters:
+                          - $.refundAction
+            - '@call_service_method':
+                  service: oro_locale.formatter.number
+                  method: formatCurrency
+                  method_parameters: [$.data.amount, $.data.currency]
+                  attribute: $.amountWithCurrency
+            - '@find_entity':
+                  class: 'Oro\Bundle\OrderBundle\Entity\Order'
+                  where:
+                      id: $.data.entityIdentifier
+                  attribute: $.order
+            - '@assign_value': [$.transactionOptions, []]
+        preconditions:
+            '@and':
+                - '@acl_granted': ['REFUND_PAYMENTS', $.order]
+                - '@equal': [$.data.entity_class, 'Oro\Bundle\OrderBundle\Entity\Order']
+                - '@equal': [$.data.action, $.paymentMethodAction]
+                - '@equal': [$.data.active, false]
+                - '@equal': [$.data.successful, true]
+                - '@equal': [$.isActionSupported, true]
+                - '@not_empty': $.paymentMethod
+                - '@not':
+                    - '@payment_transaction_was_refunded':
+                        transaction: $.data
+        actions:
+            - '@payment_transaction_refund':
+                paymentTransaction: $.data
+                transactionOptions: $.transactionOptions
+                attribute: $.result
+            - '@tree':
+                conditions:
+                    '@equal': ['$.result[successful]', true]
+                actions:
+                    - '@translate':
+                        id: 'oro.order.payment_transaction.note.refund.default_message'
+                        attribute: $.noteDefaultMessage
+                    - '@add_string_suffix':
+                        attribute: $.note
+                        string: $.noteDefaultMessage
+                        stringSuffix: $.noteMessage
+                    - '@create_note': [$.note, $.order]
+                    - '@flash_message':
+                        message: oro.order.payment_transaction.refund.result.success
+                        message_parameters:
+                            'amount': $.amountWithCurrency
+                        type: 'success'
+            - '@flash_message':
+                  conditions:
+                      '@equal': ['$.result[successful]', false]
+                  message: '$.result[message]'
+                  type: 'error'
+        frontend_options:
+            title: oro.order.payment_transaction.refund.title
+            template: '@OroOrder/Action/refundTransaction.html.twig'
+            options:
+                width: 400
+                message: oro.order.payment_transaction.refund.message
+                message_parameters:
+                    'amount': $.amountWithCurrency
+                okText: oro.order.payment_transaction.refund.button.okText
+                cancelText: oro.order.payment_transaction.refund.button.resetText
 
 action_groups:
     api_order_purchase_by_payment_term:

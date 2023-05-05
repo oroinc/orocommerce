@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 use Oro\Component\Expression\ExpressionParser;
@@ -18,36 +19,22 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $parser;
+    /** @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject */
+    private $parser;
 
-    /**
-     * @var PriceRuleLexemeHandler
-     */
-    protected $priceRuleLexemeHandler;
+    /** @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldsProvider;
 
-    /**
-     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fieldsProvider;
+    /** @var PriceRuleLexemeHandler */
+    private $priceRuleLexemeHandler;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->parser = $this->getMockBuilder(ExpressionParser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->parser = $this->createMock(ExpressionParser::class);
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
 
         $this->priceRuleLexemeHandler = new PriceRuleLexemeHandler(
@@ -63,12 +50,10 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
         $rule = 'product.msrp.value + 10';
         $ruleCondition = 'product.sku == test';
 
-        /** @var PriceRule $priceRule */
         $priceRule = $this->getEntity(PriceRule::class, ['id' => 1]);
         $priceRule->setRule($rule);
         $priceRule->setRuleCondition($ruleCondition);
 
-        /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $priceList->setProductAssignmentRule($assignmentRule);
         $priceList->addPriceRule($priceRule);
@@ -101,23 +86,16 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
                 [
                     'Oro\Bundle\PricingBundle\Entity\PriceList::prices',
                     null,
-                    'Oro\Bundle\PricingBundle\Entity\ProductPrice'
+                    ProductPrice::class
                 ]
             ]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceRuleLexemeRepository $lexemeRepository */
-        $lexemeRepository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $lexemeRepository = $this->createMock(PriceRuleLexemeRepository::class);
         $lexemeRepository->expects($this->once())
             ->method('deleteByPriceList')
             ->with($priceList);
 
-        $lexemeEntityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $lexemeEntityManager = $this->createMock(EntityManager::class);
         $lexemeEntityManager->expects($this->once())
             ->method('getRepository')
             ->with(PriceRuleLexeme::class)
@@ -126,11 +104,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
         $msrpId = '42';
         $msrpPriceAttribute = $this->getEntity(PriceAttributePriceList::class, ['id' => $msrpId]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceRuleLexemeRepository $priceAttributeRepository */
-        $priceAttributeRepository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $priceAttributeRepository = $this->createMock(PriceRuleLexemeRepository::class);
         $priceAttributeRepository->expects($this->any())
             ->method('findOneBy')
             ->with(['fieldName' => 'msrp'])
@@ -150,8 +124,10 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifierFieldName')
             ->willReturn('id');
 
-        $lexemeEntityManager->expects($this->exactly(7))->method('persist');
-        $lexemeEntityManager->expects($this->once())->method('flush');
+        $lexemeEntityManager->expects($this->exactly(7))
+            ->method('persist');
+        $lexemeEntityManager->expects($this->once())
+            ->method('flush');
 
         $this->priceRuleLexemeHandler->updateLexemes($priceList);
     }

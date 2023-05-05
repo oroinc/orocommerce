@@ -1,3 +1,6 @@
+include:
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision5:
         unit: '@item'
@@ -26,18 +29,6 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product 5'
     locValueConfigurable:
         string: 'Product Configurable'
-
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    locValueFamily:
-        string: 'Default'
-
-Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
-    productAttributeFamily:
-        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-        code: 'product_attribute_family_code'
-        __calls:
-            - addLabel: ['@locValueFamily']
-        owner: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product5:

@@ -12,6 +12,7 @@ import __ from 'orotranslation/js/translator';
 import $ from 'jquery';
 import ApiAccessor from 'oroui/js/tools/api-accessor';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
+import StandartConfirmation from 'oroui/js/standart-confirmation';
 
 const REGEXP_TWIG_TAGS = /\{\{([\w\s\"\'\_\-\,\&\#\;\(\)]+)\}\}/gi;
 
@@ -45,7 +46,7 @@ const ImportDialogView = BaseView.extend({
         'editor', 'importViewerOptions',
         'modalImportLabel', 'modalImportTitle', 'modalImportButton',
         'validateApiProps', 'entityClass', 'fieldName', 'commandId',
-        'importCallback'
+        'importCallback', 'modalExportButton'
     ]),
 
     /**
@@ -91,6 +92,11 @@ const ImportDialogView = BaseView.extend({
      * @property {String}
      */
     modalImportButton: __('oro.cms.wysiwyg.import.button'),
+
+    /**
+     * @property {String}
+     */
+    modalExportButton: __('oro.cms.wysiwyg.import.export_button'),
 
     /**
      * @property {Object}
@@ -140,6 +146,8 @@ const ImportDialogView = BaseView.extend({
 
     prevContent: '',
 
+    initialContent: '',
+
     listen: {
         'layout:reposition mediator': 'adjustHeight'
     },
@@ -180,20 +188,31 @@ const ImportDialogView = BaseView.extend({
      */
     getTemplateData() {
         return {
-            modalImportButton: this.modalImportButton
+            modalImportButton: this.modalImportButton,
+            modalExportButton: this.modalExportButton
         };
     },
 
     /**
      * @inheritdoc
      */
-    render({content, dialogOptions = {}, renderProps = {}} = {}) {
+    render({
+        content,
+        dialogOptions = {},
+        renderProps = {},
+        exportButton = true
+    } = {}) {
         this.renderProps = renderProps;
         ImportDialogView.__super__.render.call(this);
 
         this.content = unescapeTwigExpression(content ?? this.getImportContent());
 
         this.importButton = this.$el.find('[data-role="import"]');
+        this.exportButton = this.$el.find('[data-role="export"]');
+
+        if (!exportButton) {
+            this.exportButton.hide();
+        }
 
         this.dialog = new DialogWidget({
             autoRender: false,
@@ -232,6 +251,8 @@ const ImportDialogView = BaseView.extend({
         this.adjustHeight();
         this.checkContent(this.viewerEditor);
         this.bindEvents();
+
+        this.initialContent = this.viewerEditor.getValue();
     },
 
     /**
@@ -242,13 +263,14 @@ const ImportDialogView = BaseView.extend({
         this.viewerEditor.on('blur', this.checkContentWithDelay);
         this.importButton.on('mouseover', this.checkContent.bind(this, this.viewerEditor));
         this.importButton.on('click', this.onImportCode.bind(this));
+        this.exportButton.on('click', this.onExportCode.bind(this));
         this.dialog.widget.on('resize', this.adjustHeight.bind(this));
     },
 
     /**
      * Unbinding event listeners
      */
-    unbindEvents: function() {
+    unbindEvents() {
         this.viewerEditor.off();
         this.importButton.off();
     },
@@ -256,7 +278,7 @@ const ImportDialogView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    dispose: function() {
+    dispose() {
         if (this.disposed) {
             return;
         }
@@ -298,6 +320,10 @@ const ImportDialogView = BaseView.extend({
         return this.prevContent !== this.viewerEditor.getValue();
     },
 
+    isInitialContentChanged() {
+        return this.initialContent !== this.viewerEditor.getValue();
+    },
+
     /**
      * Check content in editor
      * @param {Editor.Instance} codeEditor
@@ -317,6 +343,7 @@ const ImportDialogView = BaseView.extend({
 
         this.disabled = !success;
         this.importButton.attr('disabled', this.disabled);
+        this.exportButton.attr('disabled', this.disabled);
 
         this.markers.forEach(marker => marker.clear());
         errors.forEach(({line, message}) => {
@@ -347,6 +374,7 @@ const ImportDialogView = BaseView.extend({
         this.disabled = false;
         this.subview('loadingMask').show();
         this.importButton.attr('disabled', true);
+        this.exportButton.attr('disabled', true);
         return this.twigResolverAccessor.send({}, {
             content: twigContent
         }).then(({content, success}) => {
@@ -355,6 +383,7 @@ const ImportDialogView = BaseView.extend({
                 this.validationMessage(__('oro.cms.wysiwyg.import.message.twig_exp'));
             }
             this.importButton.attr('disabled', !success);
+            this.exportButton.attr('disabled', !success);
             return content;
         }).catch(() => {
             this.validationMessage(__('oro.cms.wysiwyg.import.message.twig_exp'));
@@ -374,6 +403,7 @@ const ImportDialogView = BaseView.extend({
         this.disabled = true;
         this.prevContent = content;
         this.importButton.attr('disabled', this.disabled);
+        this.exportButton.attr('disabled', this.disabled);
         const errors = this.editor.CodeValidator.validate(
             content,
             this.renderProps.codeValidationOptions ?? {
@@ -442,6 +472,38 @@ const ImportDialogView = BaseView.extend({
         }
 
         this.adjustHeight();
+    },
+
+    showExportConfirmation() {
+        this.removeSubview('exportConfirmation');
+        this.subview('exportConfirmation', new StandartConfirmation({
+            className: 'modal oro-modal-danger',
+            title: __('oro.cms.wysiwyg.export.confirmation.title'),
+            content: __('oro.cms.wysiwyg.export.confirmation.content'),
+            okText: __('oro.cms.wysiwyg.export.confirmation.okText')
+        }));
+
+        return this.subview('exportConfirmation').open();
+    },
+
+    onExportCode() {
+        const doExport = () => {
+            const {Commands} = this.editor;
+
+            if (Commands.has('gjs-export-zip')) {
+                Commands.run('gjs-export-zip');
+            }
+        };
+
+        if (this.isInitialContentChanged()) {
+            this.showExportConfirmation().on('ok', async () => {
+                await this.onImportCode();
+                doExport();
+            });
+        } else {
+            this.closeDialog();
+            doExport();
+        }
     },
 
     /**

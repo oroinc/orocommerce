@@ -4,3 +4,6 @@ trusted_data:
         Oro\Bundle\CatalogBundle\EventListener\ExportDatagridListener:
             applyCategory: true
             applyIncludeNotCategorizedProducts: true
+            getCategoryFilterField: true
+        Oro\Bundle\CatalogBundle\ImportExport\Datagrid\CategoryFilterInterface:
+            getFieldName: true

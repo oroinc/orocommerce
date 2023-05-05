@@ -4,19 +4,16 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\DuplicateFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class DuplicateFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class DuplicateFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $filtrationService;
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtrationService;
 
-    /**
-     * @var DuplicateFiltrationService
-     */
-    protected $duplicateFiltrationService;
+    /** @var DuplicateFiltrationService */
+    private $duplicateFiltrationService;
 
     protected function setUp(): void
     {
@@ -57,11 +54,7 @@ class DuplicateFiltrationServiceTest extends AbstractSkippableFiltrationServiceT
         );
     }
 
-    /**
-     * @param int $id
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getRuleOwner($id)
+    private function getRuleOwner(int $id): PromotionDataInterface
     {
         $ruleOwner = $this->createMock(PromotionDataInterface::class);
         $ruleOwner->expects($this->any())
@@ -73,6 +66,13 @@ class DuplicateFiltrationServiceTest extends AbstractSkippableFiltrationServiceT
 
     public function testFilterIsSkippable()
     {
-        $this->assertServiceSkipped($this->duplicateFiltrationService, $this->filtrationService);
+        $this->filtrationService->expects($this->never())
+            ->method('getFilteredRuleOwners');
+
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $this->duplicateFiltrationService->getFilteredRuleOwners(
+            [$ruleOwner],
+            ['skip_filters' => [get_class($this->duplicateFiltrationService) => true]]
+        );
     }
 }

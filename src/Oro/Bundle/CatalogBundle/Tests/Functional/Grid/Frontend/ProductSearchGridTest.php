@@ -113,14 +113,13 @@ class ProductSearchGridTest extends FrontendWebTestCase
 
     /**
      * @dataProvider dataProviderForFiltersWithForceLikeOption
-     *
-     * @param string $filter
-     * @param string $field
-     * @param string $searchString
-     * @param array|string $expectedFieldValue
      */
-    public function testGridFiltersWithForceLikeOption($filter, $field, $searchString, $expectedFieldValue)
-    {
+    public function testGridFiltersWithForceLikeOption(
+        string $filter,
+        string $field,
+        string $searchString,
+        string $expectedFieldValue
+    ) {
         $products = $this->getDatagridData(
             self::PRODUCT_GRID_NAME,
             [
@@ -144,10 +143,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderForFiltersWithForceLikeOption()
+    public function dataProviderForFiltersWithForceLikeOption(): array
     {
         return [
             'sku' => [
@@ -167,13 +163,12 @@ class ProductSearchGridTest extends FrontendWebTestCase
 
     /**
      * @dataProvider dataProviderForDoesNotContainFilter
-     *
-     * @param string $filter
-     * @param string $searchString
-     * @param array $expectedFieldValues
      */
-    public function testDoesNotContainFilterWithForceLikeOption($filter, $searchString, $expectedFieldValues)
-    {
+    public function testDoesNotContainFilterWithForceLikeOption(
+        string $filter,
+        string $searchString,
+        array $expectedFieldValues
+    ) {
         $products = $this->getDatagridData(
             self::PRODUCT_GRID_NAME,
             [
@@ -187,7 +182,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
             $actualFieldValues[] = $product[$filter];
         }
 
-        $this->assertEquals(count($actualFieldValues), count($expectedFieldValues));
+        $this->assertSameSize($actualFieldValues, $expectedFieldValues);
         foreach ($expectedFieldValues as $expected) {
             $this->assertContains($expected, $expectedFieldValues);
         }

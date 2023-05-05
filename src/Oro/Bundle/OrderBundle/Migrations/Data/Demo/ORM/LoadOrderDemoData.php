@@ -5,7 +5,9 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -17,9 +19,11 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
 use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
@@ -28,8 +32,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loading order demo data.
+ */
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
+    use OrderLineItemsDemoDataTrait;
+
     /** @var array */
     protected $countries = [];
 
@@ -65,6 +74,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             LoadPriceListDemoData::class,
             LoadShoppingListDemoData::class,
             LoadTaxConfigurationDemoData::class,
+            LoadProductDemoData::class,
         ];
     }
 
@@ -99,33 +109,17 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $regularCustomerUser = $this->getCustomerUser($manager);
         $guestCustomerUser = $this->getCustomerUser($manager, true);
 
+        $orderMetadata = $manager->getClassMetadata(Order::class);
+        $this->disablePrePersistCallback($orderMetadata);
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
             $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
             $order = new Order();
 
-            $billingAddress = [
-                'label' => $row['billingAddressLabel'],
-                'country' => $row['billingAddressCountry'],
-                'city' => $row['billingAddressCity'],
-                'region' => $row['billingAddressRegion'],
-                'street' => $row['billingAddressStreet'],
-                'postalCode' => $row['billingAddressPostalCode'],
-                'firstName' => $customerUser->getFirstName(),
-                'lastName' => $customerUser->getLastName(),
-            ];
-
-            $shippingAddress = [
-                'label' => $row['shippingAddressLabel'],
-                'country' => $row['shippingAddressCountry'],
-                'city' => $row['shippingAddressCity'],
-                'region' => $row['shippingAddressRegion'],
-                'street' => $row['shippingAddressStreet'],
-                'postalCode' => $row['shippingAddressPostalCode'],
-                'firstName' => $customerUser->getFirstName(),
-                'lastName' => $customerUser->getLastName(),
-            ];
+            $billingAddress = $this->getBillingAddressData($row, $customerUser);
+            $shippingAddress = $this->getShippingAddressData($row, $customerUser);
 
             $total = MultiCurrency::create($row['total'], $row['currency']);
             $baseTotal = $rateConverter->getBaseCurrencyAmount($total);
@@ -134,6 +128,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $subtotal = MultiCurrency::create($row['subtotal'], $row['currency']);
             $baseSubtotal = $rateConverter->getBaseCurrencyAmount($subtotal);
             $subtotal->setBaseCurrencyValue($baseSubtotal);
+
+            $randomDateTime = $this->getRandomDateTime();
 
             $order
                 ->setOwner($user)
@@ -148,8 +144,11 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
                 ->setTotalObject($total)
+                ->addLineItem($this->getOrderLineItem($manager))
                 ->setSubtotalObject($subtotal)
-                ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager));
+                ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager))
+                ->setCreatedAt($randomDateTime)
+                ->setUpdatedAt($randomDateTime);
 
             $paymentTermAccessor->setPaymentTerm($order, $this->getPaymentTerm($manager, $row['paymentTerm']));
 
@@ -167,15 +166,40 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         fclose($handler);
 
+        $this->enablePrePersistCallback($orderMetadata);
+
         $manager->flush();
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param array $address
-     * @return OrderAddress
-     */
-    protected function createOrderAddress(EntityManager $manager, array $address)
+    private function getBillingAddressData(array $row, CustomerUser $customerUser): array
+    {
+        return [
+            'label' => $row['billingAddressLabel'],
+            'country' => $row['billingAddressCountry'],
+            'city' => $row['billingAddressCity'],
+            'region' => $row['billingAddressRegion'],
+            'street' => $row['billingAddressStreet'],
+            'postalCode' => $row['billingAddressPostalCode'],
+            'firstName' => $customerUser->getFirstName(),
+            'lastName' => $customerUser->getLastName(),
+        ];
+    }
+
+    private function getShippingAddressData(array $row, CustomerUser $customerUser): array
+    {
+        return [
+            'label' => $row['shippingAddressLabel'],
+            'country' => $row['shippingAddressCountry'],
+            'city' => $row['shippingAddressCity'],
+            'region' => $row['shippingAddressRegion'],
+            'street' => $row['shippingAddressStreet'],
+            'postalCode' => $row['shippingAddressPostalCode'],
+            'firstName' => $customerUser->getFirstName(),
+            'lastName' => $customerUser->getLastName(),
+        ];
+    }
+
+    protected function createOrderAddress(EntityManagerInterface $manager, array $address): OrderAddress
     {
         $orderAddress = new OrderAddress();
         $orderAddress
@@ -216,12 +240,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => $isGuest]);
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $iso2Code
-     * @return Country|null
-     */
-    protected function getCountryByIso2Code(EntityManager $manager, $iso2Code)
+    protected function getCountryByIso2Code(EntityManagerInterface $manager, string $iso2Code): ?Country
     {
         if (!array_key_exists($iso2Code, $this->countries)) {
             $this->countries[$iso2Code] = $manager->getReference('OroAddressBundle:Country', $iso2Code);
@@ -230,12 +249,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->countries[$iso2Code];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return Region|null
-     */
-    protected function getRegionByIso2Code(EntityManager $manager, $code)
+    protected function getRegionByIso2Code(EntityManagerInterface $manager, string $code): ?Region
     {
         if (!array_key_exists($code, $this->regions)) {
             $this->regions[$code] = $manager->getReference('OroAddressBundle:Region', $code);
@@ -244,12 +258,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->regions[$code];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $label
-     * @return PaymentTerm
-     */
-    protected function getPaymentTerm(EntityManager $manager, $label)
+    protected function getPaymentTerm(EntityManagerInterface $manager, string $label): PaymentTerm
     {
         if (!array_key_exists($label, $this->paymentTerms)) {
             $this->paymentTerms[$label] = $manager->getRepository('OroPaymentTermBundle:PaymentTerm')
@@ -259,12 +268,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->paymentTerms[$label];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return Website
-     */
-    protected function getWebsite(EntityManager $manager, $name)
+    protected function getWebsite(EntityManagerInterface $manager, string $name): Website
     {
         if (!array_key_exists($name, $this->websites)) {
             $this->websites[$name] = $manager->getRepository('OroWebsiteBundle:Website')
@@ -272,5 +276,32 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         }
 
         return $this->websites[$name];
+    }
+
+    private function enablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        array_unshift($lifecycleCallbacks['prePersist'], 'prePersist');
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function disablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        $lifecycleCallbacks['prePersist'] = array_diff($lifecycleCallbacks['prePersist'], ['prePersist']);
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function getRandomDateTime(): \DateTime
+    {
+        return new \DateTime(
+            sprintf(
+                '-%sday %s:%s',
+                random_int(0, 7),
+                random_int(0, 23),
+                random_int(0, 59)
+            ),
+            new \DateTimeZone('UTC')
+        );
     }
 }

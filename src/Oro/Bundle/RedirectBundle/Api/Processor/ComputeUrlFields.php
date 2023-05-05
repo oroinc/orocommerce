@@ -18,23 +18,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ComputeUrlFields implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var LocalizationHelper */
-    protected $localizationHelper;
-
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var UrlGeneratorInterface */
-    protected $urlGenerator;
-
-    /** @var string */
-    protected $urlField;
-
-    /** @var string */
-    protected $urlsField;
+    protected DoctrineHelper $doctrineHelper;
+    protected LocalizationHelper $localizationHelper;
+    protected ConfigManager $configManager;
+    protected UrlGeneratorInterface $urlGenerator;
+    protected string $urlField;
+    protected string $urlsField;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -55,7 +44,7 @@ class ComputeUrlFields implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -195,12 +184,7 @@ class ComputeUrlFields implements ProcessorInterface
     }
 
     /**
-     * @param string $ownerEntityClass
-     * @param string $ownerEntityIdFieldName
-     * @param array  $ownerIds
-     * @param array  $localizationIds
-     *
-     * @return QueryBuilder The query should return 3 fields: url, localizationId and ownerId
+     * The query should contain 3 fields: url, localizationId and ownerId.
      */
     protected function getQueryForLoadUrls(
         string $ownerEntityClass,

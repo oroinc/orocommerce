@@ -29,13 +29,9 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $isGranted
-     * @param bool $isResourceEnabled
-     * @param bool $expectedIsDisplayed
-     *
      * @dataProvider navigationConfigureDataProvider
      */
-    public function testOnNavigationConfigure($isGranted, $isResourceEnabled, $expectedIsDisplayed)
+    public function testOnNavigationConfigure(bool $isGranted, bool $isResourceEnabled, bool $expectedIsDisplayed)
     {
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
@@ -46,8 +42,8 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_rfp_frontend_request_index', 'routes')
             ->willReturn($isResourceEnabled);
 
-        $factory     = new MenuFactory();
-        $menu        = new MenuItem('oro_customer_menu', $factory);
+        $factory = new MenuFactory();
+        $menu = new MenuItem('oro_customer_menu', $factory);
         $rfpMenuItem = new MenuItem('oro_rfp_frontend_request_index', $factory);
         $menu->addChild($rfpMenuItem);
 
@@ -57,10 +53,7 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedIsDisplayed, $rfpMenuItem->isDisplayed());
     }
 
-    /**
-     * @return array
-     */
-    public function navigationConfigureDataProvider()
+    public function navigationConfigureDataProvider(): array
     {
         return [
             'access granted and resource enabled' => [

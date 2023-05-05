@@ -23,15 +23,9 @@ class QuoteProductListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->requestStack =  $this->getMockBuilder(RequestStack::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request =  $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->event = $this->getMockBuilder(PreUpdateEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestStack =  $this->createMock(RequestStack::class);
+        $this->request =  $this->createMock(Request::class);
+        $this->event = $this->createMock(PreUpdateEventArgs::class);
 
         $this->listener = new QuoteProductListener($this->requestStack);
     }
@@ -64,10 +58,7 @@ class QuoteProductListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preUpdate($this->event);
     }
 
-    /**
-     * @return array
-     */
-    public function preUpdateProvider()
+    public function preUpdateProvider(): array
     {
         return [
             'admin page' => [

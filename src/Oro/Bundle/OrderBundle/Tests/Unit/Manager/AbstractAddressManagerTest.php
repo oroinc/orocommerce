@@ -93,7 +93,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
         $em = $this->createMock(ObjectManager::class);
         $em->expects($this->exactly(2))->method('find')
             ->with($this->isType('string'), $this->isType('integer'))
-            ->will($this->onConsecutiveCalls($entity, null));
+            ->willReturnOnConsecutiveCalls($entity, null);
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')

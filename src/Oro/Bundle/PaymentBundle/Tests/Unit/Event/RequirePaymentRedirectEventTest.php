@@ -16,12 +16,8 @@ class RequirePaymentRedirectEventTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $this->event = new RequirePaymentRedirectEvent($this->paymentMethod);
-    }
 
-    protected function tearDown(): void
-    {
-        unset($this->paymentMethod, $this->event);
+        $this->event = new RequirePaymentRedirectEvent($this->paymentMethod);
     }
 
     public function testIsRedirectNeeded()
@@ -33,6 +29,6 @@ class RequirePaymentRedirectEventTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPaymentMethod()
     {
-        $this->assertInstanceOf(PaymentMethodInterface::class, $this->event->getPaymentMethod());
+        $this->assertSame($this->paymentMethod, $this->event->getPaymentMethod());
     }
 }

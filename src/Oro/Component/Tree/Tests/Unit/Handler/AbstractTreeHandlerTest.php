@@ -11,24 +11,18 @@ use Oro\Component\Tree\Tests\Unit\Stubs\Handler\TreeHandlerStub;
 
 class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TreeHandlerStub */
-    protected $treeHandler;
-
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $em;
+    private $em;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var TreeHandlerStub */
+    private $treeHandler;
+
     protected function setUp(): void
     {
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
-        $this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->em = $this->createMock(EntityManager::class);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-        $registry = $this->getMockBuilder(ManagerRegistry::class)->getMock();
-        $registry
-            ->expects($this->any())
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with(EntityStub::class)
             ->willReturn($this->em);
@@ -38,28 +32,21 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getTreeDataProvider
-     *
-     * @param bool       $includeRoot
-     * @param EntityStub $root
-     * @param array      $children
-     * @param array      $expectedTree
      */
-    public function testCreateTree($includeRoot, $root, $children, $expectedTree)
+    public function testCreateTree(bool $includeRoot, EntityStub $root, array $children, array $expectedTree)
     {
         $nodes = $children;
         if ($includeRoot) {
             $nodes = array_merge([$root], $nodes);
         }
 
-        /** @var NestedTreeRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
-        $repository = $this->getMockBuilder(NestedTreeRepository::class)->disableOriginalConstructor()->getMock();
+        $repository = $this->createMock(NestedTreeRepository::class);
         $repository->expects($this->once())
             ->method('getChildren')
             ->with($root, false, 'left', 'ASC', $includeRoot)
             ->willReturn($nodes);
 
-        $this->em
-            ->expects($this->once())
+        $this->em->expects($this->once())
             ->method('getRepository')
             ->with(EntityStub::class)
             ->willReturn($repository);
@@ -72,28 +59,25 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getTreeItemListDataProvider
-     *
-     * @param bool       $includeRoot
-     * @param EntityStub $root
-     * @param array      $children
-     * @param array      $expectedTreeItemList
      */
-    public function testGetTreeItemList($includeRoot, $root, $children, $expectedTreeItemList)
-    {
+    public function testGetTreeItemList(
+        bool $includeRoot,
+        EntityStub $root,
+        array $children,
+        array $expectedTreeItemList
+    ) {
         $nodes = $children;
         if ($includeRoot) {
             $nodes = array_merge([$root], $nodes);
         }
 
-        /** @var NestedTreeRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
-        $repository = $this->getMockBuilder(NestedTreeRepository::class)->disableOriginalConstructor()->getMock();
+        $repository = $this->createMock(NestedTreeRepository::class);
         $repository->expects($this->once())
             ->method('getChildren')
             ->with($root, false, 'left', 'ASC', $includeRoot)
             ->willReturn($nodes);
 
-        $this->em
-            ->expects($this->once())
+        $this->em->expects($this->once())
             ->method('getRepository')
             ->with(EntityStub::class)
             ->willReturn($repository);
@@ -104,10 +88,7 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getTreeDataProvider()
+    public function getTreeDataProvider(): array
     {
         $root = $this->getEntity(1, 'Root');
         $children = [
@@ -169,10 +150,7 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getTreeItemListDataProvider()
+    public function getTreeItemListDataProvider(): array
     {
         $root = $this->getEntity(1, 'Root');
         $children = [
@@ -197,14 +175,7 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int      $id
-     * @param string   $text
-     * @param int|null $parent
-     *
-     * @return EntityStub
-     */
-    protected function getEntity($id, $text, $parent = null)
+    private function getEntity(int $id, string $text, ?int $parent = null): EntityStub
     {
         $entity = new EntityStub();
         $entity->id = $id;
@@ -214,12 +185,7 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
         return $entity;
     }
 
-    /**
-     * @param bool $includeRoot
-     *
-     * @return array
-     */
-    protected function getTreeItemList($includeRoot)
+    private function getTreeItemList(bool $includeRoot): array
     {
         $item1 = new TreeItem(2, 'Item 1');
         $item11 = new TreeItem(3, 'Item 1-1');

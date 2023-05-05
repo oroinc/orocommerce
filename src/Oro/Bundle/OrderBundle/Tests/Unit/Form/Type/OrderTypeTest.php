@@ -11,6 +11,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
@@ -39,49 +40,35 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
-use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OrderTypeTest extends TypeTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressSecurityProvider */
-    private $orderAddressSecurityProvider;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderCurrencyHandler */
+    /** @var OrderCurrencyHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $orderCurrencyHandler;
 
-    /** @var OrderType */
-    private $type;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $totalsProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItemSubtotalProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DiscountSubtotalProvider */
+    /** @var DiscountSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $discountSubtotalProvider;
-
-    /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceMatcher;
 
     /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateConverter;
@@ -89,22 +76,16 @@ class OrderTypeTest extends TypeTestCase
     /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $numberFormatter;
 
-    /** @var ValidatorInterface */
-    private $validator;
-
-    /** @var OrderLineItemCurrencyHandler */
-    private $currencyHandler;
+    /** @var OrderType */
+    private $type;
 
     protected function setUp(): void
     {
-        $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
         $this->orderCurrencyHandler = $this->createMock(OrderCurrencyHandler::class);
         $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
         $this->discountSubtotalProvider = $this->createMock(DiscountSubtotalProvider::class);
-        $this->priceMatcher = $this->createMock(PriceMatcher::class);
         $this->rateConverter = $this->createMock(RateConverterInterface::class);
-        $this->currencyHandler = $this->createMock(OrderLineItemCurrencyHandler::class);
 
         $totalHelper = new TotalHelper(
             $this->totalsProvider,
@@ -117,9 +98,13 @@ class OrderTypeTest extends TypeTestCase
 
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
-            $this->orderAddressSecurityProvider,
+            $this->createMock(OrderAddressSecurityProvider::class),
             $this->orderCurrencyHandler,
-            new SubtotalSubscriber($totalHelper, $this->priceMatcher, $this->currencyHandler)
+            new SubtotalSubscriber(
+                $totalHelper,
+                $this->createMock(PriceMatcher::class),
+                $this->createMock(OrderLineItemCurrencyHandler::class)
+            )
         );
 
         $this->type->setDataClass(Order::class);
@@ -131,12 +116,7 @@ class OrderTypeTest extends TypeTestCase
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'data_class' => 'Order',
-                    'csrf_token_id' => 'order'
-                ]
-            );
+            ->with(['data_class' => 'Order', 'csrf_token_id' => 'order']);
 
         $this->type->setDataClass('Order');
         $this->type->configureOptions($resolver);
@@ -175,6 +155,7 @@ class OrderTypeTest extends TypeTestCase
             ->willReturnSelf();
         $this->totalsProvider->expects($this->once())
             ->method('getTotal')
+            ->with($order)
             ->willReturn($total);
 
         $this->discountSubtotalProvider->expects($this->any())
@@ -271,86 +252,60 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $userSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(User::class, 1),
-                2 => $this->getEntity(User::class, 2),
-            ],
-            UserSelectType::class
-        );
+        $priceType = new PriceType();
+        $priceType->setDataClass(Price::class);
 
-        $customerSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(Customer::class, 1),
-                2 => $this->getEntity(Customer::class, 2),
-            ],
-            CustomerSelectType::NAME
-        );
-
-        $customerUserSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(CustomerUser::class, 1),
-                2 => $this->getEntity(CustomerUser::class, 2),
-            ],
-            CustomerUserSelectType::NAME
-        );
-
-        $priceListSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity(PriceList::class, 1),
-                2 => $this->getEntity(PriceList::class, 2),
-            ],
-            PriceListSelectType::NAME
-        );
-
-        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
-        $productSelectType = new ProductSelectTypeStub();
-        $entityType = $this->prepareProductEntityType();
-        $priceType = $this->preparePriceType();
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider $productUnitsProvider */
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
-            ->willReturn([
-                'item' => 'item',
-                'kg' => 'kilogram',
-            ]);
+            ->willReturn(['item' => 'item', 'kg' => 'kilogram']);
 
         $orderLineItemType = new OrderLineItemType($productUnitsProvider);
         $orderLineItemType->setDataClass(OrderLineItem::class);
-        $currencySelectionType = new CurrencySelectionTypeStub();
-
-        $this->validator = $this->createMock(ValidatorInterface::class);
-        $this->validator->expects($this->any())
-            ->method('validate')
-            ->willReturn(new ConstraintViolationList());
 
         return [
             new PreloadedExtension(
                 [
                     $this->type,
-                    CollectionType::class => new CollectionType(),
-                    OroDateType::class => new OroDateType(),
-                    PriceType::class => $priceType,
-                    EntityType::class => $entityType,
-                    UserSelectType::class => $userSelectType,
-                    ProductSelectType::class => $productSelectType,
-                    ProductUnitSelectionType::class => $productUnitSelectionType,
-                    CustomerSelectType::class => $customerSelectType,
-                    CurrencySelectionType::class => $currencySelectionType,
-                    CustomerUserSelectType::class => $customerUserSelectType,
-                    PriceListSelectType::class => $priceListSelectType,
-                    OrderLineItemsCollectionType::class => new OrderLineItemsCollectionType(),
-                    OrderDiscountCollectionTableType::class => new OrderDiscountCollectionTableType(),
-                    OrderLineItemType::class => $orderLineItemType,
-                    OrderDiscountCollectionRowType::class => new OrderDiscountCollectionRowType(),
-                    QuantityType::class => $this->getQuantityType(),
-                    OroHiddenNumberType::class => new OroHiddenNumberType($this->numberFormatter),
+                    new CollectionType(),
+                    new OroDateType(),
+                    $priceType,
+                    EntityType::class => new EntityTypeStub([
+                        2 => $this->getProduct(2),
+                        3 => $this->getProduct(3),
+                    ]),
+                    UserSelectType::class => new EntityTypeStub([
+                        1 => $this->getUser(1),
+                        2 => $this->getUser(2),
+                    ]),
+                    ProductSelectType::class => new ProductSelectTypeStub(),
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub([
+                        'kg' => $this->getProductUnit('kg'),
+                        'item' => $this->getProductUnit('item'),
+                    ]),
+                    CustomerSelectType::class => new EntityTypeStub([
+                        1 => $this->getCustomer(1),
+                        2 => $this->getCustomer(2),
+                    ]),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    CustomerUserSelectType::class => new EntityTypeStub([
+                        1 => $this->getCustomerUser(1),
+                        2 => $this->getCustomerUser(2),
+                    ]),
+                    PriceListSelectType::class => new EntityTypeStub([
+                        1 => $this->getPriceList(1),
+                        2 => $this->getPriceList(2),
+                    ]),
+                    new OrderLineItemsCollectionType(),
+                    new OrderDiscountCollectionTableType(),
+                    $orderLineItemType,
+                    new OrderDiscountCollectionRowType(),
+                    $this->getQuantityType(),
+                    new OroHiddenNumberType($this->numberFormatter),
                 ],
                 []
             ),
@@ -358,43 +313,64 @@ class OrderTypeTest extends TypeTestCase
         ];
     }
 
-    private function getEntity(string $className, int|string $id, string $primaryKey = 'id'): object
+    private function getUser(int $id): User
     {
-        static $entities = [];
-        if (!isset($entities[$className][$id])) {
-            $entities[$className][$id] = new $className();
-            ReflectionUtil::setPropertyValue($entities[$className][$id], $primaryKey, $id);
-        }
+        $user = $this->createMock(User::class);
+        $user->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
 
-        return $entities[$className][$id];
+        return $user;
     }
 
-    private function prepareProductEntityType(): StubEntityType
+    private function getCustomer(int $id): Customer
     {
-        return new StubEntityType(
-            [
-                2 => $this->getEntity(Product::class, 2),
-                3 => $this->getEntity(Product::class, 3),
-            ]
-        );
+        $customer = $this->createMock(Customer::class);
+        $customer->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $customer;
     }
 
-    private function prepareProductUnitSelectionType(): ProductUnitSelectionTypeStub
+    private function getCustomerUser(int $id): CustomerUser
     {
-        return new ProductUnitSelectionTypeStub(
-            [
-                'kg' => $this->getEntity(ProductUnit::class, 'kg', 'code'),
-                'item' => $this->getEntity(ProductUnit::class, 'item', 'code'),
-            ]
-        );
+        $customerUser = $this->createMock(CustomerUser::class);
+        $customerUser->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $customerUser;
     }
 
-    private function preparePriceType(): PriceType
+    private function getProduct(int $id): Product
     {
-        $priceType = new PriceType();
-        $priceType->setDataClass(Price::class);
+        $product = $this->createMock(Product::class);
+        $product->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
 
-        return $priceType;
+        return $product;
+    }
+
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $productUnit = $this->createMock(ProductUnit::class);
+        $productUnit->expects(self::any())
+            ->method('getCode')
+            ->willReturn($code);
+
+        return $productUnit;
+    }
+
+    private function getPriceList(int $id): PriceList
+    {
+        $priceList = $this->createMock(PriceList::class);
+        $priceList->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $priceList;
     }
 
     private function getOrder(array $data): Order
@@ -408,9 +384,9 @@ class OrderTypeTest extends TypeTestCase
                     $order->addLineItem($lineItem);
                 }
             } elseif ($fieldName === 'customerUser') {
-                $order->setCustomerUser($this->getEntity(CustomerUser::class, $value));
+                $order->setCustomerUser($this->getCustomerUser($value));
             } elseif ($fieldName === 'customer') {
-                $order->setCustomer($this->getEntity(Customer::class, $value));
+                $order->setCustomer($this->getCustomer($value));
             } else {
                 $accessor->setValue($order, $fieldName, $value);
             }
@@ -425,7 +401,7 @@ class OrderTypeTest extends TypeTestCase
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($data as $fieldName => $value) {
             if ($fieldName === 'product') {
-                $lineItem->setProduct($this->getEntity(Product::class, $value));
+                $lineItem->setProduct($this->getProduct($value));
             } elseif ($fieldName === 'price') {
                 $price = new Price();
                 $price->setCurrency($value['currency']);

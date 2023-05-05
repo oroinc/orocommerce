@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Condition;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -11,7 +11,7 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 /**
- * Check if at least one of products can be added to RFP
+ * Checks whether at least one of products can be added to RFP.
  * Usage:
  * @rfp_allowed: items
  */
@@ -19,35 +19,27 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'rfp_allowed';
+    private ProductAvailabilityProvider $productAvailabilityProvider;
+    private PropertyPathInterface $propertyPath;
 
-    /**
-     * @var PropertyPathInterface
-     */
-    protected $propertyPath;
-
-    /**
-     * @var RequestDataStorageExtension
-     */
-    protected $requestDataStorageExtension;
-
-    public function __construct(RequestDataStorageExtension $requestDataStorageExtension)
+    public function __construct(ProductAvailabilityProvider $productAvailabilityProvider)
     {
-        $this->requestDataStorageExtension = $requestDataStorageExtension;
+        $this->productAvailabilityProvider = $productAvailabilityProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function isConditionAllowed($context)
     {
         $lineItems = $this->resolveValue($context, $this->propertyPath);
 
         if ($lineItems instanceof ArrayCollection) {
-            throw new \InvalidArgumentException(
-                'Property must be a valid ArrayCollection. but is '
-                .get_class($lineItems)
-            );
+            throw new \InvalidArgumentException(sprintf(
+                'Property must be a valid "%s", but got "%s".',
+                ArrayCollection::class,
+                \get_class($lineItems)
+            ));
         }
 
         if (!empty($lineItems)) {
@@ -57,32 +49,33 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
                 $productsIds[] = $lineItem->getProduct()->getId();
             }
 
-            return $this->requestDataStorageExtension->isAllowedRFPByProductsIds($productsIds);
+            return $this->productAvailabilityProvider->hasProductsAllowedForRFP($productsIds);
         }
 
         return false;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName()
     {
-        return static::NAME;
+        return 'rfp_allowed';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function initialize(array $options)
     {
         $option = reset($options);
 
         if (!$option instanceof PropertyPathInterface) {
-            throw new \InvalidArgumentException(
-                'Condition option must be a PropertyPathInterface, but is '
-                .get_class($option)
-            );
+            throw new \InvalidArgumentException(sprintf(
+                'Condition option must be "%s", but got "%s".',
+                PropertyPathInterface::class,
+                \get_class($option)
+            ));
         }
 
         $this->propertyPath = $option;
@@ -91,7 +84,7 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray()
     {
@@ -99,7 +92,7 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function compile($factoryAccessor)
     {

@@ -6,7 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\OrderBundle\Model\ExtendOrderLineItem;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -32,12 +34,18 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class OrderLineItem extends ExtendOrderLineItem implements
+class OrderLineItem implements
     ProductLineItemInterface,
     PriceAwareInterface,
-    PriceTypeAwareInterface
+    PriceTypeAwareInterface,
+    ShippingAwareInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *
@@ -172,6 +180,27 @@ class OrderLineItem extends ExtendOrderLineItem implements
      * @var bool
      */
     protected $requirePriceRecalculation = false;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method", type="string", nullable=true)
+     */
+    protected $shippingMethod;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
+     */
+    protected $shippingMethodType;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     */
+    protected $shippingEstimateAmount;
 
     /**
      * @return string
@@ -551,6 +580,77 @@ class OrderLineItem extends ExtendOrderLineItem implements
         $this->shipBy = $shipBy;
 
         return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getShippingMethod(): ?string
+    {
+        return $this->shippingMethod;
+    }
+
+    /**
+     * @param string|null $shippingMethod
+     * @return OrderLineItem
+     */
+    public function setShippingMethod(?string $shippingMethod): OrderLineItem
+    {
+        $this->shippingMethod = $shippingMethod;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getShippingMethodType(): ?string
+    {
+        return $this->shippingMethodType;
+    }
+
+    /**
+     * @param string|null $shippingMethodType
+     * @return OrderLineItem
+     */
+    public function setShippingMethodType(?string $shippingMethodType): OrderLineItem
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getShippingEstimateAmount(): ?float
+    {
+        return $this->shippingEstimateAmount;
+    }
+
+    /**
+     * @param float|null $shippingEstimateAmount
+     * @return OrderLineItem
+     */
+    public function setShippingEstimateAmount(?float $shippingEstimateAmount): OrderLineItem
+    {
+        $this->shippingEstimateAmount = $shippingEstimateAmount;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getShippingCost(): ?Price
+    {
+        $amount = $this->shippingEstimateAmount;
+
+        if (null !== $amount && $this->currency) {
+            return Price::create($amount, $this->currency);
+        }
+
+        return null;
     }
 
     /**

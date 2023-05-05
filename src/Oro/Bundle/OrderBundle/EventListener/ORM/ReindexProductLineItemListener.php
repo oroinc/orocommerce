@@ -26,7 +26,7 @@ class ReindexProductLineItemListener
 
     private EventDispatcherInterface $eventDispatcher;
     private OrderStatusesProviderInterface $statusesProvider;
-    private ReindexationWebsiteProviderInterface $websiteProvider;
+    private ReindexationWebsiteProviderInterface $reindexationWebsiteProvider;
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -35,7 +35,7 @@ class ReindexProductLineItemListener
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->statusesProvider = $statusesProvider;
-        $this->websiteProvider = $websiteProvider;
+        $this->reindexationWebsiteProvider = $websiteProvider;
     }
 
     public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem): void
@@ -108,7 +108,7 @@ class ReindexProductLineItemListener
 
     private function reindexProducts(array $productIds, Website $website): void
     {
-        $websiteIds = $this->websiteProvider->getReindexationWebsiteIds($website);
+        $websiteIds = $this->reindexationWebsiteProvider->getReindexationWebsiteIds($website);
         $this->eventDispatcher->dispatch(
             new ReindexationRequestEvent([Product::class], $websiteIds, $productIds, true, ['order']),
             ReindexationRequestEvent::EVENT_NAME

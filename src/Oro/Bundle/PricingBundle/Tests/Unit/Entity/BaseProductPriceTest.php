@@ -15,7 +15,7 @@ class BaseProductPriceTest extends \PHPUnit\Framework\TestCase
 
     public function testAccessors()
     {
-        static::assertPropertyAccessors(
+        self::assertPropertyAccessors(
             new ProductPrice(),
             [
                 ['id', 42],
@@ -35,38 +35,32 @@ class BaseProductPriceTest extends \PHPUnit\Framework\TestCase
         $price = new ProductPrice();
         $price->setProduct($product);
 
-        static::assertEquals($product->getSku(), $price->getProductSku());
+        self::assertEquals($product->getSku(), $price->getProductSku());
     }
 
     public function testSetGetPrice()
     {
-        $productPrice = new class() extends ProductPrice {
-            public function xsetValueAndCurrency(float $value, string $currency): void
-            {
-                $this->value = $value;
-                $this->currency = $currency;
-            }
-        };
-        static::assertNull($productPrice->getPrice());
+        $productPrice = new ProductPrice();
+        self::assertNull($productPrice->getPrice());
 
         $productPrice->updatePrice();
-        static::assertNull($productPrice->getPrice());
+        self::assertNull($productPrice->getPrice());
 
         $value = 11;
         $currency = 'EUR';
-        $productPrice->xsetValueAndCurrency($value, $currency);
+        $productPrice->setPrice(Price::create($value, $currency));
 
         $price = $productPrice->getPrice();
-        static::assertInstanceOf(Price::class, $price);
-        static::assertEquals($value, $price->getValue());
-        static::assertEquals($currency, $price->getCurrency());
+        self::assertInstanceOf(Price::class, $price);
+        self::assertEquals($value, $price->getValue());
+        self::assertEquals($currency, $price->getCurrency());
 
         $price = Price::create(12, 'USD');
         $productPrice->setPrice($price);
-        static::assertEquals($price, $productPrice->getPrice());
+        self::assertEquals($price, $productPrice->getPrice());
 
         $productPrice->updatePrice();
-        static::assertEquals($price->getValue(), $productPrice->getPrice()->getValue());
-        static::assertEquals($price->getCurrency(), $productPrice->getPrice()->getCurrency());
+        self::assertEquals($price->getValue(), $productPrice->getPrice()->getValue());
+        self::assertEquals($price->getCurrency(), $productPrice->getPrice()->getCurrency());
     }
 }

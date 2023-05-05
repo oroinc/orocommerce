@@ -6,16 +6,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
@@ -93,20 +97,42 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyFields)
+ *
+ * @method File getSmallImage()
+ * @method Category setSmallImage(File $smallImage)
+ * @method File getLargeImage()
+ * @method Category setLargeImage(File $largeImage)
+ * @method CategoryTitle getTitle(Localization $localization = null)
+ * @method CategoryTitle getDefaultTitle()
+ * @method CategoryShortDescription getShortDescription(Localization $localization = null)
+ * @method CategoryShortDescription getDefaultShortDescription()
+ * @method CategoryLongDescription getLongDescription(Localization $localization = null)
+ * @method CategoryLongDescription getDefaultLongDescription()
+ * @method LocalizedFallbackValue getMetaTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
+ * @method Category setProducts(ArrayCollection $value)
+ * @method removeProduct(Product $value)
+ * @method ArrayCollection getProducts()
+ * @method addProduct(Product $value)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
-class Category extends ExtendCategory implements
+class Category implements
     SluggableInterface,
     DatesAwareInterface,
     OrganizationAwareInterface,
-    DenormalizedPropertyAwareInterface
+    DenormalizedPropertyAwareInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
     use TreeTrait;
     use SluggableTrait;
     use OrganizationAwareTrait;
+    use ExtendEntityTrait;
 
     const MATERIALIZED_PATH_DELIMITER = '_';
     const CATEGORY_PATH_DELIMITER = ' / ';
+    const INDEX_DATA_DELIMITER = '|';
     const FIELD_PARENT_CATEGORY = 'parentCategory';
 
     /**
@@ -170,7 +196,7 @@ class Category extends ExtendCategory implements
     /**
      * @var Collection|Category[]
      *
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist", "remove"})
      * @ORM\OrderBy({"left" = "ASC"})
      * @ConfigField(
      *      defaultValues={
@@ -414,8 +440,6 @@ class Category extends ExtendCategory implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->titles = new ArrayCollection();
         $this->childCategories = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
@@ -727,6 +751,7 @@ class Category extends ExtendCategory implements
     public function __clone()
     {
         if ($this->id) {
+            $this->cloneExtendEntityStorage();
             $this->cloneLocalizedFallbackValueAssociations();
         }
     }

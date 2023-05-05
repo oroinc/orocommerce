@@ -79,13 +79,16 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
             $version = $body['version'];
             $priceLists = $body['priceLists'];
 
-            $jobName = ResolveCombinedPriceByVersionedPriceListTopic::getName() . ':v' . $version;
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                $jobName,
+            $result = $this->jobRunner->runUniqueByMessage(
+                $message,
                 function (JobRunner $jobRunner, Job $job) use ($priceLists, $version) {
-                    $this->schedulePostCplJobs($job);
                     $combinedPriceLists = $this->getCombinedPriceListsByPriceList($priceLists);
+                    $combinedPriceListIds = array_map(
+                        fn (CombinedPriceList $cpl) => $cpl->getId(),
+                        $combinedPriceLists
+                    );
+
+                    $this->schedulePostCplJobs($job, $combinedPriceListIds);
                     $this->addCplBuildActivity($job, $combinedPriceLists);
 
                     foreach ($combinedPriceLists as $combinedPriceList) {
@@ -122,12 +125,12 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
         }
     }
 
-    private function schedulePostCplJobs(Job $job): void
+    private function schedulePostCplJobs(Job $job, array $cpls = []): void
     {
         $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
         $context->addDependentJob(
             RunCombinedPriceListPostProcessingStepsTopic::getName(),
-            ['relatedJobId' => $job->getRootJob()->getId()]
+            ['relatedJobId' => $job->getRootJob()->getId(), 'cpls' => $cpls]
         );
         $this->dependentJob->saveDependentJob($context);
     }

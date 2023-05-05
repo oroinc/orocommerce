@@ -2,30 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductSelectEntityTypeStub extends EntityType
+class ProductSelectEntityTypeStub extends EntityTypeStub
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function __construct(array $choices)
-    {
-        parent::__construct($choices, ProductSelectType::NAME);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'query_builder'   => null,
             'create_enabled'  => false,
-            'class'           => 'Oro\Bundle\ProductBundle\Entity\Product',
+            'class'           => Product::class,
             'data_parameters' => [],
             'choice_label'    => 'sku',
             'configs'         => [

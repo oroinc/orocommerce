@@ -15,7 +15,7 @@ class OroVisibilityExtensionTest extends \PHPUnit\Framework\TestCase
         $extension = new OroVisibilityExtension();
         $extension->load([], $container);
 
-        $extensionConfig = $container->getExtensionConfig('oro_visibility');
+        self::assertNotEmpty($container->getDefinitions());
         self::assertSame(
             [
                 [
@@ -26,7 +26,7 @@ class OroVisibilityExtensionTest extends \PHPUnit\Framework\TestCase
                     ]
                 ]
             ],
-            $extensionConfig
+            $container->getExtensionConfig('oro_visibility')
         );
     }
 

@@ -1,0 +1,19 @@
+services:
+    # SearchResult Import-Export services
+    oro.website_search.importexport.data_converter.search_result:
+        parent: oro_importexport.data_converter.configurable
+
+    oro.website_search.importexport.processor.export.search_result:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [ setDataConverter, [ '@oro.website_search.importexport.data_converter.search_result' ] ]
+        tags:
+            -   name: oro_importexport.processor
+                type: export
+                entity: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory'
+                alias: oro_website_search_result_history
+
+    oro.website_search.importexport.configuration_provider.search_result:
+        class: 'Oro\Bundle\WebsiteSearchBundle\ImportExport\Configuration\SearchResultImportExportConfigurationProvider'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_website_search_result_history }

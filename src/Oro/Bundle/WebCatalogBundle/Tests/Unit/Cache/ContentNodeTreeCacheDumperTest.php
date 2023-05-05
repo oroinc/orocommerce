@@ -20,31 +20,35 @@ class ContentNodeTreeCacheDumperTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeTreeCache|\PHPUnit\Framework\MockObject\MockObject $contentNodeTreeCache;
 
+    private ContentNodeTreeCache|\PHPUnit\Framework\MockObject\MockObject $mergedContentNodeTreeCache;
+
+    private ContentNodeTreeCacheDumper $dumper;
+
     private ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject $contentNodeRepository;
 
     private WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository;
-
-    private ContentNodeTreeCacheDumper $dumper;
 
     protected function setUp(): void
     {
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
         $this->contentNodeTreeCache = $this->createMock(ContentNodeTreeCache::class);
+        $this->mergedContentNodeTreeCache = $this->createMock(ContentNodeTreeCache::class);
         $this->contentNodeRepository = $this->createMock(ContentNodeRepository::class);
         $this->webCatalogRepository = $this->createMock(WebCatalogRepository::class);
 
-        $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects(self::any())
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
+        $managerRegistry->expects(self::any())
             ->method('getRepository')
             ->willReturnMap([
                 [ContentNode::class, null, $this->contentNodeRepository],
-                [WebCatalog::class, null, $this->webCatalogRepository]
+                [WebCatalog::class, null, $this->webCatalogRepository],
             ]);
 
         $this->dumper = new ContentNodeTreeCacheDumper(
+            $managerRegistry,
             $this->contentNodeTreeResolver,
             $this->contentNodeTreeCache,
-            $doctrine
+            $this->mergedContentNodeTreeCache,
         );
     }
 
@@ -55,7 +59,11 @@ class ContentNodeTreeCacheDumperTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNodeTreeCache->expects(self::once())
             ->method('delete')
-            ->with($node->getId(), $scope->getId());
+            ->with($node->getId(), [$scope->getId()]);
+
+        $this->mergedContentNodeTreeCache->expects(self::once())
+            ->method('clear');
+
         $this->contentNodeTreeResolver->expects(self::once())
             ->method('getResolvedContentNode')
             ->with(self::identicalTo($node), self::identicalTo($scope))
@@ -74,14 +82,19 @@ class ContentNodeTreeCacheDumperTest extends \PHPUnit\Framework\TestCase
             ->method('getRootNodeByWebCatalog')
             ->with(self::identicalTo($webCatalog))
             ->willReturn($node);
+
         $this->webCatalogRepository->expects(self::once())
             ->method('getUsedScopes')
             ->with(self::identicalTo($webCatalog))
             ->willReturn([$scope]);
 
+        $this->mergedContentNodeTreeCache->expects(self::once())
+            ->method('clear');
+
         $this->contentNodeTreeCache->expects(self::once())
             ->method('delete')
-            ->with($node->getId(), $scope->getId());
+            ->with($node->getId(), [$scope->getId()]);
+
         $this->contentNodeTreeResolver->expects(self::once())
             ->method('getResolvedContentNode')
             ->with(self::identicalTo($node), self::identicalTo($scope))
@@ -103,6 +116,9 @@ class ContentNodeTreeCacheDumperTest extends \PHPUnit\Framework\TestCase
         $this->webCatalogRepository
             ->expects(self::never())
             ->method('getUsedScopes');
+
+        $this->mergedContentNodeTreeCache->expects(self::once())
+            ->method('clear');
 
         $this->contentNodeTreeCache
             ->expects(self::never())

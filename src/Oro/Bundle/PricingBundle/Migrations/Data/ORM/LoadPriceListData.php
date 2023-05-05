@@ -6,28 +6,26 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Migrations\Data\ORM\SetDefaultCurrencyFromLocale;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads Price List for the first organization.
+ */
 class LoadPriceListData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /** @var string */
-    const DEFAULT_PRICE_LIST_NAME = 'Default Price List';
+    public const PRICE_LIST_NAME = 'Default Price List';
+
+    private ContainerInterface $container;
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
-        return [
-            SetDefaultCurrencyFromLocale::class
-        ];
+        return [SetDefaultCurrencyFromLocale::class];
     }
 
     /**
@@ -40,11 +38,26 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
 
     public function load(ObjectManager $manager)
     {
-        $priceList = new PriceList();
-        $priceList
-            ->setDefault(true)
-            ->setCurrencies($this->container->get('oro_currency.config.currency')->getCurrencyList())
-            ->setName(self::DEFAULT_PRICE_LIST_NAME);
+        $organization = $this->hasReference('default_organization')
+            ? $this->getReference('default_organization')
+            : $manager->getRepository(Organization::class)->getFirst();
+
+        $priceList = $manager->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->where('p.organization = :organization')
+            ->setParameter('organization', $organization)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (null === $priceList) {
+            $priceList = new PriceList();
+            $priceList
+                ->setCurrencies($this->container->get('oro_currency.config.currency')->getCurrencyList())
+                ->setOrganization($organization);
+        }
+
+        $priceList->setName(self::PRICE_LIST_NAME);
         $manager->persist($priceList);
         $manager->flush();
 

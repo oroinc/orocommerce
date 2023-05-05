@@ -15,6 +15,7 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,32 +26,25 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShoppingListManager
 {
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
 
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
+    private TokenAccessorInterface $tokenAccessor;
 
-    /** @var TranslatorInterface */
-    private $translator;
+    private TranslatorInterface $translator;
 
-    /** @var QuantityRoundingService */
-    private $rounding;
+    private QuantityRoundingService $rounding;
 
-    /** @var WebsiteManager */
-    private $websiteManager;
+    private WebsiteManager $websiteManager;
 
-    /** @var ShoppingListTotalManager */
-    private $totalManager;
+    private ShoppingListTotalManager $totalManager;
 
-    /** @var ProductVariantAvailabilityProvider */
-    private $productVariantProvider;
+    private ProductVariantAvailabilityProvider $productVariantProvider;
 
-    /** @var ConfigManager */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /** @var EntityDeleteHandlerRegistry */
-    private $deleteHandlerRegistry;
+    private EntityDeleteHandlerRegistry $deleteHandlerRegistry;
+
+    private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -64,7 +58,8 @@ class ShoppingListManager
         ShoppingListTotalManager $totalManager,
         ProductVariantAvailabilityProvider $productVariantProvider,
         ConfigManager $configManager,
-        EntityDeleteHandlerRegistry $deleteHandlerRegistry
+        EntityDeleteHandlerRegistry $deleteHandlerRegistry,
+        LineItemChecksumGeneratorInterface $lineItemChecksumGenerator
     ) {
         $this->doctrine = $doctrine;
         $this->tokenAccessor = $tokenAccessor;
@@ -75,6 +70,7 @@ class ShoppingListManager
         $this->productVariantProvider = $productVariantProvider;
         $this->configManager = $configManager;
         $this->deleteHandlerRegistry = $deleteHandlerRegistry;
+        $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
     }
 
     /**
@@ -128,8 +124,12 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
+
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $entityManager = $this->getEntityManager();
+            $entityManager->persist($shoppingList);
+            $entityManager->flush();
         }
     }
 
@@ -147,6 +147,7 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
         $this->getEntityManager()->flush();
     }
 
@@ -196,14 +197,15 @@ class ShoppingListManager
     public function removeLineItem(LineItem $lineItem, bool $removeOnlyCurrentItem = false): int
     {
         $parentProduct = $lineItem->getParentProduct();
-        if ($removeOnlyCurrentItem || !$parentProduct) {
+        $product = $lineItem->getProduct();
+        if ($removeOnlyCurrentItem || (!$parentProduct && !$product->isKit())) {
             $this->deleteHandlerRegistry->getHandler(LineItem::class)->delete($lineItem);
 
             // return 1 because only the specified line item was deleted
             return 1;
         }
 
-        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $lineItem->getProduct());
+        return $this->removeProduct($lineItem->getShoppingList(), $parentProduct ?: $product);
     }
 
     /**
@@ -217,8 +219,23 @@ class ShoppingListManager
     {
         $lineItemsCount = count($lineItems);
         for ($iteration = 1; $iteration <= $lineItemsCount; $iteration++) {
-            $flush = $iteration % $batchSize === 0 || $lineItemsCount === $iteration;
-            $this->addLineItem($lineItems[$iteration - 1], $shoppingList, $flush);
+            $lineItem = $lineItems[$iteration - 1];
+
+            $this
+                ->prepareLineItem($lineItem, $shoppingList)
+                ->handleLineItem($lineItem, $shoppingList, function (LineItem $duplicate) use ($lineItem) {
+                    $this->mergeLineItems($lineItem, $duplicate, false);
+                });
+
+            if ($lineItemsCount === $iteration) {
+                // Recalculates totals on last iteration.
+                $this->totalManager->recalculateTotals($shoppingList, false);
+            }
+
+            if ($iteration % $batchSize === 0 || $lineItemsCount === $iteration) {
+                // Flushes entity manager once batch is ready or it the last iteration.
+                $this->getEntityManager()->flush();
+            }
         }
 
         return $lineItemsCount;
@@ -320,6 +337,11 @@ class ShoppingListManager
             $lineItem->setOrganization($shoppingList->getOrganization());
         }
 
+        $checksum = $this->lineItemChecksumGenerator->getChecksum($lineItem);
+        if ($checksum !== null) {
+            $lineItem->setChecksum($checksum);
+        }
+
         return $this;
     }
 
@@ -341,8 +363,6 @@ class ShoppingListManager
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
         }
-
-        $this->totalManager->recalculateTotals($shoppingList, false);
 
         return $this;
     }

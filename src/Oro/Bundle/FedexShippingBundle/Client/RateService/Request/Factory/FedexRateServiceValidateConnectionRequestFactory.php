@@ -7,24 +7,22 @@ use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 
+/**
+ * The factory to create FedEx shipment validation request.
+ */
 class FedexRateServiceValidateConnectionRequestFactory implements FedexRequestByIntegrationSettingsFactoryInterface
 {
-    /**
-     * @var SymmetricCrypterInterface
-     */
-    private $crypter;
+    private SymmetricCrypterInterface $crypter;
+    private SystemShippingOriginProvider $systemShippingOriginProvider;
 
-    /**
-     * @var ShippingOriginProvider
-     */
-    private $shippingOriginProvider;
-
-    public function __construct(SymmetricCrypterInterface $crypter, ShippingOriginProvider $shippingOriginProvider)
-    {
+    public function __construct(
+        SymmetricCrypterInterface $crypter,
+        SystemShippingOriginProvider $systemShippingOriginProvider
+    ) {
         $this->crypter = $crypter;
-        $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->systemShippingOriginProvider = $systemShippingOriginProvider;
     }
 
     /**
@@ -32,7 +30,7 @@ class FedexRateServiceValidateConnectionRequestFactory implements FedexRequestBy
      */
     public function create(FedexIntegrationSettings $settings): FedexRequestInterface
     {
-        $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
+        $shippingOrigin = $this->systemShippingOriginProvider->getSystemShippingOrigin();
 
         return new FedexRequest([
             'WebAuthenticationDetail' => [

@@ -458,3 +458,23 @@ Retrieve a record of payment term assigned to a specific order record.
 #### get_relationship
 
 Retrieve ID of payment term record assigned to a specific order record.
+
+### parent
+
+#### get_subresource
+
+Retrieve a record of parent order assigned to a specific order.
+
+#### get_relationship
+
+Retrieve ID of parent order record assigned to a specific order record.
+
+### subOrders
+
+#### get_subresource
+
+Retrieve a record of suborder assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve IDs of suborders records assigned to a specific order record.

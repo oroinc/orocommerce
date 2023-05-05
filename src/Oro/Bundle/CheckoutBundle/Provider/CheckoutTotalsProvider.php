@@ -7,22 +7,14 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Provides a total for a specific checkout.
+ */
 class CheckoutTotalsProvider
 {
-    /**
-     * @var CheckoutToOrderConverter
-     */
-    protected $checkoutToOrderConverter;
-
-    /**
-     * @var TotalProcessorProvider
-     */
-    protected $totalsProvider;
-
-    /**
-     * @var CheckoutShippingMethodsProviderInterface
-     */
-    protected $checkoutShippingMethodsProvider;
+    private CheckoutToOrderConverter $checkoutToOrderConverter;
+    private TotalProcessorProvider $totalsProvider;
+    private CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider;
 
     public function __construct(
         CheckoutToOrderConverter $checkoutToOrderConverter,
@@ -34,12 +26,7 @@ class CheckoutTotalsProvider
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
-    /**
-     * @param Checkout $checkout
-     *
-     * @return array
-     */
-    public function getTotalsArray(Checkout $checkout)
+    public function getTotalsArray(Checkout $checkout): array
     {
         $checkout->setShippingCost($this->checkoutShippingMethodsProvider->getPrice($checkout));
         $order = $this->checkoutToOrderConverter->getOrder($checkout);

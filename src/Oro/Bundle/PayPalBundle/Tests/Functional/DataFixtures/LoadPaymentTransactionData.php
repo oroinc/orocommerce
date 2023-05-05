@@ -8,12 +8,12 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ChannelBundle\Entity\Channel;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\IntegrationBundle\Entity\Channel as IntegrationChannel;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class LoadPaymentTransactionData extends AbstractFixture implements DependentFixtureInterface
 {

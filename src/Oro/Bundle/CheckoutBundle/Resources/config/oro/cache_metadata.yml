@@ -103,8 +103,19 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
   attributes:
     id:
       groups: ['checkout']
+    shippingMethod:
+      groups: ['checkout']
+    shippingMethodType:
+      groups: ['checkout']
 
 Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal:
   attributes:
     subtotal:
+      groups: ['checkout']
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+  attributes:
+    value:
+      groups: ['checkout']
+    currency:
       groups: ['checkout']

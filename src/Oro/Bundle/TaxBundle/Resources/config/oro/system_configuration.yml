@@ -92,7 +92,7 @@ system_configuration:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    oro.tax.system_configuration.fields.use_as_base.shipping_origin.label: shipping_origin
+                    oro.tax.system_configuration.fields.use_as_base.origin.label: origin
                     oro.tax.system_configuration.fields.use_as_base.destination.label: destination
 
         oro_tax.address_resolver_granularity:

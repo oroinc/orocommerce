@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
-use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
@@ -17,57 +18,40 @@ use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Provides shipping methods based on configuration
+ * The default implementation of the service that provides views for all applicable shipping methods
+ * and calculates a shipping price for a specific shipping context.
  */
 class ShippingPriceProvider implements ShippingPriceProviderInterface
 {
-    use MemoryCacheProviderAwareTrait;
-
-    /**
-     * @var MethodsConfigsRulesByContextProviderInterface
-     */
-    protected $shippingRulesProvider;
-
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    protected $shippingMethodProvider;
-
-    /**
-     * @var ShippingPriceCache
-     */
-    protected $priceCache;
-
-    /**
-     * @var ShippingMethodViewFactory
-     */
-    protected $shippingMethodViewFactory;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
+    private ShippingPriceCache $priceCache;
+    private ShippingMethodViewFactory $shippingMethodViewFactory;
+    private EventDispatcherInterface $eventDispatcher;
+    private MemoryCacheProviderInterface $memoryCacheProvider;
 
     public function __construct(
         MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider,
         ShippingMethodProviderInterface $shippingMethodProvider,
         ShippingPriceCache $priceCache,
         ShippingMethodViewFactory $shippingMethodViewFactory,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        MemoryCacheProviderInterface $memoryCacheProvider
     ) {
         $this->shippingRulesProvider = $shippingRulesProvider;
         $this->shippingMethodProvider = $shippingMethodProvider;
         $this->priceCache = $priceCache;
         $this->shippingMethodViewFactory = $shippingMethodViewFactory;
         $this->eventDispatcher = $eventDispatcher;
+        $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getApplicableMethodsViews(ShippingContextInterface $context)
+    public function getApplicableMethodsViews(ShippingContextInterface $context): ShippingMethodViewCollection
     {
-        return $this->getMemoryCacheProvider()->get(
+        return $this->memoryCacheProvider->get(
             ['shipping_context' => $context],
             function () use ($context) {
                 return $this->getActualApplicableMethodsViews($context);
@@ -75,12 +59,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
         );
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     *
-     * @return ShippingMethodViewCollection
-     */
-    protected function getActualApplicableMethodsViews(ShippingContextInterface $context)
+    private function getActualApplicableMethodsViews(ShippingContextInterface $context): ShippingMethodViewCollection
     {
         $methodCollection = new ShippingMethodViewCollection();
 
@@ -89,8 +68,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
             foreach ($rule->getMethodConfigs() as $methodConfig) {
                 $methodId = $methodConfig->getMethod();
                 $method = $this->shippingMethodProvider->getShippingMethod($methodId);
-
-                if (!$method) {
+                if (null === $method) {
                     continue;
                 }
 
@@ -100,16 +78,12 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
                     $method->isGrouped(),
                     $method->getSortOrder()
                 );
-
                 $methodCollection->addMethodView($methodId, $methodView);
 
-                $types = $this->getApplicableMethodTypesViews($context, $methodConfig);
-
-                if (count($types) === 0) {
-                    continue;
+                $types = $this->getApplicableMethodTypesViews($context, $methodConfig, $method);
+                if ($types) {
+                    $methodCollection->addMethodTypesViews($methodId, $types);
                 }
-
-                $methodCollection->addMethodTypesViews($methodId, $types);
             }
         }
 
@@ -120,41 +94,41 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
+    public function getPrice(ShippingContextInterface $context, ?string $methodId, ?string $typeId): ?Price
     {
+        if (!$methodId) {
+            return null;
+        }
+
         $method = $this->shippingMethodProvider->getShippingMethod($methodId);
-        if (!$method) {
+        if (null === $method) {
             return null;
         }
 
         $type = $method->getType($typeId);
-        if (!$type) {
+        if (null === $type) {
             return null;
-        }
-
-        if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
-            return $this->priceCache->getPrice($context, $methodId, $typeId);
         }
 
         $rules = $this->shippingRulesProvider->getShippingMethodsConfigsRules($context);
         foreach ($rules as $rule) {
+            if ($this->priceCache->hasPrice($context, $methodId, $typeId, $rule->getId())) {
+                return $this->priceCache->getPrice($context, $methodId, $typeId, $rule->getId());
+            }
+
             foreach ($rule->getMethodConfigs() as $methodConfig) {
                 if ($methodConfig->getMethod() !== $methodId) {
                     continue;
                 }
 
                 $typesOptions = $this->getEnabledTypesOptions($methodConfig->getTypeConfigs()->toArray());
-                if (array_key_exists($typeId, $typesOptions)) {
-                    $price = $type->calculatePrice(
-                        $context,
-                        $methodConfig->getOptions(),
-                        $typesOptions[$typeId]
-                    );
-
+                if (\array_key_exists($typeId, $typesOptions)) {
+                    $price = $type->calculatePrice($context, $methodConfig->getOptions(), $typesOptions[$typeId]);
                     if ($price) {
-                        $this->priceCache->savePrice($context, $methodId, $typeId, $price);
+                        $this->priceCache->savePrice($context, $methodId, $typeId, $rule->getId(), $price);
                     }
 
                     return $price;
@@ -165,77 +139,63 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
         return null;
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param ShippingMethodConfig $methodConfig
-     * @return array
-     */
-    protected function getApplicableMethodTypesViews(
+    private function getApplicableMethodTypesViews(
         ShippingContextInterface $context,
-        ShippingMethodConfig $methodConfig
-    ) {
-        $method = $this->shippingMethodProvider->getShippingMethod($methodConfig->getMethod());
+        ShippingMethodConfig $methodConfig,
+        ShippingMethodInterface $method
+    ): array {
         $methodId = $method->getIdentifier();
-        $methodOptions = $methodConfig->getOptions();
-        $typesOptions = $this->getEnabledTypesOptions($methodConfig->getTypeConfigs()->toArray());
 
         $prices = [];
+        $rule = $methodConfig->getMethodConfigsRule();
+        $typesOptions = $this->getEnabledTypesOptions($methodConfig->getTypeConfigs()->toArray());
         foreach ($typesOptions as $typeId => $typeOptions) {
-            if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
-                $prices[$typeId] = $this->priceCache->getPrice($context, $methodId, $typeId);
+            if ($this->priceCache->hasPrice($context, $methodId, $typeId, $rule->getId())) {
+                $prices[$typeId] = $this->priceCache->getPrice($context, $methodId, $typeId, $rule->getId());
             }
         }
         $requestedTypesOptions = array_diff_key($typesOptions, $prices);
 
-        if ($method instanceof PricesAwareShippingMethodInterface && count($requestedTypesOptions) > 0) {
+        if ($method instanceof PricesAwareShippingMethodInterface && \count($requestedTypesOptions) > 0) {
             $prices = array_replace(
                 $prices,
-                $method->calculatePrices($context, $methodOptions, $requestedTypesOptions)
+                $method->calculatePrices($context, $methodConfig->getOptions(), $requestedTypesOptions)
             );
         } else {
             foreach ($requestedTypesOptions as $typeId => $typeOptions) {
                 $type = $method->getType($typeId);
                 if ($type) {
-                    $prices[$typeId] = $type->calculatePrice($context, $methodOptions, $typeOptions);
+                    $prices[$typeId] = $type->calculatePrice($context, $methodConfig->getOptions(), $typeOptions);
                 }
             }
         }
 
         $types = [];
         foreach (array_filter($prices) as $typeId => $price) {
-            if (array_key_exists($typeId, $requestedTypesOptions)) {
-                $this->priceCache->savePrice($context, $methodId, $typeId, $price);
+            if (\array_key_exists($typeId, $requestedTypesOptions)) {
+                $this->priceCache->savePrice($context, $methodId, $typeId, $rule->getId(), $price);
             }
             $type = $method->getType($typeId);
-            $types[$typeId] = $this->shippingMethodViewFactory
-                ->createMethodTypeView(
-                    $type->getIdentifier(),
-                    $type->getLabel(),
-                    $type->getSortOrder(),
-                    $price
-                );
+            $types[$typeId] = $this->shippingMethodViewFactory->createMethodTypeView(
+                $type->getIdentifier(),
+                $type->getLabel(),
+                $type->getSortOrder(),
+                $price
+            );
         }
 
         return $types;
     }
 
-    /**
-     * @param array $typeConfigs
-     *
-     * @return array
-     */
-    protected function getEnabledTypesOptions(array $typeConfigs)
+    private function getEnabledTypesOptions(array $typeConfigs): array
     {
-        return array_reduce(
-            $typeConfigs,
-            function (array $result, ShippingMethodTypeConfig $config) {
-                if ($config->isEnabled()) {
-                    $result[$config->getType()] = $config->getOptions();
-                }
+        $result = [];
+        foreach ($typeConfigs as $config) {
+            if ($config->isEnabled()) {
+                $result[$config->getType()] = $config->getOptions();
+            }
+        }
 
-                return $result;
-            },
-            []
-        );
+        return $result;
     }
 }

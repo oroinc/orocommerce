@@ -2,15 +2,73 @@
 
 namespace Oro\Bundle\RFPBundle\Provider;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-class ProductAvailabilityProvider implements ProductAvailabilityProviderInterface
+/**
+ * Provides a set of methods to check whether products can be added to RFP.
+ */
+class ProductAvailabilityProvider
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function isProductApplicableForRFP(Product $product)
+    private ConfigManager $configManager;
+    private ManagerRegistry $doctrine;
+    private AclHelper $aclHelper;
+    private ?array $allowedInventoryStatuses = null;
+
+    public function __construct(ConfigManager $configManager, ManagerRegistry $doctrine, AclHelper $aclHelper)
+    {
+        $this->configManager = $configManager;
+        $this->doctrine = $doctrine;
+        $this->aclHelper = $aclHelper;
+    }
+
+    public function isProductApplicableForRFP(Product $product): bool
     {
         return $product->getType() !== Product::TYPE_CONFIGURABLE;
+    }
+
+    public function isProductAllowedForRFP(Product $product): bool
+    {
+        if (!$product->isEnabled()) {
+            return false;
+        }
+
+        $inventoryStatus = $product->getInventoryStatus()?->getId();
+        if (!$inventoryStatus) {
+            return false;
+        }
+
+        return \in_array($inventoryStatus, $this->getAllowedInventoryStatuses(), true);
+    }
+
+    public function hasProductsAllowedForRFP(array $productsIds): bool
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(Product::class);
+        $qb = $em->createQueryBuilder()
+            ->from(Product::class, 'p')
+            ->select('p')
+            ->where('p.id = :id');
+        foreach ($productsIds as $productId) {
+            $qb->setParameter('id', $productId);
+            $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
+            if (null !== $product && $this->isProductAllowedForRFP($product)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getAllowedInventoryStatuses(): array
+    {
+        if (null === $this->allowedInventoryStatuses) {
+            $this->allowedInventoryStatuses = (array)$this->configManager->get('oro_rfp.frontend_product_visibility');
+        }
+
+        return $this->allowedInventoryStatuses;
     }
 }

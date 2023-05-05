@@ -12,37 +12,22 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 
 class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $integrationIconProvider;
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $identifierGenerator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|LocalizationHelper
-     */
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /**
-     * @var FlatRateMethodFromChannelFactory
-     */
+    /** @var FlatRateMethodFromChannelFactory */
     private $factory;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
-
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->integrationIconProvider = $this->createMock(IntegrationIconProviderInterface::class);
 
         $this->factory = new FlatRateMethodFromChannelFactory(
@@ -52,48 +37,37 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testBuildReturnsCorrectObjectWithLabel()
+    public function testCreate(): void
     {
         $label = 'test';
-        $channel = $this->getChannel();
         $identifier = 'flat_rate_1';
+        $enabled = true;
         $iconUri = 'bundles/icon-uri.png';
 
-        $this->integrationIconProvider
-            ->expects(static::once())
+        $channel = new Channel();
+        $channel->setTransport(new FlatRateSettings());
+        $channel->setEnabled($enabled);
+
+        $this->integrationIconProvider->expects(self::once())
             ->method('getIcon')
             ->with($channel)
             ->willReturn($iconUri);
 
-        $this->localizationHelper->expects(static::once())
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
             ->willReturn($label);
 
-        $this->identifierGenerator->expects($this->once())
+        $this->identifierGenerator->expects(self::once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn($identifier);
 
-        $method = $this->factory->create($channel);
-
-        static::assertInstanceOf(FlatRateMethod::class, $method);
-        static::assertSame($identifier, $method->getIdentifier());
-        static::assertSame($label, $method->getLabel());
-        static::assertTrue($method->isEnabled());
-        static::assertSame($iconUri, $method->getIcon());
-    }
-
-    /**
-     * @return Channel
-     */
-    private function getChannel()
-    {
-        $settings = new FlatRateSettings();
-
-        $channel = new Channel();
-        $channel->setTransport($settings);
-        $channel->setEnabled(true);
-
-        return $channel;
+        $expected = new FlatRateMethod(
+            $identifier,
+            $label,
+            $iconUri,
+            $enabled
+        );
+        self::assertEquals($expected, $this->factory->create($channel));
     }
 }

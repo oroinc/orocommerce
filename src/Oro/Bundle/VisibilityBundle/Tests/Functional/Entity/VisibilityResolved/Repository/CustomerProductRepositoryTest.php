@@ -8,9 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
 
 class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
 {
@@ -74,13 +75,13 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $category = $this->getCategory($product);
         $repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category);
         $visibilities = $repository->findBy(['product' => $product]);
-        $this->assertSame(1, count($visibilities));
+        $this->assertCount(1, $visibilities);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function insertByCategoryDataProvider()
+    public function insertByCategoryDataProvider(): array
     {
         return [
             [
@@ -96,81 +97,78 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function insertStaticDataProvider()
+    public function insertStaticDataProvider(): array
     {
         return ['expected_rows' => [5]];
     }
+
     /**
      * @return CustomerProductVisibilityResolved[]
      */
-    protected function getResolvedValues()
+    protected function getResolvedValues(): array
     {
-        return $this->registry
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved')
-            ->findAll();
+        return $this->doctrine->getRepository(CustomerProductVisibilityResolved::class)->findAll();
     }
+
     /**
-     * @param CustomerProductVisibilityResolved[] $visibilities
-     * @param Product $product
-     * @param Scope $scope
-     *
-     * @return CustomerProductVisibilityResolved|null
+     * {@inheritDoc}
      */
     protected function getResolvedVisibility(
-        $visibilities,
+        array $visibilities,
         Product $product,
         Scope $scope
-    ) {
+    ): ?BaseProductVisibilityResolved {
         foreach ($visibilities as $visibility) {
-            if ($visibility->getProduct()->getId() == $product->getId()
-                && $visibility->getScope()->getId() == $scope->getId()
+            if ($visibility->getProduct()->getId() === $product->getId()
+                && $visibility->getScope()->getId() === $scope->getId()
             ) {
                 return $visibility;
             }
         }
         return null;
     }
+
     /**
-     * @param null|CustomerProductVisibility[] $sourceVisibilities
-     * @param CustomerProductVisibilityResolved $resolveVisibility
-     * @return null|CustomerProductVisibility
+     * {@inheritDoc}
      */
-    protected function getSourceVisibilityByResolved($sourceVisibilities, $resolveVisibility)
-    {
+    protected function getSourceVisibilityByResolved(
+        ?array $sourceVisibilities,
+        BaseProductVisibilityResolved $resolveVisibility
+    ): ?VisibilityInterface {
         foreach ($sourceVisibilities as $visibility) {
-            if ($resolveVisibility->getProduct()->getId() == $visibility->getProduct()->getId()
-                && $resolveVisibility->getScope()->getId() == $visibility->getScope()->getId()
+            if ($resolveVisibility->getProduct()->getId() === $visibility->getProduct()->getId()
+                && $resolveVisibility->getScope()->getId() === $visibility->getScope()->getId()
             ) {
                 return $visibility;
             }
         }
         return null;
     }
+
     /**
-     * @return EntityRepository
+     * {@inheritDoc}
      */
-    protected function getSourceRepository()
+    protected function getSourceRepository(): EntityRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            'OroVisibilityBundle:Visibility\CustomerProductVisibility'
-        );
+        return $this->getContainer()->get('doctrine')->getRepository(CustomerProductVisibility::class);
     }
+
     /**
-     * @return CustomerProductRepository
+     * {@inheritDoc}
      */
-    protected function getRepository()
+    protected function getRepository(): AbstractVisibilityRepository
     {
-        return $this->getContainer()
-            ->get('oro_visibility.customer_product_repository');
+        return $this->getContainer()->get('oro_visibility.customer_product_repository');
     }
+
     /**
-     * @param CustomerProductVisibilityResolved $visibilityResolved
-     * @return CustomerProductVisibilityResolved|null
+     * {@inheritDoc}
      */
-    public function findByPrimaryKey($visibilityResolved)
-    {
+    public function findByPrimaryKey(
+        BaseProductVisibilityResolved $visibilityResolved
+    ): BaseProductVisibilityResolved {
         return $this->getRepository()->findByPrimaryKey(
             $visibilityResolved->getProduct(),
             $visibilityResolved->getScope()
@@ -178,14 +176,13 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getScope($targetEntityReference)
+    public function getScope(string $targetEntityReference): Scope
     {
-        $targetEntity = $this->getReference($targetEntityReference);
         return $this->scopeManager->find(
             CustomerProductVisibility::VISIBILITY_TYPE,
-            ['customer' => $targetEntity]
+            ['customer' => $this->getReference($targetEntityReference)]
         );
     }
 }

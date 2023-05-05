@@ -29,26 +29,8 @@
         data-page-component-module="orosale/js/app/components/quote-product-to-order-component"
         data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="grid-cell grid-cell--offset-l-none-mobile primary-cell">
-            <h3 class="oro-grid-table__title">
-                {% if (quoteProduct.product.id is defined) %}
-                    {{ UI.link({
-                        path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
-                        label : quoteProduct.product.names|localized_value,
-                    }) }}
-                {% else %}
-                    {{ quoteProduct.productName }}
-                {% endif %}
-            </h3>
-            <div class="customer-line-items__row">
-                {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }}
-                <span class="customer-line-items__sku-value">
-                    {% if quoteProduct.isTypeNotAvailable %}
-                        {{ quoteProduct.productReplacementSku }}
-                    {% else %}
-                        {{ quoteProduct.productSku }}
-                    {% endif %}
-                </span>
-            </div>
+            {{ block('oro_sale_quote_product_demand_item_title') }}
+            {{ block('oro_sale_quote_product_demand_item_attributes_container') }}
         </td>
         <td class="grid-cell grid-cell--offset-l-none-mobile">
             {{ form_widget(form.quoteProductOffer) }}
@@ -101,6 +83,37 @@
             </td>
         </tr>
     {% endif %}
+{% endblock %}
+
+{% block oro_sale_quote_product_demand_item_title %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <h3 class="oro-grid-table__title">
+        {% if (quoteProduct.product.id is defined) %}
+            {{ UI.link({
+                path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
+                label : quoteProduct.product.names|localized_value,
+            }) }}
+        {% else %}
+            {{ quoteProduct.productName }}
+        {% endif %}
+    </h3>
+{% endblock %}
+
+{% block oro_sale_quote_product_demand_item_attributes_container %}
+    <div class="customer-line-items__row">
+        {{ block('oro_sale_quote_product_demand_item_attributes_sku') }}
+    </div>
+{% endblock %}
+
+{% block oro_sale_quote_product_demand_item_attributes_sku %}
+    {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }}
+    <span class="customer-line-items__sku-value">
+        {% if quoteProduct.isTypeNotAvailable %}
+            {{ quoteProduct.productReplacementSku }}
+        {% else %}
+            {{ quoteProduct.productSku }}
+        {% endif %}
+    </span>
 {% endblock %}
 
 {% block oro_sale_quote_product_demand_collection_widget %}

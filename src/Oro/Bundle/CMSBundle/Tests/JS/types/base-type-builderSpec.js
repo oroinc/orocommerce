@@ -2,15 +2,15 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import _ from 'underscore';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
-import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
+import BaseTypeBuilder from 'orocms/js/app/grapesjs/types/base-type';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/base-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/base-type', () => {
     let baseTypeBuilder;
     let editor;
 
     const TestTypeBuilder = BaseTypeBuilder.extend({
-        modelMixin: {
+        modelProps: {
             defaults: {
                 testValue1: 'Test Value 1',
                 testValue2: 'Test Value 2',
@@ -39,15 +39,20 @@ describe('orocms/js/app/grapesjs/type-builders/base-type-builder', () => {
 
         isComponent() {
             return {
-                type: 'base'
+                type: 'test'
             };
         }
+    }, {
+        type: 'test'
     });
 
     beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
@@ -94,9 +99,9 @@ describe('orocms/js/app/grapesjs/type-builders/base-type-builder', () => {
         it('check base model extend', () => {
             expect(baseTypeBuilder.Model.isComponent).toBeDefined();
             expect(baseTypeBuilder.Model.isComponent()).toEqual({
-                type: 'base'
+                type: 'test'
             });
-            expect(baseTypeBuilder.Model.componentType).toEqual(baseTypeBuilder.componentType);
+            expect(baseTypeBuilder.Model.componentType).toEqual(TestTypeBuilder.type);
 
             expect(baseTypeBuilder.Model.prototype.defaults.testValue1).toEqual('Test Value 1');
             expect(baseTypeBuilder.Model.prototype.defaults.testValue2).toEqual('Test Value 2');

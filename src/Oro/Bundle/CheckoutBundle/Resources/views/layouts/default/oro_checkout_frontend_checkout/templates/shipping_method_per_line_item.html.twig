@@ -1,0 +1,6 @@
+{% block _checkout_form_fields_widget %}
+    {{ parent_block_widget() }}
+    <div class="hidden">
+        {{ form_widget(form.line_items_shipping_methods) }}
+    </div>
+{% endblock %}

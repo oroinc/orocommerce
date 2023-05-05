@@ -78,6 +78,8 @@ operations:
                     - [[shallowCopy], [propertyType, ['\DateTime']]]
                     - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\Product']]]
                     - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]]
+                    - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem']]]
+                    - [[collection], [propertyName, [kitItemLineItems]]]
             - '@remove_restricted_products':
                 attribute: $.removedProducts
                 productHolderPath: $.newShoppingList.lineItems

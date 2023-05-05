@@ -10,29 +10,21 @@ use Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltr
 
 class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
 
-    /**
-     * @var ShippingContextToRulesValuesConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingContextToRulesValuesConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingContextToRuleValuesConverter;
 
-    /**
-     * @var BasicMethodsConfigsRulesFiltrationService
-     */
+    /** @var BasicMethodsConfigsRulesFiltrationService */
     private $basicMethodsConfigsRulesFiltrationService;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->shippingContextToRuleValuesConverter = $this
-            ->createMock(ShippingContextToRulesValuesConverterInterface::class);
+        $this->shippingContextToRuleValuesConverter = $this->createMock(
+            ShippingContextToRulesValuesConverterInterface::class
+        );
 
         $this->basicMethodsConfigsRulesFiltrationService = new BasicMethodsConfigsRulesFiltrationService(
             $this->filtrationService,
@@ -40,57 +32,38 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\T
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function testGetFilteredShippingMethodsConfigsRules()
     {
         $configRules = [
-            $this->createShippingMethodsConfigsRule(),
-            $this->createShippingMethodsConfigsRule(),
+            $this->createMock(ShippingMethodsConfigsRule::class),
+            $this->createMock(ShippingMethodsConfigsRule::class),
         ];
-        $context = $this->createContextMock();
+        $context = $this->createMock(ShippingContextInterface::class);
         $values = [
             'currency' => 'USD',
         ];
 
-        $this->shippingContextToRuleValuesConverter->expects(static::once())
+        $this->shippingContextToRuleValuesConverter->expects(self::once())
             ->method('convert')
             ->with($context)
             ->willReturn($values);
 
         $expectedConfigRules = [
-            $this->createShippingMethodsConfigsRule(),
-            $this->createShippingMethodsConfigsRule(),
+            $this->createMock(ShippingMethodsConfigsRule::class),
+            $this->createMock(ShippingMethodsConfigsRule::class),
         ];
 
-        $this->filtrationService->expects(static::once())
+        $this->filtrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with($configRules, $values)
             ->willReturn($expectedConfigRules);
 
-        static::assertEquals(
+        self::assertEquals(
             $expectedConfigRules,
             $this->basicMethodsConfigsRulesFiltrationService->getFilteredShippingMethodsConfigsRules(
                 $configRules,
                 $context
             )
         );
-    }
-
-    /**
-     * @return ShippingContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(ShippingContextInterface::class);
-    }
-
-    /**
-     * @return ShippingMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createShippingMethodsConfigsRule()
-    {
-        return $this->createMock(ShippingMethodsConfigsRule::class);
     }
 }

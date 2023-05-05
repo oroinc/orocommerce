@@ -128,9 +128,9 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContextData()
     {
-        $customerGroup = new CustomerGroup();
-        $customer = new Customer();
-        $customerUser = new CustomerUser();
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 1]);
+        $customer = $this->getEntity(Customer::class, ['id' => 1]);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
         $billingAddress = new OrderAddress();
         $shippingAddress = new OrderAddress();
         $website = new Website();
@@ -208,7 +208,8 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => $shippingMethodType,
             ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$coupon1]),
             ContextDataConverterInterface::PAYMENT_METHODS => ['pm1', 'pm2'],
-            ContextDataConverterInterface::PAYMENT_METHOD => 'pm1'
+            ContextDataConverterInterface::PAYMENT_METHOD => 'pm1',
+            OrderContextDataConverter::SUB_ORDERS => []
         ], $this->converter->getContextData($entity));
     }
 

@@ -181,7 +181,7 @@
              }|json_encode }}"
              data-layout="separate"
         >
-            {% set collapseId = 'content-variant-collapse-'|uniqid %}
+            {% set collapseId = 'content-variant-collapse-'|uniqid ~ form.default.vars.id  %}
             <button class="btn-toggle-variant btn btn-icon btn-square-light{{ expanded ? '' : ' collapsed' }}"
                     type="button"
                     data-toggle="collapse"

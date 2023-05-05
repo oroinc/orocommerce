@@ -33,7 +33,6 @@ define(function(require) {
          */
         onClick: function(e) {
             e.preventDefault();
-            e.stopPropagation();
 
             if (this.formHasErrors()) {
                 return;

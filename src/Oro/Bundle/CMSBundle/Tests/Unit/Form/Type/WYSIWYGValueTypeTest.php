@@ -13,9 +13,9 @@ class WYSIWYGValueTypeTest extends FormIntegrationTestCase
     use WysiwygAwareTestTrait;
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(

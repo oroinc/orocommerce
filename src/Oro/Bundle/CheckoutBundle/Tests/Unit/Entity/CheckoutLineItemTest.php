@@ -37,6 +37,9 @@ class CheckoutLineItemTest extends \PHPUnit\Framework\TestCase
             ['priceType', CheckoutLineItem::PRICE_TYPE_BUNDLED],
             ['fromExternalSource', true],
             ['comment', 'comment'],
+            ['shippingMethod', 'SHIPPING_METHOD'],
+            ['shippingMethodType', 'SHIPPING_METHOD_TYPE'],
+            ['shippingEstimateAmount', 3.0]
         ];
 
         $entity = new CheckoutLineItem();
@@ -68,5 +71,59 @@ class CheckoutLineItemTest extends \PHPUnit\Framework\TestCase
         $entity->setPrice($price);
         $this->assertSame($price->getCurrency(), $entity->getCurrency());
         $this->assertSame((float)$price->getValue(), $entity->getValue());
+    }
+
+    public function testShippingCost()
+    {
+        $entity = new CheckoutLineItem();
+        $this->assertNull($entity->getShippingCost());
+        $entity->setCurrency('USD');
+        $entity->setShippingEstimateAmount(5.00);
+
+        $shippingCost = $entity->getShippingCost();
+        $this->assertInstanceOf(Price::class, $shippingCost);
+        $this->assertSame($shippingCost->getCurrency(), $entity->getCurrency());
+        $this->assertSame((float)$shippingCost->getValue(), $entity->getShippingEstimateAmount());
+    }
+
+    /**
+     * @param string|null $shippingMethod
+     * @param string|null $shippingMethodType
+     * @param bool $expected
+     * @dataProvider getDataToTestShippingMethods
+     */
+    public function testHasShippingMethod(?string $shippingMethod, ?string $shippingMethodType, bool $expected)
+    {
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setShippingMethod($shippingMethod)
+            ->setShippingMethodType($shippingMethodType);
+
+        $this->assertEquals($expected, $lineItem->hasShippingMethodData());
+    }
+
+    public function getDataToTestShippingMethods(): array
+    {
+        return [
+            [
+                'shippingMethod' => 'METHOD',
+                'shippingMethodType' => 'TYPE',
+                'expected' => true
+            ],
+            [
+                'shippingMethod' => null,
+                'shippingMethodType' => 'TYPE',
+                'expected' => false
+            ],
+            [
+                'shippingMethod' => 'METHOD',
+                'shippingMethodType' => null,
+                'expected' => false
+            ],
+            [
+                'shippingMethod' => null,
+                'shippingMethodType' => null,
+                'expected' => false
+            ]
+        ];
     }
 }

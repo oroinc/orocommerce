@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Gateway\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option\Swipe;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class SwipeTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new Swipe()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -22,9 +27,8 @@ class SwipeTest extends AbstractOptionTest
                 ['SWIPE' => 123],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SWIPE" with value 123 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "SWIPE" with value 123 is expected to be of type "string", but is of type "int".',
                 ],
             ],
             'valid' => [

@@ -10,7 +10,7 @@ services:
 
     Oro\Bundle\OrderBundle\Controller\AjaxOrderController:
         calls:
-            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
@@ -26,3 +26,8 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+
+    Oro\Bundle\OrderBundle\Controller\DashboardController:
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_chart_widget_provider.volume'
+            - '@oro_order.provider.dashboard.sales_orders_chart_widget_provider.number'

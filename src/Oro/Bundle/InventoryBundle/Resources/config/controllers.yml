@@ -6,4 +6,5 @@ services:
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
-            - { name: 'container.service_subscriber' }
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_inventory.manager.inventory_manager, key: Oro\Bundle\InventoryBundle\Inventory\InventoryManager }

@@ -12,20 +12,16 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 
 class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
-
         $this->loadFixtures([
             LoadShoppingListACLData::class,
             LoadProductData::class,
         ]);
 
-        $user = $this->getCustomerUser();
-
+        $user = self::getContainer()->get('doctrine')->getRepository(CustomerUser::class)
+            ->findOneBy(['email' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
         $token = new UsernamePasswordOrganizationToken(
             $user,
             false,
@@ -33,26 +29,20 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
             $user->getOrganization(),
             $user->getUserRoles()
         );
-        $this->client->getContainer()->get('security.token_storage')->setToken($token);
+        self::getContainer()->get('security.token_storage')->setToken($token);
     }
 
     /**
-     * @param string $operationName
-     * @param array $params
-     *
      * @dataProvider lineItemOperationButtonsProvider
      */
-    public function testLineItemOperationButtons($operationName, array $params)
+    public function testLineItemOperationButtons(string $operationName, array $params)
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        self::assertActionButton($operationName, $product->getId(), Product::class, $params);
+        $this->assertActionButton($operationName, $product->getId(), Product::class, $params);
     }
 
-    /**
-     * @return array
-     */
-    public function lineItemOperationButtonsProvider()
+    public function lineItemOperationButtonsProvider(): array
     {
         return [
             [
@@ -60,28 +50,9 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
                 ['route' => 'oro_product_frontend_quick_add'],
             ],
             [
-                'operation' => 'oro_shoppinglist_frontend_quick_add_import_to_shoppinglist',
-                ['route' => 'oro_product_frontend_quick_add_import'],
-            ],
-            [
-                'operation' => 'oro_shoppinglist_frontend_quick_add_import_to_shoppinglist',
-                ['route' => 'oro_product_frontend_quick_add_copy_paste'],
-            ],
-            [
                 'operation' => 'oro_shoppinglist_frontend_addlineitem',
                 ['datagrid' => 'frontend-product-search-grid'],
             ],
         ];
-    }
-
-    /**
-     * @return CustomerUser
-     */
-    public function getCustomerUser()
-    {
-        return self::getContainer()
-            ->get('doctrine')
-            ->getRepository(CustomerUser::class)
-            ->findOneBy(['email' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
     }
 }

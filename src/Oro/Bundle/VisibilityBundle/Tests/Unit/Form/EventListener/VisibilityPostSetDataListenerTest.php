@@ -20,21 +20,15 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var VisibilityPostSetDataListener|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $listener;
+    /** @var VisibilityFormFieldDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldDataProvider;
 
-    /**
-     * @var VisibilityFormFieldDataProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fieldDataProvider;
+    /** @var VisibilityPostSetDataListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->fieldDataProvider = $this->getMockBuilder(VisibilityFormFieldDataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldDataProvider = $this->createMock(VisibilityFormFieldDataProvider::class);
 
         $this->listener = new VisibilityPostSetDataListener(
             $this->fieldDataProvider
@@ -46,9 +40,16 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $form = $this->createMock(FormInterface::class);
         $formConfig = $this->createMock(FormConfigInterface::class);
-        $formConfig->method('getOption')->with('allClass')->willReturn(ProductVisibility::class);
-        $form->method('getData')->willReturn($product);
-        $form->method('getConfig')->willReturn($formConfig);
+        $formConfig->expects($this->any())
+            ->method('getOption')
+            ->with('allClass')
+            ->willReturn(ProductVisibility::class);
+        $form->expects($this->any())
+            ->method('getData')
+            ->willReturn($product);
+        $form->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($formConfig);
 
         $customer1 = $this->getEntity(Customer::class, ['id' => 2]);
         $customer2 = $this->getEntity(Customer::class, ['id' => 4]);
@@ -56,43 +57,41 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
         $customerGroup2 = $this->getEntity(CustomerGroup::class, ['id' => 5]);
         $this->fieldDataProvider->expects($this->exactly(3))
             ->method('findFormFieldData')
-            ->willReturnMap(
+            ->willReturnMap([
+                [$form, 'all', null],
                 [
-                    [$form, 'all', null],
+                    $form,
+                    'customerGroup',
                     [
-                        $form,
-                        'customerGroup',
-                        [
-                            3 => (new CustomerGroupProductVisibility())->setVisibility('visible')
-                                ->setScope(new StubScope(['customerGroup' => $customerGroup1, 'customer' => null])),
-                            5 => (new CustomerGroupProductVisibility())->setVisibility('hidden')
-                                ->setScope(new StubScope(['customerGroup' => $customerGroup2, 'customer' => null])),
-                        ],
+                        3 => (new CustomerGroupProductVisibility())->setVisibility('visible')
+                            ->setScope(new StubScope(['customerGroup' => $customerGroup1, 'customer' => null])),
+                        5 => (new CustomerGroupProductVisibility())->setVisibility('hidden')
+                            ->setScope(new StubScope(['customerGroup' => $customerGroup2, 'customer' => null])),
                     ],
+                ],
+                [
+                    $form,
+                    'customer',
                     [
-                        $form,
-                        'customer',
-                        [
-                            2 => (new CustomerProductVisibility())->setVisibility('visible')
-                                ->setScope(new StubScope(['customerGroup' => null, 'customer' => $customer1])),
-                            4 => (new CustomerGroupProductVisibility())->setVisibility('hidden')
-                                ->setScope(new StubScope(['customerGroup' => null, 'customer' => $customer2])),
-                        ],
-                    ]
+                        2 => (new CustomerProductVisibility())->setVisibility('visible')
+                            ->setScope(new StubScope(['customerGroup' => null, 'customer' => $customer1])),
+                        4 => (new CustomerGroupProductVisibility())->setVisibility('hidden')
+                            ->setScope(new StubScope(['customerGroup' => null, 'customer' => $customer2])),
+                    ],
                 ]
-            );
+            ]);
 
         $allForm = $this->createMock(FormInterface::class);
         $customerForm = $this->createMock(FormInterface::class);
         $customerGroupForm = $this->createMock(FormInterface::class);
 
-        $form->method('get')->willReturnMap(
-            [
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
                 ['all', $allForm],
                 ['customer', $customerForm],
                 ['customerGroup', $customerGroupForm],
-            ]
-        );
+            ]);
 
         // assert data was set
         $allForm->expects($this->once())

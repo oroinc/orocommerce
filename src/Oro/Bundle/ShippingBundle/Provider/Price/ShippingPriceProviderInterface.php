@@ -6,21 +6,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
+/**
+ * Represents a service to provide views for all applicable shipping methods and calculate a shipping price
+ * for a specific shipping context.
+ */
 interface ShippingPriceProviderInterface
 {
-    /**
-     * @param ShippingContextInterface $context
-     *
-     * @return ShippingMethodViewCollection
-     */
-    public function getApplicableMethodsViews(ShippingContextInterface $context);
+    public function getApplicableMethodsViews(ShippingContextInterface $context): ShippingMethodViewCollection;
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param string $methodId
-     * @param string $typeId
-     *
-     * @return Price|null
-     */
-    public function getPrice(ShippingContextInterface $context, $methodId, $typeId);
+    public function getPrice(ShippingContextInterface $context, ?string $methodId, ?string $typeId): ?Price;
 }

@@ -34,6 +34,7 @@ const RteItemView = BaseView.extend({
         this.$el
             .addClass(model.getClass('button'))
             .attr(model.get('attributes'))
+            .attr('data-action-name', model.get('name'))
             .append(model.get('icon'));
 
         this.$el.tooltip();
@@ -116,7 +117,9 @@ const RteItemView = BaseView.extend({
             range.deleteContents();
             node.innerHTML = value;
             [...node.childNodes].reverse().forEach(nd => {
-                nd.setAttribute('data-temp', 'add');
+                if (select) {
+                    nd.setAttribute('data-temp', 'add');
+                }
                 range.insertNode(nd);
             });
             range.collapse(true);

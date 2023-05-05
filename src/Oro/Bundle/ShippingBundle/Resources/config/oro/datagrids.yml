@@ -40,9 +40,9 @@ datagrids:
                 label:         oro.rule.expression.label
             methodConfigs:
                 label:         oro.shipping.shippingmethodsconfigsrule.method_configs.label
-                type:          twig
                 frontend_type: html
-                template:      '@OroShipping/ShippingMethodsConfigsRule/Datagrid/configurations.html.twig'
+                type:          callback
+                callable:      ['@oro_shipping.datagrid.method_configs_provider', 'getMethodsConfigs']
             destinations:
                 label:         oro.shipping.shippingmethodsconfigsrule.destinations.label
                 type:          twig
@@ -95,13 +95,14 @@ datagrids:
                 expression:
                     type:      string
                     data_name: rule.expression
-                methodConfigs:
-                    type: choice
-                    data_name: methodConfig.method
-                    options:
-                        field_options:
-                            multiple: true
-                            choices: '@oro_shipping.provider.basic_shipping_methods_choices->getMethods()'
+# should be uncommented and fixed in scope of BB-22237 task.
+#                methodConfigs:
+#                    type: choice
+#                    data_name: methodConfig.method
+#                    options:
+#                        field_options:
+#                            multiple: true
+#                            choices: '@oro_shipping.provider.shipping_methods_choices->getMethods()'
         actions:
             view:
                 type:          navigate

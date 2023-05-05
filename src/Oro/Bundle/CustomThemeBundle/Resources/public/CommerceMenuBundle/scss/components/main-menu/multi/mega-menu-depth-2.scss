@@ -1,0 +1,25 @@
+/* @theme: custom; */
+
+@include breakpoint('desktop') {
+    .mega-menu-depth-2 {
+        &__list {
+            &--columns {
+                margin-top: 0;
+
+                &::before {
+                    display: none;
+                }
+            }
+        }
+
+        &__item {
+            &:first-child {
+                padding-top: 0;
+            }
+        }
+
+        &__featured-list {
+            grid-template-columns: initial;
+        }
+    }
+}

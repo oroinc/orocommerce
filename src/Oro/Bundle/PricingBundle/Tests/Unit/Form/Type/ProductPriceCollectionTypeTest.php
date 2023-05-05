@@ -24,7 +24,6 @@ use Oro\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
@@ -37,11 +36,11 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var ProductPriceCollectionType */
-    private $formType;
-
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
+
+    /** @var ProductPriceCollectionType */
+    private $formType;
 
     protected function setUp(): void
     {
@@ -54,9 +53,9 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $entityManager = $this->createMock(EntityManager::class);
         $searchRegistry = $this->createMock(SearchRegistry::class);
@@ -67,11 +66,11 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductPriceCollectionType::class => $this->formType,
-                    CollectionType::class => new CollectionType(),
-                    ProductPriceType::class => new ProductPriceType(),
+                    $this->formType,
+                    new CollectionType(),
+                    new ProductPriceType(),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
+                    new OroEntitySelectOrCreateInlineType(
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
@@ -79,16 +78,15 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
                         $searchRegistry
                     ),
                     ProductPriceUnitSelectorType::class => new ProductUnitSelectionTypeStub(
-                        $this->prepareProductUnitSelectionChoices(['item', 'set']),
-                        ProductPriceUnitSelectorType::NAME
+                        $this->prepareProductUnitSelectionChoices(['item', 'set'])
                     ),
-                    OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
+                    new OroJquerySelect2HiddenType(
                         $entityManager,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     ),
-                    PriceType::class => $priceType,
-                    QuantityType::class => $this->getQuantityType(),
+                    $priceType,
+                    $this->getQuantityType(),
                     CurrencySelectionType::class => new CurrencySelectionTypeStub()
                 ],
                 [

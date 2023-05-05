@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Query;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -15,14 +16,13 @@ use Oro\Bundle\ProductBundle\Provider\ProductSegmentProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
-use Oro\Component\TestUtils\ORM\OrmTestCase;
+use Oro\Component\Testing\Unit\ORM\OrmTestCase;
 
 class FeaturedProductsProviderTest extends OrmTestCase
 {
     private const PRODUCT_LIST_TYPE = 'featured_products';
 
-    /** @var EntityManagerMock */
+    /** @var EntityManagerInterface */
     private $em;
 
     /** @var SegmentProductsQueryProvider|\PHPUnit\Framework\MockObject\MockObject */
@@ -46,10 +46,7 @@ class FeaturedProductsProviderTest extends OrmTestCase
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
-            'Oro\Bundle\ProductBundle\Entity'
-        ));
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
 
         $this->segmentProductsQueryProvider = $this->createMock(SegmentProductsQueryProvider::class);
         $this->productSegmentProvider = $this->createMock(ProductSegmentProvider::class);

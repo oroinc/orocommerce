@@ -1,0 +1,4 @@
+reference,term,type,count,localization,customer,customer_user,visitor_id,created_at
+search_result_lamp,lamp,product_autocomplete,18,en_US,customer.level_1,other.user@test.com,,yesterday 13:10
+search_result_led_light_1,Led flashlight,product_autocomplete,12,en_US,customer.level_1,grzegorz.brzeczyszczykiewicz@example.com,,now 00:10
+search_result_led_light_2,Led flashlight,product_search,12,en_US,customer.level_1,grzegorz.brzeczyszczykiewicz@example.com,,now 13:10

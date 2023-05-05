@@ -1,0 +1,45 @@
+data:
+    type: productkititems
+    id: 'productkititems3'
+    attributes:
+        optional: true
+        sortOrder: 3
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: 'productkititems3-productkititemlabels-default'
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit2->getId())>'
+        kitItemProducts:
+            data:
+                -
+                    type: productkititemproducts
+                    id: 'productkititems3-productkititemproducts1-product1'
+included:
+    -
+        type: productkititemlabels
+        id: 'productkititems3-productkititemlabels-default'
+        attributes:
+            fallback: null
+            string: 'productkititems3-productkititemlabels-default'
+        relationships:
+            localization:
+                data: null
+    -
+        type: productkititemproducts
+        id: 'productkititems3-productkititemproducts1-product1'
+        attributes:
+            sortOrder: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: 'productkititems3'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->getId())>'

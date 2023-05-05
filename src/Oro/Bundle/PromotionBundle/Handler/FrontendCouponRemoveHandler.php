@@ -4,8 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Handler;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -16,23 +15,16 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class FrontendCouponRemoveHandler
 {
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
-
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
-        ManagerRegistry $doctrine
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private ManagerRegistry               $doctrine,
+        private PromotionAwareEntityHelper    $promotionAwareHelper,
     ) {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->doctrine = $doctrine;
     }
 
-    public function handleRemove(AppliedCouponsAwareInterface $entity, AppliedCoupon $appliedCoupon)
+    public function handleRemove(object $entity, AppliedCoupon $appliedCoupon)
     {
-        if ($entity instanceof AppliedPromotionsAwareInterface
+        if ($this->promotionAwareHelper->isPromotionAware($entity)
             || !$this->authorizationChecker->isGranted('EDIT', $entity)
         ) {
             throw new AccessDeniedException('Edit is not allowed for requested entity');

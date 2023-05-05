@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Async;
 
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -42,9 +41,8 @@ class FlatPriceProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $products = $body['products'];
 
             $closure = fn (JobRunner $jobRunner, Job $job) => $this->doJob($jobRunner, $job, $products);
-            $name = sprintf('%s_%s', ResolveFlatPriceTopic::getName(), UUIDGenerator::v4());
 
-            return $this->jobRunner->runUnique($message->getMessageId(), $name, $closure) ? self::ACK : self::REJECT;
+            return $this->jobRunner->runUniqueByMessage($message, $closure) ? self::ACK : self::REJECT;
         } catch (\Exception $e) {
             $this->logger?->error(
                 'Unexpected exception occurred during queue message processing',

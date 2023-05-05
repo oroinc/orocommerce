@@ -6,21 +6,18 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightType;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use Oro\Bundle\ShippingBundle\Model\Weight;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class WeightTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\ShippingBundle\Model\Weight';
-
-    /** @var WeightType */
-    protected $formType;
+    private WeightType $formType;
 
     protected function setUp(): void
     {
         $this->formType = new WeightType();
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(Weight::class);
         parent::setUp();
     }
 
@@ -30,13 +27,9 @@ class WeightTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($submittedData, $expectedData, $defaultData = null)
+    public function testSubmit(array $submittedData, mixed $expectedData, mixed $defaultData = null)
     {
         $form = $this->factory->create(WeightType::class, $defaultData);
 
@@ -48,10 +41,7 @@ class WeightTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty default data' => [
@@ -72,23 +62,12 @@ class WeightTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param WeightUnit $weightUnit
-     * @param float $value
-     *
-     * @return Weight
-     */
-    protected function getWeight(WeightUnit $weightUnit, $value)
+    private function getWeight(WeightUnit $weightUnit, int $value): Weight
     {
         return Weight::create($value, $weightUnit);
     }
 
-    /**
-     * @param string $code
-     *
-     * @return WeightUnit
-     */
-    protected function getWeightUnit($code)
+    private function getWeightUnit(string $code): WeightUnit
     {
         $weightUnit = new WeightUnit();
         $weightUnit->setCode($code);
@@ -97,21 +76,18 @@ class WeightTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
-                    WeightType::class => $this->formType,
-                    WeightUnitSelectType::class => new EntityType(
-                        [
-                            'kg' => $this->getWeightUnit('kg'),
-                            'lbs' => $this->getWeightUnit('lbs')
-                        ],
-                        WeightUnitSelectType::NAME
-                    )
+                    $this->formType,
+                    WeightUnitSelectType::class => new EntityTypeStub([
+                        'kg' => $this->getWeightUnit('kg'),
+                        'lbs' => $this->getWeightUnit('lbs')
+                    ])
                 ],
                 []
             ),

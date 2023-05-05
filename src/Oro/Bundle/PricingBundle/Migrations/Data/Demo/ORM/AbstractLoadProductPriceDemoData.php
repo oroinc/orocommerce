@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -13,6 +14,9 @@ use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDe
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * The base class for product price demo fixtures.
+ */
 abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -63,29 +67,19 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
      */
     abstract public function load(ObjectManager $manager);
 
-    /**
-     * @param EntityManager $manager
-     * @param string $sku
-     * @return Product|null
-     */
-    protected function getProductBySku(EntityManager $manager, $sku)
+    protected function getProductBySku(EntityManagerInterface $manager, $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return ProductUnit|null
-     */
-    protected function getProductUnit(EntityManager $manager, $code)
+    protected function getProductUnit(EntityManagerInterface $manager, $code): ?ProductUnit
     {
         if (!array_key_exists($code, $this->productUnis)) {
-            $this->productUnis[$code] = $manager->getRepository('OroProductBundle:ProductUnit')->find($code);
+            $this->productUnis[$code] = $manager->getRepository(ProductUnit::class)->find($code);
         }
 
         return $this->productUnis[$code];

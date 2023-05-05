@@ -8,6 +8,8 @@ $app-prefix: 'gjs-';
 $sm-prefix: $app-prefix + 'sm-';
 $clm-prefix: $app-prefix + 'clm-';
 
+$loading-mask-prefix: $app-prefix;
+
 // Palette variables
 $primaryColor: $primary-inverse;
 $secondaryColor: $primary-100;
@@ -46,6 +48,7 @@ $colorYell: $extra;
 
 $grapesjs-content-editor-offset: 24px !default;
 $grapesjs-content-editor-fullscreen-offset: 8px !default;
+$grapesjs-content-editor-fullscreen-z-index: $loading-mask-z-index !default;
 
 $grapesjs-scrollbar-track-background: rgba($primary, .1) !default;
 $grapesjs-scrollbar-thumb-background: rgba($primary, .4) !default;

@@ -57,8 +57,10 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler }
-            - { name: container.service_subscriber, id: oro_product.layout.data_provider.quick_add_collection, key: Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider }
+            - { name: container.service_subscriber, id: oro_product.layout.data_provider.product_form, key: Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider }
+            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add_process, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler }
+            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add_import_from_file, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler }
+            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add_import_from_plain_text, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromPlainTextHandler }
 
     Oro\Bundle\ProductBundle\Controller\Frontend\AjaxProductController:
         calls:
@@ -79,4 +81,17 @@ services:
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
-            - { name: 'container.service_subscriber' }
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\ProductBundle\Controller\ProductCollectionContentVariantController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_product.form.handler.product_collection_segment_products, key: Oro\Bundle\ProductBundle\Form\Handler\ProductCollectionSegmentProductsFormHandler }
+
+    Oro\Bundle\ProductBundle\Controller\ProductKitItemController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

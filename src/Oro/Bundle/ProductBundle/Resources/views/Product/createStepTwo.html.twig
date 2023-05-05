@@ -211,6 +211,21 @@
         }] ) %}
     {% endif %}
 
+    {% if entity.isKit %}
+        {% set dataBlocks = dataBlocks|merge({
+            'kitItems': {
+                'title': 'oro.product.sections.kit_items'|trans,
+                'priority': 300,
+                'subblocks': [{
+                    'title': '',
+                    'data': {
+                        'kitItems': form_row(form.kitItems)
+                    }
+                }]
+            }
+        }) %}
+    {% endif %}
+
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

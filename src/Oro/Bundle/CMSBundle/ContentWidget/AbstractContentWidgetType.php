@@ -15,14 +15,6 @@ abstract class AbstractContentWidgetType implements ContentWidgetTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel(): string
-    {
-        return static::getName();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         $additionalInformationBlock = $this->getAdditionalInformationBlock($contentWidget, $twig);

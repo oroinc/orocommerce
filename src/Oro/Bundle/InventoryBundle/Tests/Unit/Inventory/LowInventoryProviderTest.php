@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Inventory;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
@@ -15,26 +15,22 @@ use Oro\Component\Testing\ReflectionUtil;
 class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityFallbackResolver;
+    private $entityFallbackResolver;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
-
-    /** @var InventoryLevelRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $inventoryLevelRepository;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
     /** @var LowInventoryProvider */
-    protected $lowInventoryProvider;
+    private $lowInventoryProvider;
 
     protected function setUp(): void
     {
         $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->lowInventoryProvider = new LowInventoryProvider(
             $this->entityFallbackResolver,
-            $this->doctrineHelper
+            $this->doctrine
         );
     }
 
@@ -46,10 +42,10 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
         ?ProductUnit $productUnit,
         bool $highlightLowInventory,
         int $lowInventoryThreshold,
-        int $inventoryLevelQuantity,
+        float $inventoryLevelQuantity,
         bool $expectedIsLowInventoryProduct,
         bool $highlightLowInventoryCalled
-    ) {
+    ): void {
         if ($highlightLowInventoryCalled) {
             $this->entityFallbackResolver->expects($this->exactly(2))
                 ->method('getFallbackValue')
@@ -58,15 +54,16 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
                     [$product, LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION, 1, $lowInventoryThreshold]
                 ]);
 
-            $this->doctrineHelper->expects($this->once())
-                ->method('getEntityRepositoryForClass')
-                ->willReturn($this->inventoryLevelRepository);
-
             $inventoryLevel = $this->getInventoryLevel($inventoryLevelQuantity);
 
-            $this->inventoryLevelRepository->expects($this->once())
+            $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
+            $inventoryLevelRepository->expects($this->once())
                 ->method('getLevelByProductAndProductUnit')
                 ->willReturn($inventoryLevel);
+            $this->doctrine->expects($this->once())
+                ->method('getRepository')
+                ->with(InventoryLevel::class)
+                ->willReturn($inventoryLevelRepository);
         }
 
         $isLowInventoryProduct = $this->lowInventoryProvider->isLowInventoryProduct($product, $productUnit);
@@ -78,47 +75,47 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'is low inventory: product and product unit' => [
-                'product' => $this->getProductEntity(),
+                'product' => $this->getProduct(),
                 'productUnit' => new ProductUnit(),
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => true,
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
-                'inventoryLevelQuantity' => 5,
+                'highlightLowInventory' => true,
+                'lowInventoryThreshold' => 10,
+                'inventoryLevelQuantity' => 5.0,
                 'expectedIsLowInventoryProduct' => true,
                 'highlightLowInventoryCalled' => true
             ],
             'is not low inventory: product and product unit' => [
-                'product' => $this->getProductEntity(),
+                'product' => $this->getProduct(),
                 'productUnit' => new ProductUnit(),
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => true,
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
-                'inventoryLevelQuantity' => 15,
+                'highlightLowInventory' => true,
+                'lowInventoryThreshold' => 10,
+                'inventoryLevelQuantity' => 15.0,
                 'expectedIsLowInventoryProduct' => false,
                 'highlightLowInventoryCalled' => true
             ],
             'is low inventory: product' => [
-                'product' => $this->getProductEntity(),
+                'product' => $this->getProduct(),
                 'productUnit' => null,
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => true,
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
-                'inventoryLevelQuantity' => 5,
+                'highlightLowInventory' => true,
+                'lowInventoryThreshold' => 10,
+                'inventoryLevelQuantity' => 5.0,
                 'expectedIsLowInventoryProduct' => true,
                 'highlightLowInventoryCalled' => true
             ],
             'is not low inventory: product ' => [
-                'product' => $this->getProductEntity(),
+                'product' => $this->getProduct(),
                 'productUnit' => null,
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => true,
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
-                'inventoryLevelQuantity' => 15,
+                'highlightLowInventory' => true,
+                'lowInventoryThreshold' => 10,
+                'inventoryLevelQuantity' => 15.0,
                 'expectedIsLowInventoryProduct' => false,
                 'highlightLowInventoryCalled' => true
             ],
             'is low inventory: product without primary unit' => [
-                'product' => $this->getProductEntity(55, false),
+                'product' => $this->getProduct(55, false),
                 'productUnit' => null,
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => true,
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => 10,
-                'inventoryLevelQuantity' => 15,
+                'highlightLowInventory' => true,
+                'lowInventoryThreshold' => 10,
+                'inventoryLevelQuantity' => 15.0,
                 'expectedIsLowInventoryProduct' => false,
                 'highlightLowInventoryCalled' => false
             ]
@@ -129,12 +126,12 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider providerTestIsLowInventoryCollection
      */
     public function testIsLowInventoryCollection(
-        $products,
-        $highlightLowInventory,
-        $lowInventoryThreshold,
-        $quantityForProductCollection,
-        $expectedResult
-    ) {
+        array $products,
+        array $highlightLowInventory,
+        array $lowInventoryThreshold,
+        array $quantityForProductCollection,
+        array $expectedResult
+    ): void {
         $this->entityFallbackResolver->expects($this->any())
             ->method('getFallbackValue')
             ->with($this->logicalOr($products[0]['product'], $products[1]['product']), $this->logicalOr(
@@ -154,59 +151,22 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
                 if ($option === LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION) {
                     return $lowInventoryThreshold[$product->getId()];
                 }
+
+                return null;
             });
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->willReturn($this->inventoryLevelRepository);
-
-        $this->inventoryLevelRepository->expects($this->once())
+        $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
+        $inventoryLevelRepository->expects($this->once())
             ->method('getQuantityForProductCollection')
             ->willReturn($quantityForProductCollection);
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(InventoryLevel::class)
+            ->willReturn($inventoryLevelRepository);
 
         $isLowInventoryProduct = $this->lowInventoryProvider->isLowInventoryCollection($products);
 
         $this->assertEquals($expectedResult, $isLowInventoryProduct);
-    }
-
-    private function getTestProducts(string $productUnitCode): array
-    {
-        return [
-            [
-                'product' => $this->getProductEntity(1),
-                'product_unit' => $this->getProductUnitEntity($productUnitCode),
-            ],
-            [
-                'product' => $this->getProductEntity(2),
-                'product_unit' => $this->getProductUnitEntity($productUnitCode),
-            ],
-        ];
-    }
-
-    private function getQuantityForProductCollection(float $itemQuantity, float $setQuantity): array
-    {
-        return [
-            [
-                'product_id' => 1,
-                'code' => 'item',
-                'quantity' => $itemQuantity,
-            ],
-            [
-                'product_id' => 1,
-                'code' => 'set',
-                'quantity' => $setQuantity,
-            ],
-            [
-                'product_id' => 2,
-                'code' => 'item',
-                'quantity' => $itemQuantity,
-            ],
-            [
-                'product_id' => 2,
-                'code' => 'set',
-                'quantity' => $setQuantity,
-            ],
-        ];
     }
 
     public function providerTestIsLowInventoryCollection(): array
@@ -215,87 +175,60 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
             '1. show low inventory for all products with enabled highlightLowInventory 
             (quantity < lowInventoryThreshold)' => [
                 'products' => $this->getTestProducts('set'),
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => [
-                    1 => true,
-                    2 => true,
-                ],
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => [
-                    1 => 10,
-                    2 => 10,
-                ],
+                'highlightLowInventory' => [1 => true, 2 => true],
+                'lowInventoryThreshold' => [1 => 10, 2 => 10],
                 'quantityForProductCollection' => $this->getQuantityForProductCollection(10, 5),
-                'expectedResult' => [
-                    1 => true,
-                    2 => true,
-                ],
+                'expectedResult' => [1 => true, 2 => true],
             ],
             '2. hide low inventory for all products with enabled highlightLowInventory
             quantity > lowInventoryThreshold' => [
                 'products' => $this->getTestProducts('set'),
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => [
-                    1 => true,
-                    2 => true,
-                ],
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => [
-                    1 => 10,
-                    2 => 10,
-                ],
+                'highlightLowInventory' => [1 => true, 2 => true],
+                'lowInventoryThreshold' => [1 => 10, 2 => 10],
                 'quantityForProductCollection' => $this->getQuantityForProductCollection(15, 30),
-                'expectedResult' => [
-                    1 => false,
-                    2 => false,
-                ],
+                'expectedResult' => [1 => false, 2 => false],
             ],
             '3. hide low inventory for all products with disabled highlightLowInventory' => [
                 'products' => $this->getTestProducts('set'),
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => [
-                    1 => false,
-                    2 => false,
-                ],
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => [
-                    1 => 10,
-                    2 => 10,
-                ],
+                'highlightLowInventory' => [1 => false, 2 => false],
+                'lowInventoryThreshold' => [1 => 10, 2 => 10],
                 'quantityForProductCollection' => $this->getQuantityForProductCollection(15, 30),
-                'expectedResult' => [
-                    1 => false,
-                    2 => false,
-                ],
+                'expectedResult' => [1 => false, 2 => false],
             ],
             '4. show low inventory for product with enabled highlightLowInventory
             and hide product with disabled highlightLowInventory (quantity < lowInventoryThreshold)' => [
                 'products' => $this->getTestProducts('item'),
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => [
-                    1 => true,
-                    2 => false,
-                ],
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => [
-                    1 => 10,
-                    2 => 10,
-                ],
+                'highlightLowInventory' => [1 => true, 2 => false],
+                'lowInventoryThreshold' => [1 => 10, 2 => 10],
                 'quantityForProductCollection' => $this->getQuantityForProductCollection(5, 30),
-                'expectedResult' => [
-                    1 => true,
-                    2 => false,
-                ],
+                'expectedResult' => [1 => true, 2 => false],
             ],
             '5. hide low inventory for product with enabled highlightLowInventory
             and hide product with disabled highlightLowInventory (quantity > lowInventoryThreshold)' => [
                 'products' => $this->getTestProducts('item'),
-                LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION => [
-                    1 => true,
-                    2 => false,
-                ],
-                LowInventoryProvider::LOW_INVENTORY_THRESHOLD_OPTION => [
-                    1 => 10,
-                    2 => 10,
-                ],
+                'highlightLowInventory' => [1 => true, 2 => false],
+                'lowInventoryThreshold' => [1 => 10, 2 => 10],
                 'quantityForProductCollection' => $this->getQuantityForProductCollection(15, 30),
-                'expectedResult' => [
-                    1 => false,
-                    2 => false,
-                ],
+                'expectedResult' => [1 => false, 2 => false],
             ],
+        ];
+    }
+
+    private function getTestProducts(string $productUnitCode): array
+    {
+        return [
+            ['product' => $this->getProduct(1), 'product_unit' => $this->getProductUnit($productUnitCode)],
+            ['product' => $this->getProduct(2), 'product_unit' => $this->getProductUnit($productUnitCode)],
+        ];
+    }
+
+    private function getQuantityForProductCollection(float $itemQuantity, float $setQuantity): array
+    {
+        return [
+            ['product_id' => 1, 'code' => 'item', 'quantity' => $itemQuantity],
+            ['product_id' => 1, 'code' => 'set', 'quantity' => $setQuantity],
+            ['product_id' => 2, 'code' => 'item', 'quantity' => $itemQuantity],
+            ['product_id' => 2, 'code' => 'set', 'quantity' => $setQuantity],
         ];
     }
 
@@ -307,13 +240,13 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
         return $inventoryLevel;
     }
 
-    protected function getProductEntity(int $id = null, bool $withPrimaryUnitPrecision = true): Product
+    private function getProduct(int $id = null, bool $withPrimaryUnitPrecision = true): Product
     {
         $product = new Product();
         ReflectionUtil::setId($product, $id);
 
         $unitPrecision = new ProductUnitPrecision();
-        $productUnit = $this->getProductUnitEntity('item');
+        $productUnit = $this->getProductUnit('item');
         $unitPrecision->setUnit($productUnit);
 
         if ($withPrimaryUnitPrecision) {
@@ -323,7 +256,7 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
         return $product;
     }
 
-    private function getProductUnitEntity(string $code): ProductUnit
+    private function getProductUnit(string $code): ProductUnit
     {
         $productUnit = new ProductUnit();
         $productUnit->setCode($code);

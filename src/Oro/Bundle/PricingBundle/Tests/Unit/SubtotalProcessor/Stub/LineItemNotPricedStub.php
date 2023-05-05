@@ -2,31 +2,30 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
-class LineItemNotPricedStub implements
-    ProductUnitHolderInterface,
-    ProductHolderInterface,
-    QuantityAwareInterface
+class LineItemNotPricedStub implements ProductLineItemInterface, ProductKitItemLineItemsAwareInterface
 {
-    /**
-     * @var float
-     */
-    protected $quantity;
+    private ?float $quantity = null;
 
-    /**
-     * @var Product
-     */
-    protected $product;
+    private ?Product $product = null;
 
-    /**
-     * @var ProductUnit
-     */
-    protected $unit;
+    private ?ProductUnit $unit = null;
+
+    private Collection $kitItemLineItems;
+
+    private string $checksum = '';
+
+    public function __construct()
+    {
+        $this->kitItemLineItems = new ArrayCollection();
+    }
 
     /**
      * @param float $quantity
@@ -103,5 +102,46 @@ class LineItemNotPricedStub implements
      */
     public function getProductUnitCode()
     {
+    }
+
+    /**
+     * @return Collection<ProductKitItemLineItemInterface>
+     */
+    public function getKitItemLineItems(): Collection
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(ProductKitItemLineItemInterface $productKitItemLineItem): self
+    {
+        if (!$this->kitItemLineItems->contains($productKitItemLineItem)) {
+            $productKitItemLineItem->setLineItem($this);
+            $this->kitItemLineItems->add($productKitItemLineItem);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(ProductKitItemLineItemInterface $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+        return $this;
+    }
+
+    public function getParentProduct()
+    {
+        return null;
     }
 }

@@ -3,11 +3,14 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
+use Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -17,6 +20,7 @@ use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Test\FormInterface;
 
 class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -38,12 +42,14 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->messageFactory = $this->createMock(ResolveNodeSlugsMessageFactory::class);
+        $this->collectionSortOrderHandler = $this->createMock(CollectionSortOrderHandler::class);
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
             $this->storage,
             $this->messageProducer,
-            $this->messageFactory
+            $this->messageFactory,
+            $this->collectionSortOrderHandler
         );
     }
 
@@ -83,7 +89,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $this->contentNodeListener->preUpdate($contentNode, $args);
     }
 
-    public function testOnFormAfterFlush(): void
+    public function testOnFormAfterFlushWithoutSortOrder(): void
     {
         $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
 
@@ -95,7 +101,81 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->method('send')
             ->with(WebCatalogResolveContentNodeSlugsTopic::getName(), []);
 
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('get')
+            ->with('contentVariants')
+            ->willReturn([]);
         $event = $this->createMock(AfterFormProcessEvent::class);
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+        $this->collectionSortOrderHandler->expects(self::once())
+            ->method('updateCollections')
+            ->with([]);
+        $event->expects(self::once())
+            ->method('getData')
+            ->willReturn($contentNode);
+
+        $this->contentNodeListener->onFormAfterFlush($event);
+    }
+
+    public function testOnFormAfterFlushWithSortOrder(): void
+    {
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
+
+        $this->messageFactory->expects(self::once())
+            ->method('createMessage')
+            ->with($contentNode)
+            ->willReturn([]);
+        $this->messageProducer->expects(self::once())
+            ->method('send')
+            ->with(WebCatalogResolveContentNodeSlugsTopic::getName(), []);
+
+        $segment = $this->createMock(Segment::class);
+        $segment->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn(1);
+        $collectionSortOrderForm = $this->createMock(FormInterface::class);
+        $collectionSortOrder = $this->createMock(CollectionSortOrder::class);
+        $collectionSortOrderForm->expects($this->exactly(2))
+            ->method('getData')
+            ->willReturn([['data' => $collectionSortOrder]]);
+        $productCollectionSegmentForm = $this->createMock(FormInterface::class);
+        $productCollectionSegmentForm->expects($this->once())
+            ->method('get')
+            ->with('sortOrder')
+            ->willReturn($collectionSortOrderForm);
+        $productCollectionSegmentForm->expects($this->once())
+            ->method('has')
+            ->with('sortOrder')
+            ->willReturn(true);
+        $productCollectionSegmentForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($segment);
+        $contentVariantForm = $this->createMock(FormInterface::class);
+        $contentVariantForm->expects($this->exactly(2))
+            ->method('get')
+            ->with('productCollectionSegment')
+            ->willReturn($productCollectionSegmentForm);
+        $contentVariantForm->expects($this->once())
+            ->method('has')
+            ->with('productCollectionSegment')
+            ->willReturn(true);
+        $contentNodeForm = $this->createMock(FormInterface::class);
+        $contentNodeForm->expects($this->once())
+            ->method('get')
+            ->with('contentVariants')
+            ->willReturn([$contentVariantForm]);
+        $event = $this->createMock(AfterFormProcessEvent::class);
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($contentNodeForm);
+
+        $this->collectionSortOrderHandler->expects(self::once())
+            ->method('updateCollections')
+            ->with([1 => ['segment' => $segment, 'sortOrders' => [0 => $collectionSortOrder]]]);
+
         $event->expects(self::once())
             ->method('getData')
             ->willReturn($contentNode);
@@ -140,7 +220,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(LifecycleEventArgs::class);
         $event->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
 
         $this->contentNodeListener->postRemove($contentNode, $event);
@@ -192,7 +272,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(LifecycleEventArgs::class);
         $event->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
 
         $this->contentNodeListener->postRemove($contentNode, $event);

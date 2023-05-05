@@ -1,0 +1,30 @@
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+<div class="widget-content">
+    {% block widget_content %}
+        <div class="flash-messages">
+            <div class="flash-messages-frame">
+                <div class="flash-messages-holder"></div>
+            </div>
+        </div>
+        <div class="filters-view-container"></div>
+
+        {{ dataGrid.renderGrid(
+            'category-products-widget-grid',
+            params,
+            {
+                enableFullScreenLayout: true,
+                enableFilters: false,
+                gridBuildersOptions: {
+                    sortRowsDragNDropBuilder: {
+                        formName: 'category_products',
+                        route: 'oro_catalog_category_products_update',
+                        route_parameters: {
+                            id: params.category_id
+                        }
+                    }
+                }
+            }
+        ) }}
+    {% endblock %}
+</div>

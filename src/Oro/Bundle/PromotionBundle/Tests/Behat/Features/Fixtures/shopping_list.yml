@@ -1,6 +1,7 @@
 include:
     - payment.yml
     - shipping.yml
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
 
 Oro\Bundle\CurrencyBundle\Entity\Price:
     price:
@@ -43,18 +44,6 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product 1'
     locValue2:
         string: 'Product 2'
-
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    locValueFamily:
-        string: 'Product Attribute Family'
-
-Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
-    productAttributeFamily:
-        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-        code: 'product_attribute_family_code'
-        __calls:
-            - addLabel: ['@locValueFamily']
-        owner: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -120,16 +109,16 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         __calls:
             - setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
-        organization: '@organization'
+        organization: 'ORO'
         primary: true
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist:
         name: 'pricelist'
-        default: true
         __calls:
             - setCurrencies: [['USD']]
         active: true
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
     priceListToWebsite:

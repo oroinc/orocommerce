@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,25 +11,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
 // @codingStandardsIgnoreStart
 // CS-fixer tries to join the class name and extends, and the new line has more than 250 characters
 class ScopedProductSearchQueryRestrictionEventListenerTest extends
- AbstractProductSearchQueryRestrictionEventListenerTest
-// @codingStandardsIgnoreEnd
+    AbstractProductSearchQueryRestrictionEventListenerTest
+    // @codingStandardsIgnoreEnd
 {
-    const SCOPE = 'test_scope';
+    private const SCOPE = 'test_scope';
 
-    /**
-     * @var ScopedProductSearchQueryRestrictionEventListener
-     */
+    /** @var ScopedProductSearchQueryRestrictionEventListener */
     protected $listener;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
     /**
      * {@inheritdoc}
      */
-    protected function createListener()
+    protected function createListener(): ProductSearchQueryRestrictionEventListener
     {
         $this->requestStack = $this->createMock(RequestStack::class);
 

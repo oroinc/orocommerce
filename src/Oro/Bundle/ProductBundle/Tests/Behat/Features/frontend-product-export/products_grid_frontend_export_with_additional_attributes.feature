@@ -1,5 +1,6 @@
 @regression
 @feature-BB-19874
+@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:products_grid_frontend.yml
 
 Feature: Products grid frontend export with additional attributes
@@ -45,7 +46,7 @@ Feature: Products grid frontend export with additional attributes
 
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families
-    When I click "Edit" on row "product_attribute_family_code" in grid
+    When I click "Edit" on row "default" in grid
     And I fill "Product Family Form" with:
       | Attributes | [MultiSelectField] |
     And I save and close form

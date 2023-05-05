@@ -16,8 +16,10 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderNameInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
-use Oro\Bundle\OrderBundle\Model\ExtendOrder;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -43,7 +45,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-briefcase",
+ *              "icon"="fa-usd",
  *              "contact_information"={
  *                  "email"={
  *                      {"fieldName"="contactInformation"}
@@ -69,7 +71,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="orders"
- *          }
+ *          },
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -80,8 +82,11 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
+ * @method AbstractEnumValue getInternalStatus()
+ * @method $this setInternalStatus(AbstractEnumValue $status)
  */
-class Order extends ExtendOrder implements
+class Order implements
     OrganizationAwareInterface,
     EmailHolderInterface,
     EmailHolderNameInterface,
@@ -95,11 +100,13 @@ class Order extends ExtendOrder implements
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface,
     ProductLineItemsHolderInterface,
-    PreConfiguredShippingMethodConfigurationInterface
+    PreConfiguredShippingMethodConfigurationInterface,
+    ExtendEntityInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     const INTERNAL_STATUS_CODE = 'order_internal_status';
 
@@ -219,6 +226,13 @@ class Order extends ExtendOrder implements
      * @var Multicurrency
      */
     protected $subtotal;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="subtotal_with_discounts", type="money", nullable=true)
+     */
+    protected $subtotalWithDiscounts;
 
     /**
      * @var string
@@ -470,15 +484,29 @@ class Order extends ExtendOrder implements
     protected $shippingTrackings;
 
     /**
+     * @var Order
+     *
+     * @ORM\ManyToOne(targetEntity="Order", inversedBy="subOrders")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $parent;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Order", mappedBy="parent", orphanRemoval=true, cascade={"all"})
+     */
+    protected $subOrders;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->lineItems = new ArrayCollection();
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();
+        $this->subOrders = new ArrayCollection();
         $this->loadMultiCurrencyFields();
     }
 
@@ -1347,6 +1375,16 @@ class Order extends ExtendOrder implements
         $this->setBaseTotalValue(null);
     }
 
+    public function getSubtotalWithDiscounts(): ?float
+    {
+        return $this->subtotalWithDiscounts;
+    }
+
+    public function setSubtotalWithDiscounts(?float $subtotalWithDiscounts): void
+    {
+        $this->subtotalWithDiscounts = $subtotalWithDiscounts;
+    }
+
     /**
      * @return array|Product[]
      */
@@ -1360,5 +1398,45 @@ class Order extends ExtendOrder implements
         }
 
         return $products;
+    }
+
+    public function getParent(): ?Order
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Order $order): self
+    {
+        $this->parent = $order;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getSubOrders(): iterable
+    {
+        return $this->subOrders;
+    }
+
+    public function addSubOrder(Order $order): self
+    {
+        if (!$this->subOrders->contains($order)) {
+            $this->subOrders->add($order);
+            $order->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubOrder(Order $order): self
+    {
+        if ($this->subOrders->contains($order)) {
+            $this->subOrders->removeElement($order);
+            $order->setParent(null);
+        }
+
+        return $this;
     }
 }

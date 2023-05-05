@@ -7,6 +7,7 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
@@ -14,6 +15,7 @@ use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -28,7 +30,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -267,13 +268,28 @@ class ProductType extends AbstractType
             );
         }
 
-        if ($product instanceof Product && $product->isConfigurable()) {
+        if ($product->isConfigurable()) {
             $form
                 ->add(
                     'variantLinks',
                     ProductVariantLinksType::class,
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
+        }
+
+        if ($product->isKit()) {
+            $form->add(
+                'kitItems',
+                ProductKitItemCollectionType::class,
+                [
+                    'label' => false,
+                    'attr' => [
+                        'class' => 'product-kit-control-group'
+                    ],
+                    'prototype_data' => (new ProductKitItem())->setProductKit($product),
+                    'error_bubbling'=> false
+                ]
+            );
         }
 
         if (!$product->getImages()->isEmpty()) {

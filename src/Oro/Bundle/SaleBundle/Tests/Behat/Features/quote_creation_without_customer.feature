@@ -1,7 +1,6 @@
 @regression
 @ticket-BB-21196
 @fixture-OroProductBundle:product_with_price.yml
-@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 
 Feature: Quote creation without customer
   In order to create a quote

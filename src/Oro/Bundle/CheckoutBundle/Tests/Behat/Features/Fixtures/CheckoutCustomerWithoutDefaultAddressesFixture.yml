@@ -68,7 +68,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         owner: '@admin'
         systemOrganization: '@organization'
         primary: true
-        organization: '@organization'
+        organization: 'ORO'
     address2:
         country: '@germany'
         region: '@berlin'
@@ -76,7 +76,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         street: 'Fourth avenue'
         city: 'Berlin'
         postalCode: '10111'
-        organization: '@organization'
+        organization: 'ORO'
         frontendOwner: '@customer_user_3'
         owner: '@admin'
         systemOrganization: '@organization'

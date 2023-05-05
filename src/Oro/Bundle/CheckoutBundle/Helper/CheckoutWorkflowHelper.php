@@ -52,6 +52,9 @@ class CheckoutWorkflowHelper
     /** @var CheckoutLineItemsManager  */
     private $lineItemsManager;
 
+    /** @var CheckoutLineItemGroupingInvalidationHelper */
+    private $checkoutLineItemGroupingInvalidationHelper;
+
     /** @var CustomerRegistrationHandler  */
     private $registrationHandler;
 
@@ -74,6 +77,7 @@ class CheckoutWorkflowHelper
         TransitionFormProvider $transitionFormProvider,
         CheckoutErrorHandler $errorHandler,
         CheckoutLineItemsManager $lineItemsManager,
+        CheckoutLineItemGroupingInvalidationHelper $checkoutLineItemGroupingInvalidationHelper,
         CustomerRegistrationHandler $registrationHandler,
         ForgotPasswordHandler $forgotPasswordHandler,
         EventDispatcherInterface $eventDispatcher,
@@ -85,6 +89,7 @@ class CheckoutWorkflowHelper
         $this->transitionFormProvider = $transitionFormProvider;
         $this->errorHandler = $errorHandler;
         $this->lineItemsManager = $lineItemsManager;
+        $this->checkoutLineItemGroupingInvalidationHelper = $checkoutLineItemGroupingInvalidationHelper;
         $this->registrationHandler = $registrationHandler;
         $this->forgotPasswordHandler = $forgotPasswordHandler;
         $this->eventDispatcher = $eventDispatcher;
@@ -107,6 +112,10 @@ class CheckoutWorkflowHelper
         $stopPropagation = $this->stopPropagation($workflowItem);
         if ($stopPropagation) {
             return $workflowItem->getCurrentStep();
+        }
+
+        if ($this->checkoutLineItemGroupingInvalidationHelper->shouldInvalidateLineItemGrouping($workflowItem)) {
+            $this->checkoutLineItemGroupingInvalidationHelper->invalidateLineItemGrouping($checkout, $workflowItem);
         }
 
         if ($request->isMethod(Request::METHOD_POST) &&

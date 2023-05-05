@@ -50,6 +50,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         __calls:
             - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
+        unitPrecisions: [ '@precision1' ]
         primaryUnitPrecision: '@precision1'
     product2:
         sku: 'PSKU2'
@@ -61,6 +62,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         __calls:
             - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
+        unitPrecisions: [ '@precision2' ]
         primaryUnitPrecision: '@precision2'
     product3:
         sku: 'PSKU3'
@@ -72,6 +74,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         __calls:
             - addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
+        unitPrecisions: [ '@precision3' ]
         primaryUnitPrecision: '@precision3'
     product4:
         sku: 'PSKU4'
@@ -83,6 +86,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         __calls:
             - addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
+        unitPrecisions: [ '@precision4' ]
         primaryUnitPrecision: '@precision4'
 
 Doctrine\Common\Collections\ArrayCollection:
@@ -102,6 +106,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         name: 'priceListForExport'
         __calls:
             - addCurrencyByCode: ['USD']
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:
@@ -146,3 +151,20 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation4:
         product: '@product4'
         priceList: '@priceListForExport'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    priceAttributeProductPrice{1..4}:
+        product: '@product<current()>'
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    priceAttributePriceList:
+        name: 'Price Attribute'
+        fieldName: 'priceAttribute'
+        organization: '@organization'
+        __calls:
+            - setCurrencies: [ [ 'USD' ] ]

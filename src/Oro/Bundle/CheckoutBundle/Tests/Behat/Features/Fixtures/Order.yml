@@ -1,0 +1,26 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    simpleOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer'
+        customerUser: '@amanda'
+        identifier: 'SimpleOrder'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD1'
+        shipUntil: '<(new DateTime("2022-09-26T19:27:00Z"))>'
+        lineItems: [ '@simpleOrderLineItem' ]
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    simpleOrderLineItem:
+        product: '@product1'
+        order: '@simpleOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item

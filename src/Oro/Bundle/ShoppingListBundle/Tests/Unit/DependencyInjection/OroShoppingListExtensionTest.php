@@ -3,41 +3,36 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\LineItemController;
-use Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\ShoppingListController;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\OroShoppingListExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroShoppingListExtensionTest extends ExtensionTestCase
+class OroShoppingListExtensionTest extends \PHPUnit\Framework\TestCase
 {
     public function testLoad(): void
     {
-        $this->loadExtension(new OroShoppingListExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            // Services
-            'oro_shopping_list.validator.line_item',
-            'oro_shopping_list.line_item.manager.api',
-            'oro_shopping_list.shopping_list.manager.api',
-            'oro_shopping_list.manager.shopping_list',
-            'oro_shopping_list.placeholder.filter',
-            'oro_shopping_list.condition.rfp_allowed',
-            'oro_shopping_list.provider.matrix_grid_order_manager',
-            'oro_shopping_list.line_item.factory.configurable_product',
-            'oro_shopping_list.entity_listener.line_item.remove_parent_products_from_shopping_list',
-            'oro_shopping_list.manager.empty_matrix_grid',
+        $extension = new OroShoppingListExtension();
+        $extension->load([], $container);
 
-            // Forms
-            'oro_shopping_list.form.type.shopping_list',
-            'oro_shopping_list.form.type.line_item',
-            'oro_shopping_list.form.type.frontend_line_item_widget',
-
-            // REST API controllers
-            LineItemController::class,
-            ShoppingListController::class,
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
-
-        $this->assertExtensionConfigsLoaded(['oro_shopping_list']);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'backend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
+                        'availability_for_guests' => ['value' => false, 'scope' => 'app'],
+                        'default_guest_shopping_list_owner' => ['value' => null, 'scope' => 'app'],
+                        'shopping_list_limit' => ['value' => 0, 'scope' => 'app'],
+                        'mass_adding_on_product_listing_enabled' => ['value' => true, 'scope' => 'app'],
+                        'create_shopping_list_for_new_guest' => ['value' => false, 'scope' => 'app'],
+                        'shopping_lists_max_line_items_per_page' => ['value' => 1000, 'scope' => 'app'],
+                        'show_all_in_shopping_list_widget' => ['value' => false, 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_shopping_list')
+        );
     }
 }

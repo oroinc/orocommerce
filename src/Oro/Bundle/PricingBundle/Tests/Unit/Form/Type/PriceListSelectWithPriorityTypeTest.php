@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -23,15 +23,11 @@ use Symfony\Component\Validator\Validation;
 class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub([]);
-
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('get')
             ->with('oro_pricing.price_strategy')
@@ -40,8 +36,8 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    PriceListSelectWithPriorityType::class => new PriceListSelectWithPriorityType(),
-                    EntityType::class => $entityType,
+                    new PriceListSelectWithPriorityType(),
+                    EntityType::class => new EntityTypeStub(),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
                 ],
                 [
@@ -55,11 +51,8 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param mixed $defaultData
-     * @param array $submittedData
-     * @param array $expectedData
      */
-    public function testSubmit($defaultData, array $submittedData, $expectedData)
+    public function testSubmit(mixed $defaultData, array $submittedData, BasePriceListRelation $expectedData)
     {
         $form = $this->factory->create(PriceListSelectWithPriorityType::class, $defaultData);
 
@@ -71,10 +64,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $existingPriceList = new PriceList();
         ReflectionUtil::setId($existingPriceList, PriceListSelectTypeStub::PRICE_LIST_1);

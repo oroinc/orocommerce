@@ -14,8 +14,7 @@ class ComputeShoppingListDefault implements ProcessorInterface
 {
     private const FIELD_NAME = 'default';
 
-    /** @var EntityIdResolverInterface */
-    private $defaultShoppingListEntityIdResolver;
+    private EntityIdResolverInterface $defaultShoppingListEntityIdResolver;
 
     public function __construct(EntityIdResolverInterface $defaultShoppingListEntityIdResolver)
     {
@@ -25,7 +24,7 @@ class ComputeShoppingListDefault implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

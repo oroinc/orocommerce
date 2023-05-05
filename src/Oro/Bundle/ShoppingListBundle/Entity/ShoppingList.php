@@ -5,17 +5,22 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerAwareTrait;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
-use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
@@ -31,11 +36,6 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(name="customerUser",
- *          joinColumns=@ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
- *      )
- * })
  * @Config(
  *      routeName="oro_shopping_list_index",
  *      routeView="oro_shopping_list_view",
@@ -70,8 +70,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @method ArrayCollection|CustomerVisitor[] getVisitors()
  */
-class ShoppingList extends ExtendShoppingList implements
+class ShoppingList implements
     OrganizationAwareInterface,
     LineItemsNotPricedAwareInterface,
     CustomerOwnerAwareInterface,
@@ -79,11 +80,13 @@ class ShoppingList extends ExtendShoppingList implements
     WebsiteBasedCurrencyAwareInterface,
     CheckoutSourceEntityInterface,
     \JsonSerializable,
-    ProductLineItemsHolderInterface
+    ProductLineItemsHolderInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;
     use UserAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int
@@ -169,6 +172,43 @@ class ShoppingList extends ExtendShoppingList implements
     protected $totals;
 
     /**
+     * @var CustomerUser
+     *
+     * Overrides $customerUser property defined in {@see AuditableFrontendCustomerUserAwareTrait} to disable cascade
+     * persist.
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $customerUser;
+
+    /**
+     * @var Customer
+     *
+     * Overrides $customer property defined in {@see AuditableFrontendCustomerAwareTrait} to disable cascade persist.
+     *
+     * @ORM\ManyToOne(
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer"
+     * )
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $customer;
+
+    /**
      * @var Subtotal
      */
     protected $subtotal;
@@ -178,8 +218,6 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->lineItems = new ArrayCollection();
         $this->totals = new ArrayCollection();
     }
@@ -449,6 +487,7 @@ class ShoppingList extends ExtendShoppingList implements
             $this->id = null;
             $this->lineItems = clone $this->lineItems;
             $this->totals = clone $this->totals;
+            $this->cloneExtendEntityStorage();
         }
     }
 }

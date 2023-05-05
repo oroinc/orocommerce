@@ -100,6 +100,20 @@ workflows:
                                     '@extendable':
                                         events: [extendable_condition.checkout]
                                 parameters: [$.result.extendableConditionCheckout, true]
+                    # Check if line items grouping enabled and prepare grouped line items snapshot.
+                    - '@call_service_method':
+                        service: oro_checkout.provider.multi_shipping_config
+                        method: isLineItemsGroupingEnabled
+                        method_parameters: []
+                        attribute: $.result.isLineItemsGroupingEnabled
+                    - '@call_service_method':
+                        conditions:
+                            '@equal': [$.result.isLineItemsGroupingEnabled, true]
+                        parameters:
+                            service: oro_checkout.provider.grouped_line_items
+                            method: getGroupedLineItemsIds
+                            method_parameters: [$checkout]
+                            attribute: $grouped_line_items
 
                 preconditions:
                     '@and':
@@ -212,6 +226,14 @@ workflows:
                         service: oro_checkout.action.default_shipping_method_setter
                         method: setDefaultShippingMethod
                         method_parameters: [$checkout]
+                    - '@tree':
+                        conditions:
+                            '@is_multishipping_enabled': ~
+                        actions:
+                            - '@call_service_method':
+                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                method: setDefaultShippingMethods
+                                method_parameters: [$checkout]
                     - '@generate_uuid': $state_token
 
             continue_to_payment_definition:
@@ -223,12 +245,19 @@ workflows:
                         results:
                             result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
                             result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
-
                     - '@call_service_method':
                           service: oro_checkout.action.default_shipping_method_setter
                           method: setDefaultShippingMethod
                           method_parameters: [$checkout]
-
+                    - '@tree':
+                        conditions:
+                            '@is_multishipping_enabled': ~
+                        actions:
+                            # Sync actual shipping values for cases if new line items has been added.
+                            - '@call_service_method':
+                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                method: setDefaultShippingMethods
+                                method_parameters: [$checkout, $line_items_shipping_methods, true]
                     - '@tree':
                         conditions:
                             '@blank': $.result.checkoutHasApplicableShippingMethods
@@ -265,14 +294,33 @@ workflows:
                             - '@not_empty':
                                 parameters: $checkout.shippingMethod
                                 message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                        - '@shipping_method_has_enabled_shipping_rules':
-                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            method_identifier: $checkout.shippingMethod
+                        - '@and':
+                            - '@or':
+                                - '@and':
+                                    - '@not':
+                                        - '@is_multishipping_enabled': ~
+                                    - '@shipping_method_has_enabled_shipping_rules':
+                                        message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                                        method_identifier: $checkout.shippingMethod
+                                - '@and':
+                                    - '@is_multishipping_enabled': ~
+                                    - '@line_items_shipping_methods_has_enabled_shipping_rules':
+                                        message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                                        entity: $checkout
                 actions:
+                    - '@tree':
+                        conditions:
+                            '@is_multishipping_enabled': ~
+                        actions:
+                            - '@call_service_method':
+                                service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
+                                method: updateLineItemsShippingPrices
+                                method_parameters: [$checkout]
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_shipping_method
                         parameters_mapping:
                             checkout: $checkout
+
                     - '@assign_value': [$.result.shippingPriceUpdated, true]
                     - '@call_service_method':
                           service: oro_checkout.action.default_payment_method_setter
@@ -290,16 +338,37 @@ workflows:
                             result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
                             result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
 
+                    # Update line items shipping data if customer returns to the checkout on the order payment method step.
+                    - '@call_service_method':
+                        conditions:
+                            '@and':
+                                - '@is_multishipping_enabled': ~
+                                - '@is_line_items_shipping_methods_update_required': [$checkout.lineItems, $line_items_shipping_methods]
+                        parameters:
+                            service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                            method: setDefaultShippingMethods
+                            method_parameters: [$checkout, $line_items_shipping_methods]
+
                     - '@tree':
                         conditions:
                             '@blank': $.result.shippingMethodHasEnabledShippingRules
                         actions:
                             - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, false]
-                            - '@assign_value':
-                                conditions:
-                                    '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
-                                parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
-
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@not':
+                                    - '@is_multishipping_enabled': ~
+                                - '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
+                        actions:
+                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, true]
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@is_multishipping_enabled': ~
+                                - '@line_items_shipping_methods_has_enabled_shipping_rules': $checkout
+                        actions:
+                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, true]
                     - '@call_service_method':
                         conditions:
                             '@blank': $.result.paymentContext
@@ -448,28 +517,48 @@ workflows:
                         message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
                         type: 'warning'
 
-                    - '@tree':
+                    - '@call_service_method':
                         conditions:
-                            '@not_empty': [$.id]
-                        actions:
-                            - '@call_service_method':
-                                conditions:
-                                    '@empty': $.result.paymentContext
-                                parameters:
-                                    service: oro_checkout.provider.payment_context
-                                    method: getContext
-                                    method_parameters: [$checkout]
-                                    attribute: $.result.paymentContext
+                            '@and':
+                                - '@not_empty': [$.id]
+                                - '@empty': $.result.paymentContext
+                        parameters:
+                            service: oro_checkout.provider.payment_context
+                            method: getContext
+                            method_parameters: [$checkout]
+                            attribute: $.result.paymentContext
 
-                    - '@tree':
+                    # Update line items shipping data if customer returns to the checkout on the order review step.
+                    - '@call_service_method':
+                        conditions:
+                            '@and':
+                                - '@is_multishipping_enabled': ~
+                                - '@is_line_items_shipping_methods_update_required': [$checkout.lineItems, $line_items_shipping_methods]
+                        parameters:
+                            service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                            method: setDefaultShippingMethods
+                            method_parameters: [$checkout, $line_items_shipping_methods]
+
+                    - '@assign_value':
                         conditions:
                             '@blank': $.result.shippingMethodHasEnabledShippingRules
-                        actions:
-                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, false]
-                            - '@assign_value':
-                                conditions:
-                                    '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
-                                parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
+                        parameters:
+                            attribute: $.result.shippingMethodHasEnabledShippingRules
+                            value: false
+
+                    - '@assign_value':
+                        conditions:
+                            '@or':
+                                - '@and':
+                                    - '@not':
+                                        - '@is_multishipping_enabled': ~
+                                    - '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
+                                - '@and':
+                                    - '@is_multishipping_enabled': ~
+                                    - '@line_items_shipping_methods_has_enabled_shipping_rules': $checkout
+                        parameters:
+                            attribute: $.result.shippingMethodHasEnabledShippingRules
+                            value: true
 
                     - '@tree':
                         conditions:
@@ -548,6 +637,25 @@ workflows:
                         results:
                             data.order: $.order
 
+                    # Create sub-orders if create sub-orders config option is enabled.
+                    - '@call_service_method':
+                          service: oro_checkout.provider.multi_shipping_config
+                          method: isCreateSubOrdersForEachGroupEnabled
+                          method_parameters: []
+                          attribute: $.result.createSubOrdersForLineItemsGroup
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@equal': [$.result.createSubOrdersForLineItemsGroup, true]
+                                - '@not_empty': $grouped_line_items
+                        actions:
+                            - '@run_action_group':
+                                action_group: b2b_flow_checkout_create_child_orders
+                                parameters_mapping:
+                                    checkout: $checkout
+                                    order: $order
+                                    groupedLineItemsIds: $grouped_line_items
+
                     - '@assign_value': [$payment_in_progress, true]
 
                     - '@run_action_group':
@@ -563,6 +671,19 @@ workflows:
 
                     - '@extendable':
                         events: [extendable_action.finish_checkout]
+
+                    # Used for cases when sub-orders are paid separately and some of sub-order payments failed.
+                    - '@assign_url':
+                        conditions:
+                            '@equal':
+                                - $.result.responseData[purchasePartial]
+                                - true
+                        parameters:
+                            attribute: $.result.responseData.partiallyPaidUrl
+                            route: oro_checkout_frontend_checkout
+                            route_parameters:
+                                id: $checkout.id
+                                transition: paid_partially
 
                     - '@redirect':
                         conditions:
@@ -621,6 +742,14 @@ workflows:
                         service: oro_checkout.action.default_shipping_method_setter
                         method: setDefaultShippingMethod
                         method_parameters: [$checkout]
+                    - '@tree':
+                        conditions:
+                            '@is_multishipping_enabled': ~
+                        actions:
+                            - '@call_service_method':
+                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                method: setDefaultShippingMethods
+                                method_parameters: [$checkout]
                     - '@generate_uuid': $state_token
 
             clear_payment_method_and_recalculate_state_definition:
@@ -661,3 +790,52 @@ workflows:
 
                     - '@delete_checkout_state':
                           entity: $checkout
+
+            paid_partially_definition:
+                actions:
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $order
+                        actions:
+                            - '@assign_url':
+                                attribute: $.result.orderViewPage
+                                route: oro_order_frontend_view
+                                route_parameters:
+                                    id: $order.id
+                            - '@flash_message':
+                                message: oro.checkout.workflow.condition.payment_has_not_fully_been_processed.message
+                                message_parameters:
+                                    orderIdentifier: $order.identifier
+                                    orderViewLink: $.result.orderViewPage
+                                type: 'warning'
+                            - '@actualize_line_items_by_unpaid_suborders':
+                                order: $order
+                                checkout: $checkout
+                            - '@call_service_method':
+                                service: oro_checkout.provider.grouped_line_items
+                                method: getGroupedLineItemsIds
+                                method_parameters: [ $checkout ]
+                                attribute: $grouped_line_items
+                    - '@flash_message':
+                        conditions:
+                            '@empty': $order
+                        message: oro.checkout.workflow.condition.payment_has_not_fully_been_processed.message
+                        message_parameters:
+                            orderIdentifier: $order.identifier
+                            orderViewLink: $.result.orderViewPage
+                        type: 'warning'
+                    - '@assign_value':
+                        - [ $payment_method, null ]
+                        - [ $payment_in_progress, false ]
+                    - '@unset_value': [ $.data.order ]
+                    - '@generate_uuid': $state_token
+                    - '@delete_checkout_state':
+                        entity: $checkout
+                        token: $state_token
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.currentCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.currentCheckoutState
+                        token: $state_token

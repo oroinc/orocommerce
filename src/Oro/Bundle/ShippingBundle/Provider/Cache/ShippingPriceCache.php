@@ -26,31 +26,42 @@ class ShippingPriceCache
         $this->cacheKeyGenerator = $cacheKeyGenerator;
     }
 
-    public function getPrice(ShippingContextInterface $context, string $methodId, string $typeId) : Price|null
+    public function getPrice(ShippingContextInterface $context, string $methodId, string $typeId, int $ruleId): ?Price
     {
-        $cacheKey = $this->generateKey($context, $methodId, $typeId);
+        $cacheKey = $this->generateKey($context, $methodId, $typeId, $ruleId);
         $cacheItem = $this->cache->getItem($cacheKey);
 
         return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 
-    public function hasPrice(ShippingContextInterface $context, string $methodId, string $typeId) : bool
+    public function hasPrice(ShippingContextInterface $context, string $methodId, string $typeId, int $ruleId) : bool
     {
-        return $this->cache->getItem($this->generateKey($context, $methodId, $typeId))->isHit();
+        return $this->cache->getItem($this->generateKey($context, $methodId, $typeId, $ruleId))->isHit();
     }
 
-    public function savePrice(ShippingContextInterface $context, string $methodId, string $typeId, Price $price) : void
-    {
-        $cacheKey = $this->generateKey($context, $methodId, $typeId);
+    public function savePrice(
+        ShippingContextInterface $context,
+        string $methodId,
+        string $typeId,
+        int $ruleId,
+        Price $price
+    ) : void {
+        $cacheKey = $this->generateKey($context, $methodId, $typeId, $ruleId);
         $cacheItem = $this->cache->getItem($cacheKey);
         $cacheItem->set($price)->expiresAfter(static::CACHE_LIFETIME);
         $this->cache->save($cacheItem);
     }
 
-    private function generateKey(ShippingContextInterface $context, string $methodId, string $typeId) : string
+    /**
+     * @param ShippingContextInterface $context
+     * @param string[] $identifiers
+     * @return string
+     */
+    private function generateKey(ShippingContextInterface $context, ...$identifiers): string
     {
+        array_unshift($identifiers, $this->cacheKeyGenerator->generateKey($context));
         return UniversalCacheKeyGenerator::normalizeCacheKey(
-            $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId
+            implode("|", $identifiers)
         );
     }
 

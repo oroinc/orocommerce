@@ -10,16 +10,14 @@ use Symfony\Component\Form\FormFactory;
 class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var FormFactory|\PHPUnit\Framework\MockObject\MockObject */
-    protected $formFactory;
+    private $formFactory;
 
     /** @var BooleanTypeHandler */
-    protected $handler;
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->formFactory = $this->getMockBuilder(FormFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formFactory = $this->createMock(FormFactory::class);
 
         $this->handler = new BooleanTypeHandler($this->formFactory);
     }
@@ -32,20 +30,14 @@ class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
             true => true,
         ];
 
-        $form = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock(Form::class);
 
         $this->formFactory->expects($this->once())
             ->method('createNamed')
             ->with($fieldName, ChoiceType::class, null, $this->callback(function (array $options) {
-
                 // will check choice_attr separately
-                $this->assertSame([
-                    'No' => false,
-                    'Yes' => true,
-                ], $options['choices']);
-                $this->assertSame(false, $options['auto_initialize']);
+                $this->assertSame(['No' => false, 'Yes' => true], $options['choices']);
+                $this->assertFalse($options['auto_initialize']);
 
                 $this->assertArrayHasKey('choice_attr', $options);
 

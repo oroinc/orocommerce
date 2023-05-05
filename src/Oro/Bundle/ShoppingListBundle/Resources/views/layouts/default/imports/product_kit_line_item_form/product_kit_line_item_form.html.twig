@@ -1,0 +1,103 @@
+{% block oro_product_kit_line_item_widget %}
+    <div class="product-kit-items form-row">
+        {{ form_row(form.kitItemLineItems, {label: false}) }}
+    </div>
+
+    <div class="product-kit-subtotal">
+        {% if form.vars.subtotal|default(null) is not null %}
+            {% set subtotal = form.vars.subtotal.amount|default(0)|oro_format_currency({'currency': form.vars.subtotal.currency|default(null)}) %}
+        {% else %}
+            {% set subtotal = 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans %}
+        {% endif %}
+        {{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.subtotal.label'|trans({'%subtotal%': subtotal}) }}
+    </div>
+
+    <div class="product-kit-quantity">
+        <div class="product-kit-quantity__unit{% if form.unit.vars.choices|length == 1 %} product-view-quantity__unit--half{% endif %}">
+            {% if form.unit.vars.choices|length > 1 %}
+                {{ form_row(form.unit, {label: false}) }}
+            {% else %}
+                <div class="product-kit-quantity__unit-label" data-role="unit-label">
+                    {{- value.product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}
+                </div>
+                <div class="hidden">
+                    <input type="hidden" name="{{ form.unit.vars.full_name }}"
+                           value="{{ value.product.primaryUnitPrecision.unit.code }}"
+                           data-name="{{ form.unit.vars.attr['data-name'] }}"
+                           data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}"/>
+                </div>
+            {% endif %}
+        </div>
+        <div class="product-kit-quantity__value{% if form.unit.vars.choices|length == 1 %} product-kit-quantity__value--half{% endif %}">
+            {{ form_row(form.quantity, {label: false, attr: {'aria-label': 'oro.product.quantity.aria_label'|trans }}) }}
+        </div>
+        <div class="fields-row-error"></div>
+    </div>
+{% endblock %}
+
+{% block _oro_product_kit_line_item_kitItemLineItems_entry_label %}
+    {{ form_label(form, value.kitItem.labels|localized_value|e ~ ':') }}
+{% endblock %}
+
+{% block _oro_product_kit_line_item_kitItemLineItems_entry_widget %}
+    <div class="product-kit-item-quantity form-row">
+        <div data-role="unit-label">
+            {{- value.kitItem.productUnit.code|oro_format_product_unit_label -}}
+        </div>
+        <div data-role="quantity">
+            {{ form_row(form.quantity, {label: false, attr: {'aria-label': 'oro.shoppinglist.productkititemlineitem.quantity.aria_label'|trans}}) }}
+        </div>
+        <div class="fields-row-error"></div>
+    </div>
+    <div class="product-kit-item-line-item-product form-row">
+        {{ form_row(form.product, {label: false, kitItem: value.kitItem, productPrices: form.parent.vars.productPrices|default({})}) }}
+    </div>
+{% endblock %}
+
+{% block _oro_product_kit_line_item_kitItemLineItems_entry_product_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        <table class="table">
+            <tbody>
+            {%- for index, choice in choices -%}
+                {%- set product = choice.data -%}
+                <tr>
+                    <td>
+                        {{- form_row(form[index], {label: false, product: product}) -}}
+                    </td>
+                    <td>
+                        {%- if product -%}
+                        <div class="price-value-container">
+                            {%- set productPrice = productPrices[product.id|default(0)][kitItem.productUnit.code|default('')]|default([null])|first -%}
+                            {%- if productPrice is not null -%}
+                                <span data-name="price-value">
+                                    {{ productPrice.price.value|default(0)|oro_format_currency({'currency': productPrice.price.currency|default(null)}) }}
+                                </span>
+                            {%- else -%}
+                                <span data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}</span>
+                            {%- endif -%}
+                        </div>
+                        {%- endif -%}
+                    </td>
+                </tr>
+            {%- endfor -%}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block _oro_product_kit_line_item_kitItemLineItems_entry_product_entry_widget %}
+    {% set label %}
+        {% if product is not null %}
+            {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
+            {% set productName = product.names|localized_value %}
+            {% include '@OroAttachment/Twig/picture.html.twig' with {
+                sources: product_filtered_picture_sources(productImageData, 'product_small')
+            } %}
+            <span>{{ product.skuUppercase ~ ' - ' ~ productName|e }}</span>
+        {% else %}
+            <span>{{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.product_kit_item_line_item.product.choices.none'|trans }}</span>
+        {% endif %}
+    {% endset %}
+
+    {{ block('radio_widget') }}
+{% endblock %}

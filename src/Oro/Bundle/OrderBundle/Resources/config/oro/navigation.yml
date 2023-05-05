@@ -6,7 +6,13 @@ navigation:
                 route:           'oro_order_index'
                 position:        400
                 extras:
-                    routes:      ['oro_order_index', 'oro_order_view', 'oro_order_update', 'oro_order_create']
+                    routes:
+                        - 'oro_order_index'
+                        - 'oro_order_view'
+                        - 'oro_order_update'
+                        - 'oro_order_create'
+                        - 'oro_order_create_for_customer'
+                        - 'oro_order_create_for_customer_user'
                     description: 'oro.order.menu.order_list.description'
 
             shortcut_order_list:
@@ -27,6 +33,7 @@ navigation:
                 route:           'oro_report_view_grid'
                 route_parameters:
                     gridName:    'best-selling-products'
+                position: 50
                 extras:
                     description: 'oro.order.menu.best_selling_list.description'
 
@@ -89,6 +96,8 @@ navigation:
         oro_order_view:   'oro.order.navigation.view'
         oro_order_update: 'oro.order.navigation.view - oro.ui.edit'
         oro_order_create: 'oro.ui.create_entity'
+        oro_order_create_for_customer: 'oro.ui.create_entity'
+        oro_order_create_for_customer_user: 'oro.ui.create_entity'
 
         oro_order_frontend_index:  'oro.order.order_history.label'
         oro_order_frontend_view:   'oro.order.navigation.view'

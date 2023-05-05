@@ -25,7 +25,7 @@ const PanelManagerModule = BaseClass.extend({
     /**
      * @inheritdoc
      */
-    initialize: function(options) {
+    initialize(options) {
         _.extend(this, _.pick(options, ['builder', 'themes']));
 
         if (!this.builder) {
@@ -56,7 +56,7 @@ const PanelManagerModule = BaseClass.extend({
         });
     },
 
-    createThemeSelector: function() {
+    createThemeSelector() {
         const pn = this.builder.Panels.getPanel('options');
 
         this.themeSelector = new ThemeSelectorView({
@@ -67,7 +67,7 @@ const PanelManagerModule = BaseClass.extend({
         pn.view.$el.prepend(this.themeSelector.$el);
     },
 
-    _addOptionButtonTooltips: function() {
+    _addOptionButtonTooltips() {
         const pn = this.builder.Panels.getPanel('options');
 
         pn.buttons.each(function(button) {
@@ -83,8 +83,9 @@ const PanelManagerModule = BaseClass.extend({
      * Move settings tab to style manager above style property
      * @private
      */
-    _moveSettings: function() {
-        const Panels = this.builder.Panels;
+    _moveSettings() {
+        const {TraitManager, Panels} = this.builder;
+
         const builderEl = this.builder.editor.view.$el;
 
         const openTmBtn = Panels.getButton('views', 'open-tm');
@@ -95,12 +96,14 @@ const PanelManagerModule = BaseClass.extend({
         const traitsSector = $(this.settingsTemplate());
         const traitsProps = traitsSector.find('.gjs-sm-properties');
         $(Panels.getPanelsEl()).find('.gjs-sm-sectors').before(traitsSector);
-        traitsProps.append(builderEl.find('.gjs-trt-traits'));
+        traitsProps.append(TraitManager.view.$el);
 
-        traitsSector.find('.gjs-sm-title').on('click', function() {
+        traitsSector.find('.gjs-sm-sector-title').on('click', ({currentTarget}) => {
             const traitStyle = traitsProps.get(0).style;
-
             const hidden = traitStyle.display === 'none';
+
+            currentTarget.parentNode.classList.toggle('gjs-sm-open', hidden);
+
             if (hidden) {
                 traitStyle.display = 'block';
             } else {

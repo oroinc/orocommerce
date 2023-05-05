@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntityValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
@@ -36,10 +37,7 @@ class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
 
     public function testNotExpectedValueException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
-        );
+        $this->expectException(UnexpectedTypeException::class);
 
         $constraint = new UniqueEntity();
         $this->validator->validate(new \stdClass(), $constraint);

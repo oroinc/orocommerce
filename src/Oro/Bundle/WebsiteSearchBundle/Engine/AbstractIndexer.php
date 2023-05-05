@@ -8,6 +8,7 @@ use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\AfterReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
@@ -61,7 +62,7 @@ abstract class AbstractIndexer implements IndexerInterface
     protected $regexPlaceholder;
 
     /** @var int */
-    private $batchSize = 100;
+    private $batchSize = Configuration::INDEXER_BATCH_SIZE_DEFAULT;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,

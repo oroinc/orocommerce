@@ -19,7 +19,7 @@ use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -48,7 +48,7 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
     /** @var AuditMessageBodyProvider */
     private $auditMessageBodyProvider;
 
-    /** @var PropertyAccessor */
+    /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
     /** @var LoggerInterface */
@@ -78,7 +78,7 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         AuditConfigProvider $auditConfigProvider,
         EntityNameResolver $entityNameResolver,
         AuditMessageBodyProvider $auditMessageBodyProvider,
-        PropertyAccessor $propertyAccessor,
+        PropertyAccessorInterface $propertyAccessor,
         LoggerInterface $logger,
         ApplicationState $applicationState
     ) {

@@ -19,17 +19,12 @@ use Oro\Component\EntitySerializer\EntitySerializer;
  */
 class ComputeCategoryNodeCategory implements ProcessorInterface
 {
-    private const ID_FIELD       = 'id';
+    private const ID_FIELD = 'id';
     private const CATEGORY_FIELD = 'category';
 
-    /** @var EntitySerializer */
-    private $entitySerializer;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var DataAccessorInterface */
-    private $dataAccessor;
+    private EntitySerializer $entitySerializer;
+    private DoctrineHelper $doctrineHelper;
+    private DataAccessorInterface $dataAccessor;
 
     public function __construct(
         EntitySerializer $entitySerializer,
@@ -44,7 +39,7 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 
@@ -183,7 +178,7 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         string $categoryPrefix
     ): array {
         $categoryDependsOn = [];
-        $categoryPrefixLength = strlen($categoryPrefix);
+        $categoryPrefixLength = \strlen($categoryPrefix);
         $fields = $config->getFields();
         foreach ($fields as $field) {
             if ($field->isExcluded()) {

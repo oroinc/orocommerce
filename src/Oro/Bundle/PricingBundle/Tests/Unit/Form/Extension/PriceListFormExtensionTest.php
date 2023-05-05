@@ -14,17 +14,15 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class PriceListFormExtensionTest extends FormIntegrationTestCase
 {
-    /** @var PriceListFormExtension */
-    protected $priceListFormExtension;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /** @var ConfigManager */
-    protected $configManager;
+    /** @var PriceListFormExtension */
+    private $priceListFormExtension;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->priceListFormExtension = new PriceListFormExtension($this->configManager);
 
@@ -48,11 +46,11 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $extensions = [
+        return [
             new PreloadedExtension(
                 [
                     PriceListSelectWithPriorityType::class => new PriceListSelectWithPriorityTypeStub()
@@ -64,7 +62,5 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
                 ]
             )
         ];
-
-        return $extensions;
     }
 }

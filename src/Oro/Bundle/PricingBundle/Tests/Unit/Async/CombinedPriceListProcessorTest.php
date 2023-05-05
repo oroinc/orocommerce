@@ -112,7 +112,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $e = new \Exception();
         $this->jobRunner->expects($this->once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willThrowException($e);
 
         $this->logger->expects($this->once())
@@ -162,13 +162,10 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn(42);
         $this->jobRunner->expects($this->once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($job, $body) {
-                    $this->assertEquals(
-                        'oro_pricing.price_lists.cpl.mass_rebuild:'. md5(json_encode($body)),
-                        $name
-                    );
+                function ($actualMessage, $closure) use ($job, $message) {
+                    $this->assertSame($actualMessage, $message);
 
                     return $closure($this->jobRunner, $job);
                 }

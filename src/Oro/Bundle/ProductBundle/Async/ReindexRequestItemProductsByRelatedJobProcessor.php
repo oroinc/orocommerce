@@ -65,10 +65,8 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
                 return self::ACK;
             }
 
-            $jobName = $this->getUniqueJobName($relatedJobId);
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                $jobName,
+            $result = $this->jobRunner->runUniqueByMessage(
+                $message,
                 function (JobRunner $jobRunner, Job $job) use ($relatedJobId, $websiteIdsOnReindex, $fieldGroups) {
                     $this->doJob($jobRunner, $job, $relatedJobId, $websiteIdsOnReindex, $fieldGroups);
 
@@ -157,19 +155,6 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
                     ]
                 ]);
             }
-        );
-    }
-
-    /**
-     * @param int $relatedJobId
-     * @return string
-     */
-    private function getUniqueJobName(int $relatedJobId): string
-    {
-        return sprintf(
-            '%s:%s',
-            ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-            $relatedJobId
         );
     }
 

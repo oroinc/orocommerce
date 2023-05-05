@@ -38,7 +38,6 @@ Example:
             "name": "some name",
             "priceListCurrencies": ["EUR", "USD"],
             "active": true,
-            "default": false,
             "productAssignmentRule": "product.category.id > 0"
         },
         "relationships": {
@@ -55,6 +54,12 @@ Example:
                     {"type": "pricelistschedules", "id": "schedule_1"},
                     {"type": "pricelistschedules", "id": "schedule_2"}
                 ]
+            },
+            "organization": {
+                "data": {
+                  "type": "organizations",
+                  "id": "1"
+                }
             }
         }
     },
@@ -221,3 +226,30 @@ Retrieve the IDs of the schedules configured for a specific price list.
 #### delete_relationship
 
 Remove the schedules for a specific price list.
+
+### organization
+
+#### get_subresource
+
+Retrieve the record of the organization a specific price list belongs to.
+
+#### get_relationship
+
+Retrieve the ID of the organization that a specific price list belongs to.
+
+#### update_relationship
+
+Replace the organization that a specific price list belongs to.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "organizations",
+    "id": "1"
+  }
+}
+```
+{@/request}

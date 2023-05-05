@@ -9,22 +9,22 @@ Feature: Product collection mass actions of tabs grids
     Given I login as administrator
     And I am on Content Node page and added Product Collection variant
     And I have all products available in <tab> tab, and focused on it
-    And I check PSKU12 record in "Active Grid" grid
-    And I check PSKU11 record in "Active Grid" grid
-    And I press next page button in grid "Active Grid"
+    And I check PSKU1 record in "Active Grid" grid
     And I check PSKU2 record in "Active Grid" grid
+    And I press next page button in grid "Active Grid"
+    And I check PSKU11 record in "Active Grid" grid
     And I click <mass action> mass action in "Active Grid" grid
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU10 | Product 10 |
-      | PSKU9  | Product 9  |
-      | PSKU8  | Product 8  |
-      | PSKU7  | Product 7  |
-      | PSKU6  | Product 6  |
-      | PSKU5  | Product 5  |
-      | PSKU4  | Product 4  |
       | PSKU3  | Product 3  |
-      | PSKU1  | Product 1  |
+      | PSKU4  | Product 4  |
+      | PSKU5  | Product 5  |
+      | PSKU6  | Product 6  |
+      | PSKU7  | Product 7  |
+      | PSKU8  | Product 8  |
+      | PSKU9  | Product 9  |
+      | PSKU10 | Product 10 |
+      | PSKU12 | Product 12 |
     And I click "Cancel"
     Examples:
       | tab            | mass action      |
@@ -49,16 +49,16 @@ Feature: Product collection mass actions of tabs grids
     Given I am on Content Node page and added Product Collection variant
     And I have all products available in <tab> tab, and focused on it
     And I check all records in "Active Grid" grid
-    And I uncheck PSKU12 record in "Active Grid" grid
-    And I uncheck PSKU11 record in "Active Grid" grid
-    And I press next page button in grid "Active Grid"
+    And I uncheck PSKU1 record in "Active Grid" grid
     And I uncheck PSKU2 record in "Active Grid" grid
+    And I press next page button in grid "Active Grid"
+    And I uncheck PSKU11 record in "Active Grid" grid
     And I click <mass action> mass action in "Active Grid" grid
     Then I should see following "Active Grid" grid:
-      | SKU    | NAME        |
-      | PSKU12 | Product 12  |
-      | PSKU11 | Product 11  |
-      | PSKU2  | Product 2   |
+      | SKU    | NAME       |
+      | PSKU1  | Product 1  |
+      | PSKU2  | Product 2  |
+      | PSKU11 | Product 11 |
     And I click "Cancel"
     Examples:
     | tab            | mass action      |
@@ -74,16 +74,16 @@ Feature: Product collection mass actions of tabs grids
     And I click <mass action> mass action in "Active Grid" grid
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
-      | PSKU9  | Product 9  |
-      | PSKU8  | Product 8  |
-      | PSKU7  | Product 7  |
-      | PSKU6  | Product 6  |
-      | PSKU5  | Product 5  |
-      | PSKU4  | Product 4  |
+      | PSKU1  | Product 1  |
+      | PSKU2  | Product 2  |
       | PSKU3  | Product 3  |
+      | PSKU4  | Product 4  |
+      | PSKU5  | Product 5  |
+      | PSKU6  | Product 6  |
+      | PSKU7  | Product 7  |
+      | PSKU8  | Product 8  |
+      | PSKU9  | Product 9  |
+      | PSKU10 | Product 10 |
     And I should see "Total Of 10 Records"
     And I click "Cancel"
     Examples:

@@ -1,4 +1,4 @@
-@container-incompatible
+@behat-test-env
 @waf-skip
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml

@@ -3,8 +3,10 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CheckoutBundle\Model\ExtendCheckoutSource;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\EntityExtendBundle\EntityReflectionClass;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -14,8 +16,10 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @ORM\Table(name="oro_checkout_source")
  * @Config
  */
-class CheckoutSource extends ExtendCheckoutSource
+class CheckoutSource implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *
@@ -59,7 +63,7 @@ class CheckoutSource extends ExtendCheckoutSource
      */
     public function getEntity()
     {
-        $reflectionClass = new \ReflectionClass($this);
+        $reflectionClass = new EntityReflectionClass($this);
         $properties = $reflectionClass->getProperties();
 
         foreach ($properties as $property) {
@@ -77,7 +81,7 @@ class CheckoutSource extends ExtendCheckoutSource
 
     public function clear(): void
     {
-        $reflectionClass = new \ReflectionClass($this);
+        $reflectionClass = new EntityReflectionClass($this);
         $properties = $reflectionClass->getProperties();
         foreach ($properties as $property) {
             $property->setAccessible(true);

@@ -22,14 +22,14 @@ use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 
 class QuoteAddressManagerTest extends AbstractAddressManagerTest
 {
-    /** @var QuoteAddressManager */
-    protected $manager;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressProvider */
-    protected $provider;
+    private $provider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
+
+    /** @var QuoteAddressManager */
+    protected $manager;
 
     protected function setUp(): void
     {
@@ -77,10 +77,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         $this->assertEquals($expectedCustomerUserAddress, $quoteAddress->getCustomerUserAddress());
     }
 
-    /**
-     * @return array
-     */
-    public function quoteDataProvider()
+    public function quoteDataProvider(): array
     {
         $country = new Country('US');
         $region = new Region('US-AL');
@@ -174,10 +171,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         $this->assertEquals($expected, $result->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function groupedAddressDataProvider()
+    public function groupedAddressDataProvider(): array
     {
         return [
             'empty customer user' => [new Quote()],

@@ -11,6 +11,14 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product1_precision:
+        unit: '@item'
+        precision: 0
+    product2_precision:
+        unit: '@set'
+        precision: 1
+
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'SKU1'
@@ -18,12 +26,16 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product1_precision'
+        unitPrecisions: [ '@product1_precision' ]
         __calls:
             - addName: ['@locvalue1']
     product2:
         sku: 'SKU2'
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        primaryUnitPrecision: '@product2_precision'
+        unitPrecisions: [ '@product2_precision' ]
         organization: '@organization'
         attributeFamily: '@defaultProductFamily'
         __calls:

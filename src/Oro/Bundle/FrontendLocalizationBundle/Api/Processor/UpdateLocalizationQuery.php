@@ -16,8 +16,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class UpdateLocalizationQuery implements ProcessorInterface
 {
-    /** @var ConfigManager */
-    private $configManager;
+    private ConfigManager $configManager;
 
     public function __construct(ConfigManager $configManager)
     {
@@ -27,7 +26,7 @@ class UpdateLocalizationQuery implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

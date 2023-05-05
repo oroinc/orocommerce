@@ -3,24 +3,29 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ConsentBundle\DependencyInjection\OroConsentExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroConsentExtensionTest extends ExtensionTestCase
+class OroConsentExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
-        $this->loadExtension(new OroConsentExtension());
+        $container = new ContainerBuilder();
 
-        $expectedDefinitions = [
-            'oro_consent.form.autocomplete.consent.search_handler',
-            'oro_consent.form.consent_collection_data_transformer',
-            'oro_consent.validator.unique_consent',
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
+        $extension = new OroConsentExtension();
+        $extension->load([], $container);
 
-        $expectedExtensionConfigs = [
-            'oro_consent'
-        ];
-        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
+        self::assertNotEmpty($container->getDefinitions());
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'consent_feature_enabled' => ['value' => false, 'scope' => 'app'],
+                        'enabled_consents' => ['value' => [], 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('oro_consent')
+        );
     }
 }

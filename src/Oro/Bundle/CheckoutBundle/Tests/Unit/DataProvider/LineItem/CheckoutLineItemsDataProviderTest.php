@@ -21,13 +21,13 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $frontendProductPricesDataProvider;
+    private $frontendProductPricesDataProvider;
 
     /** @var CheckoutLineItemsDataProvider */
-    protected $provider;
+    private $provider;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productAvailabilityCache;
@@ -35,9 +35,6 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ResolvedProductVisibilityProvider */
     private $resolvedProductVisibilityProvider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
@@ -55,19 +52,13 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isEntitySupportedProvider
-     *
-     * @param bool $expected
-     * @param object $entity
      */
-    public function testIsEntitySupported($expected, $entity)
+    public function testIsEntitySupported(bool $expected, object $entity)
     {
         $this->assertEquals($expected, $this->provider->isEntitySupported($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function isEntitySupportedProvider()
+    public function isEntitySupportedProvider(): array
     {
         return [
             ['expected' => false, 'data' => new \stdClass(),],
@@ -76,13 +67,10 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Price|null $price
-     * @param bool $isPriceFixed
-     *
      * @dataProvider priceDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGetData(Price $price = null, $isPriceFixed = false)
+    public function testGetData(?Price $price, bool $isPriceFixed)
     {
         $freeFormProduct = 'freeFromProduct';
         $product1 = $this->getEntity(
@@ -109,7 +97,6 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('prefetch')
             ->with([$product1->getId(), $product2->getId()]);
 
-        /** @var CheckoutLineItem $lineItem */
         $lineItem1 = $this->getEntity(
             CheckoutLineItem::class,
             [
@@ -121,6 +108,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'price' => $price,
                 'fromExternalSource' => true,
                 'comment' => 'line item comment',
+                'shippingMethod' => 'flat_rate_1',
+                'shippingMethodType' => 'primary',
+                'shippingEstimateAmount' => 5.0,
             ]
         );
         $lineItem1->setPriceFixed($isPriceFixed)
@@ -137,6 +127,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'price' => $price,
                 'fromExternalSource' => true,
                 'comment' => 'line item comment',
+                'shippingMethod' => 'flat_rate_2',
+                'shippingMethodType' => 'primary',
+                'shippingEstimateAmount' => 3.0,
             ]
         );
         $lineItem2->setPriceFixed($isPriceFixed)
@@ -168,6 +161,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                     'productUnitCode' => 'code',
                     'price' => $expectedPrice,
                     'fromExternalSource' => true,
+                    'shippingMethod' => 'flat_rate_1',
+                    'shippingMethodType' => 'primary',
+                    'shippingEstimateAmount' => 5.0,
                 ],
                 [
                     'product' => $product2,
@@ -180,6 +176,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                     'productUnitCode' => 'code',
                     'price' => $price,
                     'fromExternalSource' => true,
+                    'shippingMethod' => 'flat_rate_2',
+                    'shippingMethodType' => 'primary',
+                    'shippingEstimateAmount' => 3.0,
                 ],
             ],
             $this->provider->getData($checkout)
@@ -188,7 +187,6 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDataWithoutProduct()
     {
-        /** @var CheckoutLineItem $lineItem */
         $lineItem = $this->getEntity(CheckoutLineItem::class);
         $checkout = $this->getEntity(Checkout::class, ['lineItems' => new ArrayCollection([$lineItem])]);
 
@@ -203,7 +201,10 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'productUnit' => null,
                 'productUnitCode' => null,
                 'price' => null,
-                'fromExternalSource' => false
+                'fromExternalSource' => false,
+                'shippingMethod' => null,
+                'shippingMethodType' => null,
+                'shippingEstimateAmount' => null,
             ]
         ];
         $this->assertEquals($expected, $this->provider->getData($checkout));
@@ -211,8 +212,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDataFromCache()
     {
-        $this->frontendProductPricesDataProvider
-            ->expects($this->atMost(2))
+        $this->frontendProductPricesDataProvider->expects($this->atMost(2))
             ->method('getProductsMatchedPrice')
             ->willReturn([]);
 
@@ -220,7 +220,6 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
             Product::class,
             ['id' => 3, 'sku' => 'PRODUCT_SKU', 'status' => Product::STATUS_ENABLED]
         );
-        /** @var CheckoutLineItem $lineItem */
         $lineItem = $this->getEntity(CheckoutLineItem::class, ['product' => $enabledProduct]);
         $firstCheckout = $this->getEntity(
             Checkout::class,
@@ -250,7 +249,10 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'parentProduct' => null,
                 'freeFormProduct' => null,
                 'fromExternalSource' => false,
-                'price' => null
+                'price' => null,
+                'shippingMethod' => null,
+                'shippingMethodType' => null,
+                'shippingEstimateAmount' => null,
             ]
         ];
 
@@ -260,15 +262,12 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getData($secondCheckout));
     }
 
-    /**
-     * @return array
-     */
-    public function priceDataProvider()
+    public function priceDataProvider(): array
     {
         return [
-            'positive' => ['price' => Price::create(10, 'EUR')],
-            'negative & auto-discovery prices' => ['price' => null],
-            'negative & price is fixed' => ['price' => null, 'isPriceFixed' => true],
+            'positive' => [Price::create(10, 'EUR'), false],
+            'negative & auto-discovery prices' => [null, false],
+            'negative & price is fixed' => [null, true],
         ];
     }
 }

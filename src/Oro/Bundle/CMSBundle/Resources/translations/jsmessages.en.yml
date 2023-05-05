@@ -4,12 +4,15 @@ oro.cms:
             confirmation:
                 title: 'Leave External Markup Mode?'
                 desc: 'If you exit external markup mode, the editor may change the source code and break the imported content markup and styles.'
+            message: 'Style Manager is disabled in External Markup Mode'
+            label: 'Enable External Markup'
+            info: "The option disables the GrapeJs built-in style manager to prevent it from breaking the imported СSS styles. Use the Source Code dialog to add/edit styles."
         option_panel:
             show_borders: 'Show Borders'
             preview: 'Preview'
             fullscreen: 'Fullscreen'
             export: 'Export'
-            import: 'Import'
+            import: 'Source Code'
             undo: 'Undo'
             redo: 'Redo'
             clear_canvas: 'Clear Canvas'
@@ -17,6 +20,8 @@ oro.cms:
             open_Blocks: 'Open Blocks'
             open_style_manager: 'Open Style Manager'
             open_layer_manager: 'Open Layer Manager'
+        settings_panel:
+            title: 'Settings'
         theme_selector:
             placeholder: 'Type theme name'
         exclude_content_block: 'You are trying to add current content block inside itself. Please choose another one'
@@ -62,6 +67,16 @@ oro.cms:
                 label: 'Table'
                 header_cell_label: 'Header Cell'
                 body_cell_label: 'Body Cell'
+            table_responsive:
+                label: 'Table Responsive'
+            table_head:
+                label: 'Table Head'
+            table_body:
+                label: 'Table Body'
+            table_row:
+                label: 'Table Row'
+            table_cell:
+                label: 'Table Cell'
             digital_asset:
                 image: 'Image'
                 file: 'File'
@@ -124,8 +139,9 @@ oro.cms:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:
             label: 'Paste here your HTML/CSS and click Import'
-            title: 'Import'
-            button: 'Import'
+            title: 'Source Code'
+            button: 'Apply Changes'
+            export_button: 'Download'
             message:
                 twig_exp: 'An unexpected error occurred while converting wysiwyg content'
         code:
@@ -135,6 +151,10 @@ oro.cms:
         export:
             title: 'Code'
             btn_label: 'Export to ZIP'
+            confirmation:
+                title: 'Apply Changes?'
+                content: 'The downloaded file will include only the changes that have already been applied'
+                okText: 'Apply and Download'
         toolbar:
             selectParent: 'Select Parent'
             move: 'Move'
@@ -174,7 +194,7 @@ oro.cms:
                 active: 'Click'
                 even_odd: 'Even/Odd'
         style_manager:
-            settings: 'Settings'
+            settings: 'Attributes'
             empty: 'Select an element before using Style Manager'
             unsupport: 'The selected component does not support Selector Manager'
             layer: 'Layer'
@@ -582,6 +602,9 @@ oro.cms:
             reset_search: 'Reset search field'
             content_template:
                 not_found: 'Content template {{ name }} could not load'
+        commands:
+            clear_canvas:
+                confirm: 'Are you sure to clean the canvas?'
     change_type:
         confirmation:
             title: 'Change Type'

@@ -1,0 +1,71 @@
+data:
+    type: products
+    id: 'products-kit1'
+    attributes:
+        sku: 'products-kit1'
+        status: 'enabled'
+        productType: 'kit'
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '<toString(@business_unit->getId())>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@business_unit->organization->getId())>'
+        names:
+            data:
+                -
+                    type: productnames
+                    id: 'products-kit1-productnames-default'
+        attributeFamily:
+            data:
+                type: attributefamilies
+                id: '<toString(@default_product_family->getId())>'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: 'products-kit1-productunitprecisions-item'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: '<toString(@in_stock->id)>'
+        pageTemplate:
+            data:
+                type: entityfieldfallbackvalues
+                id: 'products-kit1-page-template-short'
+        kitItems:
+            data:
+                -
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->getId)>'
+included:
+    -
+        type: entityfieldfallbackvalues
+        id: 'products-kit1-page-template-short'
+        attributes:
+            fallback: null
+            scalarValue: short
+            arrayValue: null
+    -
+        type: productnames
+        id: 'products-kit1-productnames-default'
+        attributes:
+            fallback: null
+            string: 'products-kit1-productnames-default'
+        relationships:
+            localization:
+                data: null
+    -
+        type: productunitprecisions
+        id: 'products-kit1-productunitprecisions-item'
+        attributes:
+            precision: 0
+            conversionRate: 2
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->getCode())>'

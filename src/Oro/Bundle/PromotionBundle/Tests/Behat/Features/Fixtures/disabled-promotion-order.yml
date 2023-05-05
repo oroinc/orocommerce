@@ -9,6 +9,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: USD
         poNumber: 'DORD1'
         disablePromotions: true
+        lineItems: [ '@simpleOrderLineItem' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:

@@ -2,46 +2,37 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Represents a tax code.
+ */
 class TaxCode implements TaxCodeInterface
 {
-    /** @var string */
-    protected $code;
+    private string $code;
+    private string $type;
 
-    /** @var string */
-    protected $type;
-
-    /**
-     * @param string $code
-     * @param string $type
-     */
-    public function __construct($code, $type)
+    public function __construct(string $code, string $type)
     {
-        if (!is_string($code) || !is_string($type)) {
-            throw new \InvalidArgumentException('Strings required');
-        }
-
         $this->code = $code;
         $this->type = $type;
     }
 
-    /**
-     * @param string $code
-     * @param string $type
-     * @return static
-     */
-    public static function create($code, $type)
+    public static function create(string $code, string $type): TaxCode
     {
         return new static($code, $type);
     }
 
-    /** {@inheritdoc} */
-    public function getCode()
+    /**
+     * {@inheritDoc}
+     */
+    public function getCode(): string
     {
         return $this->code;
     }
 
-    /** {@inheritdoc} */
-    public function getType()
+    /**
+     * {@inheritDoc}
+     */
+    public function getType(): string
     {
         return $this->type;
     }

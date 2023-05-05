@@ -12,24 +12,16 @@ use Oro\Component\Website\WebsiteInterface;
 
 class RobotsTxtIndexingRulesBySitemapManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject */
     private $robotsTxtFileManager;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var UrlItemsProviderRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UrlItemsProviderRegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $itemsProviderRegistry;
 
-    /**
-     * @var RobotsTxtIndexingRulesBySitemapManager
-     */
+    /** @var RobotsTxtIndexingRulesBySitemapManager */
     private $robotsTxtIndexingRulesBySitemapManager;
 
     protected function setUp(): void
@@ -37,6 +29,7 @@ class RobotsTxtIndexingRulesBySitemapManagerTest extends \PHPUnit\Framework\Test
         $this->robotsTxtFileManager = $this->createMock(RobotsTxtFileManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->itemsProviderRegistry = $this->createMock(UrlItemsProviderRegistryInterface::class);
+
         $this->robotsTxtIndexingRulesBySitemapManager = new RobotsTxtIndexingRulesBySitemapManager(
             $this->robotsTxtFileManager,
             $this->configManager,
@@ -46,60 +39,46 @@ class RobotsTxtIndexingRulesBySitemapManagerTest extends \PHPUnit\Framework\Test
 
     /**
      * @dataProvider onConfigUpdateDataProvider
-     *
-     * @param bool   $isAccessEnabled
-     * @param string $url
-     * @param string $content
-     * @param string $contentResult
      */
     public function testFlush(
-        $isAccessEnabled,
-        $url,
-        $content,
-        $contentResult
+        bool $isAccessEnabled,
+        string $url,
+        string $content,
+        string $contentResult
     ) {
         $website = $this->createMock(WebsiteInterface::class);
         $version = '1';
         $urlItem = $this->createMock(UrlItemInterface::class);
-        $urlItem
-            ->expects(static::any())
+        $urlItem->expects(self::any())
             ->method('getLocation')
             ->willReturn($url);
 
         $provider = $this->createMock(UrlItemsProviderInterface::class);
-        $provider
-            ->expects(static::any())
+        $provider->expects(self::any())
             ->method('getUrlItems')
             ->willReturn([$urlItem]);
 
-        $this->robotsTxtFileManager
-            ->expects(static::any())
+        $this->robotsTxtFileManager->expects(self::any())
             ->method('getContent')
             ->willReturn($content);
 
-        $this->robotsTxtFileManager
-            ->expects(static::any())
+        $this->robotsTxtFileManager->expects(self::any())
             ->method('dumpContent')
             ->with($this->equalTo($contentResult));
 
-        $this->configManager
-            ->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_frontend.guest_access_enabled', false, false, $website)
             ->willReturn($isAccessEnabled);
 
-        $this->itemsProviderRegistry
-            ->expects(static::any())
+        $this->itemsProviderRegistry->expects(self::any())
             ->method('getProvidersIndexedByNames')
             ->willReturn(['provider1' => $provider]);
 
         $this->robotsTxtIndexingRulesBySitemapManager->flush($website, $version);
     }
 
-    /**
-     * @return array
-     */
-    public function onConfigUpdateDataProvider()
+    public function onConfigUpdateDataProvider(): array
     {
         return [
             'access disabled' => [

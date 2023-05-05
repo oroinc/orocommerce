@@ -11,7 +11,7 @@ use Symfony\Component\Form\Exception\OutOfBoundsException;
 
 class FixedProductOptionsTypeTest extends FormIntegrationTestCase
 {
-    protected FixedProductOptionsType $formType;
+    private FixedProductOptionsType $formType;
 
     protected function setUp(): void
     {
@@ -94,9 +94,9 @@ class FixedProductOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function getExtensions(): array
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->formType], []),

@@ -4,15 +4,15 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * This constraint is used to check that there are no duplicated price lists.
+ */
 class UniquePriceList extends Constraint
 {
-    /**
-     * @var string
-     */
-    public $message = 'oro.pricing.validators.price_list.unique_price_list.message';
+    public string $message = 'oro.pricing.validators.price_list.unique_price_list.message';
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getTargets()
     {

@@ -90,7 +90,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_line_item_visitor.yml', $response);
-        self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
+        self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGet()
@@ -129,7 +129,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             ->find($lineItemId);
         self::assertNotNull($lineItem);
         $shoppingList = $lineItem->getShoppingList();
-        self::assertCount(2, $shoppingList->getLineItems());
+        self::assertCount(3, $shoppingList->getLineItems());
         self::assertLineItem(
             $lineItem,
             $organizationId,

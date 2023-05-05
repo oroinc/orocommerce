@@ -13,11 +13,11 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class ProductStepOneTypeTest extends WebTestCase
 {
-    const CATEGORY_ID = 1;
+    private const CATEGORY_ID = 1;
 
-    protected FormFactoryInterface $formFactory;
-    protected AttributeFamily $defaultFamily;
-    protected CsrfTokenManagerInterface $tokenManager;
+    private FormFactoryInterface $formFactory;
+    private AttributeFamily $defaultFamily;
+    private CsrfTokenManagerInterface $tokenManager;
 
     protected function setUp(): void
     {
@@ -42,16 +42,13 @@ class ProductStepOneTypeTest extends WebTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $submitData
-     * @param bool $isValid
      */
-    public function testSubmit(array $submitData, $isValid)
+    public function testSubmit(array $submitData, bool $isValid)
     {
         $submitData['_token'] = $this->tokenManager->getToken('product')->getValue();
         $submitData['attributeFamily'] = $this->defaultFamily->getId();
         // submit form
-        $form = $this->formFactory->create(ProductStepOneType::class, null);
+        $form = $this->formFactory->create(ProductStepOneType::class);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
         $this->assertTrue($form->isSynchronized());
@@ -62,10 +59,7 @@ class ProductStepOneTypeTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty category' => [

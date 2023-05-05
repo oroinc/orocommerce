@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\EntityListener\LineIte
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -19,7 +19,7 @@ class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
 {
     use EntityTrait;
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $configurableLineItems = [
             $this->getEntity(LineItem::class, ['id' => 1]),
@@ -31,7 +31,7 @@ class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
             ->addLineItem($configurableLineItems[0])
             ->addLineItem($configurableLineItems[1]);
 
-        $unit = new ProductUnit();
+        $unit = (new ProductUnit())->setCode('item');
 
         $parentProducts = [
             $this->getEntity(Product::class, ['id' => 100, 'type' => Product::TYPE_CONFIGURABLE]),
@@ -52,30 +52,61 @@ class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
 
         $repository = $this->createMock(EntityRepository::class);
         $repository
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('findBy')
             ->with([
-                'shoppingList' => $shoppingList,
+                'shoppingList' => $shoppingList->getId(),
                 'unit' => $unit,
-                'product' => $parentProducts[0],
+                'product' => $parentProducts[0]->getId(),
             ])
             ->willReturn([$configurableLineItems[0]]);
 
         $entityManager = $this->createMock(EntityManager::class);
         $entityManager
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('getRepository')
-            ->with('OroShoppingListBundle:LineItem')
+            ->with(LineItem::class)
             ->willReturn($repository);
 
         $event = $this->createMock(LifecycleEventArgs::class);
         $event
-            ->expects(static::once())
-            ->method('getEntityManager')
+            ->expects(self::once())
+            ->method('getObjectManager')
             ->willReturn($entityManager);
 
         (new RemoveParentProductsFromShoppingListLineItemListener())->prePersist($lineItem, $event);
 
-        static::assertEquals(new ArrayCollection([1 => $configurableLineItems[1]]), $shoppingList->getLineItems());
+        self::assertEquals(new ArrayCollection([1 => $configurableLineItems[1]]), $shoppingList->getLineItems());
+    }
+
+    public function testPrePersistWhenNoParentProduct(): void
+    {
+        $lineItems = [
+            $this->getEntity(LineItem::class, ['id' => 1]),
+            $this->getEntity(LineItem::class, ['id' => 2]),
+        ];
+
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+        $shoppingList
+            ->addLineItem($lineItems[0])
+            ->addLineItem($lineItems[1]);
+
+        $unit = (new ProductUnit())->setCode('item');
+        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);
+
+        $lineItem = $this->getEntity(LineItem::class, ['id' => 11]);
+        $lineItem
+            ->setShoppingList($shoppingList)
+            ->setProduct($product)
+            ->setUnit($unit);
+
+        $event = $this->createMock(LifecycleEventArgs::class);
+        $event
+            ->expects(self::never())
+            ->method(self::anything());
+
+        (new RemoveParentProductsFromShoppingListLineItemListener())->prePersist($lineItem, $event);
+
+        self::assertEquals(new ArrayCollection($lineItems), $shoppingList->getLineItems());
     }
 }

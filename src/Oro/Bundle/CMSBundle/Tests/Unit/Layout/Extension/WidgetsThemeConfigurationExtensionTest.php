@@ -13,21 +13,17 @@ class WidgetsThemeConfigurationExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TempDirExtension;
 
-    /** @var ThemeConfigurationProvider */
-    private $themeConfigurationProvider;
-
-    /** @var string */
-    private $cacheFile;
+    private ThemeConfigurationProvider $themeConfigurationProvider;
 
     protected function setUp(): void
     {
-        $this->cacheFile = $this->getTempFile('WidgetsThemeConfigurationExtension');
+        $cacheFile = $this->getTempFile('WidgetsThemeConfigurationExtension');
 
         $themeConfiguration = new ThemeConfiguration();
         $themeConfiguration->addExtension(new WidgetsThemeConfigurationExtension());
 
         $this->themeConfigurationProvider = new ThemeConfigurationProvider(
-            $this->cacheFile,
+            $cacheFile,
             false,
             $themeConfiguration,
             '[\w\-]+'

@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+.grid-shipping-methods {
+    @include list-normalize();
+}
+
+@include breakpoint('mobile-landscape') {
+    .grid-shipping-methods {
+        padding-left: $responsive-shopping-body-cell-offset-x-mobile;
+    }
+}

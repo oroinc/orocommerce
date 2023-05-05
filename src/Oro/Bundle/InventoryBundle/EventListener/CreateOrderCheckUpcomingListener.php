@@ -7,19 +7,19 @@ use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Checks that a checkout object is valid.
+ */
 class CreateOrderCheckUpcomingListener
 {
-    /**
-     * @var ValidatorInterface
-     */
-    protected $validator;
+    private ValidatorInterface $validator;
 
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
 
-    public function onBeforeOrderCreate(ExtendableConditionEvent $event)
+    public function onBeforeOrderCreate(ExtendableConditionEvent $event): void
     {
         /** @var Checkout $checkout */
         $checkout = $event->getContext()->getEntity();

@@ -23,13 +23,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class CheckoutCompareHelperTest extends TestCase
 {
     private CheckoutDiffStorageInterface|MockObject $diffStorage;
-
     private ShoppingListLineItemDiffMapper|MockObject $diffMapper;
-
     private WorkflowManager|MockObject $workflowManager;
-
     private ActionGroupRegistry|MockObject $actionGroupRegistry;
-
     private CheckoutCompareHelper $helper;
 
     protected function setUp(): void
@@ -269,7 +265,7 @@ class CheckoutCompareHelperTest extends TestCase
             ->method('getWorkflowItemsByEntity')
             ->with($checkout)
             ->willReturn([$workflowItem]);
-        $workflowItem->expects($this->exactly(2))
+        $workflowItem->expects($this->once())
             ->method('getData')
             ->willReturn($workflowData);
         $workflowData->expects($this->once())

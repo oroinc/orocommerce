@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * REST API controller to update product TAX code.
+ * REST API controller to update product tax code.
  */
 class ProductTaxCodeController extends AbstractFOSRestController
 {

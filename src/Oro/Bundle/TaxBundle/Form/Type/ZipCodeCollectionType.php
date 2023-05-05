@@ -6,43 +6,34 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type for the collection of tax jurisdiction zip codes.
+ */
 class ZipCodeCollectionType extends AbstractType
 {
-    const NAME = 'oro_tax_zip_code_collection_type';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(
-            [
-                'entry_type' => ZipCodeType::class,
-                'required' => false,
-            ]
-        );
+        $resolver->setDefaults([
+            'entry_type' => ZipCodeType::class,
+            'required'   => false
+        ]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
+        return 'oro_tax_zip_code_collection_type';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }

@@ -9,6 +9,7 @@ aliases:
     oro/datagrid/cell/shoppinglist-line-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-line-item-cell
     oro/datagrid/cell/shoppinglist-string-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-string-cell
     oro/matrix-grid-order-widget$: oroshoppinglist/js/app/widget/matrix-grid-order-widget
+    oro/product-kit-line-item-widget$: oroshoppinglist/js/app/widget/product-kit-line-item-widget
     oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
     oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
 app-modules:
@@ -16,6 +17,7 @@ app-modules:
 dynamic-imports:
     commons:
         - oro/matrix-grid-order-widget
+        - oro/product-kit-line-item-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget
         - oroshoppinglist/js/app/components/shoppinglist-collection-component
@@ -52,6 +54,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
         - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
+        - oroshoppinglist/js/app/views/product-kit-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
     oroshoppinglist:
         - oroshoppinglist/js/app/components/shoppinglist-notes-editable-view-component

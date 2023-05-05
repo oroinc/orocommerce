@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Gateway\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option\ErrorUrl;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class ErrorUrlTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new ErrorUrl()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -22,9 +27,8 @@ class ErrorUrlTest extends AbstractOptionTest
                 ['ERRORURL' => 123],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "ERRORURL" with value 123 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "ERRORURL" with value 123 is expected to be of type "string", but is of type "int".',
                 ],
             ],
             'valid' => [['ERRORURL' => 'http://127.0.0.1']],

@@ -21,10 +21,10 @@ Feature: Calculate taxes after promotions
     And uncheck "Use default" for "Use as Base by Default" field
     And uncheck "Use default" for "Origin Address" field
     And I fill "Tax Calculation Form" with:
-      | Use As Base By Default | Shipping Origin |
-      | Origin Country         | United States   |
-      | Origin Region          | Florida         |
-      | Origin Zip Code        | 90001           |
+      | Use As Base By Default | Origin        |
+      | Origin Country         | United States |
+      | Origin Region          | Florida       |
+      | Origin Zip Code        | 90001         |
     And I save form
     Then I should see "Configuration saved" flash message
 
@@ -178,10 +178,10 @@ Feature: Calculate taxes after promotions
     When I go to Sales/Orders
     Then I should see following grid:
       | Order Number | PO Number | Total |
-      | 1            | PONumber1 | $5.74 |
-      | 2            | PONumber2 | $5.74 |
-      | 3            | PONumber3 | $5.50 |
       | 4            | PONumber4 | $5.50 |
+      | 3            | PONumber3 | $5.50 |
+      | 2            | PONumber2 | $5.74 |
+      | 1            | PONumber1 | $5.74 |
 
   Scenario Outline: Taxes correctly displayed on Backoffice Order view page
     Given I go to Sales/Orders

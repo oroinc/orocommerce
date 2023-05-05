@@ -9,9 +9,11 @@ use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
+use Oro\Bundle\EntityBundle\Provider\EntityProvider;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,23 +25,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WYSIWYGTypeTest extends FormIntegrationTestCase
 {
-    /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $htmlTagProvider;
+    private HtmlTagProvider|MockObject $htmlTagProvider;
 
-    /** @var HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $purifierScopeProvider;
+    private HTMLPurifierScopeProvider|MockObject $purifierScopeProvider;
 
-    /** @var EventSubscriberInterface */
-    private $eventSubscriber;
+    private EventSubscriberInterface $eventSubscriber;
 
-    /** @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $assetHelper;
+    private AssetHelper|MockObject $assetHelper;
+
+    private EntityProvider|MockObject $entityProvider;
 
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
+        $this->entityProvider = $this->createMock(EntityProvider::class);
         $digitalAssetTwigTagsConverter->expects(self::any())
             ->method('convertToUrls')
             ->willReturnArgument(0);
@@ -61,7 +62,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             $this->htmlTagProvider,
             $this->purifierScopeProvider,
             $this->eventSubscriber,
-            $this->assetHelper
+            $this->assetHelper,
+            $this->entityProvider
         );
         self::assertEquals(TextareaType::class, $type->getParent());
     }
@@ -73,9 +75,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with([
                 'page-component' => [
-                    'module' => 'oroui/js/app/components/view-component',
+                    'module' => 'orocms/js/app/grapesjs/grapesjs-editor-component',
                     'options' => [
-                        'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
                         'allow_tags' => [],
                     ],
                 ],
@@ -89,6 +90,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 'error_bubbling' => true,
                 'entity_class' => null,
                 'disable_isolation' => false,
+                'jsmodules' => [],
             ])
             ->willReturnSelf();
 
@@ -96,7 +98,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             $this->htmlTagProvider,
             $this->purifierScopeProvider,
             $this->eventSubscriber,
-            $this->assetHelper
+            $this->assetHelper,
+            $this->entityProvider
         );
         $type->configureOptions($resolver);
     }
@@ -137,18 +140,28 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             ->with('default')
             ->willReturn(['h1', 'h2', 'h3']);
 
+        $this->entityProvider
+            ->expects(self::once())
+            ->method('getEntity')
+            ->willReturn([
+                "name" => Page::class,
+                "label" => "Page",
+                "plural_label" => "Pages",
+                "icon" => "fa-page",
+            ]);
+
         $view = new FormView();
         $form = $this->factory->create(WYSIWYGType::class, null, ['data_class' => Page::class]);
         $type = new WYSIWYGType(
             $this->htmlTagProvider,
             $this->purifierScopeProvider,
             $this->eventSubscriber,
-            $this->assetHelper
+            $this->assetHelper,
+            $this->entityProvider
         );
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -157,17 +170,20 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'disable_isolation' => true,
+            'jsmodules' => [],
         ]);
 
         self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
         self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         self::assertEquals(
-            '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            '{"allow_tags":["h1","h2","h3"]'
             . ',"allowed_iframe_domains":[]'
+            . ',"jsmodules":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"disableIsolation":true'
             . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
+            . ',"entityLabels":{"label":"Page","plural_label":"Pages"}'
             . ',"extraStyles":[{"name":"canvas","url":"build\/admin\/css\/wysiwyg_canvas.css"}]'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]"'
             . ',"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
@@ -187,18 +203,28 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             ->with('default')
             ->willReturn(['h1', 'h2', 'h3']);
 
+        $this->entityProvider
+            ->expects(self::once())
+            ->method('getEntity')
+            ->willReturn([
+                "name" => Page::class,
+                "label" => "Page",
+                "plural_label" => "Pages",
+                "icon" => "fa-page",
+            ]);
+
         $view = new FormView();
         $form = $this->factory->create(WYSIWYGType::class, null, ['entity_class' => Page::class]);
         $type = new WYSIWYGType(
             $this->htmlTagProvider,
             $this->purifierScopeProvider,
             $this->eventSubscriber,
-            $this->assetHelper
+            $this->assetHelper,
+            $this->entityProvider
         );
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -207,17 +233,20 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'disable_isolation' => true,
+            'jsmodules' => [],
         ]);
 
         self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
         self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         self::assertEquals(
-            '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            '{"allow_tags":["h1","h2","h3"]'
             . ',"allowed_iframe_domains":[]'
+            . ',"jsmodules":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"disableIsolation":true'
             . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
+            . ',"entityLabels":{"label":"Page","plural_label":"Pages"}'
             . ',"extraStyles":[{"name":"canvas","url":"build\/admin\/css\/wysiwyg_canvas.css"}]'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]"'
             . ',"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
@@ -232,6 +261,17 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             ->with(Page::class, 'wysiwyg')
             ->willReturn(null);
 
+        $this->entityProvider
+            ->expects(self::once())
+            ->method('getEntity')
+            ->with(Page::class)
+            ->willReturn([
+                "name" => Page::class,
+                "label" => "Page",
+                "plural_label" => "Pages",
+                "icon" => "fa-page",
+            ]);
+
         $this->htmlTagProvider->expects(self::never())
             ->method('getAllowedElements');
 
@@ -241,12 +281,12 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             $this->htmlTagProvider,
             $this->purifierScopeProvider,
             $this->eventSubscriber,
-            $this->assetHelper
+            $this->assetHelper,
+            $this->entityProvider
         );
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -255,16 +295,19 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'disable_isolation' => true,
+            'jsmodules' => [],
         ]);
 
         self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         self::assertEquals(
-            '{"view":"app\/view","allow_tags":false'
+            '{"allow_tags":false'
             . ',"allowed_iframe_domains":false'
+            . ',"jsmodules":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"disableIsolation":true'
             . ',"entityClass":"Oro\\\\Bundle\\\\CMSBundle\\\\Entity\\\\Page"'
+            . ',"entityLabels":{"label":"Page","plural_label":"Pages"}'
             . ',"extraStyles":[{"name":"canvas","url":"build\/admin\/css\/wysiwyg_canvas.css"}]'
             . ',"stylesInputSelector":"[data-grapesjs-styles=\"wysiwyg_style\"]"'
             . ',"propertiesInputSelector":"[data-grapesjs-properties=\"wysiwyg_properties\"]"}',
@@ -300,7 +343,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                         $this->htmlTagProvider,
                         $this->purifierScopeProvider,
                         $this->eventSubscriber,
-                        $this->assetHelper
+                        $this->assetHelper,
+                        $this->entityProvider
                     ),
                 ],
                 []

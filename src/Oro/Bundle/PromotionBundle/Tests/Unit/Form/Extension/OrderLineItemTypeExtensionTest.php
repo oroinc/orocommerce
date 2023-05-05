@@ -19,35 +19,23 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxationSettingsProvider;
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxationSettingsProvider;
 
-    /**
-     * @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxProvider;
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxProvider;
 
-    /**
-     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $appliedDiscountsProvider;
+    /** @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $appliedDiscountsProvider;
 
-    /**
-     * @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $sectionProvider;
+    /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $sectionProvider;
 
-    /**
-     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $lineItemSubtotalProvider;
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemSubtotalProvider;
 
-    /**
-     * @var OrderLineItemTypeExtension
-     */
-    protected $extension;
+    /** @var OrderLineItemTypeExtension */
+    private $extension;
 
     protected function setUp(): void
     {
@@ -78,7 +66,8 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildView()
     {
-        $this->sectionProvider->expects($this->once())->method('addSections')
+        $this->sectionProvider->expects($this->once())
+            ->method('addSections')
             ->with(
                 $this->equalTo(OrderLineItemType::class),
                 $this->logicalAnd(
@@ -88,7 +77,6 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
             );
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $this->extension->buildView($view, $form, []);
@@ -96,10 +84,8 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider finishViewDataProvider
-     * @param array $sourceData
-     * @param array $expectedData
      */
-    public function testFinishView(array $sourceData, $expectedData)
+    public function testFinishView(array $sourceData, array $expectedData)
     {
         $orderLineItem = $this->getEntity(OrderLineItem::class, ['id' => 1]);
         $orderLineItem->setCurrency($sourceData['currency']);
@@ -107,18 +93,20 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $orderLineItem->setQuantity($sourceData['quantity']);
 
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('getData')->willReturn($orderLineItem);
+        $form->expects($this->once())
+            ->method('getData')
+            ->willReturn($orderLineItem);
 
-        $this->appliedDiscountsProvider
-            ->expects($this->once())
+        $this->appliedDiscountsProvider->expects($this->once())
             ->method('getDiscountsAmountByLineItem')
             ->with($orderLineItem)
             ->willReturn($sourceData['discountAmount']);
 
-        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
-        $this->taxProvider
-            ->expects($this->once())
+        $this->taxProvider->expects($this->once())
             ->method('getTax')
             ->with($orderLineItem)
             ->willReturn($sourceData['taxes']);
@@ -140,16 +128,17 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
     public function testFinishViewWithoutEntity()
     {
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('getData')->willReturn(null);
+        $form->expects($this->once())
+            ->method('getData')
+            ->willReturn(null);
 
-        $this->appliedDiscountsProvider
-            ->expects($this->never())
+        $this->appliedDiscountsProvider->expects($this->never())
             ->method('getDiscountsAmountByLineItem');
 
-        $this->taxationSettingsProvider->expects($this->never())->method('isEnabled');
+        $this->taxationSettingsProvider->expects($this->never())
+            ->method('isEnabled');
 
-        $this->taxProvider
-            ->expects($this->never())
+        $this->taxProvider->expects($this->never())
             ->method('getTax');
 
         $view = new FormView();
@@ -159,10 +148,8 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider finishViewWithDisabledTaxesDataProvider
-     * @param array $sourceData
-     * @param array $expectedData
      */
-    public function testFinishViewWithDisabledTaxes(array $sourceData, $expectedData)
+    public function testFinishViewWithDisabledTaxes(array $sourceData, array $expectedData)
     {
         $orderLineItem = $this->getEntity(OrderLineItem::class, ['id' => 1]);
         $orderLineItem->setCurrency($sourceData['currency']);
@@ -170,18 +157,20 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $orderLineItem->setQuantity($sourceData['quantity']);
 
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('getData')->willReturn($orderLineItem);
+        $form->expects($this->once())
+            ->method('getData')
+            ->willReturn($orderLineItem);
 
-        $this->appliedDiscountsProvider
-            ->expects($this->once())
+        $this->appliedDiscountsProvider->expects($this->once())
             ->method('getDiscountsAmountByLineItem')
             ->with($orderLineItem)
             ->willReturn($sourceData['discountAmount']);
 
-        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(false);
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(false);
 
-        $this->taxProvider
-            ->expects($this->never())
+        $this->taxProvider->expects($this->never())
             ->method('getTax');
 
         $this->lineItemSubtotalProvider->expects($this->once())
@@ -198,10 +187,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedData, $view->vars['applied_discounts']);
     }
 
-    /**
-     * @return array
-     */
-    public function finishViewDataProvider()
+    public function finishViewDataProvider(): array
     {
         return [
             [
@@ -222,10 +208,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function finishViewWithDisabledTaxesDataProvider()
+    public function finishViewWithDisabledTaxesDataProvider(): array
     {
         return [
             [

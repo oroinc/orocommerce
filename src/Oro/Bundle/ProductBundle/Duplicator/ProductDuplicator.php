@@ -14,41 +14,28 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProductDuplicator
 {
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var SkuIncrementorInterface
-     */
-    protected $skuIncrementor;
+    private SkuIncrementorInterface $skuIncrementor;
 
-    /**
-     * @var FileManager
-     */
-    protected $fileManager;
+    private FileManager $fileManager;
 
-    /**
-     * @var AttachmentProvider
-     */
-    protected $attachmentProvider;
+    private AttachmentProvider $attachmentProvider;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EventDispatcherInterface $eventDispatcher,
         FileManager $fileManager,
-        AttachmentProvider $attachmentProvider
+        AttachmentProvider $attachmentProvider,
+        SkuIncrementorInterface $skuIncrementor
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->eventDispatcher = $eventDispatcher;
         $this->fileManager = $fileManager;
         $this->attachmentProvider = $attachmentProvider;
+        $this->skuIncrementor = $skuIncrementor;
     }
 
     /**
@@ -56,7 +43,7 @@ class ProductDuplicator
      * @return Product
      * @throws \Exception
      */
-    public function duplicate(Product $product)
+    public function duplicate(Product $product): Product
     {
         $objectManager = $this->doctrineHelper->getEntityManager($product);
         $objectManager->getConnection()->beginTransaction();
@@ -81,16 +68,7 @@ class ProductDuplicator
         return $productCopy;
     }
 
-    public function setSkuIncrementor(SkuIncrementorInterface $skuIncrementor)
-    {
-        $this->skuIncrementor = $skuIncrementor;
-    }
-
-    /**
-     * @param Product $product
-     * @return Product
-     */
-    protected function createProductCopy(Product $product)
+    protected function createProductCopy(Product $product): Product
     {
         $productCopy = clone $product;
 
@@ -102,12 +80,13 @@ class ProductDuplicator
         return $productCopy;
     }
 
-    protected function cloneChildObjects(Product $product, Product $productCopy)
+    protected function cloneChildObjects(Product $product, Product $productCopy): void
     {
         $this->cloneUnitPrecisions($product, $productCopy);
         $this->cloneFallbackValues($product, $productCopy);
         $this->cloneImages($product, $productCopy);
         $this->cloneAttachments($product, $productCopy);
+        $this->cloneKitItems($product, $productCopy);
 
         $pageTemplate = $product->getPageTemplate();
         if ($pageTemplate) {
@@ -115,7 +94,7 @@ class ProductDuplicator
         }
     }
 
-    private function cloneUnitPrecisions(Product $product, Product $productCopy)
+    private function cloneUnitPrecisions(Product $product, Product $productCopy): void
     {
         $primaryPrecision = $product->getPrimaryUnitPrecision();
         if ($primaryPrecision) {
@@ -127,7 +106,7 @@ class ProductDuplicator
         }
     }
 
-    private function cloneFallbackValues(Product $product, Product $productCopy)
+    private function cloneFallbackValues(Product $product, Product $productCopy): void
     {
         foreach ($product->getNames() as $name) {
             $productCopy->addName(clone $name);
@@ -142,7 +121,7 @@ class ProductDuplicator
         }
     }
 
-    private function cloneImages(Product $product, Product $productCopy)
+    private function cloneImages(Product $product, Product $productCopy): void
     {
         foreach ($product->getImages() as $productImage) {
             $productImageCopy = clone $productImage;
@@ -158,7 +137,7 @@ class ProductDuplicator
         }
     }
 
-    private function cloneAttachments(Product $product, Product $productCopy)
+    private function cloneAttachments(Product $product, Product $productCopy): void
     {
         $attachments = $this->attachmentProvider->getEntityAttachments($product);
         foreach ($attachments as $attachment) {
@@ -172,6 +151,26 @@ class ProductDuplicator
             $attachmentCopy->setTarget($productCopy);
 
             $this->doctrineHelper->getEntityManager($attachmentCopy)->persist($attachmentCopy);
+        }
+    }
+
+    private function cloneKitItems(Product $product, Product $productCopy): void
+    {
+        foreach ($product->getKitItems() as $kitItem) {
+            $kitItemCopy = clone $kitItem;
+            $kitItemCopy->setProductKit($productCopy);
+
+            foreach ($kitItem->getLabels() as $kitItemLabel) {
+                $kitItemLabelCopy = clone $kitItemLabel;
+                $kitItemCopy->addLabel($kitItemLabelCopy);
+            }
+
+            foreach ($kitItem->getKitItemProducts() as $kitItemProduct) {
+                $kitItemProductCopy = clone $kitItemProduct;
+                $kitItemCopy->addKitItemProduct($kitItemProductCopy);
+            }
+
+            $this->doctrineHelper->getEntityManager($kitItemCopy)->persist($kitItemCopy);
         }
     }
 }

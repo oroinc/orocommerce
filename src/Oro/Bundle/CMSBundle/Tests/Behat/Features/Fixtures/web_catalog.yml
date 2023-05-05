@@ -1,16 +1,4 @@
-Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
-    nodeDefaultWebCatalog:
-        __calls:
-            - addTitle: ['@localValueDefaultWebCatalog']
-        webCatalog: '@webCatalog'
-
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localValueDefaultWebCatalog:
-        string: 'Default Web Catalog'
-
-Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
-    webCatalog:
-        name: 'Default Web Catalog'
-        description: 'Default Web Catalog description'
-        organization: '@organization'
-        owner: '@business_unit'
+include:
+    - '@OroProductBundle:default_webcatalog.yml'
+    - '@OroCMSBundle:default_web_catalog_node.yml'
+    - '@OroProductBundle:system_variant.yml'

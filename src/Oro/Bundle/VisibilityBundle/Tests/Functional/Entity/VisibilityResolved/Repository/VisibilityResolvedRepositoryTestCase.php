@@ -25,7 +25,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
     use ResolvedEntityRepositoryTestTrait;
 
     /** @var ManagerRegistry */
-    protected $registry;
+    protected $doctrine;
 
     /** @var EntityManager */
     protected $entityManager;
@@ -37,16 +37,21 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->entityManager = $this->registry->getManager();
+        $this->doctrine = $this->getContainer()->get('doctrine');
+        $this->entityManager = $this->doctrine->getManager();
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
-        $this->loadFixtures([LoadProductVisibilityData::class]);
+        $this->loadFixtures($this->getFixtures());
+    }
+
+    protected function getFixtures(): array
+    {
+        return [LoadProductVisibilityData::class];
     }
 
     protected function tearDown(): void
     {
-        $this->registry->getManager()->clear();
+        $this->doctrine->getManager()->clear();
         parent::tearDown();
     }
 
@@ -64,12 +69,8 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
 
     /**
      * @dataProvider insertByCategoryDataProvider
-     *
-     * @param string $targetEntityReference
-     * @param string $visibility
-     * @param array $expectedData
      */
-    public function testInsertByCategory($targetEntityReference, $visibility, array $expectedData)
+    public function testInsertByCategory(string $targetEntityReference, int $visibility, array $expectedData)
     {
         $this->getRepository()->clearTable();
         $scope = $this->getScope($targetEntityReference);
@@ -88,17 +89,12 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         }
     }
 
-    /**
-     * @param string $targetEntityReference
-     * @return Scope
-     */
-    abstract public function getScope($targetEntityReference);
+    abstract public function getScope(string $targetEntityReference): Scope;
 
     /**
      * @dataProvider insertStaticDataProvider
-     * @param int $expectedRows
      */
-    public function testInsertStatic($expectedRows)
+    public function testInsertStatic(int $expectedRows)
     {
         /** @var CustomerGroupProductRepository $repository */
         $repository = $this->getRepository();
@@ -107,17 +103,12 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         $resolved = $this->getResolvedValues();
         $this->assertCount($expectedRows, $resolved);
         $visibilities = $this->getSourceRepository()->findAll();
-        foreach ($resolved as $resolvedValue) {
-            $source = $this->getSourceVisibilityByResolved(
-                $visibilities,
-                $resolvedValue
-            );
+        foreach ($resolved as $val) {
+            $source = $this->getSourceVisibilityByResolved($visibilities, $val);
             $this->assertNotNull($source);
-            if ($resolvedValue->getVisibility() == BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
+            if ($val->getVisibility() === BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
                 $visibility = VisibilityInterface::HIDDEN;
-            } elseif ($resolvedValue->getVisibility()
-                == CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL
-            ) {
+            } elseif ($val->getVisibility() === CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL) {
                 $visibility = CustomerProductVisibility::CURRENT_PRODUCT;
             } else {
                 $visibility = VisibilityInterface::VISIBLE;
@@ -140,56 +131,32 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         $this->assertEquals(spl_object_hash($this->findByPrimaryKey($actualEntity)), spl_object_hash($actualEntity));
     }
 
-    /**
-     * @param Product $product
-     * @return null|Category
-     */
-    protected function getCategory(Product $product)
+    protected function getCategory(Product $product): ?Category
     {
-        return $this->registry
-            ->getRepository('OroCatalogBundle:Category')
-            ->findOneByProduct($product);
+        return $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
     }
 
-    /**
-     * @return InsertFromSelectQueryExecutor
-     */
-    protected function getInsertFromSelectExecutor()
+    protected function getInsertFromSelectExecutor(): InsertFromSelectQueryExecutor
     {
-        return $this->getContainer()
-            ->get('oro_entity.orm.insert_from_select_query_executor');
+        return $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
     }
 
-    /**
-     * @param BaseProductVisibilityResolved $visibilityResolved
-     * @return BaseProductVisibilityResolved
-     */
-    abstract public function findByPrimaryKey($visibilityResolved);
+    abstract public function findByPrimaryKey(
+        BaseProductVisibilityResolved $visibilityResolved
+    ): BaseProductVisibilityResolved;
 
-    /**
-     * @return array
-     */
-    abstract public function insertByCategoryDataProvider();
+    abstract public function insertByCategoryDataProvider(): array;
 
-    /**
-     * @return array
-     */
-    abstract public function insertStaticDataProvider();
+    abstract public function insertStaticDataProvider(): array;
 
-    /**
-     * @return AbstractVisibilityRepository
-     */
-    abstract protected function getRepository();
+    abstract protected function getRepository(): AbstractVisibilityRepository;
 
-    /**
-     * @return EntityRepository
-     */
-    abstract protected function getSourceRepository();
+    abstract protected function getSourceRepository(): EntityRepository;
 
     /**
      * @return BaseProductVisibilityResolved[]
      */
-    abstract protected function getResolvedValues();
+    abstract protected function getResolvedValues(): array;
 
     /**
      * @param BaseProductVisibilityResolved[] $visibilities
@@ -198,12 +165,20 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      *
      * @return BaseProductVisibilityResolved|null
      */
-    abstract protected function getResolvedVisibility($visibilities, Product $product, Scope $scope);
+    abstract protected function getResolvedVisibility(
+        array $visibilities,
+        Product $product,
+        Scope $scope
+    ): ?BaseProductVisibilityResolved;
 
     /**
      * @param VisibilityInterface[]|null $sourceVisibilities
      * @param BaseProductVisibilityResolved $resolveVisibility
+     *
      * @return VisibilityInterface|null
      */
-    abstract protected function getSourceVisibilityByResolved($sourceVisibilities, $resolveVisibility);
+    abstract protected function getSourceVisibilityByResolved(
+        ?array $sourceVisibilities,
+        BaseProductVisibilityResolved $resolveVisibility
+    ): ?VisibilityInterface;
 }

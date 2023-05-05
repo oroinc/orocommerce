@@ -7,6 +7,8 @@
         background: $primary-900;
         border-radius: 4px;
 
+        --loading-mask-background-color: #{rgba($primary-900, .5)};
+
         &:not(:last-of-type) {
             margin-bottom: $content-padding-small;
         }

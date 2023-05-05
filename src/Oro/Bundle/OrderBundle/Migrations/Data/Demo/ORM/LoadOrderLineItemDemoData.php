@@ -5,13 +5,14 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -39,6 +40,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     /** @var array */
     protected $prices = [];
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     /**
      * {@inheritdoc}
      */
@@ -46,6 +49,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     {
         $this->container = $container;
         $this->productPriceProvider = $container->get('oro_pricing.provider.product_price');
+        $this->productPriceCriteriaFactory = $container->get('oro_pricing.product_price_criteria_factory');
     }
 
     /**
@@ -140,49 +144,34 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         $manager->flush();
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $identifier
-     * @return null|Order
-     */
-    protected function getOrder(EntityManager $manager, $identifier)
+    protected function getOrder(EntityManagerInterface $manager, string $identifier): ?Order
     {
         if (!array_key_exists($identifier, $this->orders)) {
-            $this->orders[$identifier] = $manager->getRepository('OroOrderBundle:Order')
+            $this->orders[$identifier] = $manager->getRepository(Order::class)
                 ->findOneBy(['identifier' => $identifier]);
         }
 
         return $this->orders[$identifier];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $sku
-     * @return null|Product
-     */
-    protected function getProduct(EntityManager $manager, $sku)
+    protected function getProduct(EntityManagerInterface $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return null|ProductUnit
-     */
-    protected function getProductUnit(EntityManager $manager, $code)
+    protected function getProductUnit(EntityManagerInterface $manager, string $code): ?ProductUnit
     {
-        return $manager->getReference('OroProductBundle:ProductUnit', $code);
+        return $manager->getReference(ProductUnit::class, $code);
     }
 
     /**
      * @param Product $product
      * @param ProductUnit $productUnit
-     * @param float $quantity
+     * @param int $quantity
      * @param string $currency
      * @param BasePriceList $priceList
      * @param Order $order
@@ -191,12 +180,12 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getPrice(
         Product $product,
         ProductUnit $productUnit,
-        $quantity,
-        $currency,
+        int $quantity,
+        string $currency,
         BasePriceList $priceList,
         Order $order
     ) {
-        $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
+        $productPriceCriteria = $this->productPriceCriteriaFactory->build($product, $productUnit, $quantity, $currency);
         $identifier = $productPriceCriteria->getIdentifier();
 
         $priceListId = $priceList->getId();

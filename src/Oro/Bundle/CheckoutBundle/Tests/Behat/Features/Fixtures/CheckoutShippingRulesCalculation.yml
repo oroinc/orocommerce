@@ -1,0 +1,202 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..3}:
+        unit: '@each'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    localProductName{1..3}:
+        string: 'Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..3}:
+        type: 'simple'
+        sku: 'SKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        __calls:
+          - addName: ['@localProductName<current()>']
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'pricelist'
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite1:
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 100
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice{1..3}:
+        pricelist: '@pricelist'
+        product: '@product<current()>'
+        productSku: '@product<current()>->getSku'
+        quantity: 1
+        unit: '@each'
+        value: '<current()>'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct{1..3}:
+        product: '@product<current()>'
+        pricelist: '@pricelist'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'List 1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '1'
+        unit: '@each'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+    lineitem2:
+        product: '@product2'
+        quantity: '1'
+        unit: '@each'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+    lineitem3:
+        product: '@product3'
+        quantity: '1'
+        unit: '@each'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRuleD:
+        name: 'D'
+        enabled: true
+        sortOrder: 1
+        stopProcessing: true
+        expression: "lineItems.any( lineItem.product.shipping_category.id = 'd' )"
+    shippingRuleC:
+        name: 'C'
+        enabled: true
+        sortOrder: 2
+        stopProcessing: true
+        expression: "lineItems.any( lineItem.product.shipping_category.id = 'c' )"
+    shippingRuleB:
+        name: 'B'
+        enabled: true
+        sortOrder: 3
+        stopProcessing: true
+        expression: "lineItems.any( lineItem.product.shipping_category.id = 'b' )"
+    shippingRuleA:
+        name: 'A'
+        enabled: true
+        sortOrder: 4
+        stopProcessing: true
+        expression: "lineItems.any( lineItem.product.shipping_category.id = 'a' )"
+    shippingRuleDefault:
+        name: 'Default'
+        enabled: true
+        sortOrder: 5
+        stopProcessing: true
+    paymentRule:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfigD:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 200
+            type: 'per_order'
+    shippingMethodTypeConfigC:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 150
+            type: 'per_order'
+    shippingMethodTypeConfigB:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 100
+            type: 'per_order'
+    shippingMethodTypeConfigA:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 50
+            type: 'per_order'
+    shippingMethodTypeConfigDefault:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 0
+            type: 'per_order'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRuleD:
+        rule: '@shippingRuleD'
+        currency: 'USD'
+        organization: '@organization'
+    shippingMethodsConfigsRuleC:
+        rule: '@shippingRuleC'
+        currency: 'USD'
+        organization: '@organization'
+    shippingMethodsConfigsRuleB:
+        rule: '@shippingRuleB'
+        currency: 'USD'
+        organization: '@organization'
+    shippingMethodsConfigsRuleA:
+        rule: '@shippingRuleA'
+        currency: 'USD'
+        organization: '@organization'
+    shippingMethodsConfigsRuleDefault:
+        rule: '@shippingRuleDefault'
+        currency: 'USD'
+        organization: '@organization'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfigD:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfigD']
+        methodConfigsRule: '@shippingMethodsConfigsRuleD'
+    shippingMethodConfigC:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfigC']
+        methodConfigsRule: '@shippingMethodsConfigsRuleC'
+    shippingMethodConfigB:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfigB']
+        methodConfigsRule: '@shippingMethodsConfigsRuleB'
+    shippingMethodConfigA:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfigA']
+        methodConfigsRule: '@shippingMethodsConfigsRuleA'
+    shippingMethodConfigDefault:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfigDefault']
+        methodConfigsRule: '@shippingMethodsConfigsRuleDefault'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfig:
+        type: '<("payment_term_".@paymentTermIntegration->getId())>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRule1:
+        rule: '@paymentRule'
+        methodConfigs: ['@paymentMethodConfig']
+        currency: 'USD'
+        organization: '@organization'

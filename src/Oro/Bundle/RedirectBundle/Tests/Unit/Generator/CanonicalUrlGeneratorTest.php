@@ -19,6 +19,9 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 {
+    /**
+     * {@inheritDoc}
+     */
     protected function createGenerator(): CanonicalUrlGenerator
     {
         return new CanonicalUrlGenerator(
@@ -36,7 +39,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
 
-        $key = 'oro_redirect.canonical_url_type';
         $cacheKey = 'oro_redirect.canonical_url_type.1';
         $this->cache->expects(self::once())
             ->method('get')
@@ -195,36 +197,34 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         $this->assertEquals($expectedUrl, $this->canonicalUrlGenerator->getDirectUrl($entity, $localization));
     }
 
-    public function localizedUrlDataProvider()
+    public function localizedUrlDataProvider(): array
     {
-        yield 'current used' => [
-            'http://example.com/canonical',
-            null,
-            $this->getEntity(Localization::class, ['id' => 1])
-        ];
-
-        yield 'base used when not found for current' => [
-            'http://example.com/canonical_base',
-            null,
-            $this->getEntity(Localization::class, ['id' => 3])
-        ];
-
-        yield 'base used when no current' => [
-            'http://example.com/canonical_base',
-            null,
-            null
-        ];
-
-        yield 'by locale no current' => [
-            'http://example.com/canonical',
-            $this->getEntity(Localization::class, ['id' => 1]),
-            null
-        ];
-
-        yield 'by locale with another current' => [
-            'http://example.com/canonical_2',
-            $this->getEntity(Localization::class, ['id' => 2]),
-            $this->getEntity(Localization::class, ['id' => 1])
+        return [
+            'current used' => [
+                'http://example.com/canonical',
+                null,
+                $this->getEntity(Localization::class, ['id' => 1])
+            ],
+            'base used when not found for current' => [
+                'http://example.com/canonical_base',
+                null,
+                $this->getEntity(Localization::class, ['id' => 3])
+            ],
+            'base used when no current' => [
+                'http://example.com/canonical_base',
+                null,
+                null
+            ],
+            'by locale no current' => [
+                'http://example.com/canonical',
+                $this->getEntity(Localization::class, ['id' => 1]),
+                null
+            ],
+            'by locale with another current' => [
+                'http://example.com/canonical_2',
+                $this->getEntity(Localization::class, ['id' => 2]),
+                $this->getEntity(Localization::class, ['id' => 1])
+            ]
         ];
     }
 
@@ -299,7 +299,8 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
                 ['oro_redirect.use_localized_canonical', true]
             ]);
 
-        $this->configManager->expects($this->never())->method('get');
+        $this->configManager->expects($this->never())
+            ->method('get');
 
         $expectedUrl = 'http://example.com/canonical';
 
@@ -429,7 +430,6 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 
     public function testCreateUrlWithMasterRequest()
     {
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
         $request->expects($this->any())
             ->method('getBaseUrl')

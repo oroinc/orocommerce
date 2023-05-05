@@ -34,6 +34,10 @@ define(function(require) {
                     type: 'filtered'
                 },
                 {
+                    name: 'product-collection-content-variant-grid',
+                    type: 'filtered'
+                },
+                {
                     name: 'product-collection-included-products-grid',
                     type: 'included'
                 },
@@ -175,18 +179,31 @@ define(function(require) {
             const url = routing.generate(this.options.counterRoute, {gridName: collection.inputName});
             const tabType = `tab${type.charAt(0).toUpperCase() + type.slice(1)}`;
             const $tab = this.options._sourceElement.find(this.options.selectors[tabType]);
+            const requestMethod = $tab.data('counter-request-method') || 'GET';
+            let data = null;
+            let uri = url + query;
+
+            if (requestMethod === 'POST') {
+                uri = url;
+                data = query.substring(1);
+            }
 
             if (tabData.request) {
                 tabData.request.abort();
             }
-            tabData.request = $.getJSON(
-                url + query,
-                count => {
+
+            tabData.request = $.ajax({
+                url: uri,
+                data: data,
+                processData: false,
+                dataType: 'json',
+                type: requestMethod,
+                success: count => {
                     $tab.find(this.options.selectors.counter).each((i, el) => {
                         $(el).html(count);
                     });
                 }
-            );
+            });
             tabData.request
                 .done(() => {
                     $tab.effect('highlight', {color: this.options.highlightColor}, 1000);

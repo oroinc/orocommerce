@@ -20,6 +20,10 @@
         bottom: auto;
         box-sizing: content-box;
         transition: width 1s, height 1s;
+
+        &-wrapper {
+            transition: width 1s, height 1s;
+        }
     }
 
     &cv-canvas {
@@ -31,6 +35,7 @@
         .gjs-highlighter-sel {
             margin-left: -2px;
             margin-top: -2px;
+            outline-offset: 0;
         }
 
         ##{$app-prefix}tools,
@@ -100,15 +105,39 @@
     &pn-commands,
     &pn-options,
     &pn-devices-c {
-        .#{$pn-prefix}btn {
+        .#{$pn-prefix}btn,
+        .btn {
             background-color: $button-bg-color;
             border-radius: 30px;
             margin-right: 7px;
 
-            &.#{$pn-prefix}active {
+            &.#{$pn-prefix}active,
+            &[aria-expanded="true"] {
                 background-color: $additional-extra-light;
                 box-shadow: $button-bg-shadow;
             }
+        }
+    }
+
+    &pn-settings {
+        position: relative;
+        padding: 0;
+        display: none;
+        min-width: 250px;
+
+        .#{$pn-prefix}views-container & {
+            display: block;
+        }
+
+        .#{$pn-prefix}buttons {
+            display: grid;
+            grid-template-columns: 1fr 32px;
+            grid-gap: 8px;
+            text-align: left;
+        }
+
+        .tooltip-icon {
+            margin-right: 8px;
         }
     }
 
@@ -249,6 +278,8 @@
         animation: none;
 
         .#{$app-prefix}btn-prim {
+            // Positions that button should be above CodeMirror container
+            position: relative;
             display: inline-flex;
             padding: 0 16px;
             font-size: .875rem;
@@ -261,7 +292,7 @@
     &sm-header {
         padding: 0;
 
-        @extend .no-data;
+        @extend %base-no-data;
     }
 
     &mdl-header {
@@ -365,6 +396,15 @@
             top: -10px;
         }
     }
+
+    // Place some actions above some elements that overlap them, like CodeMirror container
+    &action {
+        position: relative;
+    }
+
+    &resizer-h-cl {
+        margin: auto -8px;
+    }
 }
 
 .table-edition-toolbar {
@@ -463,6 +503,23 @@
     }
 }
 
+.settings-panel {
+    padding: 10px;
+
+    &:not(.show) {
+        display: none;
+    }
+
+    &__body {
+        padding: 12px;
+    }
+
+    &__tooltip-trigger {
+        position: absolute;
+        inset: 0;
+    }
+}
+
 .content-variant-item-content__body {
     &.editor-unavailable {
         .alert {
@@ -551,13 +608,17 @@
         right: 0;
         bottom: 0;
         left: 0;
-        z-index: 1000;
+        z-index: $grapesjs-content-editor-fullscreen-z-index;
         // stylelint-disable-next-line declaration-no-important
         padding: $grapesjs-content-editor-fullscreen-offset !important;
         // stylelint-disable-next-line declaration-no-important
         width: auto !important;
         // stylelint-disable-next-line declaration-no-important
         height: auto !important;
+    }
+
+    &-loading-mask-fullscreen {
+        z-index: $grapesjs-content-editor-fullscreen-z-index + 1;
     }
 }
 

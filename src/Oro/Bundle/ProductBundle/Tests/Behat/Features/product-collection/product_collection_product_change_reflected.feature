@@ -6,8 +6,8 @@ Feature: Product collection product change reflected
 
   Scenario: Logged in as buyer and manager on different window sessions
     Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
+      | Admin | first_session  |
+      | Buyer | second_session |
 
   Scenario: Product Collection can be edited
     Given I proceed as the Admin
@@ -15,6 +15,12 @@ Feature: Product collection product change reflected
     And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click "Root Node"
+    And I save form
+    And click "Create Content Node"
+    And I fill "Content Node Form" with:
+      | Titles           | Collection1                |
+      | Url Slug         | collection1                |
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I click "Content Variants"
@@ -31,6 +37,7 @@ Feature: Product collection product change reflected
   Scenario: Edited product collection is accesible at frontend
     Given I operate as the Buyer
     And I am on homepage
+    And I click "Collection1"
     Then I should see "PSKU1"
     And I should see "PSKU2"
 
@@ -45,9 +52,10 @@ Feature: Product collection product change reflected
     And I save and close form
     Then I should see "Product has been saved" flash message
 
-    Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at backend
+  Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at backend
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click "Collection1"
     And I click on "First Content Variant Expand Button"
     Then I should see following grid:
       | SKU   | NAME      |
@@ -56,6 +64,7 @@ Feature: Product collection product change reflected
   Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at frontend
     Given I operate as the Buyer
     And I am on homepage
+    And I click "Collection1"
     Then I should see "PSKU1"
     And I should not see "PSKU2"
     And I should not see "XSKU"
@@ -74,14 +83,16 @@ Feature: Product collection product change reflected
   Scenario: "Product 2" that confirm to filter again, included into product collection grid at backend
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click "Collection1"
     And I click on "First Content Variant Expand Button"
     Then I should see following grid:
       | SKU   | NAME      |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
 
   Scenario: "Product 2" that confirm to filter again, included into product collection grid at frontend
     Given I operate as the Buyer
     And I am on homepage
+    And I click "Collection1"
     Then I should see "PSKU1"
     And I should see "PSKU2"

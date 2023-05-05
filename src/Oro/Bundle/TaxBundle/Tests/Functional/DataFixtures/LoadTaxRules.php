@@ -13,135 +13,74 @@ use Oro\Bundle\TaxBundle\Entity\TaxRule;
 
 class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 {
-    const TAX_RULE_1 = 'TAX_RULE_1';
-    const TAX_RULE_2 = 'TAX_RULE_2';
-    const TAX_RULE_3 = 'TAX_RULE_3';
-    const TAX_RULE_4 = 'TAX_RULE_4';
+    public const REFERENCE_PREFIX = 'tax_rule';
 
-    const DESCRIPTION = 'Tax rule description 1';
+    public const TAX_RULE_1 = 'TAX_RULE_1';
+    public const TAX_RULE_2 = 'TAX_RULE_2';
+    public const TAX_RULE_3 = 'TAX_RULE_3';
+    public const TAX_RULE_4 = 'TAX_RULE_4';
 
-    const REFERENCE_PREFIX = 'tax_rule';
+    private const DATA = [
+        self::TAX_RULE_1 => [
+            'taxJurisdiction' => LoadTaxes::TAX_1
+        ],
+        self::TAX_RULE_2 => [
+            'taxJurisdiction' => LoadTaxes::TAX_2
+        ],
+        self::TAX_RULE_3 => [
+            'taxJurisdiction' => LoadTaxes::TAX_3
+        ],
+        self::TAX_RULE_4 => [
+            'taxJurisdiction' => LoadTaxes::TAX_4
+        ]
+    ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes',
-            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
-            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
-            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions',
+            LoadCustomerTaxCodes::class,
+            LoadProductTaxCodes::class,
+            LoadTaxes::class,
+            LoadTaxJurisdictions::class
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         /** @var CustomerTaxCode $customerTaxCode */
-        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
-
-        /** @var productTaxCode $productTaxCode */
-        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
-
+        $customerTaxCode = $this->getReference(
+            LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . LoadCustomerTaxCodes::TAX_1
+        );
+        /** @var ProductTaxCode $productTaxCode */
+        $productTaxCode = $this->getReference(
+            LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1
+        );
         /** @var Tax $tax */
-        $tax = $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1);
-
-        /** @var TaxJurisdiction $taxJurisdiction */
-        $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1
+        $tax = $this->getReference(
+            LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1
         );
+        foreach (self::DATA as $code => $item) {
+            /** @var TaxJurisdiction $taxJurisdiction */
+            $taxJurisdiction = $this->getReference(
+                LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . $item['taxJurisdiction']
+            );
 
-        /** @var TaxJurisdiction $taxJurisdiction2 */
-        $taxJurisdiction2 = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_2
-        );
-
-        /** @var TaxJurisdiction $taxJurisdiction3 */
-        $taxJurisdiction3 = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_3
-        );
-
-        /** @var TaxJurisdiction $taxJurisdiction4 */
-        $taxJurisdiction4 = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_4
-        );
-
-        $this->createTaxRule(
-            $manager,
-            $customerTaxCode,
-            $productTaxCode,
-            $tax,
-            $taxJurisdiction,
-            self::DESCRIPTION,
-            self::TAX_RULE_1
-        );
-
-        $this->createTaxRule(
-            $manager,
-            $customerTaxCode,
-            $productTaxCode,
-            $tax,
-            $taxJurisdiction2,
-            self::DESCRIPTION,
-            self::TAX_RULE_2
-        );
-
-        $this->createTaxRule(
-            $manager,
-            $customerTaxCode,
-            $productTaxCode,
-            $tax,
-            $taxJurisdiction3,
-            self::DESCRIPTION,
-            self::TAX_RULE_3
-        );
-
-        $this->createTaxRule(
-            $manager,
-            $customerTaxCode,
-            $productTaxCode,
-            $tax,
-            $taxJurisdiction4,
-            self::DESCRIPTION,
-            self::TAX_RULE_4
-        );
-
+            $taxRule = new TaxRule();
+            $taxRule->setDescription('Tax rule description 1');
+            $taxRule->setCustomerTaxCode($customerTaxCode);
+            $taxRule->setProductTaxCode($productTaxCode);
+            $taxRule->setTaxJurisdiction($taxJurisdiction);
+            $taxRule->setTax($tax);
+            $taxRule->setOrganization($productTaxCode->getOrganization());
+            $manager->persist($taxRule);
+            $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $taxRule);
+        }
         $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param CustomerTaxCode $customerTaxCode
-     * @param ProductTaxCode $productTaxCode
-     * @param Tax $tax
-     * @param TaxJurisdiction $taxJurisdiction
-     * @param string $description
-     * @param string $reference
-     * @return TaxRule
-     */
-    protected function createTaxRule(
-        ObjectManager $manager,
-        CustomerTaxCode $customerTaxCode,
-        ProductTaxCode $productTaxCode,
-        Tax $tax,
-        TaxJurisdiction $taxJurisdiction,
-        $description,
-        $reference
-    ) {
-        $taxRule = new TaxRule();
-        $taxRule
-            ->setCustomerTaxCode($customerTaxCode)
-            ->setProductTaxCode($productTaxCode)
-            ->setTax($tax)
-            ->setTaxJurisdiction($taxJurisdiction)
-            ->setDescription($description);
-
-        $manager->persist($taxRule);
-        $this->addReference(static::REFERENCE_PREFIX . '.' . $reference, $taxRule);
-
-        return $taxRule;
     }
 }

@@ -1,0 +1,47 @@
+navigation:
+    menu_config:
+        items:
+            oro_website_search_tab:
+                label: oro.websitesearch.navigation.package_label
+                uri: '#'
+                position: 200
+            oro_website_search_report_tab:
+                label: oro.websitesearch.navigation.package_label
+                uri: '#'
+            oro_website_search_result_history_list:
+                label: oro.websitesearch.navigation.search_history_index.label
+                route: oro_website_search_result_history_index
+                extras:
+                    routes: ['oro_website_search_*']
+            shortcut_oro_website_search_result_history_index:
+                label: oro.websitesearch.shortcut.list_search_result_histories.label
+                route: oro_website_search_result_history_index
+            oro_website_search_results_report:
+                label: 'oro.websitesearch.navigation.search_report.label'
+                route: 'oro_report_view_grid'
+                route_parameters:
+                    gridName: 'website-search-results-report'
+                extras:
+                    description: 'oro.order.menu.best_selling_list.description'
+
+        tree:
+            application_menu:
+                children:
+                    marketing_tab:
+                        children:
+                            oro_website_search_tab:
+                                children:
+                                    oro_website_search_result_history_list: ~
+                    reports_tab:
+                        children:
+                            static_reports_tab:
+                                children:
+                                    oro_website_search_report_tab:
+                                        children:
+                                            oro_website_search_results_report: ~
+
+            shortcuts:
+                children:
+                    shortcut_oro_website_search_result_history_index: ~
+    titles:
+        oro_website_search_result_history_index: ~

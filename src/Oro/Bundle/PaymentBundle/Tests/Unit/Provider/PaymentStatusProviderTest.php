@@ -8,17 +8,15 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
+class PaymentStatusProviderTest extends TestCase
 {
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentTransactionProvider;
+    protected PaymentTransactionProvider|MockObject $paymentTransactionProvider;
+    protected TotalProcessorProvider|MockObject $totalProcessorProvider;
 
-    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $totalProcessorProvider;
-
-    /** @var PaymentStatusProvider */
-    private $provider;
+    protected PaymentStatusProvider $provider;
 
     protected function setUp(): void
     {
@@ -418,7 +416,7 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
                 100,
                 PaymentStatusProvider::PENDING,
             ],
-            'partially refunded amount' => [
+            'partially cancelled amount' => [
                 [
                     (new PaymentTransaction())
                         ->setSuccessful(true)
@@ -439,7 +437,44 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
                 100,
                 PaymentStatusProvider::CANCELED_PARTIALLY
             ],
-            'partially canceled/refunded amount' => [
+            'partially authorized amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(50.001),
+                    (new PaymentTransaction())
+                        ->setSuccessful(false)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(50),
+                ],
+                100.001,
+                PaymentStatusProvider::AUTHORIZED_PARTIALLY
+            ],
+            're-authorized amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(100),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CANCEL)
+                        ->setAmount(100),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(100.003),
+                ],
+                100.002,
+                PaymentStatusProvider::AUTHORIZED
+            ],
+            'partially canceled amount' => [
                 [
                     (new PaymentTransaction())
                         ->setSuccessful(true)
@@ -454,6 +489,38 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 50,
                 PaymentStatusProvider::CANCELED
+            ],
+            'partially refunded amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CAPTURE)
+                        ->setAmount(50.00),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::REFUND)
+                        ->setAmount(30.00)
+                ],
+                50.00,
+                PaymentStatusProvider::REFUNDED_PARTIALLY
+            ],
+            'fully refunded amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CAPTURE)
+                        ->setAmount(50.00),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::REFUND)
+                        ->setAmount(50.00)
+                ],
+                50.00,
+                PaymentStatusProvider::REFUNDED
             ]
         ];
     }

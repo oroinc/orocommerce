@@ -16,34 +16,27 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const SEGMENT_ID = 123;
-    const FIRST_WEB_CATALOG_ID = 111;
-    const SECOND_WEB_CATALOG_ID = 777;
-    const THIRD_WEB_CATALOG_ID = 999;
-    const FIRST_WEBSITE_ID = 1;
-    const SECOND_WEBSITE_ID = 2;
+    private const SEGMENT_ID = 123;
+    private const FIRST_WEB_CATALOG_ID = 111;
+    private const SECOND_WEB_CATALOG_ID = 777;
+    private const THIRD_WEB_CATALOG_ID = 999;
+    private const FIRST_WEBSITE_ID = 1;
+    private const SECOND_WEBSITE_ID = 2;
 
-    /**
-     * @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contentVariantSegmentProvider;
 
-    /**
-     * @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $webCatalogUsageProvider;
 
-    /**
-     * @var ProductCollectionSegmentHelper
-     */
+    /** @var ProductCollectionSegmentHelper */
     private $helper;
 
     protected function setUp(): void
     {
-        $this->contentVariantSegmentProvider = $this->getMockBuilder(ContentVariantSegmentProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);
         $this->webCatalogUsageProvider = $this->createMock(WebCatalogUsageProviderInterface::class);
+
         $this->helper = new ProductCollectionSegmentHelper(
             $this->contentVariantSegmentProvider,
             $this->webCatalogUsageProvider
@@ -54,8 +47,7 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
     {
         $this->helper = new ProductCollectionSegmentHelper($this->contentVariantSegmentProvider);
 
-        $this->contentVariantSegmentProvider
-            ->expects($this->never())
+        $this->contentVariantSegmentProvider->expects($this->never())
             ->method('getContentVariants');
 
         $this->assertEmpty($this->helper->getWebsiteIdsBySegment($this->createSegment()));
@@ -63,8 +55,7 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetWebsiteIdsBySegmentWhenNoContentVariantsExist()
     {
-        $this->contentVariantSegmentProvider
-            ->expects($this->once())
+        $this->contentVariantSegmentProvider->expects($this->once())
             ->method('getContentVariants')
             ->willReturn([]);
 
@@ -76,26 +67,21 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetWebsiteIdsBySegment(array $webCatalogAssignment, array $expectedWebsiteIds)
     {
-        $firstContentVariant = $this->createContentVariant(self::FIRST_WEB_CATALOG_ID);
-        $secondContentVariant = $this->createContentVariant(self::SECOND_WEB_CATALOG_ID);
+        $firstContentVariant = $this->getContentVariant(self::FIRST_WEB_CATALOG_ID);
+        $secondContentVariant = $this->getContentVariant(self::SECOND_WEB_CATALOG_ID);
 
-        $this->contentVariantSegmentProvider
-            ->expects($this->once())
+        $this->contentVariantSegmentProvider->expects($this->once())
             ->method('getContentVariants')
             ->willReturn([$firstContentVariant, $secondContentVariant]);
 
-        $this->webCatalogUsageProvider
-            ->expects($this->once())
+        $this->webCatalogUsageProvider->expects($this->once())
             ->method('getAssignedWebCatalogs')
             ->willReturn($webCatalogAssignment);
 
         $this->assertEquals($expectedWebsiteIds, $this->helper->getWebsiteIdsBySegment($this->createSegment()));
     }
 
-    /**
-     * @return array
-     */
-    public function webCatalogsAssignmentDataProvider()
+    public function webCatalogsAssignmentDataProvider(): array
     {
         return [
             'no web catalog is used' => [
@@ -126,30 +112,17 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return Segment
-     */
-    private function createSegment()
+    private function createSegment(): Segment
     {
-        /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => self::SEGMENT_ID]);
-
-        return $segment;
+        return $this->getEntity(Segment::class, ['id' => self::SEGMENT_ID]);
     }
 
-    /**
-     * @param int $webCatalogId
-     * @return ContentVariantInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createContentVariant($webCatalogId)
+    private function getContentVariant(int $webCatalogId): ContentVariantInterface
     {
         $contentVariant = new ContentVariantStub();
 
-        /** @var WebCatalogInterface|\PHPUnit\Framework\MockObject\MockObject $webCatalog */
         $webCatalog = $this->createMock(WebCatalogInterface::class);
-
-        $webCatalog
-            ->expects($this->any())
+        $webCatalog->expects($this->any())
             ->method('getId')
             ->willReturn($webCatalogId);
 

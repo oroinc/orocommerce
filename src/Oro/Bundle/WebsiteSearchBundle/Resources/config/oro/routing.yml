@@ -1,0 +1,4 @@
+oro_website_search:
+    resource: "@OroWebsiteSearchBundle/Controller"
+    type: annotation
+    prefix: /website-search

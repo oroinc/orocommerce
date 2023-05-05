@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\AttachmentBundle\Async\Topics;
+use Oro\Bundle\AttachmentBundle\Async\Topic\AttachmentRemoveImageTopic;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -55,7 +55,7 @@ class RemoveProductImageListenerTest extends WebTestCase
         $this->entityManager->remove($productImage);
         $this->entityManager->flush();
 
-        self::assertMessagesCount(Topics::ATTACHMENT_REMOVE_IMAGE, 0);
+        self::assertMessagesCount(AttachmentRemoveImageTopic::getName(), 0);
     }
 
     public function testRemoveProductImage(): void
@@ -84,16 +84,18 @@ class RemoveProductImageListenerTest extends WebTestCase
         $this->entityManager->remove($productImage);
         $this->entityManager->flush();
 
-        self::assertMessagesCount(Topics::ATTACHMENT_REMOVE_IMAGE, 1);
+        self::assertMessagesCount(AttachmentRemoveImageTopic::getName(), 1);
         self::assertMessageSent(
-            Topics::ATTACHMENT_REMOVE_IMAGE,
+            AttachmentRemoveImageTopic::getName(),
             [
-                [
-                    'id' => $imageFile->getId(),
-                    'fileName' => $imageFile->getFilename(),
-                    'originalFileName' => $imageFile->getOriginalFilename(),
-                    'parentEntityClass' => $imageFile->getParentEntityClass()
-                ]
+                'images' => [
+                    [
+                        'id' => $imageFile->getId(),
+                        'fileName' => $imageFile->getFilename(),
+                        'originalFileName' => $imageFile->getOriginalFilename(),
+                        'parentEntityClass' => $imageFile->getParentEntityClass()
+                    ],
+                ],
             ]
         );
     }

@@ -50,11 +50,14 @@ services:
 
     oro_order.form.type.extension.order_data_storage:
         class: 'Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension'
-        parent: oro_product.form.type.extension.product_data_storage.abstract
-        calls:
-            - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\Order']]
+        arguments:
+            - '@request_stack'
+            - '@oro_product.storage.product_data_storage'
+            - '@form.property_accessor'
+            - '@doctrine'
+            - '@logger'
         tags:
-            - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
+            - { name: form.type_extension }
 
     oro_order.form.type.order_collection_table:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType'
@@ -94,7 +97,7 @@ services:
     oro_order.form.type.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType'
         arguments:
-            - '@?oro_shipping.tracking_aware_shipping_methods_provider'
+            - '@oro_shipping.tracking_aware_shipping_methods_provider'
         tags:
             - { name: form.type }
 

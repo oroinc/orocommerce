@@ -2,166 +2,121 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Extension;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
- * Pre-fills RFQ with requested products taken from product data storage.
+ * The form type extension that pre-fill a RFQ with requested products taken from the product data storage.
  */
 class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 {
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    private ProductAvailabilityProvider $productAvailabilityProvider;
+    private TranslatorInterface $translator;
+    private Environment $twig;
 
-    /**
-     * @var Session
-     */
-    protected $session;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ProductAvailabilityProviderInterface
-     */
-    protected $productAvailabilityProvider;
-
-    /**
-     * @var array
-     */
-    protected $supportedStatuses = [];
-
-    public function setConfigManager(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
-    public function setSession(Session $session)
-    {
-        $this->session = $session;
-    }
-
-    public function setTranslator(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
-    public function setContainer(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    public function setProductAvailabilityProvider(ProductAvailabilityProviderInterface $productAvailabilityProvider)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        ProductDataStorage $storage,
+        PropertyAccessorInterface $propertyAccessor,
+        ManagerRegistry $doctrine,
+        LoggerInterface $logger,
+        ProductAvailabilityProvider $productAvailabilityProvider,
+        TranslatorInterface $translator,
+        Environment $twig
+    ) {
+        parent::__construct($requestStack, $storage, $propertyAccessor, $doctrine, $logger);
         $this->productAvailabilityProvider = $productAvailabilityProvider;
+        $this->translator = $translator;
+        $this->twig = $twig;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function fillItemsData($entity, array $itemsData = [])
+    protected function fillItemsData(object $entity, array $itemsData): void
     {
-        $repository = $this->getProductRepository();
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass($this->getEntityClass());
         $canNotBeAddedToRFQ = [];
         foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
+            $productId = $dataRow[ProductDataStorage::PRODUCT_ID_KEY] ?? null;
+            if (null === $productId) {
                 continue;
             }
-
-            $qb = $repository->getBySkuQueryBuilder($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
-            $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
-            if (!$product) {
+            $product = $em->find(Product::class, $productId);
+            if (null === $product) {
                 continue;
             }
 
             if (!$this->productAvailabilityProvider->isProductApplicableForRFP($product)) {
-                $this->session->getFlashBag()->add(
+                $this->requestStack->getSession()->getFlashBag()->add(
                     'warning',
                     'oro.frontend.rfp.data_storage.no_qty_products_cant_be_added_to_rfq'
                 );
                 continue;
             }
 
-            $result = $this->addItem($product, $entity, $dataRow);
-            if ($result === false) {
+            $this->addItem($product, $entity, $dataRow);
+            if (!$this->productAvailabilityProvider->isProductAllowedForRFP($product)) {
                 $canNotBeAddedToRFQ[] = $product;
             }
         }
 
-        $message = $this->container->get('twig')->render(
-            '@OroRFP/Form/FlashBag/warning.html.twig',
-            [
-                'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
-                'products' => $canNotBeAddedToRFQ
-            ]
-        );
-
         if (!empty($canNotBeAddedToRFQ)) {
-            $this->session->getFlashBag()->add('warning', $message);
+            $message = $this->twig->render(
+                '@OroRFP/Form/FlashBag/warning.html.twig',
+                [
+                    'message' => $this->translator->trans('oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'),
+                    'products' => $canNotBeAddedToRFQ
+                ]
+            );
+            $this->requestStack->getSession()->getFlashBag()->add('warning', $message);
         }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function addItem(Product $product, $entity, array $itemData = [])
+    protected function addItem(Product $product, object $entity, array $itemData): void
     {
-        if (!$entity instanceof RFPRequest) {
+        /** @var RFPRequest $entity */
+
+        if (!$this->productAvailabilityProvider->isProductAllowedForRFP($product)) {
             return;
         }
-        if (!$this->isAllowedProduct($product)) {
-            return false;
-        }
 
-        $requestProductItem = new RequestProductItem();
         $requestProduct = new RequestProduct();
 
         $this->fillEntityData($requestProduct, $itemData);
 
-        $requestProduct
-            ->setProduct($product)
-            ->addRequestProductItem($requestProductItem);
+        $requestProduct->setProduct($product);
 
-        if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
+        $requestProductItem = new RequestProductItem();
+        if (\array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
             $requestProductItem->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
         }
+        $requestProduct->addRequestProductItem($requestProductItem);
 
         $this->fillEntityData($requestProductItem, $itemData);
 
         if (!$requestProductItem->getProductUnit()) {
-            /** @var ProductUnitPrecision $unitPrecision */
-            $unitPrecision = $product->getUnitPrecisions()->first();
-            if (!$unitPrecision) {
+            $unit = $this->getDefaultProductUnit($product);
+            if (null === $unit) {
                 return;
             }
-
-            /** @var ProductUnit $unit */
-            $unit = $unitPrecision->getUnit();
-            if (!$unit) {
-                return;
-            }
-
             $requestProductItem->setProductUnit($unit);
         }
 
@@ -171,60 +126,15 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     }
 
     /**
-     * @param Product $product
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    protected function isAllowedProduct(Product $product)
+    protected function getEntityClass(): string
     {
-        if (!$this->supportedStatuses) {
-            $this->supportedStatuses = (array)$this->configManager->get('oro_rfp.frontend_product_visibility');
-        }
-        $inventoryStatus = $product->getInventoryStatus();
-        if (is_object($inventoryStatus)) {
-            $inventoryStatus = $inventoryStatus->getId();
-        }
-
-        return $inventoryStatus && in_array($inventoryStatus, $this->supportedStatuses) && $product->isEnabled();
+        return RFPRequest::class;
     }
 
     /**
-     * @param array $products
-     *
-     * @return bool
-     */
-    public function isAllowedRFP($products)
-    {
-        $repository = $this->getProductRepository();
-        foreach ($products as $product) {
-            if (!empty($product['productSku'])) {
-                $qb = $repository->getBySkuQueryBuilder($product['productSku']);
-                $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
-                if (!empty($product) && ($this->isAllowedProduct($product) === true)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public function isAllowedRFPByProductsIds(array $productsIds): bool
-    {
-        $repository = $this->getProductRepository();
-        foreach ($productsIds as $productId) {
-            $qb = $repository->getProductsQueryBuilder([$productId]);
-            $productId = $this->aclHelper->apply($qb)->getOneOrNullResult();
-            if (!empty($productId) && ($this->isAllowedProduct($productId) === true)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getExtendedTypes(): iterable
     {

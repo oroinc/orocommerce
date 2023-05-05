@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form;
 
+use Oro\Bundle\CatalogBundle\Utils\SortOrderDialogTargetStorage;
 use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -14,11 +15,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ContentNodeFormTemplateDataProvider implements FormTemplateDataProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     * @throws \InvalidArgumentException
-     */
-    public function getData($entity, FormInterface $form, Request $request)
+    private SortOrderDialogTargetStorage $sortOrderDialogTargetStorage;
+
+    public function __construct(SortOrderDialogTargetStorage $sortOrderDialogTargetStorage)
+    {
+        $this->sortOrderDialogTargetStorage = $sortOrderDialogTargetStorage;
+    }
+
+    public function getData($entity, FormInterface $form, Request $request): array
     {
         if (!$entity instanceof ContentNode) {
             throw new \InvalidArgumentException(
@@ -31,24 +35,44 @@ class ContentNodeFormTemplateDataProvider implements FormTemplateDataProviderInt
             'form' => $form->createView(),
         ];
 
-        if (!$form->isSubmitted() || $form->isValid()) {
-            return $data;
-        }
+        if ($data['form']->offsetExists('contentVariants')) {
+            $contentVariantsForm = $data['form']->offsetGet('contentVariants');
 
-        $expandedContentVariantForms = [];
-        /** @var \IteratorAggregate $contentVariantsForm */
-        $contentVariantsForm = $data['form']->offsetGet('contentVariants');
-        $iterator = $contentVariantsForm->getIterator();
-        /** @var FormView $contentVariantForm */
-        foreach ($iterator as $contentVariantForm) {
-            /** @var ContentVariant $contentVariant */
-            $contentVariant = $contentVariantForm->vars['value'];
-            if ($contentVariant->isExpanded()) {
-                $expandedContentVariantForms[] = $contentVariantForm;
+            if (!$form->isSubmitted() || $form->isValid()) {
+                $this->handleDataWhenNotSubmitted($contentVariantsForm, $data);
+
+                return $data;
+            }
+
+            $data['expandedContentVariantForms'] = [];
+
+            /** @var FormView $contentVariantForm */
+            foreach ($contentVariantsForm as $contentVariantForm) {
+                /** @var ContentVariant $contentVariant */
+                $contentVariant = $contentVariantForm->vars['value'];
+                if ($contentVariant->isExpanded()) {
+                    $data['expandedContentVariantForms'][] = $contentVariantForm;
+                }
             }
         }
-        $data['expandedContentVariantForms'] = $expandedContentVariantForms;
 
         return $data;
+    }
+
+    private function handleDataWhenNotSubmitted(FormView $contentVariantsForm, array &$data): void
+    {
+        foreach ($contentVariantsForm as $contentVariantForm) {
+            $contentVariantForm->vars['triggerSortOrderDialog'] = false;
+            $targetEntity = $contentVariantForm->vars['value'];
+            if (is_object($targetEntity)
+                && $this->sortOrderDialogTargetStorage->hasTarget(ContentVariant::class, $targetEntity->getId())) {
+                $contentVariantForm->vars['triggerSortOrderDialog'] = true;
+                $data['expandedContentVariantForms'][] = $contentVariantForm;
+
+                $this->sortOrderDialogTargetStorage->removeTarget(ContentVariant::class, $targetEntity->getId());
+
+                break;
+            }
+        }
     }
 }

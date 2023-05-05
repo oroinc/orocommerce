@@ -1,0 +1,204 @@
+data:
+    -
+        type: products
+        id: '<toString(@product_kit1->id)>'
+        attributes:
+            availability_date: null
+            testAttrInvisible: null
+            testAttrBoolean: false
+            testAttrString: null
+            testAttrInteger: null
+            testAttrFloat: null
+            testAttrDateTime: null
+            testAttrMoney: null
+            sku: PKSKU1
+            status: enabled
+            variantFields: {  }
+            createdAt: '@product_kit1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product_kit1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: kit
+            featured: false
+            newArrival: false
+            wysiwyg: null
+            wysiwygAttr: null
+        relationships:
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@business_unit->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@organization->id)>'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_kit1_precision1->id)>'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_kit1_precision1->id)>'
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: '<toString(@product_kit1_name->id)>'
+            descriptions:
+                data: []
+            variantLinks:
+                data: []
+            shortDescriptions:
+                data: []
+            images:
+                data: []
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_product_family->id)>'
+            brand:
+                data: null
+            kitItems:
+                data:
+                    -
+                        type: productkititems
+                        id: '<toString(@product_kit1_item1->id)>'
+                    -
+                        type: productkititems
+                        id: '<toString(@product_kit1_item2->id)>'
+            slugPrototypes:
+                data: []
+            category:
+                data: null
+            pageTemplate:
+                data: null
+            taxCode:
+                data: null
+            manageInventory:
+                data: null
+            highlightLowInventory:
+                data: null
+            inventoryThreshold:
+                data: null
+            lowInventoryThreshold:
+                data: null
+            minimumQuantityToOrder:
+                data: null
+            maximumQuantityToOrder:
+                data: null
+            decrementQuantity:
+                data: null
+            backOrder:
+                data: null
+            isUpcoming:
+                data: null
+            metaTitles:
+                data: []
+            metaDescriptions:
+                data: []
+            metaKeywords:
+                data: []
+            testAttrManyToMany:
+                data: []
+            default_testAttrManyToMany:
+                data: null
+            testAttrManyToOne:
+                data: null
+            testToOneId:
+                data: null
+            testToManyId:
+                data: []
+            default_testToManyId:
+                data: null
+            contact:
+                data: []
+            default_contact:
+                data: null
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            test_variant_field:
+                data: null
+            testAttrEnum:
+                data: null
+            testAttrMultiEnum:
+                data: []
+            type_contact:
+                data: null
+            contact_type:
+                data: null
+            productShippingOptions:
+                data: []
+            attachments:
+                data: []
+            activityNotes:
+                data: []
+included:
+    -
+        type: productkititems
+        id: '<toString(@product_kit1_item1->id)>'
+        attributes:
+            sortOrder: 1
+            optional: false
+            minimumQuantity: null
+            maximumQuantity: null
+            createdAt: '@product_kit1_item1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product_kit1_item1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            labels:
+                data:
+                    -
+                        type: productkititemlabels
+                        id: '<toString(@product_kit1_item1_label->id)>'
+                    -
+                        type: productkititemlabels
+                        id: '<toString(@product_kit1_item1_label_es->id)>'
+            productKit:
+                data:
+                    type: products
+                    id: '<toString(@product_kit1->id)>'
+            kitItemProducts:
+                data:
+                    -
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product1->id)>'
+                    -
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item1_product3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: productkititems
+        id: '<toString(@product_kit1_item2->id)>'
+        attributes:
+            sortOrder: 10
+            optional: true
+            minimumQuantity: 0
+            maximumQuantity: 5
+            createdAt: '@product_kit1_item2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product_kit1_item2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            labels:
+                data:
+                    -
+                        type: productkititemlabels
+                        id: '<toString(@product_kit1_item2_label->id)>'
+                    -
+                        type: productkititemlabels
+                        id: '<toString(@product_kit1_item2_label_es->id)>'
+            productKit:
+                data:
+                    type: products
+                    id: '<toString(@product_kit1->id)>'
+            kitItemProducts:
+                data:
+                    -
+                        type: productkititemproducts
+                        id: '<toString(@product_kit1_item2_product3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

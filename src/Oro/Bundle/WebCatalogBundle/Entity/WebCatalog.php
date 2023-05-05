@@ -7,9 +7,10 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
-use Oro\Bundle\WebCatalogBundle\Model\ExtendWebCatalog;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 
 /**
@@ -43,13 +44,15 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *     }
  * )
  */
-class WebCatalog extends ExtendWebCatalog implements
+class WebCatalog implements
     WebCatalogInterface,
     DatesAwareInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @ORM\Id

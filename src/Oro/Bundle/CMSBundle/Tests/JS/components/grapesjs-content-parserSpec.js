@@ -1,6 +1,7 @@
 import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
+import '../fixtures/load-plugin-modules';
 
 describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
     let grapesjsEditorView;
@@ -364,6 +365,92 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     ]
                 }
             ];
+
+            expect(htmlParser(str).html).toEqual(result);
+        });
+
+        it('Parse nested text component with video', () => {
+            const str =
+                // eslint-disable-next-line
+                `<h3><span>Lorem</span></h3><div class="frontpage-news-container"><div class="frontpage-news-left"><iframe src="https://www.youtube-nocookie.com/embed/test?&controls=0&showinfo=0&rel=0" allowfullscreen="allowfullscreen"></iframe></div><div class="frontpage-news-right"><div><h1>Lorem ipsum</h1><div><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit</span></div><div>Lorem ipsum dolor sit amet, consectetur adipiscing elit</div></div></div></div>`;
+
+            const result = [{
+                tagName: 'h3',
+                type: 'text',
+                components: [{
+                    tagName: 'span',
+                    type: 'text',
+                    ...textBlockOptions,
+                    components: [{
+                        content: 'Lorem',
+                        tagName: '',
+                        type: 'textnode'
+                    }]
+                }]
+            }, {
+                tagName: 'div',
+                attributes: {},
+                classes: ['frontpage-news-container'],
+                components: [{
+                    tagName: 'div',
+                    attributes: {},
+                    classes: ['frontpage-news-left'],
+                    components: [{
+                        type: 'video',
+                        tagName: 'iframe',
+                        provider: 'ytnc',
+                        initial: true,
+                        src: 'https://www.youtube-nocookie.com/embed/test?&controls=0&showinfo=0&rel=0',
+                        attributes: {
+                            allowfullscreen: 'allowfullscreen',
+                            src: 'https://www.youtube-nocookie.com/embed/test?&controls=0&showinfo=0&rel=0'
+                        }
+                    }]
+                }, {
+                    tagName: 'div',
+                    attributes: {},
+                    classes: ['frontpage-news-right'],
+                    type: 'text',
+                    components: [{
+                        tagName: 'div',
+                        type: 'text',
+                        ...textBlockOptions,
+                        components: [{
+                            tagName: 'h1',
+                            type: 'text',
+                            ...textBlockOptions,
+                            components: [{
+                                content: 'Lorem ipsum',
+                                tagName: '',
+                                type: 'textnode'
+                            }]
+                        }, {
+                            tagName: 'div',
+                            type: 'text',
+                            ...textBlockOptions,
+                            components: [{
+                                tagName: 'span',
+                                type: 'text',
+                                ...textBlockOptions,
+                                components: [{
+                                    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                                    tagName: '',
+                                    type: 'textnode'
+                                }]
+                            }]
+                        }, {
+                            tagName: 'div',
+                            type: 'text',
+                            ...textBlockOptions,
+                            components: [{
+                                content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                                tagName: '',
+                                type: 'textnode'
+                            }]
+                        }]
+                    }]
+                }]
+            }];
 
             expect(htmlParser(str).html).toEqual(result);
         });

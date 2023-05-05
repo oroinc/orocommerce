@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Gateway\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option\SecureToken;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class SecureTokenTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new SecureToken()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         $token = md5('SecureToken');
 
@@ -24,9 +29,9 @@ class SecureTokenTest extends AbstractOptionTest
                 ['SECURETOKEN' => 12345],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SECURETOKEN" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "SECURETOKEN" with value 12345 is expected to be of type "string", but is of '
+                    . 'type "int".',
                 ],
             ],
             'valid' => [['SECURETOKEN' => $token], ['SECURETOKEN' => $token]],

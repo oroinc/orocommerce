@@ -3,25 +3,24 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
-class LoadPriceLists extends AbstractFixture
+class LoadPriceLists extends AbstractFixture implements DependentFixtureInterface
 {
-    const PRICE_LIST_1 = 'price_list_1';
-    const PRICE_LIST_2 = 'price_list_2';
-    const PRICE_LIST_3 = 'price_list_3';
-    const PRICE_LIST_4 = 'price_list_4';
-    const PRICE_LIST_5 = 'price_list_5';
-    const PRICE_LIST_6 = 'price_list_6';
-    /**
-     * @var array
-     */
-    protected static $data = [
+    public const PRICE_LIST_1 = 'price_list_1';
+    public const PRICE_LIST_2 = 'price_list_2';
+    public const PRICE_LIST_3 = 'price_list_3';
+    public const PRICE_LIST_4 = 'price_list_4';
+    public const PRICE_LIST_5 = 'price_list_5';
+    public const PRICE_LIST_6 = 'price_list_6';
+
+    protected static array $data = [
         [
             'name' => 'priceList1',
             'reference' => self::PRICE_LIST_1,
-            'default' => false,
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD'],
             'active' => true,
             'assignmentRule' => null,
@@ -29,7 +28,6 @@ class LoadPriceLists extends AbstractFixture
         [
             'name' => 'priceList2',
             'reference' => self::PRICE_LIST_2,
-            'default' => false,
             'currencies' => ['USD'],
             'active' => true,
             'assignmentRule' => 'product.category.id == 2',
@@ -37,7 +35,6 @@ class LoadPriceLists extends AbstractFixture
         [
             'name' => 'priceList3',
             'reference' => self::PRICE_LIST_3,
-            'default' => false,
             'currencies' => ['CAD'],
             'active' => true,
             'assignmentRule' => null,
@@ -45,7 +42,6 @@ class LoadPriceLists extends AbstractFixture
         [
             'name' => 'priceList4',
             'reference' => self::PRICE_LIST_4,
-            'default' => false,
             'currencies' => ['GBP'],
             'active' => true,
             'assignmentRule' => 'product.sku == "product-1"',
@@ -53,7 +49,6 @@ class LoadPriceLists extends AbstractFixture
         [
             'name' => 'priceList5',
             'reference' => self::PRICE_LIST_5,
-            'default' => false,
             'currencies' => ['GBP', 'EUR'],
             'active' => true,
             'assignmentRule' => 'product.category == 1 or product.category.id == 2',
@@ -61,7 +56,6 @@ class LoadPriceLists extends AbstractFixture
         [
             'name' => 'priceList6',
             'reference' => self::PRICE_LIST_6,
-            'default' => false,
             'currencies' => ['USD'],
             'active' => false,
             'assignmentRule' => null,
@@ -69,7 +63,15 @@ class LoadPriceLists extends AbstractFixture
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function getDependencies()
+    {
+        return [LoadOrganization::class];
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
@@ -78,13 +80,12 @@ class LoadPriceLists extends AbstractFixture
         foreach (static::getPriceListData() as $priceListData) {
             $priceList = new PriceList();
 
-            $priceList
-                ->setName($priceListData['name'])
-                ->setDefault($priceListData['default'])
+            $priceList->setName($priceListData['name'])
                 ->setCurrencies($priceListData['currencies'])
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)
                 ->setActive($priceListData['active'])
+                ->setOrganization($this->getReference('organization'))
                 ->setProductAssignmentRule($priceListData['assignmentRule']);
 
             $manager->persist($priceList);
@@ -94,10 +95,7 @@ class LoadPriceLists extends AbstractFixture
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
-    public static function getPriceListData()
+    public static function getPriceListData(): array
     {
         return static::$data;
     }

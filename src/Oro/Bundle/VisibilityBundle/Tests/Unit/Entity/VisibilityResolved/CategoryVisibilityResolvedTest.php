@@ -13,10 +13,10 @@ class CategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var CategoryVisibilityResolved */
-    protected $categoryVisibilityResolved;
+    private $categoryVisibilityResolved;
 
     /** @var Category */
-    protected $category;
+    private $category;
 
     protected function setUp(): void
     {
@@ -24,18 +24,7 @@ class CategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
         $this->categoryVisibilityResolved = new CategoryVisibilityResolved($this->category);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->entity, $this->category);
-    }
-
-    /**
-     * Test setters getters
-     */
-    public function testAccessors()
+    public function testGettersAndSetters()
     {
         $categoryVisibilityResolved = new CategoryVisibilityResolved(new Category());
 

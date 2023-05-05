@@ -10,58 +10,36 @@ use Oro\Bundle\SearchBundle\Formatter\DateTimeFormatter;
 
 class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
+    private $localeSettings;
 
     /** @var PreviouslyPurchasedConfigProvider */
-    protected $provider;
+    private $provider;
 
-    /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
-    protected $localeSettings;
-
-    /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dateTimeFormatter;
-
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->configManager = $this->createMock(ConfigManager::class);
         $this->localeSettings = $this->createMock(LocaleSettings::class);
-        $this->dateTimeFormatter = $this->createMock(DateTimeFormatter::class);
 
-        $this->dateTimeFormatter
-            ->method('format')
-            ->willReturnCallback(
-                function (\DateTime $dateTimeValue) {
-                    return $dateTimeValue
-                        ->setTimezone(new \DateTimeZone('UTC'))
-                        ->format(DateTimeFormatter::DATETIME_FORMAT);
-                }
-            );
-
-        $this->configManager->expects($this->any())
+        $configManager = $this->createMock(ConfigManager::class);
+        $configManager->expects(self::any())
             ->method('get')
-            ->with(
-                Configuration::getConfigKey(Configuration::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD),
-                0
-            )
+            ->with(Configuration::getConfigKey(Configuration::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD), 0)
             ->willReturn(1);
 
-        $this->provider = new PreviouslyPurchasedConfigProvider(
-            $this->configManager,
-            $this->localeSettings,
-            $this->dateTimeFormatter
-        );
-    }
+        $dateTimeFormatter = $this->createMock(DateTimeFormatter::class);
+        $dateTimeFormatter->expects(self::any())
+            ->method('format')
+            ->willReturnCallback(function (\DateTime $dateTimeValue) {
+                return $dateTimeValue
+                    ->setTimezone(new \DateTimeZone('UTC'))
+                    ->format(DateTimeFormatter::DATETIME_FORMAT);
+            });
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->provider, $this->configManager, $this->localeSettings, $this->dateTimeFormatter);
+        $this->provider = new PreviouslyPurchasedConfigProvider(
+            $configManager,
+            $this->localeSettings,
+            $dateTimeFormatter
+        );
     }
 
     public function testGetDaysPeriod()
@@ -71,7 +49,7 @@ class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPreviouslyPurchasedStartDateWithUTCTimeZone()
     {
-        $this->localeSettings
+        $this->localeSettings->expects(self::once())
             ->method('getTimeZone')
             ->willReturn('UTC');
 
@@ -85,7 +63,7 @@ class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
     {
         $timeZoneCode = 'Europe/Berlin';
 
-        $this->localeSettings
+        $this->localeSettings->expects(self::once())
             ->method('getTimeZone')
             ->willReturn($timeZoneCode);
 

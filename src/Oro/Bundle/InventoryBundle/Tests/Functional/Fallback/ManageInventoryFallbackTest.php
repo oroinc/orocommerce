@@ -9,22 +9,18 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ManageInventoryFallbackTest extends InventoryFallbackTest
 {
-    const VIEW_MANAGED_INVENTORY_XPATH =
+    protected const VIEW_MANAGED_INVENTORY_XPATH =
         "//label[text() = 'Managed Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
+
     /**
-     * @param mixed $systemValue
-     * @param string $expectedProductValue
-     * @param bool $updateProduct
-     * @param bool $updateCategory
-     *
      * @dataProvider productCategorySystemFallbackProvider
      */
     public function testProductCategorySystemFallback(
-        $systemValue,
-        $expectedProductValue,
-        $updateProduct = false,
-        $updateCategory = false
+        mixed $systemValue,
+        string $expectedProductValue,
+        bool $updateProduct = false,
+        bool $updateCategory = false
     ) {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         if ($updateProduct) {

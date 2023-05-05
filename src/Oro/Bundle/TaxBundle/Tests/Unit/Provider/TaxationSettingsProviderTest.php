@@ -49,7 +49,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function configureGetCachedExpectations(string $optionKey, mixed $optionValue, string$methodName): void
+    private function configureGetCachedExpectations(string $optionKey, mixed $optionValue, string $methodName): void
     {
         $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
             TaxationSettingsProvider::class . '::' . $methodName
@@ -346,7 +346,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
                 'value' => false,
             ],
             [
-                'configValue' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                'configValue' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                 'value' => true,
             ],
         ];
@@ -374,7 +374,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
                 'value' => true,
             ],
             [
-                'configValue' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                'configValue' => TaxationSettingsProvider::USE_AS_BASE_ORIGIN,
                 'value' => false,
             ],
         ];

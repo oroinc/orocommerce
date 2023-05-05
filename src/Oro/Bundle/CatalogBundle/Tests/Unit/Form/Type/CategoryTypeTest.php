@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type\Stub\CategorySortOrderGridTypeStub;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
@@ -18,6 +19,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\CategorySortOrderGridType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
@@ -25,7 +27,7 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilder;
@@ -35,23 +37,23 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CategoryTypeTest extends FormIntegrationTestCase
 {
-    private UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $urlGenerator;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlGenerator;
 
-    private CategoryType $type;
+    /** @var CategoryType */
+    private $type;
 
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->type = new CategoryType($this->urlGenerator);
-        $this->type->setDataClass(Category::class);
-        $this->type->setProductClass(Product::class);
         parent::setUp();
     }
 
     public function testBuildForm(): void
     {
         $builder = $this->createMock(FormBuilder::class);
-        $builder->expects(self::exactly(9))
+        $builder->expects(self::exactly(10))
             ->method('add')
             ->withConsecutive(
                 [
@@ -71,7 +73,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class,
                     array_merge(
                         $this->getOroRichTextTypeConfiguration('oro.catalog.category.short_descriptions.label'),
-                        ['value_class' => CategoryShortDescription::class,]
+                        ['value_class' => CategoryShortDescription::class]
                     )
                 ],
                 [
@@ -99,6 +101,11 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     'removeProducts',
                     EntityIdentifierType::class,
                     ['class' => Product::class, 'required' => false, 'mapped' => false, 'multiple' => true]
+                ],
+                [
+                    'sortOrder',
+                    CategorySortOrderGridType::class,
+                    ['required' => false, 'mapped' => false]
                 ],
                 [
                     'smallImage',
@@ -133,24 +140,19 @@ class CategoryTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions(): void
     {
-        $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects(self::once())
-            ->method('setDefaults')
-            ->with(
-                [
-                    'data_class' => Category::class,
-                    'csrf_token_id' => 'category',
-                ]
-            );
+        $resolver = new OptionsResolver();
 
         $this->type->configureOptions($resolver);
+
+        $resolvedOptions = $resolver->resolve();
+        self::assertEquals(Category::class, $resolvedOptions['data_class']);
+        self::assertEquals('category', $resolvedOptions['csrf_token_id']);
     }
 
     public function testGenerateChangedSlugsUrlOnPresetData(): void
     {
         $generatedUrl = '/some/url';
-        $this->urlGenerator
-            ->expects(self::once())
+        $this->urlGenerator->expects(self::once())
             ->method('generate')
             ->with('oro_catalog_category_get_changed_slugs', ['id' => 1])
             ->willReturn($generatedUrl);
@@ -171,25 +173,24 @@ class CategoryTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
                     $this->type,
+                    CategorySortOrderGridType::class => new CategorySortOrderGridTypeStub(),
                     ImageType::class => new ImageTypeStub(),
-                    EntityIdentifierType::class => new EntityType([
+                    EntityIdentifierType::class => new EntityTypeStub([
                         1 => $this->getCategory(1)
                     ]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
-                    CategoryDefaultProductOptionsType::class => new CategoryDefaultProductOptionsType(),
+                    new CategoryDefaultProductOptionsType(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::class => new LocalizedSlugWithRedirectType(
-                        $this->createMock(ConfirmSlugChangeFormHelper::class)
-                    ),
-                    CategoryUnitPrecisionType::class => new CategoryUnitPrecisionType(
+                    new LocalizedSlugWithRedirectType($this->createMock(ConfirmSlugChangeFormHelper::class)),
+                    new CategoryUnitPrecisionType(
                         $this->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class)
                     )
                 ],

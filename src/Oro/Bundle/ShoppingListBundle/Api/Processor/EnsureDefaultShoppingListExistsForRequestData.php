@@ -17,11 +17,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterface
 {
-    /** @var DefaultShoppingListFactory */
-    private $defaultShoppingListFactory;
-
-    /** @var RequestDataAccessor */
-    private $requestDataAccessor;
+    private DefaultShoppingListFactory $defaultShoppingListFactory;
+    private RequestDataAccessor $requestDataAccessor;
 
     public function __construct(
         DefaultShoppingListFactory $defaultShoppingListFactory,
@@ -34,7 +31,7 @@ class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterfac
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ChangeRelationshipContext $context */
 
@@ -50,7 +47,7 @@ class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterfac
             if (is_a($identifier->getEntityClass(), ShoppingList::class, true)
                 && 'default' === $identifier->getValue()
             ) {
-                $path = substr($path, strlen($requestDataPrefix));
+                $path = substr($path, \strlen($requestDataPrefix));
                 if (null === $this->requestDataAccessor->getValue($requestData, $path)) {
                     $notResolvedIdentifierPaths[] = $path;
                 }

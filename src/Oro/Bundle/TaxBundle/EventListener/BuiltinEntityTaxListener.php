@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
@@ -46,7 +46,7 @@ class BuiltinEntityTaxListener
          * Create new TaxValue entities with empty "entityId" property.
          * Fill this property in postPersist event
          */
-        if ($this->getIdentifier($entity, $event->getEntityManager())) {
+        if ($this->getIdentifier($entity, $event->getObjectManager())) {
             return;
         }
 
@@ -54,7 +54,7 @@ class BuiltinEntityTaxListener
             $taxValue = $provider->createTaxValue($entity);
 
             $this->taxValues[$this->getKey($entity)] = $taxValue;
-            $event->getEntityManager()->persist($taxValue);
+            $event->getObjectManager()->persist($taxValue);
         } catch (TaxationDisabledException $e) {
             // Taxation disabled, skip tax saving
         }
@@ -68,15 +68,15 @@ class BuiltinEntityTaxListener
     {
         $key = $this->getKey($entity);
         if (array_key_exists($key, $this->taxValues)) {
-            $id = $this->getIdentifier($entity, $event->getEntityManager());
+            $id = $this->getIdentifier($entity, $event->getObjectManager());
             $taxValue = $this->taxValues[$key];
             $taxValue->setEntityId($id);
 
-            $uow = $event->getEntityManager()->getUnitOfWork();
+            $uow = $event->getObjectManager()->getUnitOfWork();
             $uow->propertyChanged($taxValue, 'entityId', null, $id);
             $uow->scheduleExtraUpdate($taxValue, ['entityId' => [null, $id]]);
             $uow->recomputeSingleEntityChangeSet(
-                $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($taxValue)),
+                $event->getObjectManager()->getClassMetadata(ClassUtils::getClass($taxValue)),
                 $taxValue
             );
 

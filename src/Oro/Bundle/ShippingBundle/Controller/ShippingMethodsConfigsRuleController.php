@@ -9,11 +9,14 @@ use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\UIBundle\Route\Router;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -26,7 +29,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
 
     public function addUpdateFlagToAddMethodWidget(string $addMethodWidgetUpdateFlags): void
     {
-        if (false === \in_array($addMethodWidgetUpdateFlags, $this->addMethodWidgetUpdateFlags, true)) {
+        if (!\in_array($addMethodWidgetUpdateFlags, $this->addMethodWidgetUpdateFlags, true)) {
             $this->addMethodWidgetUpdateFlags[] = $addMethodWidgetUpdateFlags;
         }
     }
@@ -35,14 +38,10 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      * @Route("/", name="oro_shipping_methods_configs_rule_index")
      * @Template
      * @AclAncestor("oro_shipping_methods_configs_rule_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
-        return [
-            'entity_class' => ShippingMethodsConfigsRule::class
-        ];
+        return ['entity_class' => ShippingMethodsConfigsRule::class];
     }
 
     /**
@@ -54,34 +53,35 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      *     permission="CREATE",
      *     class="OroShippingBundle:ShippingMethodsConfigsRule"
      * )
-     *
-     * @param Request $request
-     * @return array
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): array|RedirectResponse
     {
         return $this->update(new ShippingMethodsConfigsRule(), $request);
     }
 
     /**
      * @Route("/view/{id}", name="oro_shipping_methods_configs_rule_view", requirements={"id"="\d+"})
-     * @Template
      * @Acl(
      *      id="oro_shipping_methods_configs_rule_view",
      *      type="entity",
      *      class="OroShippingBundle:ShippingMethodsConfigsRule",
      *      permission="VIEW"
      * )
-     *
-     * @param ShippingMethodsConfigsRule $shippingRule
-     *
-     * @return array
      */
-    public function viewAction(ShippingMethodsConfigsRule $shippingRule)
+    public function viewAction(ShippingMethodsConfigsRule $shippingRule): Response
     {
-        return [
-            'entity' => $shippingRule,
-        ];
+        $organizationProvider = $this->get(ShippingMethodOrganizationProvider::class);
+        $previousOrganization = $organizationProvider->getOrganization();
+
+        $organizationProvider->setOrganization($shippingRule->getOrganization());
+        try {
+            return $this->render(
+                '@OroShipping/ShippingMethodsConfigsRule/view.html.twig',
+                ['entity' => $shippingRule]
+            );
+        } finally {
+            $organizationProvider->setOrganization($previousOrganization);
+        }
     }
 
     /**
@@ -93,22 +93,13 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      *     permission="EDIT",
      *     class="OroShippingBundle:ShippingMethodsConfigsRule"
      * )
-     * @param Request $request
-     * @param ShippingMethodsConfigsRule $entity
-     *
-     * @return array
      */
-    public function updateAction(Request $request, ShippingMethodsConfigsRule $entity)
+    public function updateAction(Request $request, ShippingMethodsConfigsRule $entity): array|RedirectResponse
     {
         return $this->update($entity, $request);
     }
 
-    /**
-     * @param ShippingMethodsConfigsRule $entity
-     * @param Request $request
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    protected function update(ShippingMethodsConfigsRule $entity, Request $request)
+    protected function update(ShippingMethodsConfigsRule $entity, Request $request): array|RedirectResponse
     {
         $form = $this->createForm(ShippingMethodsConfigsRuleType::class);
         if ($this->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
@@ -143,14 +134,8 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      *     class="OroShippingBundle:ShippingMethodsConfigsRule"
      * )
      * @CsrfProtection()
-     *
-     * @param string $gridName
-     * @param string $actionName
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
-    public function markMassAction($gridName, $actionName, Request $request)
+    public function markMassAction(string $gridName, string $actionName, Request $request): JsonResponse
     {
         $massActionDispatcher = $this->get(MassActionDispatcher::class);
 
@@ -165,13 +150,14 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices()
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
+                ShippingMethodOrganizationProvider::class,
                 ShippingMethodsConfigsRuleHandler::class,
                 TranslatorInterface::class,
                 Router::class,

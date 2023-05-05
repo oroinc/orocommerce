@@ -41,6 +41,10 @@
         border-top: $product-view-content-border;
     }
 
+    &__variant-field {
+        margin-bottom: $product-view-variant-field-margin-bottom;
+    }
+
     &__specification {
         width: $product-view-specification-width;
         padding: $product-view-specification-inner-offset;
@@ -83,7 +87,6 @@
     .product-view__specification {
         &--colored {
             position: $product-view-specification-colored-position;
-            display: $product-view-specification-colored-display;
 
             width: $product-view-specification-colored-width;
             padding: $product-view-specification-colored-inner-offset;

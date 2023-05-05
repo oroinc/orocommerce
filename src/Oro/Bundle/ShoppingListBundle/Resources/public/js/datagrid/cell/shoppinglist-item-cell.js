@@ -19,7 +19,7 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
     },
 
     render() {
-        const templateKey = this.model.get('isMessage') ? 'message' : 'default';
+        const templateKey = this.model.get('_templateKey') || 'default';
         const template = this.getTemplateFunction(templateKey);
         const html = template(this.getTemplateData());
 

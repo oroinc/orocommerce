@@ -20,6 +20,11 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
 
+    oro_order.provider.payment_status_provider:
+        class: Oro\Bundle\OrderBundle\Provider\OrderPaymentStatusProvider
+        parent: oro_payment.provider.payment_status
+        decorates: oro_payment.provider.payment_status
+
     oro_order.provider.shipping_cost_subtotal:
         class: 'Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider'
         public: false
@@ -121,7 +126,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
         public: true
         arguments:
-            - "@doctrine"
+            - '@doctrine'
 
     oro_order.event_listener.form_view:
         class: 'Oro\Bundle\OrderBundle\EventListener\FormViewListener'
@@ -194,7 +199,7 @@ services:
         arguments:
             - '@oro_order.factory.shipping_context'
             - '@oro_order.converter.shipping_prices'
-            - '@?oro_shipping.shipping_price.provider'
+            - '@oro_shipping.shipping_price.provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onEvent }
 
@@ -228,6 +233,16 @@ services:
 #        tags:
 #            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
 
+    oro_order.event_listener.system_config.order_creation_new_order_owner:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\UserBundle\Entity\User'
+            - 'oro_order.order_creation_new_order_owner'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
     oro_order.twig.order:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
         public: false
@@ -240,7 +255,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
         public: false
         arguments:
-            - "@oro_platform.twig.service_locator"
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -252,7 +267,7 @@ services:
     oro_order.formatter.shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
         arguments:
-            - "@?oro_shipping.tracking_aware_shipping_methods_provider"
+            - '@oro_shipping.tracking_aware_shipping_methods_provider'
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
@@ -269,7 +284,7 @@ services:
         arguments:
             - '@oro_pricing.provider.matching_price'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
-            - '@logger'
+            - '@oro_pricing.product_price_criteria_factory'
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'
@@ -287,6 +302,31 @@ services:
             - '@oro_payment.provider.payment_status'
         tags:
             - { name: layout.data_provider, alias: oro_order_frontend_payment_status_provider }
+
+    oro_order.layout.provider.order_multi_shipping_layout:
+        class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderMultiShippingLayoutProvider'
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+        tags:
+            - { name: layout.data_provider, alias: oro_order_frontend_multi_shipping_provider }
+
+    oro_order.acl.voter.sub_order_view:
+        class: 'Oro\Bundle\OrderBundle\Acl\Voter\SubOrderViewVoter'
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@request_stack'
+        tags:
+            - { name: security.voter }
+
+    oro_order.datagrid.sub_orders_frontend_datagrid_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\SubOrdersFrontendDatagridListener'
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@doctrine'
+            - '@oro_order.provider.order_types'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-orders-grid, method: onBuildAfter }
 
     oro_order.event_listener.order_datagrid:
         class: 'Oro\Bundle\OrderBundle\EventListener\OrderDatagridListener'
@@ -309,27 +349,27 @@ services:
     oro_order.factory.shipping_context:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_order.shipping_line_item.converter_basic'
-            - '@?oro_shipping.context.builder_factory_basic'
+            - '@oro_shipping.context.builder_factory_basic'
 
     oro_order.factory.payment_context:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory'
         arguments:
             - '@oro_order.payment_line_item.converter_basic'
-            - '@?oro_payment.context.builder_factory_basic'
+            - '@oro_payment.context.builder_factory_basic'
 
     oro_order.shipping_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
         arguments:
-            - '@?oro_shipping.context.line_item_collection_factory.set_shipping_options_if_null'
-            - '@?oro_shipping.line_item.factory_basic'
+            - '@oro_shipping.context.line_item_collection_factory.set_shipping_options_if_null'
+            - '@oro_shipping.line_item.factory_basic'
 
     oro_order.payment_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderPaymentLineItemConverter'
         arguments:
-            - '@?oro_payment.context.doctrine_line_item_collection_factory'
-            - '@?oro_payment.line_item.builder_factory_basic'
+            - '@oro_payment.context.doctrine_line_item_collection_factory'
+            - '@oro_payment.line_item.builder_factory_basic'
 
     oro_order.provider.order_currency_checker:
         class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
@@ -348,6 +388,10 @@ services:
 
     Oro\Bundle\OrderBundle\Provider\TotalProvider:
         alias: 'oro_order.provider.total_processor'
+
+    oro_order.provider.order_types:
+        class: Oro\Bundle\OrderBundle\Provider\OrderTypeProvider
+        public: true
 
     oro_order.event_listener.unit_visibility.datagrid:
         parent: oro_product.event_listener.unit_visibility.datagrid_basic
@@ -411,6 +455,13 @@ services:
             - '@oro_config.manager'
             - '@oro_locale.settings'
             - '@oro_search.formatter.datetime_formatter'
+
+    oro_order.order.listener.orm.payment_status_listener:
+        class: Oro\Bundle\OrderBundle\EventListener\ORM\PaymentStatusListener
+        arguments:
+            - '@oro_payment.manager.payment_status'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PaymentBundle\Entity\PaymentStatus', event: preUpdate, method: preUpdate }
 
     oro_order.order.listener.orm.reindex_product_line_item_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener'
@@ -490,3 +541,98 @@ services:
             - '@oro_order.order.provider.order_address'
         tags:
             - { name: validator.constraint_validator, alias: oro_order_customer_or_user_address_granted }
+
+    oro_order.order_create_for_customer.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_button
+            - order_create_for_customer_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_order.order_create_for_customer_user.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - order_create_for_customer_user_button
+            - order_create_for_customer_user_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_order.form.type.order_internal_status:
+        class: Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType
+        arguments:
+            - '@oro_entity_extend.enum_value_provider'
+        tags:
+            - { name: form.type }
+
+    oro_order.widget_config_value.widget_order_internal_status.converter:
+        parent: oro_dashboard.widget_config_value.widget_enum_select.converter
+        arguments: ['order_internal_status']
+        tags:
+            - { name: oro_dashboard.value.converter, form_type: Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType }
+
+    oro_order.provider.dashboard.sales_orders_chart_scale_provider:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartScaleProvider
+        arguments:
+            - '@oro_dashboard.datetime.helper'
+
+    oro_order.provider.dashboard.sales_orders_chart_widget_provider.abstract:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartWidgetProvider
+        abstract: true
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_chart_scale_provider'
+            - '@oro_chart.factory.chart_view_builder_factory'
+            - '@oro_dashboard.widget_configs'
+
+    oro_order.provider.dashboard.sales_orders_chart_widget_provider.volume:
+        parent: oro_order.provider.dashboard.sales_orders_chart_widget_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_chart_data_provider.volume'
+            - 'sales_orders_volume_chart'
+            - 'sales_orders_volume'
+
+    oro_order.provider.dashboard.sales_orders_chart_widget_provider.number:
+        parent: oro_order.provider.dashboard.sales_orders_chart_widget_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_chart_data_provider.number'
+            - 'sales_orders_number_chart'
+            - 'sales_orders_number'
+
+    oro_order.provider.dashboard.sales_orders_chart_data_provider.abstract:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider
+        abstract: true
+        arguments:
+            - '@oro_locale.formatter.date_time'
+            - '@oro_dashboard.datetime.helper'
+
+    oro_order.provider.dashboard.sales_orders_chart_data_provider.volume:
+        parent: oro_order.provider.dashboard.sales_orders_chart_data_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_volume_data_provider'
+            - 'amount'
+
+    oro_order.provider.dashboard.sales_orders_chart_data_provider.number:
+        parent: oro_order.provider.dashboard.sales_orders_chart_data_provider.abstract
+        arguments:
+            - '@oro_order.provider.dashboard.sales_orders_number_data_provider'
+            - 'number'
+
+    oro_order.provider.dashboard.sales_orders_volume_data_provider:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersVolumeDataProvider
+        arguments:
+            - '@doctrine'
+
+    oro_order.provider.dashboard.sales_orders_number_data_provider:
+        class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersNumberDataProvider
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
+            - [setDateHelper, ['@oro_dashboard.datetime.helper']]
+        tags:
+            - { name: doctrine.repository_service }

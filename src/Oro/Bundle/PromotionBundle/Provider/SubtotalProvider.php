@@ -123,6 +123,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $subtotal->setCurrency($currency);
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
         $subtotal->setSortOrder($sortOrder);
+        $subtotal->setRemovable(false);
 
         return $subtotal;
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Inventory;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -58,16 +59,10 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
      */
     private function assertInventoryLevelsCreated()
     {
-        $product = $this->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityManagerForClass(Product::class)
-            ->getRepository(Product::class)
-            ->findOneBy(['sku' => ProductTestHelper::TEST_SKU]);
-        $inventoryLevels = $this->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityManagerForClass(InventoryLevel::class)
-            ->getRepository(InventoryLevel::class)
-            ->findBy(['product' => $product]);
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = self::getContainer()->get('doctrine');
+        $product = $doctrine->getRepository(Product::class)->findOneBy(['sku' => ProductTestHelper::TEST_SKU]);
+        $inventoryLevels = $doctrine->getRepository(InventoryLevel::class)->findBy(['product' => $product]);
         $this->assertCount($product->getUnitPrecisions()->count(), $inventoryLevels);
     }
 
@@ -76,10 +71,7 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
      */
     protected function getLocalization(): Localization
     {
-        $localization = $this->getContainer()->get('doctrine')
-            ->getRepository(Localization::class)
-            ->findOneBy([]);
-
+        $localization = self::getContainer()->get('doctrine')->getRepository(Localization::class)->findOneBy([]);
         if (!$localization) {
             throw new \LogicException('At least one localization must be defined');
         }

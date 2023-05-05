@@ -36,9 +36,7 @@
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set zoomOptions = {
-        viewport: {
-            minScreenType: 'desktop'
-        },
+        viewport: 'desktop',
         component: 'oroui/js/app/components/jquery-widget-component',
         widgetModule: 'oroproduct/js/widget/zoom-widget'
     } %}
@@ -51,7 +49,8 @@
         asNavFor: '.product-view-media-gallery__nav',
         lazyLoad: 'progressive',
         infinite: false,
-        relatedComponent: 'zoom'
+        relatedComponent: 'zoom',
+        draggable: true
     } %}
 
     {% set navListOptions = {
@@ -60,7 +59,8 @@
         asNavFor: '.product-view-media-gallery',
         focusOnSelect: true,
         infinite: false,
-        arrows: true
+        arrows: true,
+        draggable: true
     } %}
 
 

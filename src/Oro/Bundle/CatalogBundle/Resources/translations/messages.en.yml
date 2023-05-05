@@ -189,6 +189,14 @@ oro:
         product:
             section.catalog: 'Master Catalog'
             in_category.label: 'In category'
+            category_sort_order.label: 'Sort order'
+            grid:
+                action:
+                    sort_products:
+                        aria_label: 'Sort products in {{ category }} category'
+            sort_products:
+                dialog:
+                    title: 'Sort products in {{ category }} category'
 
         controller:
             category:
@@ -215,6 +223,9 @@ oro:
                 category_image_placeholder:
                     label: 'Category Image Placeholder'
                     tooltip: 'Select the image file to be used in various category widgets (e.g., Featured Categories) for the categories that have no associated images.'
+                search_autocomplete_max_categories:
+                    label: 'Number Of Categories In Search Autocomplete'
+                    tooltip: 'Set the maximum number of categories displayed in the storefront autocomplete dropdown.'
 
         featured_categories:
             label: 'Featured Categories'
@@ -248,3 +259,5 @@ oro:
     product:
         category:
             label: 'Category'
+        category_sort_order:
+            label: 'Category sort order'

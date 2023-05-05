@@ -2,20 +2,19 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendLineItemsGrid;
 
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * Adds action configuration for simple and grouped rows.
+ * Adds action configuration for simple and grouped rows and kits.
  */
 class LineItemsActionsOnResultAfterListener
 {
-    /** @var array */
-    private $cachedIsGranted = [];
+    private array $cachedIsGranted = [];
 
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
@@ -39,20 +38,13 @@ class LineItemsActionsOnResultAfterListener
 
         foreach ($records as $record) {
             if ($record->getValue('isConfigurable')) {
-                $actionsConfig = $defaultActionsConfig;
-                $actionsConfig['update_configurable'] = $isEditGranted && $record->getValue('isMatrixFormAvailable');
+                $actionsConfig = $this->getConfigurableActionsConfig($record, $isEditGranted, $defaultActionsConfig);
 
-                $subData = (array)$record->getValue('subData') ?: [];
-                foreach ($subData as &$lineItemData) {
-                    $subDataActionsConfig = $defaultActionsConfig;
-                    $subDataActionsConfig['add_notes'] = $isEditGranted
-                        && (string)($lineItemData['notes'] ?? '') === '';
+                $this->setVariantsActionsConfig($record, $isEditGranted, $defaultActionsConfig);
+            } elseif ($record->getValue('isKit')) {
+                $actionsConfig = $this->getKitActionsConfig($record, $isEditGranted, $defaultActionsConfig);
 
-                    $lineItemData['action_configuration'] = $subDataActionsConfig;
-                }
-                unset($lineItemData);
-
-                $record->setValue('subData', $subData);
+                $this->setKitItemLineItemsActionsConfig($record, $defaultActionsConfig);
             } else {
                 $actionsConfig = $defaultActionsConfig;
                 $actionsConfig['add_notes'] = $isEditGranted && (string)$record->getValue('notes') === '';
@@ -62,11 +54,64 @@ class LineItemsActionsOnResultAfterListener
         }
     }
 
+    private function getConfigurableActionsConfig(
+        ResultRecordInterface $record,
+        bool $isEditGranted,
+        array $defaultActionsConfig
+    ): array {
+        $actionsConfig = $defaultActionsConfig;
+        $actionsConfig['update_configurable'] = $isEditGranted && $record->getValue('isMatrixFormAvailable');
+
+        return $actionsConfig;
+    }
+
+    private function setVariantsActionsConfig(
+        ResultRecordInterface $record,
+        bool $isEditGranted,
+        array $defaultActionsConfig
+    ): void {
+        $subData = (array)$record->getValue('subData') ?: [];
+        foreach ($subData as &$lineItemData) {
+            $subDataActionsConfig = $defaultActionsConfig;
+            $subDataActionsConfig['add_notes'] = $isEditGranted && (string)($lineItemData['notes'] ?? '') === '';
+
+            $lineItemData['action_configuration'] = $subDataActionsConfig;
+        }
+        unset($lineItemData);
+
+        $record->setValue('subData', $subData);
+    }
+
+    private function getKitActionsConfig(
+        ResultRecordInterface $record,
+        bool $isEditGranted,
+        array $defaultActionsConfig
+    ): array {
+        $actionsConfig = $defaultActionsConfig;
+        $actionsConfig['add_notes'] = $isEditGranted && (string)$record->getValue('notes') === '';
+
+        return $actionsConfig;
+    }
+
+    private function setKitItemLineItemsActionsConfig(ResultRecordInterface $record, array $defaultActionsConfig): void
+    {
+        $subData = (array)$record->getValue('subData') ?: [];
+        foreach ($subData as &$kitItemLineItemData) {
+            $subDataActionsConfig = $defaultActionsConfig;
+            $subDataActionsConfig['delete'] = false;
+
+            $kitItemLineItemData['action_configuration'] = $subDataActionsConfig;
+        }
+        unset($kitItemLineItemData);
+
+        $record->setValue('subData', $subData);
+    }
+
     private function isEditGranted(OrmResultAfter $event): bool
     {
         $shoppingList = $this->getShoppingList($event);
 
-        return $shoppingList ? $this->isEditPermissionGrantedForShoppingList($shoppingList) : false;
+        return $shoppingList && $this->isEditPermissionGrantedForShoppingList($shoppingList);
     }
 
     private function getShoppingList(OrmResultAfter $event): ?ShoppingList

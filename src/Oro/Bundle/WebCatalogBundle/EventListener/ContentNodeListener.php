@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -38,16 +39,23 @@ class ContentNodeListener
      */
     protected $messageFactory;
 
+    /**
+     * @var CollectionSortOrderHandler
+     */
+    protected $collectionSortOrderHandler;
+
     public function __construct(
         ContentNodeMaterializedPathModifier $modifier,
         ExtraActionEntityStorageInterface $storage,
         MessageProducerInterface $messageProducer,
-        ResolveNodeSlugsMessageFactory $messageFactory
+        ResolveNodeSlugsMessageFactory $messageFactory,
+        CollectionSortOrderHandler $collectionSortOrderHandler
     ) {
         $this->modifier = $modifier;
         $this->storage = $storage;
         $this->messageProducer = $messageProducer;
         $this->messageFactory = $messageFactory;
+        $this->collectionSortOrderHandler = $collectionSortOrderHandler;
     }
 
     public function postPersist(ContentNode $contentNode)
@@ -74,7 +82,7 @@ class ContentNodeListener
     public function postRemove(ContentNode $contentNode, LifecycleEventArgs $args)
     {
         if ($contentNode->getParentNode() && $contentNode->getParentNode()->getId()) {
-            if (!$args->getEntityManager()->getUnitOfWork()->isScheduledForDelete($contentNode->getParentNode())) {
+            if (!$args->getObjectManager()->getUnitOfWork()->isScheduledForDelete($contentNode->getParentNode())) {
                 $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
             }
         } else {
@@ -85,12 +93,42 @@ class ContentNodeListener
     }
 
     /**
-     * Form after flush is used to catch all content node fields update, including collections of
-     * localized fallback values which are used for Titles and Slug Prototypes.
+     * Form after flush is used to catch all content node fields update, including
+     * - collections of localized fallback values which are used for Titles and Slug Prototypes.
+     * - new sort order values for Products in Segments for ProductCollection Variants.
      */
     public function onFormAfterFlush(AfterFormProcessEvent $event)
     {
+        $this->saveCollectionVariantsSortOrders($event);
+
         $this->scheduleContentNodeRecalculation($event->getData());
+    }
+
+    /**
+     * Depending on the form submitted, if there are ContentVariants that are of ProductCollection type
+     * we get all unsaved CollectionSortOrder values (happens when either the ContentVariant or the CollectionSortOrder
+     * is new) and save them through a specific handler
+     */
+    protected function saveCollectionVariantsSortOrders(AfterFormProcessEvent $event): void
+    {
+        $sortOrdersToUpdate = [];
+        foreach ($event->getForm()->get('contentVariants') as $contentVariantForm) {
+            if ($contentVariantForm->has('productCollectionSegment')) {
+                $productCollectionSegmentForm = $contentVariantForm->get('productCollectionSegment');
+                $segment = $contentVariantForm->get('productCollectionSegment')->getData();
+                $sortOrdersToUpdate[$segment->getId()]['segment'] = $segment;
+                if ($productCollectionSegmentForm->has('sortOrder')) {
+                    $collectionSortOrderForm = $productCollectionSegmentForm->get('sortOrder');
+                    if (!is_null($collectionSortOrderForm->getData())) {
+                        foreach ($collectionSortOrderForm->getData() as $collectionSortOrderToProcess) {
+                            $sortOrdersToUpdate[$segment->getId()]['sortOrders'][] =
+                                $collectionSortOrderToProcess['data'];
+                        }
+                    }
+                }
+            }
+        }
+        $this->collectionSortOrderHandler->updateCollections($sortOrdersToUpdate);
     }
 
     protected function scheduleContentNodeRecalculation(ContentNode $contentNode)

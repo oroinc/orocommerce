@@ -60,8 +60,8 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getOrder')
             ->willReturn($this->order);
 
-        $websiteProvider = $this->createMock(ReindexationWebsiteProviderInterface::class);
-        $websiteProvider->expects(self::any())
+        $reindexationWebsiteProvider = $this->createMock(ReindexationWebsiteProviderInterface::class);
+        $reindexationWebsiteProvider->expects(self::any())
             ->method('getReindexationWebsiteIds')
             ->willReturnCallback(function (Website $website) {
                 return [$website->getId(), $website->getId() + 1, self::ANOTHER_WEBSITE_ID];
@@ -70,7 +70,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new ReindexProductLineItemListener(
             $this->eventDispatcher,
             new PreviouslyPurchasedOrderStatusesProvider(),
-            $websiteProvider
+            $reindexationWebsiteProvider
         );
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('previously_purchased_products');

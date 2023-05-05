@@ -11,9 +11,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListRelationType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\CustomerTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,41 +20,31 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    public function testGetExtendedTypes()
-    {
-        $this->assertSame([CustomerType::class], CustomerFormFlatPricingExtension::getExtendedTypes());
-    }
-
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(true);
 
-        /** @var CustomerFlatPricingRelationFormListener|\PHPUnit\Framework\MockObject\MockObject $listener */
-        $listener = $this->createMock(CustomerFlatPricingRelationFormListener::class);
-
-        $formExtension = new CustomerFormFlatPricingExtension($listener);
+        $formExtension = new CustomerFormFlatPricingExtension(
+            $this->createMock(CustomerFlatPricingRelationFormListener::class)
+        );
         $formExtension->setFeatureChecker($featureChecker);
         $formExtension->addFeature('feature1');
 
-        $websiteScopedDataType = (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType();
         return [
             new PreloadedExtension(
                 [
-                    PriceListRelationType::class => new PriceListRelationType(),
-                    WebsiteScopedDataType::class => $websiteScopedDataType,
+                    new PriceListRelationType(),
+                    (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType(),
                     CustomerType::class => new CustomerTypeStub(),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    EntityType::class => new EntityTypeStub([])
+                    EntityType::class => new EntityTypeStub()
                 ],
                 [
                     CustomerTypeStub::class => [$formExtension]
@@ -65,20 +54,31 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
         ];
     }
 
+    private function getPriceList(int $id): PriceList
+    {
+        $priceList = new PriceList();
+        ReflectionUtil::setId($priceList, $id);
+
+        return $priceList;
+    }
+
+    public function testGetExtendedTypes()
+    {
+        $this->assertSame([CustomerType::class], CustomerFormFlatPricingExtension::getExtendedTypes());
+    }
+
     public function testBuildFormFeatureDisabled()
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(false);
 
-        /** @var CustomerFlatPricingRelationFormListener|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->createMock(CustomerFlatPricingRelationFormListener::class);
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->never())->method('add');
+        $builder->expects($this->never())
+            ->method('add');
 
         $formExtension = new CustomerFormFlatPricingExtension($listener);
         $formExtension->setFeatureChecker($featureChecker);
@@ -99,10 +99,7 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [
@@ -113,7 +110,7 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
                 ],
                 'expected' => [
                     1 => [
-                        'priceList' => $this->getEntity(PriceList::class, ['id' => 1])
+                        'priceList' => $this->getPriceList(1)
                     ],
                 ]
             ]

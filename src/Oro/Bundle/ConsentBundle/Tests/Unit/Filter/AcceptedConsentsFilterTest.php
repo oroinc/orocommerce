@@ -38,12 +38,12 @@ class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
     public function testGetMetadataConsents()
     {
         $formView = new FormView();
-        $formMock = $this->createMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->willReturn($formMock);
+            ->willReturn($form);
 
-        $formMock->expects($this->once())
+        $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
 
@@ -52,9 +52,7 @@ class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
         $typeView->vars['choices'] = ['some_choices'];
         $this->filter->init('FooName', ['params']);
 
-        $repository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(EntityRepository::class);
 
         $this->doctrine->expects($this->once())
             ->method('getRepository')

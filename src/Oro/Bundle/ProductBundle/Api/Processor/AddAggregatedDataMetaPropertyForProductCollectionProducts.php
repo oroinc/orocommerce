@@ -14,13 +14,13 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class AddAggregatedDataMetaPropertyForProductCollectionProducts implements ProcessorInterface
 {
-    private const PRODUCTS_ASSOCIATION     = 'products';
+    private const PRODUCTS_ASSOCIATION = 'products';
     private const AGGREGATED_DATA_PROPERTY = 'aggregatedData';
 
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var Context $context */
 

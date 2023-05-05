@@ -13,6 +13,7 @@ services:
             - "@oro_currency.config.currency"
             - "@oro_entity.doctrine_helper"
             - '@oro_security.acl_helper'
+            - '@oro_pricing.product_price_criteria_factory'
 
     oro_sale.validator.quote_product:
         class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'
@@ -309,3 +310,19 @@ services:
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
         public: false
+
+    oro_order.quote_create_for_customer.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - quote_create_for_customer_button
+            - quote_create_for_customer_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_order.quote_create_for_customer_user.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - quote_create_for_customer_user_button
+            - quote_create_for_customer_user_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity }

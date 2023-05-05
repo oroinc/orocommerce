@@ -8,6 +8,7 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
     - Oro\Bundle\CatalogBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCategoryVisibilityScopes
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
 
 Oro\Bundle\OrganizationBundle\Entity\Organization:
     another_organization:
@@ -205,6 +206,18 @@ Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
         scalar_value: 1
     product1_low_inventory_threshold:
         scalar_value: 100
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    default_combined_price_list:
+        name: 'combined_price_list'
+        enabled: true
+        __calls:
+            -   setCurrencies: [ ['USD'] ]
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    first_combined_price:
+        priceList: '@default_combined_price_list'
+        website: '@website'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:

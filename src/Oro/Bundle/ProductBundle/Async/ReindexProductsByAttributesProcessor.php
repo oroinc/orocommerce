@@ -54,9 +54,8 @@ class ReindexProductsByAttributesProcessor implements
 
             $attributeIds = $body['attributeIds'];
 
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                ReindexProductsByAttributesTopic::getName(),
+            $result = $this->jobRunner->runUniqueByMessage(
+                $message,
                 function () use ($attributeIds) {
                     return $this->triggerReindex($attributeIds);
                 }

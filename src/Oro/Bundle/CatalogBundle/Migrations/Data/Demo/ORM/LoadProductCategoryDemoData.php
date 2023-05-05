@@ -4,70 +4,40 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loads product categories demo data
+ * Loads product categories demo data.
  */
 class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $products = [];
-
-    /**
-     * @var array
-     */
-    protected $categories = [];
-
-    /**
-     * @var EntityRepository
-     */
-    protected $productRepository;
-
-    /**
-     * @var CategoryRepository
-     */
-    protected $categoryRepository;
+    private array $categories = [];
 
     /**
      * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
+            LoadCategoryDemoData::class,
+            LoadProductDemoData::class,
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
@@ -85,6 +55,9 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
             $row = array_combine($headers, array_values($data));
 
             $product = $this->getProductBySku($manager, $row['sku']);
+            if (!empty($row['category_sort_order'])) {
+                $product->setCategorySortOrder($row['category_sort_order']);
+            }
             $category = $this->getCategoryByDefaultTitle($manager, $row['category'], $defaultOrganization);
             if ($category) {
                 $category->addProduct($product);
@@ -95,28 +68,20 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         fclose($handler);
 
         $manager->flush();
+
+        $this->categories = [];
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string        $sku
-     *
-     * @return Product|null
-     */
-    protected function getProductBySku(EntityManager $manager, $sku)
+    private function getProductBySku(EntityManagerInterface $manager, string $sku): ?Product
     {
-        return $this->getProductRepository($manager)->findOneBy(['sku' => $sku]);
+        return $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $title
-     * @param Organization $organization
-     *
-     * @return Category|null
-     */
-    protected function getCategoryByDefaultTitle(EntityManager $manager, string $title, Organization $organization)
-    {
+    private function getCategoryByDefaultTitle(
+        EntityManagerInterface $manager,
+        string $title,
+        Organization $organization
+    ): ?Category {
         if (!array_key_exists($title, $this->categories)) {
             $this->categories[$title] = $this->getCategory($manager, $organization, $title);
         }
@@ -124,37 +89,9 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         return $this->categories[$title];
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return EntityRepository
-     */
-    protected function getProductRepository(ObjectManager $manager)
-    {
-        if (!$this->productRepository) {
-            $this->productRepository = $manager->getRepository('OroProductBundle:Product');
-        }
-
-        return $this->productRepository;
-    }
-
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return CategoryRepository
-     */
-    protected function getCategoryRepository(ObjectManager $manager)
-    {
-        if (!$this->categoryRepository) {
-            $this->categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
-        }
-
-        return $this->categoryRepository;
-    }
-
     private function getCategory(ObjectManager $manager, OrganizationInterface $organization, string $title): ?Category
     {
-        $queryBuilder = $this->getCategoryRepository($manager)->findOneByDefaultTitleQueryBuilder($title);
+        $queryBuilder = $manager->getRepository(Category::class)->findOneByDefaultTitleQueryBuilder($title);
         $queryBuilder
             ->andWhere('category.organization = :organization')
             ->setParameter('organization', $organization);

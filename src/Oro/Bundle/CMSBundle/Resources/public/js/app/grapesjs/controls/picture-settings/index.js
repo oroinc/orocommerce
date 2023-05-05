@@ -80,7 +80,7 @@ const PictureTypeSettingsView = BaseView.extend({
         return this.subview('sourceCollection').toHTML();
     },
 
-    dispose: function() {
+    dispose() {
         if (this.disposed) {
             return;
         }

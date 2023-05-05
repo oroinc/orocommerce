@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\EntityExtendBundle\EntityExtend\PropertyAccessorWithDotArraySyntax;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -10,7 +11,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionCommonProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class SchemaOrgProductDescriptionCommonProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,7 +23,7 @@ class SchemaOrgProductDescriptionCommonProviderTest extends \PHPUnit\Framework\T
     protected function setUp(): void
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
-        $propertyAccessor = $this->createMock(PropertyAccessor::class);
+        $propertyAccessor = $this->createMock(PropertyAccessorWithDotArraySyntax::class);
         $localizationHelper = $this->createMock(LocalizationHelper::class);
 
         $propertyAccessor

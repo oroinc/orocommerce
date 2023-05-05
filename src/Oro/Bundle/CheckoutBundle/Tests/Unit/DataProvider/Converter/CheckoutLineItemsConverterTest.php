@@ -11,25 +11,12 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class CheckoutLineItemsConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CheckoutLineItemsConverter
-     */
-    protected $checkoutLineItemsConverter;
+    /** @var CheckoutLineItemsConverter */
+    private $checkoutLineItemsConverter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->checkoutLineItemsConverter = new CheckoutLineItemsConverter();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->checkoutLineItemsConverter);
     }
 
     /**
@@ -42,10 +29,7 @@ class CheckoutLineItemsConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function convertDataProvider()
+    public function convertDataProvider(): array
     {
         $product1 = (new Product())->setSku('product1');
         $product2 = (new Product())->setSku('product2');

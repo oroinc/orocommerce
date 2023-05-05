@@ -3,12 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\LayoutBundle\Layout\LayoutContextHolder;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings as BaseLocaleSettings;
 use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\LocaleSettings;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
+use Oro\Component\Layout\LayoutContextStack;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -18,13 +18,7 @@ class LocaleSettingsTest extends TestCase
 
     private FrontendHelper|MockObject $frontendHelper;
 
-    private LocalizationProviderInterface|MockObject $localizationProvider;
-
     private UserCurrencyManager|MockObject $currencyManager;
-
-    private LayoutContextHolder|MockObject $layoutContextHolder;
-
-    private ThemeManager|MockObject $themeManager;
 
     protected LocaleSettings $localeSettings;
 
@@ -32,73 +26,73 @@ class LocaleSettingsTest extends TestCase
     {
         $this->inner = $this->createMock(BaseLocaleSettings::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
-        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
-        $this->layoutContextHolder = $this->createMock(LayoutContextHolder::class);
-        $this->themeManager = $this->createMock(ThemeManager::class);
+        $layoutContextStack = $this->createMock(LayoutContextStack::class);
+        $themeManager = $this->createMock(ThemeManager::class);
 
         $this->localeSettings = new LocaleSettings(
             $this->inner,
             $this->frontendHelper,
-            $this->localizationProvider,
+            $localizationProvider,
             $this->currencyManager,
-            $this->layoutContextHolder,
-            $this->themeManager
+            $layoutContextStack,
+            $themeManager
         );
     }
 
-    public function testGetCurrency()
+    public function testGetCurrency(): void
     {
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects(self::once())
             ->method('isFrontendRequest')
             ->willReturn(false);
 
-        $this->inner->expects($this->once())
+        $this->inner->expects(self::once())
             ->method('getCurrency')
             ->willReturn('USD');
 
-        $this->assertEquals('USD', $this->localeSettings->getCurrency());
+        self::assertEquals('USD', $this->localeSettings->getCurrency());
 
         // Checks local cache.
-        $this->assertEquals('USD', $this->localeSettings->getCurrency());
+        self::assertEquals('USD', $this->localeSettings->getCurrency());
     }
 
-    public function testGetCurrencyWithManager()
+    public function testGetCurrencyWithManager(): void
     {
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects(self::once())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
-        $this->inner->expects($this->never())
+        $this->inner->expects(self::never())
             ->method('getCurrency');
 
-        $this->currencyManager->expects($this->once())
+        $this->currencyManager->expects(self::once())
             ->method('getUserCurrency')
             ->willReturn('EUR');
 
-        $this->assertEquals('EUR', $this->localeSettings->getCurrency());
+        self::assertEquals('EUR', $this->localeSettings->getCurrency());
 
         // Checks local cache.
-        $this->assertEquals('EUR', $this->localeSettings->getCurrency());
+        self::assertEquals('EUR', $this->localeSettings->getCurrency());
     }
 
-    public function testGetCurrencyWithoutManager()
+    public function testGetCurrencyWithoutManager(): void
     {
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects(self::once())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
-        $this->inner->expects($this->once())
+        $this->inner->expects(self::once())
             ->method('getCurrency')
             ->willReturn('PLN');
 
-        $this->currencyManager->expects($this->once())
+        $this->currencyManager->expects(self::once())
             ->method('getUserCurrency')
             ->willReturn(null);
 
-        $this->assertEquals('PLN', $this->localeSettings->getCurrency());
+        self::assertEquals('PLN', $this->localeSettings->getCurrency());
 
         // Checks local cache.
-        $this->assertEquals('PLN', $this->localeSettings->getCurrency());
+        self::assertEquals('PLN', $this->localeSettings->getCurrency());
     }
 }

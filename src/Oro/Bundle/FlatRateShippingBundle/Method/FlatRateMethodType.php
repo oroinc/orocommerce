@@ -9,40 +9,36 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 /**
- * Flat rate shipping method type implementation.
+ * Represents Flat Rate shipping method type.
  */
 class FlatRateMethodType implements ShippingMethodTypeInterface
 {
-    const IDENTIFIER = 'primary';
+    public const IDENTIFIER = 'primary';
 
-    const PRICE_OPTION = 'price';
-    const TYPE_OPTION = 'type';
-    const HANDLING_FEE_OPTION = 'handling_fee';
+    public const PRICE_OPTION = 'price';
+    public const TYPE_OPTION = 'type';
+    public const HANDLING_FEE_OPTION = 'handling_fee';
 
-    const PER_ORDER_TYPE = 'per_order';
-    const PER_ITEM_TYPE = 'per_item';
+    public const PER_ORDER_TYPE = 'per_order';
+    public const PER_ITEM_TYPE = 'per_item';
 
-    /** @var string */
-    protected string $label;
+    private string $label;
 
-    /**
-     * @param string $label
-     */
-    public function __construct($label)
+    public function __construct(string  $label)
     {
-        $this->label = (string) $label;
+        $this->label = $label;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
-        return static::IDENTIFIER;
+        return self::IDENTIFIER;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel(): string
     {
@@ -50,39 +46,34 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getSortOrder()
+    public function getSortOrder(): int
     {
         return 0;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType()
+    public function getOptionsConfigurationFormType(): ?string
     {
         return FlatRateOptionsType::class;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOptions()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
-    {
-        $price = $typeOptions[static::PRICE_OPTION];
-        switch ($typeOptions[static::TYPE_OPTION]) {
-            case static::PER_ORDER_TYPE:
+    public function calculatePrice(
+        ShippingContextInterface $context,
+        array $methodOptions,
+        array $typeOptions
+    ): ?Price {
+        $price = $typeOptions[self::PRICE_OPTION];
+        switch ($typeOptions[self::TYPE_OPTION]) {
+            case self::PER_ORDER_TYPE:
                 break;
-            case static::PER_ITEM_TYPE:
+            case self::PER_ITEM_TYPE:
                 $countItems = array_sum(array_map(function (ShippingLineItemInterface $item) {
                     return $item->getQuantity();
                 }, $context->getLineItems()->toArray()));
@@ -93,10 +84,10 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
         }
 
         $handlingFee = 0;
-        if (array_key_exists(static::HANDLING_FEE_OPTION, $typeOptions)
-            && $typeOptions[static::HANDLING_FEE_OPTION]
+        if (\array_key_exists(self::HANDLING_FEE_OPTION, $typeOptions)
+            && $typeOptions[self::HANDLING_FEE_OPTION]
         ) {
-            $handlingFee = $typeOptions[static::HANDLING_FEE_OPTION];
+            $handlingFee = $typeOptions[self::HANDLING_FEE_OPTION];
         }
 
         return Price::create((float)$price + (float)$handlingFee, $context->getCurrency());

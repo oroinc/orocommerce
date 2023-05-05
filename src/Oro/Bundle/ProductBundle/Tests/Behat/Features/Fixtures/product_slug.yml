@@ -1,98 +1,89 @@
 include:
-    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserFixture.yml'
+    - '@OroCustomerBundle:CustomerUserFixture.yml'
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
+    - '@OroOrganizationBundle:BusinessUnit.yml'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-  precision1:
-    unit: '@each'
-    precision: '1'
-
-Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
-  businessUnit:
-    name: Common Business Unit
-    organization: '@organization'
+    precision:
+        unit: '@each'
+        precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
-  locvalue:
-    string: 'Product1'
-
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-  attribute_family_label:
-    string: 'Attribute Family'
-  localValueProductSlug:
-    string: 'acme'
-  localValueDefaultWebCatalog:
-    string: 'Default Web Catalog'
-  localValueNewCategorySlug:
-    string: 'new-category'
+    productName:
+        string: 'Product1'
 
 Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
-  localNewCategory:
-    string: 'NewCategory'
-  localValueNewCategory:
-    string: 'MyCategory'
+    categoryTitle:
+        string: 'Category'
 
-Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
-  attribute_family:
-    entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-    code: 'family'
-    __calls:
-      - addLabel: ['@attribute_family_label']
-    owner: '@organization'
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    productSlug:
+        string: 'product-1'
+    rootNodeTitle:
+        string: 'NewCategory'
+    subNodeTitle:
+        string: 'MyCategory'
+    subNodeSlug:
+        string: 'new-category'
 
+# Do not change or add other fields as this will break the test.
 Oro\Bundle\ProductBundle\Entity\Product:
-  product1:
-    sku: 'SKU1'
-    type: 'simple'
-    organization: '@organization'
-    owner: '@businessUnit'
-    unitPrecisions: []
-    attributeFamily: '@defaultProductFamily'
-    __calls:
-        - addName: ['@locvalue']
-        - addSlugPrototype: ['@localValueProductSlug']
-        - addUnitPrecision: ['@precision1']
-        - setPrimaryUnitPrecision: ['@precision1']
-    inventoryStatus: '@enumInventoryStatuses'
-    status: 'enabled'
+    product:
+        sku: 'SKU1'
+        type: 'simple'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        owner: '@business_unit'
+        __calls:
+            - addName: ['@productName']
+            - addSlugPrototype: ['@productSlug']
+            - addUnitPrecision: ['@precision']
+            - setPrimaryUnitPrecision: ['@precision']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
 
 Doctrine\Common\Collections\ArrayCollection:
-  products:
-    __construct: [['@product1']]
+    products:
+        __construct: [['@product']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
-  categoryLightingProducts:
-    organization: '@organization'
-    __calls:
-        - addTitle: ['@localNewCategory']
-        - setParentCategory: ['@root_category']
-        - setProducts: ['@products']
+    category:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@categoryTitle']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products']
 
 Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
-  webCatalog:
-    name: 'Default Web Catalog'
-    organization: '@organization'
-    owner: '@business_unit'
+    webCatalog:
+        name: 'Default Web Catalog'
+        organization: '@organization'
+        owner: '@business_unit'
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
-  systemPageVariant:
-    type: 'system_page'
-    systemPageRoute: 'oro_customer_frontend_customer_user_index'
-  categoryPageVariant:
-    type: 'category_page'
-    node: '@nodeNewCategory'
-    categoryPageCategory: '@categoryLightingProducts'
+    systemPageVariant:
+        scopes: ['@default_scope']
+        type: 'system_page'
+        systemPageRoute: 'oro_customer_frontend_customer_user_index'
+    categoryPageVariant:
+        scopes: ['@default_scope']
+        type: 'category_page'
+        node: '@subNode'
+        categoryPageCategory: '@category'
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
-  nodeDefaultWebCatalog:
-    __calls:
-        - addTitle: ['@localValueDefaultWebCatalog']
-        - addContentVariant: ['@systemPageVariant']
-    webCatalog: '@webCatalog'
+    rootNode:
+        __calls:
+            - addTitle: ['@rootNodeTitle']
+            - addContentVariant: ['@systemPageVariant']
+            - addScope: ['@default_scope']
+        webCatalog: '@webCatalog'
 
-  nodeNewCategory:
-    __calls:
-        - addTitle: ['@localValueNewCategory']
-        - addSlugPrototype: ['@localValueNewCategorySlug']
-        - addContentVariant: ['@categoryPageVariant']
-    parentNode: '@nodeDefaultWebCatalog'
-    webCatalog: '@webCatalog'
+    subNode:
+        __calls:
+            - addTitle: ['@subNodeTitle']
+            - addSlugPrototype: ['@subNodeSlug']
+            - addContentVariant: ['@categoryPageVariant']
+            - addScope: ['@default_scope']
+        parentNode: '@rootNode'
+        webCatalog: '@webCatalog'

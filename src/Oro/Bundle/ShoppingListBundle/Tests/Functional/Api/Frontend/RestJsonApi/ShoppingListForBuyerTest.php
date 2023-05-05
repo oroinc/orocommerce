@@ -464,7 +464,8 @@ class ShoppingListForBuyerTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
-                    ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>']
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>'],
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>'],
                 ]
             ],
             $response

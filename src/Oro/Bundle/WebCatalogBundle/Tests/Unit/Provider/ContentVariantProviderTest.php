@@ -53,10 +53,7 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
     {
         $entities = [new \stdClass()];
         $entityClass = \stdClass::class;
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
 
         $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
@@ -81,7 +78,6 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetValues()
     {
-        /** @var ContentNodeInterface $node */
         $node = $this->createMock(ContentNodeInterface::class);
 
         $provider1 = $this->createMock(ContentVariantProviderInterface::class);
@@ -105,7 +101,6 @@ class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLocalizedValues()
     {
-        /** @var ContentNodeInterface $node */
         $node = $this->createMock(ContentNodeInterface::class);
 
         $provider1 = $this->createMock(ContentVariantProviderInterface::class);

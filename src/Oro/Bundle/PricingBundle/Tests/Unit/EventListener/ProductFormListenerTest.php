@@ -14,31 +14,21 @@ class ProductFormListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceManager|\PHPUnit\Framework\MockObject\MockObject */
     private $priceManager;
 
-    /**
-     * @var ProductFormListener
-     */
-    private $listener;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $featureChecker;
+    /** @var ProductFormListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->priceManager = $this->createMock(PriceManager::class);
-        $this->listener = new ProductFormListener($this->priceManager);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-    }
 
-    protected function tearDown(): void
-    {
-        unset($this->priceManager, $this->listener, $this->featureChecker);
+        $this->listener = new ProductFormListener($this->priceManager);
     }
 
     public function testOnBeforeFlushFeatureDisabled()
@@ -52,20 +42,17 @@ class ProductFormListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->addFeature('feature1');
 
         $event = $this->createMock(AfterFormProcessEvent::class);
-        $event->expects($this->never())->method('getData');
+        $event->expects($this->never())
+            ->method('getData');
 
         $this->listener->onBeforeFlush($event);
     }
 
     public function testOnBeforeFlushWithNewProduct()
     {
-        /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
-        $event = new AfterFormProcessEvent($form, new Product());
 
-        $this->priceManager
-            ->expects($this->never())
+        $this->priceManager->expects($this->never())
             ->method('flush');
 
         $this->featureChecker->expects($this->once())
@@ -75,23 +62,17 @@ class ProductFormListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
-        $this->listener->onBeforeFlush($event);
+        $this->listener->onBeforeFlush(new AfterFormProcessEvent($form, new Product()));
     }
 
     public function testOnBeforeFlushWithSavedProduct()
     {
-        /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
-
         $product = $this->getEntity(Product::class, ['id' => 5]);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
-        $event = new AfterFormProcessEvent($form, $product);
-
-        $this->priceManager
-            ->expects($this->once())
+        $this->priceManager->expects($this->once())
             ->method('flush');
 
-        $this->listener->onBeforeFlush($event);
+        $this->listener->onBeforeFlush(new AfterFormProcessEvent($form, $product));
     }
 }

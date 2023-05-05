@@ -9,33 +9,24 @@ use Oro\Bundle\ShippingBundle\Extension\FreightClassesExtension;
 class FreightClassesExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var FreightClassesExtension */
-    protected $extension;
+    private $extension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->extension = new FreightClassesExtension();
     }
 
     /**
-     * @param FreightClass $inputData
-     * @param bool $expectedData
-     *
      * @dataProvider isApplicableProvider
      */
-    public function testIsApplicable(FreightClass $inputData, $expectedData)
+    public function testIsApplicable(FreightClass $inputData, bool $expectedData)
     {
         $options = $this->createMock(ProductShippingOptionsInterface::class);
 
         $this->assertEquals($expectedData, $this->extension->isApplicable($inputData, $options));
     }
 
-    /**
-     * @return array
-     */
-    public function isApplicableProvider()
+    public function isApplicableProvider(): array
     {
         return [
             'not applicable' => [

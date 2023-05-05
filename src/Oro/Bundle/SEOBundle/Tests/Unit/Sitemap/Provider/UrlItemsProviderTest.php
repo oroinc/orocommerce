@@ -11,7 +11,7 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider;
-use Oro\Component\TestUtils\ORM\OrmTestCase;
+use Oro\Component\Testing\Unit\ORM\OrmTestCase;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -35,16 +35,14 @@ class UrlItemsProviderTest extends OrmTestCase
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $entityManager = $this->getTestEntityManager();
-        $entityManager->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
-            'Oro\Bundle\BatchBundle\Tests\Unit\ORM\Query\Stub'
-        ));
+        $em = $this->getTestEntityManager();
+        $em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
+
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(Product::class)
-            ->willReturn($entityManager);
+            ->willReturn($em);
 
         $this->urlItemsProvider = new UrlItemsProvider(
             $this->canonicalUrlGenerator,

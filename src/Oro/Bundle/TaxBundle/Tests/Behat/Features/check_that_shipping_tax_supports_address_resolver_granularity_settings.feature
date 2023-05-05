@@ -51,7 +51,7 @@ Feature: Check that shipping tax supports address resolver granularity settings
     Given I proceed as the Admin
     And go to Taxes/ Tax Jurisdictions
     And click edit "TaxJurisdiction" in grid
-    When I fill "Tax Jurisdiction Form" with:
+    When I fill form with:
       | State | Florida |
     And save and close form
     Then I should see "Tax Jurisdiction has been saved" flash message

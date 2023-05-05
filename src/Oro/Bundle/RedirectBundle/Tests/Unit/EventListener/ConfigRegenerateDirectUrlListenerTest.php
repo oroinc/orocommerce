@@ -15,17 +15,23 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageProducer;
 
-    private RedirectStorage|\PHPUnit\Framework\MockObject\MockObject $redirectStorage;
+    /** @var RedirectStorage|\PHPUnit\Framework\MockObject\MockObject */
+    private $redirectStorage;
 
-    private MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
+    /** @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageFactory;
 
-    private string $configParameter;
+    /** @var string */
+    private $configParameter;
 
-    private ConfigRegenerateDirectUrlListener $listener;
+    /** @var ConfigRegenerateDirectUrlListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -34,7 +40,6 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
         $this->redirectStorage = $this->createMock(RedirectStorage::class);
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
         $this->configParameter = 'some_parameter';
-        $entityClass = \stdClass::class;
 
         $this->listener = new ConfigRegenerateDirectUrlListener(
             $this->configManager,
@@ -42,16 +47,13 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
             $this->redirectStorage,
             $this->messageFactory,
             $this->configParameter,
-            $entityClass
+            \stdClass::class
         );
     }
 
     public function testOnUpdateNotChanged(): void
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
         $event->expects(self::once())
             ->method('isChanged')
             ->with($this->configParameter)
@@ -68,10 +70,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdatePrefixChange(): void
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
         $event->expects(self::once())
             ->method('isChanged')
             ->with($this->configParameter)
@@ -111,16 +110,10 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider onUpdateUseDefaultDataProvider
-     *
-     * @param string $strategy
-     * @param bool $createRedirect
      */
-    public function testOnUpdateUseDefault($strategy, $createRedirect): void
+    public function testOnUpdateUseDefault(string $strategy, bool $createRedirect): void
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
         $event->expects(self::once())
             ->method('isChanged')
             ->with($this->configParameter)
@@ -159,9 +152,6 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onUpdateAfter($event);
     }
 
-    /**
-     * @return array
-     */
     public function onUpdateUseDefaultDataProvider(): array
     {
         return [

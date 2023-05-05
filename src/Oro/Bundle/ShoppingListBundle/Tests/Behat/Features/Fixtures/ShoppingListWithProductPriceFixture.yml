@@ -14,10 +14,10 @@ Oro\Bundle\CurrencyBundle\Entity\Price:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist:
         name: 'pricelist'
-        default: true
         __calls:
             - setCurrencies: [['USD']]
         active: true
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceListToProduct:

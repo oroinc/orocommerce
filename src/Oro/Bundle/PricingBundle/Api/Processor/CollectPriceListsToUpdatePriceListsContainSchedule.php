@@ -15,7 +15,7 @@ class CollectPriceListsToUpdatePriceListsContainSchedule implements ProcessorInt
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ChangeContextInterface $context */
 

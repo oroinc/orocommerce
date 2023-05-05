@@ -22,14 +22,6 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     productSlugPrototype:
         string: 'product'
 
-Oro\Bundle\RedirectBundle\Entity\Slug:
-    productSlug:
-        url: '/product'
-        slugPrototype: 'product'
-        routeName: 'oro_product_frontend_product_view'
-        routeParameters: []
-        organization: '@organization'
-
 Oro\Bundle\ProductBundle\Entity\Brand:
     brand:
         owner: '@business_unit'
@@ -69,7 +61,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addAdditionalUnitPrecision: ['@additionalPrecision']
             - addDescription: ['@description']
             - addShortDescription: ['@shortDescription']
-        slugs: ['@productSlug']
         slugPrototypes: ['@productSlugPrototype']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
@@ -89,10 +80,10 @@ Oro\Bundle\CatalogBundle\Entity\Category:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist:
         name: 'Price List'
-        default: true
         __calls:
             - setCurrencies: [['USD']]
         active: true
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceListToProduct:

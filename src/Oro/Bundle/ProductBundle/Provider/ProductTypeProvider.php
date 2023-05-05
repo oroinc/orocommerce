@@ -2,18 +2,25 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
-
+/**
+ * Provides a list of available product types.
+ */
 class ProductTypeProvider
 {
-    /**
-     * @return array
-     */
-    public function getAvailableProductTypes()
+    private array $availableProductTypes;
+
+    public function __construct(array $availableProductTypes)
     {
-        return [
-            'oro.product.type.simple' => Product::TYPE_SIMPLE,
-            'oro.product.type.configurable' => Product::TYPE_CONFIGURABLE,
-        ];
+        $this->availableProductTypes = $availableProductTypes;
+    }
+
+    public function getAvailableProductTypes(): array
+    {
+        $availableProductTypesChoices = [];
+        foreach ($this->availableProductTypes as $availableProductType) {
+            $availableProductTypesChoices['oro.product.type.' . $availableProductType] = $availableProductType;
+        }
+
+        return $availableProductTypesChoices;
     }
 }

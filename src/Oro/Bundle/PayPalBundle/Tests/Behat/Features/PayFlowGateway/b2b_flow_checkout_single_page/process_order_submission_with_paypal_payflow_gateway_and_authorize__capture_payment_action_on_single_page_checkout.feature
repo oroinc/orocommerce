@@ -6,7 +6,7 @@
 @ticket-BB-11433
 @ticket-BB-14390
 @ticket-BB-13932
-
+@behat-test-env
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action on Single Page Checkout
   In order to purchase goods using PayPal PayFlow Gateway payment system
   As a Buyer

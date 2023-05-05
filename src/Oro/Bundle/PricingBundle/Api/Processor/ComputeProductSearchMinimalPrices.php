@@ -16,11 +16,8 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
 {
     public const MINIMAL_PRICES_FIELD = 'minimalPrices';
 
-    /** @var ValueTransformer */
-    private $valueTransformer;
-
-    /** @var UserCurrencyManager */
-    private $currencyManager;
+    private ValueTransformer $valueTransformer;
+    private UserCurrencyManager $currencyManager;
 
     public function __construct(ValueTransformer $valueTransformer, UserCurrencyManager $currencyManager)
     {
@@ -31,7 +28,7 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

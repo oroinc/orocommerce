@@ -10,42 +10,35 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @return WebsiteScopedDataType
-     */
-    public function getWebsiteScopedDataType()
+    public function getWebsiteScopedDataType(): WebsiteScopedDataType
     {
-        $websites = [1 => $this->getEntity(Website::class, ['id' => 1])];
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->any())
             ->method('getReference')
             ->with(Website::class, 1)
-            ->willReturn($this->getEntity(Website::class, ['id' => 1]));
+            ->willReturn($this->getWebsite(1));
 
         $websiteQuery = $this->createMock(AbstractQuery::class);
-        $websiteQB = $this->createMock(QueryBuilder::class);
         $websiteQuery->expects($this->any())
             ->method('getResult')
-            ->willReturn($websites);
+            ->willReturn([1 => $this->getWebsite(1)]);
 
         $websiteRepository = $this->createMock(WebsiteRepository::class);
         $websiteRepository->expects($this->any())
             ->method('createQueryBuilder')
             ->with('website')
-            ->willReturn($websiteQB);
+            ->willReturn($this->createMock(QueryBuilder::class));
 
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getRepository')
             ->with(Website::class)
             ->willReturn($websiteRepository);
-        $registry->expects($this->any())
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(Website::class)
             ->willReturn($em);
@@ -55,6 +48,14 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
             ->method('apply')
             ->willReturn($websiteQuery);
 
-        return new WebsiteScopedDataType($registry, $aclHelper);
+        return new WebsiteScopedDataType($doctrine, $aclHelper);
+    }
+
+    private function getWebsite(int $id): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
     }
 }

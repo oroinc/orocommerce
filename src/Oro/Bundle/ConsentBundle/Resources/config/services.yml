@@ -20,17 +20,26 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_consent.provider.consent_acceptance_provider'
 
+    oro_consent.enabled_consent_filter_collection:
+        class: 'Oro\Bundle\ConsentBundle\Filter\ConsentFilterCollection'
+        arguments:
+            - !iterator
+                - '@oro_consent.filter.admin_consent_content_node_valid_filter'
+                - '@oro_consent.filter.frontend_consent_content_node_valid_filter'
+                - '@oro_consent.filter.required_consent_filter'
+
     oro_consent.provider.enabled_consent_provider:
         class: 'Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider'
-        public: false
+        arguments:
+            - '@oro_consent.provider.enabled_consent_config_provider'
+            - '@oro_consent.enabled_consent_filter_collection'
+
+    oro_consent.provider.enabled_consent_config_provider:
+        class: 'Oro\Bundle\ConsentBundle\Provider\EnabledConsentConfigProvider'
         arguments:
             - '@oro_config.manager'
             - '@oro_consent.system_config.consent_config_converter'
             - '@oro_consent.provider.consent_context_provider'
-        calls:
-            - ['addFilter', ['@oro_consent.filter.admin_consent_content_node_valid_filter']]
-            - ['addFilter', ['@oro_consent.filter.frontend_consent_content_node_valid_filter']]
-            - ['addFilter', ['@oro_consent.filter.required_consent_filter']]
 
     oro_consent.provider.consent_acceptance_provider:
         class: 'Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider'
@@ -122,7 +131,7 @@ services:
     oro_consent.validator.unique_consent:
         class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsentValidator'
         tags:
-            - { name: validator.constraint_validator, alias: oro_consent_unique_consent_validator }
+            - { name: validator.constraint_validator }
 
     oro_consent.validator.required_consents:
         class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsentsValidator'
@@ -130,21 +139,21 @@ services:
             - '@oro_consent.provider.enabled_consent_provider'
             - '@oro_locale.helper.localization'
         tags:
-            - { name: validator.constraint_validator, alias: oro_consent.validator.required_consents }
+            - { name: validator.constraint_validator }
 
     oro_consent.validator.removed_consents:
         class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsentsValidator'
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: validator.constraint_validator, alias: oro_consent_removed_consents_validator }
+            - { name: validator.constraint_validator }
 
     oro_consent.validator.removed_landing_pages:
         class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPagesValidator'
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: validator.constraint_validator, alias: oro_consent_removed_landing_pages_validator }
+            - { name: validator.constraint_validator }
 
     oro_consent.event_listener.rfq_form_listener:
         class: 'Oro\Bundle\ConsentBundle\EventListener\RfqBeforeFlushFormListener'

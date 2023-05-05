@@ -41,7 +41,10 @@ class ConsentTypeTest extends FormIntegrationTestCase
         );
     }
 
-    protected function getExtensions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(

@@ -15,51 +15,61 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
  */
 class ContentNodeTreeCacheDumper
 {
-    /** @var ContentNodeTreeResolverInterface */
-    private $contentNodeTreeResolver;
+    private ManagerRegistry $managerRegistry;
 
-    /** @var ContentNodeTreeCache */
-    private $contentNodeTreeCache;
+    private ContentNodeTreeResolverInterface $contentNodeTreeResolver;
 
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ContentNodeTreeCache $contentNodeTreeCache;
+
+    private ContentNodeTreeCache $mergedContentNodeTreeCache;
 
     public function __construct(
+        ManagerRegistry $managerRegistry,
         ContentNodeTreeResolverInterface $contentNodeTreeResolver,
         ContentNodeTreeCache $contentNodeTreeCache,
-        ManagerRegistry $doctrine
+        ContentNodeTreeCache $mergedContentNodeTreeCache
     ) {
+        $this->managerRegistry = $managerRegistry;
         $this->contentNodeTreeResolver = $contentNodeTreeResolver;
         $this->contentNodeTreeCache = $contentNodeTreeCache;
-        $this->doctrine = $doctrine;
+        $this->mergedContentNodeTreeCache = $mergedContentNodeTreeCache;
     }
 
     public function dump(ContentNode $node, Scope $scope): void
     {
-        // delete existing cached data
-        $this->contentNodeTreeCache->delete($node->getId(), $scope->getId());
-        // build web catalog node tree and save it to the cache
-        $this->contentNodeTreeResolver->getResolvedContentNode($node, $scope);
+        $this->mergedContentNodeTreeCache->clear();
+
+        $this->doDump($node, $scope);
     }
 
     public function dumpForAllScopes(WebCatalog $webCatalog): void
     {
+        $this->mergedContentNodeTreeCache->clear();
+
         $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
         if ($rootNode) {
             $scopes = $this->getWebCatalogRepository()->getUsedScopes($webCatalog);
             foreach ($scopes as $scope) {
-                $this->dump($rootNode, $scope);
+                $this->doDump($rootNode, $scope);
             }
         }
     }
 
+    private function doDump(ContentNode $node, Scope $scope): void
+    {
+        // delete existing cached data
+        $this->contentNodeTreeCache->delete($node->getId(), [$scope->getId()]);
+        // build web catalog node tree and save it to the cache
+        $this->contentNodeTreeResolver->getResolvedContentNode($node, $scope);
+    }
+
     private function getContentNodeRepository(): ContentNodeRepository
     {
-        return $this->doctrine->getRepository(ContentNode::class);
+        return $this->managerRegistry->getRepository(ContentNode::class);
     }
 
     private function getWebCatalogRepository(): WebCatalogRepository
     {
-        return $this->doctrine->getRepository(WebCatalog::class);
+        return $this->managerRegistry->getRepository(WebCatalog::class);
     }
 }

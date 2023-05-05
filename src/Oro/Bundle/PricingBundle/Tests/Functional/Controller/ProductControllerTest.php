@@ -38,6 +38,16 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->loadFixtures([LoadProductPrices::class]);
     }
 
+    private function getFirstPriceList(): PriceList
+    {
+        return self::getContainer()->get('doctrine')->getRepository(PriceList::class)
+            ->createQueryBuilder('p')
+            ->orderBy('p.id')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getSingleResult();
+    }
+
     public function testSidebar()
     {
         $crawler = $this->client->request(
@@ -48,9 +58,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $result = $this->client->getResponse();
         self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var PriceListRepository $repository */
-        $repository = self::getContainer()->get('doctrine')->getRepository(PriceList::class);
-        $defaultPriceList = $repository->getDefault();
+        $defaultPriceList = $this->getFirstPriceList();
 
         self::assertEquals(
             $defaultPriceList->getId(),

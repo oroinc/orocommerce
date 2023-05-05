@@ -1,5 +1,5 @@
 @regression
-@fixture-OroPricingBundle:ProductPricesWithMultipleCurrencies.yml
+@fixture-OroPricingBundle:ProductPricesWithDifferentCurrencies.yml
 
 Feature: Shopping list subtotal with different currencies
   In order to use shopping list in the selected currency

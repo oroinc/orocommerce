@@ -53,6 +53,9 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
             ['shipBy', $now],
             ['fromExternalSource', true],
             ['comment', 'The answer is 42'],
+            ['shippingMethod', 'shipping_method'],
+            ['shippingMethodType', 'shipping_method_type'],
+            ['shippingEstimateAmount', 10.00]
         ];
 
         $entity = new OrderLineItem();
@@ -139,14 +142,13 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isRequirePriceRecalculationDataProvider
-     *
-     * @param OrderLineItem $entity
-     * @param string $method
-     * @param mixed $value
-     * @param bool $expectedResult
      */
-    public function testIsRequirePriceRecalculation(OrderLineItem $entity, $method, $value, $expectedResult)
-    {
+    public function testIsRequirePriceRecalculation(
+        OrderLineItem $entity,
+        string $method,
+        mixed $value,
+        bool $expectedResult
+    ) {
         ReflectionUtil::setPropertyValue($entity, 'requirePriceRecalculation', false);
         $this->assertFalse($entity->isRequirePriceRecalculation());
 
@@ -154,10 +156,7 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $entity->isRequirePriceRecalculation());
     }
 
-    /**
-     * @return array
-     */
-    public function isRequirePriceRecalculationDataProvider()
+    public function isRequirePriceRecalculationDataProvider(): array
     {
         $lineItemWithProduct = new OrderLineItem();
         $lineItemWithProduct->setProduct($this->getProduct(42));
@@ -206,5 +205,17 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
                 true
             ]
         ];
+    }
+
+    public function testShippingCost()
+    {
+        $lineItem = new OrderLineItem();
+        $lineItem->setCurrency('USD');
+        $lineItem->setShippingEstimateAmount(7.00);
+        $shippingCost = $lineItem->getShippingCost();
+
+        $this->assertInstanceOf(Price::class, $shippingCost);
+        $this->assertEquals(7.00, $shippingCost->getValue());
+        $this->assertEquals('USD', $shippingCost->getCurrency());
     }
 }

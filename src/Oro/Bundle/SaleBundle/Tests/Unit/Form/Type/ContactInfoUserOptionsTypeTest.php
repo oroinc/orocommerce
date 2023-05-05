@@ -8,28 +8,18 @@ use Oro\Bundle\SaleBundle\Provider\OptionProviderWithDefaultValueInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\FormInterface;
 
 class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var OptionProviderWithDefaultValueInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var OptionProviderWithDefaultValueInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $optionProvider;
 
-    /**
-     * @var ContactInfoUserOptionsType
-     */
-    private $formType;
-
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var ContactInfoUserOptionsType */
+    private $formType;
+
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -39,23 +29,18 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
-            new PreloadedExtension(
-                [
-                    ContactInfoUserOptionsType::class => $this->formType
-                ],
-                []
-            ),
+            new PreloadedExtension([$this->formType], [])
         ];
     }
 
     public function testSubmit()
     {
-        $this->configManager->expects(static::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->willReturn('');
         $this->optionProvider->expects($this->once())
@@ -73,35 +58,21 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
                 new ChoiceView('option2', 'option2', 'oro.sale.contact_info_user_options.type.option2.label')
             ],
         ];
-        $this->optionProvider
+        $this->optionProvider->expects(self::any())
             ->method('getOptions')
             ->willReturn($allowedOptions);
 
-        $this->doTestForm($inputOptions, $expectedOptions, $submittedData);
-    }
-
-    /**
-     * @param array $inputOptions
-     * @param array $expectedOptions
-     * @param mixed $submittedData
-     *
-     * @return FormInterface
-     */
-    protected function doTestForm(array $inputOptions, array $expectedOptions, $submittedData)
-    {
         $form = $this->factory->create(ContactInfoUserOptionsType::class, null, $inputOptions);
         $formConfig = $form->getConfig();
 
         foreach ($expectedOptions as $key => $value) {
-            static::assertTrue($formConfig->hasOption($key));
+            self::assertTrue($formConfig->hasOption($key));
         }
 
-        static::assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
+        self::assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
         $form->submit($submittedData);
-        static::assertTrue($form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($submittedData, $form->getData());
-
-        return $form;
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($submittedData, $form->getData());
     }
 }

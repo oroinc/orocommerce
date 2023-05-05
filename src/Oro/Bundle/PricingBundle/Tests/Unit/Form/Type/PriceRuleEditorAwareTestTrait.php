@@ -17,43 +17,29 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Twig\Environment;
 
 trait PriceRuleEditorAwareTestTrait
 {
-    /**
-     * @return array
-     */
-    protected function getPriceRuleEditorExtension()
+    private function getPriceRuleEditorExtension(): array
     {
-        /** @var FormIntegrationTestCase $this */
-        /** @var AutocompleteFieldsProvider|\PHPUnit\Framework\MockObject\MockObject $autocompleteFiledsProvider */
-        $autocompleteFiledsProvider = $this->getMockBuilder(AutocompleteFieldsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $priceListSelectFormView = $this->getMockBuilder(FormView::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProvider::class);
+        $priceListSelectFormView = $this->createMock(FormView::class);
         $priceListSelectForm = $this->createMock(FormInterface::class);
         $priceListSelectForm->expects($this->any())
             ->method('createView')
             ->willReturn($priceListSelectFormView);
-        /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $formFactory */
         $formFactory = $this->createMock(FormFactoryInterface::class);
         $formFactory->expects($this->any())
             ->method('createNamed')
             ->willReturn($priceListSelectForm);
-        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder(Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $twig = $this->createMock(Environment::class);
         /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject $entityAliasResolver */
         $entityAliasResolver = $this->getMockBuilder(EntityAliasResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
         $priceRuleOptionsConfigurator = new PriceRuleEditorOptionsConfigurator(
-            $autocompleteFiledsProvider,
+            $autocompleteFieldsProvider,
             $formFactory,
             $twig,
             $entityAliasResolver

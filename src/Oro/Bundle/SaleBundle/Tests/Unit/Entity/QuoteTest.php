@@ -53,12 +53,12 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
             ['overriddenShippingCostAmount', 15],
         ];
 
-        static::assertPropertyAccessors(new Quote(), $properties);
+        self::assertPropertyAccessors(new Quote(), $properties);
 
         $quote = new Quote();
-        static::assertIsUUID($quote->getGuestAccessId());
+        self::assertIsUUID($quote->getGuestAccessId());
 
-        static::assertPropertyCollections(new Quote(), [
+        self::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
             ['assignedUsers', new User()],
             ['assignedCustomerUsers', new CustomerUser()],
@@ -92,8 +92,8 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
         $quote->prePersist();
 
-        $this->assertInstanceOf('\DateTime', $quote->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $quote->getCreatedAt());
+        $this->assertInstanceOf(\DateTime::class, $quote->getUpdatedAt());
     }
 
     public function testPreUpdate(): void
@@ -104,7 +104,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
         $quote->preUpdate();
 
-        $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $quote->getUpdatedAt());
     }
 
     public function testGetEmailOwner(): void
@@ -118,8 +118,8 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     public function testAddQuoteProduct(): void
     {
-        $quote          = new Quote();
-        $quoteProduct   = new QuoteProduct();
+        $quote = new Quote();
+        $quoteProduct = new QuoteProduct();
 
         $this->assertNull($quoteProduct->getQuote());
 
@@ -130,11 +130,8 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider hasOfferVariantsDataProvider
-     *
-     * @param Quote $quote
-     * @param bool $expected
      */
-    public function testHasOfferVariants(Quote $quote, $expected): void
+    public function testHasOfferVariants(Quote $quote, bool $expected): void
     {
         $this->assertEquals($expected, $quote->hasOfferVariants());
     }
@@ -154,17 +151,12 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isAcceptableDataProvider
-     *
-     * @param bool $expired
-     * @param \DateTime|null $validUntil
-     * @param bool $expected
-     * @param string $internalStatus
      */
     public function testIsAcceptable(
-        $expired,
-        $validUntil,
-        $expected,
-        $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
+        bool $expired,
+        ?\DateTime $validUntil,
+        bool $expected,
+        ?string $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
     ): void {
         $status = $internalStatus ? new TestEnumValue($internalStatus, 'test') : null;
 
@@ -263,14 +255,11 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEquals($quote->getGuestAccessId(), $clone->getGuestAccessId());
     }
 
-    /**
-     * @param int $quoteProductCount
-     * @param int $quoteProductOfferCount
-     * @param bool $allowIncrements
-     * @return Quote
-     */
-    protected function createQuote($quoteProductCount, $quoteProductOfferCount, $allowIncrements = false): Quote
-    {
+    private function createQuote(
+        int $quoteProductCount,
+        int $quoteProductOfferCount,
+        bool $allowIncrements = false
+    ): Quote {
         $quote = new Quote();
 
         for ($i = 0; $i < $quoteProductCount; $i++) {
@@ -291,7 +280,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     private static function assertIsUUID(string $actual): void
     {
-        static::assertMatchesRegularExpression(
+        self::assertMatchesRegularExpression(
             '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $actual
         );
@@ -300,7 +289,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider shippingCostDataProvider
      */
-    public function testGetShippingCost($estimated, $overridden, $expected)
+    public function testGetShippingCost(?int $estimated, ?int $overridden, ?int $expected)
     {
         $currency = 'USD';
         $item = new Quote();
@@ -309,16 +298,13 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $item->setOverriddenShippingCostAmount($overridden);
 
         if (null !== $expected) {
-            static::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
+            self::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
         } else {
-            static::assertNull($item->getShippingCost());
+            self::assertNull($item->getShippingCost());
         }
     }
 
-    /**
-     * @return array
-     */
-    public function shippingCostDataProvider()
+    public function shippingCostDataProvider(): array
     {
         return [
             [
@@ -346,6 +332,6 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
 
     public function testGetShippingCostNull()
     {
-        static::assertNull((new Quote())->getShippingCost());
+        self::assertNull((new Quote())->getShippingCost());
     }
 }

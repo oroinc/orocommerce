@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductTest extends FrontendRestJsonApiTestCase
 {
@@ -23,7 +24,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         // guard
         self::assertEquals(
             ['in_stock', 'out_of_stock'],
-            $this->getConfigManager()->get('oro_product.general_frontend_product_visibility')
+            self::getConfigManager()->get('oro_product.general_frontend_product_visibility')
         );
 
         $this->loadFixtures([
@@ -38,7 +39,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform;
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -48,7 +49,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_product.yml', $response);
     }
 
-    public function testGetListFilterBySeveralSkus()
+    public function testGetListFilterBySeveralSkus(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -58,7 +59,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_product_filter_by_sku.yml', $response);
     }
 
-    public function testGetListFilterBySeveralInventoryStatuses()
+    public function testGetListFilterBySeveralInventoryStatuses(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -86,7 +87,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetListFilterByVariants()
+    public function testGetListFilterByVariants(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -100,14 +101,15 @@ class ProductTest extends FrontendRestJsonApiTestCase
                     ['type' => 'products', 'id' => '<toString(@product3->id)>'],
                     ['type' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
                     ['type' => 'products', 'id' => '<toString(@configurable_product2->id)>'],
-                    ['type' => 'products', 'id' => '<toString(@configurable_product3->id)>']
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product_kit1->id)>'],
                 ]
             ],
             $response
         );
     }
 
-    public function testGetListFilterByVariantsWithYesValue()
+    public function testGetListFilterByVariantsWithYesValue(): void
     {
         $response = $this->cget(
             ['entity' => 'products'],
@@ -127,14 +129,15 @@ class ProductTest extends FrontendRestJsonApiTestCase
                     ['type' => 'products', 'id' => '<toString(@configurable_product2_variant1->id)>'],
                     ['type' => 'products', 'id' => '<toString(@configurable_product2_variant2->id)>'],
                     ['type' => 'products', 'id' => '<toString(@configurable_product3_variant1->id)>'],
-                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant2->id)>']
+                    ['type' => 'products', 'id' => '<toString(@configurable_product3_variant2->id)>'],
+                    ['type' => 'products', 'id' => '<toString(@product_kit1->id)>']
                 ]
             ],
             $response
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>']
@@ -164,14 +167,14 @@ class ProductTest extends FrontendRestJsonApiTestCase
             ExtendConfigDumper::DEFAULT_PREFIX . 'testAttrManyToMany'
         ];
         foreach ($attributeNames as $name) {
-            self::assertFalse(array_key_exists($name, $attributes), $name . ' attribute must not exist');
+            self::assertArrayNotHasKey($name, $attributes, $name . ' attribute must not exist');
         }
         foreach ($attributeNames as $name) {
-            self::assertFalse(array_key_exists($name, $relationships), $name . ' relationship must not exist');
+            self::assertArrayNotHasKey($name, $relationships, $name . ' relationship must not exist');
         }
     }
 
-    public function testGetForAnotherLocalization()
+    public function testGetForAnotherLocalization(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
@@ -202,7 +205,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetOnlyUrlsAndUrlForProductOnlyWithDefaultUrl()
+    public function testGetOnlyUrlsAndUrlForProductOnlyWithDefaultUrl(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product3->id)>'],
@@ -225,7 +228,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetOnlyUpcomingAttribute()
+    public function testGetOnlyUpcomingAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
@@ -235,7 +238,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(['data' => ['attributes' => ['upcoming' => true]]], $response);
     }
 
-    public function testGetOnlyAvailabilityDateAttribute()
+    public function testGetOnlyAvailabilityDateAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
@@ -248,7 +251,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetOnlyLowInventoryAttribute()
+    public function testGetOnlyLowInventoryAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
@@ -258,7 +261,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(['data' => ['attributes' => ['lowInventory' => true]]], $response);
     }
 
-    public function testGetOnlyUpcomingAttributeOnNonUpcomingProduct()
+    public function testGetOnlyUpcomingAttributeOnNonUpcomingProduct(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product3->id)>'],
@@ -268,7 +271,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(['data' => ['attributes' => ['upcoming' => false]]], $response);
     }
 
-    public function testGetOnlyAvailabilityDateAttributeOnNonUpcomingProduct()
+    public function testGetOnlyAvailabilityDateAttributeOnNonUpcomingProduct(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product3->id)>'],
@@ -281,7 +284,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetOnlyLowInventoryAttributeOnNonHighlightRequiredProduct()
+    public function testGetOnlyLowInventoryAttributeOnNonHighlightRequiredProduct(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product3->id)>'],
@@ -291,7 +294,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(['data' => ['attributes' => ['lowInventory' => false]]], $response);
     }
 
-    public function testGetOnlyUnitPrecisionsAttribute()
+    public function testGetOnlyUnitPrecisionsAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
@@ -316,7 +319,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertCount(2, $responseData['data']['attributes']['unitPrecisions']);
     }
 
-    public function testGetOnlyProductAttributes()
+    public function testGetOnlyProductAttributes(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
@@ -379,7 +382,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertCount(12, $responseData['data']['attributes']['productAttributes']);
     }
 
-    public function testGetAttributesWithEmptyValues()
+    public function testGetAttributesWithEmptyValues(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product3->id)>'],
@@ -422,7 +425,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertCount(12, $responseData['data']['attributes']['productAttributes']);
     }
 
-    public function testGetConfigurableProduct()
+    public function testGetConfigurableProduct(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@configurable_product3->id)>']
@@ -431,7 +434,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_configurable_product.yml', $response);
     }
 
-    public function testGetConfigurableProductVariantWithInvisibleVariantAttribute()
+    public function testGetConfigurableProductVariantWithInvisibleVariantAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>']
@@ -440,7 +443,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_variant_product_with_invisible.yml', $response);
     }
 
-    public function testGetConfigurableProductVariantWithoutInvisibleVariantAttribute()
+    public function testGetConfigurableProductVariantWithoutInvisibleVariantAttribute(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@configurable_product2_variant1->id)>']
@@ -452,7 +455,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertArrayNotHasKey('testAttrEnum', $responseData['data']['attributes']['productAttributes']);
     }
 
-    public function testGetOnlyVariantProducts()
+    public function testGetOnlyVariantProducts(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@configurable_product3->id)>'],
@@ -477,7 +480,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetWithIncludeVariantProducts()
+    public function testGetWithIncludeVariantProducts(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@configurable_product1->id)>'],
@@ -487,7 +490,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_configurable_product_with_variants.yml', $response);
     }
 
-    public function testGetOnlyParentProducts()
+    public function testGetOnlyParentProducts(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
@@ -511,7 +514,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetWithIncludeParentProducts()
+    public function testGetWithIncludeParentProducts(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@configurable_product1_variant1->id)>'],
@@ -521,7 +524,26 @@ class ProductTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_product_with_parent_products.yml', $response);
     }
 
-    public function testTryToGetDisabled()
+    public function testGetProductKit(): void
+    {
+        $response = $this->get(
+            ['entity' => 'products', 'id' => '<toString(@product_kit1->id)>']
+        );
+
+        $this->assertResponseContains('get_product_kit.yml', $response);
+    }
+
+    public function testGetProductKitWithIncludeKitItems(): void
+    {
+        $response = $this->get(
+            ['entity' => 'products', 'id' => '<toString(@product_kit1->id)>'],
+            ['include' => 'kitItems,kitItems.kitItemProducts,kitItems.kitItemProducts.product']
+        );
+
+        $this->assertResponseContains('get_product_kit_with_kit_items.yml', $response);
+    }
+
+    public function testTryToGetDisabled(): void
     {
         $response = $this->get(
             ['entity' => 'products', 'id' => '<toString(@product2->id)>'],
@@ -539,7 +561,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $data = [
             'data' => [
@@ -561,7 +583,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $data = [
             'data' => [
@@ -582,7 +604,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
@@ -594,7 +616,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'products'],
@@ -606,7 +628,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForProductFamily()
+    public function testGetSubresourceForProductFamily(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>', 'association' => 'productFamily']
@@ -627,7 +649,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForProductFamily()
+    public function testGetRelationshipForProductFamily(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'products', 'id' => '<toString(@product1->id)>', 'association' => 'productFamily']
@@ -643,7 +665,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForProductFamily()
+    public function testTryToUpdateRelationshipForProductFamily(): void
     {
         $response = $this->patchRelationship(
             [
@@ -658,7 +680,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForVariantProducts()
+    public function testGetSubresourceForVariantProducts(): void
     {
         $response = $this->getSubresource([
             'entity'      => 'products',
@@ -695,7 +717,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForVariantProducts()
+    public function testGetRelationshipForVariantProducts(): void
     {
         $response = $this->getRelationship([
             'entity'      => 'products',
@@ -714,7 +736,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForVariantProducts()
+    public function testTryToUpdateRelationshipForVariantProducts(): void
     {
         $response = $this->patchRelationship(
             [
@@ -729,7 +751,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToAddRelationshipForVariantProducts()
+    public function testTryToAddRelationshipForVariantProducts(): void
     {
         $response = $this->postRelationship(
             [
@@ -744,7 +766,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteRelationshipForVariantProducts()
+    public function testTryToDeleteRelationshipForVariantProducts(): void
     {
         $response = $this->deleteRelationship(
             [
@@ -759,7 +781,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForParentProducts()
+    public function testGetSubresourceForParentProducts(): void
     {
         $response = $this->getSubresource([
             'entity'      => 'products',
@@ -789,7 +811,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForParentProducts()
+    public function testGetRelationshipForParentProducts(): void
     {
         $response = $this->getRelationship([
             'entity'      => 'products',
@@ -807,7 +829,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForParentProducts()
+    public function testTryToUpdateRelationshipForParentProducts(): void
     {
         $response = $this->patchRelationship(
             [
@@ -822,7 +844,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToAddRelationshipForParentProducts()
+    public function testTryToAddRelationshipForParentProducts(): void
     {
         $response = $this->postRelationship(
             [
@@ -837,13 +859,137 @@ class ProductTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteRelationshipForParentProducts()
+    public function testTryToDeleteRelationshipForParentProducts(): void
     {
         $response = $this->deleteRelationship(
             [
                 'entity'      => 'products',
                 'id'          => '<toString(@configurable_product1_variant1->id)>',
                 'association' => 'parentProducts'
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testGetSubresourceForKitItems(): void
+    {
+        $response = $this->getSubresource([
+            'entity'      => 'products',
+            'id'          => '<toString(@product_kit1->id)>',
+            'association' => 'kitItems',
+        ]);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'productkititems',
+                        'id'         => '<toString(@product_kit1_item1->id)>',
+                        'attributes' => [
+                            'optional'        => false,
+                            'sortOrder'       => 1,
+                            'minimumQuantity' => null,
+                            'maximumQuantity' => null,
+                        ],
+                        'relationships' => [
+                            'kitItemProducts'  => [
+                                'data'  => [
+                                    [
+                                        'type' => 'productkititemproducts',
+                                        'id'   => '<toString(@product_kit1_item1_product1->id)>',
+                                    ],
+                                    [
+                                        'type' => 'productkititemproducts',
+                                        'id'   => '<toString(@product_kit1_item1_product3->id)>',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'productkititems',
+                        'id'   => '<toString(@product_kit1_item2->id)>',
+                        'attributes' => [
+                            'optional'        => true,
+                            'sortOrder'       => 10,
+                            'minimumQuantity' => 0,
+                            'maximumQuantity' => 5,
+                        ],
+                        'relationships' => [
+                            'kitItemProducts' => [
+                                'data' => [
+                                    [
+                                        'type' => 'productkititemproducts',
+                                        'id'   => '<toString(@product_kit1_item2_product3->id)>',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForKitItems(): void
+    {
+        $response = $this->getRelationship([
+            'entity'      => 'products',
+            'id'          => '<toString(@product_kit1->id)>',
+            'association' => 'kitItems',
+        ]);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'productkititems', 'id' => '<toString(@product_kit1_item1->id)>'],
+                    ['type' => 'productkititems', 'id' => '<toString(@product_kit1_item2->id)>'],
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToUpdateRelationshipForKitItems(): void
+    {
+        $response = $this->patchRelationship(
+            [
+                'entity'      => 'products',
+                'id'          => '<toString(@product_kit1->id)>',
+                'association' => 'kitItems',
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToAddRelationshipForKitItems(): void
+    {
+        $response = $this->postRelationship(
+            [
+                'entity'      => 'products',
+                'id'          => '<toString(@product_kit1->id)>',
+                'association' => 'kitItems',
+            ],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDeleteRelationshipForKitItems(): void
+    {
+        $response = $this->deleteRelationship(
+            [
+                'entity'      => 'products',
+                'id'          => '<toString(@product_kit1->id)>',
+                'association' => 'kitItems',
             ],
             [],
             [],

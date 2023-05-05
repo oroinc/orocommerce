@@ -10,28 +10,20 @@ use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TimeInTransitCacheProviderFactory
-     */
-    private $timeInTransitCacheProviderFactory;
-
-    /**
-     * @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
-    /**
-     * @var LifetimeProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LifetimeProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $lifetimeProvider;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var TimeInTransitCacheProviderFactory */
+    private $timeInTransitCacheProviderFactory;
+
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(AbstractAdapter::class);
         $this->lifetimeProvider = $this->createMock(LifetimeProviderInterface::class);
+
         $this->timeInTransitCacheProviderFactory = new TimeInTransitCacheProviderFactory(
             $this->cacheProvider,
             $this->lifetimeProvider
@@ -40,13 +32,12 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateCacheProviderForTransport()
     {
-        $settings = $this->createSettingsMock();
-
-        $settings->method('getId')
+        $settings = $this->createMock(UPSSettings::class);
+        $settings->expects(self::any())
+            ->method('getId')
             ->willReturn(1);
 
-        $this->cacheProvider
-            ->expects(static::once())
+        $this->cacheProvider->expects(self::once())
             ->method('enableVersioning')
             ->with(true);
 
@@ -59,18 +50,17 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
         $timeInTransitCacheProvider = $this->timeInTransitCacheProviderFactory
             ->createCacheProviderForTransport($settings);
 
-        static::assertEquals($expectedTimeInTransitCacheProvider, $timeInTransitCacheProvider);
+        self::assertEquals($expectedTimeInTransitCacheProvider, $timeInTransitCacheProvider);
     }
 
     public function testCreateCacheProviderForTransportReturnsSameInstance()
     {
-        $settings = $this->createSettingsMock();
-
-        $settings->method('getId')
+        $settings = $this->createMock(UPSSettings::class);
+        $settings->expects(self::any())
+            ->method('getId')
             ->willReturn(1);
 
-        $this->cacheProvider
-            ->expects(static::once())
+        $this->cacheProvider->expects(self::once())
             ->method('enableVersioning')
             ->with(true);
 
@@ -80,14 +70,6 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
         $timeInTransitCacheProvider2 = $this->timeInTransitCacheProviderFactory
             ->createCacheProviderForTransport($settings);
 
-        static::assertSame($timeInTransitCacheProvider2, $timeInTransitCacheProvider1);
-    }
-
-    /**
-     * @return UPSSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createSettingsMock()
-    {
-        return $this->createMock(UPSSettings::class);
+        self::assertSame($timeInTransitCacheProvider2, $timeInTransitCacheProvider1);
     }
 }

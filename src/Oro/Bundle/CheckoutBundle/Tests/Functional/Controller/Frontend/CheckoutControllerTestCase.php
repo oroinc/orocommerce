@@ -7,6 +7,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
@@ -21,47 +22,43 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 abstract class CheckoutControllerTestCase extends FrontendWebTestCase
 {
-    const MANUAL_ADDRESS = 0;
-    const FIRST_NAME = 'Jackie';
-    const LAST_NAME = 'Chuck';
-    const STREET = 'Fake Street';
-    const CITY = 'Fake City';
-    const POSTAL_CODE = '123456';
-    const COUNTRY = 'UA';
-    const REGION = 'UA-65';
+    protected const MANUAL_ADDRESS = 0;
+    protected const FIRST_NAME = 'Jackie';
+    protected const LAST_NAME = 'Chuck';
+    protected const STREET = 'Fake Street';
+    protected const CITY = 'Fake City';
+    protected const POSTAL_CODE = '123456';
+    protected const COUNTRY = 'UA';
+    protected const REGION = 'UA-65';
 
-    const ORO_WORKFLOW_TRANSITION = 'oro_workflow_transition';
+    protected const ORO_WORKFLOW_TRANSITION = 'oro_workflow_transition';
 
-    const ANOTHER_ACCOUNT_ADDRESS = 'customer.level_1.address_1';
-    const DEFAULT_BILLING_ADDRESS = 'customer.level_1.address_2';
+    protected const ANOTHER_ACCOUNT_ADDRESS = 'customer.level_1.address_1';
+    protected const DEFAULT_BILLING_ADDRESS = 'customer.level_1.address_2';
 
-    const SHIPPING_ADDRESS_SIGN = 'Select Shipping Address';
-    const BILLING_ADDRESS_SIGN = 'Select Billing Address';
-    const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
-    const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
-    const ORDER_REVIEW_SIGN = 'Do not ship later than';
-    const FINISH_SIGN = 'Thank You For Your Purchase!';
-    const EDIT_BILLING_SIGN = 'Edit Billing Information';
-    const EDIT_SHIPPING_INFO_SIGN = 'Edit Shipping Information';
-    const EDIT_SHIPPING_METHOD_SIGN = 'Edit Shipping Method';
-    const EDIT_PAYMENT_SIGN = 'Edit Payment';
+    protected const SHIPPING_ADDRESS_SIGN = 'Select Shipping Address';
+    protected const BILLING_ADDRESS_SIGN = 'Select Billing Address';
+    protected const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
+    protected const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
+    protected const ORDER_REVIEW_SIGN = 'Do not ship later than';
+    protected const FINISH_SIGN = 'Thank You For Your Purchase!';
+    protected const EDIT_BILLING_SIGN = 'Edit Billing Information';
+    protected const EDIT_SHIPPING_INFO_SIGN = 'Edit Shipping Information';
+    protected const EDIT_SHIPPING_METHOD_SIGN = 'Edit Shipping Method';
+    protected const EDIT_PAYMENT_SIGN = 'Edit Payment';
 
-    const SHIPPING_ADDRESS = 'shipping_address';
-    const BILLING_ADDRESS = 'billing_address';
+    protected const SHIPPING_ADDRESS = 'shipping_address';
+    protected const BILLING_ADDRESS = 'billing_address';
 
-    const TRANSITION_BACK_TO_BILLING_ADDRESS = 'back_to_billing_address';
-    const TRANSITION_BACK_TO_SHIPPING_ADDRESS = 'back_to_shipping_address';
+    protected const TRANSITION_BACK_TO_BILLING_ADDRESS = 'back_to_billing_address';
+    protected const TRANSITION_BACK_TO_SHIPPING_ADDRESS = 'back_to_shipping_address';
 
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var string */
-    protected static $checkoutUrl;
+    protected ManagerRegistry $registry;
+    protected static ?string $checkoutUrl = null;
 
     protected function setUp(): void
     {
@@ -69,8 +66,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             [],
             $this->generateBasicAuthHeader(TestCustomerUserData::AUTH_USER, TestCustomerUserData::AUTH_PW)
         );
-        $paymentFixtures = (array)$this->getPaymentFixtures();
-        $inventoryFixtures = (array)$this->getInventoryFixtures();
         $this->loadFixtures(array_merge([
             LoadCustomerUserData::class,
             LoadCustomerAddresses::class,
@@ -78,14 +73,11 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
-        ], $paymentFixtures, $inventoryFixtures));
+        ], $this->getPaymentFixtures(), $this->getInventoryFixtures()));
         $this->registry = $this->getContainer()->get('doctrine');
     }
 
-    /**
-     * @return array
-     */
-    protected function getPaymentFixtures()
+    protected function getPaymentFixtures(): array
     {
         return [
             LoadPaymentTermData::class,
@@ -93,10 +85,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getInventoryFixtures()
+    protected function getInventoryFixtures(): array
     {
         return [UpdateInventoryLevelsQuantities::class];
     }
@@ -106,11 +95,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         $this->startCheckoutByData($this->getCheckoutData($shoppingList));
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @return array
-     */
-    protected function getCheckoutData(ShoppingList $shoppingList)
+    protected function getCheckoutData(ShoppingList $shoppingList): array
     {
         return [
             'context' => new ActionData(['shoppingList' => $shoppingList]),
@@ -127,19 +112,10 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         ];
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string $type
-     * @return null|int
-     */
-    protected function getSelectedAddressId(Crawler $crawler, $type)
+    protected function getSelectedAddressId(Crawler $crawler, string $type): ?int
     {
         $select = $crawler->filter(
-            sprintf(
-                'select[name="%s[%s][customerAddress]"]',
-                CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION,
-                $type
-            )
+            sprintf('select[name="%s[%s][customerAddress]"]', static::ORO_WORKFLOW_TRANSITION, $type)
         );
         if ($select->filter('option')->count() === 1) {
             return null;
@@ -150,36 +126,27 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         return (int)substr($value, strpos($value, '_') + 1);
     }
 
-    /**
-     * @param array $values
-     * @param string $type
-     * @return array
-     */
-    protected function setFormData(array $values, $type)
+    protected function setFormData(array $values, string $type): array
     {
         $address = [
-            'customerAddress' => CheckoutControllerTestCase::MANUAL_ADDRESS,
-            'firstName' => CheckoutControllerTestCase::FIRST_NAME,
-            'lastName' => CheckoutControllerTestCase::LAST_NAME,
-            'street' => CheckoutControllerTestCase::STREET,
-            'city' => CheckoutControllerTestCase::CITY,
-            'postalCode' => CheckoutControllerTestCase::POSTAL_CODE,
-            'country' => CheckoutControllerTestCase::COUNTRY,
-            'region' => CheckoutControllerTestCase::REGION,
+            'customerAddress' => static::MANUAL_ADDRESS,
+            'firstName' => static::FIRST_NAME,
+            'lastName' => static::LAST_NAME,
+            'street' => static::STREET,
+            'city' => static::CITY,
+            'postalCode' => static::POSTAL_CODE,
+            'country' => static::COUNTRY,
+            'region' => static::REGION,
         ];
-        $values[CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION][$type] = array_merge(
-            $values[CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION][$type],
+        $values[static::ORO_WORKFLOW_TRANSITION][$type] = array_merge(
+            $values[static::ORO_WORKFLOW_TRANSITION][$type],
             $address
         );
 
         return $values;
     }
 
-    /**
-     * @param array $values
-     * @return array
-     */
-    protected function explodeArrayPaths($values)
+    protected function explodeArrayPaths(array $values): array
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         $parameters = [];
@@ -195,42 +162,22 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         return $parameters;
     }
 
-    /**
-     * @param string $transitionName
-     * @return string
-     */
-    protected function getTransitionUrl($transitionName)
+    protected function getTransitionUrl(string $transitionName): string
     {
         return sprintf('%s?transition=%s', self::$checkoutUrl, $transitionName);
     }
 
-    /**
-     * @param string $transitionName
-     * @return Crawler
-     */
-    protected function getTransitionPage($transitionName)
+    protected function getTransitionPage(string $transitionName): Crawler
     {
-        $crawler = $this->client->request('GET', $this->getTransitionUrl($transitionName));
-
-        return $crawler;
+        return $this->client->request('GET', $this->getTransitionUrl($transitionName));
     }
 
-    /**
-     * @param Crawler $crawler
-     * @return Form
-     */
-    protected function getTransitionForm(Crawler $crawler)
+    protected function getTransitionForm(Crawler $crawler): Form
     {
-        return $crawler->filter(sprintf('form[name=%s]', CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION))->form();
+        return $crawler->filter(sprintf('form[name=%s]', static::ORO_WORKFLOW_TRANSITION))->form();
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string  $paymentMethodName
-     *
-     * @return Crawler
-     */
-    protected function goToOrderReviewStepFromPayment(Crawler $crawler, $paymentMethodName)
+    protected function goToOrderReviewStepFromPayment(Crawler $crawler, string $paymentMethodName): Crawler
     {
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());

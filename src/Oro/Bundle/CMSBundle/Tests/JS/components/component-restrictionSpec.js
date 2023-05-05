@@ -11,7 +11,10 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
     beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
         editor.on('load', () => done());
     });
@@ -112,12 +115,12 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
         });
 
         it('check domains allowed', () => {
-            expect(componentRestriction.isAllowedDomain('http://youtube.com/embed/')).toBeTruthy();
-            expect(componentRestriction.isAllowedDomain('http://youtube-nocookie.com/embed/')).toBeTruthy();
-            expect(componentRestriction.isAllowedDomain('http://maps.google.com/maps')).toBeTruthy();
-            expect(componentRestriction.isAllowedDomain('http://player.vimeo.com/video/')).toBeTruthy();
-            expect(componentRestriction.isAllowedDomain('http://testdomain.com')).toBeFalsy();
-            expect(componentRestriction.isAllowedDomain('http://fake.domain.com/test')).toBeFalsy();
+            expect(componentRestriction.isAllowedDomain('http://youtube.com/embed/')).toBe(true);
+            expect(componentRestriction.isAllowedDomain('http://youtube-nocookie.com/embed/')).toBe(true);
+            expect(componentRestriction.isAllowedDomain('http://maps.google.com/maps')).toBe(true);
+            expect(componentRestriction.isAllowedDomain('http://player.vimeo.com/video/')).toBe(true);
+            expect(componentRestriction.isAllowedDomain('http://testdomain.com')).toBe(false);
+            expect(componentRestriction.isAllowedDomain('http://fake.domain.com/test')).toBe(false);
         });
 
         it('check is allowed tags', () => {
@@ -146,7 +149,7 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
                     <img src="#" alt="Alt">
                 </div>
             </div>`
-            )).toBeFalsy();
+            )).toBe(false);
 
             expect(componentRestriction.checkTemplate(
                 `<div data-image="Test">
@@ -156,7 +159,7 @@ describe('orocms/js/app/grapesjs/plugins/components/component-restriction', () =
                     <table border="0" cellspacing="0"></table>
                 </div>
             </div>`
-            )).toBeTruthy();
+            )).toBe(true);
         });
 
         it('check template validate', () => {

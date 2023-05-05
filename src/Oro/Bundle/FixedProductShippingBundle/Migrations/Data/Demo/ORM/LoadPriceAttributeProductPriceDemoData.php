@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\FixedProductShippingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FixedProductShippingBundle\Migrations\Data\ORM\LoadPriceAttributePriceListData;
@@ -61,7 +61,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
         $manager->flush();
     }
 
-    private function getPriceAttribute(EntityManager $manager): PriceAttributePriceList
+    private function getPriceAttribute(EntityManagerInterface $manager): PriceAttributePriceList
     {
         return $manager->getRepository('OroPricingBundle:PriceAttributePriceList')
             ->findOneBy(['name' => LoadPriceAttributePriceListData::SHIPPING_COST_NAME]);

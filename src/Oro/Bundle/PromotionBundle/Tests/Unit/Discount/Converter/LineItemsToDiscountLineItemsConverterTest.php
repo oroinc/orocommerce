@@ -15,15 +15,11 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestC
 {
     use EntityTrait;
 
-    /**
-     * @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productPricesDataProvider;
+    /** @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPricesDataProvider;
 
-    /**
-     * @var LineItemsToDiscountLineItemsConverter
-     */
-    protected $converter;
+    /** @var LineItemsToDiscountLineItemsConverter */
+    private $converter;
 
     protected function setUp(): void
     {
@@ -44,15 +40,11 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestC
         $this->assertEquals($expected, $this->converter->convert($lineItems));
     }
 
-    /**
-     * @return array
-     */
-    public function converterDataProvider()
+    public function converterDataProvider(): array
     {
         $productId = 42;
         $unitCode = 'item';
 
-        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
 
         $price = Price::create(100, 'USD');

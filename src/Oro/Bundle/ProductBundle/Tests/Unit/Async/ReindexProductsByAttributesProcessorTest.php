@@ -65,7 +65,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $message = $this->getMessage($messageBody);
 
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
+            ->method('runUniqueByMessage')
             ->willThrowException(new \Exception());
 
         $this->loggerMock->expects(self::once())
@@ -88,7 +88,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $messageBody = ['attributeIds' => $attributeIds];
         $message = $this->getMessage($messageBody);
 
-        $this->mockRunUniqueJob();
+        $this->mockRunUniqueJob($message);
 
         $this->repository->expects(self::once())
             ->method('getProductIdsByAttributesId')
@@ -122,7 +122,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $messageBody = ['attributeIds' => $attributeIds];
         $message = $this->getMessage($messageBody);
 
-        $this->mockRunUniqueJob();
+        $this->mockRunUniqueJob($message);
 
         $this->repository->expects(self::once())
             ->method('getProductIdsByAttributesId')
@@ -181,7 +181,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         return $message;
     }
 
-    private function mockRunUniqueJob(): void
+    private function mockRunUniqueJob(MessageInterface $expectedMessage): void
     {
         $job = new Job();
         $job->setId(1);
@@ -192,11 +192,10 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
         $childJob->setName(ReindexProductsByAttributesTopic::getName());
 
         $this->jobRunner->expects(self::once())
-            ->method('runUnique')
-            ->with('msg-1', ReindexProductsByAttributesTopic::getName())
-            ->willReturnCallback(function ($jobId, $name, $callback) use ($childJob) {
-                self::assertEquals('msg-1', $jobId);
-                self::assertEquals(ReindexProductsByAttributesTopic::getName(), $name);
+            ->method('runUniqueByMessage')
+            ->with($expectedMessage)
+            ->willReturnCallback(function ($actualMessage, $callback) use ($expectedMessage, $childJob) {
+                self::assertEquals($actualMessage, $expectedMessage);
 
                 return $callback($this->jobRunner, $childJob);
             });

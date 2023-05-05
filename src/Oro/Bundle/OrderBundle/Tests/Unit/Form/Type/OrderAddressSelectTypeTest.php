@@ -36,9 +36,6 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|Serializer */
     private $serializer;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
@@ -176,20 +173,19 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([
-                OrderAddressSelectType::class => new OrderAddressSelectType(
+                new OrderAddressSelectType(
                     $this->orderAddressManager,
                     $this->addressFormatter,
                     $this->orderAddressSecurityProvider,
                     $this->serializer
-                ),
-            ], [
-            ])
+                )
+            ], [])
         ];
     }
 }

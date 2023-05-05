@@ -18,43 +18,36 @@ class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
-
     /** @var OrderConfigurationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $configurationProvider;
+    private $configurationProvider;
 
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityManager;
+    private $entityManager;
 
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityRepository;
+    private $entityRepository;
 
     /** @var OrderStatusListener */
-    protected $listener;
+    private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->entityRepository = $this->createMock(EntityRepository::class);
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->configurationProvider = $this->createMock(OrderConfigurationProviderInterface::class);
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->entityManager);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
 
-        $this->listener = new OrderStatusListener($this->configurationProvider, $this->registry);
+        $this->listener = new OrderStatusListener($this->configurationProvider, $doctrine);
     }
 
     /**
-     * @param bool $expected
-     * @param Order $order
-     *
      * @dataProvider prePersistDataProvider
      */
-    public function testPrePersist($expected, Order $order)
+    public function testPrePersist(bool $expected, Order $order)
     {
         $orderStatus = $order->getInternalStatus();
         $this->entityManager->expects($this->exactly((int)$expected))
@@ -81,25 +74,23 @@ class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @return \Generator
-     */
-    public function prePersistDataProvider()
+    public function prePersistDataProvider(): array
     {
-        yield 'negative' => [
-            'expected' => false,
-            'order' => $this->getEntity(
-                OrderStub::class,
-                ['internalStatus' => new TestEnumValue(1, '')]
-            ),
-        ];
-
-        yield 'positive' => [
-            'expected' => true,
-            'order' => $this->getEntity(
-                OrderStub::class,
-                ['internalStatus' => null]
-            ),
+        return [
+            'negative' => [
+                'expected' => false,
+                'order' => $this->getEntity(
+                    OrderStub::class,
+                    ['internalStatus' => new TestEnumValue(1, '')]
+                ),
+            ],
+            'positive' => [
+                'expected' => true,
+                'order' => $this->getEntity(
+                    OrderStub::class,
+                    ['internalStatus' => null]
+                ),
+            ]
         ];
     }
 }

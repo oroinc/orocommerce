@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\VirtualFields;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
@@ -24,6 +25,9 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
     /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject  */
+    private $attributeProvider;
+
     /** @var VirtualFieldsProductDecoratorFactory */
     private $testedVirtualFieldsProductDecoratorFactory;
 
@@ -33,12 +37,14 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
         $this->doctrineMock = $this->createMock(ManagerRegistry::class);
         $this->fieldHelperMock = $this->createMock(FieldHelper::class);
         $this->cacheProvider = $this->createMock(CacheInterface::class);
+        $this->attributeProvider = $this->createMock(ConfigProvider::class);
 
         $this->testedVirtualFieldsProductDecoratorFactory = new VirtualFieldsProductDecoratorFactory(
             $this->converterMock,
             $this->doctrineMock,
             $this->fieldHelperMock,
-            $this->cacheProvider
+            $this->cacheProvider,
+            $this->attributeProvider,
         );
     }
 
@@ -56,6 +62,7 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
             $this->doctrineMock,
             $this->fieldHelperMock,
             $this->cacheProvider,
+            $this->attributeProvider,
             $products,
             $product
         );

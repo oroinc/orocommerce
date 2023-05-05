@@ -14,4 +14,8 @@ class ContentNodeStub extends ContentNode
             $this->id = $id;
         }
     }
+
+    public function __clone()
+    {
+    }
 }

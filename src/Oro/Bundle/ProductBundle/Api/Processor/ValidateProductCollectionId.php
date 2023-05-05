@@ -18,11 +18,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ValidateProductCollectionId implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ContentNodeProvider */
-    private $contentNodeProvider;
+    private DoctrineHelper $doctrineHelper;
+    private ContentNodeProvider $contentNodeProvider;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -35,13 +32,13 @@ class ValidateProductCollectionId implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */
 
         $contentVariantId = $context->getId();
 
-        list($nodeId, $contentVariantType) = $this->getContentVariantInfo($contentVariantId);
+        [$nodeId, $contentVariantType] = $this->getContentVariantInfo($contentVariantId);
         if (null === $nodeId) {
             throw new NotFoundHttpException('An entity with the requested identifier does not exist.');
         }

@@ -14,8 +14,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /** @var ConfigManager */
-    protected $configManager;
+    private ConfigManager $configManager;
 
     protected function setUp(): void
     {
@@ -24,14 +23,13 @@ class QuickAddFeatureToggleTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
     }
 
     /**
      * @dataProvider actionsProvider
-     * @param string  $route
      */
-    public function testActions($route)
+    public function testActions(string $route)
     {
         $this->client->request('GET', $this->getUrl($route));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -43,16 +41,13 @@ class QuickAddFeatureToggleTest extends WebTestCase
         $this->assertTrue($this->client->getResponse()->isNotFound());
     }
 
-    /**
-     * @return array
-     */
-    public function actionsProvider()
+    public function actionsProvider(): array
     {
         return [
             ['oro_product_frontend_quick_add'],
             ['oro_product_frontend_quick_add_import'],
             ['oro_product_frontend_quick_add_copy_paste'],
-            ['oro_product_frontend_quick_add_validation_result'],
+            ['oro_product_frontend_quick_add_import_help'],
         ];
     }
 

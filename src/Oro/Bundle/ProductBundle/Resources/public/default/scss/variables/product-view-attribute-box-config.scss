@@ -6,10 +6,13 @@ $product-view-attributes-box-offset-right: -15px !default;
 $product-view-attributes-box-title-offset-bottom: $offset-y !default;
 $product-view-attributes-box-title-text-transform: uppercase !default;
 
-$product-view-attributes-box-related-items-display: flex !default;
+$product-view-attributes-box-related-items-display: grid !default;
+$product-view-attributes-box-related-items-grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) !default;
+$product-view-attributes-box-related-items-gap: 40px !default;
 $product-view-attributes-box-related-items-columns: auto !default;
-$product-view-attributes-box-embedded-products-width: 50% !default;
 
-$product-view-attributes-box-embedded-products-offset: 20px !default;
+$product-view-attributes-box-embedded-products-offset: 0 !default;
+
+$product-view-attributes-box-tab-content-width: 100% !default;
 
 $product-view-attributes-box-tablet-related-items-display: block !default;

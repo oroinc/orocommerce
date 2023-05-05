@@ -18,8 +18,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class BuildVariantProductsSubresourceQuery implements ProcessorInterface
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private DoctrineHelper $doctrineHelper;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
@@ -29,7 +28,7 @@ class BuildVariantProductsSubresourceQuery implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */
 

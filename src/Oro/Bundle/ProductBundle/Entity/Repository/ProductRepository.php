@@ -39,18 +39,6 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $sku
-     *
-     * @return null|Product
-     */
-    public function findOneBySku($sku)
-    {
-        $queryBuilder = $this->getBySkuQueryBuilder($sku);
-
-        return $queryBuilder->getQuery()->getOneOrNullResult();
-    }
-
-    /**
      * @param string $pattern
      *
      * @return QueryBuilder
@@ -81,31 +69,6 @@ class ProductRepository extends ServiceEntityRepository
                 ->where($productsQueryBuilder->expr()->in('p.id', ':productIds'))
                 ->setParameter('productIds', $productIds);
         }
-
-        return $productsQueryBuilder;
-    }
-
-    /**
-     * @param array $productSkus
-     *
-     * @return QueryBuilder
-     */
-    public function getProductsIdsBySkuQueryBuilder(array $productSkus = [])
-    {
-        $productsQueryBuilder = $this
-            ->createQueryBuilder('p')
-            ->select('p.id, p.sku');
-
-        if ($productSkus) {
-            // Convert to uppercase for insensitive search in all DB
-            $upperCaseSkus = array_map('mb_strtoupper', $productSkus);
-
-            $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('p.skuUppercase', ':product_skus'))
-                ->setParameter('product_skus', $upperCaseSkus);
-        }
-
-        $productsQueryBuilder->orderBy($productsQueryBuilder->expr()->asc('p.id'));
 
         return $productsQueryBuilder;
     }
@@ -147,23 +110,6 @@ class ProductRepository extends ServiceEntityRepository
             ->setMaxResults($maxResults);
 
         return $productsQueryBuilder;
-    }
-
-    /**
-     * @param array $skus
-     * @return QueryBuilder
-     */
-    public function getProductWithNamesBySkuQueryBuilder(array $skus)
-    {
-        // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map('mb_strtoupper', $skus);
-
-        $qb = $this->createQueryBuilder('product')
-            ->select('product');
-        $qb->where($qb->expr()->in('product.skuUppercase', ':product_skus'))
-            ->setParameter('product_skus', $upperCaseSkus);
-
-        return $qb;
     }
 
     private function getImagesQueryBuilder(array $productIds): QueryBuilder
@@ -252,24 +198,6 @@ class ProductRepository extends ServiceEntityRepository
            ->setParameter('product_id', $productId);
 
         return $qb->getQuery()->execute();
-    }
-
-    /**
-     * @param string $sku
-     *
-     * @return QueryBuilder
-     */
-    public function getPrimaryUnitPrecisionCodeQueryBuilder($sku)
-    {
-        $qb = $this->createQueryBuilder('product');
-
-        $qb
-            ->select('IDENTITY(productPrecision.unit)')
-            ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
-            ->where($qb->expr()->eq('product.skuUppercase', ':sku'))
-            ->setParameter('sku', mb_strtoupper($sku));
-
-        return $qb;
     }
 
     /**

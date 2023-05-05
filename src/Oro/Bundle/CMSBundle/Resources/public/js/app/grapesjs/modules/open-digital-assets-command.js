@@ -25,7 +25,7 @@ const openDigitalAssetsCommand = {
      * @param {object} options
      * @returns {openDigitalAssetsCommand}
      */
-    run: function(editor, sender, options) {
+    run(editor, sender, options) {
         this.options = {
             ...this.options,
             ...options
@@ -43,7 +43,7 @@ const openDigitalAssetsCommand = {
         return this;
     },
 
-    stop: function(editor) {
+    stop(editor) {
         this.dialog.dispose();
 
         return this;
@@ -58,13 +58,13 @@ const openDigitalAssetsCommand = {
      * @param {object} data
      * @private
      */
-    _onGridRowSelect: function(editor, data) {
+    _onGridRowSelect(editor, data) {
         this.options.onSelect(data.model, this);
         editor.stopCommand(this.id);
     },
 
-    _openChooseDialog: function(editor) {
-        return new DigitalAssetDialogWidget({
+    _openChooseDialog(editor) {
+        const options = {
             title: this.options.title,
             url: routing.generate(
                 this.options.routeName,
@@ -73,7 +73,15 @@ const openDigitalAssetsCommand = {
             dialogOptions: {
                 modal: true
             }
-        });
+        };
+
+        if (editor.Commands.isActive('fullscreen') ) {
+            options.loadingProperties = {
+                extraClassName: 'grapesjs-loading-mask-fullscreen'
+            };
+        }
+
+        return new DigitalAssetDialogWidget(options);
     }
 };
 

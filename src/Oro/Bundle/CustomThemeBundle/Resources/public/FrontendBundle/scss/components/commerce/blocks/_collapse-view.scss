@@ -15,9 +15,3 @@
         }
     }
 }
-
-@include breakpoint('tablet') {
-    .main-menu-outer {
-        display: none;
-    }
-}

@@ -4,7 +4,8 @@ namespace Oro\Bundle\InventoryBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\InventoryBundle\Model\ExtendInventoryLevel;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -31,9 +32,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  *      }
  * )
  */
-class InventoryLevel extends ExtendInventoryLevel implements OrganizationAwareInterface
+class InventoryLevel implements
+    OrganizationAwareInterface,
+    ExtendEntityInterface
 {
     use OrganizationAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int

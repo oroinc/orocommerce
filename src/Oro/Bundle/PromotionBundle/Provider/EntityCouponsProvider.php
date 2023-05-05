@@ -7,24 +7,20 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Selectable;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\CouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
 /**
  * This service help with getting coupons or applied coupons
  */
 class EntityCouponsProvider implements EntityCouponsProviderInterface
 {
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
-        $this->doctrineHelper = $doctrineHelper;
+    public function __construct(
+        private DoctrineHelper             $doctrineHelper,
+        private PromotionAwareEntityHelper $promotionAwareHelper
+    ) {
     }
 
     /**
@@ -34,15 +30,14 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
     {
         if ($entity instanceof CouponsAwareInterface) {
             return $entity->getCoupons();
-        } elseif ($entity instanceof AppliedCouponsAwareInterface) {
+        } elseif ($this->promotionAwareHelper->isCouponAware($entity)) {
             return $this->getCouponsByAppliedCoupons($entity->getAppliedCoupons());
         }
 
-        throw new \InvalidArgumentException(sprintf(
-            'Given entity must implement either %s or %s',
-            CouponsAwareInterface::class,
-            AppliedCouponsAwareInterface::class
-        ));
+        throw new \InvalidArgumentException(
+            'Given entity must have is_coupon_aware entity config or ' .
+            'implement the Oro\Bundle\PromotionBundle\Entity\CouponsAwareInterface interface'
+        );
     }
 
     /**

@@ -1,91 +1,119 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\WebCatalogBundle\ContentNodeUtils;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerGroupCriteriaProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
-use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
+use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Service that collect content nodes tree by scope, including content variants.
  */
 class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 {
-    private const ROOT_NODE_IDENTIFIER = 'root';
-    private const IDENTIFIER_GLUE      = '__';
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var ContentNodeProvider */
-    private $contentNodeProvider;
-
-    /** @var ScopeManager */
-    private $scopeManager;
+    private DoctrineHelper             $doctrineHelper;
+    private ContentNodeProvider        $contentNodeProvider;
+    private ScopeManager               $scopeManager;
+    private ResolvedContentNodesLoader $resolvedContentNodesLoader;
+    private PropertyAccessorInterface  $propertyAccessor;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ContentNodeProvider $contentNodeProvider,
-        ScopeManager $scopeManager
+        ScopeManager $scopeManager,
+        ResolvedContentNodesLoader $resolvedContentNodesLoader,
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->contentNodeProvider = $contentNodeProvider;
         $this->scopeManager = $scopeManager;
-    }
-
-    public function getResolvedContentNode(ContentNode $node, Scope $scope): ?ResolvedContentNode
-    {
-        $criteria = $this->getCriteriaByScope($scope);
-        $nodeIds = $this->loadContentNodeIds($node, $criteria);
-        if (!$nodeIds) {
-            return null;
-        }
-
-        $nodes = $this->loadContentNodes($nodeIds);
-        $variants = $this->loadContentVariants($nodeIds, $criteria);
-        $variantMetadata = $this->doctrineHelper->getEntityMetadataForClass(ContentVariant::class);
-
-        $rootNodeId = array_shift($nodeIds);
-        $resolvedRootNode = $this->createResolvedContentNode($rootNodeId, $nodes, $variants, $variantMetadata);
-        if (null === $resolvedRootNode) {
-            return null;
-        }
-
-        /** @var ResolvedContentNode[] $resolvedNodes */
-        $resolvedNodes = [];
-        $resolvedNodes[$resolvedRootNode->getId()] = $resolvedRootNode;
-        foreach ($nodeIds as $nodeId) {
-            $parentNodeId = $nodes[$nodeId]->getParentNode()->getId();
-            if (isset($resolvedNodes[$parentNodeId])) {
-                $resolvedNode = $this->createResolvedContentNode($nodeId, $nodes, $variants, $variantMetadata);
-                if (null !== $resolvedNode) {
-                    $resolvedNodes[$resolvedNode->getId()] = $resolvedNode;
-                    $resolvedNodes[$parentNodeId]->addChildNode($resolvedNode);
-                }
-            }
-        }
-
-        return $resolvedRootNode;
+        $this->resolvedContentNodesLoader = $resolvedContentNodesLoader;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
-     * @param ContentNode   $node
-     * @param ScopeCriteria $criteria
-     *
-     * @return int[]
+     * @param ContentNode $node
+     * @param Scope|array $scopes
+     * @param array $context Available context options:
+     *  [
+     *      'tree_depth' => int, // Restricts the maximum tree depth. -1 stands for unlimited.
+     *  ]
+     * @return ResolvedContentNode|null
      */
-    private function loadContentNodeIds(ContentNode $node, ScopeCriteria $criteria): array
+    public function getResolvedContentNode(
+        ContentNode $node,
+        Scope|array $scopes,
+        array $context = []
+    ): ?ResolvedContentNode {
+        $scopes = !is_array($scopes) ? [$scopes] : $scopes;
+        if (!$scopes) {
+            return null;
+        }
+
+        $variantIdByContentNodeIds = $this->getVariantIdByContentNodeIds($node, $scopes, $context);
+        if (!$variantIdByContentNodeIds) {
+            return null;
+        }
+
+        $resolvedContentNodes = $this->resolvedContentNodesLoader->loadResolvedContentNodes($variantIdByContentNodeIds);
+
+        return $resolvedContentNodes[$node->getId()] ?? null;
+    }
+
+    /**
+     * @param ContentNode $node
+     * @param Scope|Scope[] $scopes
+     * @param array $context
+     *
+     * @return array<int,int> $variantIdByContentNodeIds
+     *  [
+     *      int $nodeId => int $contentVariantId,
+     *      // ...
+     *  ]
+     */
+    private function getVariantIdByContentNodeIds(
+        ContentNode $node,
+        Scope|array $scopes,
+        array $context = []
+    ): array {
+        $treeDepth = (int)($context['tree_depth'] ?? -1);
+        $queryBuilder = $this->getContentNodeIdsQueryBuilder($node, $treeDepth);
+
+        /**
+         * @var array<array<int,int>> $variantIdByContentNodeIds
+         *  [
+         *      [
+         *          int $nodeId => int $contentVariantId,
+         *          // ...
+         *      ],
+         *      // ...
+         *  ]
+         */
+        $variantIdByContentNodeIds = [];
+        foreach ($scopes as $scope) {
+            $criteria = $this->getCriteriaByScope($scope);
+            $nodeIds = $this->contentNodeProvider->getContentNodeIds($queryBuilder, $criteria);
+            if ($nodeIds) {
+                $variantIdByContentNodeIds[] = $this->contentNodeProvider->getContentVariantIds($nodeIds, $criteria);
+            }
+        }
+
+        // Flattens content variant ids collected for each scope, so content variant IDs are merged
+        // as per the scopes ordering in $scopes, e.g. content node #1 with content variant #11 from $scopes[0]
+        // has higher priority than content node #1 with content variant #12 from $scopes[1].
+        return array_replace([], ...array_reverse($variantIdByContentNodeIds));
+    }
+
+    private function getContentNodeIdsQueryBuilder(ContentNode $node, int $treeDepth = -1): QueryBuilder
     {
         $qb = $this->doctrineHelper
             ->createQueryBuilder(ContentNode::class, 'node')
@@ -93,161 +121,13 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             ->setParameter('left', $node->getLeft())
             ->setParameter('right', $node->getRight());
 
-        return $this->contentNodeProvider->getContentNodeIds($qb, $criteria);
-    }
-
-    /**
-     * @param int[] $nodeIds
-     *
-     * @return ContentNode[] [node id => content node, ...]
-     */
-    private function loadContentNodes(array $nodeIds): array
-    {
-        /** @var ContentNode[] $nodes */
-        $nodes = $this->doctrineHelper
-            ->createQueryBuilder(ContentNode::class, 'node')
-            ->where('node.id IN (:ids)')
-            ->setParameter('ids', $nodeIds)
-            ->getQuery()
-            ->getResult();
-
-        $result = [];
-        foreach ($nodes as $node) {
-            $result[$node->getId()] = $node;
+        if ($treeDepth > -1) {
+            $qb
+                ->andWhere('node.level <= :max_level')
+                ->setParameter('max_level', $node->getLevel() + $treeDepth);
         }
 
-        return $result;
-    }
-
-    /**
-     * @param int[]         $nodeIds
-     * @param ScopeCriteria $criteria
-     *
-     * @return ContentVariant[] [node id => content variant id, ...]
-     */
-    private function loadContentVariants(array $nodeIds, ScopeCriteria $criteria): array
-    {
-        $variantIds = $this->contentNodeProvider->getContentVariantIds($nodeIds, $criteria);
-
-        /** @var ContentVariant[] $variants */
-        $variants = $this->doctrineHelper
-            ->createQueryBuilder(ContentVariant::class, 'variant')
-            ->where('variant.id IN (:ids)')
-            ->setParameter('ids', array_values($variantIds))
-            ->getQuery()
-            ->getResult();
-
-        $variantMap = [];
-        foreach ($variants as $variant) {
-            $variantMap[$variant->getId()] = $variant;
-        }
-
-        $result = [];
-        foreach ($variantIds as $nodeId => $variantId) {
-            if (isset($variantMap[$variantId])) {
-                $result[$nodeId] = $variantMap[$variantId];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param int              $nodeId
-     * @param ContentNode[]    $nodes    [node id => content node, ...]
-     * @param ContentVariant[] $variants [node id => content variant, ...]
-     * @param ClassMetadata    $variantMetadata
-     *
-     * @return ResolvedContentNode|null
-     */
-    private function createResolvedContentNode(
-        int $nodeId,
-        array $nodes,
-        array $variants,
-        ClassMetadata $variantMetadata
-    ): ?ResolvedContentNode {
-        if (!isset($nodes[$nodeId], $variants[$nodeId])) {
-            return null;
-        }
-
-        $node = $nodes[$nodeId];
-
-        return new ResolvedContentNode(
-            $nodeId,
-            $this->getIdentifier($node),
-            $node->getLeft(), // The "left" tree option used as the priority of the menu item.
-            $node->getTitles(),
-            $this->createResolvedContentVariant($variants[$nodeId], $variantMetadata),
-            $node->isRewriteVariantTitle()
-        );
-    }
-
-    private function createResolvedContentVariant(
-        ContentVariant $variant,
-        ClassMetadata $metadata
-    ): ResolvedContentVariant {
-        $resolvedVariant = new ResolvedContentVariant();
-        foreach ($metadata->getFieldNames() as $fieldName) {
-            $resolvedVariant->{$fieldName} = $metadata->getFieldValue($variant, $fieldName);
-        }
-
-        foreach ($metadata->getAssociationNames() as $associationName) {
-            $associatedValue = $metadata->getFieldValue($variant, $associationName);
-            if ($associationName === 'slugs') {
-                $this->fillSlugs($associatedValue, $resolvedVariant);
-            }
-            if ($associatedValue instanceof Collection || $associatedValue instanceof ContentNode) {
-                continue;
-            }
-            if ($associatedValue) {
-                $resolvedVariant->{$associationName} = $associatedValue;
-            }
-        }
-
-        return $resolvedVariant;
-    }
-
-    private function getIdentifier(ContentNode $node): string
-    {
-        /** @var LocalizedFallbackValue $localizedUrl */
-        $localizedUrl = $node->getLocalizedUrls()
-            ->filter(function (LocalizedFallbackValue $localizedUrl) {
-                return $localizedUrl->getLocalization() === null;
-            })
-            ->first();
-        if (!$localizedUrl) {
-            $localizedUrl = $node->getLocalizedUrls()->first();
-        }
-        if (!$localizedUrl) {
-            return '';
-        }
-
-        $url = trim($localizedUrl->getText(), '/');
-        $identifierParts = [self::ROOT_NODE_IDENTIFIER];
-        if ($url) {
-            if (strpos($url, '/') > 0) {
-                $identifierParts = array_merge($identifierParts, explode('/', $url));
-            } else {
-                $identifierParts[] = $url;
-            }
-        }
-
-        return implode(self::IDENTIFIER_GLUE, $identifierParts);
-    }
-
-    /**
-     * @param Collection|Slug[]      $slugs
-     * @param ResolvedContentVariant $resolvedVariant
-     */
-    private function fillSlugs(Collection $slugs, ResolvedContentVariant $resolvedVariant): void
-    {
-        foreach ($slugs as $slug) {
-            $localizedUrl = new LocalizedFallbackValue();
-            $localizedUrl->setString($slug->getUrl());
-            $localizedUrl->setLocalization($slug->getLocalization());
-
-            $resolvedVariant->addLocalizedUrl($localizedUrl);
-        }
+        return $qb;
     }
 
     private function getCriteriaByScope(Scope $scope): ScopeCriteria
@@ -261,8 +141,11 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         // a consent or other object).
         // We need the customer group to be sure that content nodes that have a restriction
         // by a customer group will be filtered correctly.
-        if (method_exists($scope, 'getCustomer') && $scope->getCustomer()) {
-            $context[ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP] = $scope->getCustomer()->getGroup();
+        if ($this->propertyAccessor->isReadable($scope, 'customer')
+            && $this->propertyAccessor->getValue($scope, 'customer')
+        ) {
+            $customer = $this->propertyAccessor->getValue($scope, 'customer');
+            $context[ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP] = $customer->getGroup();
         }
 
         return $this->scopeManager->getCriteriaByScope($scope, 'web_content', $context);

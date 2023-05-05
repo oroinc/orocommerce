@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
@@ -12,50 +13,25 @@ use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
 /**
- * UPS shipping method type implementation.
+ * Represents UPS shipping method type.
  */
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
-    const REQUEST_OPTION = 'Rate';
+    private const REQUEST_OPTION = 'Rate';
 
-    /** @var string */
-    protected $methodId;
-
-    /** @var UPSSettings */
-    protected $transport;
-
-    /** @var UPSTransportProvider */
-    protected $transportProvider;
-
-    /** @var ShippingService */
-    protected $shippingService;
-
-    /** @var PriceRequestFactory */
-    protected $priceRequestFactory;
-
-    /** @var ShippingPriceCache */
-    protected $cache;
-
-    /** @var string */
-    private $identifier;
-
-    /** @var string */
+    private string $identifier;
     private string $label;
+    private string $methodId;
+    private ShippingService $shippingService;
+    private UPSSettings $transport;
+    private UPSTransportProvider $transportProvider;
+    private PriceRequestFactory $priceRequestFactory;
+    private ShippingPriceCache $cache;
 
-    /**
-     * @param string $identifier
-     * @param string $label
-     * @param string $methodId
-     * @param UPSSettings $transport
-     * @param UPSTransportProvider $transportProvider
-     * @param ShippingService $shippingService
-     * @param PriceRequestFactory $priceRequestFactory
-     * @param ShippingPriceCache $cache
-     */
     public function __construct(
-        $identifier,
-        $label,
-        $methodId,
+        string $identifier,
+        string $label,
+        string $methodId,
         ShippingService $shippingService,
         UPSSettings $transport,
         UPSTransportProvider $transportProvider,
@@ -63,7 +39,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         ShippingPriceCache $cache
     ) {
         $this->identifier = $identifier;
-        $this->label = (string) $label;
+        $this->label = $label;
         $this->methodId = $methodId;
         $this->shippingService = $shippingService;
         $this->transport = $transport;
@@ -73,15 +49,15 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel(): string
     {
@@ -89,17 +65,17 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getSortOrder()
+    public function getSortOrder(): int
     {
         return 0;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType()
+    public function getOptionsConfigurationFormType(): ?string
     {
         return UPSShippingMethodOptionsType::class;
     }
@@ -113,18 +89,21 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
-    {
+    public function calculatePrice(
+        ShippingContextInterface $context,
+        array $methodOptions,
+        array $typeOptions
+    ): ?Price {
         $priceRequest = $this->priceRequestFactory->create(
             $this->transport,
             $context,
-            static::REQUEST_OPTION,
+            self::REQUEST_OPTION,
             $this->shippingService
         );
 
-        if (count($priceRequest->getPackages()) < 1) {
+        if (\count($priceRequest->getPackages()) < 1) {
             return null;
         }
 

@@ -1,0 +1,177 @@
+{
+  "success": false,
+  "collection": {
+    "errors": [],
+    "items": [
+      {
+        "sku": "product-1",
+        "product_name": "product-1.names.default",
+        "quantity": 1,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 2
+        },
+        "index": 1,
+        "unit_label": "milliliter",
+        "organization": ""
+      },
+      {
+        "sku": "product-1",
+        "product_name": "product-1.names.default",
+        "quantity": 1.4,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 2
+        },
+        "index": 2,
+        "unit_label": "liter",
+        "organization": ""
+      },
+      {
+        "sku": "product-1",
+        "product_name": "product-1.names.default",
+        "quantity": 5,
+        "errors": [
+          {
+            "message": "Unit 'box' doesn't exist for product product-1.",
+            "propertyPath": "unit"
+          }
+        ],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 2
+        },
+        "index": 3,
+        "unit_label": "box",
+        "organization": ""
+      },
+      {
+        "sku": "product-2",
+        "product_name": "product-2.names.default",
+        "quantity": 2.55,
+        "errors": [
+          {
+            "message": "Invalid precision for unit 'milliliter'.",
+            "propertyPath": "quantity"
+          }
+        ],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3,
+          "bottle": 1,
+          "box": 1
+        },
+        "index": 4,
+        "unit_label": "milliliter",
+        "organization": ""
+      },
+      {
+        "sku": "product-3",
+        "product_name": "product-3.names.default",
+        "quantity": 3,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3
+        },
+        "index": 5,
+        "unit_label": "milliliter",
+        "organization": ""
+      },
+      {
+        "sku": "product-3",
+        "product_name": "product-3.names.default",
+        "quantity": 3,
+        "errors": [
+          {
+            "message": "Unit 'liter5' doesn't exist for product product-3.",
+            "propertyPath": "unit"
+          }
+        ],
+        "additional": [],
+        "units": {
+          "milliliter": 0,
+          "liter": 3
+        },
+        "index": 6,
+        "unit_label": "liter5",
+        "organization": ""
+      },
+      {
+        "sku": "SKU1",
+        "product_name": "",
+        "quantity": 10.0112,
+        "errors": [
+          {
+            "message": "Item number cannot be found.",
+            "propertyPath": "product"
+          },
+          {
+            "message": "Unit cannot be blank.",
+            "propertyPath": "unit"
+          }
+        ],
+        "additional": [],
+        "index": 7,
+        "unit_label": "",
+        "organization": ""
+      },
+      {
+        "sku": "SKU2",
+        "product_name": "",
+        "quantity": 0,
+        "errors": [
+          {
+            "message": "Item number cannot be found.",
+            "propertyPath": "product"
+          },
+          {
+            "message": "Quantity should be greater than 0.",
+            "propertyPath": "quantity"
+          },
+          {
+            "message": "Unit cannot be blank.",
+            "propertyPath": "unit"
+          }
+        ],
+        "additional": [],
+        "index": 8,
+        "unit_label": "",
+        "organization": ""
+      },
+      {
+        "sku": "SKU3",
+        "product_name": "",
+        "quantity": 0,
+        "errors": [
+          {
+            "message": "Item number cannot be found.",
+            "propertyPath": "product"
+          },
+          {
+            "message": "Quantity should be greater than 0.",
+            "propertyPath": "quantity"
+          },
+          {
+            "message": "Unit cannot be blank.",
+            "propertyPath": "unit"
+          }
+        ],
+        "additional": [],
+        "index": 9,
+        "unit_label": "",
+        "organization": ""
+      }
+    ]
+  }
+}

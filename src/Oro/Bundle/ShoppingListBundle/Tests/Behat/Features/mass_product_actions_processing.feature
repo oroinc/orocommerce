@@ -1,4 +1,6 @@
+@fixture-OroWebCatalogBundle:empty_web_catalog.yml
 @fixture-OroCatalogBundle:all_products_page.yml
+
 Feature: Mass Product Actions processing
 
   In order to add multiple products to a shopping list

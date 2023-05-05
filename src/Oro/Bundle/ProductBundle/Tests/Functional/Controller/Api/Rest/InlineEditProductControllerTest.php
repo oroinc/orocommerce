@@ -15,24 +15,17 @@ class InlineEditProductControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const NEW_PRODUCT_NAME = 'New default product-1 name';
-    const NEW_PRODUCT_SLUG_PROTOTYPE = 'new-default-product-1-name';
-    const NEW_INVENTORY_STATUS_ID = 'out_of_stock';
+    private const NEW_PRODUCT_NAME = 'New default product-1 name';
+    private const NEW_PRODUCT_SLUG_PROTOTYPE = 'new-default-product-1-name';
+    private const NEW_INVENTORY_STATUS_ID = 'out_of_stock';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-
         $this->loadFixtures([LoadProductData::class]);
     }
 
-    /**
-     * @return array
-     */
-    public function productEditNameRedirectDataProvider()
+    public function productEditNameRedirectDataProvider(): array
     {
         return [
             'Redirect strategy empty, create redirect false' => [
@@ -79,12 +72,9 @@ class InlineEditProductControllerTest extends WebTestCase
     }
 
     /**
-     * @param string $redirectStrategy
-     * @param bool $createRedirect
-     * @param bool $expectedCreateRedirect
      * @dataProvider productEditNameRedirectDataProvider
      */
-    public function testProductEditName($redirectStrategy, $createRedirect, $expectedCreateRedirect)
+    public function testProductEditName(?string $redirectStrategy, bool $createRedirect, bool $expectedCreateRedirect)
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
@@ -92,7 +82,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
         $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_redirect.redirect_generation_strategy', $redirectStrategy);
         $configManager->flush();
         $configManager->reload();

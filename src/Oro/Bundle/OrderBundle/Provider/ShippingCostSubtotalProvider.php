@@ -56,6 +56,7 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         $subtotal->setLabel($this->translator->trans($translation));
         $subtotal->setVisible((bool) $entity->getShippingCost());
         $subtotal->setCurrency($this->getBaseCurrency($entity));
+        $subtotal->setRemovable(false);
 
         $subtotalAmount = 0.0;
         if ($entity->getShippingCost() !== null) {

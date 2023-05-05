@@ -625,3 +625,97 @@ Example:
 }
 ```
 {@/request}
+
+### parent
+
+#### get_subresource
+
+Retrieve a record of parent order assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve ID of parent order record assigned to a specific order record.
+
+#### update_relationship
+
+Replace the parent order assigned to a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "orders",
+    "id": "2"
+  }
+}
+```
+{@/request}
+
+### subOrders
+
+#### get_subresource
+
+Retrieve a record of suborders assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve IDs of suborders records assigned to a specific order record.
+
+#### update_relationship
+
+Replace the list of suborders assigned to a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "orders",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
+#### add_relationship
+
+Set suborders records for a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "orders",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
+#### delete_relationship
+
+Remove suborders records from a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "orders",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}

@@ -127,7 +127,11 @@ class ContentNodeProvider
      * @param int[] $nodeIds
      * @param ScopeCriteria|null $criteria
      *
-     * @return array [node id => content variant id, ...]
+     * @return array<int,int> Elements ordering is equal to ordering in $nodeIds
+     *  [
+     *      int $nodeId => int $contentVariantId,
+     *      // ..
+     *  ]
      */
     public function getContentVariantIds(array $nodeIds, ScopeCriteria $criteria = null): array
     {
@@ -146,16 +150,17 @@ class ContentNodeProvider
             ->setParameter('ids', $nodeIds);
         $criteria->applyWhereWithPriority($qb, 'scope');
 
-        $rows = $qb->getQuery()->getArrayResult();
+        /**
+         * @var array<int,int> $contentVariantIdByNodeId
+         *  [
+         *      int $nodeId => int $contentVariantId,
+         *      // ..
+         *  ]
+         */
+        $contentVariantIdByNodeId = array_column(array_reverse($qb->getQuery()->getArrayResult()), 'id', 'nodeId');
 
-        $result = [];
-        foreach ($rows as $row) {
-            if (!isset($result[$row['nodeId']])) {
-                $result[$row['nodeId']] = $row['id'];
-            }
-        }
-
-        return $result;
+        // Ensures the ordering is the same as in $nodeIds.
+        return array_filter(array_replace(array_fill_keys($nodeIds, null), $contentVariantIdByNodeId));
     }
 
     /**

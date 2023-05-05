@@ -1,0 +1,20 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    localProductName{1..5}:
+        string: 'Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..5}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..5}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        __calls:
+            - addName: ['@localProductName<current()>']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'

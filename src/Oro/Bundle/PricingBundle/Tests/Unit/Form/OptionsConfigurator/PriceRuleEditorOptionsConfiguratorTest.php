@@ -14,38 +14,26 @@ use Twig\Environment;
 
 class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var AutocompleteFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AutocompleteFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $autocompleteFieldsProvider;
 
-    /**
-     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /**
-     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $twig;
 
-    /**
-     * @var EntityAliasResolver
-     */
+    /** @var EntityAliasResolver */
     private $entityAliasResolver;
 
-    /**
-     * @var PriceRuleEditorOptionsConfigurator
-     */
+    /** @var PriceRuleEditorOptionsConfigurator */
     private $configurator;
 
     protected function setUp(): void
     {
         $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProviderInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->twig = $this->getMockBuilder(Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->twig = $this->createMock(Environment::class);
         $this->entityAliasResolver = $this->createMock(EntityAliasResolver::class);
 
         $this->configurator = new PriceRuleEditorOptionsConfigurator(
@@ -237,9 +225,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
 
     private function assertFormCalled()
     {
-        $priceListSelectFormView = $this->getMockBuilder(FormView::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceListSelectFormView = $this->createMock(FormView::class);
         $priceListSelectForm = $this->createMock(FormInterface::class);
         $priceListSelectForm->expects($this->once())
             ->method('createView')

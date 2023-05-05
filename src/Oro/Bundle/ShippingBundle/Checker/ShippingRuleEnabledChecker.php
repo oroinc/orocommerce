@@ -4,12 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Checker;
 
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
+/**
+ * The default implementation of the service to check whether a shipping rule can be enabled or not.
+ */
 class ShippingRuleEnabledChecker implements ShippingRuleEnabledCheckerInterface
 {
-    /**
-     * @var ShippingMethodEnabledByIdentifierCheckerInterface
-     */
-    private $methodEnabledChecker;
+    private ShippingMethodEnabledByIdentifierCheckerInterface $methodEnabledChecker;
 
     public function __construct(ShippingMethodEnabledByIdentifierCheckerInterface $methodEnabledChecker)
     {
@@ -17,11 +17,12 @@ class ShippingRuleEnabledChecker implements ShippingRuleEnabledCheckerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function canBeEnabled(ShippingMethodsConfigsRule $rule)
+    public function canBeEnabled(ShippingMethodsConfigsRule $rule): bool
     {
-        foreach ($rule->getMethodConfigs() as $config) {
+        $configs = $rule->getMethodConfigs();
+        foreach ($configs as $config) {
             if ($this->methodEnabledChecker->isEnabled($config->getMethod())) {
                 return true;
             }

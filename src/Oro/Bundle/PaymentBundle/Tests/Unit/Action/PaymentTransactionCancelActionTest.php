@@ -5,11 +5,57 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCancelAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Component\ConfigExpression\ContextAccessor;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Routing\RouterInterface;
 
-class PaymentTransactionCancelActionTest extends AbstractActionTest
+class PaymentTransactionCancelActionTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
+
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodProvider;
+
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTransactionProvider;
+
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $router;
+
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $dispatcher;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
+    /** @var PaymentTransactionCancelAction */
+    private $action;
+
+    protected function setUp(): void
+    {
+        $this->contextAccessor = $this->createMock(ContextAccessor::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->action = new PaymentTransactionCancelAction(
+            $this->contextAccessor,
+            $this->paymentMethodProvider,
+            $this->paymentTransactionProvider,
+            $this->router
+        );
+        $this->action->setLogger($this->logger);
+        $this->action->setDispatcher($this->dispatcher);
+    }
+
     /**
      * @dataProvider executeDataProvider
      */
@@ -17,6 +63,7 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
     {
         /** @var PaymentTransaction $authorizationPaymentTransaction */
         $authorizationPaymentTransaction = $data['options']['paymentTransaction'];
+        /** @var PaymentTransaction $cancelPaymentTransaction */
         $cancelPaymentTransaction = $data['cancelPaymentTransaction'];
         $options = $data['options'];
         $context = [];
@@ -30,10 +77,10 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
             ->with(PaymentMethodInterface::CANCEL, $authorizationPaymentTransaction)
             ->willReturn($cancelPaymentTransaction);
 
-        $responseValue = $this->returnValue($data['response']);
-
         if ($data['response'] instanceof \Exception) {
             $responseValue = $this->throwException($data['response']);
+        } else {
+            $responseValue = $this->returnValue($data['response']);
         }
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
@@ -65,20 +112,18 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
 
         $this->action->initialize($options);
         $this->action->execute($context);
+
+        self::assertEquals(!$cancelPaymentTransaction->isSuccessful(), $authorizationPaymentTransaction->isActive());
     }
 
     public function executeDataProvider(): array
     {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
-
         return [
             'default' => [
                 'data' => [
-                    'cancelPaymentTransaction' => $paymentTransaction
-                        ->setAction(PaymentMethodInterface::CANCEL),
+                    'cancelPaymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::CANCEL, true),
                     'options' => [
-                        'paymentTransaction' => $paymentTransaction,
+                        'paymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::AUTHORIZE, true),
                         'attribute' => new PropertyPath('test'),
                         'transactionOptions' => [
                             'testOption' => 'testOption',
@@ -88,18 +133,17 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'transaction' => null,
-                    'successful' => false,
-                    'message' => 'oro.payment.message.error',
+                    'successful' => true,
+                    'message' => null,
                     'testOption' => 'testOption',
                     'testResponse' => 'testResponse',
                 ],
             ],
             'throw exception' => [
                 'data' => [
-                    'cancelPaymentTransaction' => $paymentTransaction
-                        ->setAction(PaymentMethodInterface::CANCEL),
+                    'cancelPaymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::CANCEL, false),
                     'options' => [
-                        'paymentTransaction' => $paymentTransaction,
+                        'paymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::AUTHORIZE, true),
                         'attribute' => new PropertyPath('test'),
                         'transactionOptions' => [
                             'testOption' => 'testOption',
@@ -115,6 +159,18 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
                 ],
             ],
         ];
+    }
+
+    private function getPaymentTransaction(string $action, bool $successful): PaymentTransaction
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setAction($action);
+        $paymentTransaction->setAmount(100);
+        $paymentTransaction->setActive(true);
+        $paymentTransaction->setSuccessful($successful);
+        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
+
+        return $paymentTransaction;
     }
 
     /**
@@ -139,19 +195,6 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
             [['currency' => 'someCurrency']],
             [['paymentMethod' => 'somePaymentMethod']],
         ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getAction()
-    {
-        return new PaymentTransactionCancelAction(
-            $this->contextAccessor,
-            $this->paymentMethodProvider,
-            $this->paymentTransactionProvider,
-            $this->router
-        );
     }
 
     public function testExecuteFailedWhenPaymentMethodNotExists()

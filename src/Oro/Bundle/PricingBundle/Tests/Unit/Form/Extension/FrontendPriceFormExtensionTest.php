@@ -20,26 +20,26 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
 
         $userCurrencyManager = $this->createMock(UserCurrencyManager::class);
-        $userCurrencyManager->method('getAvailableCurrencies')
+        $userCurrencyManager->expects(self::any())
+            ->method('getAvailableCurrencies')
             ->willReturn(['USD', 'EUR']);
-        $userCurrencyManager->method('getUserCurrency')
+        $userCurrencyManager->expects(self::any())
+            ->method('getUserCurrency')
             ->willReturn('EUR');
 
         $priceType = new PriceType();
         $priceType->setDataClass(Price::class);
 
-        $currencySelectionType = new CurrencySelectionTypeStub();
-
         return [
             new PreloadedExtension(
                 [
-                    PriceType::class => $priceType,
-                    CurrencySelectionType::class => $currencySelectionType,
+                    $priceType,
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                 ],
                 [
                     PriceType::class => [
@@ -53,7 +53,8 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
 
     public function testSubmitNotFrontend()
     {
-        $this->frontendHelper->method('isFrontendRequest')
+        $this->frontendHelper->expects(self::any())
+            ->method('isFrontendRequest')
             ->willReturn(false);
 
         $form = $this->factory->create(PriceType::class);
@@ -67,7 +68,8 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-        $this->frontendHelper->method('isFrontendRequest')
+        $this->frontendHelper->expects(self::any())
+            ->method('isFrontendRequest')
             ->willReturn(true);
 
         $form = $this->factory->create(PriceType::class);

@@ -33,10 +33,10 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     Then I should see "Schema updated" flash message
 
     Given I go to Products / Product Families
-    When I click Edit "Attribute Family" in grid
+    When I click Edit "Default" in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Color] |
+      | Attribute group | true    | [Color] |
     And I save form
     Then I should see "Successfully updated" flash message
 

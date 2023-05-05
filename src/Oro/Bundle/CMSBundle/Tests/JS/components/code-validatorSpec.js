@@ -2,6 +2,7 @@ import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import Modal from 'oroui/js/modal';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
+import '../fixtures/load-plugin-modules';
 
 describe('orocms/js/app/grapesjs/plugins/code-validator', () => {
     let grapesjsEditorView;
@@ -68,7 +69,7 @@ describe('orocms/js/app/grapesjs/plugins/code-validator', () => {
                 <div id="test"></div>
             </div>`);
 
-            expect(codeValidator.invalid).toBeTruthy();
+            expect(codeValidator.invalid).toBe(true);
             expect(codeValidator.lockOverlay).toBeInstanceOf(Modal);
         });
 

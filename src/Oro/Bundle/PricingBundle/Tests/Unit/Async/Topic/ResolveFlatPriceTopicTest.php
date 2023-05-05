@@ -72,4 +72,12 @@ class ResolveFlatPriceTopicTest extends AbstractTopicTestCase
     {
         return [];
     }
+
+    public function testCreateJobName(): void
+    {
+        self::assertStringStartsWith(
+            'oro_pricing.flat_price.resolve_',
+            $this->getTopic()->createJobName([])
+        );
+    }
 }

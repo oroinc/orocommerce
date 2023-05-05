@@ -6,4 +6,4 @@ layout:
             id: product_view_related_items_container
             parentId: product_view_additional_container
             blockType: container
-    conditions: '!context["is_mobile"]'
+    conditions: '!context["is_mobile"] && context["product_type"] != "kit"'

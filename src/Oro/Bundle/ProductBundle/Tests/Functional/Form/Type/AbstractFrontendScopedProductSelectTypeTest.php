@@ -36,9 +36,9 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function restrictionSelectDataProvider()
+    public function restrictionSelectDataProvider(): array
     {
         return [
             [
@@ -80,9 +80,9 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function restrictionGridDataProvider()
+    public function restrictionGridDataProvider(): array
     {
         return [
             [

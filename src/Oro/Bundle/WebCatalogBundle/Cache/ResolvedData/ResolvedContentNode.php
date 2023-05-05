@@ -12,20 +12,26 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 class ResolvedContentNode implements ContentNodeInterface
 {
     protected int $id;
+
     protected string $identifier;
+
     protected Collection $titles;
+
     protected ResolvedContentVariant $resolvedContentVariant;
+
     protected Collection $childNodes;
+
     protected bool $rewriteVariantTitle = true;
+
     protected int $priority = 0;
 
     public function __construct(
-        $id,
-        $identifier,
-        $priority,
+        int $id,
+        string $identifier,
+        int $priority,
         Collection $titles,
         ResolvedContentVariant $resolvedContentVariant,
-        $rewriteVariantTitle = true
+        bool $rewriteVariantTitle = true
     ) {
         $this->id = $id;
         $this->identifier = $identifier;

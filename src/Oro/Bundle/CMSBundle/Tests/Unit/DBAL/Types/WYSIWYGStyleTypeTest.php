@@ -2,22 +2,16 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DBAL\Types;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType;
-use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
 class WYSIWYGStyleTypeTest extends \PHPUnit\Framework\TestCase
 {
-    private Type $type;
-
-    public static function setUpBeforeClass(): void
-    {
-        Type::addType('wysiwyg_style', WYSIWYGStyleType::class);
-    }
+    private WYSIWYGStyleType $type;
 
     protected function setUp(): void
     {
-        $this->type = Type::getType('wysiwyg_style');
+        $this->type = new WYSIWYGStyleType();
     }
 
     public function testPrefixConst(): void
@@ -32,9 +26,6 @@ class WYSIWYGStyleTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testRequiresSQLCommentHint(): void
     {
-        /** @var DatabasePlatformMock $platform */
-        $platform = $this->createMock(DatabasePlatformMock::class);
-
-        self::assertTrue($this->type->requiresSQLCommentHint($platform));
+        self::assertTrue($this->type->requiresSQLCommentHint($this->createMock(AbstractPlatform::class)));
     }
 }

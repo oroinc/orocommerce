@@ -14,8 +14,7 @@ class ComputeLocalizationDefaultField implements ProcessorInterface
 {
     private const DEFAULT_FIELD = 'default';
 
-    /** @var LocalizationManager */
-    private $localizationManager;
+    private LocalizationManager $localizationManager;
 
     public function __construct(LocalizationManager $localizationManager)
     {
@@ -25,7 +24,7 @@ class ComputeLocalizationDefaultField implements ProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */
 

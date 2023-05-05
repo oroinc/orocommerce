@@ -12,30 +12,23 @@ class CheckoutLineItemRepositoryTest extends WebTestCase
 {
     use WebsiteManagerTrait;
 
-    /** @var CheckoutLineItemRepository */
-    private $repository;
+    private CheckoutLineItemRepository $repository;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->setCurrentWebsite();
-        $this->loadFixtures(
-            [
-                LoadShoppingListsCheckoutsData::class,
-            ]
-        );
+        $this->loadFixtures([LoadShoppingListsCheckoutsData::class]);
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository(CheckoutLineItem::class);
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(CheckoutLineItem::class);
     }
 
     /**
-     * @after
+     * @beforeResetClient
      */
-    public function afterFrontendTest(): void
+    public static function afterFrontendTest(): void
     {
-        if (null !== $this->client) {
-            $this->getWebsiteManagerStub()->disableStub();
-        }
+        self::getWebsiteManagerStub()->disableStub();
     }
 
     public function testCanBeGrouped(): void

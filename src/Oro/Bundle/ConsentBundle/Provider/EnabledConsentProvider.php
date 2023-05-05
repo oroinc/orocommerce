@@ -2,81 +2,43 @@
 
 namespace Oro\Bundle\ConsentBundle\Provider;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ConsentBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
-use Oro\Bundle\ConsentBundle\Filter\AdminConsentContentNodeValidFilter;
+use Oro\Bundle\ConsentBundle\Filter\ConsentFilterCollection;
 use Oro\Bundle\ConsentBundle\Filter\ConsentFilterInterface;
-use Oro\Bundle\ConsentBundle\Filter\FrontendConsentContentNodeValidFilter;
-use Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter;
-use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
-use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 
 /**
- * Provides consents enabled in the config with additional filterable option
+ * Provides consents enabled in a config with additional filterable option.
  */
 class EnabledConsentProvider
 {
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
-     * @var ConsentConfigConverter
-     */
-    private $converter;
-
-    /**
-     * @var ConsentContextProviderInterface
-     */
-    private $contextProvider;
-
-    /**
-     * @var ConsentFilterInterface[]
-     */
-    private $filters;
+    private EnabledConsentConfigProviderInterface $enabledConsentConfigProvider;
+    private ConsentFilterCollection $filters;
 
     public function __construct(
-        ConfigManager $configManager,
-        ConsentConfigConverter $converter,
-        ConsentContextProviderInterface $contextProvider
+        EnabledConsentConfigProviderInterface $enabledConsentConfigProvider,
+        ConsentFilterCollection $filters
     ) {
-        $this->configManager = $configManager;
-        $this->converter = $converter;
-        $this->contextProvider = $contextProvider;
-    }
-
-    public function addFilter(ConsentFilterInterface $filter)
-    {
-        $this->filters[] = $filter;
+        $this->enabledConsentConfigProvider = $enabledConsentConfigProvider;
+        $this->filters = $filters;
     }
 
     /**
-     * If no filters are passed, it will return all consents enabled in the configuration for customer user's website.
+     * Returns all consents enabled in a config that are passed by all given filters.
+     * When filters are not specified, it will return all consents enabled in a config.
      *
-     * @param array $enabledFilters
-     * [
-     *      'name of filter, by default (filter::NAME)',
-     *      ...
-     * ]
-     * @param array $filterParams
-     * [
-     *     'key1' => 'value1',
-     *      ...
-     * ]
+     * @param string[] $enabledFilters
+     * @param array    $filterParams
+     *
      * @return Consent[]
      */
-    public function getConsents(array $enabledFilters = [], array $filterParams = [])
+    public function getConsents(array $enabledFilters = [], array $filterParams = []): array
     {
         $consents = [];
-
-        $consentConfigs = $this->getConsentConfigs();
-
+        $consentConfigs = $this->enabledConsentConfigProvider->getConsentConfigs();
         foreach ($consentConfigs as $consentConfig) {
             $consent = $consentConfig->getConsent();
-            if ($this->filterConsent($consent, $enabledFilters, $filterParams)) {
+            if (null !== $consent && $this->isConsentPassedFilters($consent, $filterParams, $enabledFilters)) {
                 $consents[] = $consent;
             }
         }
@@ -85,66 +47,50 @@ class EnabledConsentProvider
     }
 
     /**
+     * Returns all unaccepted required consents enabled in a config.
+     *
      * @param ConsentAcceptance[] $consentAcceptances
      *
      * @return Consent[]
      */
-    public function getUnacceptedRequiredConsents(array $consentAcceptances)
+    public function getUnacceptedRequiredConsents(array $consentAcceptances): array
     {
-        $checkedConsentIds = array_map(function (ConsentAcceptance $consentAcceptance) {
-            return (int) $consentAcceptance->getConsent()->getId();
-        }, $consentAcceptances);
+        $acceptedConsents = [];
+        foreach ($consentAcceptances as $consentAcceptance) {
+            $acceptedConsents[$consentAcceptance->getConsent()->getId()] = true;
+        }
 
-        $requiredConsents = $this->getConsents([
-            RequiredConsentFilter::NAME,
-            AdminConsentContentNodeValidFilter::NAME,
-            FrontendConsentContentNodeValidFilter::NAME
-        ]);
+        $consents = [];
+        $consentConfigs = $this->enabledConsentConfigProvider->getConsentConfigs();
+        foreach ($consentConfigs as $consentConfig) {
+            $consent = $consentConfig->getConsent();
+            if (null !== $consent
+                && !isset($acceptedConsents[$consent->getId()])
+                && $this->isConsentPassedFilters($consent)
+            ) {
+                $consents[] = $consent;
+            }
+        }
 
-        return array_filter($requiredConsents, function (Consent $consent) use ($checkedConsentIds) {
-            return !in_array((int) $consent->getId(), $checkedConsentIds, true);
-        });
+        return $consents;
     }
 
-    /**
-     * @param Consent $consent
-     * @param array $enabledFilters
-     * @param array $filterParams
-     *
-     * @return bool
-     */
-    private function filterConsent(Consent $consent, array $enabledFilters, array $filterParams)
-    {
+    private function isConsentPassedFilters(
+        Consent $consent,
+        array $filterParams = [],
+        ?array $enabledFilters = null
+    ): bool {
+        /** @var ConsentFilterInterface $filter */
         foreach ($this->filters as $filter) {
-            if (in_array($filter->getName(), $enabledFilters) &&
-                !$filter->isConsentPassedFilter($consent, $filterParams)) {
+            if (null !== $enabledFilters && !\in_array($filter->getName(), $enabledFilters, true)) {
+                continue;
+            }
+
+            if (!$filter->isConsentPassedFilter($consent, $filterParams)) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    /**
-     * @return ConsentConfig[]
-     */
-    private function getConsentConfigs()
-    {
-        /**
-         * If we can't resolve website, return empty result
-         */
-        $website = $this->contextProvider->getWebsite();
-        if (!$website) {
-            return [];
-        }
-
-        $consentConfigValue = (array) $this->configManager->get(
-            Configuration::getConfigKey(Configuration::ENABLED_CONSENTS),
-            false,
-            false,
-            $website
-        );
-
-        return $this->converter->convertFromSaved($consentConfigValue);
     }
 }

@@ -10,13 +10,15 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeWithRedirectAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeWithRedirectAwareTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
-use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
@@ -62,17 +64,26 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
  * )
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @method LocalizedFallbackValue getTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultTitle()
+ * @method LocalizedFallbackValue getSlugPrototype(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultSlugPrototype()
+ * @method setDefaultTitle($title)
+ * @method setDefaultSlugPrototype($slug)
+ * @method $this cloneLocalizedFallbackValueAssociations()
  */
-class ContentNode extends ExtendContentNode implements
+class ContentNode implements
     ContentNodeInterface,
     DatesAwareInterface,
     LocalizedSlugPrototypeWithRedirectAwareInterface,
     ScopeCollectionAwareInterface,
-    WebCatalogAwareInterface
+    WebCatalogAwareInterface,
+    ExtendEntityInterface
 {
     use TreeTrait;
     use DatesAwareTrait;
     use LocalizedSlugPrototypeWithRedirectAwareTrait;
+    use ExtendEntityTrait;
 
     const FIELD_PARENT_NODE = 'parentNode';
 
@@ -236,8 +247,6 @@ class ContentNode extends ExtendContentNode implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->titles = new ArrayCollection();
         $this->childNodes = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
@@ -596,6 +605,7 @@ class ContentNode extends ExtendContentNode implements
     public function __clone()
     {
         if ($this->id) {
+            $this->cloneExtendEntityStorage();
             $this->cloneLocalizedFallbackValueAssociations();
         }
     }

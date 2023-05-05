@@ -17,18 +17,7 @@ operations:
                 action_group: oro_product_duplicate
                 parameters_mapping:
                     data: $.data
-            - '@call_service_method':
-                attribute: $.flashBag
-                service: session
-                method: getFlashBag
-            - '@call_method':
-                attribute: $.hasSuccessMessage
-                object: $.flashBag
-                method: has
-                method_parameters: ['success']
             - '@flash_message':
-                conditions:
-                    '@equal': [$.hasSuccessMessage, false]
                 parameters:
                     message: oro.product.controller.product.duplicated.message
                     type: 'success'
@@ -44,6 +33,9 @@ operations:
             - products-grid
             - products-select-grid
             - frontend-product-search-grid
+            - kit-item-products-edit-grid
+            - kit-item-products-view-grid
+            - kit-item-products-add-grid
 
     oro_product_update:
         extends: UPDATE

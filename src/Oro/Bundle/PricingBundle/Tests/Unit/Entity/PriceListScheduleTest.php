@@ -24,22 +24,16 @@ class PriceListScheduleTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider schedulesDataProvider
-     * @param PriceListSchedule $schedule1
-     * @param PriceListSchedule $schedule2
-     * @param bool $isEquivalent
      */
-    public function testEquals(PriceListSchedule $schedule1, PriceListSchedule $schedule2, $isEquivalent)
+    public function testEquals(PriceListSchedule $schedule1, PriceListSchedule $schedule2, bool $isEquivalent)
     {
         $this->assertSame($schedule1->equals($schedule2), $isEquivalent);
     }
 
     /**
      * @dataProvider schedulesDataProvider
-     * @param PriceListSchedule $schedule1
-     * @param PriceListSchedule $schedule2
-     * @param bool $isEquivalent
      */
-    public function testGetHash(PriceListSchedule $schedule1, PriceListSchedule $schedule2, $isEquivalent)
+    public function testGetHash(PriceListSchedule $schedule1, PriceListSchedule $schedule2, bool $isEquivalent)
     {
         $hash1 = $schedule1->getHash();
         $hash2 = $schedule2->getHash();
@@ -52,10 +46,7 @@ class PriceListScheduleTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function schedulesDataProvider()
+    public function schedulesDataProvider(): array
     {
         $priceList1 = new PriceList();
         $priceList2 = new PriceList();

@@ -1,6 +1,8 @@
 @ticket-BB-10800
 @ticket-BB-14758
+@ticket-BB-21411
 @fixture-OroRFPBundle:GuestRFQ.yml
+
 Feature: Guest RFQ
   In order to collect potential sales from non-registered customers
   As a Sales rep
@@ -72,6 +74,11 @@ Feature: Guest RFQ
     And I should see " Company Red Fox Tavern "
     And I should see " Customer Tester Testerson "
     And I should see "Product1"
+    When I click "Edit"
+    When I click "Assigned To Tooltip Icon"
+    Then I should see "The ID of the user who acts as an order fulfillment officer."
+    When I click "Assigned Customer Users Tooltip Icon"
+    Then I should see "The IDs of the customer users that will receive the order delivery."
 
   Scenario: Create second RFQ without adding to shopping list
     Given I proceed as the Buyer

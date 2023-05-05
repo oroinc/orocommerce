@@ -5,13 +5,13 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -23,21 +23,16 @@ class QuoteControllerTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
     use OperationAwareTestTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadQuoteAddressData::class,
-        ]);
+        $this->loadFixtures([LoadQuoteAddressData::class]);
     }
 
     protected function tearDown(): void
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_sale.enable_guest_quote', false);
         $configManager->set('oro_checkout.guest_checkout', false);
         $configManager->flush();
@@ -52,19 +47,19 @@ class QuoteControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_frontend_index'));
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString('frontend-quotes-grid', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('frontend-quotes-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid([
             'gridName' => 'frontend-quotes-grid',
             'frontend-quotes-grid[_sort_by][qid]' => 'ASC',
         ]);
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
         $data = $result['data'];
 
-        $this->assertEquals(count($expectedData['data']), count($data));
+        self::assertSameSize($expectedData['data'], $data);
 
         if (isset($expectedData['columns'])) {
             $testedColumns = array_keys($data[0]);
@@ -73,15 +68,16 @@ class QuoteControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
-            $this->assertEquals($expectedColumns, $testedColumns);
+            self::assertEquals($expectedColumns, $testedColumns);
         }
 
-        for ($i = 0; $i < $iMax = count($expectedData['data']); $i++) {
+        $dataSize = count($expectedData['data']);
+        for ($i = 0; $i < $dataSize; $i++) {
             // not expected Draft Quote
-            $this->assertArrayNotHasKey(LoadQuoteData::QUOTE_DRAFT, $data[$i]);
+            self::assertArrayNotHasKey(LoadQuoteData::QUOTE_DRAFT, $data[$i]);
             foreach ($expectedData['data'][$i] as $key => $value) {
-                $this->assertArrayHasKey($key, $data[$i]);
-                $this->assertEquals($value, $data[$i][$key]);
+                self::assertArrayHasKey($key, $data[$i]);
+                self::assertEquals($value, $data[$i][$key]);
             }
         }
     }
@@ -259,11 +255,11 @@ class QuoteControllerTest extends WebTestCase
         ));
 
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $controls = $crawler->filter('.customer-info-grid__row, .page-title');
 
-        $this->assertSameSize($expectedData['columns'], $controls);
+        self::assertSameSize($expectedData['columns'], $controls);
 
         /* @var TranslatorInterface $translator */
         $translator = $this->getContainer()->get('translator');
@@ -282,14 +278,14 @@ class QuoteControllerTest extends WebTestCase
             }
 
             $property = (string)$property;
-            static::assertStringContainsString($label, $control->textContent);
-            static::assertStringContainsString($property, $control->textContent);
+            self::assertStringContainsString($label, $control->textContent);
+            self::assertStringContainsString($property, $control->textContent);
         }
 
         $createOrderButton = (bool)$crawler
             ->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
 
-        $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
+        self::assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
 
     /**
@@ -526,12 +522,9 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider ACLProvider
-     *
-     * @param string $user
-     * @param int $status
+     * @dataProvider aclProvider
      */
-    public function testViewAccessDenied($user, $status): void
+    public function testViewAccessDenied(string $user, int $status): void
     {
         $this->loginUser($user);
 
@@ -547,10 +540,10 @@ class QuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($response, $status);
+        self::assertHtmlResponseStatusCodeEquals($response, $status);
     }
 
-    public function ACLProvider(): array
+    public function aclProvider(): array
     {
         return [
             'VIEW (nanonymous user)' => [
@@ -584,7 +577,7 @@ class QuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($response, 200);
+        self::assertHtmlResponseStatusCodeEquals($response, 200);
     }
 
     public function testViewDraft(): void
@@ -603,7 +596,7 @@ class QuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+        self::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     /**
@@ -613,7 +606,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->initClient();
 
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
 
         foreach ($configs as $name => $value) {
             $configManager->set($name, $value);
@@ -632,19 +625,16 @@ class QuoteControllerTest extends WebTestCase
             )
         );
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expected);
-        static::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "breadcrumbs")]')->count());
-        static::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "primary-menu-container")]')->count());
-        static::assertEquals(
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expected);
+        self::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "breadcrumbs")]')->count());
+        self::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "primary-menu-container")]')->count());
+        self::assertEquals(
             $expectedButton,
             (bool)$crawler->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count()
         );
     }
 
-    /**
-     * @return array
-     */
-    public function guestAccessProvider()
+    public function guestAccessProvider(): array
     {
         return [
             'valid' => [
@@ -739,10 +729,10 @@ class QuoteControllerTest extends WebTestCase
         $this->client->getCookieJar()->clear();
 
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
 
         $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
-        $this->assertSame($response->getStatusCode(), 302);
+        self::assertSame($response->getStatusCode(), 302);
     }
 
     public function testActualQuantityNotEqualToOfferedValidation(): void
@@ -770,13 +760,13 @@ class QuoteControllerTest extends WebTestCase
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $data = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('redirectUrl', $data);
-        $this->assertTrue($data['success']);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $data = self::jsonToArray($this->client->getResponse()->getContent());
+        self::assertArrayHasKey('redirectUrl', $data);
+        self::assertTrue($data['success']);
 
         $crawler = $this->client->request('POST', $data['redirectUrl']);
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit(
@@ -787,11 +777,11 @@ class QuoteControllerTest extends WebTestCase
             ]
         );
 
-        $this->assertCount(
+        self::assertCount(
             1,
             $crawler->filter('.validation-failed:contains("Quantity should be equal to offered quantity")')
         );
-        $this->assertCount(
+        self::assertCount(
             1,
             $crawler->filter(
                 '.validation-failed:contains("Quantity should be greater than or equal to offered quantity")'

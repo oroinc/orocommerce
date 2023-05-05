@@ -2,64 +2,44 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Type;
 
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type for the tax jurisdiction zip code.
+ */
 class ZipCodeType extends AbstractType
 {
-    const NAME = 'oro_tax_zip_code_type';
-
     /**
-     * @var string
+     * {@inheritDoc}
      */
-    protected $dataClass;
-
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new ZipCodeTransformer());
         $builder
-            ->add('zipRangeStart', TextType::class, [
-                'required' => true,
-            ])
-            ->add('zipRangeEnd', TextType::class, [
-                'required' => false,
-            ]);
+            ->add('zipRangeStart', TextType::class, ['required' => true])
+            ->add('zipRangeEnd', TextType::class, ['required' => false]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
+            'data_class' => ZipCode::class
         ]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
+        return 'oro_tax_zip_code_type';
     }
 }

@@ -21,9 +21,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CriteriaDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -94,9 +97,9 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContextData(): void
     {
-        $customerGroup = new CustomerGroup();
-        $customer = new Customer();
-        $customerUser = new CustomerUser();
+        $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 1]);
+        $customer = $this->getEntity(Customer::class, ['id' => 1]);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
         $website = new Website();
         $lineItem = new LineItem();
 

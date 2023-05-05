@@ -12,10 +12,8 @@ use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
@@ -57,7 +55,7 @@ class AppliedPromotionManager
     }
 
     /**
-     * @param Order|AppliedPromotionsAwareInterface $order
+     * @param Order $order
      * @param bool $removeOrphans
      */
     public function createAppliedPromotions(Order $order, $removeOrphans = false)
@@ -90,7 +88,7 @@ class AppliedPromotionManager
 
     /**
      * @param DiscountContextInterface $discountContext
-     * @param Order|AppliedPromotionsAwareInterface $order
+     * @param Order $order
      * @return AppliedPromotion[]
      */
     private function updateAppliedPromotions(DiscountContextInterface $discountContext, Order $order)
@@ -143,7 +141,7 @@ class AppliedPromotionManager
     }
 
     /**
-     * @param Order|AppliedPromotionsAwareInterface|AppliedCouponsAwareInterface $order
+     * @param Order $order
      * @param array|AppliedPromotion[] $appliedPromotions
      */
     private function removeUnusedAppliedCoupons(Order $order, array $appliedPromotions)
@@ -167,7 +165,7 @@ class AppliedPromotionManager
     }
 
     /**
-     * @param Order|AppliedPromotionsAwareInterface $order
+     * @param Order $order
      * @param PromotionDataInterface $promotion
      * @return AppliedPromotion
      */

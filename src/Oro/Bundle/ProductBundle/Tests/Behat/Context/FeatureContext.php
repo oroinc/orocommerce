@@ -14,6 +14,7 @@ use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
@@ -97,7 +98,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $inventoryLevel->setQuantity(self::PRODUCT_INVENTORY_QUANTITY);
 
         // package commerce-ee available
-        if (method_exists($inventoryLevel, 'setWarehouse')) {
+        if (EntityPropertyInfo::methodExists($inventoryLevel, 'setWarehouse')) {
             $warehouseEntityManager = $doctrineHelper->getEntityManagerForClass(Warehouse::class);
             $warehouseRepository = $warehouseEntityManager->getRepository(Warehouse::class);
 
@@ -151,27 +152,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $flashMessages = $page->findAll('css', 'div.notification-flash--error');
 
         static::assertNotEmpty($flashMessages);
-    }
-
-    /**
-     * @Then quick order form contains product with sku :productSku and quantity :productQuantity
-     *
-     * @param string $productSku
-     * @param int    $productQuantity
-     */
-    public function quickOrderFormContainsProductWithSkuAndQuantity($productSku, $productQuantity)
-    {
-        $quickAddForm = $this->createElement('QuickAddForm');
-        $firstSkuField = $quickAddForm->find('css', 'input[name="oro_product_quick_add[products][0][productSku]"]');
-
-        static::assertEquals($productSku, $firstSkuField->getValue());
-
-        $firstQuantityField = $quickAddForm->find(
-            'css',
-            'input[name="oro_product_quick_add[products][0][productQuantity]"]'
-        );
-
-        static::assertEquals($productQuantity, $firstQuantityField->getValue());
     }
 
     /**

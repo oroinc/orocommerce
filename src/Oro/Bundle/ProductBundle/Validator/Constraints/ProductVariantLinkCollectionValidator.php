@@ -9,21 +9,21 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Validate uninitialized variant links collection.
+ * This validator checks uninitialized variant links collection.
  */
 class ProductVariantLinkCollectionValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductVariantLinkCollection) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\ProductVariantLinkCollection');
+            throw new UnexpectedTypeException($constraint, ProductVariantLinkCollection::class);
         }
 
         if (null === $value) {
             return;
         }
 
-        if (!is_array($value) && !$value instanceof \Traversable) {
+        if (!\is_array($value) && !$value instanceof \Traversable) {
             throw new UnexpectedTypeException($value, 'array or Traversable');
         }
 
@@ -32,10 +32,11 @@ class ProductVariantLinkCollectionValidator extends ConstraintValidator
             return;
         }
 
-        $validator = $this->context->getValidator()->inContext($this->context);
         if ($value instanceof PersistentCollection) {
             $value = $value->unwrap();
         }
+
+        $validator = $this->context->getValidator()->inContext($this->context);
         foreach ($value as $key => $element) {
             $validator->atPath('[' . $key . ']')->validate($element, $constraint->constraints);
         }

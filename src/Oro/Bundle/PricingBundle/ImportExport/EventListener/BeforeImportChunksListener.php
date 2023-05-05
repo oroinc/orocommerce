@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\ImportExport\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -27,11 +28,7 @@ class BeforeImportChunksListener
     public function onBeforeImportChunks(BeforeImportChunksEvent $event): void
     {
         $body = $event->getBody();
-        if ($this->isResetStrategyApplicable($body)) {
-            if (!isset($body['options']['price_list_id'])) {
-                return;
-            }
-
+        if ($this->isSupported($body)) {
             $priceListId = (int)$body['options']['price_list_id'];
             $priceList = $this->getPriceListById($priceListId);
             if (null !== $priceList) {
@@ -41,9 +38,14 @@ class BeforeImportChunksListener
         }
     }
 
-    private function isResetStrategyApplicable(array $body): bool
+    private function isSupported(array $body): bool
     {
-        return isset($body['processorAlias']) && $body['processorAlias'] === self::RESET_PROCESSOR_ALIAS;
+        return
+            isset($body['options']['price_list_id'])
+            && isset($body['processorAlias'])
+            && $body['processorAlias'] === self::RESET_PROCESSOR_ALIAS
+            && isset($body['process'])
+            && $body['process'] === ProcessorRegistry::TYPE_IMPORT;
     }
 
     private function getPriceListById(int $priceListId): ?PriceList

@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ImportExportBundle\Entity\ImportExportResult;
+use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener;
@@ -263,6 +264,31 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('send')
             ->with(ResolveCombinedPriceByVersionedPriceListTopic::getName(), ['version' => 1, 'priceLists' => [2]]);
+
+        $this->listener->postPersist($importExportResult);
+    }
+
+    public function testPostPersistWithImportValidation()
+    {
+        $importExportResult = new ImportExportResult();
+        $importExportResult->setType(ProcessorRegistry::TYPE_IMPORT_VALIDATION);
+        $importExportResult->setOptions(['price_list_id' => 2, 'importVersion' => 2]);
+
+        $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
+
+        $this->producer
+            ->expects($this->never())
+            ->method('send');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('find')
+            ->willReturn($priceList);
+
+        $this->doctrine
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
         $this->listener->postPersist($importExportResult);
     }

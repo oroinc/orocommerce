@@ -78,7 +78,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNodeTreeResolver->expects($this->any())
             ->method('getResolvedContentNode')
-            ->with($contentNode, $scope)
+            ->with($contentNode, $scope, ['tree_depth' => 0])
             ->willReturn($resolvedContentNode);
 
         $this->assertEquals($expectedResult, $this->validator->isValid($contentNode, $consent, $logErrorsEnabled));

@@ -76,12 +76,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(142.0, $subtotal->getAmount());
     }
 
-    public function testGetSubtotalsException()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->provider->getSubtotals(null);
-    }
-
     public function testGetTotal()
     {
         $this->translator->expects($this->once())
@@ -280,7 +274,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
     public function testGetName()
     {
-        $this->assertEquals(TotalProcessorProvider::NAME, $this->provider->getName());
+        $this->assertEquals('oro_pricing.subtotal_total', $this->provider->getName());
     }
 
     public function testGetTotalInDefaultCurrency()
@@ -487,7 +481,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal->setType(LineItemSubtotalProvider::TYPE);
         $subtotal->setLabel('Total');
         $subtotal->setOperation(Subtotal::OPERATION_ADD);
-        $total = $this->provider->enableRecalculation()->getTotalForSubtotals($entity, [$subtotal]);
+        $total = $this->provider->getTotalForSubtotals($entity, new ArrayCollection([$subtotal]));
         $this->assertInstanceOf(Subtotal::class, $total);
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());

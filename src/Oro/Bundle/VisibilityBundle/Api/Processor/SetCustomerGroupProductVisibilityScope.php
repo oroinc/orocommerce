@@ -16,8 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class SetCustomerGroupProductVisibilityScope extends AbstractSetVisibilityScope
 {
-    /** @var VisibilityScopeProvider */
-    private $visibilityProvider;
+    private VisibilityScopeProvider $visibilityProvider;
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -48,5 +47,13 @@ class SetCustomerGroupProductVisibilityScope extends AbstractSetVisibilityScope
             'product' => $entity->getProduct(),
             'scope'   => $scope,
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function isExistingVisibilityCheckApplicable(VisibilityInterface $entity): bool
+    {
+        return null !== $entity->getProduct()?->getId();
     }
 }

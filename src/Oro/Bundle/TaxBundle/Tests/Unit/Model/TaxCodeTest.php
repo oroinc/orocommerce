@@ -21,20 +21,4 @@ class TaxCodeTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($taxCode, $taxCodeConstructor);
     }
-
-    public function testInvalidArgument()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Strings required');
-
-        TaxCode::create(new \stdClass(), 'string');
-    }
-
-    public function testInvalidSecondArgument()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Strings required');
-
-        TaxCode::create('string', new \stdClass());
-    }
 }

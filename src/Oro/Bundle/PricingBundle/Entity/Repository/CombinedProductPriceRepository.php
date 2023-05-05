@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -51,6 +52,29 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         );
     }
 
+    public function copyPricesByPriceListWithTempTable(
+        TempTableManipulatorInterface $tempTableManipulator,
+        CombinedPriceList $combinedPriceList,
+        PriceList $priceList,
+        bool $mergeAllowed,
+        array $products = []
+    ): void {
+        $tempTableName = $tempTableManipulator->getTempTableNameForEntity(
+            CombinedProductPrice::class,
+            $combinedPriceList->getId()
+        );
+
+        $this->doInsertByProductsUsingTempTable(
+            $tempTableManipulator,
+            $combinedPriceList,
+            $priceList,
+            $products,
+            $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList),
+            $tempTableName,
+            false
+        );
+    }
+
     public function insertPricesByPriceListWithTempTable(
         TempTableManipulatorInterface $tempTableManipulator,
         CombinedPriceList $combinedPriceList,
@@ -58,76 +82,23 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         bool $mergeAllowed,
         array $products
     ): void {
-        // Copy prices for products that are not in the CPL yet to temp table (faster insert)
-        // This logic is same to copying prices from price list with merge = false
-        $notInListQb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
-        $this->addPresentProductsRestriction($notInListQb, $combinedPriceList);
-
         $tempTableName = $tempTableManipulator->getTempTableNameForEntity(
             CombinedProductPrice::class,
             $combinedPriceList->getId()
         );
 
-        // Source - PL, restricted by - CPL, target - TMP
+        $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
+        $this->addUniquePriceCondition($qb, $combinedPriceList, $mergeAllowed);
+
         $this->doInsertByProductsUsingTempTable(
             $tempTableManipulator,
             $combinedPriceList,
             $priceList,
             $products,
-            $notInListQb,
-            $tempTableName,
-            false
-        );
-
-        if ($mergeAllowed) {
-            // For merge allowed add prices not blocked by merge:false for qty/units/currencies that are not present yet
-            // Skip prices moved to temp table
-            $qb = $this->getPricesQb($combinedPriceList, $mergeAllowed, $priceList);
-            $this->addProductsBlockedByMergeFlagRestriction($qb, $combinedPriceList);
-            $this->addPresentPricesRestriction($qb, $combinedPriceList);
-
-            // Apply restriction by temp table
-            $tempTableSubQb = $this->_em->createQueryBuilder();
-            $tempTableSubQb->select('cpp_tmp.id')
-                ->from(CombinedProductPrice::class, 'cpp_tmp')
-                ->where(
-                    $tempTableSubQb->expr()->eq('pp.product', 'cpp_tmp.product')
-                );
-            $qb->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->exists($tempTableSubQb->getDQL())
-                )
-            );
-
-            // Source - PL, restricted by - TMP, target - CPL
-            $this->doInsertByProductsUsingTempTable(
-                $tempTableManipulator,
-                $combinedPriceList,
-                $priceList,
-                $products,
-                $qb,
-                $tempTableManipulator->getTableNameForEntity(CombinedProductPrice::class),
-                true,
-                ['cpp_tmp' => $tempTableName]
-            );
-        }
-
-        // Move prices from temp to persistent CPL table
-        $tempTableManipulator->moveDataFromTemplateTableToEntityTable(
-            CombinedProductPrice::class,
-            $combinedPriceList->getId(),
-            [
-                'product',
-                'unit',
-                'priceList',
-                'productSku',
-                'quantity',
-                'value',
-                'currency',
-                'mergeAllowed',
-                'originPriceId',
-                'id'
-            ]
+            $qb,
+            $tempTableManipulator->getTempTableNameForEntity(CombinedProductPrice::class, $combinedPriceList->getId()),
+            true,
+            ['cpp' => $tempTableName, 'cpp2' => $tempTableName]
         );
     }
 
@@ -197,6 +168,61 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
 
         $qb->getQuery()->execute();
+    }
+
+    public function deleteDuplicatePrices(array $cpls = []): int
+    {
+        $delete = <<<SQL
+            DELETE FROM oro_price_product_combined cpp1 
+            USING oro_price_product_combined cpp2
+            WHERE
+                cpp1.id < cpp2.id
+                AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
+                AND cpp1.product_id = cpp2.product_id
+                AND cpp1.value = cpp2.value
+                AND cpp1.currency = cpp2.currency
+                AND cpp1.quantity = cpp2.quantity
+                AND cpp1.unit_code = cpp2.unit_code %s
+            RETURNING cpp1.id
+        SQL;
+
+        $sql = "WITH deleted_rows AS ($delete) SELECT COUNT(*) FROM deleted_rows";
+
+        return $this->executeDuplicatePricesQuery($sql, $cpls);
+    }
+
+    public function hasDuplicatePrices(array $cpls = []): bool
+    {
+        $sql = <<<SQL
+            SELECT 1
+            FROM oro_price_product_combined cpp1 
+            INNER JOIN oro_price_product_combined cpp2 ON 
+                cpp1.id < cpp2.id
+                AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
+                AND cpp1.product_id = cpp2.product_id
+                AND cpp1.value = cpp2.value
+                AND cpp1.currency = cpp2.currency
+                AND cpp1.quantity = cpp2.quantity
+                AND cpp1.unit_code = cpp2.unit_code %s
+            LIMIT 1
+        SQL;
+
+        return (bool) $this->executeDuplicatePricesQuery($sql, $cpls);
+    }
+
+    private function executeDuplicatePricesQuery(string $sql, array $cpls = []): int
+    {
+        $connection = $this->_em->getConnection();
+        $parameters = $types = [];
+        if ($cpls) {
+            $sql = sprintf($sql, 'AND cpp1.combined_price_list_id IN (:combinedPriceLists)');
+            $parameters = ['combinedPriceLists' => $cpls];
+            $types = ['combinedPriceLists' => Connection::PARAM_INT_ARRAY];
+        } else {
+            $sql = sprintf($sql, '');
+        }
+
+        return (int)$connection->executeQuery($sql, $parameters, $types)->fetchOne();
     }
 
     /**

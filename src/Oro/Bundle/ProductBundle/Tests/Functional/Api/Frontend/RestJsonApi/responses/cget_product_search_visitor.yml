@@ -1,6 +1,34 @@
 data:
     -
         type: productsearch
+        id: '<toString(@product_kit1->id)>'
+        attributes:
+            sku: PKSKU1
+            name: 'Product Kit 1'
+            shortDescription: null
+            productType: kit
+            isVariant: false
+            newArrival: false
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, default: true }
+            minimalPrices: []
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product_kit1->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+            category:
+                data: null
+    -
+        type: productsearch
         id: '<toString(@product1->id)>'
         attributes:
             sku: '<toString(@product1->sku)>'

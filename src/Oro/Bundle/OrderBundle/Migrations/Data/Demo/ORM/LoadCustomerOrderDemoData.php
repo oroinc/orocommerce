@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -16,6 +17,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
@@ -27,11 +29,13 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loading customer order demo data.
+ */
 class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
-
-    const REFERENCE_NAME = 'customer_orders';
+    use OrderLineItemsDemoDataTrait;
 
     /** @var array */
     private $countries = [];
@@ -76,8 +80,10 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
         $website = $this->getWebsite($manager);
 
-        $index = 0;
+        $orderMetadata = $manager->getClassMetadata(Order::class);
+        $this->disablePrePersistCallback($orderMetadata);
 
+        $index = 0;
         $timeZone = new \DateTimeZone('UTC');
         foreach ($customerUsers as $customerUser) {
             /** @var User $user */
@@ -86,6 +92,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             foreach ($internalStatuses as $internalStatus) {
                 $order = new Order();
                 $orderAddress = $this->getOrderAddressByCustomer($customerUser, $manager);
+                $randomDateTime = $this->getRandomDateTime();
 
                 $order
                     ->setInternalStatus($internalStatus)
@@ -98,15 +105,21 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
                     ->setBillingAddress($orderAddress)
                     ->setShippingAddress($orderAddress)
                     ->setWebsite($website)
+                    ->addLineItem($this->getOrderLineItem($manager))
                     ->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY)
-                    ->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone));
+                    ->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone))
+                    ->setCreatedAt($randomDateTime)
+                    ->setUpdatedAt($randomDateTime);
 
                 $paymentTermAccessor->setPaymentTerm($order, $paymentTerm);
 
                 $manager->persist($order);
+
                 $index++;
             }
         }
+
+        $this->enablePrePersistCallback($orderMetadata);
 
         $manager->flush();
     }
@@ -189,5 +202,32 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         }
 
         return $this->regions[$code];
+    }
+
+    private function enablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        array_unshift($lifecycleCallbacks['prePersist'], 'prePersist');
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function disablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        $lifecycleCallbacks['prePersist'] = array_diff($lifecycleCallbacks['prePersist'], ['prePersist']);
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function getRandomDateTime(): \DateTime
+    {
+        return new \DateTime(
+            sprintf(
+                '-%sday %s:%s',
+                random_int(0, 7),
+                random_int(0, 23),
+                random_int(0, 59)
+            ),
+            new \DateTimeZone('UTC')
+        );
     }
 }

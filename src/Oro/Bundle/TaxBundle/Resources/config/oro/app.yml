@@ -1,0 +1,3 @@
+oro_api:
+    form_types:
+        - Oro\Bundle\TaxBundle\Api\Form\Type\ZipCodeType

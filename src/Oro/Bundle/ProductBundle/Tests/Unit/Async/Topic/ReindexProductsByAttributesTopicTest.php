@@ -56,4 +56,12 @@ class ReindexProductsByAttributesTopicTest extends AbstractTopicTestCase
             ],
         ];
     }
+
+    public function testCreateJobName(): void
+    {
+        self::assertSame(
+            'oro_product.reindex_products_by_attributes',
+            $this->getTopic()->createJobName([])
+        );
+    }
 }

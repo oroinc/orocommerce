@@ -3,24 +3,30 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Tender;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class TenderTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new Tender()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [
                 [],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\MissingOptionsException',
+                    MissingOptionsException::class,
                     'The required option "TENDER" is missing.',
                 ],
             ],
@@ -28,7 +34,7 @@ class TenderTest extends AbstractOptionTest
                 ['TENDER' => true],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
+                    InvalidOptionsException::class,
                     'The option "TENDER" with value true is invalid. Accepted values are: "A", "C", "D", "K", "P".',
                 ],
             ],

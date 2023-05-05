@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
@@ -143,25 +144,27 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
 
         $variant->setType($type);
 
+        $accessor = PropertyAccess::createPropertyAccessor();
         $doctrine = $this->container->get('doctrine');
-        if ($type === CategoryPageContentVariantType::TYPE && method_exists($variant, 'setCategoryPageCategory')) {
+        if ($type === CategoryPageContentVariantType::TYPE
+            && $accessor->isWritable($variant, 'category_page_category')) {
             $category = $this->getCategory($params['title']);
-            $variant->setCategoryPageCategory($category);
+            $accessor->setValue($variant, 'category_page_category', $category);
             $variant->setExcludeSubcategories($params['excludeSubcategories'] ?? true);
-        } elseif ($type === CmsPageContentVariantType::TYPE && method_exists($variant, 'setCmsPage')) {
+        } elseif ($type === CmsPageContentVariantType::TYPE && $accessor->isWritable($variant, 'cms_page')) {
             $page = $doctrine
                 ->getRepository(Page::class)
                 ->findOneByTitle($params['title']);
-            $variant->setCmsPage($page);
+            $accessor->setValue($variant, 'cms_page', $page);
         } elseif ($type === SystemPageContentVariantType::TYPE) {
             $variant->setSystemPageRoute($params['route']);
         } elseif ($type === ProductCollectionContentVariantType::TYPE
-            && method_exists($variant, 'setProductCollectionSegment')
+            && $accessor->isWritable($variant, 'product_collection_segment')
         ) {
             $segment = $doctrine
                 ->getRepository(Segment::class)
                 ->findOneByName($params['title']);
-            $variant->setProductCollectionSegment($segment);
+            $accessor->setValue($variant, 'product_collection_segment', $segment);
         }
 
         return $variant;

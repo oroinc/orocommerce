@@ -6,11 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
-use Oro\Bundle\WebCatalogBundle\Model\ExtendContentVariant;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
@@ -35,13 +36,15 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  * @ORM\Table(name="oro_web_catalog_variant")
  * @Config
  */
-class ContentVariant extends ExtendContentVariant implements
+class ContentVariant implements
     ContentVariantInterface,
     ContentNodeAwareInterface,
     SlugAwareInterface,
-    ScopeCollectionAwareInterface
+    ScopeCollectionAwareInterface,
+    ExtendEntityInterface
 {
     use SlugAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @ORM\Id
@@ -116,8 +119,6 @@ class ContentVariant extends ExtendContentVariant implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->scopes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
     }

@@ -9,7 +9,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCheckoutData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
@@ -98,7 +97,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
     public function testHandleWhenNoAppliedPromotionInterface()
     {
-        /** @var AppliedCouponsAwareInterface|Order $entity */
+        /** @var Order $entity */
         $entity = $this->getReference(LoadOrders::ORDER_2);
         $request = $this->getRequestWithCouponData([
             'entityClass' => Order::class,
@@ -117,7 +116,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
     public function testHandle()
     {
-        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        /** @var Checkout $entity */
         $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
         $request = $this->getRequestWithCouponData([
             'entityClass' => Checkout::class,
@@ -140,7 +139,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
     public function testHandleCaseSensitive()
     {
-        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        /** @var Checkout $entity */
         $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
         $code = strtoupper($this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getCode());
         $postData = [
@@ -165,7 +164,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         $configManager->set('oro_promotion.case_insensitive_coupon_search', true);
         $configManager->flush();
 
-        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        /** @var Checkout $entity */
         $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
         $code = strtoupper($this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getCode());
         $postData = [
@@ -196,7 +195,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
     public function testHandleShippingPromotionForShoppingList()
     {
-        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        /** @var Checkout $entity */
         $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
         $request = $this->getRequestWithEuroCouponData([
             'entityClass' => Checkout::class,

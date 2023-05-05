@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDuplicateCombinedProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -177,13 +178,13 @@ class CombinedPriceListRepositoryGCTest extends WebTestCase
         $this->loadFixtures([LoadDuplicateCombinedProductPrices::class]);
         $doctrine = $this->getContainer()->get('doctrine');
 
-        // Check initial number of prices
+        /**
+         * Check initial number of prices
+         * @var CombinedProductPriceRepository $priceRepo
+         */
         $priceRepo = $doctrine->getRepository(CombinedProductPrice::class);
         $this->assertCount(5, $priceRepo->findAll());
-
-        /** @var CombinedPriceListRepository $plRepo */
-        $plRepo = $doctrine->getRepository(CombinedPriceList::class);
-        $plRepo->removeDuplicatePrices();
+        $priceRepo->deleteDuplicatePrices();
 
         // Check that two duplicate records were removed
         $this->assertCount(3, $priceRepo->findAll());

@@ -60,6 +60,35 @@ $search-autocomplete-product-price-inner-offset-left: $offset-x-m !default;
 
 $search-autocomplete-product-status-inner-offset-left: $offset-x-m !default;
 
+$search-autocomplete-category-text-decoration: none !default;
+$search-autocomplete-category-display: flex !default;
+$search-autocomplete-category-color: get-color('additional', 'middle') !default;
+
+$search-autocomplete-category-image-width: 40px !default;
+$search-autocomplete-category-image-height: 40px !default;
+$search-autocomplete-category-image-display: block !default;
+$search-autocomplete-category-image-border: none !default;
+$search-autocomplete-category-image-offset-right: $offset-x !default;
+$search-autocomplete-category-image-font-size: 25px !default;
+$search-autocomplete-category-image-text-align: center !default;
+$search-autocomplete-category-image-span-vertical-align: bottom !default;
+
+$search-autocomplete-category-info-width: calc(
+        100% - #{$search-autocomplete-category-image-width + $search-autocomplete-category-image-offset-right}
+) !default;
+$search-autocomplete-category-info-flex-grow: 1 !default;
+$search-autocomplete-category-info-flex-shrink: 1 !default;
+
+$search-autocomplete-category-head-offset-bottom: 6px !default;
+$search-autocomplete-category-head-color: get-color('additional', 'dark') !default;
+
+$search-autocomplete-category-body-font-size: .85em !default;
+$search-autocomplete-category-body-color: #919193 !default;
+$search-autocomplete-category-body-line-height: 1em !default;
+$search-autocomplete-category-body-span-white-space: nowrap !default;
+$search-autocomplete-category-body-last-category-color: get-color('primary', 'dark') !default;
+$search-autocomplete-category-body-last-category-font-weight: font-weight('bold') !default;
+
 // Tablet
 $search-autocomplete-tablet-offset-bottom: -$offset-y !default;
 $search-autocomplete-tablet-position: relative !default;

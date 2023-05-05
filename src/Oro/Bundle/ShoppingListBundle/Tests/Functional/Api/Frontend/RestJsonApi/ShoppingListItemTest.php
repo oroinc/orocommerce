@@ -140,7 +140,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_line_item.yml', $response);
-        self::assertEquals(4, $response->headers->get('X-Include-Total-Count'));
+        self::assertEquals(5, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGetListFilteredByShoppingList()
@@ -152,7 +152,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         );
 
         $this->assertResponseContains('cget_line_item_filter.yml', $response);
-        self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
+        self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
     }
 
     public function testGet()
@@ -190,7 +190,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             ->find($lineItemId);
         self::assertNotNull($lineItem);
         self::assertEquals(123.45, $lineItem->getQuantity());
-        $this->assertShoppingListTotal($lineItem->getShoppingList(), 148.08, 'USD');
+        $this->assertShoppingListTotal($lineItem->getShoppingList(), 177.68, 'USD');
     }
 
     public function testTryToUpdateFloatQuantityWhenPrecisionIsZero()
@@ -258,8 +258,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         );
         $shoppingList = $lineItem->getShoppingList();
         self::assertEquals($shoppingListId, $shoppingList->getId());
-        self::assertCount(3, $shoppingList->getLineItems());
-        $this->assertShoppingListTotal($lineItem->getShoppingList(), 139.45, 'USD');
+        self::assertCount(4, $shoppingList->getLineItems());
+        $this->assertShoppingListTotal($lineItem->getShoppingList(), 169.05, 'USD');
     }
 
     public function testTryToCreateWithFloatQuantityWhenPrecisionIsZero()
@@ -507,8 +507,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $shoppingList = $this->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
-        self::assertCount(1, $shoppingList->getLineItems());
-        $this->assertShoppingListTotal($shoppingList, 23.4, 'USD');
+        self::assertCount(2, $shoppingList->getLineItems());
+        $this->assertShoppingListTotal($shoppingList, 53.0, 'USD');
     }
 
     public function testDeleteList()
@@ -530,8 +530,8 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $shoppingList = $this->getEntityManager()
             ->getRepository(ShoppingList::class)
             ->find($shoppingListId);
-        self::assertCount(1, $shoppingList->getLineItems());
-        $this->assertShoppingListTotal($shoppingList, 23.4, 'USD');
+        self::assertCount(2, $shoppingList->getLineItems());
+        $this->assertShoppingListTotal($shoppingList, 53.0, 'USD');
     }
 
     public function testTryToSetZeroQuantity()
@@ -1051,5 +1051,14 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             false
         );
         $this->assertUnsupportedSubresourceResponse($response);
+    }
+
+    public function testGetKitLineItem(): void
+    {
+        $response = $this->get(
+            ['entity' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>']
+        );
+
+        $this->assertResponseContains('get_kit_line_item.yml', $response);
     }
 }

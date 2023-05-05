@@ -15,8 +15,8 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -30,8 +30,6 @@ use Symfony\Component\Validator\Validation;
  */
 class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
     /** @var FedexResponseCacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $fedexResponseCache;
 
@@ -57,22 +55,8 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
                     EntityType::class => new EntityTypeStub([
-                        1 => $this->getEntity(
-                            FedexShippingService::class,
-                            [
-                                'id' => 1,
-                                'code' => '01',
-                                'description' => 'UPS Next Day Air',
-                            ]
-                        ),
-                        2 => $this->getEntity(
-                            FedexShippingService::class,
-                            [
-                                'id' => 2,
-                                'code' => '03',
-                                'description' => 'UPS Ground',
-                            ]
-                        ),
+                        1 => $this->getFedexShippingService(1, '01', 'UPS Next Day Air'),
+                        2 => $this->getFedexShippingService(2, '03', 'UPS Ground'),
                     ]),
                     new OroEncodedPlaceholderPasswordType($crypter),
                     new FedexIntegrationSettingsType($this->fedexResponseCache, $this->shippingPriceCache)
@@ -83,6 +67,16 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
+    }
+
+    private function getFedexShippingService(int $id, string $code, string $description): FedexShippingService
+    {
+        $service = new FedexShippingService();
+        ReflectionUtil::setId($service, $id);
+        $service->setCode($code);
+        $service->setDescription($description);
+
+        return $service;
     }
 
     public function testSubmit()

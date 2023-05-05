@@ -6,8 +6,11 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * PriceList with priority collection from handler.
+ */
 class PriceListWithPriorityCollectionHandler
 {
     /**
@@ -16,11 +19,11 @@ class PriceListWithPriorityCollectionHandler
     protected $doctrineHelper;
 
     /**
-     * @var PropertyAccessor
+     * @var PropertyAccessorInterface
      */
     protected $propertyAccessor;
 
-    public function __construct(DoctrineHelper $doctrineHelper, PropertyAccessor $propertyAccessor)
+    public function __construct(DoctrineHelper $doctrineHelper, PropertyAccessorInterface $propertyAccessor)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->propertyAccessor = $propertyAccessor;

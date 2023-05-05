@@ -7,24 +7,17 @@ use Oro\Bundle\PaymentBundle\Context\Factory\SupportsEntityPaymentContextFactory
 
 class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CompositeSupportsEntityPaymentContextFactory
-     */
+    private const ENTITY_CLASS_ONE = 'OrderFQCN';
+    private const ENTITY_ID_ONE = 1;
+    private const ENTITY_CLASS_TWO = 'InvoiceFQCN';
+    private const ENTITY_ID_TWO = 2;
+
+    /** @var array */
+    private $results;
+
+    /** @var CompositeSupportsEntityPaymentContextFactory */
     private $factory;
 
-    const ENTITY_CLASS_ONE = 'OrderFQCN';
-    const ENTITY_ID_ONE = 1;
-    const ENTITY_CLASS_TWO = 'InvoiceFQCN';
-    const ENTITY_ID_TWO = 2;
-
-    /**
-     * @var array
-     */
-    protected $results;
-
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->results = [
@@ -33,25 +26,25 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framewor
         ];
 
         $factoryOne = $this->createMock(SupportsEntityPaymentContextFactoryInterface::class);
-        $factoryOne
+        $factoryOne->expects(self::any())
             ->method('supports')
             ->willReturnMap([
                 [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, true],
                 [self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO, false],
             ]);
-        $factoryOne
+        $factoryOne->expects(self::any())
             ->method('create')
             ->with(self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE)
             ->willReturn($this->results['resultOne']);
 
         $factoryTwo = $this->createMock(SupportsEntityPaymentContextFactoryInterface::class);
-        $factoryTwo
+        $factoryTwo->expects(self::any())
             ->method('supports')
             ->willReturnMap([
                 [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, false],
                 [self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO, true],
             ]);
-        $factoryTwo
+        $factoryTwo->expects(self::any())
             ->method('create')
             ->with(self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO)
             ->willReturn($this->results['resultTwo']);
@@ -63,22 +56,15 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framewor
 
     /**
      * @dataProvider createDataProvider
-     *
-     * @param string $entityClass
-     * @param int $entityId
-     * @param string $expectedResult
      */
-    public function testCreate($entityClass, $entityId, $expectedResult)
+    public function testCreate(string $entityClass, int $entityId, string $expectedResult)
     {
         $result = $this->factory->create($entityClass, $entityId);
 
-        static::assertSame($this->results[$expectedResult], $result);
+        self::assertSame($this->results[$expectedResult], $result);
     }
 
-    /**
-     * @return array
-     */
-    public function createDataProvider()
+    public function createDataProvider(): array
     {
         return [
             [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, 'resultOne'],
@@ -88,21 +74,14 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framewor
 
     /**
      * @dataProvider supportsWithSupportedClassDataProvider
-     *
-     * @param string $entityClass
-     * @param int $entityId
-     * @param bool $expected
      */
-    public function testSupports($entityClass, $entityId, $expected)
+    public function testSupports(string $entityClass, int $entityId, bool $expected)
     {
         $actual = $this->factory->supports($entityClass, $entityId);
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function supportsWithSupportedClassDataProvider()
+    public function supportsWithSupportedClassDataProvider(): array
     {
         return [
             'with first supported entity' => [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, true],

@@ -3,11 +3,10 @@
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -19,49 +18,30 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
-use Symfony\Component\Validator\Exception\InvalidOptionsException;
-use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
- * UPS integration settings form type.
+ * The form type for UPS integration settings.
  */
 class UPSTransportSettingsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_ups_transport_settings';
+    private TransportInterface $transport;
+    private SystemShippingOriginProvider $systemShippingOriginProvider;
 
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @var TransportInterface
-     */
-    protected $transport;
-
-    /**
-     * @var ShippingOriginProvider
-     */
-    protected $shippingOriginProvider;
-
-    public function __construct(TransportInterface $transport, ShippingOriginProvider $shippingOriginProvider)
-    {
+    public function __construct(
+        TransportInterface $transport,
+        SystemShippingOriginProvider $systemShippingOriginProvider
+    ) {
         $this->transport = $transport;
-        $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->systemShippingOriginProvider = $systemShippingOriginProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @throws ConstraintDefinitionException
-     * @throws InvalidOptionsException
-     * @throws MissingOptionsException
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'labels',
@@ -163,55 +143,58 @@ class UPSTransportSettingsType extends AbstractType
             EntityType::class,
             $this->getApplicableShippingServicesOptions()
         );
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $this->setDefaultCountry($event);
+            $this->setApplicableShippingServicesChoicesByCountry($event);
+        });
     }
 
     /**
-     * @throws NotManageableEntityException
+     * {@inheritDoc}
      */
-    public function onPreSetData(FormEvent $event)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $this->setDefaultCountry($event);
-
-        $this->setApplicableShippingServicesChoicesByCountry($event);
+        $resolver->setDefaults([
+            'data_class' => $this->transport->getSettingsEntityFQCN()
+        ]);
     }
 
-    protected function setDefaultCountry(FormEvent $event)
+    /**
+     * {@inheritDoc}
+     */
+    public function getBlockPrefix(): string
     {
-        /** @var UPSTransport $transport */
-        $transport = $event->getData();
+        return 'oro_ups_transport_settings';
+    }
 
+    private function setDefaultCountry(FormEvent $event): void
+    {
+        /** @var UPSTransport|null $transport */
+        $transport = $event->getData();
         if (!$transport) {
             return;
         }
 
-        if ($transport && null === $transport->getUpsCountry()) {
-            $country = $this
-                ->shippingOriginProvider
-                ->getSystemShippingOrigin()
-                ->getCountry();
-
+        if (null === $transport->getUpsCountry()) {
+            $country = $this->systemShippingOriginProvider->getSystemShippingOrigin()->getCountry();
             if (null !== $country) {
                 $transport->setUpsCountry($country);
             }
         }
     }
 
-    protected function setApplicableShippingServicesChoicesByCountry(FormEvent $event)
+    private function setApplicableShippingServicesChoicesByCountry(FormEvent $event): void
     {
-        /** @var UPSTransport $transport */
+        /** @var UPSTransport|null $transport */
         $transport = $event->getData();
-        $form = $event->getForm();
-
         if (!$transport) {
             return;
         }
 
-        $country = $transport->getUpsCountry();
-
         $additionalOptions = [
             'choices' => [],
         ];
+        $country = $transport->getUpsCountry();
         if ($country) {
             $additionalOptions = [
                 'query_builder' => function (ShippingServiceRepository $repository) use ($country) {
@@ -222,16 +205,13 @@ class UPSTransportSettingsType extends AbstractType
             ];
         }
 
-        $form->add('applicableShippingServices', EntityType::class, array_merge(
+        $event->getForm()->add('applicableShippingServices', EntityType::class, array_merge(
             $this->getApplicableShippingServicesOptions(),
             $additionalOptions
         ));
     }
 
-    /**
-     * @return array
-     */
-    protected function getApplicableShippingServicesOptions()
+    private function getApplicableShippingServicesOptions(): array
     {
         return [
             'label' => 'oro.ups.transport.shipping_service.plural_label',
@@ -239,24 +219,5 @@ class UPSTransportSettingsType extends AbstractType
             'multiple' => true,
             'class' => ShippingService::class,
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     * @throws AccessException
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN()
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::BLOCK_PREFIX;
     }
 }

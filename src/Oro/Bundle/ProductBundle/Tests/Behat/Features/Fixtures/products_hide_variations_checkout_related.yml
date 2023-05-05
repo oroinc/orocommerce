@@ -46,7 +46,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
             - setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
         primary: true
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     billing:

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -9,19 +10,17 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroInventoryExtension extends Extension
 {
-    const VALIDATION_CONFIG = 'oro_inventory.validation.config_path';
+    public const VALIDATION_CONFIG = 'oro_inventory.validation.config_path';
 
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $config = $this->processConfiguration(new Configuration(), $configs);
+        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        $container->prependExtensionConfig($this->getAlias(), SettingsBuilder::getSettings($config));
 
-        $container->prependExtensionConfig($this->getAlias(), $config);
-
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('services_api.yml');
         $loader->load('form_types.yml');

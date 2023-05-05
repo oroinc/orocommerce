@@ -64,7 +64,7 @@ class Category extends BaseCategory
     /**
      * {@inheritdoc}
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value): void
     {
         if (array_key_exists($name, $this->localizedFields)) {
             $this->localizedFieldSet($this->localizedFields, $name, $value);
@@ -84,7 +84,7 @@ class Category extends BaseCategory
     /**
      * {@inheritdoc}
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         if (array_key_exists($name, $this->localizedFields)) {
             return (bool)$this->localizedFieldGet($this->localizedFields, $name);
@@ -102,11 +102,15 @@ class Category extends BaseCategory
         if (!$this->products->contains($value)) {
             $this->products->add($value);
         }
+
+        return $this;
     }
 
     public function removeProduct(Product $value)
     {
         $this->products->removeElement($value);
+
+        return $this;
     }
 
     /**

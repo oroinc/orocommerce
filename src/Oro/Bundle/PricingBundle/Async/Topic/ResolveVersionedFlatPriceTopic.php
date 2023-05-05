@@ -3,12 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Async\Topic;
 
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
+use Oro\Component\MessageQueue\Topic\JobAwareTopicInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Resolves flat prices by price version.
  */
-class ResolveVersionedFlatPriceTopic extends AbstractTopic
+class ResolveVersionedFlatPriceTopic extends AbstractTopic implements JobAwareTopicInterface
 {
     private const NAME = 'oro_pricing.flat_price.resolve_by_version';
 
@@ -35,5 +36,10 @@ class ResolveVersionedFlatPriceTopic extends AbstractTopic
             ->info('List of price lists.')
             ->required()
             ->allowedTypes('int[]');
+    }
+
+    public function createJobName($messageBody): string
+    {
+        return ResolveFlatPriceTopic::getName() . ':v' . $messageBody['version'];
     }
 }

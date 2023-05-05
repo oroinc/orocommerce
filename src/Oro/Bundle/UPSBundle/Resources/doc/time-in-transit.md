@@ -22,8 +22,8 @@ The following example snippet can be used to test the UPS integration if at leas
     $countryRepository = $doctrineHelper->getEntityRepositoryForClass(Country::class);
     $country = $countryRepository->findOneBy(['iso2Code' => 'US']);
 
-    $channelRepository = $doctrineHelper->getEntityRepositoryForClass(Channel::class);
-    $upsChannels = $channelRepository->findByType($this->container->getParameter('oro_ups.integration.channel.type'));
+    $upsChannels = $doctrineHelper->getEntityRepositoryForClass(Channel::class)
+        ->findBy(['type' => $this->container->getParameter('oro_ups.integration.channel.type')]);
     $upsChannel = current($upsChannels);
 
     /** @var UPSTransport $transport */

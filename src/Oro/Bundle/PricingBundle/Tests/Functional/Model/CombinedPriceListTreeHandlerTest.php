@@ -17,20 +17,14 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /**
-     * @var CombinedPriceListTreeHandler
-     */
-    protected $handler;
+    /** @var CombinedPriceListTreeHandler */
+    private $handler;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|WebsiteManager
-     */
-    protected $websiteManager;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|WebsiteManager */
+    private $websiteManager;
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    /** @var ConfigManager */
+    private $configManager;
 
     protected function setUp(): void
     {
@@ -41,7 +35,7 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
 
         $this->websiteManager = $this->createMock(WebsiteManager::class);
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
 
         $this->handler = new CombinedPriceListTreeHandler(
             $this->getContainer()->get('doctrine'),
@@ -51,17 +45,15 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
     }
 
     /**
-     * @param string $customerReference
-     * @param string $expectedPriceListReference
-     *
      * @dataProvider customerUserDataProvider
      */
-    public function testGetPriceList($customerReference, $expectedPriceListReference)
+    public function testGetPriceList(string $customerReference, string $expectedPriceListReference)
     {
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($this->getCustomer($customerReference));
 
-        $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
             ->willReturn($this->getReference(LoadWebsiteData::WEBSITE1));
 
         $this->assertEquals(
@@ -71,22 +63,19 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
     }
 
     /**
-     * @param string $customerReference
-     * @param string $configPriceListReference
-     * @param string $expectedPriceListReference
-     *
      * @dataProvider priceListFromConfigDataProvider
      */
     public function testGetPriceListFromConfig(
-        $customerReference,
-        $configPriceListReference,
-        $expectedPriceListReference
+        string $customerReference,
+        string $configPriceListReference,
+        string $expectedPriceListReference
     ) {
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($this->getCustomer($customerReference));
         $configPriceList = $this->getReference($configPriceListReference);
         $this->configManager->set('oro_pricing.combined_price_list', $configPriceList->getId());
-        $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
             ->willReturn($this->getReference(LoadWebsiteData::WEBSITE1));
 
         $this->assertEquals(
@@ -95,10 +84,7 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function customerUserDataProvider()
+    public function customerUserDataProvider(): array
     {
         return [
             'get PriceList from customer' => ['customer.level_1.2', '2t_3f_1t'],
@@ -108,10 +94,7 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function priceListFromConfigDataProvider()
+    public function priceListFromConfigDataProvider(): array
     {
         return [
             'get PriceList from customer' => ['customer.level_1.2', '1t_2t_3t', '2t_3f_1t'],
@@ -119,11 +102,7 @@ class CombinedPriceListTreeHandlerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $reference
-     * @return Customer
-     */
-    protected function getCustomer($reference)
+    private function getCustomer(string $reference): Customer
     {
         return $this->getReference($reference);
     }

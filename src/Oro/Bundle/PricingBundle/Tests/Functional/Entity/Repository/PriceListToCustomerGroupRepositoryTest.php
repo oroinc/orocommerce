@@ -24,12 +24,10 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadPriceListRelations::class,
-                LoadPriceListFallbackSettings::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadPriceListRelations::class,
+            LoadPriceListFallbackSettings::class,
+        ]);
     }
 
     /**
@@ -56,10 +54,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function restrictByPriceListDataProvider()
+    public function restrictByPriceListDataProvider(): array
     {
         return [
             [
@@ -109,11 +104,8 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getPriceListDataProvider
-     * @param string $customerGroup
-     * @param string $website
-     * @param array $expectedPriceLists
      */
-    public function testGetPriceLists($customerGroup, $website, array $expectedPriceLists)
+    public function testGetPriceLists(string $customerGroup, string $website, array $expectedPriceLists)
     {
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->getReference($customerGroup);
@@ -132,10 +124,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         $this->assertEquals($expectedPriceLists, $actualPriceLists);
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceListDataProvider()
+    public function getPriceListDataProvider(): array
     {
         return [
             [
@@ -200,7 +189,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
 
     public function testGetAllWebsiteIds()
     {
-        static::assertEqualsCanonicalizing(
+        self::assertEqualsCanonicalizing(
             [
                 $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                 $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
@@ -216,7 +205,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         $result1 = iterator_to_array($this->getRepository()->getIteratorByPriceList($priceList));
         $result2 = iterator_to_array($this->getRepository()->getIteratorByPriceLists([$priceList]));
 
-        static::assertEqualsCanonicalizing(
+        self::assertEqualsCanonicalizing(
             [
                 [
                     'customerGroup' => $this->getReference(LoadGroups::GROUP1)->getId(),
@@ -256,10 +245,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         $this->assertEquals($expectsResult, $relations);
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderRelationsByCustomer()
+    public function dataProviderRelationsByCustomer(): array
     {
         return [
             [
@@ -281,10 +267,7 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return PriceListToCustomerGroupRepository
-     */
-    protected function getRepository()
+    private function getRepository(): PriceListToCustomerGroupRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(PriceListToCustomerGroup::class);
     }
@@ -310,11 +293,8 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider assignedPriceListsDataProvider
-     * @param string $websiteReference
-     * @param string $customerGroupReference
-     * @param bool $expected
      */
-    public function testHasAssignedPriceLists($websiteReference, $customerGroupReference, $expected)
+    public function testHasAssignedPriceLists(string $websiteReference, string $customerGroupReference, bool $expected)
     {
         /** @var Website $website */
         $website = $this->getReference($websiteReference);

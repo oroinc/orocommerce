@@ -16,13 +16,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class FindContentVariantForSubresource implements ProcessorInterface
 {
     public const CONTENT_CLASS = 'contentClass';
-    public const CONTENT_ID    = 'contentId';
+    public const CONTENT_ID = 'contentId';
 
-    /** @var ContentVariantTypeRegistry */
-    private $contentVariantTypeRegistry;
-
-    /** @var ContentNodeProvider */
-    private $contentNodeProvider;
+    private ContentVariantTypeRegistry $contentVariantTypeRegistry;
+    private ContentNodeProvider $contentNodeProvider;
 
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
@@ -35,7 +32,7 @@ class FindContentVariantForSubresource implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */
 
@@ -43,7 +40,7 @@ class FindContentVariantForSubresource implements ProcessorInterface
             return;
         }
 
-        list($contentClass, $contentId) = $this->getContentVariant($context->getParentId());
+        [$contentClass, $contentId] = $this->getContentVariant($context->getParentId());
         if (!$contentClass) {
             throw new NotFoundHttpException('The content variant was not found.');
         }
@@ -55,7 +52,7 @@ class FindContentVariantForSubresource implements ProcessorInterface
     /**
      * @param int $nodeId
      *
-     * @return array [content class, content id]
+     * @return array|null [content class, content id]
      */
     private function getContentVariant(int $nodeId): ?array
     {

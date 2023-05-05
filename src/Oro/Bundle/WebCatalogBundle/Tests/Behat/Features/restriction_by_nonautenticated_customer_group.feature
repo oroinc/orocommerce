@@ -1,7 +1,7 @@
 @ticket-BB-13519
 @automatically-ticket-tagged
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
-@fixture-OroWebCatalogBundle:web_catalog.yml
+@fixture-OroProductBundle:default_webcatalog.yml
 Feature: Restriction by non-autenticated customer group
   In order to manipulate content variant visibility
   As site administrator
@@ -15,13 +15,13 @@ Feature: Restriction by non-autenticated customer group
     And I click on "Show Variants Dropdown"
     And I click "Add System Page"
     And I fill "Content Node Form" with:
-      | Titles            | Contact Us Node                                   |
-      | System Page Route | Oro Contactus Bridge Contact Us Page (Contact Us) |
+      | Titles                           | Contact Us Node                                   |
+      | System Page Route                | Oro Contactus Bridge Contact Us Page (Contact Us) |
     And I click "Add System Page"
     And I fill "Content Node Form" with:
-      | Titles            | Welcome Node                            |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
-      | First System Page Customer Group | Non-Authenticated Visitors |
+      | Titles                           | Welcome Node                            |
+      | System Page Route                | Oro Frontend Root (Welcome - Home page) |
+      | First System Page Customer Group | Non-Authenticated Visitors              |
     When I save form
     Then I should see "Content Node has been saved" flash message
 

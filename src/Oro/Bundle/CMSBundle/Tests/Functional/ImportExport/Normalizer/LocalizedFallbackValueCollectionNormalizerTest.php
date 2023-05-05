@@ -7,16 +7,11 @@ use Oro\Bundle\CMSBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectio
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
 {
-    use EntityTrait;
+    private LocalizedFallbackValueCollectionNormalizer $normalizer;
 
-    /** @var LocalizedFallbackValueCollectionNormalizer */
-    private $normalizer;
-
-    /** {@inheritdoc} */
     protected function setUp(): void
     {
         $this->initClient();
@@ -29,253 +24,175 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
         );
     }
 
-    /**
-     * @dataProvider normalizeDataProvider
-     */
-    public function testNormalize(array $actualData, array $expectedData = []): void
-    {
-        $actualData = $this->convertArrayToEntities($actualData);
+    private function getLocalizedValue(
+        ?string $fallback,
+        ?string $value,
+        ?string $valueType,
+        ?string $localizationName
+    ): LocalizedFallbackValue {
+        $entity = new LocalizedFallbackValue();
+        if (null !== $fallback) {
+            $entity->setFallback($fallback);
+        }
+        if (null !== $value) {
+            switch ($valueType) {
+                case 'string':
+                    $entity->setString($value);
+                    break;
+                case 'text':
+                    $entity->setText($value);
+                    break;
+                case 'wysiwyg':
+                    $entity->setWysiwyg($value);
+                    break;
+                default:
+                    throw new \LogicException(sprintf('The "%s" value is not supported.', $valueType));
+            }
+        }
+        if ('' === $localizationName) {
+            $entity->setLocalization($this->getLocalization());
+        } elseif (null !== $localizationName) {
+            $entity->setLocalization($this->getLocalization($localizationName));
+        }
 
-        $this->assertEquals($expectedData, $this->normalizer->normalize(new ArrayCollection($actualData)));
+        return $entity;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function normalizeDataProvider(): array
+    private function getLocalization(?string $name = null): Localization
     {
-        return [
-            'without localization' => [
-                [
-                    [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'wysiwyg' => 'value',
-                            'localization' => null
-                        ]
-                    ],
-                ],
-                ['default' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']],
-            ],
-            'localization without name' => [
-                [
-                    [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'wysiwyg' => 'value',
-                            'localization' => ['testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization'],
-                        ]
-                    ],
-                ],
-                ['default' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']],
-            ],
-            'localization with name' => [
-                [
-                    [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'wysiwyg' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'English']
-                            ],
-                        ]
-                    ],
-                ],
-                ['English' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']],
-            ],
-            'mixed' => [
-                [
-                    [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'text' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'English']
-                            ],
-                        ],
-                    ],
-                    [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'string' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'English (Canada)']
-                            ],
-                        ],
-                    ],
-                    [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'wysiwyg' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'French (France)']
-                            ],
-                        ],
-                    ],
-                    [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'text' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'English' => ['fallback' => 'system', 'string' => null, 'text' => 'value', 'wysiwyg' => null],
-                    'English (Canada)' => [
-                        'fallback' => 'system',
-                        'string' => 'value',
-                        'text' => null,
-                        'wysiwyg' => null
-                    ],
-                    'French (France)' => [
-                        'fallback' => 'system',
-                        'string' => null,
-                        'text' => null,
-                        'wysiwyg' => 'value'
-                    ],
-                    'default' => ['fallback' => 'system', 'string' => null, 'text' => 'value', 'wysiwyg' => null],
-                ],
-            ],
+        $entity = new Localization();
+        if (null !== $name) {
+            $entity->setName($name);
+        }
+
+        return $entity;
+    }
+
+    public function testNormalizeWithoutLocalization(): void
+    {
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', 'value', 'wysiwyg', null)
+        ]);
+        $expectedData = [
+            'default' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']
         ];
+
+        $this->assertEquals($expectedData, $this->normalizer->normalize($actualData));
     }
 
-    /**
-     * @param mixed $actualData
-     * @param string $class
-     * @param array $expectedData
-     *
-     * @dataProvider denormalizeDataProvider
-     */
-    public function testDenormalize($actualData, $class, array $expectedData): void
+    public function testNormalizeLocalizationWithoutName(): void
     {
-        $expectedData = new ArrayCollection($this->convertArrayToEntities($expectedData));
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', 'value', 'wysiwyg', '')
+        ]);
+        $expectedData = [
+            'default' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']
+        ];
+
+        $this->assertEquals($expectedData, $this->normalizer->normalize($actualData));
+    }
+
+    public function testNormalizeLocalizationWithName(): void
+    {
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', 'value', 'wysiwyg', 'English')
+        ]);
+        $expectedData = [
+            'English' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']
+        ];
+
+        $this->assertEquals($expectedData, $this->normalizer->normalize($actualData));
+    }
+
+    public function testNormalizeMixed(): void
+    {
+        $actualData = new ArrayCollection([
+            $this->getLocalizedValue('system', 'value', 'text', 'English'),
+            $this->getLocalizedValue('system', 'value', 'string', 'English (Canada)'),
+            $this->getLocalizedValue('system', 'value', 'wysiwyg', 'French (France)'),
+            $this->getLocalizedValue('system', 'value', 'text', ''),
+        ]);
+        $expectedData = [
+            'English' => ['fallback' => 'system', 'string' => null, 'text' => 'value', 'wysiwyg' => null],
+            'English (Canada)' => ['fallback' => 'system', 'string' => 'value', 'text' => null, 'wysiwyg' => null],
+            'French (France)' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value'],
+            'default' => ['fallback' => 'system', 'string' => null, 'text' => 'value', 'wysiwyg' => null]
+        ];
+
+        $this->assertEquals($expectedData, $this->normalizer->normalize($actualData));
+    }
+
+    public function testDenormalizeNotArray(): void
+    {
+        $class = LocalizedFallbackValue::class;
+        $actualData = 'value';
+        $expectedData = new ArrayCollection([]);
 
         $this->assertEquals($expectedData, $this->normalizer->denormalize($actualData, $class));
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function denormalizeDataProvider(): array
+    public function testDenormalizeWrongType(): void
     {
-        return [
-            'not and array' => [
-                'value',
-                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                [],
-            ],
-            'wrong type' => [
-                [],
-                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                [],
-            ],
-            'without localization' => [
-                ['default' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
-                [
-                    'default' => [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'wysiwyg' => 'value',
-                        ],
-                    ],
-                ]
-            ],
-            'localization with name, default missing' => [
-                ['English' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
-                [
-                    'default' => [
-                        'testEntity' => LocalizedFallbackValue::class,
-                        'testProperties' => [
-                            'fallback' => null,
-                            'wysiwyg' => null,
-                            'localization' => null
-                        ],
-                    ],
-                    'English' => [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'wysiwyg' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'English']
-                            ],
-                        ],
-                    ],
-                ]
-            ],
-            'mixed' => [
-                [
-                    'default' => ['fallback' => 'system', 'string' => 'value', 'text' => null, 'wysiwyg' => null],
-                    'English' => ['string' => 'value', 'wysiwyg' => null],
-                    'English (Canada)' => ['fallback' => 'parent_localization', 'text' => 'value', 'wysiwyg' => null],
-                    'French (France)' => [
-                        'fallback' => 'parent_localization',
-                        'string' => null,
-                        'text' => null,
-                        'wysiwyg' => 'value'
-                    ],
-                ],
-                'ArrayCollection<Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue>',
-                [
-                    'default' => [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'system',
-                            'string' => 'value',
-                        ],
-                    ],
-                    'English' => [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'string' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'English']
-                            ],
-                        ],
-                    ],
-                    'English (Canada)' => [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'parent_localization',
-                            'text' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'English (Canada)']
-                            ],
-                        ],
-                    ],
-                    'French (France)' => [
-                        'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                        'testProperties' => [
-                            'fallback' => 'parent_localization',
-                            'wysiwyg' => 'value',
-                            'localization' => [
-                                'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\Localization',
-                                'testProperties' => ['name' => 'French (France)']
-                            ],
-                        ],
-                    ],
-                ]
-            ],
+        $class = LocalizedFallbackValue::class;
+        $actualData = [];
+        $expectedData = new ArrayCollection([]);
+
+        $this->assertEquals($expectedData, $this->normalizer->denormalize($actualData, $class));
+    }
+
+    public function testDenormalizeWithoutLocalization(): void
+    {
+        $class = sprintf('ArrayCollection<%s>', LocalizedFallbackValue::class);
+        $actualData = [
+            'default' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']
         ];
+        $expectedData = new ArrayCollection([
+            'default' => $this->getLocalizedValue('system', 'value', 'wysiwyg', null)
+        ]);
+
+        $this->assertEquals($expectedData, $this->normalizer->denormalize($actualData, $class));
+    }
+
+    public function testDenormalizeLocalizationWithNameAndDefaultMissing(): void
+    {
+        $class = sprintf('ArrayCollection<%s>', LocalizedFallbackValue::class);
+        $actualData = [
+            'English' => ['fallback' => 'system', 'string' => null, 'text' => null, 'wysiwyg' => 'value']
+        ];
+        $expectedData = new ArrayCollection([
+            'default' => $this->getLocalizedValue(null, null, null, null),
+            'English' => $this->getLocalizedValue('system', 'value', 'wysiwyg', 'English')
+        ]);
+
+        $this->assertEquals($expectedData, $this->normalizer->denormalize($actualData, $class));
+    }
+
+    public function testDenormalizeMixed(): void
+    {
+        $class = sprintf('ArrayCollection<%s>', LocalizedFallbackValue::class);
+        $actualData = [
+            'default' => ['fallback' => 'system', 'string' => 'value', 'text' => null, 'wysiwyg' => null],
+            'English' => ['string' => 'value', 'wysiwyg' => null],
+            'English (Canada)' => ['fallback' => 'parent_localization', 'text' => 'value'],
+            'French (France)' => [
+                'fallback' => 'parent_localization',
+                'string' => null,
+                'text' => null,
+                'wysiwyg' => 'value'
+            ]
+        ];
+        $defaultValue = $this->getLocalizedValue('system', 'value', 'string', null);
+        $defaultValue->setText('');
+        $defaultValue->setWysiwyg('');
+        $englishValue = $this->getLocalizedValue(null, 'value', 'string', 'English');
+        $englishValue->setWysiwyg('');
+        $expectedData = new ArrayCollection([
+            'default' => $defaultValue,
+            'English' => $englishValue,
+            'English (Canada)' => $this->getLocalizedValue('parent_localization', 'value', 'text', 'English (Canada)'),
+            'French (France)' => $this->getLocalizedValue('parent_localization', 'value', 'wysiwyg', 'French (France)')
+        ]);
+
+        $this->assertEquals($expectedData, $this->normalizer->denormalize($actualData, $class));
     }
 }

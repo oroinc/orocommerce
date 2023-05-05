@@ -8,19 +8,12 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 
 class MapperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Mapper
-     */
-    protected $mapper;
+    /** @var Mapper */
+    private $mapper;
 
     protected function setUp(): void
     {
         $this->mapper = new Mapper(new DateTimeFormatter());
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->mapper);
     }
 
     public function testMapSelectedData()

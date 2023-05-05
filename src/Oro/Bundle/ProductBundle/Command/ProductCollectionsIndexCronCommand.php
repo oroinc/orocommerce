@@ -91,7 +91,7 @@ HELP
                 $partialMessageIterator,
                 $rootJobName,
                 true,
-                ['main']
+                ['main', 'collection_sort_order']
             );
         } catch (FailedToRunReindexProductCollectionJobException $jobException) {
             $output->writeln(

@@ -2,301 +2,291 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-    /** @var ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnitsProvider;
-
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
-
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $numberFormatter;
 
     /** @var QuickAddRowInputParser */
     private $quickAddRowInputParser;
 
-    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $numberFormatter;
-
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->productRepository = $this->createMock(ProductRepository::class);
-        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
-        $this->aclHelper = $this->createMock(AclHelper::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
-        $this->registry->method('getRepository')->willReturnMap([
-            [Product::class, null, $this->productRepository],
-        ]);
-
-        $this->productUnitsProvider->method('getAvailableProductUnits')
-            ->willReturn(
-                [
-                    'Element' => 'item',
-                    'Stunde' => 'hour',
-                ]
-            );
+        $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $productUnitsProvider->expects(self::any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([
+                'Element' => 'item',
+                'Stunde' => 'hour',
+                'Liter' => 'LITER',
+                'Item2' => 'item1',
+                'Item1' => 'item3'
+            ]);
 
         $this->quickAddRowInputParser = new QuickAddRowInputParser(
-            $this->registry,
-            $this->productUnitsProvider,
-            $this->aclHelper,
+            $productUnitsProvider,
             $this->numberFormatter
         );
     }
 
-    /**
-     * @param array $input
-     * @param array $expected
-     *
-     * @dataProvider exampleRowFile
-     */
-    public function testCreateFromFileLine($input, $expected)
+    private function expectsParseFormattedDecimal(): void
     {
-        $this->numberFormatter->expects($this->once())
+        $this->numberFormatter->expects(self::once())
             ->method('parseFormattedDecimal')
             ->willReturnCallback(function ($value) {
                 if (str_contains($value, ',')) {
                     return (float)str_replace(',', '.', $value);
                 }
-
-                if (str_contains($value, '.')) {
-                    return false;
+                if (!str_contains($value, '.')) {
+                    return (float)$value;
                 }
 
-                return $value;
+                return false;
             });
-
-        $index = 0;
-        $input = array_values($input);
-        if (!array_key_exists(2, $input)) {
-            $this->assertProductRepository();
-        }
-
-        $result = $this->quickAddRowInputParser->createFromFileLine($input, $index++);
-
-        $this->assertEquals($expected[0], $result->getSku());
-        $this->assertEquals($expected[1], $result->getQuantity());
-        $this->assertEquals($expected[2], $result->getUnit());
-
-        $this->assertEquals(1, $index);
     }
 
     /**
-     * @return array
+     * @dataProvider rowFileDataProvider
      */
-    public function exampleRowFile()
+    public function testCreateFromFileLine(array $input, array $expected): void
+    {
+        $this->expectsParseFormattedDecimal();
+
+        $index = 1;
+        $result = $this->quickAddRowInputParser->createFromFileLine($input, $index);
+
+        self::assertSame($index, $result->getIndex());
+        self::assertSame($expected[0], $result->getSku());
+        self::assertSame($expected[1], $result->getQuantity());
+        self::assertSame($expected[2], $result->getUnit());
+    }
+
+    /**
+     * @dataProvider rowFileDataProvider
+     */
+    public function testCreateFromPasteTextLine(array $input, array $expected): void
+    {
+        $this->expectsParseFormattedDecimal();
+
+        $index = 1;
+        $result = $this->quickAddRowInputParser->createFromCopyPasteTextLine($input, $index);
+
+        self::assertSame($index, $result->getIndex());
+        self::assertSame($expected[0], $result->getSku());
+        self::assertSame($expected[1], $result->getQuantity());
+        self::assertSame($expected[2], $result->getUnit());
+        self::assertSame($expected[3] ?? null, $result->getOrganization());
+    }
+
+    public function rowFileDataProvider(): array
     {
         return [
             [
-                'input' => [
-                    'productSku' => ' SKU5  ',
-                    'productQuantity' => ' 4.5',
-                    'productUnit' => 'item '
-                ],
-                'expected' => [
-                    'SKU5',
-                    4.5,
-                    'item'
-                ]
+                'input' => [' SKU1  ', ' 4.5', 'item '],
+                'expected' => ['SKU1', 4.5, 'item']
             ],
             [
-                'input' => [
-                    'productSku' => 'ss2',
-                    'productQuantity' => '   6 ',
-                    'productUnit' => 'liter'
-                ],
-                'expected' => [
-                    'ss2',
-                    6,
-                    null
-                ]
+                'input' => ['sku1', '.5', 'item'],
+                'expected' => ['sku1', 0.0, 'item']
             ],
             [
-                'input' => [
-                    'productSku' => 'ss2',
-                    'productQuantity' => '   6 ',
-                ],
-                'expected' => [
-                    'ss2',
-                    '6',
-                    'item'
-                ]
+                'input' => ['sku1', '   6 ', 'liter'],
+                'expected' => ['sku1', 6.0, 'LITER']
             ],
             [
-                'input' => [
-                    'productSku' => ' SKU5  ',
-                    'productQuantity' => ' 4,5',
-                    'productUnit' => 'Stunde '
-                ],
-                'expected' => [
-                    'SKU5',
-                    4.5,
-                    'hour'
-                ]
+                'input' => ['sku1', '6'],
+                'expected' => ['sku1', 6.0, null]
             ],
             [
-                'input' => [
-                    'productSku' => ' SKU5  ',
-                    'productQuantity' => ' 4.5',
-                    'productUnit' => 'ELEMENT '
-                ],
-                'expected' => [
-                    'SKU5',
-                    '4.5',
-                    'item'
-                ]
+                'input' => ['sku1', '4,5', 'Stunde '],
+                'expected' => ['sku1', 4.5, 'hour']
+            ],
+            [
+                'input' => ['sku1', '4,0', 'ELEMENT '],
+                'expected' => ['sku1', 4.0, 'item']
+            ],
+            [
+                'input' => ['sku1', '4,5', 'unknown'],
+                'expected' => ['sku1', 4.5, 'unknown']
+            ],
+            [
+                'input' => ['sku1', '4,5', 'ITEM1'],
+                'expected' => ['sku1', 4.5, 'item3']
+            ],
+            [
+                'input' => ['sku1', '4,5', 'ITEM2'],
+                'expected' => ['sku1', 4.5, 'item1']
+            ],
+            [
+                'input' => ['"sku1"', '4,5', 'ITEM2'],
+                'expected' => ['sku1', 4.5, 'item1', null]
+            ],
+            [
+                'input' => ['"sku1,"', '4,5', 'ITEM2'],
+                'expected' => ['sku1', 4.5, 'item1', null]
+            ],
+            [
+                'input' => ['"sku1,Org"', '4,5', 'ITEM2'],
+                'expected' => ['sku1', 4.5, 'item1', 'Org']
+            ],
+            [
+                'input' => ['"sku1, Org"', '4,5', 'ITEM2'],
+                'expected' => ['sku1', 4.5, 'item1', 'Org']
             ],
         ];
     }
 
     /**
-     * @dataProvider exampleRow
+     * @dataProvider createFromRequestDataProvider
      */
-    public function testCreateFromRequest($input, $expected)
+    public function testCreateFromRequest(array $input, array $expected): void
     {
-        $this->numberFormatter->expects($this->never())
+        $this->numberFormatter->expects(self::never())
             ->method('parseFormattedDecimal');
 
-        $index = 0;
+        $index = 1;
+        $result = $this->quickAddRowInputParser->createFromRequest($input, $index);
 
-        if (!array_key_exists('productUnit', $input)) {
-            $this->assertProductRepository();
-        }
-
-        $result = $this->quickAddRowInputParser->createFromRequest($input, $index++);
-
-        $this->assertEquals($expected[0], $result->getSku());
-        $this->assertEquals($expected[1], $result->getQuantity());
-        $this->assertEquals($expected[2], $result->getUnit());
-
-        $this->assertEquals(1, $index);
+        self::assertSame($index, $result->getIndex());
+        self::assertSame($expected[0], $result->getSku());
+        self::assertSame($expected[1], $result->getQuantity());
+        self::assertSame($expected[2], $result->getUnit());
+        self::assertSame($expected[3] ?? null, $result->getOrganization());
     }
 
-    /**
-     * @dataProvider exampleRow
-     */
-    public function testCreateFromPasteTextLine($input, $expected)
-    {
-        $this->numberFormatter->expects($this->never())
-            ->method('parseFormattedDecimal');
-
-        $index = 0;
-        $input = array_values($input);
-
-        if (!array_key_exists(2, $input)) {
-            $this->assertProductRepository();
-        }
-
-        $result = $this->quickAddRowInputParser->createFromCopyPasteTextLine($input, $index++);
-
-        $this->assertEquals($expected[0], $result->getSku());
-        $this->assertEquals($expected[1], $result->getQuantity());
-        $this->assertEquals($expected[2], $result->getUnit());
-
-        $this->assertEquals(1, $index);
-    }
-
-    /**
-     * @return array
-     */
-    public function exampleRow()
+    public function createFromRequestDataProvider(): array
     {
         return [
             [
-                'input' => [
-                    'productSku' => ' SKU5  ',
-                    'productQuantity' => ' 4.5',
-                    'productUnit' => 'item '
-                ],
-                'expected' => [
-                    'SKU5',
-                    4.5,
-                    'item'
-                ]
+                'input' => ['productSku' => ' SKU1  ', 'productQuantity' => ' 4.5', 'productUnit' => 'item '],
+                'expected' => ['SKU1', 4.5, 'item']
             ],
             [
-                'input' => [
-                    'productSku' => 'ss2',
-                    'productQuantity' => '   6 ',
-                    'productUnit' => 'liter'
-                ],
-                'expected' => [
-                    'ss2',
-                    6,
-                    null
-                ]
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '   6 ', 'productUnit' => 'liter'],
+                'expected' => ['sku1', 6.0, 'LITER']
             ],
             [
-                'input' => [
-                    'productSku' => 'ss2',
-                    'productQuantity' => '   6 ',
-                ],
-                'expected' => [
-                    'ss2',
-                    '6',
-                    'item'
-                ]
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '6'],
+                'expected' => ['sku1', 6.0, null]
             ],
             [
-                'input' => [
-                    'productSku' => ' SKU5  ',
-                    'productQuantity' => ' 4.5',
-                    'productUnit' => 'Stunde '
-                ],
-                'expected' => [
-                    'SKU5',
-                    '4.5',
-                    'hour'
-                ]
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '4.5', 'productUnit' => 'Stunde '],
+                'expected' => ['sku1', 4.5, 'hour']
             ],
             [
-                'input' => [
-                    'productSku' => ' SKU5  ',
-                    'productQuantity' => ' 4.5',
-                    'productUnit' => 'ELEMENT '
-                ],
-                'expected' => [
-                    'SKU5',
-                    '4.5',
-                    'item'
-                ]
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '4.0', 'productUnit' => 'ELEMENT '],
+                'expected' => ['sku1', 4.0, 'item']
+            ],
+            [
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '4.5', 'productUnit' => 'unknown'],
+                'expected' => ['sku1', 4.5, 'unknown']
+            ],
+            [
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '4.5', 'productUnit' => 'ITEM1'],
+                'expected' => ['sku1', 4.5, 'item3']
+            ],
+            [
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '4.5', 'productUnit' => 'ITEM2'],
+                'expected' => ['sku1', 4.5, 'item1']
+            ],
+            [
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '6', 'productOrganization' => null],
+                'expected' => ['sku1', 6.0, null, null]
+            ],
+            [
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '6', 'productOrganization' => ' '],
+                'expected' => ['sku1', 6.0, null, null]
+            ],
+            [
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '6', 'productOrganization' => 'Org'],
+                'expected' => ['sku1', 6.0, null, 'Org']
+            ],
+            [
+                'input' => ['productSku' => 'sku1', 'productQuantity' => '6', 'productOrganization' => ' Org '],
+                'expected' => ['sku1', 6.0, null, 'Org']
             ],
         ];
     }
 
-    private function assertProductRepository()
+    /**
+     * @dataProvider createFromArrayDataProvider
+     */
+    public function testCreateFromArray(array $input, array $expected): void
     {
-        $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->once())
-            ->method('getOneOrNullResult')
-            ->with(AbstractQuery::HYDRATE_SINGLE_SCALAR)
-            ->willReturn('item');
+        $this->numberFormatter->expects(self::never())
+            ->method('parseFormattedDecimal');
 
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $this->productRepository
-            ->expects($this->once())
-            ->method('getPrimaryUnitPrecisionCodeQueryBuilder')
-            ->willReturn($queryBuilder);
+        $index = 1;
+        $result = $this->quickAddRowInputParser->createFromArray($input, $index);
 
-        $this->aclHelper
-            ->expects($this->once())
-            ->method('apply')
-            ->with($queryBuilder)
-            ->willReturn($query);
+        self::assertSame($index, $result->getIndex());
+        self::assertSame($expected[0], $result->getSku());
+        self::assertSame($expected[1], $result->getQuantity());
+        self::assertSame($expected[2], $result->getUnit());
+        self::assertSame($expected[3] ?? null, $result->getOrganization());
+    }
+
+    public function createFromArrayDataProvider(): array
+    {
+        return [
+            [
+                'input' => ['sku' => ' SKU1  ', 'quantity' => ' 4.5', 'unit' => 'item '],
+                'expected' => ['SKU1', 4.5, 'item']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '   6 ', 'unit' => 'liter'],
+                'expected' => ['sku1', 6.0, 'LITER']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '6'],
+                'expected' => ['sku1', 6.0, null]
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'Stunde '],
+                'expected' => ['sku1', 4.5, 'hour']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.0', 'unit' => 'ELEMENT '],
+                'expected' => ['sku1', 4.0, 'item']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'unknown'],
+                'expected' => ['sku1', 4.5, 'unknown']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'ITEM1'],
+                'expected' => ['sku1', 4.5, 'item3']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'ITEM2'],
+                'expected' => ['sku1', 4.5, 'item1']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'ITEM2', 'organization' => null],
+                'expected' => ['sku1', 4.5, 'item1', null]
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'ITEM2', 'organization' => ''],
+                'expected' => ['sku1', 4.5, 'item1', null]
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'ITEM2', 'organization' => ' '],
+                'expected' => ['sku1', 4.5, 'item1', null]
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'ITEM2', 'organization' => 'Org'],
+                'expected' => ['sku1', 4.5, 'item1', 'Org']
+            ],
+            [
+                'input' => ['sku' => 'sku1', 'quantity' => '4.5', 'unit' => 'ITEM2', 'organization' => ' Org '],
+                'expected' => ['sku1', 4.5, 'item1', 'Org']
+            ],
+        ];
     }
 }

@@ -2,92 +2,75 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * This validator checks whether a product does not have duplication of product prices.
+ */
 class UniqueEntityValidator extends ConstraintValidator
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private ManagerRegistry $doctrine;
+    private ShardManager $shardManager;
 
-    /**
-     * @var ShardManager
-     */
-    private $shardManager;
-
-    /**
-     * UniqueEntityValidator constructor.
-     */
-    public function __construct(ManagerRegistry $registry, ShardManager $shardManager)
+    public function __construct(ManagerRegistry $doctrine, ShardManager $shardManager)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->shardManager = $shardManager;
     }
 
     /**
-     * @param UniqueEntity $constraint
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function validate($entity, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        if (!$entity instanceof ProductPrice) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Value must be instance of "%s", "%s" given',
-                    'Oro\Bundle\PricingBundle\Entity\ProductPrice',
-                    is_object($entity) ? ClassUtils::getClass($entity) : gettype($entity)
-                )
-            );
+        if (!$constraint instanceof UniqueEntity) {
+            throw new UnexpectedTypeException($value, UniqueEntity::class);
         }
-        if (!$this->isObjectCanBeValidated($entity)) {
-            return;
-        }
-        /** @var EntityManager $em */
-        $em = $this->registry->getManager();
-        $criteria = [];
-        $fields = $constraint->fields;
-        $this->getCriteria($em, $entity, $criteria, $fields);
-        $priceList = $entity->getPriceList();
-        $result = $em
-            ->getRepository(ProductPrice::class)
-            ->findByPriceList(
-                $this->shardManager,
-                $priceList,
-                $criteria
-            );
 
-        $countResult = count($result);
-        if (0 === $countResult || (1 === $countResult && $entity === current($result))) {
+        if (!$value instanceof ProductPrice) {
+            throw new UnexpectedTypeException($value, ProductPrice::class);
+        }
+
+        if (!$this->isObjectCanBeValidated($value)) {
             return;
         }
-        /** @var ExecutionContext $context */
-        $context = $this->context;
-        $context->buildViolation($constraint->message)->addViolation();
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManager();
+        $criteria = [];
+        $this->getCriteria($em, $value, $criteria, $constraint->fields);
+        $result = $em->getRepository(ProductPrice::class)->findByPriceList(
+            $this->shardManager,
+            $value->getPriceList(),
+            $criteria
+        );
+        $countResult = \count($result);
+        if (0 === $countResult || (1 === $countResult && $value === current($result))) {
+            return;
+        }
+        $this->context->buildViolation($constraint->message)->addViolation();
     }
 
-    private function getCriteria(EntityManager $em, ProductPrice $entity, array &$criteria, array $fields)
-    {
-        /* @var ClassMetadata $class */
+    private function getCriteria(
+        EntityManagerInterface $em,
+        ProductPrice $entity,
+        array &$criteria,
+        array $fields
+    ): void {
         $class = $em->getClassMetadata(ProductPrice::class);
-
         foreach ($fields as $fieldName) {
             if (!$class->hasField($fieldName) && !$class->hasAssociation($fieldName)) {
-                throw new ConstraintDefinitionException(
-                    sprintf(
-                        'The field "%s" is not mapped by Doctrine, so it cannot be validated for uniqueness.',
-                        $fieldName
-                    )
-                );
+                throw new ConstraintDefinitionException(sprintf(
+                    'The field "%s" is not mapped by Doctrine, so it cannot be validated for uniqueness.',
+                    $fieldName
+                ));
             }
             $criteria[$fieldName] = $class->reflFields[$fieldName]->getValue($entity);
             if (null === $criteria[$fieldName]) {
@@ -99,12 +82,7 @@ class UniqueEntityValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param ProductPrice $entity
-     *
-     * @return bool
-     */
-    private function isObjectCanBeValidated(ProductPrice $entity)
+    private function isObjectCanBeValidated(ProductPrice $entity): bool
     {
         if ($entity->getProduct() && null === $entity->getProduct()->getId()) {
             // for new product prices can't exist in db

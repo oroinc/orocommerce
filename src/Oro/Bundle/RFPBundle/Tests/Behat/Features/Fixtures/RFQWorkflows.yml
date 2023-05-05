@@ -15,6 +15,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'SKU123'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@precision'
+        unitPrecisions: [ '@precision' ]
         __calls:
             - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
@@ -24,10 +25,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist_shipping'
-        default: true
         __calls:
             - setCurrencies: [['USD']]
         active: true
+        organization: '@organization'
 
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
@@ -74,6 +75,7 @@ Oro\Bundle\RFPBundle\Entity\RequestProduct:
         request: '@request<current()>'
         product: '@product'
         product_sku: 'SKU123'
+        requestProductItems: [ '@requestproductitem<current()>' ]
 
 Oro\Bundle\RFPBundle\Entity\RequestProductItem:
     requestproductitem{0..4}:

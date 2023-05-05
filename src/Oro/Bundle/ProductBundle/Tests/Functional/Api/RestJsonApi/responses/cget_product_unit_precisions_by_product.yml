@@ -1,7 +1,7 @@
 data:
     -
         type: productunitprecisions
-        id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        id: '<toString(@product1_precision->id)>'
         attributes:
             precision: 0
             conversionRate: 1
@@ -10,40 +10,56 @@ data:
             product:
                 data:
                     type: products
-                    id: '<toString(@product-1->id)>'
+                    id: '<toString(@product1->id)>'
             unit:
                 data:
                     type: productunits
-                    id: '<toString(@product_unit.milliliter->code)>'
+                    id: '<toString(@item->code)>'
     -
         type: productunitprecisions
-        id: '<toString(@product_unit_precision.product-1.liter->id)>'
+        id: '<toString(@product1_precision1->id)>'
         attributes:
-            precision: 3
-            conversionRate: 5
+            precision: 1
+            conversionRate: 10
             sell: true
         relationships:
             product:
                 data:
                     type: products
-                    id: '<toString(@product-1->id)>'
+                    id: '<toString(@product1->id)>'
             unit:
                 data:
                     type: productunits
-                    id: '<toString(@product_unit.liter->code)>'
+                    id: '<toString(@set->code)>'
     -
         type: productunitprecisions
-        id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+        id: '<toString(@product1_precision2->id)>'
         attributes:
-            precision: 2
-            conversionRate: 3
-            sell: true
+            precision: 0
+            conversionRate: null
+            sell: false
         relationships:
             product:
                 data:
                     type: products
-                    id: '<toString(@product-1->id)>'
+                    id: '<toString(@product1->id)>'
             unit:
                 data:
                     type: productunits
-                    id: '<toString(@product_unit.bottle->code)>'
+                    id: '<toString(@piece->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product1_precision3->id)>'
+        attributes:
+            precision: 0
+            conversionRate: null
+            sell: false
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@kg->code)>'

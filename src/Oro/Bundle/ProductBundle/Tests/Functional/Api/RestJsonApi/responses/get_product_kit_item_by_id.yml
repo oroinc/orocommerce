@@ -1,0 +1,64 @@
+data:
+    type: productkititems
+    id: '<toString(@product_kit1_item1->id)>'
+    attributes:
+        sortOrder: 1
+        optional: false
+        minimumQuantity: null
+        maximumQuantity: null
+        createdAt: '@product_kit1_item1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@product_kit1_item1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+    relationships:
+        labels:
+            data:
+                -
+                    type: productkititemlabels
+                    id: '<toString(@product_kit1_item1_label->id)>'
+                -
+                    type: productkititemlabels
+                    id: '<toString(@product_kit1_item1_label_es->id)>'
+        productKit:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        kitItemProducts:
+            data:
+                -
+                    type: productkititemproducts
+                    id: '<toString(@product_kit1_item1_product1->id)>'
+                -
+                    type: productkititemproducts
+                    id: '<toString(@product_kit1_item1_product3->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'
+included:
+    -
+        type: productkititemlabels
+        id: '<toString(@product_kit1_item1_label->id)>'
+        attributes:
+            string: 'Product Kit 1 Item 1'
+            fallback: null
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            localization:
+                data: null
+    -
+        type: productkititemlabels
+        id: '<toString(@product_kit1_item1_label_es->id)>'
+        attributes:
+            string: 'Product Kit 1 Item 1 ES'
+            fallback: null
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->id)>'

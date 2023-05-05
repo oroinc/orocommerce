@@ -4,116 +4,80 @@ namespace Oro\Bundle\CheckoutBundle\Factory;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingOriginProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 /**
- * Provides scope of data required to calculate correct shipping cost for checkout.
+ * Creates a shipping context for a specific checkout object.
  */
 class CheckoutShippingContextFactory
 {
-    /**
-     * @var CheckoutLineItemsManager
-     */
-    protected $checkoutLineItemsManager;
-
-    /**
-     * @var SubtotalProviderInterface
-     */
-    protected $checkoutSubtotalProvider;
-
-    /**
-     * @var TotalProcessorProvider
-     */
-    protected $totalProcessor;
-
-    /**
-     * @var OrderShippingLineItemConverterInterface
-     */
-    private $shippingLineItemConverter;
-
-    /**
-     * @var ShippingContextBuilderFactoryInterface|null
-     */
-    private $shippingContextBuilderFactory;
+    private CheckoutLineItemsManager $checkoutLineItemsManager;
+    private SubtotalProviderInterface $checkoutSubtotalProvider;
+    private OrderShippingLineItemConverterInterface $shippingLineItemConverter;
+    private CheckoutShippingOriginProviderInterface $shippingOriginProvider;
+    private ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory;
 
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         SubtotalProviderInterface $checkoutSubtotalProvider,
-        TotalProcessorProvider $totalProcessor,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter,
-        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory = null
+        CheckoutShippingOriginProviderInterface $shippingOriginProvider,
+        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
         $this->checkoutSubtotalProvider = $checkoutSubtotalProvider;
-        $this->totalProcessor = $totalProcessor;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
+        $this->shippingOriginProvider = $shippingOriginProvider;
         $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
     }
 
-    /**
-     * @param Checkout $checkout
-     *
-     * @return ShippingContextInterface|null
-     */
-    public function create(Checkout $checkout)
+    public function create(Checkout $checkout): ShippingContextInterface
     {
-        if (null === $this->shippingContextBuilderFactory) {
-            return null;
-        }
-
-        $lineItems = $this->checkoutLineItemsManager->getData($checkout);
-        $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($lineItems);
-
         $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
             $checkout,
             (string)$checkout->getId()
         );
 
-        $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
-        $subtotalPrice = Price::create(
-            $subtotal->getAmount(),
-            $subtotal->getCurrency()
-        );
+        $this->addAddresses($shippingContextBuilder, $checkout);
+        $this->addCustomer($shippingContextBuilder, $checkout);
+        $this->addSubTotal($shippingContextBuilder, $checkout);
 
-        $shippingContextBuilder
-            ->setSubTotal($subtotalPrice)
-            ->setCurrency($checkout->getCurrency());
-
-        $this->configureShippingContextBuilderFromCheckout($shippingContextBuilder, $checkout);
-
-        if (null !== $convertedLineItems) {
-            $shippingContextBuilder->setLineItems($convertedLineItems);
+        if (null !== $checkout->getPaymentMethod()) {
+            $shippingContextBuilder->setPaymentMethod($checkout->getPaymentMethod());
         }
+
+        $shippingContextBuilder->setLineItems(
+            $this->shippingLineItemConverter->convertLineItems($this->checkoutLineItemsManager->getData($checkout))
+        );
 
         return $shippingContextBuilder->getResult();
     }
 
-    private function configureShippingContextBuilderFromCheckout(
+    private function addAddresses(
         ShippingContextBuilderInterface $shippingContextBuilder,
         Checkout $checkout
-    ) {
-        if (null !== $checkout->getWebsite()) {
-            $shippingContextBuilder->setWebsite($checkout->getWebsite());
+    ): void {
+        if (null !== $checkout->getBillingAddress()) {
+            $shippingContextBuilder->setBillingAddress($checkout->getBillingAddress());
         }
 
         if (null !== $checkout->getShippingAddress()) {
             $shippingContextBuilder->setShippingAddress($checkout->getShippingAddress());
         }
 
-        if (null !== $checkout->getBillingAddress()) {
-            $shippingContextBuilder->setBillingAddress($checkout->getBillingAddress());
-        }
+        $shippingContextBuilder->setShippingOrigin($this->shippingOriginProvider->getShippingOrigin($checkout));
+    }
 
-        if (null !== $checkout->getPaymentMethod()) {
-            $shippingContextBuilder->setPaymentMethod($checkout->getPaymentMethod());
-        }
-
+    private function addCustomer(
+        ShippingContextBuilderInterface $shippingContextBuilder,
+        Checkout $checkout
+    ): void {
         if (null !== $checkout->getCustomer()) {
             $shippingContextBuilder->setCustomer($checkout->getCustomer());
         }
@@ -121,5 +85,18 @@ class CheckoutShippingContextFactory
         if (null !== $checkout->getCustomerUser()) {
             $shippingContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
+
+        if (null !== $checkout->getWebsite()) {
+            $shippingContextBuilder->setWebsite($checkout->getWebsite());
+        }
+    }
+
+    private function addSubTotal(
+        ShippingContextBuilderInterface $shippingContextBuilder,
+        Checkout $checkout
+    ): void {
+        $shippingContextBuilder->setCurrency($checkout->getCurrency());
+        $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
+        $shippingContextBuilder->setSubTotal(Price::create($subtotal->getAmount(), $subtotal->getCurrency()));
     }
 }

@@ -55,7 +55,7 @@ Example:
     "type": "customertaxcodes",
     "id": "1",
     "attributes": {
-      "name": "SOME_TAX_CODE",
+      "code": "SOME_TAX_CODE",
       "description": "Some tax code description"
     }
   }

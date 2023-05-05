@@ -3,11 +3,15 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CMSBundle\Model\ExtendLoginPage;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
+ * Login page entity class.
+ *
  * @ORM\Table(name="oro_cms_login_page")
  * @ORM\Entity()
  * @Config(
@@ -26,9 +30,15 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          }
  *      }
  * )
+ * @method File getLogoImage()
+ * @method LoginPage setLogoImage(File $image)
+ * @method File getBackgroundImage()
+ * @method LoginPage setBackgroundImage(File $image)
  */
-class LoginPage extends ExtendLoginPage
+class LoginPage implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var integer
      *

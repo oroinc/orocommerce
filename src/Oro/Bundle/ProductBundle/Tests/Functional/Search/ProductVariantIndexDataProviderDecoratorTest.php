@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
-use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
@@ -28,20 +27,10 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
     }
 
     /**
-     * @param string $allTextValue
-     * @param array $expectedSkus
-     *
      * @dataProvider allTextVariantDataProvider
      */
-    public function testAllTextVariantSearch($allTextValue, array $expectedSkus)
+    public function testAllTextVariantSearch(string $allTextValue, array $expectedSkus)
     {
-        if ($this->getContainer()->getParameter('database_driver') === DatabaseDriverInterface::DRIVER_MYSQL) {
-            $this->markTestSkipped(
-                'Fulltext search does not work inside the transaction for MySQL. ' .
-                'https://dev.mysql.com/doc/refman/5.6/en/innodb-fulltext-index.html#innodb-fulltext-index-transaction'
-            );
-        }
-
         $response = $this->client->requestFrontendGrid(
             'frontend-product-search-grid',
             [
@@ -54,10 +43,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
         $this->assertEquals($expectedSkus, $this->getSkusFromResponse($response));
     }
 
-    /**
-     * @return array
-     */
-    public function allTextVariantDataProvider()
+    public function allTextVariantDataProvider(): array
     {
         return [
             'configurable by SKU' => [
@@ -129,12 +115,9 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
     }
 
     /**
-     * @param string $enumName
-     * @param array $expectedSkus
-     *
      * @dataProvider enumVariantDataProvider
      */
-    public function testEnumVariantSearch($enumName, array $expectedSkus)
+    public function testEnumVariantSearch(string $enumName, array $expectedSkus)
     {
         $variantClassName = ExtendHelper::buildEnumValueClassName(
             OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_CODE
@@ -157,10 +140,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
         $this->assertEquals($expectedSkus, $skus);
     }
 
-    /**
-     * @return array
-     */
-    public function enumVariantDataProvider()
+    public function enumVariantDataProvider(): array
     {
         return [
             'first variant' => [
@@ -184,15 +164,11 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param Response $response
-     * @return array
-     */
-    private function getSkusFromResponse(Response $response)
+    private function getSkusFromResponse(Response $response): array
     {
         $actualSkus = [];
-        $products = \json_decode($response->getContent(), true)['data'];
-        foreach ($products as $product) {
+        $responseData = self::jsonToArray($response->getContent());
+        foreach ($responseData['data'] as $product) {
             $actualSkus[] = $product['sku'];
         }
         sort($actualSkus);
@@ -219,10 +195,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
         $this->assertEquals($expectedSkus, $this->getSkusFromResponse($response));
     }
 
-    /**
-     * @return array
-     */
-    public function multiEnumVariantDataProvider()
+    public function multiEnumVariantDataProvider(): array
     {
         return [
             'only first option' => [

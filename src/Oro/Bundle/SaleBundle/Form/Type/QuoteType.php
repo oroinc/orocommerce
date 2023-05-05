@@ -24,31 +24,20 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * Builds Form for create/update actions on Oro\Bundle\SaleBundle\Entity\Quote entity
+ * The form type for Quote entity.
  */
 class QuoteType extends AbstractType
 {
-    const NAME = 'oro_sale_quote';
+    public const NAME = 'oro_sale_quote';
 
-    /** @var QuoteAddressSecurityProvider */
-    protected $quoteAddressSecurityProvider;
-
-    /** @var string */
-    protected $dataClass;
-
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var EventSubscriberInterface */
-    protected $quoteFormSubscriber;
-
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    private QuoteAddressSecurityProvider $quoteAddressSecurityProvider;
+    private ConfigManager $configManager;
+    private EventSubscriberInterface $quoteFormSubscriber;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(
         QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
@@ -63,18 +52,9 @@ class QuoteType extends AbstractType
     }
 
     /**
-     * @param string $dataClass
+     * {@inheritDoc}
      */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @throws \InvalidArgumentException
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Quote $quote */
         $quote = $options['data'];
@@ -86,28 +66,28 @@ class QuoteType extends AbstractType
         $builder
             ->add('qid', HiddenType::class)
             ->add('owner', UserSelectType::class, [
-                'label'     => 'oro.sale.quote.owner.label',
-                'required'  => true
+                'label' => 'oro.sale.quote.owner.label',
+                'required' => true
             ])
             ->add('customerUser', CustomerUserSelectType::class, [
-                'label'     => 'oro.sale.quote.customer_user.label',
-                'required'  => false
+                'label' => 'oro.sale.quote.customer_user.label',
+                'required' => false
             ])
             ->add('customer', CustomerSelectType::class, [
-                'label'     => 'oro.sale.quote.customer.label',
-                'required'  => false
+                'label' => 'oro.sale.quote.customer.label',
+                'required' => false
             ])
             ->add('validUntil', OroDateTimeType::class, [
-                'label'     => 'oro.sale.quote.valid_until.label',
-                'required'  => false
+                'label' => 'oro.sale.quote.valid_until.label',
+                'required' => false
             ])
             ->add('shippingMethodLocked', CheckboxType::class, [
                 'label' => 'oro.sale.quote.shipping_method_locked.label',
-                'required'  => false
+                'required' => false
             ])
             ->add('allowUnlistedShippingMethod', CheckboxType::class, [
                 'label' => 'oro.sale.quote.allow_unlisted_shipping_method.label',
-                'required'  => false
+                'required' => false
             ])
             ->add('poNumber', TextType::class, [
                 'required' => false,
@@ -154,13 +134,7 @@ class QuoteType extends AbstractType
         }
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param Quote $quote
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    protected function addShippingFields(FormBuilderInterface $builder, Quote $quote)
+    private function addShippingFields(FormBuilderInterface $builder, Quote $quote): void
     {
         $builder
             ->add(PossibleShippingMethodEventListener::CALCULATE_SHIPPING_KEY, HiddenType::class, [
@@ -182,20 +156,16 @@ class QuoteType extends AbstractType
                 function ($price) {
                     return $price instanceof Price ? $price->getValue() : $price;
                 }
-            ))
-        ;
-
-        return $this;
+            ));
     }
 
     /**
-     * {@inheritdoc}
-     * @throws AccessException
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
+            'data_class' => Quote::class,
             'csrf_token_id' => 'sale_quote',
             'allow_prices_override' => $this->authorizationChecker->isGranted('oro_quote_prices_override'),
             'allow_add_free_form_items' => $this->authorizationChecker->isGranted('oro_quote_add_free_form_items'),
@@ -203,9 +173,9 @@ class QuoteType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

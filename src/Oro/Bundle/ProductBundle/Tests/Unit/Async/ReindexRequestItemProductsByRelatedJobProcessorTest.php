@@ -15,35 +15,37 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use LoggerAwareTraitTestTrait;
 
-    private ProductWebsiteReindexRequestDataStorageInterface|MockObject $websiteReindexRequestDataStorage;
+    /** @var ProductWebsiteReindexRequestDataStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteReindexRequestDataStorage;
 
-    private JobRunner|MockObject $jobRunner;
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
+    private $jobRunner;
 
-    private MessageProducerInterface|MockObject $messageProducer;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageProducer;
 
-    private ReindexRequestItemProductsByRelatedJobProcessor $processor;
+    /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $message;
 
-    private MessageInterface|MockObject $message;
+    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    private SessionInterface|MockObject $session;
+    /** @var ReindexRequestItemProductsByRelatedJobProcessor */
+    private $processor;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->websiteReindexRequestDataStorage = $this
-            ->createMock(ProductWebsiteReindexRequestDataStorageInterface::class);
-
+        $this->websiteReindexRequestDataStorage = $this->createMock(
+            ProductWebsiteReindexRequestDataStorageInterface::class
+        );
         $this->jobRunner = $this->createMock(JobRunner::class);
-
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
-
         $this->message = $this->createMock(MessageInterface::class);
-
         $this->session = $this->createMock(SessionInterface::class);
 
         $this->processor = new ReindexRequestItemProductsByRelatedJobProcessor(
@@ -57,16 +59,14 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
 
     public function testProcessWithEmptyWebsiteIds(): void
     {
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn([
                 'relatedJobId' => 1,
                 'indexationFieldsGroups' => ['main'],
             ]);
 
-        $this->websiteReindexRequestDataStorage
-            ->expects(self::once())
+        $this->websiteReindexRequestDataStorage->expects(self::once())
             ->method('getWebsiteIdsByRelatedJobId')
             ->willReturn([]);
 
@@ -83,26 +83,22 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
         $productIds = [[2, 3]];
         $fieldGroups = ['main'];
 
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn([
                 'relatedJobId' => $jobId,
                 'indexationFieldsGroups' => $fieldGroups,
             ]);
 
-        $this->websiteReindexRequestDataStorage
-            ->expects(self::once())
+        $this->websiteReindexRequestDataStorage->expects(self::once())
             ->method('getWebsiteIdsByRelatedJobId')
             ->willReturn($websiteIds);
 
-        $this->websiteReindexRequestDataStorage
-            ->expects(self::once())
+        $this->websiteReindexRequestDataStorage->expects(self::once())
             ->method('getProductIdIteratorByRelatedJobIdAndWebsiteId')
             ->willReturn(new \ArrayIterator($productIds));
 
-        $this->messageProducer
-            ->expects(self::once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
             ->with(
                 WebsiteSearchReindexTopic::getName(),
@@ -117,29 +113,22 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
                 ]
             );
 
-        $this->jobRunner->method('createDelayed')
-            ->willReturnCallback(
-                function (string $job, callable $callback) use ($jobId) {
-                    $job = new Job();
-                    $job->setId($jobId);
-                    return $callback($this->jobRunner, $job);
-                }
-            );
+        $this->jobRunner->expects(self::once())
+            ->method('createDelayed')
+            ->willReturnCallback(function (string $job, callable $callback) use ($jobId) {
+                $job = new Job();
+                $job->setId($jobId);
 
-        $this->jobRunner
-            ->expects(self::once())
-            ->method('runUnique')
-            ->willReturnCallback(
-                function (string $ownerId, string $rootJobName, callable $callback) {
-                    self::assertEquals($this->message->getMessageId(), $ownerId);
-                    self::assertStringContainsString(
-                        ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
-                        $rootJobName
-                    );
+                return $callback($this->jobRunner, $job);
+            });
 
-                    return $callback($this->jobRunner, new Job());
-                }
-            );
+        $this->jobRunner->expects(self::once())
+            ->method('runUniqueByMessage')
+            ->willReturnCallback(function ($actualMessage, callable $callback) {
+                self::assertEquals($actualMessage, $this->message);
+
+                return $callback($this->jobRunner, new Job());
+            });
 
         self::assertEquals(
             MessageProcessorInterface::ACK,
@@ -149,22 +138,19 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
 
     public function testProcessWithJobRunnerFailedResult(): void
     {
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn([
                 'relatedJobId' => 1,
                 'indexationFieldsGroups' => ['main'],
             ]);
 
-        $this->websiteReindexRequestDataStorage
-            ->expects(self::once())
+        $this->websiteReindexRequestDataStorage->expects(self::once())
             ->method('getWebsiteIdsByRelatedJobId')
             ->willReturn([1, 2, 3]);
 
-        $this->jobRunner
-            ->expects(self::once())
-            ->method('runUnique')
+        $this->jobRunner->expects(self::once())
+            ->method('runUniqueByMessage')
             ->willReturn(null);
 
         self::assertEquals(
@@ -177,26 +163,22 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
     {
         $exception = new \Exception();
 
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn([
                 'relatedJobId' => 1,
                 'indexationFieldsGroups' => ['main'],
             ]);
 
-        $this->websiteReindexRequestDataStorage
-            ->expects(self::once())
+        $this->websiteReindexRequestDataStorage->expects(self::once())
             ->method('getWebsiteIdsByRelatedJobId')
             ->willReturn([1, 2, 3]);
 
-        $this->jobRunner
-            ->expects(self::once())
-            ->method('runUnique')
+        $this->jobRunner->expects(self::once())
+            ->method('runUniqueByMessage')
             ->willThrowException($exception);
 
-        $this->loggerMock
-            ->expects(self::once())
+        $this->loggerMock->expects(self::once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during queue message processing',

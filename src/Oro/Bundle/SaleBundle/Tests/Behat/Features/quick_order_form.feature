@@ -1,5 +1,4 @@
 @ticket-BB-20787
-@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:products.yml
 
 Feature: Quick order form
@@ -10,21 +9,21 @@ Feature: Quick order form
   Scenario: Check quick order form field clearing
     Given I login as AmandaRCole@example.org buyer
     And I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 - Product1 |
     And I wait for products to load
-    And "QuickAddForm" must contains values:
+    And "Quick Order Form" must contains values:
       | SKU1      | PSKU1 - Product1 |
       | QTY1      | 1                |
       | UNIT1     | each             |
       | SUBTOTAL1 | $10.00           |
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 |  |
     And I click on empty space
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | PSKU1 - Product1 |
     And I wait for products to load
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1      | PSKU1 - Product1 |
       | QTY1      | 1                |
       | UNIT1     | each             |
@@ -34,7 +33,7 @@ Feature: Quick order form
     When I click "Quick Order Form"
     Then I should not see an "Quick Order Form > DeleteRow1" element
     And I should not see an "Quick Order Form > DeleteRow2" element
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | Foo |
       | QTY2 | 7   |
     Then I should see an "Quick Order Form > DeleteRow1" element

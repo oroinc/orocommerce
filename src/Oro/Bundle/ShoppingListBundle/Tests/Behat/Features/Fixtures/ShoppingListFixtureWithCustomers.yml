@@ -50,7 +50,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@precision3'
-        unitPrecisions: []
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue2']

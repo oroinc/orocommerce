@@ -21,6 +21,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU'
         primaryUnitPrecision: '@precision'
+        unitPrecisions: [ '@precision' ]
         __calls:
             - addName: ['@product_name']
         inventoryStatus: '@enumInventoryStatuses'
@@ -64,11 +65,11 @@ Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
     customer_tax_code:
         owner: '@admin'
         organization: '@organization'
-        code: 'Customer tax code'
+        code: 'customer_tax_code'
 
 Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     product_tax_code:
-        code: 'Product tax code'
+        code: 'product_tax_code'
         organization: '@organization'
 
 Oro\Bundle\TaxBundle\Entity\Tax:
@@ -87,6 +88,7 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
         customerTaxCode: '@customer_tax_code'
         taxJurisdiction: '@tax_jurisdiction'
         tax: '@tax'
+        organization: '@organization'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address:
@@ -102,7 +104,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
             - setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
         primary: true
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     billing:

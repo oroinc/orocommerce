@@ -60,5 +60,12 @@
                 width: 16px;
             }
         }
+
+        &-range {
+            [type='range'] {
+                // Need to reset padding
+                padding: 0;
+            }
+        }
     }
 }

@@ -1,0 +1,12 @@
+Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
+    properties:
+        shippingMethod:
+            - Length:
+                max: 255
+                allowEmptyString: true
+        shippingMethodType:
+            - Length:
+                max: 255
+                allowEmptyString: true
+        shippingEstimateAmount:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~

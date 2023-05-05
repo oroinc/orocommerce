@@ -21,7 +21,7 @@ use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -29,9 +29,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutAddressTypeTest extends FormIntegrationTestCase
 {
-    /** @var OrderAddressToAddressIdentifierViewTransformer|\PHPUnit\Framework\MockObject\MockObject */
-    private $orderAddressToAddressIdentifierViewTransformer;
-
     public function testGetBlockPrefix()
     {
         $type = new CheckoutAddressType();
@@ -40,7 +37,6 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setAllowedTypes')
@@ -55,7 +51,8 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(CheckoutAddressType::class, null, [
             'object' => new Checkout(),
-            'addressType' => 'billing'
+            'addressType' => 'billing',
+            'disabled' => null,
         ]);
 
         $this->assertTrue($form->has('id'));
@@ -73,6 +70,8 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('postalCode'));
         $this->assertTrue($form->has('customerAddress'));
         $this->assertTrue($form->has('phone'));
+        $this->assertTrue($form->getConfig()->hasOption('disabled'));
+        $this->assertFalse($form->getConfig()->getOption('disabled'));
     }
 
     public function testGetParent()
@@ -85,12 +84,8 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param OrderAddress|null $defaultData
-     * @param array $submittedData
-     * @param OrderAddress|null $expectedData
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit(OrderAddress $defaultData, array $submittedData, OrderAddress $expectedData)
     {
         $form = $this->factory->create(CheckoutAddressType::class, $defaultData, [
             'object' => new Checkout(),
@@ -107,10 +102,7 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'edit order address' => [
@@ -178,51 +170,40 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
         $orderAddressSecurityProvider->expects($this->any())
             ->method('isManualEditGranted')
             ->willReturn(true);
-        $orderAddressType = new OrderAddressType($orderAddressSecurityProvider);
-        $addressTypeStub = new AddressTypeStub();
-        /** @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject $addressManager */
+
         $addressManager = $this->createMock(OrderAddressManager::class);
         $addressManager->expects($this->any())
             ->method('getGroupedAddresses')
             ->willReturn(new TypedOrderAddressCollection(null, 'billing', []));
-        $addressFormatter = $this->createMock(AddressFormatter::class);
-        $serializer = $this->createMock(Serializer::class);
-        $addressType = new EntityType(
-            [
-                AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
-                AddressType::TYPE_SHIPPING => new AddressType(AddressType::TYPE_SHIPPING),
-            ],
-            TranslatableEntityType::NAME
-        );
-        $this->orderAddressToAddressIdentifierViewTransformer = $this->createMock(
-            OrderAddressToAddressIdentifierViewTransformer::class
-        );
 
         return [
             new PreloadedExtension(
                 [
-                    CheckoutAddressType::class => new CheckoutAddressType(),
-                    OrderAddressType::class => $orderAddressType,
-                    AddressFormType::class => $addressTypeStub,
-                    CheckoutAddressSelectType::class => new CheckoutAddressSelectType(
+                    new CheckoutAddressType(),
+                    new OrderAddressType($orderAddressSecurityProvider),
+                    AddressFormType::class => new AddressTypeStub(),
+                    new CheckoutAddressSelectType(
                         $addressManager,
-                        $this->orderAddressToAddressIdentifierViewTransformer
+                        $this->createMock(OrderAddressToAddressIdentifierViewTransformer::class)
                     ),
-                    OrderAddressSelectType::class => new OrderAddressSelectType(
+                    new OrderAddressSelectType(
                         $addressManager,
-                        $addressFormatter,
+                        $this->createMock(AddressFormatter::class),
                         $orderAddressSecurityProvider,
-                        $serializer
+                        $this->createMock(Serializer::class)
                     ),
-                    TranslatableEntityType::class => $addressType,
+                    TranslatableEntityType::class => new EntityTypeStub([
+                        AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
+                        AddressType::TYPE_SHIPPING => new AddressType(AddressType::TYPE_SHIPPING),
+                    ]),
                 ],
                 [
                     FormType::class => [new StripTagsExtensionStub($this)],
@@ -231,17 +212,13 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param string|null $label
-     * @param string|null $firstName
-     * @param string|null $lastName
-     * @param string|null $phone
-     * @param string|null $street
-     *
-     * @return OrderAddress
-     */
-    private function getOrderAddress($label = null, $firstName = null, $lastName = null, $phone = null, $street = null)
-    {
+    private function getOrderAddress(
+        ?string $label = null,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        ?string $phone = null,
+        ?string $street = null
+    ): OrderAddress {
         $orderAddress = new OrderAddress();
         $orderAddress->setLabel($label);
         $orderAddress->setFirstName($firstName);

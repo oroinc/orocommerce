@@ -18,11 +18,8 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class GuestCheckoutQueryModifier implements QueryModifierInterface
 {
-    /** @var GuestCheckoutChecker */
-    private $guestCheckoutChecker;
-
-    /** @var EntityClassResolver */
-    private $entityClassResolver;
+    private GuestCheckoutChecker $guestCheckoutChecker;
+    private EntityClassResolver $entityClassResolver;
 
     public function __construct(
         GuestCheckoutChecker $guestCheckoutChecker,

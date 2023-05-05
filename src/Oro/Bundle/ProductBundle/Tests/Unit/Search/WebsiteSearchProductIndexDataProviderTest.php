@@ -21,6 +21,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\ProductDescription;
@@ -36,26 +37,25 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\StringSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attributeTypeRegistry;
+    private $attributeTypeRegistry;
 
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $extendConfigProvider;
+    private $extendConfigProvider;
 
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attributeConfigProvider;
+    private $attributeConfigProvider;
 
     /** @var ProductIndexFieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $filterableAttributeProvider;
+    private $filterableAttributeProvider;
 
     /** @var WebsiteSearchProductIndexDataProvider */
-    protected $provider;
+    private $provider;
 
     protected function setUp(): void
     {
@@ -64,16 +64,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
 
         $this->attributeTypeRegistry = $this->createMock(AttributeTypeRegistry::class);
 
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('getProvider')
-            ->willReturnMap(
-                [
-                    ['extend', $this->extendConfigProvider],
-                    ['attribute', $this->attributeConfigProvider],
-                ]
-            );
+            ->willReturnMap([
+                ['extend', $this->extendConfigProvider],
+                ['attribute', $this->attributeConfigProvider],
+            ]);
 
         $this->filterableAttributeProvider = new ProductIndexFieldsProvider();
         $searchableProvider = new SearchableInformationProvider($configManager);
@@ -82,23 +79,17 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
             $this->attributeTypeRegistry,
             new AttributeConfigurationProvider($configManager),
             $this->filterableAttributeProvider,
-            new PropertyAccessor(),
+            PropertyAccess::createPropertyAccessor(),
             $searchableProvider
         );
     }
 
     /**
      * @dataProvider getIndexDataProvider
-     *
-     * @param FieldConfigModel $attribute
-     * @param AttributeTypeInterface|null $attributeType
-     * @param ConfigInterface $extendConfig
-     * @param ConfigInterface $attributeConfig
-     * @param array $expected
      */
     public function testGetIndexData(
         FieldConfigModel $attribute,
-        $attributeType,
+        ?AttributeTypeInterface $attributeType,
         ConfigInterface $extendConfig,
         ConfigInterface $attributeConfig,
         array $expected = []
@@ -106,7 +97,6 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $locale1 = $this->getEntity(Localization::class, ['id' => 1001]);
         $locale2 = $this->getEntity(Localization::class, ['id' => 1002]);
 
-        /** @var Product $product */
         $product = $this->getEntity(
             Product::class,
             [
@@ -133,8 +123,12 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
             ->with($attribute)
             ->willReturn($attributeType);
 
-        $this->extendConfigProvider->expects($this->any())->method('getConfig')->willReturn($extendConfig);
-        $this->attributeConfigProvider->expects($this->any())->method('getConfig')->willReturn($attributeConfig);
+        $this->extendConfigProvider->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($extendConfig);
+        $this->attributeConfigProvider->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($attributeConfig);
 
         $data = $this->provider->getIndexData($product, $attribute, [$locale1, $locale2]);
         $this->assertEquals($expected, array_values($data->getArrayCopy()));
@@ -142,10 +136,8 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function getIndexDataProvider()
+    public function getIndexDataProvider(): array
     {
         $enumAttribute = new FieldConfigModel('inventoryStatus');
         $enumAttribute->setEntity(new EntityConfigModel(Product::class));
@@ -157,17 +149,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $stringAttributeType = new StringAttributeType();
         $stringSearchAttributeType = new StringSearchableAttributeType($stringAttributeType);
 
-        /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject $entityNameResolver */
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
         $entityNameResolver->expects($this->any())
             ->method('getName')
-            ->willReturnCallback(
-                function ($entity, $format, $locale) {
-                    return (string)$entity . '_' . $locale;
-                }
-            );
+            ->willReturnCallback(function ($entity, $format, $locale) {
+                return (string)$entity . '_' . $locale;
+            });
 
-        /** @var DoctrineHelper $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $manyToManyAttribute = new FieldConfigModel('descriptions');
@@ -534,40 +522,28 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         ];
     }
 
-    /**
-     * @param array $values
-     * @return Config
-     */
-    protected function getConfig(array $values = [])
+    private function getConfig(array $values = []): Config
     {
-        /** @var ConfigIdInterface $id */
-        $id = $this->createMock(ConfigIdInterface::class);
-
-        return new Config($id, $values);
+        return new Config($this->createMock(ConfigIdInterface::class), $values);
     }
 
-    /**
-     * @param string $id
-     * @param string $name
-     * @param int $priority
-     * @return AbstractEnumValue|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getEnumValue($id, $name, $priority)
+    private function getEnumValue(string $id, string $name, int $priority): AbstractEnumValue
     {
         $enum = $this->createMock(AbstractEnumValue::class);
-        $enum->expects($this->any())->method('getId')->willReturn($id);
-        $enum->expects($this->any())->method('getName')->willReturn($name);
-        $enum->expects($this->any())->method('getPriority')->willReturn($priority);
+        $enum->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+        $enum->expects($this->any())
+            ->method('getName')
+            ->willReturn($name);
+        $enum->expects($this->any())
+            ->method('getPriority')
+            ->willReturn($priority);
 
         return $enum;
     }
 
-    /**
-     * @param string $string
-     * @param Localization|null $localization
-     * @return ProductDescription
-     */
-    protected function getLocalizedValue($string, Localization $localization = null)
+    private function getLocalizedValue(string $string, Localization $localization = null): ProductDescription
     {
         $value = new ProductDescription();
         $value->setLocalization($localization)->setString($string);

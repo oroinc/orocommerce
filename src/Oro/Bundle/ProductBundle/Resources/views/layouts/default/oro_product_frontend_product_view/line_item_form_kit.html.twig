@@ -1,0 +1,33 @@
+{% block _product_view_kit_content_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid product-view__kit-container'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_kit_content_container_start_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid-col-6 grid-col-mobile-landscape-12 '
+    }) %}
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_kit_content_container_end_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid-col-6 grid-col-mobile-landscape-12 '
+    }) %}
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+

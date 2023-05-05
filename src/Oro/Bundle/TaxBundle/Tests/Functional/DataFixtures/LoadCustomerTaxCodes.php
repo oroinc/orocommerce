@@ -11,99 +11,75 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadCustomerTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
     use UserUtilityTrait;
 
-    const TAX_1 = 'TAX1';
-    const TAX_2 = 'TAX2';
-    const TAX_3 = 'TAX3';
-    const TAX_4 = 'TAX4';
+    public const REFERENCE_PREFIX = 'customer_tax_code';
 
-    const DESCRIPTION_1 = 'Tax description 1';
-    const DESCRIPTION_2 = 'Tax description 2';
-    const DESCRIPTION_3 = 'Tax description 3';
-    const DESCRIPTION_4 = 'Tax description 4';
+    public const TAX_1 = 'TAX1';
+    public const TAX_2 = 'TAX2';
+    public const TAX_3 = 'TAX3';
+    public const TAX_4 = 'TAX4';
 
-    const REFERENCE_PREFIX = 'customer_tax_code';
+    private const DATA = [
+        self::TAX_1 => [
+            'description'    => 'Tax description 1',
+            'customers'      => [LoadCustomers::DEFAULT_ACCOUNT_NAME],
+            'customerGroups' => []
+        ],
+        self::TAX_2 => [
+            'description'    => 'Tax description 2',
+            'customers'      => [],
+            'customerGroups' => [LoadGroups::GROUP2]
+        ],
+        self::TAX_3 => [
+            'description'    => 'Tax description 3',
+            'customers'      => [LoadCustomers::CUSTOMER_LEVEL_1_1],
+            'customerGroups' => []
+        ],
+        self::TAX_4 => [
+            'description'    => 'Tax description 4',
+            'customers'      => [],
+            'customerGroups' => [LoadGroups::GROUP3]
+        ]
+    ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers'];
+        return [LoadCustomers::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $owner = $this->getFirstUser($manager);
-        $this->createCustomerTaxCode(
-            $manager,
-            self::TAX_1,
-            self::DESCRIPTION_1,
-            [LoadCustomers::DEFAULT_ACCOUNT_NAME],
-            [],
-            $owner
-        );
-        $this->createCustomerTaxCode(
-            $manager,
-            self::TAX_3,
-            self::DESCRIPTION_3,
-            [LoadCustomers::CUSTOMER_LEVEL_1_1],
-            [],
-            $owner
-        );
-        $this->createCustomerTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, [], [LoadGroups::GROUP2], $owner);
-        $this->createCustomerTaxCode($manager, self::TAX_4, self::DESCRIPTION_4, [], [LoadGroups::GROUP3], $owner);
-
+        $user = $this->getFirstUser($manager);
+        $organization = $user->getOrganization();
+        foreach (self::DATA as $code => $item) {
+            $customerTaxCode = new CustomerTaxCode();
+            $customerTaxCode->setCode($code);
+            $customerTaxCode->setDescription($item['description']);
+            $customerTaxCode->setOwner($user);
+            $customerTaxCode->setOrganization($organization);
+            foreach ($item['customers'] as $customerRef) {
+                /** @var Customer $customer */
+                $customer = $this->getReference($customerRef);
+                $customer->setTaxCode($customerTaxCode);
+            }
+            foreach ($item['customerGroups'] as $customerGroupRef) {
+                /** @var CustomerGroup $customer */
+                $customerGroup = $this->getReference($customerGroupRef);
+                $customerGroup->setTaxCode($customerTaxCode);
+            }
+            $manager->persist($customerTaxCode);
+            $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $customerTaxCode);
+        }
         $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string $code
-     * @param string $description
-     * @param array $customerRefs
-     * @param array $customerGroupsRefs
-     * @param User $owner
-     * @return CustomerTaxCode
-     */
-    protected function createCustomerTaxCode(
-        ObjectManager $manager,
-        $code,
-        $description,
-        array $customerRefs,
-        array $customerGroupsRefs,
-        User $owner
-    ) {
-        $customerTaxCode = new CustomerTaxCode();
-        $customerTaxCode
-            ->setCode($code)
-            ->setDescription($description)
-            ->setOwner($owner)
-            ->setOrganization($owner->getOrganization());
-
-        foreach ($customerRefs as $customerRef) {
-            /** @var Customer $customer */
-            $customer = $this->getReference($customerRef);
-            $customer->setTaxCode($customerTaxCode);
-        }
-
-        foreach ($customerGroupsRefs as $customerGroupRef) {
-            /** @var CustomerGroup $customer */
-            $customerGroup = $this->getReference($customerGroupRef);
-            $customerGroup->setTaxCode($customerTaxCode);
-        }
-
-        $manager->persist($customerTaxCode);
-        $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $customerTaxCode);
-
-        return $customerTaxCode;
     }
 }

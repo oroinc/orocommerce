@@ -24,14 +24,10 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
     use MessageQueueAssertTrait;
     use ConfigManagerAwareTestTrait;
 
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        self::getConfigManager('global')
+        self::getConfigManager()
             ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
 
         $this->loadFixtures([
@@ -91,10 +87,8 @@ class PriceListScheduleRecalculateCommandTest extends WebTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function commandDataProvider()
+    public function commandDataProvider(): array
     {
         return [
             'all' => [

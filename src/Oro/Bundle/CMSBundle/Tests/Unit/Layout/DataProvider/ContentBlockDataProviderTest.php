@@ -12,6 +12,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
@@ -19,20 +20,15 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
     const ENTITY_CLASS = 'TestEntityClass';
     const SCOPE_TYPE = 'test_scope_type';
 
-    /** @var ContentBlockDataProvider */
-    private $provider;
+    private ContentBlockDataProvider $provider;
 
-    /** @var ContentBlockResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $resolver;
+    protected ContentBlockResolver|MockObject $resolver;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    protected ManagerRegistry|MockObject $registry;
 
-    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $scopeManager;
+    protected ScopeManager|MockObject $scopeManager;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
+    protected LoggerInterface|MockObject $logger;
 
     protected function setUp(): void
     {
@@ -50,7 +46,7 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetContentBlockView()
+    public function testGetContentBlockView(): void
     {
         $context = ['field' => 'value'];
 
@@ -86,7 +82,7 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($view, $this->provider->getContentBlockView('test_alias'));
     }
 
-    public function testGetContentBlockViewWithWrongAlias()
+    public function testGetContentBlockViewWithWrongAlias(): void
     {
         $context = ['field' => 'value'];
         $this->scopeManager->expects($this->once())
@@ -108,9 +104,45 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getManagerForClass')
             ->with(self::ENTITY_CLASS)
             ->willReturn($manager);
+
+        $this->assertNull($this->provider->getContentBlockView('test_alias'));
+    }
+
+    public function testGetContentBlockViewNotVisible(): void
+    {
+        $context = ['field' => 'value'];
+
+        $contentBlock = new ContentBlock();
+        $criteria = new ScopeCriteria($context, $this->createMock(ClassMetadataFactory::class));
+
+        $this->scopeManager->expects($this->once())
+            ->method('getCriteria')
+            ->with(self::SCOPE_TYPE)
+            ->willReturn($criteria);
+
+        $this->resolver->expects($this->once())
+            ->method('getContentBlockViewByCriteria')
+            ->with($contentBlock, $criteria)
+            ->willReturn(null);
+
+        $repo = $this->createMock(ObjectRepository::class);
+        $repo->expects($this->once())
+            ->method('findOneBy')
+            ->with(['alias' => 'test_alias'])
+            ->willReturn($contentBlock);
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->once())
+            ->method('getRepository')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($repo);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($manager);
+
         $this->logger->expects($this->once())
             ->method('notice')
-            ->with('Content block with alias "{alias}" doesn\'t exists', ['alias' => 'test_alias']);
+            ->with('Content block with alias "{alias}" is not visible to user.', ['alias' => 'test_alias']);
 
         $this->assertNull($this->provider->getContentBlockView('test_alias'));
     }

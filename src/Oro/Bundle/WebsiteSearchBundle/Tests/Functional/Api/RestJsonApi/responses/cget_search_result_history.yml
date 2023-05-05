@@ -1,0 +1,57 @@
+data:
+    -
+        type: searchresulthistories
+        id: '<toString(@search_result_tires->id)>'
+        attributes:
+            searchTerm: '@search_result_tires->searchTerm'
+            customerVisitorId: '@search_result_tires->customerVisitorId'
+            resultType: '@search_result_tires->resultType'
+            resultsCount: '@search_result_tires->resultsCount'
+            createdAt: '@search_result_tires->createdAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@search_result_tires->localization->id)>'
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@search_result_tires->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@search_result_tires->organization->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@search_result_tires->customerUser->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@search_result_tires->customer->id)>'
+    -
+        type: searchresulthistories
+        id: '<toString(@search_result_expert->id)>'
+        attributes:
+            searchTerm: '@search_result_expert->searchTerm'
+            customerVisitorId: '@search_result_expert->customerVisitorId'
+            resultType: '@search_result_expert->resultType'
+            resultsCount: '@search_result_expert->resultsCount'
+            createdAt: '@search_result_expert->createdAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@search_result_expert->localization->id)>'
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@search_result_expert->owner->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@search_result_expert->organization->id)>'
+            customerUser:
+                data: null
+            customer:
+                data: null

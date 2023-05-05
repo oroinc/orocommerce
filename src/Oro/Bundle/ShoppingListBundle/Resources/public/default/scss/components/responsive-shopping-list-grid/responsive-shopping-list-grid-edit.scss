@@ -87,7 +87,7 @@
     .filtered-out .select-row-cell::after {
         top: -1px;
         height:
-            $datagrid-body-cell-offset +  $responsive-shopping-list-edit-action-in-desktop-height * .5 -
+            $datagrid-body-cell-offset + $responsive-shopping-list-edit-action-in-desktop-height * .5 -
             $responsive-shopping-sub-row-cell-inner-offset;
         bottom: auto;
     }

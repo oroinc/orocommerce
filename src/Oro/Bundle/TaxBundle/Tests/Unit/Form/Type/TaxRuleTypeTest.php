@@ -12,9 +12,8 @@ use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxRuleType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
-use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
@@ -22,8 +21,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var TaxType */
-    private $formType;
+    private TaxRuleType $formType;
 
     protected function setUp(): void
     {
@@ -37,46 +35,26 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions(): array
     {
-        $productTaxCodeAutocomplete = new EntityType(
-            [
-                1 => $this->getEntity(ProductTaxCode::class, ['id' => 1]),
-                2 => $this->getEntity(ProductTaxCode::class, ['id' => 2])
-            ],
-            ProductTaxCodeAutocompleteType::NAME
-        );
-
-        $customerTaxCodeAutocomplete = new EntityType(
-            [
-                1 => $this->getEntity(CustomerTaxCode::class, ['id' => 1]),
-                2 => $this->getEntity(CustomerTaxCode::class, ['id' => 2])
-            ],
-            CustomerTaxCodeAutocompleteType::NAME
-        );
-
-        $taxSelect = new EntityType(
-            [
-                1 => $this->getEntity(Tax::class, ['id' => 1]),
-                2 => $this->getEntity(Tax::class, ['id' => 2])
-            ],
-            TaxSelectType::NAME
-        );
-
-        $taxJurisdictionSelect = new EntityType(
-            [
-                1 => $this->getEntity(TaxJurisdiction::class, ['id' => 1]),
-                2 => $this->getEntity(TaxJurisdiction::class, ['id' => 2])
-            ],
-            TaxJurisdictionSelectType::NAME
-        );
-
         return [
             new PreloadedExtension(
                 [
-                    TaxRuleType::class => $this->formType,
-                    CustomerTaxCodeAutocompleteType::class => $customerTaxCodeAutocomplete,
-                    ProductTaxCodeAutocompleteType::class => $productTaxCodeAutocomplete,
-                    TaxSelectType::class => $taxSelect,
-                    TaxJurisdictionSelectType::class => $taxJurisdictionSelect
+                    $this->formType,
+                    CustomerTaxCodeAutocompleteType::class => new EntityTypeStub([
+                        1 => $this->getEntity(CustomerTaxCode::class, ['id' => 1]),
+                        2 => $this->getEntity(CustomerTaxCode::class, ['id' => 2])
+                    ]),
+                    ProductTaxCodeAutocompleteType::class => new EntityTypeStub([
+                        1 => $this->getEntity(ProductTaxCode::class, ['id' => 1]),
+                        2 => $this->getEntity(ProductTaxCode::class, ['id' => 2])
+                    ]),
+                    TaxSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(Tax::class, ['id' => 1]),
+                        2 => $this->getEntity(Tax::class, ['id' => 2])
+                    ]),
+                    TaxJurisdictionSelectType::class => new EntityTypeStub([
+                        1 => $this->getEntity(TaxJurisdiction::class, ['id' => 1]),
+                        2 => $this->getEntity(TaxJurisdiction::class, ['id' => 2])
+                    ])
                 ],
                 []
             )
