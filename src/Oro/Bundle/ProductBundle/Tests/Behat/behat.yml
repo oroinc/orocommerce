@@ -1655,6 +1655,21 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"2")]|.//*[contains(concat(" ",normalize-space(@class)," ")," product-kit-view ")]/*[contains(concat(" ",normalize-space(@class)," ")," content-variant-item ")][3]'
+        
+    Product Kit Item Sortable 1:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"0")]//*[@data-name="sortable-handle"]'
+    
+    Product Kit Item Sortable 2:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"1")]//*[@data-name="sortable-handle"]'
+    
+    Product Kit Item Sortable 3:
+      selector:
+        type: 'xpath'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"2")]//*[@data-name="sortable-handle"]'
 
     Product Kit Collection:
       selector: '.product-kit-control-group'

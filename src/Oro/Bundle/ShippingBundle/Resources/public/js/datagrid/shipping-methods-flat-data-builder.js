@@ -42,9 +42,9 @@ const shippingMethodsFlatDataBuilder = {
 
         const {parseResponseModels} = options.metadata.options;
         Object.assign(options.metadata.options, {
-            parseResponseModels: resp => {
+            parseResponseModels: function(resp) {
                 if (parseResponseModels) {
-                    resp = parseResponseModels(resp);
+                    resp = parseResponseModels.call(this, resp);
                 }
                 return 'data' in resp ? flattenData(resp.data) : resp;
             }

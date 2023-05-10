@@ -31,6 +31,7 @@ const ProductKitItemsView = BaseView.extend({
     initialize(options) {
         ProductKitItemsView.__super__.initialize.call(this, options);
         this.updateValueToShow();
+        this.toggleButtonAvailability();
     },
 
     /**
@@ -44,8 +45,17 @@ const ProductKitItemsView = BaseView.extend({
      * Handles collection changes (sync, remove or sortOrder property change events)
      */
     handleCollectionChanges() {
+        this.toggleButtonAvailability();
         this.updateValueToShow();
         this.updateOriginField();
+    },
+
+    /**
+     * Disabled or enabled "add product" button if maximum is reached
+     */
+    toggleButtonAvailability() {
+        const {length, state} = this.collection;
+        this.$('.product-kit-item__add-product-button').attr('disabled', length >= state.pageSize);
     },
 
     /**
