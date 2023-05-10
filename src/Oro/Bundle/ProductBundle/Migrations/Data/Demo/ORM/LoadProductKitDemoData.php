@@ -61,6 +61,7 @@ class LoadProductKitDemoData extends LoadProductDemoData
                 ->setPrecision((int) $additionalUnit['precision'])
                 ->setConversionRate((float) $additionalUnit['conversion_rate'])
                 ->setSell((bool) $additionalUnit['sell']);
+            $manager->persist($productUnitPrecision);
         }
 
         foreach ($row['kitItems'] as $kitItem) {
