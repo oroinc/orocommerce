@@ -2,6 +2,7 @@ import ProductAddToShoppingListView from 'oroshoppinglist/js/app/views/product-a
 import routing from 'routing';
 import mediator from 'oroui/js/mediator';
 import $ from 'jquery';
+import _ from 'underscore';
 
 const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
     /**
@@ -37,6 +38,31 @@ const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
             return {};
         }
         return this.model.get('_widget_data') || {};
+    },
+
+    _collectAllButtons: function() {
+        if (this.options.shoppingListAddToEnabled) {
+            return ProductKitAddToShoppingListView.__super__._collectAllButtons.call(this);
+        }
+
+        let buttons = [];
+
+        this.modelAttr.shopping_lists.forEach(function(shoppingList) {
+            this._addShoppingListButtons(buttons, shoppingList);
+        }, this);
+
+        if (this.options.shoppingListCreateEnabled) {
+            let $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
+            $createNewButton = this.updateLabel($createNewButton, null);
+            buttons.push($createNewButton);
+        }
+
+        if (buttons.length === 1) {
+            const decoreClass = this.dropdownWidget.options.decoreClass || '';
+            buttons = _.first(buttons).find(this.options.buttonsSelector).addClass(decoreClass);
+        }
+
+        return buttons;
     },
 
     _addProductToShoppingList(url, urlOptions, formData) {

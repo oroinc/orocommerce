@@ -203,9 +203,7 @@ define(function(require) {
             if (hasLineItems) {
                 $button = this.updateLabel($button, shoppingList, hasLineItems);
             }
-            if (this.options.shoppingListAddToEnabled ||
-                (this.options.shoppingListUpdateEnabled && shoppingList.is_current)
-            ) {
+            if (this.options.shoppingListAddToEnabled || this.options.shoppingListUpdateEnabled) {
                 buttons.push($button);
             }
 

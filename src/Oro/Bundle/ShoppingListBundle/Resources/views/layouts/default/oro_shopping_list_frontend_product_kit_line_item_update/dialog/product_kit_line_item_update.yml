@@ -17,7 +17,7 @@ layout:
                 product: '=data["product"]'
                 shoppingList: '=data["shoppingList"]'
                 shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
-                productShoppingLists: '=data.offsetExists("product") ? data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data)) : []'
+                productShoppingLists: '=data.offsetExists("product") ? data["oro_shopping_list_product_units_quantity"].getByProductAndShoppingList(data["oro_product_variant"].getProductVariantOrProduct(data), data["shoppingList"]) : []'
 
         - '@setOption':
             id: product_kit_line_item_widget_form_actions_submit
