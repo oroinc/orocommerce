@@ -49,7 +49,7 @@
             maximumQuantity: null
             products:
                 - 8DO33
-        -   label: 'Receipt Printer(s)'
+        -   label: 'Additional Card Reader(s)'
             unit: item
             optional: true
             sortOrder: 4

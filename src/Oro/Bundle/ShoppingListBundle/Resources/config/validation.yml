@@ -171,6 +171,12 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 groups: [Default, create, update, add_product_kit_line_item]
             - Sequentially:
+                payload:
+                    jsValidation:
+                        type: Range
+                        options:
+                            minPropertyPath: 'kitItem.minimumQuantity'
+                            maxPropertyPath: 'kitItem.maximumQuantity'
                 constraints:
                     - Expression:
                         expression: 'this.kitItem or !value'
