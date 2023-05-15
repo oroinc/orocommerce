@@ -102,9 +102,6 @@ api:
                     depends_on: [product, quantity, unit]
                 kitItems:
                     property_path: kitItemLineItems
-                    max_results: -1
-                    form_options:
-                        mapped: false
             actions:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
@@ -153,6 +150,10 @@ api:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
                         validation_groups: [update, api]
+                    fields:
+                        lineItem:
+                            form_options:
+                                mapped: false
                 get:
                     acl_resource: oro_shopping_list_frontend_view
                 get_list:

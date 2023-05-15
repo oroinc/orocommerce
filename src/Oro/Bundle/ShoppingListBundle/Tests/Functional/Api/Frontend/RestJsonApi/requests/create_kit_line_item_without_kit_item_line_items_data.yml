@@ -1,0 +1,31 @@
+data:
+    type: shoppinglistitems
+    id: new
+    attributes:
+        quantity: 10
+        notes: 'New Kit Line Item Notes'
+        checksum: 'bf38f135a3274d65ddfeb77244e250a7e9327b04'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        parentProduct:
+            data: null
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        kitItems:
+            data:
+                -
+                    type: shoppinglistkititems
+                    id: new
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'
+included:
+    -
+        type: shoppinglistkititems
+        id: new

@@ -604,20 +604,6 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     ],
                 ],
             ],
-            'lineItem null' => [
-                'parameters' => [
-                    'relationships' => [
-                        'lineItem' => ['data' => null],
-                    ],
-                ],
-                'expectedErrors' => [
-                    [
-                        'title' => 'not null constraint',
-                        'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/data/relationships/lineItem/data'],
-                    ],
-                ],
-            ],
             'kitItem null' => [
                 'parameters' => [
                     'relationships' => [
@@ -788,6 +774,53 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
             ],
         ];
+    }
+
+    public function testUpdateLineItem(): void
+    {
+        $shoppingList1 = $this->getReference('shopping_list1');
+        $this->assertShoppingListTotal($shoppingList1, 59.15, 'USD');
+
+        /** @var ProductKitItemLineItem $kitItemLineItem */
+        $kitItemLineItem = $this->getReference('product_kit_item1_line_item1');
+        $kitLineItemId = $this->getReference('kit_line_item1')->getId();
+        self::assertEquals($kitLineItemId, $kitItemLineItem->getLineItem()->getId());
+
+        $kitItemLineItemId = (string) $kitItemLineItem->getId();
+        $data = [
+            'data' => [
+                'type' => 'shoppinglistkititems',
+                'id' => $kitItemLineItemId,
+                'relationships' => [
+                    'lineItem' => [
+                        'data' => [
+                            'type' => 'shoppinglistitems',
+                            'id' => '<toString(@kit_line_item2->id)>',
+                        ],
+                    ],
+                ],
+            ]
+        ];
+
+        $response = $this->patch(
+            ['entity' => 'shoppinglistkititems', 'id' => $kitItemLineItemId],
+            $data
+        );
+        // LineItem should remain the same
+        $data['data']['relationships']['lineItem']['data']['id'] = (string) $kitLineItemId;
+        $this->assertResponseContains($data, $response);
+
+        /** @var ProductKitItemLineItem $kitItemLineItem */
+        $kitItemLineItem = $this->getEntityManager()
+            ->getRepository(ProductKitItemLineItem::class)
+            ->find($kitItemLineItemId);
+        self::assertNotNull($kitItemLineItem);
+        self::assertEquals(2, $kitItemLineItem->getQuantity());
+        self::assertEquals($kitLineItemId, $kitItemLineItem->getLineItem()->getId());
+
+        $kitItemLineItemShoppingList = $kitItemLineItem->getLineItem()->getShoppingList();
+        self::assertEquals($shoppingList1->getId(), $kitItemLineItemShoppingList->getId());
+        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 59.15, 'USD');
     }
 
     public function testUpdate(): void
