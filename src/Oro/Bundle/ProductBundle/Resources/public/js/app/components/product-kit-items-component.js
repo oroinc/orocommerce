@@ -85,6 +85,7 @@ const ProductKitItemsComponent = BaseComponent.extend({
         const dialog = new DialogWidget({
             autoRender: true,
             title: __('oro.product.product_kit.dialog.select.title'),
+            method: 'POST',
             url: routing.generate(route, {
                 ...routeParams,
                 params: {

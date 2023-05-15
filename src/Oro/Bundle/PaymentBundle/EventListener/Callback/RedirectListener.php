@@ -7,23 +7,20 @@ use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Redirect listener class.
+ */
 class RedirectListener
 {
     const SUCCESS_URL_KEY = 'successUrl';
     const FAILURE_URL_KEY = 'failureUrl';
 
-    /** @var Session */
-    protected $session;
-
-    /** @var PaymentResultMessageProviderInterface */
-    protected $messageProvider;
-
-    public function __construct(Session $session, PaymentResultMessageProviderInterface $messageProvider)
-    {
-        $this->session = $session;
-        $this->messageProvider = $messageProvider;
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected PaymentResultMessageProviderInterface $messageProvider
+    ) {
     }
 
     public function onReturn(CallbackReturnEvent $event)
@@ -60,7 +57,7 @@ class RedirectListener
      */
     protected function setErrorMessage($message)
     {
-        $flashBag = $this->session->getFlashBag();
+        $flashBag = $this->requestStack->getSession()->getFlashBag();
 
         if (!$flashBag->has('error')) {
             $flashBag->add('error', $message);

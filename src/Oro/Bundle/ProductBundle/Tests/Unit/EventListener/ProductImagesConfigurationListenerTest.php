@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,9 +38,12 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->session = $this->createMock(Session::class);
-
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->listener = new ProductImagesConfigurationListener(
-            $this->session,
+            $this->requestStack,
             $this->translator
         );
     }
@@ -53,7 +58,16 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
         $this->session->expects($this->any())
             ->method('getFlashBag')
             ->willReturn($this->prepareFlashBag());
-
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects(self::exactly(2))
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::exactly(2))
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
         $this->listener->afterUpdate($this->prepareEvent([
             'oro_product.product_image_watermark_size' => ['old' => 20, 'new' => 21],
             'oro_product.original_file_names_enabled' => ['old' => false, 'new' => true],
@@ -81,6 +95,16 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
         $this->session->expects($this->any())
             ->method('getFlashBag')
             ->willReturn($flashBag);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects($this->once())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
 
         $this->listener->afterUpdate($this->prepareEvent([
             'oro_product.original_file_names_enabled' => ['old' => false, 'new' => true]

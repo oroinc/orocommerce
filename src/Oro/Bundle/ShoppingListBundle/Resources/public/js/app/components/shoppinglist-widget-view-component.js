@@ -65,7 +65,10 @@ define(function(require) {
                 [`focusin.${this.cid}`]: e => {
                     const $widget = $(e.currentTarget);
 
-                    if (!$widget.hasClass('show') && this.hasFocus($widget.find('.header-row__toggle'))) {
+                    if (
+                        $(e.target).is($widget) &&
+                        !$widget.hasClass('show') && this.hasFocus($widget.find('.header-row__toggle'))
+                    ) {
                         $widget.attr('data-skip-focus-decoration-inner-elements', '');
 
                         setTimeout(() => {

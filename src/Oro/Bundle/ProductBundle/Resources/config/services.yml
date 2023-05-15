@@ -969,7 +969,7 @@ services:
     oro_product.event_listener.product_images_configuration_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: afterUpdate }

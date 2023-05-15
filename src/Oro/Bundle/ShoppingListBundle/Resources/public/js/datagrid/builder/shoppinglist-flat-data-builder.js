@@ -150,15 +150,15 @@ const shoppingListFlatDataBuilder = {
         } = options.metadata.options;
 
         Object.assign(options.metadata.options, {
-            parseResponseModels: resp => {
+            parseResponseModels: function(resp) {
                 if (parseResponseModels) {
-                    resp = parseResponseModels(resp);
+                    resp = parseResponseModels.call(this, resp);
                 }
                 return 'data' in resp ? flattenData(resp.data) : resp;
             },
-            parseResponseOptions: (resp = {}) => {
+            parseResponseOptions: function(resp = {}) {
                 if (parseResponseOptions) {
-                    resp = parseResponseOptions(resp);
+                    resp = parseResponseOptions.call(this, resp);
                 }
                 const {options = {}} = resp;
                 return {

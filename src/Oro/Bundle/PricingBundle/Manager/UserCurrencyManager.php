@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\PricingBundle\Provider\CurrentCurrencyProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -19,38 +19,14 @@ class UserCurrencyManager
 {
     const SESSION_CURRENCIES = 'currency_by_website';
 
-    /** @var Session */
-    protected $session;
-
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var CurrencyProviderInterface */
-    protected $currencyProvider;
-
-    /** @var WebsiteManager */
-    protected $websiteManager;
-
-    /** @var CurrentCurrencyProviderInterface */
-    protected $currentCurrencyProvider;
-
     public function __construct(
-        Session $session,
-        TokenStorageInterface $tokenStorage,
-        ManagerRegistry $doctrine,
-        CurrencyProviderInterface $currencyProvider,
-        WebsiteManager $websiteManager,
-        CurrentCurrencyProviderInterface $currentCurrencyProvider
+        protected RequestStack $requestStack,
+        protected TokenStorageInterface $tokenStorage,
+        protected ManagerRegistry $doctrine,
+        protected CurrencyProviderInterface $currencyProvider,
+        protected WebsiteManager $websiteManager,
+        protected CurrentCurrencyProviderInterface $currentCurrencyProvider
     ) {
-        $this->session = $session;
-        $this->tokenStorage = $tokenStorage;
-        $this->doctrine = $doctrine;
-        $this->currencyProvider = $currencyProvider;
-        $this->websiteManager = $websiteManager;
-        $this->currentCurrencyProvider = $currentCurrencyProvider;
     }
 
     /**
@@ -65,6 +41,7 @@ class UserCurrencyManager
         }
 
         $website = $this->getWebsite($website);
+        $request = $this->requestStack->getCurrentRequest();
         if ($website) {
             $user = $this->getLoggedUser();
             if ($user instanceof CustomerUser) {
@@ -72,7 +49,7 @@ class UserCurrencyManager
                 if ($userSettings) {
                     $currency = $userSettings->getCurrency();
                 }
-            } elseif ($this->session->isStarted()) {
+            } elseif (null !== $request && $request->hasSession() && $request->getSession()->isStarted()) {
                 $sessionStoredCurrencies = $this->getSessionCurrencies();
                 if (array_key_exists($website->getId(), $sessionStoredCurrencies)) {
                     $currency = $sessionStoredCurrencies[$website->getId()];
@@ -95,6 +72,7 @@ class UserCurrencyManager
         }
 
         $user = $this->getLoggedUser();
+        $request = $this->requestStack->getCurrentRequest();
         if ($user instanceof CustomerUser) {
             $userWebsiteSettings = $user->getWebsiteSettings($website);
             if (!$userWebsiteSettings) {
@@ -103,10 +81,10 @@ class UserCurrencyManager
             }
             $userWebsiteSettings->setCurrency($currency);
             $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
-        } elseif ($this->session->isStarted()) {
+        } elseif (null !== $request && $request->hasSession() && $request->getSession()->isStarted()) {
             $sessionCurrencies = $this->getSessionCurrencies();
             $sessionCurrencies[$website->getId()] = $currency;
-            $this->session->set(self::SESSION_CURRENCIES, $sessionCurrencies);
+            $request->getSession()->set(self::SESSION_CURRENCIES, $sessionCurrencies);
         }
     }
 
@@ -172,6 +150,11 @@ class UserCurrencyManager
      */
     protected function getSessionCurrencies()
     {
-        return (array)$this->session->get(self::SESSION_CURRENCIES);
+        $request = $this->requestStack->getCurrentRequest();
+        if (null === $request || !$request->hasSession()) {
+            return [];
+        }
+
+        return (array)$request->getSession()->get(self::SESSION_CURRENCIES);
     }
 }

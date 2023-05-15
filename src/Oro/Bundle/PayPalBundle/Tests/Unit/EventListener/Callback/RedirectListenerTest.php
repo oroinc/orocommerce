@@ -9,6 +9,7 @@ use Oro\Bundle\PayPalBundle\EventListener\Callback\RedirectListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response as PayflowResponse;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -17,6 +18,9 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
+
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethodProvider;
@@ -28,8 +32,12 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->session = $this->createMock(Session::class);
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
 
-        $this->listener = new RedirectListener($this->session, $this->paymentMethodProvider);
+        $this->listener = new RedirectListener($this->requestStack, $this->paymentMethodProvider);
     }
 
     public function testOnErrorWithoutPaymentTransaction()

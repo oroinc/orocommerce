@@ -19,10 +19,12 @@ class CheckoutForgotPasswordCheckEmailProviderTest extends \PHPUnit\Framework\Te
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->session = $this->createMock(Session::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
 
         $this->provider = new CheckoutForgotPasswordCheckEmailProvider(
             $this->requestStack,
-            $this->session
         );
     }
 

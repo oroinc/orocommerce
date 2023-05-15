@@ -88,8 +88,6 @@ const GrapesjsRteEditor = BaseClass.extend({
 
                 this.focus(el, rte);
 
-                Canvas.canvasView.toolsWrapper.classList.add('float-editor-enabled');
-
                 return rte;
             },
 
@@ -99,8 +97,6 @@ const GrapesjsRteEditor = BaseClass.extend({
                 if (rte && !rte.disposed) {
                     rte.dispose();
                 }
-
-                Canvas.canvasView.toolsWrapper.classList.remove('float-editor-enabled');
             },
 
             focus(el, rte) {
@@ -118,7 +114,6 @@ const GrapesjsRteEditor = BaseClass.extend({
             },
 
             toggleVisibility(hidden = true) {
-                Canvas.canvasView.toolsWrapper.classList.toggle('float-editor-enabled', !hidden);
                 self.view.$el.parent().css('visibility', hidden ? 'hidden' : '');
             }
         });

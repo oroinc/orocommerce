@@ -21,20 +21,22 @@
     }
 
     &__content-wrapper {
-        overflow: hidden;
         display: flex;
         padding: $shopping-lists-content-wrapper-offset;
+        max-width: 100%;
     }
 
     &__text {
         display: $shopping-lists-text-display;
+        column-gap: $shopping-lists-cart-offset;
+        overflow: hidden;
+    }
 
+    &__phrase {
         @include ellipsis();
     }
 
     &__cart {
-        padding-right: $shopping-lists-cart-offset;
-
         @include fa-icon($shopping-lists-cart-icon, before, true) {
             font-size: $shopping-lists-cart-font-size;
         }

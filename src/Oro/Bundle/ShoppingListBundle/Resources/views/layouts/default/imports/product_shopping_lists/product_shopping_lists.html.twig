@@ -41,11 +41,13 @@
     <div class="shopping-lists__content-wrapper">
         <div class="shopping-lists__text">
             <span class="shopping-lists__cart" aria-hidden="true"></span>
+            <span class="shopping-lists__phrase">
             <% if (shoppingListsCount == 1) { %>
                 <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
             <% } else { %>
                 <%- _.__('oro.shoppinglist.actions.in_shopping_lists') %>
             <% } %>
+            </span>
         </div>
     </div>
 {% endblock %}

@@ -2,16 +2,18 @@
 
 /* GrapesJS Canvas CSS */
 
-* ::-webkit-scrollbar {
-    width: 5px;
-}
+body {
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
 
-::-webkit-scrollbar-track {
-    background: $primary-860;
-}
+    &::-webkit-scrollbar-track {
+        background-color: $grapesjs-scrollbar-track-background;
+    }
 
-::-webkit-scrollbar-thumb {
-    background: $primary-800;
+    &::-webkit-scrollbar-thumb {
+        background-color: $grapesjs-scrollbar-thumb-background;
+    }
 }
 
 .body.cms-page.cms-typography {
