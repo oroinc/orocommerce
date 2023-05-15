@@ -1,0 +1,58 @@
+data:
+  type: orders
+  attributes:
+    identifier: 'FR1012401w'
+    poNumber: 'CV032342USDw'
+    customerNotes: 'Please, call before delivery'
+    shipUntil: '2023-08-15'
+    currency: 'USD'
+  relationships:
+    billingAddress:
+      data:
+        type: 'orderaddresses'
+        id: 'billing_address_1'
+    lineItems:
+      data:
+        -
+          type: 'orderlineitems'
+          id: 'line_item_1'
+    customer:
+      data:
+        type: customers
+        id: '<toString(@user->id)>'
+
+included:
+  -
+    type: 'orderaddresses'
+    id: 'billing_address_1'
+    attributes:
+      label: 'Address 01'
+      street: '1215 Caldwell Road'
+      city: 'Rochester'
+      postalCode: '14608'
+      firstName: 'Amanda'
+      lastName: 'Cole'
+    relationships:
+      country:
+        data:
+          type: countries
+          id: 'US'
+      region:
+        data:
+          type: regions
+          id: 'US-NY'
+  -
+    type: 'orderlineitems'
+    id: 'line_item_1'
+    attributes:
+      productSku: 'PRODUCT-1'
+      quantity: 1
+      value: 11
+      currency: 'USD'
+      priceType: 1
+      shipBy: '2023-05-30'
+    relationships:
+      productUnit:
+        data:
+          type: productunits
+          id: '<toString(@product_unit.box->code)>'
