@@ -7,6 +7,7 @@ use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ParameterBagInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -20,10 +21,16 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
     private const PRODUCT_IDS = 'order_line_item_product_ids';
 
     private DoctrineHelper $doctrineHelper;
+    private AclHelper $aclHelper;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
+    }
+
+    public function setAclHelper(AclHelper $aclHelper): void
+    {
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -145,13 +152,12 @@ class UpdateOrderLineItemProduct implements ProcessorInterface
      */
     private function loadProductIds(array $productSkus): array
     {
-        $rows = $this->doctrineHelper
+        $qb = $this->doctrineHelper
             ->createQueryBuilder(Product::class, 'p')
             ->select('p.id, p.skuUppercase AS sku')
             ->where('p.skuUppercase IN (:skus)')
-            ->setParameter('skus', $productSkus)
-            ->getQuery()
-            ->getArrayResult();
+            ->setParameter('skus', $productSkus);
+        $rows = $this->aclHelper->apply($qb)->getArrayResult();
 
         $result = [];
         foreach ($rows as $row) {
