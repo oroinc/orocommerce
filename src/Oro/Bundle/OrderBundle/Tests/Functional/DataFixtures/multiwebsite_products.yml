@@ -1,0 +1,45 @@
+dependencies:
+  - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+  - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+  - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits
+  - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+
+Oro\Bundle\OrganizationBundle\Entity\Organization:
+  organization2:
+    name: 'Second Organization'
+    enabled: true
+    users: ['@user']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  box-org-{1..4}:
+    unit: '@product_unit.box'
+    precision: '1'
+  box-org2-{1..4}:
+    unit: '@product_unit.box'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  product_name{1..4}:
+    string: 'Product-<current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product-org-{1..4}:
+    type: 'simple'
+    sku: 'product-<current()>'
+    primaryUnitPrecision: '@box-org-<current()>'
+    unitPrecisions: [ '@box-org-<current()>' ]
+    inventoryStatus: '@in_stock'
+    status: 'enabled'
+    organization: '@organization'
+    __calls:
+      - addName: ['@product_name<current()>']
+  product-org2-{1..4}:
+    type: 'simple'
+    sku: 'product-<current()>'
+    primaryUnitPrecision: '@box-org2-<current()>'
+    unitPrecisions: [ '@box-org2-<current()>' ]
+    inventoryStatus: '@in_stock'
+    status: 'enabled'
+    organization: '@organization2'
+    __calls:
+      - addName: ['@product_name<current()>']
