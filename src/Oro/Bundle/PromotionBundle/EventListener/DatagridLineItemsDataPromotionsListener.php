@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProviderInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
@@ -28,16 +30,20 @@ class DatagridLineItemsDataPromotionsListener
 
     private SplitEntitiesProviderInterface $splitEntitiesProvider;
 
+    private RoundingServiceInterface $roundingService;
+
     private array $cache = [];
 
     public function __construct(
         PromotionExecutor $promotionExecutor,
         NumberFormatter $numberFormatter,
-        SplitEntitiesProviderInterface $splitEntitiesProvider
+        SplitEntitiesProviderInterface $splitEntitiesProvider,
+        RoundingServiceInterface $roundingService
     ) {
         $this->promotionExecutor = $promotionExecutor;
         $this->numberFormatter = $numberFormatter;
         $this->splitEntitiesProvider = $splitEntitiesProvider;
+        $this->roundingService = $roundingService;
     }
 
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
@@ -58,7 +64,7 @@ class DatagridLineItemsDataPromotionsListener
         }
 
         foreach ($lineItems as $lineItem) {
-            $lineItemId = $lineItem->getId();
+            $lineItemId = $lineItem->getEntityIdentifier();
             $discountValue = $discountTotals[$lineItemId] ?? null;
             if (!$discountValue) {
                 continue;
@@ -70,24 +76,24 @@ class DatagridLineItemsDataPromotionsListener
                 $event->addDataForLineItem($lineItemId, [
                     self::DISCOUNT_VALUE => 0.0,
                     self::DISCOUNT => '',
-                    self::INITIAL_SUBTOTAL => $lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL] ?? ''
+                    self::INITIAL_SUBTOTAL => $lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL] ?? '',
                 ]);
                 continue;
             }
 
-            $subtotalValue = (float)($lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE] ?? 0);
-            $subtotalValue -= $discountValue;
+            $currency = $lineItemData[DatagridLineItemsDataPricingListener::CURRENCY];
+            $subtotalValue = BigDecimal::of(($lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE] ?? 0))
+                ->minus($discountValue)
+                ->toFloat();
+            $subtotalValue = $this->roundingService->round($subtotalValue);
 
             $event->addDataForLineItem($lineItemId, [
                 self::DISCOUNT_VALUE => $discountValue,
                 DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => $subtotalValue,
-                self::DISCOUNT => $this->numberFormatter->formatCurrency(
-                    $discountValue,
-                    $lineItemData[DatagridLineItemsDataPricingListener::CURRENCY]
-                ),
+                self::DISCOUNT => $this->numberFormatter->formatCurrency($discountValue, $currency),
                 self::INITIAL_SUBTOTAL => $lineItemData[DatagridLineItemsDataPricingListener::SUBTOTAL] ?? '',
                 DatagridLineItemsDataPricingListener::SUBTOTAL => $this->numberFormatter
-                    ->formatCurrency($subtotalValue, $lineItemData[DatagridLineItemsDataPricingListener::CURRENCY]),
+                    ->formatCurrency($subtotalValue, $currency),
             ]);
         }
     }

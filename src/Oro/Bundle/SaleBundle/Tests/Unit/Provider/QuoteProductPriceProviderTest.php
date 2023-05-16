@@ -405,7 +405,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->productPriceCriteriaFactory
             ->expects($this->once())
-            ->method('build')
+            ->method('create')
             ->with(
                 $this->equalTo($product),
                 $this->equalTo($unit),

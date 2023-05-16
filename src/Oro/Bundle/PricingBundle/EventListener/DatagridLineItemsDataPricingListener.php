@@ -6,8 +6,9 @@ use Brick\Math\BigDecimal;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
+use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
@@ -27,7 +28,7 @@ class DatagridLineItemsDataPricingListener
     public const SUBTOTAL = 'subtotal';
     public const CURRENCY = 'currency';
 
-    private SubtotalProviderInterface $subtotalProvider;
+    private ProductLineItemPriceProviderInterface $productLineItemsPriceProvider;
 
     private ShoppingListLineItemsHolderFactory $lineItemsHolderFactory;
 
@@ -36,12 +37,12 @@ class DatagridLineItemsDataPricingListener
     private NumberFormatter $numberFormatter;
 
     public function __construct(
-        SubtotalProviderInterface $subtotalProvider,
+        ProductLineItemPriceProviderInterface $productLineItemsPriceProvider,
         ShoppingListLineItemsHolderFactory $lineItemsHolderFactory,
         RoundingServiceInterface $roundingService,
         NumberFormatter $numberFormatter
     ) {
-        $this->subtotalProvider = $subtotalProvider;
+        $this->productLineItemsPriceProvider = $productLineItemsPriceProvider;
         $this->lineItemsHolderFactory = $lineItemsHolderFactory;
         $this->roundingService = $roundingService;
         $this->numberFormatter = $numberFormatter;
@@ -55,21 +56,18 @@ class DatagridLineItemsDataPricingListener
         }
 
         $lineItemsHolder = $this->lineItemsHolderFactory->createFromLineItems($lineItems);
-        $subtotal = $this->subtotalProvider->getSubtotal($lineItemsHolder);
-        if (!$subtotal) {
-            return;
-        }
+        $productLineItemsPrices = $this->productLineItemsPriceProvider
+            ->getProductLineItemsPricesForLineItemsHolder($lineItemsHolder);
 
-        $currency = $subtotal->getCurrency();
-
-        foreach ($lineItems as $lineItem) {
-            $lineItemSubtotal = $subtotal->getLineItemSubtotal($lineItem);
+        foreach ($lineItems as $key => $lineItem) {
+            $lineItemPrice = $productLineItemsPrices[$key] ?? null;
 
             $lineItemId = $lineItem->getEntityIdentifier();
             $lineItemData = $event->getDataForLineItem($lineItemId);
-            $this->setPricingData($lineItemData, $lineItem, $currency, $lineItemSubtotal);
+            $this->setPricingData($lineItemData, $lineItem, $lineItemPrice);
 
-            if ($lineItemData[DatagridKitLineItemsDataListener::IS_KIT] ?? false) {
+            if (($lineItemData[DatagridKitLineItemsDataListener::IS_KIT] ?? false)
+                && $lineItemPrice instanceof ProductKitLineItemPrice) {
                 $kitItemLineItemsData = $lineItemData[DatagridKitLineItemsDataListener::SUB_DATA] ?? [];
 
                 foreach ($kitItemLineItemsData as $index => $kitItemLineItemDatum) {
@@ -81,8 +79,7 @@ class DatagridLineItemsDataPricingListener
                     $hasSubtotal = $this->setPricingData(
                         $lineItemData[DatagridKitLineItemsDataListener::SUB_DATA][$index],
                         $kitItemLineItem,
-                        $currency,
-                        $lineItemSubtotal?->getLineItemSubtotal($kitItemLineItem)
+                        $lineItemPrice->getKitItemLineItemPrice($kitItemLineItem)
                     );
 
                     if ($hasSubtotal === false
@@ -99,11 +96,11 @@ class DatagridLineItemsDataPricingListener
     private function setPricingData(
         array &$lineItemData,
         ProductLineItemInterface $lineItem,
-        string $currency,
-        ?Subtotal $lineItemSubtotal
+        ?ProductLineItemPrice $lineItemPrice
     ): bool {
-        $priceValue = $this->getPriceValueForLineItem($lineItem, $lineItemSubtotal);
-        $subtotalValue = $this->getSubtotalValueForLineItem($lineItem, $lineItemSubtotal);
+        $currency = $this->getCurrencyForLineItem($lineItem, $lineItemPrice);
+        $priceValue = $this->getPriceValueForLineItem($lineItem, $lineItemPrice);
+        $subtotalValue = $this->getSubtotalValueForLineItem($lineItem, $lineItemPrice);
 
         $lineItemData[self::PRICE_VALUE] = $priceValue;
         $lineItemData[self::CURRENCY] = $currency;
@@ -118,9 +115,25 @@ class DatagridLineItemsDataPricingListener
         return $subtotalValue !== null && $subtotalValue >= 0;
     }
 
+    private function getCurrencyForLineItem(
+        ProductLineItemInterface $lineItem,
+        ?ProductLineItemPrice $lineItemPrice
+    ): ?string {
+        $currency = null;
+        if ($lineItem instanceof PriceAwareInterface) {
+            $currency = $lineItem->getPrice()?->getCurrency();
+        }
+
+        if (!$currency) {
+            $currency = $lineItemPrice?->getPrice()?->getCurrency();
+        }
+
+        return $currency;
+    }
+
     private function getPriceValueForLineItem(
         ProductLineItemInterface $lineItem,
-        ?Subtotal $lineItemSubtotal
+        ?ProductLineItemPrice $lineItemPrice
     ): ?float {
         $priceValue = null;
         if ($lineItem instanceof PriceAwareInterface) {
@@ -128,7 +141,7 @@ class DatagridLineItemsDataPricingListener
         }
 
         if (!$priceValue) {
-            $priceValue = $lineItemSubtotal?->getPrice()?->getValue();
+            $priceValue = $lineItemPrice?->getPrice()?->getValue();
         }
 
         return $priceValue;
@@ -136,19 +149,19 @@ class DatagridLineItemsDataPricingListener
 
     private function getSubtotalValueForLineItem(
         ProductLineItemInterface $lineItem,
-        ?Subtotal $lineItemSubtotal
+        ?ProductLineItemPrice $productLineItemPrice
     ): ?float {
         if ($lineItem instanceof PriceAwareInterface) {
-            $priceValue = $lineItem->getPrice()?->getValue();
-            if ($priceValue !== null) {
-                // The logic of multiplying and rounding is mimicking {@see LineItemNotPricedSubtotalProvider}.
-                $subtotalAmount = BigDecimal::of($priceValue)
-                    ->multipliedBy((float)$lineItem->getQuantity());
+            $price = $lineItem->getPrice();
+            if ($price !== null) {
+                $subtotalValue = BigDecimal::of($price->getValue())
+                    ->multipliedBy((float)$lineItem->getQuantity())
+                    ->toFloat();
 
-                return $this->roundingService->round($subtotalAmount->toFloat());
+                return $this->roundingService->round($subtotalValue);
             }
         }
 
-        return $lineItemSubtotal?->getAmount();
+        return $productLineItemPrice?->getSubtotal();
     }
 }

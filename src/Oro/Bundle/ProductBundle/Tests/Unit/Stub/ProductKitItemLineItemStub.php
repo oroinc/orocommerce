@@ -11,9 +11,9 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 class ProductKitItemLineItemStub extends ProductLineItem implements ProductKitItemLineItemInterface
 {
-    private ?ProductLineItemInterface $lineItem;
+    private ?ProductLineItemInterface $lineItem = null;
 
-    private ?ProductKitItem $kitItem;
+    private ?ProductKitItem $kitItem = null;
 
     private int $sortOrder = 0;
 

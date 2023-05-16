@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
@@ -11,14 +10,11 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
  */
 class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountLineItemsConverter
 {
-    /**
-     * @var FrontendProductPricesDataProvider
-     */
-    protected $productPricesDataProvider;
+    private ProductLineItemPriceProviderInterface $productLineItemsPriceProvider;
 
-    public function __construct(FrontendProductPricesDataProvider $productPricesDataProvider)
+    public function __construct(ProductLineItemPriceProviderInterface $productLineItemsPriceProvider)
     {
-        $this->productPricesDataProvider = $productPricesDataProvider;
+        $this->productLineItemsPriceProvider = $productLineItemsPriceProvider;
     }
 
     /**
@@ -27,23 +23,18 @@ class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountL
     public function convert(array $lineItems): array
     {
         $discountLineItems = [];
-        $shoppingListPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems);
+        $lineItemsPrices = $this->productLineItemsPriceProvider->getProductLineItemsPrices($lineItems);
 
         /** @var LineItem[] $lineItems */
-        foreach ($lineItems as $lineItem) {
+        foreach ($lineItems as $key => $lineItem) {
             $discountLineItem = $this->createDiscountLineItem($lineItem);
             if (!$discountLineItem) {
                 continue;
             }
 
-            $productId = $lineItem->getProduct()->getId();
-            $unitCode = $lineItem->getProductUnitCode();
-            $price = null;
-            if (isset($shoppingListPrices[$productId][$unitCode])) {
-                /** @var Price $price */
-                $price = $shoppingListPrices[$productId][$unitCode];
-                $discountLineItem->setPrice($price);
-                $discountLineItem->setSubtotal($price->getValue() * $lineItem->getQuantity());
+            if (isset($lineItemsPrices[$key])) {
+                $discountLineItem->setPrice($lineItemsPrices[$key]->getPrice());
+                $discountLineItem->setSubtotal($lineItemsPrices[$key]->getSubtotal());
             } else {
                 $discountLineItem->setSubtotal(0);
             }

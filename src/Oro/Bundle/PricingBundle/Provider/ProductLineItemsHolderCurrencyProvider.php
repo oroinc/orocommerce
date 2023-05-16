@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
 
 /**
@@ -34,7 +35,7 @@ class ProductLineItemsHolderCurrencyProvider
     }
 
     public function getCurrencyForLineItemsHolder(
-        LineItemsAwareInterface|LineItemsNotPricedAwareInterface $lineItemsHolder
+        ProductLineItemsHolderInterface|LineItemsAwareInterface|LineItemsNotPricedAwareInterface $lineItemsHolder
     ): string {
         if ($lineItemsHolder instanceof CurrencyAwareInterface && $lineItemsHolder->getCurrency()) {
             return $lineItemsHolder->getCurrency();

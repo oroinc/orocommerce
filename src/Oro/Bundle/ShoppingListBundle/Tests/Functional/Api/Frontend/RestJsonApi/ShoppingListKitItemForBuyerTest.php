@@ -119,7 +119,7 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
 
         $kitItemLineItemShoppingList = $kitItemLineItem->getLineItem()->getShoppingList();
         self::assertEquals($shoppingList1->getId(), $kitItemLineItemShoppingList->getId());
-        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 303.6, 'USD');
+        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 303.59, 'USD');
     }
 
     /**
