@@ -34,6 +34,11 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->method('getLineItems')
             ->willReturn([]);
 
+
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
+
         $event
             ->expects(self::never())
             ->method('addDataForLineItem');
@@ -41,13 +46,17 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
         $this->listener->onLineItemData($event);
     }
 
-    public function testOnLineItemDataWhenNotKitItemLineItem(): void
+    public function testOnLineItemDataWhenNotKitItemLineItemsAware(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
         $event
             ->expects(self::once())
             ->method('getLineItems')
             ->willReturn([10 => new \stdClass()]);
+
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
 
         $event
             ->expects(self::never())
@@ -68,6 +77,10 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->method('getDataForLineItem')
             ->with(10)
             ->willReturn(['type' => Product::TYPE_SIMPLE]);
+
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
 
         $event
             ->expects(self::never())
@@ -93,9 +106,20 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->with(10)
             ->willReturn(['type' => Product::TYPE_KIT]);
 
-        $event
+        $this->eventDispatcher
             ->expects(self::never())
-            ->method('addDataForLineItem');
+            ->method('dispatch');
+
+        $event
+            ->expects(self::once())
+            ->method('addDataForLineItem')
+            ->with(
+                10,
+                [
+                    DatagridKitLineItemsDataListener::IS_KIT => true,
+                    DatagridKitLineItemsDataListener::SUB_DATA => [],
+                ]
+            );
 
         $this->listener->onLineItemData($event);
     }

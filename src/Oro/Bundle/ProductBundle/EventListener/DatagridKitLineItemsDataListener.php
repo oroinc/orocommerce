@@ -38,6 +38,7 @@ class DatagridKitLineItemsDataListener
                 continue;
             }
 
+            $kitItemLineItemsByIdGroupedByLineItem[$lineItemId] = [];
             foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
                 $id = $kitItemLineItem->getEntityIdentifier();
                 $kitItemLineItemsByIdGroupedByLineItem[$lineItemId][$id] = $kitItemLineItem;
@@ -45,6 +46,7 @@ class DatagridKitLineItemsDataListener
             }
         }
 
+        $allKitItemLineItemsData = [];
         if ($allKitItemLineItemsById) {
             $kitItemLineItemsDataEvent = new DatagridKitItemLineItemsDataEvent(
                 $allKitItemLineItemsById,
@@ -53,15 +55,15 @@ class DatagridKitLineItemsDataListener
                 []
             );
             $this->eventDispatcher->dispatch($kitItemLineItemsDataEvent, $kitItemLineItemsDataEvent->getName());
-
             $allKitItemLineItemsData = $kitItemLineItemsDataEvent->getDataForAllLineItems();
-            foreach ($kitItemLineItemsByIdGroupedByLineItem as $lineItemId => $kitItemLineItemsById) {
-                $kitItemLineItemsData = array_intersect_key($allKitItemLineItemsData, $kitItemLineItemsById);
-                $event->addDataForLineItem(
-                    $lineItemId,
-                    [self::IS_KIT => true, self::SUB_DATA => array_values($kitItemLineItemsData)]
-                );
-            }
+        }
+
+        foreach ($kitItemLineItemsByIdGroupedByLineItem as $lineItemId => $kitItemLineItemsById) {
+            $kitItemLineItemsData = array_intersect_key($allKitItemLineItemsData, $kitItemLineItemsById);
+            $event->addDataForLineItem(
+                $lineItemId,
+                [self::IS_KIT => true, self::SUB_DATA => array_values($kitItemLineItemsData)]
+            );
         }
     }
 }

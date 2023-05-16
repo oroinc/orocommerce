@@ -22,7 +22,7 @@
                 data-label="<%- _metadata.label %>:"
                 data-blank-content="<%- _blankContent %>"></span>
         <% } %>
-        <% if (!obj._isKitItemLineItem) { %>
+        <% if (!obj._isKitItemLineItem && !obj.isKit) { %>
             <button type="button"
                     data-prices-hint-trigger
                     data-trigger="manual"
