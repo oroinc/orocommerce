@@ -2246,3 +2246,11 @@ services:
         class: Oro\Bundle\ProductBundle\DataGrid\Property\ProductUnitsProperty
         # Public because used as a property callback in a datagrid.
         public: true
+
+    oro_product.filter.composed_sku_string_filter:
+        class: Oro\Bundle\ProductBundle\Filter\ComposedSkuStringFilter
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: composed-sku-string }

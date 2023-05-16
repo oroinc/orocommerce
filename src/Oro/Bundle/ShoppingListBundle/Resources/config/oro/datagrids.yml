@@ -362,6 +362,26 @@ datagrids:
                     - COALESCE(parentProduct.sku, product.sku) as sku
                     - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
                     - MAX(lineItem.id) as sortId
+                    - >
+                        UPPER(
+                            CASE WHEN product.type = 'kit'
+                            THEN 
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(DISTINCT product.sku SEPARATOR ''),
+                                    GROUP_CONCAT(kitItemLineItemProduct.sku SEPARATOR ''),
+                                    ''
+                                )
+                            ELSE
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(product.sku SEPARATOR ''),
+                                    ''
+                                )
+                            END
+                        ) as composedSku
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
                 join:
@@ -370,10 +390,12 @@ datagrids:
                     left:
                         - { join: lineItem.parentProduct, alias: parentProduct }
                         - { join: lineItem.unit, alias: unit}
+                        - { join: lineItem.kitItemLineItems, alias: kitItemLineItem }
+                        - { join: kitItemLineItem.product, alias: kitItemLineItemProduct }
                 where:
                     and:
                         - IDENTITY(lineItem.shoppingList) = :shopping_list_id
-                groupBy: mainProductId, unit.code
+                groupBy: mainProductId, unit.code, product.type
             bind_parameters:
                 - shopping_list_id
         columns:
@@ -422,11 +444,13 @@ datagrids:
                 id: ASC
         filters:
             columns:
-                sku:
-                    type:             string
-                    data_name:        product.skuUppercase
+                composedSku:
+                    label:            oro.frontend.shoppinglist.lineitem.sku.label
+                    type:             composed-sku-string
+                    data_name:        composedSku
                     case_insensitive: false
                     value_conversion: mb_strtoupper
+                    filter_by_having: true
                 inventoryStatus:
                     type:             choice
                     data_name:        product.inventory_status

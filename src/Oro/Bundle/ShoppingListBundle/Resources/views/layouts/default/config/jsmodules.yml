@@ -14,6 +14,7 @@ aliases:
     oro/product-kit-in-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-kit-in-shopping-lists-widget
     oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
     oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
+    oro/filter/composed-sku-string-filter$: orofrontend/default/js/app/views/choice-filter
 app-modules:
     - oroshoppinglist/js/app/modules/template-macros-module
 dynamic-imports:
@@ -55,6 +56,7 @@ dynamic-imports:
         - oroshoppinglist/js/datagrid/row/shopping-list-row
         - oroshoppinglist/js/inline-editing/shopping-list-editors
         - oroui/js/tools/search-api-accessor
+        - oro/filter/composed-sku-string-filter
     oroproduct:
         - oroshoppinglist/js/app/components/shopping-list-create-component
         - oroshoppinglist/js/app/components/shoppinglist-create-order-button-component

@@ -22,17 +22,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
-    private array $notAllowedProductTypes = [];
-
-    private RequestStack $requestStack;
-
-    private ProductManager $productManager;
-
-    private FrontendHelper $frontendHelper;
-
-    private ProductSearchRepository $searchRepository;
-
-    private LocalizationHelper $localizationHelper;
+    protected array $notAllowedProductTypes = [];
+    protected RequestStack $requestStack;
+    protected ProductManager $productManager;
+    protected FrontendHelper $frontendHelper;
+    protected ProductSearchRepository $searchRepository;
+    protected LocalizationHelper $localizationHelper;
 
     /**
      * @param string                  $entityName
