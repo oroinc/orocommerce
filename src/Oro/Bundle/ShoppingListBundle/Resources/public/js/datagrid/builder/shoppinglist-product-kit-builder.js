@@ -1,4 +1,7 @@
 import ShoppingListProductKitSubItemRow from '../row/shopping-list-product-kit-sub-item-row';
+import ProductKitInShoppingListRefreshPlugin
+    from 'oroshoppinglist/js/datagrid/plugins/product-kit-in-shopping-list-refresh-plugin';
+
 import {addClass} from './utils';
 
 const useKitSubItemRow = item => {
@@ -48,6 +51,11 @@ const shoppinglistProductKitBuilder = {
                 return productKitData(data);
             }
         });
+
+        if (!options.metadata.plugins) {
+            options.metadata.plugins = [];
+        }
+        options.metadata.plugins.push(ProductKitInShoppingListRefreshPlugin);
 
         return deferred.resolve();
     },
