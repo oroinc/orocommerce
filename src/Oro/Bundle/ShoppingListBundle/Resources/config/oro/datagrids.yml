@@ -627,6 +627,8 @@ datagrids:
                 renderable: false
         properties:
             id: ~
+            kitHasGeneralError:
+                frontend_type: boolean
             action_configuration:
                 frontend_type: row_array
         actions:
