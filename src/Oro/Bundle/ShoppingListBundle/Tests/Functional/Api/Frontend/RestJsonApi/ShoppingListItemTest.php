@@ -1084,30 +1084,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
     public function getTryToCreateKitLineItemDataProvider(): array
     {
         return [
-            'no kitItems' => [
-                'request' => 'create_kit_line_item_without_kit_items_data.yml',
-                'expectedErrors' => [
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
-                        'source' => [
-                            'pointer' => '/data/relationships/kitItems/data',
-                        ],
-                    ],
-                ],
-            ],
-            'empty kitItems' => [
-                'request' => 'create_kit_line_item_with_empty_kit_items.yml',
-                'expectedErrors' => [
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
-                        'source' => [
-                            'pointer' => '/data/relationships/kitItems/data',
-                        ],
-                    ],
-                ],
-            ],
             'no kit item line item data' => [
                 'request' => 'create_kit_line_item_without_kit_item_line_items_data.yml',
                 'expectedErrors' => [
@@ -1220,6 +1196,66 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                         'title' => 'equal to constraint',
                         'detail' => 'This value should be equal to item.',
                         'source' => ['pointer' => '/included/0/relationships/unit/data'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCreateKitLineItemWithoutKitItemLineItemsDataProvider
+     */
+    public function testCreateKitLineItemWithoutKitItemLineItems(string $request): void
+    {
+        $shoppingList = $this->getReference('shopping_list1');
+        self::assertCount(3, $shoppingList->getLineItems());
+        $this->assertShoppingListTotal($shoppingList, 59.15, 'USD');
+
+        $response = $this->post(
+            ['entity' => 'shoppinglistitems'],
+            $this->getRequestData($request)
+        );
+
+        $lineItemId = (int) $this->getResourceId($response);
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()
+            ->getRepository(LineItem::class)
+            ->find($lineItemId);
+        self::assertNotNull($lineItem);
+        $shoppingList = $lineItem->getShoppingList();
+        self::assertNotNull($shoppingList);
+        self::assertCount(4, $shoppingList->getLineItems());
+
+        $responseContent = $this->updateResponseContent('create_kit_line_item.yml', $response);
+        $responseContent['data']['relationships']['kitItems']['data'] = [];
+        $this->assertResponseContains($responseContent, $response);
+        $this->assertShoppingListTotal($shoppingList, 182.55, 'USD');
+    }
+
+    public function getCreateKitLineItemWithoutKitItemLineItemsDataProvider(): array
+    {
+        return [
+            'no kitItems' => [
+                'request' => 'create_kit_line_item_without_kit_items_data.yml',
+                'expectedErrors' => [
+                    [
+                        'title' => 'expression constraint',
+                        'detail' => 'This value is not valid.',
+                        'source' => [
+                            'pointer' => '/data/relationships/kitItems/data',
+                        ],
+                    ],
+                ],
+            ],
+            'empty kitItems' => [
+                'request' => 'create_kit_line_item_with_empty_kit_items.yml',
+                'expectedErrors' => [
+                    [
+                        'title' => 'expression constraint',
+                        'detail' => 'This value is not valid.',
+                        'source' => [
+                            'pointer' => '/data/relationships/kitItems/data',
+                        ],
                     ],
                 ],
             ],
