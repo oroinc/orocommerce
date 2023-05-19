@@ -96,6 +96,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             ->addSelect('IDENTITY(lineItems.product) as product_id')
             ->andWhere($queryBuilder->expr()->in('lineItems.product', ':productIdList'))
             ->andWhere($queryBuilder->expr()->isNull('lineItems.parentProduct'))
+            ->andWhere($queryBuilder->expr()->isNotNull('orders.customerUser'))
             ->addGroupBy('lineItems.product')
             ->orderBy('lineItems.product')
             ->setParameter('productIdList', $productIds);
@@ -116,6 +117,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         $queryBuilder
             ->addSelect('IDENTITY(lineItems.parentProduct) as product_id')
             ->andWhere($queryBuilder->expr()->in('lineItems.parentProduct', ':productIdList'))
+            ->andWhere($queryBuilder->expr()->isNotNull('orders.customerUser'))
             ->addGroupBy('lineItems.parentProduct')
             ->orderBy('lineItems.parentProduct')
             ->setParameter('productIdList', $productIds);
