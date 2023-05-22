@@ -1559,6 +1559,8 @@ services:
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_locale.formatter.number'
+        calls:
+            - ['setProductLineItemsHolderFactory', ['@oro_product.model.product_line_items_holder_factory']]
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 100 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 100 }

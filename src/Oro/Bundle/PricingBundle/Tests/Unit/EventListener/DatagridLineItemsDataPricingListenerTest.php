@@ -8,7 +8,6 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
@@ -17,6 +16,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -36,6 +37,8 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
     private LineItemNotPricedSubtotalProvider|MockObject $lineItemNotPricedSubtotalProvider;
 
+    private ProductLineItemsHolderFactoryInterface|MockObject $productLineItemsHolderFactory;
+
     private DatagridLineItemsDataPricingListener $listener;
 
     protected function setUp(): void
@@ -43,12 +46,15 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         $this->lineItemNotPricedSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $numberFormatter = $this->createMock(NumberFormatter::class);
+        $this->productLineItemsHolderFactory = $this->createMock(ProductLineItemsHolderFactoryInterface::class);
 
         $this->listener = new DatagridLineItemsDataPricingListener(
             $this->lineItemNotPricedSubtotalProvider,
             $roundingService,
             $numberFormatter
         );
+
+        $this->listener->setProductLineItemsHolderFactory($this->productLineItemsHolderFactory);
 
         $numberFormatter
             ->method('formatCurrency')
@@ -85,10 +91,17 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
             ->method('getLineItems')
             ->willReturn($lineItems);
 
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn(null);
 
         $event
@@ -111,10 +124,17 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         $subtotal = new Subtotal();
         $subtotal->setCurrency(self::CURRENCY_USD);
 
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn($subtotal);
 
         $event
@@ -168,10 +188,17 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         ];
         $subtotal->setData($subtotalData);
 
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn($subtotal);
 
         $this->listener->onLineItemData($event);
@@ -238,10 +265,17 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         $subtotal = new Subtotal();
         $subtotal->setCurrency(self::CURRENCY_USD);
 
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn($subtotal);
 
         $this->listener->onLineItemData($event);
