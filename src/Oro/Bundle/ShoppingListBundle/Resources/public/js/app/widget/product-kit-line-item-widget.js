@@ -1,15 +1,14 @@
-import FrontendDialogWidget from 'orofrontend/js/app/components/frontend-dialog-widget';
+import DialogWidget from 'oro/dialog-widget';
 import mediator from 'oroui/js/mediator';
 import messenger from 'oroui/js/messenger';
 import _ from 'underscore';
 
-const ProductKitLineItemWidget = FrontendDialogWidget.extend({
-    options: _.extend({}, FrontendDialogWidget.prototype.options, {
+const ProductKitLineItemWidget = DialogWidget.extend({
+    options: _.extend({}, DialogWidget.prototype.options, {
         preventModelRemoval: true,
         incrementalPosition: false,
         dialogOptions: {
             modal: true,
-            title: null,
             resizable: false,
             width: 'auto',
             autoResize: true,

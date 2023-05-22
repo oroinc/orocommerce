@@ -57,13 +57,13 @@ define(function(require) {
             this.frontend_options.title = this.frontend_options.title || this.label;
 
             loadModules(
-                'orofrontend/js/app/components/frontend-' + this.frontend_handle + '-widget',
+                'oro/' + this.frontend_handle + '-widget',
                 function(WidgetType) {
                     const widget = new WidgetType(this.frontend_options);
                     widget.render();
 
                     this.listenToOnce(widget, {
-                        'frontend-dialog:accept': this._handleAjax.bind(this)
+                        accept: this._handleAjax.bind(this)
                     });
                 }.bind(this)
             );
