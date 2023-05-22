@@ -42,7 +42,7 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_head_cell_label %}
-    {{- cell.label -}}
+    {{- cell.label|default(cell.vars.label|default('')) -}}
 {% endblock %}
 
 {% block _matrix_collection_widget_cell_label %}

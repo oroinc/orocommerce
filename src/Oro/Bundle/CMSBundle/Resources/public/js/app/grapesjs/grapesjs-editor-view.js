@@ -580,6 +580,9 @@ const GrapesjsEditorView = BaseView.extend({
             }
 
             if (!this.builder.getContainer().contains(event.target)) {
+                this.builder.getContainer().querySelectorAll(':focus').forEach(
+                    element => element.blur()
+                );
                 this.builder.getSelectedAll().forEach(selected => this.builder.selectRemove(selected));
             }
         });
@@ -1163,7 +1166,7 @@ const GrapesjsEditorView = BaseView.extend({
             }
         }
 
-        if (pos.top < 0 && frameHeight > (pos.canvasOffsetTop + targetHeight)) {
+        if (pos.top < 0 && frameHeight > (pos.canvasOffsetTop + targetHeight + $el.height())) {
             pos.top += $el.outerHeight() + targetHeight;
         }
 
@@ -1173,8 +1176,10 @@ const GrapesjsEditorView = BaseView.extend({
     },
 
     rtlFallback() {
-        this.builder.LayerManager.render = _.wrap(this.builder.LayerManager.render, function(wrap) {
-            const root = wrap();
+        const {LayerManager} = this.builder;
+
+        LayerManager.render = _.wrap(LayerManager.render, wrap => {
+            const root = wrap.call(LayerManager);
 
             root.querySelectorAll('[data-toggle-select]').forEach(el => {
                 el.style.paddingRight = el.style.paddingLeft;

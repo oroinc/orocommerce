@@ -51,11 +51,13 @@ define(function(require) {
                     this.subview('fitMatrixView', new FitMatrixView({
                         el: this.el
                     }));
-                } else {
-                    this.subview('scrollView', new ScrollView({
-                        el: this.el
-                    }));
                 }
+            }
+
+            if (this.dimension !== 1 && this.$el.find('[data-scroll-view]').length) {
+                this.subview('scrollView', new ScrollView({
+                    el: this.el
+                }));
             }
 
             this.setDefaultTotals();

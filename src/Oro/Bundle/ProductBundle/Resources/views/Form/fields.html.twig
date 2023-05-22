@@ -338,6 +338,7 @@
                 <div class="oro-tabs"  {{ UI.renderPageComponentAttributes({
                     module: 'oroui/js/app/components/tabs-component'
                 }) }}>
+                    {% set counterRequestMethod = tabCounterRequestMethod|default('POST') %}
                     <div class="oro-tabs__head">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
@@ -346,6 +347,7 @@
                                    class="nav-link active"
                                    data-toggle="tab"
                                    data-role="tab-filtered"
+                                   data-counter-request-method="{{ counterRequestMethod }}"
                                    role="tab"
                                    aria-controls="{{'filtered_products' ~ uniqueId ~ scope }}"
                                    aria-selected="true"
@@ -360,6 +362,7 @@
                                    class="nav-link"
                                    data-toggle="tab"
                                    data-role="tab-excluded"
+                                   data-counter-request-method="{{ counterRequestMethod }}"
                                    role="tab"
                                    aria-controls="{{ 'excluded_products' ~ uniqueId ~ scope}}"
                                    aria-selected="false"
@@ -374,6 +377,7 @@
                                    class="nav-link"
                                    data-toggle="tab"
                                    data-role="tab-included"
+                                   data-counter-request-method="{{ counterRequestMethod }}"
                                    role="tab"
                                    aria-controls="{{ 'included_products' ~ uniqueId ~ scope}}"
                                    aria-selected="false"

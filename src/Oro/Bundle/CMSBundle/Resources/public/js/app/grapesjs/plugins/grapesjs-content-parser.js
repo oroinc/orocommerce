@@ -6,11 +6,15 @@
  */
 
 const postParseModel = model => {
+    if (model.attributes && model.attributes['data-type'] === 'temporary-container') {
+        return model.components;
+    }
+
     if (model.components) {
         if (model.components.length) {
-            const isTextContain = model.components.some(
-                ({type, textComponent}) => ['textnode', 'text'].includes(type) || textComponent
-            );
+            const isTextContain = model.components.every(
+                ({type, textComponent}) => type === 'text' || textComponent
+            ) || model.components.some(({type}) => type === 'textnode');
 
             if (!model.type && isTextContain) {
                 model.type = 'text';
@@ -41,10 +45,6 @@ const postParseModel = model => {
                 tagName: ''
             }];
         }
-    }
-
-    if (model.attributes && model.attributes['data-type'] === 'temporary-container') {
-        return model.components;
     }
 
     return model;

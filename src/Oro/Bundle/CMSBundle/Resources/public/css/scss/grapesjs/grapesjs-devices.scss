@@ -2,34 +2,17 @@
 
 .#{$app-prefix} {
     &cv-canvas {
+        transition: $devices-transition;
+
         &.desktop {
-            border: $canvas-border;
-        }
-
-        &__tools {
-            &:not(.float-editor-enabled) {
-                overflow: hidden;
-            }
-
-            &.float-editor-enabled {
-                .#{$app-prefix}tools {
-                    visibility: hidden;
-                }
-            }
+            box-shadow: 0 0 0 2px $primary-750;
+            margin: 2px;
+            width: calc(77% - 18px);
         }
 
         &:not(.desktop) {
             background-color: transparent;
-            background-image: $canvas-pattern;
-            background-size: $canvas-pattern-size;
-            background-position: $canvas-pattern-position;
-
-            box-shadow: $canvas-box-shadow;
-            border: none;
-
-            .#{$app-prefix}cv-canvas__tools {
-                position: relative;
-            }
+            padding: 0;
         }
 
         &.tablet,
@@ -38,43 +21,67 @@
         &.mobile-small,
         &.mobile-big,
         &.mobile-landscape {
-            padding: 63px 0 75px 8px;
-
-            .gjs-frame-wrapper {
-                background: $primary-800;
-                margin: 8px auto;
-                border: solid $primary-800;
-                border-radius: 55px;
-                border-width: 47px 12px 67px;
-                box-sizing: content-box;
-            }
-
-            #gjs-tools,
-            .gjs-tools {
-                transform: translate(-6px, -6px);
-            }
-
-            .#{$app-prefix}cv-canvas__tools {
-                height: 100%;
-            }
+            margin: 71px 0 67px;
         }
 
         &.mobile-landscape {
-            padding: 28px 0 0 8px;
+            margin: 28px 0 0 8px;
+        }
+    }
 
-            .gjs-frame-wrapper {
-                border-width: 12px 67px 12px 47px;
-            }
+    &canvas-device-decorator {
+        width: calc(77% - 14px);
+        min-height: calc(100% - 40px);
 
-            .#{$app-prefix}cv-canvas__tools {
-                height: 100%;
-            }
+        background-image: $canvas-pattern;
+        background-size: $canvas-pattern-size;
+        background-position: $canvas-pattern-position;
+
+        box-shadow: 0 0 0 2px $primary-750;
+
+        position: absolute;
+        top: 40px;
+        left: 0;
+
+        transition: $devices-transition;
+
+        pointer-events: none;
+
+        opacity: 0;
+        visibility: hidden;
+
+        &.tablet,
+        &.tablet-small,
+        &.mobile,
+        &.mobile-big,
+        &.mobile-landscape {
+            opacity: 1;
+            visibility: visible;
         }
 
-        &__frames {
-            // stylelint-disable-next-line declaration-no-important
-            background-color: transparent !important;
-            z-index: 1;
+        &::before {
+            content: '';
+            display: block;
+
+            background-color: $primary-800;
+
+            border-radius: 55px;
+
+            padding: 63px 20px 67px;
+            margin: 8px auto;
+
+            box-sizing: content-box;
+
+            transition: $devices-transition;
+
+            width: var(--device-width, 100%);
+            height: var(--device-height, 700px);
+        }
+
+        &.mobile-landscape {
+            &::before {
+                padding: 20px 67px;
+            }
         }
     }
 

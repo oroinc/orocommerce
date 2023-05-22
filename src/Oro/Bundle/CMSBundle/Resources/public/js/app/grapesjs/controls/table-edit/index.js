@@ -61,8 +61,6 @@ const TableEditView = BaseView.extend({
         this.$el.tooltip({
             selector: '[data-toggle="tooltip"]'
         });
-
-        editorModel.get('Canvas').canvasView.toolsWrapper.classList.add('float-editor-enabled');
     },
 
     updatePosition() {
@@ -103,13 +101,9 @@ const TableEditView = BaseView.extend({
             return;
         }
 
-        const editorModel = this.table.em;
-
         this.table.em.off(eventsUp, this.updatePosition, this);
         this.$el.tooltip('dispose');
         this.$el.css('pointer-events', '');
-
-        editorModel.get('Canvas').canvasView.toolsWrapper.classList.remove('float-editor-enabled');
 
         TableEditView.__super__.dispose.call(this);
     }

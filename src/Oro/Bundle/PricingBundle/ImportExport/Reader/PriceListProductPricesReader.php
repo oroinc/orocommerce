@@ -44,6 +44,10 @@ class PriceListProductPricesReader extends EntityReader
                 ->setParameter('priceList', $this->priceListId);
         }
 
+        // As ProductPrice entity is not ACL protected,
+        // join Product entity to limit result data via ACL by Product entity.
+        $qb->innerJoin('o.product', 'product');
+
         return $qb;
     }
 
@@ -85,6 +89,10 @@ class PriceListProductPricesReader extends EntityReader
         );
         $queryBuilder->andWhere('o.priceList = :priceListId');
         $queryBuilder->setParameter('priceListId', $options['price_list_id']);
+
+        // As ProductPrice entity is not ACL protected,
+        // join Product entity to limit result data via ACL by Product entity.
+        $queryBuilder->innerJoin('o.product', 'product');
 
         return $queryBuilder;
     }

@@ -42,6 +42,8 @@ services:
         class: Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderLineItemProduct
         arguments:
             - '@oro_api.doctrine_helper'
+        calls:
+            - ['setAclHelper', ['@oro_security.acl_helper']]
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
 
