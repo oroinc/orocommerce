@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -21,7 +22,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitItemLineItemType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType;
-use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
 use Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -54,7 +54,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->type = new ProductKitLineItemType(
             $this->frontendProductPricesDataProvider,
-            new ShoppingListLineItemsHolderFactory(),
+            new ProductLineItemsHolderFactory(),
             $this->lineItemNotPricedSubtotalProvider
         );
 

@@ -1554,7 +1554,7 @@ services:
         class: Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener
         arguments:
             - '@oro_pricing.provider.product_line_item_price'
-            - '@oro_shopping_list.model.factory.shopping_list_line_items_holder'
+            - '@oro_product.model.product_line_items_holder_factory'
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_locale.formatter.number'
         tags:

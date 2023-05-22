@@ -1,16 +1,15 @@
-import FrontendDialogWidget from 'orofrontend/js/app/components/frontend-dialog-widget';
+import DialogWidget from 'oro/dialog-widget';
 import mediator from 'oroui/js/mediator';
 import messenger from 'oroui/js/messenger';
 import _ from 'underscore';
 import $ from 'jquery';
 
-const ProductKitLineItemWidget = FrontendDialogWidget.extend({
-    options: _.extend({}, FrontendDialogWidget.prototype.options, {
+const ProductKitLineItemWidget = DialogWidget.extend({
+    options: _.extend({}, DialogWidget.prototype.options, {
         preventModelRemoval: true,
         incrementalPosition: false,
         dialogOptions: {
             modal: true,
-            title: null,
             resizable: false,
             width: 890,
             minWidth: 367,
@@ -24,8 +23,6 @@ const ProductKitLineItemWidget = FrontendDialogWidget.extend({
                 data-role="totals-section"></div>
         `)
     }),
-
-    fullscreenMode: false,
 
     listen: {
         'shopping-list:line-items:before-response mediator': 'hide',

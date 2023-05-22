@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -16,7 +17,6 @@ use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitLineItemType;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitLineItemFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -42,7 +42,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
 
     private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
 
-    private ShoppingListLineItemsHolderFactory $lineItemsHolderFactory;
+    private ProductLineItemsHolderFactory $lineItemsHolderFactory;
 
     private ManagerRegistry $managerRegistry;
 
@@ -54,7 +54,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         ShoppingListManager $shoppingListManager,
         ProductKitLineItemFactory $productKitLineItemFactory,
         SubtotalProviderInterface $lineItemNotPricedSubtotalProvider,
-        ShoppingListLineItemsHolderFactory $lineItemsHolderFactory,
+        ProductLineItemsHolderFactory $lineItemsHolderFactory,
         ManagerRegistry $managerRegistry,
         ValidatorInterface $validator
     ) {

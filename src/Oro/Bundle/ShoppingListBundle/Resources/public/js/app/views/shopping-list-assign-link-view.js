@@ -6,7 +6,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const actionsTemplate = require('tpl-loader!oroshoppinglist/templates/frontend-dialog/assign-dialog-actions.html');
     const BaseView = require('oroui/js/app/views/base/view');
-    const FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    const DialogWidget = require('oro/dialog-widget');
 
     const ShoppingListAssignLinkView = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([
@@ -71,7 +71,7 @@ define(function(require) {
          * Render dialog widget
          */
         renderDialogWidget: function() {
-            this.subview('popup', new FrontendDialogWidget({
+            this.subview('popup', new DialogWidget({
                 autoRender: true,
                 url: this.dialogUrl,
                 title: this.dialogTitle,
@@ -80,7 +80,6 @@ define(function(require) {
                 renderActionsFromTemplate: true,
                 actionsTemplate: actionsTemplate,
                 staticPage: false,
-                fullscreenMode: false,
                 dialogOptions: {
                     modal: true,
                     resizable: true,
@@ -91,7 +90,7 @@ define(function(require) {
             }));
 
             this.listenToOnce(this.subview('popup'), {
-                'frontend-dialog:accept': this._onShoppingListOwnerChange.bind(this)
+                accept: this._onShoppingListOwnerChange.bind(this)
             });
         },
 

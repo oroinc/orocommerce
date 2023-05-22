@@ -296,7 +296,7 @@ class ProductPriceProviderTest extends TestCase
         $this->priceByMatchingCriteriaProvider
             ->expects(self::once())
             ->method('getProductPriceMatchingCriteria')
-            ->with($productPriceCriteria, new ProductPriceCollectionDTO($prices))
+            ->with($productPriceCriteria, new ProductPriceCollectionDTO([$prices[1], $prices[0]]))
             ->willReturn($prices[0]);
 
         $this->priceStorage->expects(self::once())
@@ -418,7 +418,7 @@ class ProductPriceProviderTest extends TestCase
         $this->priceByMatchingCriteriaProvider
             ->expects(self::once())
             ->method('getProductPriceMatchingCriteria')
-            ->with($productPriceCriteria, new ProductPriceCollectionDTO($prices))
+            ->with($productPriceCriteria, new ProductPriceCollectionDTO([$prices[1], $prices[0]]))
             ->willReturn($prices[0]);
 
         $this->priceStorage->expects(self::once())

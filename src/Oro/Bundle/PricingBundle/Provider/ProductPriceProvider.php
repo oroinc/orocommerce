@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceCollectionDTO;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaDataExtractor\ProductPriceCriteriaDataExtractorInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
@@ -146,6 +147,22 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
     }
 
     /**
+     * @param ProductPriceInterface[] $prices
+     */
+    private function sortPrices(array &$prices): void
+    {
+        usort($prices, static function (ProductPriceDTO $a, ProductPriceDTO $b) {
+            $codeA = $a->getUnit()->getCode();
+            $codeB = $b->getUnit()->getCode();
+            if ($codeA === $codeB) {
+                return $a->getQuantity() <=> $b->getQuantity();
+            }
+
+            return $codeA <=> $codeB;
+        });
+    }
+
+    /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @param array $productsIds
      * @param array|null $productUnitCodes
@@ -164,14 +181,19 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
             return [];
         }
 
-        return (array)$this->getMemoryCacheProvider()->get(
+        return (array) $this->getMemoryCacheProvider()->get(
             [
                 'product_price_scope_criteria' => $scopeCriteria,
                 $productsIds,
                 $currencies,
                 $productUnitCodes,
             ],
-            fn () => $this->priceStorage->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies)
+            function () use ($scopeCriteria, $productsIds, $productUnitCodes, $currencies) {
+                $prices = $this->priceStorage->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
+                $this->sortPrices($prices);
+
+                return $prices;
+            }
         );
     }
 

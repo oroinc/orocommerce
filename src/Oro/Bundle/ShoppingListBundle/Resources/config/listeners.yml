@@ -102,7 +102,7 @@ services:
         class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
         arguments:
             - '@validator'
-            - '@oro_shopping_list.model.factory.shopping_list_line_items_holder'
+            - '@oro_product.model.product_line_items_holder_factory'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
@@ -112,7 +112,7 @@ services:
         class: Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
         arguments:
             - '@validator'
-            - '@oro_shopping_list.model.factory.shopping_list_line_items_holder'
+            - '@oro_product.model.product_line_items_holder_factory'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }

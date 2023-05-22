@@ -14,8 +14,8 @@ use Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
-use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
 
 /**
  * Adds line items pricing data.
@@ -30,7 +30,7 @@ class DatagridLineItemsDataPricingListener
 
     private ProductLineItemPriceProviderInterface $productLineItemsPriceProvider;
 
-    private ShoppingListLineItemsHolderFactory $lineItemsHolderFactory;
+    private ProductLineItemsHolderFactoryInterface $productLineItemsHolderFactory;
 
     private RoundingServiceInterface $roundingService;
 
@@ -38,12 +38,12 @@ class DatagridLineItemsDataPricingListener
 
     public function __construct(
         ProductLineItemPriceProviderInterface $productLineItemsPriceProvider,
-        ShoppingListLineItemsHolderFactory $lineItemsHolderFactory,
+        ProductLineItemsHolderFactoryInterface $productLineItemsHolderFactory,
         RoundingServiceInterface $roundingService,
         NumberFormatter $numberFormatter
     ) {
         $this->productLineItemsPriceProvider = $productLineItemsPriceProvider;
-        $this->lineItemsHolderFactory = $lineItemsHolderFactory;
+        $this->productLineItemsHolderFactory = $productLineItemsHolderFactory;
         $this->roundingService = $roundingService;
         $this->numberFormatter = $numberFormatter;
     }
@@ -55,7 +55,7 @@ class DatagridLineItemsDataPricingListener
             return;
         }
 
-        $lineItemsHolder = $this->lineItemsHolderFactory->createFromLineItems($lineItems);
+        $lineItemsHolder = $this->productLineItemsHolderFactory->createFromLineItems($lineItems);
         $productLineItemsPrices = $this->productLineItemsPriceProvider
             ->getProductLineItemsPricesForLineItemsHolder($lineItemsHolder);
 

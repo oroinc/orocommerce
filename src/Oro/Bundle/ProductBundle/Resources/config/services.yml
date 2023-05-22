@@ -2231,6 +2231,9 @@ services:
         arguments:
             - '@doctrine'
 
+    oro_product.model.product_line_items_holder_factory:
+        class: Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory
+
     oro_product.event_listener.payment_profile_grid_listener:
         class: Oro\Bundle\ProductBundle\EventListener\ProductsSelectGridFrontendGridListener
         calls:

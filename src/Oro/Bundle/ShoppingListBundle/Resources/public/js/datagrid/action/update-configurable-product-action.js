@@ -24,7 +24,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
     ],
 
     widgetDefaultOptions: {
-        'type': 'frontend-dialog',
+        'type': 'dialog',
         'multiple': false,
         'reload-grid-name': '',
         'options': {
@@ -32,7 +32,6 @@ const UpdateConfigurableProductAction = DialogAction.extend({
             contentElement: '.matrix-grid-update-container',
             renderActionsFromTemplate: true,
             staticPage: false,
-            fullscreenMode: true,
             dialogOptions: {
                 allowMaximize: false,
                 allowMinimize: false,
@@ -40,8 +39,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
                 resizable: false,
                 maximizedHeightDecreaseBy: 'minimize-bar',
                 width: 800
-            },
-            fullscreenViewOptions: {}
+            }
         }
     },
 
@@ -88,7 +86,6 @@ const UpdateConfigurableProductAction = DialogAction.extend({
         });
 
         this.widgetOptions.options.dialogOptions.title = title;
-        this.widgetOptions.options.fullscreenViewOptions.popupLabel = title;
         this.widgetOptions.options.initLayoutOptions = {
             productModel: this.model
         };

@@ -822,9 +822,6 @@ services:
         arguments:
             - '@.inner'
 
-    oro_shopping_list.model.factory.shopping_list_line_items_holder:
-        class: Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory
-
     oro_shopping_list.delete_handler.product_kit_item_line_item:
         class: Oro\Bundle\ShoppingListBundle\Handler\ProductKitItemLineItemDeleteHandler
         parent: oro_entity.delete_handler

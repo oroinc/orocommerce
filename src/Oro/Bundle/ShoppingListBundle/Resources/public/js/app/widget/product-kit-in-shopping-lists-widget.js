@@ -1,4 +1,4 @@
-import FrontendDialogWidget from 'orofrontend/js/app/components/frontend-dialog-widget';
+import FrontendDialogWidget from 'oro/dialog-widget';
 import mediator from 'oroui/js/mediator';
 import messenger from 'oroui/js/messenger';
 import $ from 'jquery';
@@ -24,8 +24,6 @@ const ProductKitInShoppingListsWidget = FrontendDialogWidget.extend({
             dialogClass: 'product-kit-dialog product-kit-in-shopping-lists-dialog'
         }
     }),
-
-    fullscreenMode: false,
 
     listen: {
         'widget_dialog:open mediator': 'onWidgetDialogOpen',

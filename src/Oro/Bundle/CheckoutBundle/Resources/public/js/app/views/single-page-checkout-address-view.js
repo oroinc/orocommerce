@@ -12,14 +12,14 @@ define(function(require) {
         options: {
             entityId: null,
             entityClass: 'Oro\\Bundle\\CheckoutBundle\\Entity\\Checkout',
-            jsDialogWidget: 'orofrontend/js/app/components/frontend-dialog-widget',
+            jsDialogWidget: 'oro/dialog-widget',
             dialogRoute: 'oro_frontend_action_widget_form',
             dialogWidth: 1000,
             dialogHeight: 'auto',
             resizable: false,
             autoResize: true,
-            popupIcon: 'fa-map-marker',
-            popupBadge: true
+            dialogTitleIcon: 'fa-map-marker',
+            dialogTitleBadge: true
         },
 
         enterManuallyOriginLabel: null,
@@ -126,10 +126,9 @@ define(function(require) {
                         resizable: this.options.resizable,
                         autoResize: this.options.autoResize
                     },
-                    fullscreenViewOptions: {
-                        popupLabel: this._title(addressType),
-                        popupIcon: this.options.popupIcon,
-                        popupBadge: this.options.popupBadge
+                    fullscreenDialogOptions: {
+                        dialogTitleIcon: this.options.dialogTitleIcon,
+                        dialogTitleBadge: this.options.dialogTitleBadge
                     }
                 }
             });

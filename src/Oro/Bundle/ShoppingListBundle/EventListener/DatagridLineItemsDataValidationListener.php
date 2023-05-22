@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
-use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -21,7 +21,7 @@ class DatagridLineItemsDataValidationListener
 
     private ValidatorInterface $validator;
 
-    private ShoppingListLineItemsHolderFactory $lineItemsHolderFactory;
+    private ProductLineItemsHolderFactory $lineItemsHolderFactory;
 
     private TranslatorInterface $translator;
 
@@ -29,7 +29,7 @@ class DatagridLineItemsDataValidationListener
 
     public function __construct(
         ValidatorInterface $validator,
-        ShoppingListLineItemsHolderFactory $lineItemsHolderFactory,
+        ProductLineItemsHolderFactory $lineItemsHolderFactory,
         TranslatorInterface $translator
     ) {
         $this->validator = $validator;

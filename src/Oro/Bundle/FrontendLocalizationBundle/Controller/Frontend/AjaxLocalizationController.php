@@ -40,8 +40,13 @@ class AjaxLocalizationController extends AbstractController
 
             $redirectHelper = $this->get('oro_locale.helper.localized_slug_redirect');
             $fromUrl = $this->generateUrlWithContext($request);
-            $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
-            $toUrl = $this->rebuildQueryString($toUrl, $request);
+
+            if ($request->server->has('WEBSITE_PATH')) {
+                [$fromUrl, $toUrl] = $this->getUrlsForWebsitePath($request, $fromUrl, $localization);
+            } else {
+                $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
+                $toUrl = $this->rebuildQueryString($toUrl, $request);
+            }
 
             return new JsonResponse(['success' => true, 'redirectTo' => $toUrl]);
         }
@@ -59,7 +64,7 @@ class AjaxLocalizationController extends AbstractController
             [
                 LocalizationManager::class,
                 UserLocalizationManager::class,
-                'oro_locale.helper.localized_slug_redirect' => LocalizedSlugRedirectHelper::class
+                'oro_locale.helper.localized_slug_redirect' => LocalizedSlugRedirectHelper::class,
             ]
         );
     }
@@ -120,5 +125,37 @@ class AjaxLocalizationController extends AbstractController
         }
 
         return $toUrl;
+    }
+
+    private function getUrlsForWebsitePath(Request $request, string $fromUrl, Localization $localization): array
+    {
+        $baseUrl = $request->getBaseUrl();
+        $redirectHelper = $this->get('oro_locale.helper.localized_slug_redirect');
+
+        if (in_array($baseUrl, ['/', ''])) {
+            $baseUrl = $request->server->get('WEBSITE_PATH');
+        }
+
+        $fromUrl = str_replace($baseUrl, '', $fromUrl);
+        $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
+        $toUrl = $this->rebuildQueryString($toUrl, $request);
+        $fromUrl = $baseUrl . $fromUrl;
+        $parsedUrl = parse_url($toUrl);
+
+        if (!empty($parsedUrl['scheme']) && !empty($parsedUrl['host'])) {
+            $parsedUrl['path'] = $parsedUrl['path'] ?? '';
+            $parsedUrl['path'] = $baseUrl . $parsedUrl['path'];
+            $toUrl = sprintf(
+                '%s://%s%s%s',
+                $parsedUrl['scheme'],
+                $parsedUrl['host'],
+                $parsedUrl['path'],
+                '?' . $parsedUrl['query'] ?? ''
+            );
+        } else {
+            $toUrl = $baseUrl . $toUrl;
+        }
+
+        return [$fromUrl, $toUrl];
     }
 }

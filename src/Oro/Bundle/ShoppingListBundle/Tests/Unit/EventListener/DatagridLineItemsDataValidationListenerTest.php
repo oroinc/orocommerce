@@ -7,9 +7,9 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
-use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
 use Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,7 +30,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
     protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);
-        $lineItemsHolderFactory = new ShoppingListLineItemsHolderFactory();
+        $lineItemsHolderFactory = new ProductLineItemsHolderFactory();
 
         $translator = $this->createMock(TranslatorInterface::class);
         $translator

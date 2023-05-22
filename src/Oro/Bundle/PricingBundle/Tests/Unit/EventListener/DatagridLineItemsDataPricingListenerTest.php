@@ -19,11 +19,11 @@ use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
-use Oro\Bundle\ShoppingListBundle\Model\Factory\ShoppingListLineItemsHolderFactory;
-use Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -43,18 +43,20 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
     private ProductLineItemPriceProviderInterface|MockObject $productLineItemsPriceProvider;
 
+    private ProductLineItemsHolderFactoryInterface|MockObject $productLineItemsHolderFactory;
+
     private DatagridLineItemsDataPricingListener $listener;
 
     protected function setUp(): void
     {
         $this->productLineItemsPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);
-        $lineItemsHolderFactory = new ShoppingListLineItemsHolderFactory();
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $numberFormatter = $this->createMock(NumberFormatter::class);
+        $this->productLineItemsHolderFactory = $this->createMock(ProductLineItemsHolderFactoryInterface::class);
 
         $this->listener = new DatagridLineItemsDataPricingListener(
             $this->productLineItemsPriceProvider,
-            $lineItemsHolderFactory,
+            $this->productLineItemsHolderFactory,
             $roundingService,
             $numberFormatter
         );
@@ -94,10 +96,18 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
             ->method('getLineItems')
             ->willReturn($lineItems);
 
+
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->productLineItemsPriceProvider
             ->expects(self::once())
             ->method('getProductLineItemsPricesForLineItemsHolder')
-            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn([]);
 
         $event
@@ -170,10 +180,18 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
         $lineItem3Price = new ProductKitLineItemPrice($lineItem3, Price::create(0.0, self::CURRENCY_USD), 0.0);
 
+
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->productLineItemsPriceProvider
             ->expects(self::once())
             ->method('getProductLineItemsPricesForLineItemsHolder')
-            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn([
                 $lineItem1->getEntityIdentifier() => $lineItem1Price,
                 $lineItem2->getEntityIdentifier() => $lineItem2Price,
@@ -257,10 +275,17 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
         $event = new DatagridLineItemsDataEvent($lineItems, [], $this->createMock(DatagridInterface::class), []);
 
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->productLineItemsPriceProvider
             ->expects(self::once())
             ->method('getProductLineItemsPricesForLineItemsHolder')
-            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn([]);
 
         $this->listener->onLineItemData($event);
@@ -339,10 +364,17 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         ))
             ->addKitItemLineItemPrice($kitItemLineItem1Price);
 
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
         $this->productLineItemsPriceProvider
             ->expects(self::once())
             ->method('getProductLineItemsPricesForLineItemsHolder')
-            ->with(new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)))
+            ->with($lineItemsHolder)
             ->willReturn([$kitLineItem->getEntityIdentifier() => $kitLineItemPrice]);
 
         $this->listener->onLineItemData($event);
