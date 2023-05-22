@@ -12,7 +12,6 @@ Feature: Manage products with disabled category view by ACL
   Scenario: Edit product when view "Category" enabled
     Given I login as administrator
     And I go to Products/ Products
-    And I wait for action
     And I click edit "PSKU1" in grid
     Then I should see "Master Catalog"
     When fill "ProductForm" with:
