@@ -3,15 +3,14 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Brick\Math\BigDecimal;
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 
 /**
  * Adds line items pricing data.
@@ -26,16 +25,20 @@ class DatagridLineItemsDataPricingListener
 
     private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
 
+    private ProductLineItemsHolderFactoryInterface $productLineItemsHolderFactory;
+
     private RoundingServiceInterface $roundingService;
 
     private NumberFormatter $numberFormatter;
 
     public function __construct(
         SubtotalProviderInterface $lineItemNotPricedSubtotalProvider,
+        ProductLineItemsHolderFactoryInterface $productLineItemsHolderFactory,
         RoundingServiceInterface $roundingService,
         NumberFormatter $numberFormatter
     ) {
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
+        $this->productLineItemsHolderFactory = $productLineItemsHolderFactory;
         $this->roundingService = $roundingService;
         $this->numberFormatter = $numberFormatter;
     }
@@ -47,13 +50,13 @@ class DatagridLineItemsDataPricingListener
             return;
         }
 
-        $subtotal = $this->lineItemNotPricedSubtotalProvider
-            ->getSubtotal(new LineItemsNotPricedDTO(new ArrayCollection($lineItems)));
+        $lineItemsHolder = $this->productLineItemsHolderFactory->createFromLineItems($lineItems);
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($lineItemsHolder);
         if ($subtotal === null) {
             return;
         }
 
-        $subtotalData = (array) $subtotal->getData();
+        $subtotalData = (array)$subtotal->getData();
 
         foreach ($lineItems as $lineItem) {
             $lineItemSubtotalData = $this->getLineItemSubtotalData($lineItem, $subtotalData);

@@ -2220,3 +2220,6 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\ProductKitItemUnitPrecisionProvider
         arguments:
             - '@doctrine'
+
+    oro_product.model.product_line_items_holder_factory:
+        class: Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory
