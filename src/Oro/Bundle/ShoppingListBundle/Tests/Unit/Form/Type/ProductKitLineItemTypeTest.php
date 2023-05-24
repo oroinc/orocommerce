@@ -179,6 +179,55 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         self::assertSame($subtotal, $formView->vars['subtotal']);
     }
 
+    public function testBuildFormSortedKitItems(): void
+    {
+        $kitItem1 = (new ProductKitItem())
+            ->setSortOrder(3)
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct2));
+        $kitItem2 = (new ProductKitItem())
+            ->setSortOrder(2)
+            ->setOptional(true)
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1));
+        $kitItemLineItem1 = (new ProductKitItemLineItem())
+            ->setProduct($this->kitItemProduct1)
+            ->setSortOrder(1)
+            ->setKitItem($kitItem1);
+        $kitItemLineItem2 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem2);
+        $lineItem = (new LineItem())
+            ->setProduct($this->productKit)
+            ->setQuantity(42.1)
+            ->setUnit($this->productUnitItem)
+            ->addKitItemLineItem($kitItemLineItem1)
+            ->addKitItemLineItem($kitItemLineItem2);
+
+        $productPrices = [
+            $this->productKit->getId() => ['sample_key1' => 'sample_value1'],
+            $this->kitItemProduct1->getId() => ['sample_key2' => 'sample_value2'],
+            $this->kitItemProduct2->getId() => ['sample_key3' => 'sample_value3'],
+        ];
+        $this->frontendProductPricesDataProvider
+            ->expects(self::once())
+            ->method('getAllPricesForProducts')
+            ->with([$this->productKit, $this->kitItemProduct1, $this->kitItemProduct2, $this->kitItemProduct1])
+            ->willReturn($productPrices);
+
+        $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
+
+        self::assertSame($lineItem, $form->getData());
+        self::assertEquals(
+            new ArrayCollection([$kitItemLineItem1, $kitItemLineItem2]),
+            $form->get('kitItemLineItems')->getData()
+        );
+
+        $formView = $form->createView();
+
+        $kitItemLineItemsFormViews = $formView['kitItemLineItems']->children;
+        self::assertEquals($kitItemLineItem2, $kitItemLineItemsFormViews[0]->vars['data']);
+        self::assertEquals($kitItemLineItem1, $kitItemLineItemsFormViews[1]->vars['data']);
+    }
+
     public function testSubmitWhenHasLineItem(): void
     {
         $kitItem = (new ProductKitItem())

@@ -68,6 +68,16 @@ class ProductKitLineItemType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
+        usort($view['kitItemLineItems']->children, function (FormView $formViewA, FormView $formViewB) {
+            /** @var ProductKitItemLineItem $kiteItemLineItemA */
+            $kiteItemLineItemA = $formViewA->vars['data'];
+            /** @var ProductKitItemLineItem $kiteItemLineItemB */
+            $kiteItemLineItemB = $formViewB->vars['data'];
+
+            return $kiteItemLineItemA->getKitItem()->getSortOrder() <=>
+                $kiteItemLineItemB->getKitItem()->getSortOrder();
+        });
+
         $view['kitItemLineItems']->vars['productPrices'] = [];
         $view->vars['subtotal'] = null;
 
