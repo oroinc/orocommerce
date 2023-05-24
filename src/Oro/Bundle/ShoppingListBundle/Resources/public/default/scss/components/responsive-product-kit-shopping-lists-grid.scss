@@ -41,7 +41,7 @@
         .grid-cell {
             padding-top: 0;
 
-            &:first-child{
+            &:first-child {
                 padding: 0;
             }
         }
@@ -134,7 +134,7 @@
             display: inline-flex;
             flex-grow: 1;
             order: 1;
-            width: calc( 100% - #{$responsive-product-kit-shopping-lists-action-cell-width-mobile});
+            width: calc(100% - #{$responsive-product-kit-shopping-lists-action-cell-width-mobile});
             padding-left: 0;
         }
 

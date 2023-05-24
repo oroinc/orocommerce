@@ -319,7 +319,8 @@ define(function(require) {
             }
             const url = $button.data('url');
             const intention = $button.data('intention');
-            const formData = this.$form.serialize();
+            // some fields may be rendered outside the main form
+            const formData = this.$form.add(this.$form.data('extra-form-selector')).serialize();
 
             const urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id

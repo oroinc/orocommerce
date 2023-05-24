@@ -1,6 +1,6 @@
 {% block __product_kit_line_item_form__wrapper_widget %}
     {% set class_prefix = 'product-kit-line-item-widget' %}
-
+    {% set extraFormId = form.vars.id ~ ''|uniqid %}
     {% do block|merge_context({
         class_prefix: class_prefix,
         form: form,
@@ -9,6 +9,7 @@
         shoppingLists: shoppingLists,
         lineItem: lineItem ?? null,
         productShoppingLists: productShoppingLists ?? [],
+        extraFormId: extraFormId
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -103,21 +104,23 @@
             </div>
         </div>
         <div class="product-totals__controls" data-role="totals-controls">
-            <div class="product-item-quantity product-item-quantity--justify-end">
-                {{ form_row(form.quantity, {label: false, attr: {
+            <div class="product-item-quantity product-item-quantity--justify-end fields-row"
+                 data-extra-form="{{ extraFormId }}"
+            >
+                {{ form_widget(form.quantity, {label: false, attr: {
                     'aria-label': 'oro.product.quantity.aria_label'|trans,
                     'class': 'product-item-quantity__input',
                     'data-floating-error': '',
                     'data-role': 'quantity',
-                    'form': form.vars.id
+                    'data-boundaries-element': '[role="dialog"]'
                 }}) }}
-
-                {{ form_row(form.unit,{attr: {
+                {{ form_widget(form.unit,{attr: {
                     'class': 'product-item-quantity__choice',
-                    'data-role': 'unit-label',
-                    'form': form.vars.id
+                    'data-role': 'unit-label'
                 }}) }}
-                <div class="fields-row-error"></div>
+                <div class="fields-row-error">
+                    {{- form_errors(form) -}}
+                </div>
             </div>
             {{ block_widget(block) }}
         </div>

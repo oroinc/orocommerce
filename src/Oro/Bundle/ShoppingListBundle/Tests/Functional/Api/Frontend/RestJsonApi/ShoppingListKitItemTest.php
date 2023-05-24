@@ -90,8 +90,8 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type' => 'shoppinglistkititems'
-            ]
+                'type' => 'shoppinglistkititems',
+            ],
         ];
 
         $response = $this->post(
@@ -142,6 +142,14 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
                     'source' => ['pointer' => '/data/relationships/unit/data'],
+                ],
+                [
+                    'status' => '400',
+                    'title' => 'expression constraint',
+                    'detail' => 'Unit must be equal to Product Kit Item unit.',
+                    'source' => [
+                        'pointer' => '/data/relationships/unit/data',
+                    ],
                 ],
             ],
             $response
@@ -367,7 +375,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'create shopping list constraint',
                 'detail' => 'It is not allowed to create a new shopping list.',
-                'source' => ['pointer' => '/included/1']
+                'source' => ['pointer' => '/included/1'],
             ],
             $response
         );
@@ -449,15 +457,15 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'access granted constraint',
+                    'title' => 'access granted constraint',
                     'detail' => 'The "EDIT" permission is denied for the related resource.',
-                    'source' => ['pointer' => '/data/relationships/shoppingList/data']
+                    'source' => ['pointer' => '/data/relationships/shoppingList/data'],
                 ],
                 [
-                    'title'  => 'access granted constraint',
+                    'title' => 'access granted constraint',
                     'detail' => 'The "VIEW" permission is denied for the related resource.',
-                    'source' => ['pointer' => '/data/relationships/shoppingList/data']
-                ]
+                    'source' => ['pointer' => '/data/relationships/shoppingList/data'],
+                ],
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -727,6 +735,14 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/data/relationships/unit/data'],
                     ],
+                    [
+                        'status' => '400',
+                        'title' => 'expression constraint',
+                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'source' => [
+                            'pointer' => '/data/relationships/unit/data',
+                        ],
+                    ],
                 ],
             ],
             'unit when no KitItem' => [
@@ -744,7 +760,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Unit cannot be validated without Product Kit Item.',
+                        'detail' => 'Unit must be equal to Product Kit Item unit.',
                         'source' => ['pointer' => '/data/relationships/unit/data'],
                     ],
                     [
@@ -767,9 +783,12 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
                 'expectedErrors' => [
                     [
-                        'title' => 'equal to constraint',
-                        'detail' => 'This value should be equal to item.',
-                        'source' => ['pointer' => '/data/relationships/unit/data'],
+                        'status' => '400',
+                        'title' => 'expression constraint',
+                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'source' => [
+                            'pointer' => '/data/relationships/unit/data',
+                        ],
                     ],
                 ],
             ],
@@ -786,7 +805,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $kitLineItemId = $this->getReference('kit_line_item1')->getId();
         self::assertEquals($kitLineItemId, $kitItemLineItem->getLineItem()->getId());
 
-        $kitItemLineItemId = (string) $kitItemLineItem->getId();
+        $kitItemLineItemId = (string)$kitItemLineItem->getId();
         $data = [
             'data' => [
                 'type' => 'shoppinglistkititems',
@@ -799,7 +818,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                         ],
                     ],
                 ],
-            ]
+            ],
         ];
 
         $response = $this->patch(
@@ -807,7 +826,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
             $data
         );
         // LineItem should remain the same
-        $data['data']['relationships']['lineItem']['data']['id'] = (string) $kitLineItemId;
+        $data['data']['relationships']['lineItem']['data']['id'] = (string)$kitLineItemId;
         $this->assertResponseContains($data, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
@@ -828,15 +847,15 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $shoppingList1 = $this->getReference('shopping_list1');
         $this->assertShoppingListTotal($shoppingList1, 59.15, 'USD');
 
-        $kitItemLineItemId = (string) $this->getReference('product_kit_item1_line_item1')->getId();
+        $kitItemLineItemId = (string)$this->getReference('product_kit_item1_line_item1')->getId();
         $data = [
             'data' => [
                 'type' => 'shoppinglistkititems',
                 'id' => $kitItemLineItemId,
                 'attributes' => [
-                    'quantity' => 123.45
-                ]
-            ]
+                    'quantity' => 123.45,
+                ],
+            ],
         ];
 
         $response = $this->patch(

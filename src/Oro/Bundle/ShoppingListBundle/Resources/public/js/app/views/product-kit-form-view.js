@@ -91,15 +91,25 @@ const ProductKitFormView = BaseView.extend({
     },
 
     /**
+     * Validates the form with extra fields that outside of it, returns true if it is valid, false otherwise
+     * @returns {boolean}
+     */
+    validateForm() {
+        const isValid = this.$el.validate().form();
+        const extraIsValid = $(this.$el.data('extra-form-selector')).validate().form();
+        return isValid && extraIsValid;
+    },
+
+    /**
      * Gets actual total price
      * @param {Event} e
      */
     getSubtotal(e) {
-        if (!this.$el.validate().form()) {
+        if (!this.validateForm()) {
             return;
         }
 
-        const data = this.$el.serializeArray();
+        const data = this.$el.add(this.$el.data('extra-form-selector')).serializeArray();
 
         if (!this._activeAjaxActions) {
             this._activeAjaxActions = 0;

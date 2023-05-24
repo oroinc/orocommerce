@@ -47,7 +47,7 @@ class ProductKitLineItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('quantity', QuantityType::class)
+            ->add('quantity', QuantityType::class, ['constraints' => []])
             ->add('unit', ProductUnitSelectionType::class)
             ->add(
                 $builder

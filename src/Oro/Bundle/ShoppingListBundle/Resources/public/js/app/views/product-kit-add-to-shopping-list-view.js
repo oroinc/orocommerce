@@ -18,7 +18,7 @@ const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
     onClick: function(e) {
         e.preventDefault();
 
-        if (this.validateForm()) {
+        if (!this.validateForm()) {
             return;
         }
 
@@ -26,11 +26,13 @@ const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
     },
 
     /**
-     * Validates the form, returns true if it is valid, false otherwise
+     * Validates the form with extra fields that outside of it, returns true if it is valid, false otherwise
      * @returns {boolean}
      */
     validateForm: function() {
-        return !this.$form.validate().form();
+        const isValid = this.$form.validate().form();
+        const extraIsValid = $(this.$form.data('extra-form-selector')).validate().form();
+        return isValid && extraIsValid;
     },
 
     addWidgetUrlOptions() {

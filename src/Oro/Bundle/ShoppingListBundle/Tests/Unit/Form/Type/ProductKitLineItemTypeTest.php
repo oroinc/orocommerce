@@ -94,6 +94,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->assertFormOptionEqual(LineItem::class, 'data_class', $form);
 
         $this->assertFormContainsField('quantity', $form);
+        $this->assertFormOptionEqual([], 'constraints', $form->get('quantity'));
         $this->assertFormContainsField('unit', $form);
         $this->assertFormContainsField('kitItemLineItems', $form);
         $this->assertFormOptionEqual(false, 'required', $form->get('kitItemLineItems'));
@@ -154,6 +155,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->assertFormOptionEqual(LineItem::class, 'data_class', $form);
 
         $this->assertFormContainsField('quantity', $form);
+        $this->assertFormOptionEqual([], 'constraints', $form->get('quantity'));
         $this->assertFormContainsField('unit', $form);
         $this->assertFormContainsField('kitItemLineItems', $form);
         $this->assertFormContainsField('notes', $form);

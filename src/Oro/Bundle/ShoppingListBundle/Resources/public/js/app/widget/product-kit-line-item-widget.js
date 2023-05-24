@@ -4,6 +4,8 @@ import messenger from 'oroui/js/messenger';
 import _ from 'underscore';
 import $ from 'jquery';
 
+import 'jquery.validate';
+
 const ProductKitLineItemWidget = DialogWidget.extend({
     options: _.extend({}, DialogWidget.prototype.options, {
         preventModelRemoval: true,
@@ -104,6 +106,10 @@ const ProductKitLineItemWidget = DialogWidget.extend({
             this.actionsEl = $('<div class="form-actions widget-actions"/>').appendTo(
                 this.widget.dialog('actionsContainer')
             );
+            const $extraForm = this.widget.find('[data-extra-form]');
+
+            $extraForm.wrap(`<form id="${$extraForm.data('extra-form')}" />`);
+            $extraForm.parent().validate();
         }
         return this.actionsEl;
     },

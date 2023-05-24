@@ -89,7 +89,8 @@
         'data-page-component-options': {
             productId: lineItem.product.id,
             subtotalUrl: 'oro_shopping_list_frontend_product_kit_line_item_create'
-        }|json_encode
+        }|json_encode,
+        'data-extra-form-selector': '#' ~ extraFormId
     }) %}
     {{ parent_block_widget(block) }}
     {{ form_widget(form._token) }}

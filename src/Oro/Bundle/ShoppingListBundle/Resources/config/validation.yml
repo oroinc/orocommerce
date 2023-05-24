@@ -52,20 +52,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
                 groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
-            - AtLeastOneOf:
-                  constraints:
-                    - Expression:
-                          expression: "!this.product || this.product.isConfigurable()"
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
-                  message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
-                  includeInternalMessages: false
-                  groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
-                  payload:
-                      jsValidation:
-                          type: Range
-                          options:
-                              min: 0
-                              max: 100000000
+            - Expression:
+                expression: "!this.product || this.product.isConfigurable() || this.quantity > 0"
+                message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
+                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
+                payload:
+                    jsValidation:
+                        type: Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero
             - NotBlank:
                 groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
         unit:
@@ -185,13 +178,9 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
         unit:
             - NotNull:
                 groups: [Default, create, update, add_product_kit_line_item]
-            - Sequentially:
-                constraints:
-                    - Expression:
-                        expression: 'this.kitItem or !value'
-                        message: 'oro.shoppinglist.product_kit_item_line_item.unit.kit_item.not_blank.message'
-                    - EqualTo:
-                        propertyPath: kitItem.productUnit
+            - Expression:
+                expression: 'this.kitItem && value == this.kitItem.productUnit'
+                message: 'oro.shoppinglist.product_kit_item_line_item.unit.kit_item.message'
                 groups: [Default, create, update, add_product_kit_line_item]
         sortOrder:
             - Type:

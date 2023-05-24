@@ -53,8 +53,7 @@ oro:
                 status_required.message: "Selection required"
             unit:
                 kit_item:
-                    not_blank:
-                        message: 'Unit cannot be validated without Product Kit Item.'
+                    message: 'Unit must be equal to Product Kit Item unit.'
 
     product_unavailable: "This item is unavailable"
     non_valid_precision: "This value should be decimal with a precision {{ precision }}"
