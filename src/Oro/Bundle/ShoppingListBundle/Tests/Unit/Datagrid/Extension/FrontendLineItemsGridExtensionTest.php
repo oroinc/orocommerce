@@ -15,29 +15,25 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
+class FrontendLineItemsGridExtensionTest extends TestCase
 {
-    /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListRepository;
+    private ShoppingListRepository|MockObject $shoppingListRepository;
 
-    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemRepository;
+    private LineItemRepository|MockObject $lineItemRepository;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
+    private ConfigManager|MockObject $configManager;
 
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
+    private TokenAccessorInterface|MockObject $tokenAccessor;
 
-    /** @var ParameterBag */
-    private $parameters;
+    private ParameterBag $parameters;
 
-    /** @var FrontendLineItemsGridExtension */
-    private $extension;
+    private FrontendLineItemsGridExtension $extension;
 
     protected function setUp(): void
     {
@@ -432,12 +428,14 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         'select' => [
                             '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
                             'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
-                            'WHERE (innerItem.parentProduct = lineItem.parentProduct ' .
-                            'OR innerItem.product = lineItem.product) ' .
+                            'WHERE ('.
+                            '  innerItem.parentProduct = lineItem.parentProduct OR '.
+                            '  (innerItem.product = lineItem.product AND innerItem.checksum = lineItem.checksum)'.
+                            ') ' .
                             'AND innerItem.shoppingList = lineItem.shoppingList ' .
                             'AND innerItem.unit = lineItem.unit) as allLineItemsIds',
                             'GROUP_CONCAT(' .
-                            'COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
+                            '  COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
                             ') as sortSku',
                         ],
                     ],
