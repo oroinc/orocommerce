@@ -5,7 +5,10 @@ namespace Oro\Bundle\ProductBundle\Model;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductLineItem implements ProductLineItemInterface
+/**
+ * Represents a product line item.
+ */
+class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolderAwareInterface
 {
     /**
      * @var mixed
@@ -26,6 +29,8 @@ class ProductLineItem implements ProductLineItemInterface
      * @var float
      */
     protected $quantity = 1;
+
+    private ?ProductLineItemsHolderInterface $lineItemsHolder = null;
 
     /**
      * @param mixed $identifier
@@ -135,5 +140,17 @@ class ProductLineItem implements ProductLineItemInterface
     public function getProductSku()
     {
         return $this->product ? $this->product->getSku() : null;
+    }
+
+    public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
+    {
+        return $this->lineItemsHolder;
+    }
+
+    public function setLineItemsHolder(?ProductLineItemsHolderInterface $lineItemsHolder): ProductLineItem
+    {
+        $this->lineItemsHolder = $lineItemsHolder;
+
+        return $this;
     }
 }

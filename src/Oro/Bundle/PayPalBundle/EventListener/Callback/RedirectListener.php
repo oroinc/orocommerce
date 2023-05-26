@@ -8,7 +8,7 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Listen payment error callbacks from payment and redirect to shipping address url in case when PayPal returns
@@ -18,20 +18,10 @@ class RedirectListener
 {
     const FAILED_SHIPPING_ADDRESS_URL_KEY = 'failedShippingAddressUrl';
 
-    /**
-     * @var Session
-     */
-    protected $session;
-
-    /**
-     * @var PaymentMethodProviderInterface
-     */
-    protected $paymentMethodProvider;
-
-    public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
-    {
-        $this->session = $session;
-        $this->paymentMethodProvider = $paymentMethodProvider;
+    public function __construct(
+        protected RequestStack $requestStack,
+        protected PaymentMethodProviderInterface $paymentMethodProvider
+    ) {
     }
 
     public function onError(CallbackErrorEvent $event)
@@ -75,7 +65,7 @@ class RedirectListener
      */
     protected function setErrorMessage($message)
     {
-        $flashBag = $this->session->getFlashBag();
+        $flashBag = $this->requestStack->getSession()->getFlashBag();
 
         if (!$flashBag->has('error')) {
             $flashBag->add('error', $message);

@@ -8,6 +8,7 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -18,6 +19,9 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
 
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     protected $session;
+
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    protected $requestStack;
 
     /** @var PaymentTransaction */
     protected $paymentTransaction;
@@ -31,12 +35,16 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->messageProvider = $this->createMock(PaymentResultMessageProviderInterface::class);
         $this->paymentTransaction = new PaymentTransaction();
 
         $this->listener = new PayflowExpressCheckoutRedirectListener(
-            $this->session,
+            $this->requestStack,
             $this->paymentMethodProvider,
             $this->messageProvider
         );

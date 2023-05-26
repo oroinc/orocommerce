@@ -44,7 +44,7 @@ class RequestUpdateHandler extends UpdateHandlerFacade
             ));
         }
 
-        $this->session->set('last_success_rfq_id', $rfpRequest->getId());
+        $this->getSession()?->set('last_success_rfq_id', $rfpRequest->getId());
 
         return new RedirectResponse($this->symfonyRouter->generate('oro_rfp_frontend_request_success', []));
     }
@@ -63,7 +63,7 @@ class RequestUpdateHandler extends UpdateHandlerFacade
         if ($request->get('_wid')) {
             $result = parent::constructResponse($update, $request, $saveMessage);
         } else {
-            $this->session->getFlashBag()->add('success', $saveMessage);
+            $this->getSession()?->getFlashBag()->add('success', $saveMessage);
 
             $result = $this->createResponse($entity);
         }

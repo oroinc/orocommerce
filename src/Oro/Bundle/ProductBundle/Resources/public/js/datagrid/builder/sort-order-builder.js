@@ -68,8 +68,12 @@ export default {
 
         options.metadata.columns = updateColumns(options.metadata.columns);
         options.data.data = updateData(options.data.data);
+        const {parseResponseModels} = options.metadata.options;
         Object.assign(options.metadata.options, {
-            parseResponseModels: resp => {
+            parseResponseModels: function(resp) {
+                if (parseResponseModels) {
+                    resp = parseResponseModels.call(this, resp);
+                }
                 return 'data' in resp ? updateData(resp.data) : resp;
             }
         });

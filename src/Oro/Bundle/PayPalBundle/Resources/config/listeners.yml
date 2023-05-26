@@ -3,7 +3,7 @@ services:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener'
         lazy: true
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@oro_paypal.method.provider.payflow_gateway.credit_card'
         calls:
             - ['setLogger', ['@logger']]
@@ -15,7 +15,7 @@ services:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener'
         lazy: true
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@oro_paypal.method.provider.payments_pro.credit_card'
         calls:
             - ['setLogger', ['@logger']]
@@ -71,7 +71,7 @@ services:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener'
         lazy: true
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
             - '@oro_payment.provider.result_messages'
         tags:
@@ -82,7 +82,7 @@ services:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener'
         lazy: true
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@oro_paypal.method.provider.payments_pro.express_checkout'
             - '@oro_payment.provider.result_messages'
         tags:

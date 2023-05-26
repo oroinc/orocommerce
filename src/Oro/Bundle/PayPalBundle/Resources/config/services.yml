@@ -11,7 +11,7 @@ services:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\RedirectListener'
         lazy: true
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@oro_paypal.method.provider.express_checkout.composite'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }

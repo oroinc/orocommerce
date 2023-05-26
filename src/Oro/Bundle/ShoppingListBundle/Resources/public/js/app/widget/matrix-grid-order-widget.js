@@ -2,12 +2,12 @@ define(function(require) {
     'use strict';
 
     const routing = require('routing');
-    const FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    const DialogWidget = require('oro/dialog-widget');
     const mediator = require('oroui/js/mediator');
     const _ = require('underscore');
 
-    const MatrixGridOrderWidget = FrontendDialogWidget.extend({
-        optionNames: FrontendDialogWidget.prototype.optionNames.concat([
+    const MatrixGridOrderWidget = DialogWidget.extend({
+        optionNames: DialogWidget.prototype.optionNames.concat([
             'shoppingListId'
         ]),
 
@@ -41,7 +41,6 @@ define(function(require) {
             options.incrementalPosition = false;
             options.dialogOptions = {
                 modal: true,
-                title: null,
                 resizable: false,
                 width: 'auto',
                 autoResize: true,

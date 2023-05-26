@@ -39,6 +39,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
         string $redirectRoute,
         ?string $routeParameters,
         ?array $queryParameters,
+        array $serverParameters,
         array $expectedResult,
         string $current
     ): void {
@@ -57,7 +58,9 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'redirectRoute' => $redirectRoute,
                 'redirectRouteParameters' => $routeParameters,
                 'redirectQueryParameters' => json_encode($queryParameters, JSON_THROW_ON_ERROR)
-            ]
+            ],
+            [],
+            $serverParameters
         );
 
         $result = $this->client->getResponse();
@@ -88,6 +91,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'redirectRoute' => 'oro_frontend_root',
                 'routeParameters' => null,
                 'queryParameters' => null,
+                'serverParameters' => [],
                 'expectedResult' => ['success' => true, 'redirectTo' => '/'],
                 'current' => 'en_US'
             ],
@@ -96,6 +100,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'redirectRoute' => 'oro_cms_frontend_page_view',
                 'routeParameters' => LoadPageData::PAGE_3,
                 'queryParameters' => ['random' => '1234567890'],
+                'serverParameters' => [],
                 'expectedResult' => [
                     'success' => true,
                     'redirectTo' => 'http://localhost/localized-slug/en_ca/page3?random=1234567890'
@@ -107,7 +112,29 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'redirectRoute' => 'oro_frontend_root',
                 'routeParameters' => null,
                 'queryParameters' => null,
+                'serverParameters' => [],
                 'expectedResult' => ['success' => false],
+                'current' => 'en_CA'
+            ],
+            'Set to en and redirect to root when site installed in sub-directory' => [
+                'code' => 'en',
+                'redirectRoute' => 'oro_frontend_root',
+                'routeParameters' => null,
+                'queryParameters' => null,
+                'serverParameters' => ['WEBSITE_PATH' => '/test'],
+                'expectedResult' => ['success' => true, 'redirectTo' => '/test/'],
+                'current' => 'en_US'
+            ],
+            'Set to en_CA and redirect to localized page when site installed in sub-directory' => [
+                'code' => 'en_CA',
+                'redirectRoute' => 'oro_cms_frontend_page_view',
+                'routeParameters' => LoadPageData::PAGE_3,
+                'queryParameters' => ['random' => '1234567890'],
+                'serverParameters' => ['WEBSITE_PATH' => '/test'],
+                'expectedResult' => [
+                    'success' => true,
+                    'redirectTo' => 'http://localhost/test/localized-slug/en_ca/page3?random=1234567890'
+                ],
                 'current' => 'en_CA'
             ],
         ];

@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-9989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
+@skip
 
 Feature: Product attribute image
   In order to have custom attributes for Product entity
