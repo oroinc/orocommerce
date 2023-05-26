@@ -161,12 +161,8 @@
             }
         }
 
-        &-product + &-entry {
-            border-top: $product-kit-items-mobile-table-border;
-        }
-
         &.product-last-in-group {
-            border-bottom: $product-kit-items-table-border;
+            border-bottom: $product-kit-items-mobile-table-border;
         }
     }
 }
