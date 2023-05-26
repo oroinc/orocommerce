@@ -1100,6 +1100,11 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                         'source' => ['pointer' => '/included/0/attributes/quantity'],
                     ],
                     [
+                        'title' => 'expression constraint',
+                        'detail' => 'Quantity cannot be validated without Product Kit Item.',
+                        'source' => ['pointer' => '/included/0/attributes/quantity'],
+                    ],
+                    [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/included/0/relationships/kitItem/data'],

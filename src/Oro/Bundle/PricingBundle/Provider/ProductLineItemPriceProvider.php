@@ -86,6 +86,10 @@ class ProductLineItemPriceProvider implements ProductLineItemPriceProviderInterf
 
         $productLineItemsPrices = [];
         foreach ($lineItems as $key => $lineItem) {
+            if (!isset($productsPriceCriteria[$key])) {
+                continue;
+            }
+
             $productPriceCriterionIdentifier = $productsPriceCriteria[$key]?->getIdentifier();
             if (!isset($matchedProductPrices[$productPriceCriterionIdentifier])) {
                 continue;

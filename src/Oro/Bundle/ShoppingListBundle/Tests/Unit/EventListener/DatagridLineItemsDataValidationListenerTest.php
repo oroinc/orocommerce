@@ -7,10 +7,10 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
-use Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -71,7 +71,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             ->expects(self::once())
             ->method('validate')
             ->with(
-                new ShoppingListLineItemsHolder(new ArrayCollection($lineItems)),
+                (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems)),
                 null,
                 ['Default', 'datagrid_line_items_data']
             )
@@ -95,7 +95,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
         $lineItem2 = (new LineItemStub())->setId(20);
         $lineItems = [$lineItem1->getId() => $lineItem1, $lineItem2->getId() => $lineItem2];
         $event = new DatagridLineItemsDataEvent($lineItems, [], $this->createMock(Datagrid::class), []);
-        $lineItemsHolder = new ShoppingListLineItemsHolder(new ArrayCollection($lineItems));
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
         $constraintViolationList = new ConstraintViolationList();
         $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
         $constraintViolationList->add($this->createViolation('warning2', 'warning', $lineItem2, $lineItemsHolder));
@@ -141,7 +141,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             $this->createMock(Datagrid::class),
             []
         );
-        $lineItemsHolder = new ShoppingListLineItemsHolder(new ArrayCollection($lineItems));
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
         $constraintViolationList = new ConstraintViolationList();
         $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
 
@@ -190,7 +190,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             $this->createMock(Datagrid::class),
             []
         );
-        $lineItemsHolder = new ShoppingListLineItemsHolder(new ArrayCollection($lineItems));
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
         $constraintViolationList = new ConstraintViolationList();
         $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
 
@@ -242,7 +242,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             $this->createMock(Datagrid::class),
             []
         );
-        $lineItemsHolder = new ShoppingListLineItemsHolder(new ArrayCollection($lineItems));
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
         $constraintViolationList = new ConstraintViolationList();
         $constraintViolationList->add($this->createViolation('warning1', 'warning', $lineItem1, $lineItemsHolder));
 

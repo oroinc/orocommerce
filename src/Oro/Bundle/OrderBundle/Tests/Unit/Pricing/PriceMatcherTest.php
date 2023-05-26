@@ -14,25 +14,24 @@ use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PriceMatcherTest extends \PHPUnit\Framework\TestCase
+class PriceMatcherTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $provider;
+    private MatchingPriceProvider|MockObject $provider;
 
-    /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceScopeCriteriaFactory;
+    private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
 
-    /** @var PriceMatcher */
-    private $matcher;
+    private PriceMatcher $matcher;
 
-    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+    private ProductPriceCriteriaFactory|MockObject $productPriceCriteriaFactory;
 
-    private OrderLineItem $orderLineItem;
+    private OrderLineItem|MockObject $orderLineItem;
 
-    private Order $order;
+    private Order|MockObject $order;
 
     private ProductPriceCriteria $productPriceCriteria;
 
@@ -53,7 +52,7 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetMatchingPrices()
+    public function testGetMatchingPrices(): void
     {
         $lineItemQuantity = 5;
         $productUnitCode = 'code';
@@ -98,13 +97,13 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         ];
 
         $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->priceScopeCriteriaFactory->expects($this->once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->with($order)
             ->willReturn($scopeCriteria);
 
         $matchedPrices = ['matched', 'prices'];
-        $this->provider->expects($this->once())
+        $this->provider->expects(self::once())
             ->method('getMatchingPrices')
             ->with($expectedLineItemsArray, $scopeCriteria)
             ->willReturn($matchedPrices);
@@ -112,7 +111,7 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         $this->matcher->getMatchingPrices($order);
     }
 
-    public function testThatOrderLinesAreFilledWithCurrencyAndValue()
+    public function testThatOrderLinesAreFilledWithCurrencyAndValue(): void
     {
         $identifier = 'identifier';
 
@@ -128,18 +127,18 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $this->productPriceCriteriaFactory->expects($this->once())->method('createListFromProductLineItems')->with(
-            $this->equalTo($orderLineItems),
-            $this->equalTo('USD')
+        $this->productPriceCriteriaFactory->expects(self::once())->method('createListFromProductLineItems')->with(
+            self::equalTo($orderLineItems),
+            self::equalTo('USD')
         )->willReturn([$this->productPriceCriteria]);
 
-        $this->orderLineItem->expects($this->once())->method('setCurrency')->with('USD');
-        $this->orderLineItem->expects($this->once())->method('setValue')->with('123');
+        $this->orderLineItem->expects(self::once())->method('setCurrency')->with('USD');
+        $this->orderLineItem->expects(self::once())->method('setValue')->with('123');
 
         $this->matcher->addMatchingPrices($this->order);
     }
 
-    public function testThatOrderLineNotFilledWithValuesWhenProductPriceCriteriaIsNotCreated()
+    public function testThatOrderLineNotFilledWithValuesWhenProductPriceCriteriaIsNotCreated(): void
     {
         $identifier = 'identifier';
 
@@ -153,16 +152,16 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $this->productPriceCriteriaFactory->expects($this->once())
+        $this->productPriceCriteriaFactory->expects(self::once())
             ->method('createListFromProductLineItems')
             ->willReturn([]);
-        $this->orderLineItem->expects($this->never())->method('setCurrency');
-        $this->orderLineItem->expects($this->never())->method('setValue');
+        $this->orderLineItem->expects(self::never())->method('setCurrency');
+        $this->orderLineItem->expects(self::never())->method('setValue');
 
         $this->matcher->addMatchingPrices($this->order);
     }
 
-    public function testThatOrderLineNotFilledWithValuesWhenIdentifiersAreDifferent()
+    public function testThatOrderLineNotFilledWithValuesWhenIdentifiersAreDifferent(): void
     {
         $identifier1 = 'identifier1';
         $identifier2 = 'identifier2';
@@ -175,12 +174,12 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         ]);
         $this->productPriceCriteria->method('getIdentifier')->willReturn($identifier2);
 
-        $this->productPriceCriteriaFactory->expects($this->once())
+        $this->productPriceCriteriaFactory->expects(self::once())
             ->method('createListFromProductLineItems')
             ->willReturn([$this->productPriceCriteria]);
 
-        $this->orderLineItem->expects($this->never())->method('setCurrency');
-        $this->orderLineItem->expects($this->never())->method('setValue');
+        $this->orderLineItem->expects(self::never())->method('setCurrency');
+        $this->orderLineItem->expects(self::never())->method('setValue');
 
         $this->matcher->addMatchingPrices($this->order);
     }

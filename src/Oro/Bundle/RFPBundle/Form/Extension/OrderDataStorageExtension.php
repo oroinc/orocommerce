@@ -28,7 +28,6 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
     private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
 
-
     public function __construct(
         RequestStack $requestStack,
         ProductPriceProviderInterface $productPriceProvider,

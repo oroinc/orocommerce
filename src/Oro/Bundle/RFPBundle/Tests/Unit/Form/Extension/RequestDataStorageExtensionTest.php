@@ -10,7 +10,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -21,7 +21,7 @@ use Twig\Environment;
 
 class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
-    /** @var ProductAvailabilityProvider|MockObject */
+    /** @var ProductRFPAvailabilityProvider|MockObject */
     private $productAvailabilityProvider;
 
     /** @var Environment|MockObject */
@@ -42,7 +42,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         parent::setUp();
 
-        $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
+        $this->productAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(self::any())
             ->method('trans')

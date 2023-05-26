@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 
 /**

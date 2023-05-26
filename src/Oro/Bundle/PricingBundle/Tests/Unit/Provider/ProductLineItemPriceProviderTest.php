@@ -17,8 +17,8 @@ use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProvider;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemsHolderCurrencyProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
-use Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -82,6 +82,44 @@ class ProductLineItemPriceProviderTest extends TestCase
             ->expects(self::once())
             ->method('createListFromProductLineItems')
             ->with([10 => $lineItem1, 20 => $lineItem2], $currency)
+            ->willReturn([]);
+
+        self::assertEquals(
+            [],
+            $this->provider->getProductLineItemsPrices(
+                [10 => $lineItem1, 20 => $lineItem2],
+                $priceScopeCriteria,
+                $currency
+            )
+        );
+    }
+
+    public function testGetProductLineItemsPricesWhenNoSomeProductPriceCriteria(): void
+    {
+        $lineItem1 = new ProductLineItem(1);
+        $lineItem2 = new ProductLineItem(2);
+        $priceScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $currency = 'USD';
+
+        $this->userCurrencyManager
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->priceScopeCriteriaRequestHandler
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $productLineItem2PriceCriteria = $this->createMock(ProductPriceCriteria::class);
+        $this->productPriceCriteriaFactory
+            ->expects(self::once())
+            ->method('createListFromProductLineItems')
+            ->with([10 => $lineItem1, 20 => $lineItem2], $currency)
+            ->willReturn([20 => $productLineItem2PriceCriteria]);
+
+        $this->matchedProductPriceProvider
+            ->expects(self::once())
+            ->method('getMatchedProductPrices')
+            ->with([20 => $productLineItem2PriceCriteria], $priceScopeCriteria)
             ->willReturn([]);
 
         self::assertEquals(
@@ -423,7 +461,8 @@ class ProductLineItemPriceProviderTest extends TestCase
     {
         $lineItem1 = new ProductLineItem(1);
         $lineItem2 = new ProductLineItem(2);
-        $lineItemsHolder = new ShoppingListLineItemsHolder(new ArrayCollection([10 => $lineItem1, 20 => $lineItem2]));
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())
+            ->setLineItems(new ArrayCollection([10 => $lineItem1, 20 => $lineItem2]));
         $priceScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
         $currency = 'CAD';
 
@@ -501,7 +540,8 @@ class ProductLineItemPriceProviderTest extends TestCase
     {
         $lineItem1 = new ProductLineItem(1);
         $lineItem2 = new ProductLineItem(2);
-        $lineItemsHolder = new ShoppingListLineItemsHolder(new ArrayCollection([10 => $lineItem1, 20 => $lineItem2]));
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())
+            ->setLineItems(new ArrayCollection([10 => $lineItem1, 20 => $lineItem2]));
         $priceScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
         $currency = 'USD';
 

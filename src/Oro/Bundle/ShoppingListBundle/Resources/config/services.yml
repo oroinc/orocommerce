@@ -350,7 +350,7 @@ services:
     oro_shopping_list.condition.rfp_allowed:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
         arguments:
-            - '@oro_rfp.provider.product_availability'
+            - '@oro_rfp.provider.product_rfp_availability'
         tags:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
 

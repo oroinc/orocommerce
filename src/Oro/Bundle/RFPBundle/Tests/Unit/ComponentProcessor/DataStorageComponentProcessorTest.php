@@ -8,7 +8,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +37,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $urlGenerator;
 
-    /** @var ProductAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductRFPAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productAvailabilityProvider;
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
@@ -53,7 +53,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->session = $this->createMock(Session::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
+        $this->productAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $requestStack = $this->createMock(RequestStack::class);

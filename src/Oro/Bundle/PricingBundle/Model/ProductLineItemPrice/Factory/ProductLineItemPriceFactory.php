@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
- * Creates product price criteria from a product line item by delegating calls to inner factories.
+ * Creates product line item price from a product line item and product price by delegating calls to inner factories.
  */
 class ProductLineItemPriceFactory implements ProductLineItemPriceFactoryInterface
 {

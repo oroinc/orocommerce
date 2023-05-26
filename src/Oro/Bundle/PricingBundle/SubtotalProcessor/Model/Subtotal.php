@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * Represents subtotal information from shopping list
@@ -34,10 +33,6 @@ class Subtotal
      * @var string
      */
     protected $currency;
-
-    protected ?Price $price = null;
-
-    protected ?float $quantity = null;
 
     /**
      * @var BasePriceList
@@ -78,9 +73,6 @@ class Subtotal
      * @var bool
      */
     protected $removable = false;
-
-    /** @var array<string,Subtotal> */
-    protected array $lineItemsSubtotals = [];
 
     /**
      * @return string
@@ -155,30 +147,6 @@ class Subtotal
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-
-        return $this;
-    }
-
-    public function getPrice(): ?Price
-    {
-        return $this->price;
-    }
-
-    public function setPrice(?Price $price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    public function getQuantity(): ?float
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(?float $quantity): self
-    {
-        $this->quantity = $quantity;
 
         return $this;
     }
@@ -301,8 +269,6 @@ class Subtotal
             'amount' => $this->getAmount(),
             'signedAmount' => $this->getSignedAmount(),
             'currency' => $this->getCurrency(),
-            'price' => (array) $this->getPrice()?->jsonSerialize(),
-            'quantity' => $this->getQuantity(),
             'visible' => $this->isVisible(),
             'data' => $this->getData(),
         ];
@@ -349,25 +315,5 @@ class Subtotal
         $this->removable = $removable;
 
         return $this;
-    }
-
-    /**
-     * @return array<string,Subtotal>
-     */
-    public function getLineItemsSubtotals(): array
-    {
-        return $this->lineItemsSubtotals;
-    }
-
-    public function addLineItemSubtotal(ProductLineItemInterface $lineItem, Subtotal $subtotal): self
-    {
-        $this->lineItemsSubtotals[spl_object_hash($lineItem)] = $subtotal;
-
-        return $this;
-    }
-
-    public function getLineItemSubtotal(ProductLineItemInterface $lineItem): ?Subtotal
-    {
-        return $this->lineItemsSubtotals[spl_object_hash($lineItem)] ?? null;
     }
 }

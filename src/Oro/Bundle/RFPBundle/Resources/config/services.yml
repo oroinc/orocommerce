@@ -22,7 +22,7 @@ services:
             - '@request_stack'
             - '@translator'
             - '@router'
-            - '@oro_rfp.provider.product_availability'
+            - '@oro_rfp.provider.product_rfp_availability'
             - '@oro_featuretoggle.checker.feature_checker'
         calls:
             - [setRedirectRouteName, ['oro_rfp_frontend_request_create']]
@@ -119,8 +119,8 @@ services:
         tags:
             - { name: oro_multi_currency.currency_checker_provider }
 
-    oro_rfp.provider.product_availability:
-       class: Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider
+    oro_rfp.provider.product_rfp_availability:
+       class: Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider
        arguments:
            - '@oro_config.manager'
            - '@doctrine'

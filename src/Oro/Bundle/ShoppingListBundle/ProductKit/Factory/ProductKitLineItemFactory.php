@@ -57,12 +57,6 @@ class ProductKitLineItemFactory
         }
 
         $minimumQuantity = $lineItem->getQuantity();
-        if ($productUnit !== null) {
-            $productUnitPrecision = $product->getUnitPrecision($productUnit->getCode());
-            if ($productUnitPrecision !== null) {
-                $minimumQuantity = 1 / (10 ** $productUnitPrecision->getPrecision());
-            }
-        }
 
         $lineItem->setQuantity($quantity ?? $minimumQuantity);
         $this->addKitItemLineItemsAvailableForPurchase($lineItem);

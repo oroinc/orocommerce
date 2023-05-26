@@ -40,9 +40,9 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     private AclHelper|MockObject $aclHelper;
 
-    private QuoteProductPriceProvider $quoteProductPriceProvider;
+    private ProductPriceCriteriaFactory|MockObject $productPriceCriteriaFactory;
 
-    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+    private QuoteProductPriceProvider $quoteProductPriceProvider;
 
     protected function setUp(): void
     {

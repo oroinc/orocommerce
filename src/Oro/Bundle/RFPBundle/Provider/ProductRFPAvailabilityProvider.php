@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 /**
  * Provides a set of methods to check whether products can be added to RFP.
  */
-class ProductAvailabilityProvider
+class ProductRFPAvailabilityProvider
 {
     private ConfigManager $configManager;
     private ManagerRegistry $doctrine;

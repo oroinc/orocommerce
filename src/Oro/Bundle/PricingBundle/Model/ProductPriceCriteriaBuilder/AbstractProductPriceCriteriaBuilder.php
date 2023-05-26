@@ -33,7 +33,7 @@ abstract class AbstractProductPriceCriteriaBuilder implements
 
     protected ?ProductUnit $productUnit = null;
 
-    protected ?float $quantity = null;
+    protected ?float $quantity = 0.0;
 
     protected ?string $currency = null;
 

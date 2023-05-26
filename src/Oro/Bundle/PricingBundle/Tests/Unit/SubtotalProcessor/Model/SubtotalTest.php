@@ -6,7 +6,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPricedStub;
 use PHPUnit\Framework\TestCase;
 
 class SubtotalTest extends TestCase
@@ -22,26 +21,14 @@ class SubtotalTest extends TestCase
         self::assertEquals('Subtotal', $subtotal->setLabel('Subtotal')->getLabel());
         self::assertEquals('USD', $subtotal->setCurrency('USD')->getCurrency());
         self::assertEquals(999.99, $subtotal->setAmount(999.99)->getAmount());
-        self::assertEquals(true, $subtotal->setVisible(true)->isVisible());
-        self::assertEquals(false, $subtotal->setRemovable(false)->isRemovable());
+        self::assertTrue($subtotal->setVisible(true)->isVisible());
+        self::assertFalse($subtotal->setRemovable(false)->isRemovable());
         self::assertEquals(['some value'], $subtotal->setData(['some value'])->getData());
         self::assertEquals(987, $subtotal->setSortOrder(987)->getSortOrder());
         self::assertEquals(
             'test',
             $subtotal->setPriceList((new CombinedPriceList())->setName('test'))
                 ->getPriceList()->getName()
-        );
-        self::assertEquals(
-            Price::create(12.345, 'USD'),
-            $subtotal->setPrice(Price::create(12.345, 'USD'))->getPrice()
-        );
-        self::assertEquals(34.567, $subtotal->setQuantity(34.567)->getQuantity());
-
-        $lineItemSubtotal = new Subtotal();
-        $lineItem = new LineItemNotPricedStub();
-        self::assertEquals(
-            $lineItemSubtotal,
-            $subtotal->addLineItemSubtotal($lineItem, $lineItemSubtotal)->getLineItemSubtotal($lineItem)
         );
     }
 
@@ -58,8 +45,6 @@ class SubtotalTest extends TestCase
                 'visible' => $subtotal->isVisible(),
                 'data' => $subtotal->getData(),
                 'signedAmount' => $subtotal->getSignedAmount(),
-                'price' => (array)$subtotal->getPrice()?->jsonSerialize(),
-                'quantity' => $subtotal->getQuantity(),
             ],
             $subtotal->toArray()
         );

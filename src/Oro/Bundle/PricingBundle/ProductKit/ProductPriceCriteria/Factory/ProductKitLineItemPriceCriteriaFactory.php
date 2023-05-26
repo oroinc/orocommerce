@@ -42,7 +42,7 @@ class ProductKitLineItemPriceCriteriaFactory implements ProductLineItemPriceCrit
                     $kitItemLineItem->getKitItem(),
                     $kitItemLineItem->getProduct(),
                     $kitItemLineItem->getProductUnit(),
-                    $kitItemLineItem->getQuantity()
+                    (float)$kitItemLineItem->getQuantity()
                 );
             }
         }

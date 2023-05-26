@@ -192,8 +192,3 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                 # Maximum of 4-byte integer value.
                 max: 2147483647
                 groups: [Default, create, update, add_product_kit_line_item]
-
-Oro\Bundle\ShoppingListBundle\Model\ShoppingListLineItemsHolder:
-    properties:
-        lineItems:
-            - Valid: ~

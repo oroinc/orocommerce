@@ -67,7 +67,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $expected = (new LineItem())
             ->setProduct($product)
             ->setUnit($productUnitItem)
-            ->setQuantity(0.01);
+            ->setQuantity(1);
 
         self::assertEquals($expected, $this->factory->createProductKitLineItem($product));
     }

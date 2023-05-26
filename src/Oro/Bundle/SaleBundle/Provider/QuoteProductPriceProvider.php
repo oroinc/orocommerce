@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -144,7 +145,8 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
-     * @return array
+     *
+     * @return array<ProductPriceCriteria>
      */
     protected function getProductsPriceCriteria(Quote $quote)
     {

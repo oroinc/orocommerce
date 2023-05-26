@@ -225,7 +225,6 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
                 ],
             ]);
 
-
         $kitItem2PriceDTO = new ProductKitItemPriceDTO(
             $kitItem2,
             $kitItem2Product,
