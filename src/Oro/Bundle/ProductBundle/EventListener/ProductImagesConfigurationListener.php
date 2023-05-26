@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -19,24 +19,14 @@ class ProductImagesConfigurationListener
     const MESSAGE_TYPE = 'warning';
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var Session
-     */
-    private $session;
-
-    /**
      * @var bool
      */
     private $spaceWarningAdded = false;
 
-    public function __construct(Session $session, TranslatorInterface $translator)
-    {
-        $this->session = $session;
-        $this->translator = $translator;
+    public function __construct(
+        private RequestStack $requestStack,
+        protected TranslatorInterface $translator
+    ) {
     }
 
     public function afterUpdate(ConfigUpdateEvent $event)
@@ -44,7 +34,10 @@ class ProductImagesConfigurationListener
         $changeSet = $event->getChangeSet();
         foreach ($changeSet as $configKey => $change) {
             if (str_contains($configKey, self::PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX)) {
-                $this->session->getFlashBag()->add(self::MESSAGE_TYPE, $this->getNotice($event));
+                $request = $this->requestStack->getCurrentRequest();
+                if (null !== $request && $request->hasSession()) {
+                    $this->requestStack->getSession()->getFlashBag()->add(self::MESSAGE_TYPE, $this->getNotice($event));
+                }
                 $this->addSpaceWarning();
                 break;
             }
@@ -70,8 +63,9 @@ class ProductImagesConfigurationListener
 
     private function addSpaceWarning()
     {
-        if (!$this->spaceWarningAdded) {
-            $this->session->getFlashBag()->add(
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$this->spaceWarningAdded && null !== $request && $request->hasSession()) {
+            $request->getSession()->getFlashBag()->add(
                 self::MESSAGE_TYPE,
                 $this->translator->trans(self::SPACE_NOTICE_TEXT_TRANS_KEY)
             );

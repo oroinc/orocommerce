@@ -16,6 +16,7 @@ Feature: Guest shopping list in the list block
     And I enable configuration options:
       | oro_shopping_list.availability_for_guests |
       | oro_checkout.guest_checkout               |
+    And I wait for a "search_reindex" job
 
   Scenario: Create shopping list on frontend
     Given I proceed as the Buyer
@@ -23,7 +24,7 @@ Feature: Guest shopping list in the list block
     Then I should see "Shopping list"
     And I should not see "In Shopping List"
     When type "PSKU1" in "search"
-    When I click "Add to Shopping List"
+    And I click "Add to Shopping List" for "PSKU1" product
     Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     When I am on homepage

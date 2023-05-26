@@ -5,7 +5,7 @@ define(function(require) {
     const $ = require('jquery');
     const actionsTemplate = require('tpl-loader!oroconsent/templates/frontend-dialog/dialog-actions.html');
     const BaseView = require('oroui/js/app/views/base/view');
-    const FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
+    const DialogWidget = require('oro/dialog-widget');
 
     const BaseConsentItemView = BaseView.extend({
         optionNames: BaseView.prototype.optionNames.concat([
@@ -86,7 +86,7 @@ define(function(require) {
          */
         renderDialogWidget: function() {
             this._toggleSubmitButtonOnce = true;
-            this.subview('popup', new FrontendDialogWidget({
+            this.subview('popup', new DialogWidget({
                 autoRender: true,
                 url: this.cmsPageData.url,
                 title: this.consentTitle,
@@ -94,7 +94,6 @@ define(function(require) {
                 renderActionsFromTemplate: true,
                 actionsTemplate: actionsTemplate,
                 staticPage: true,
-                fullscreenMode: false,
                 dialogOptions: {
                     modal: true,
                     resizable: true,
@@ -110,11 +109,11 @@ define(function(require) {
                 this.stopListening(this.subview('popup'));
             };
             this.listenToOnce(this.subview('popup'), {
-                'frontend-dialog:accept': handleFirst.bind(void 0, true),
-                'frontend-dialog:cancel': handleFirst.bind(void 0, false),
-                'frontend-dialog:close': handleFirst.bind(void 0, false),
-                'dispose': handleFirst.bind(void 0, false),
-                'renderComplete': this.onRenderComplete
+                accept: handleFirst.bind(void 0, true),
+                cancel: handleFirst.bind(void 0, false),
+                close: handleFirst.bind(void 0, false),
+                dispose: handleFirst.bind(void 0, false),
+                renderComplete: this.onRenderComplete
             });
         },
 

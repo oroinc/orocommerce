@@ -11,7 +11,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -21,41 +21,17 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
 {
     const SESSION_LOCALIZATIONS = 'localizations_by_website';
 
-    /** @var Session */
-    protected $session;
-
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @var WebsiteManager */
-    protected $websiteManager;
-
-    /** @var LocalizationManager */
-    protected $localizationManager;
-
     /** @var array */
     private $currentLocalizations = [];
 
     public function __construct(
-        Session $session,
-        TokenStorageInterface $tokenStorage,
-        ManagerRegistry $doctrine,
-        ConfigManager $configManager,
-        WebsiteManager $websiteManager,
-        LocalizationManager $localizationManager
+        protected RequestStack $requestStack,
+        protected TokenStorageInterface $tokenStorage,
+        protected ManagerRegistry $doctrine,
+        protected ConfigManager $configManager,
+        protected WebsiteManager $websiteManager,
+        protected LocalizationManager $localizationManager
     ) {
-        $this->session = $session;
-        $this->tokenStorage = $tokenStorage;
-        $this->doctrine = $doctrine;
-        $this->configManager = $configManager;
-        $this->websiteManager = $websiteManager;
-        $this->localizationManager = $localizationManager;
     }
 
     /**
@@ -84,6 +60,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
 
     /**
      * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getCurrentLocalization(Website $website = null): ?Localization
     {
@@ -103,12 +80,13 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
 
         $localization = null;
         $enabledLocalizations = $this->getEnabledLocalizations();
+        $request = $this->requestStack->getCurrentRequest();
         if ($userId !== 0) {
             $userSettings = $user->getWebsiteSettings($website);
             if ($userSettings) {
                 $localization = $userSettings->getLocalization();
             }
-        } elseif ($this->session->isStarted()) {
+        } elseif (null !== $request && $request->hasSession() && $request->getSession()->isStarted()) {
             $localization = $enabledLocalizations[$this->getSessionLocalizationIdByWebsiteId($websiteId)] ?? null;
         }
 
@@ -169,7 +147,10 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
         } else {
             $sessionLocalizations = $this->getSessionLocalizations();
             $sessionLocalizations[$website->getId()] = $localization->getId();
-            $this->session->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);
+            $request = $this->requestStack->getCurrentRequest();
+            if (null !== $request && $request->hasSession()) {
+                $request->getSession()->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);
+            }
         }
     }
 
@@ -197,7 +178,12 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
      */
     protected function getSessionLocalizations()
     {
-        return (array)$this->session->get(self::SESSION_LOCALIZATIONS);
+        $request = $this->requestStack->getCurrentRequest();
+        if (null === $request || !$request->hasSession()) {
+            return [];
+        }
+
+        return (array)$request->getSession()->get(self::SESSION_LOCALIZATIONS);
     }
 
     private function getSessionLocalizationIdByWebsiteId(int $websiteId): int

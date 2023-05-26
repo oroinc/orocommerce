@@ -13,6 +13,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 
 /**
  * Represents checkout item.
@@ -31,6 +33,7 @@ class CheckoutLineItem implements
     PriceAwareInterface,
     PriceTypeAwareInterface,
     ProductLineItemInterface,
+    ProductLineItemsHolderAwareInterface,
     ShippingAwareInterface
 {
     /**
@@ -630,5 +633,10 @@ class CheckoutLineItem implements
     public function hasShippingMethodData(): bool
     {
         return (bool)$this->getShippingMethod() && (bool)$this->getShippingMethodType();
+    }
+
+    public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
+    {
+        return $this->checkout;
     }
 }

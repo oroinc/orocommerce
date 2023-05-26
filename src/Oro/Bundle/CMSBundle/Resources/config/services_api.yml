@@ -74,7 +74,7 @@ services:
             - '@oro_api.entity_description_provider'
             - '@file_locator'
         tags:
-            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&descriptions', priority: -220 }
+            - { name: oro.api.processor, action: get_config, extra: 'descriptions&!identifier_fields_only', priority: -220 }
 
     oro_cms.api.compute_rendered_wysiwyg_fields:
         class: Oro\Bundle\CMSBundle\Api\Processor\ComputeRenderedWYSIWYGFields

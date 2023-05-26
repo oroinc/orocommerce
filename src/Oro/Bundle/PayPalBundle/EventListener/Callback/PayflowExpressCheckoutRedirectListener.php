@@ -6,34 +6,18 @@ use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Handle PayPal express checkout response.
  */
 class PayflowExpressCheckoutRedirectListener
 {
-    /** @var Session */
-    private $session;
-
-    /**
-     * @var PaymentMethodProviderInterface
-     */
-    protected $paymentMethodProvider;
-
-    /**
-     * @var PaymentResultMessageProviderInterface
-     */
-    protected $messageProvider;
-
     public function __construct(
-        Session $session,
-        PaymentMethodProviderInterface $paymentMethodProvider,
-        PaymentResultMessageProviderInterface $messageProvider
+        private RequestStack $requestStack,
+        private PaymentMethodProviderInterface $paymentMethodProvider,
+        private PaymentResultMessageProviderInterface $messageProvider
     ) {
-        $this->session = $session;
-        $this->paymentMethodProvider = $paymentMethodProvider;
-        $this->messageProvider = $messageProvider;
     }
 
     public function onReturn(AbstractCallbackEvent $event)
@@ -59,7 +43,7 @@ class PayflowExpressCheckoutRedirectListener
         $paymentTransaction = $event->getPaymentTransaction();
         $response = $paymentTransaction->getResponse();
         if (!empty($response['RESPMSG']) && strpos($response['RESPMSG'], '10486') !== false) {
-            $flashBag = $this->session->getFlashBag();
+            $flashBag = $this->requestStack->getSession()->getFlashBag();
             $flashBag->add('warning', 'oro.paypal.result.funding_decline_error');
         }
     }
@@ -71,7 +55,7 @@ class PayflowExpressCheckoutRedirectListener
         if (!empty($transactionOptions['failureUrl'])) {
             $event->setResponse(new RedirectResponse($transactionOptions['failureUrl']));
 
-            $flashBag = $this->session->getFlashBag();
+            $flashBag = $this->requestStack->getSession()->getFlashBag();
             if (!$flashBag->has('error')) {
                 $flashBag->add('error', $this->messageProvider->getErrorMessage($paymentTransaction));
             }

@@ -736,7 +736,6 @@ services:
         lazy: true
         arguments:
             - '@request_stack'
-            - '@session'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_forgot_password_check_email }
 

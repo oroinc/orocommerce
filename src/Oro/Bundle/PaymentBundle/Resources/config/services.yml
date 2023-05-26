@@ -147,7 +147,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener'
         lazy: true
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@oro_payment.provider.result_messages'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 10 }

@@ -49,7 +49,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Manager\UserCurrencyManager'
         public: true
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@security.token_storage'
             - '@doctrine'
             - '@oro_currency.config.currency'
@@ -315,7 +315,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_pricing.cache.rule_cache'
-            - '@session'
+            - '@request_stack'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
@@ -1555,6 +1555,7 @@ services:
         class: Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener
         arguments:
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+            - '@oro_product.model.product_line_items_holder_factory'
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_locale.formatter.number'
         tags:

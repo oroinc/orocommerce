@@ -1,0 +1,113 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAddressNancyJSalleeFixture.yml'
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    product1PriceDefault:
+        value: '12.3456'
+        currency: 'USD'
+    product1PriceAmandaRCole:
+        value: '1.2345'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceListDefault:
+        name: 'Default Price List'
+        __calls:
+            -   setCurrencies: [ [ 'USD' ] ]
+        active: true
+        organization: '@organization'
+    priceListAmandaRCole:
+        name: 'AmandaRCOle Price List'
+        __calls:
+            -   setCurrencies: [ [ 'USD' ] ]
+        active: true
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListDefaultToProduct:
+        product: '@product1'
+        pricelist: '@priceListDefault'
+    priceListAmandaRColeToProduct:
+        product: '@product1'
+        pricelist: '@priceListAmandaRCole'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListDefaultToWebsite:
+        pricelist: '@priceListDefault'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@Customer_AmandaRCole'
+        pricelist: '@priceListAmandaRCole'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product1PriceDefault:
+        pricelist: '@priceListDefault'
+        __calls:
+            - setProduct: ['@product1']
+        quantity: 1
+        unit: '@item'
+        value: '12.3456'
+        currency: 'USD'
+    product1PriceAmandaRCole:
+        pricelist: '@priceListAmandaRCole'
+        __calls:
+            - setProduct: ['@product1']
+        quantity: 1
+        unit: '@item'
+        value: '1.2345'
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1Name:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product1Precision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        __calls:
+            - addName: ['@product1Name']
+            - setPrimaryUnitPrecision: ['@product1Precision']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppingList1AmandaRCole:
+        label: 'Shopping List Amanda'
+        customerUser: '@CustomerUser_AmandaRCole'
+        organization: '@organization'
+        website: '@website1'
+    shoppingList1Nancy:
+        label: 'Shopping List Nancy'
+        customerUser: '@nancy'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    shoppingList1AmandaRColeLineItemProduct1:
+        product: '@product1'
+        quantity: '1'
+        unit: '@item'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shoppingList1AmandaRCole'
+        organization: '@organization'
+
+    shoppingList1NancyLineItemProduct1:
+        product: '@product1'
+        quantity: '1'
+        unit: '@item'
+        customerUser: '@nancy'
+        shoppingList: '@shoppingList1Nancy'
+        organization: '@organization'

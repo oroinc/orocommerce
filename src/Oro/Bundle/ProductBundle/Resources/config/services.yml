@@ -959,7 +959,7 @@ services:
     oro_product.event_listener.product_images_configuration_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
         arguments:
-            - '@session'
+            - '@request_stack'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: afterUpdate }
@@ -2220,3 +2220,6 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\ProductKitItemUnitPrecisionProvider
         arguments:
             - '@doctrine'
+
+    oro_product.model.product_line_items_holder_factory:
+        class: Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory

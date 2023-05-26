@@ -12,6 +12,8 @@ use Oro\Bundle\PricingBundle\Provider\CurrentCurrencyProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -25,6 +27,9 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
 
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
+
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
     /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenStorage;
@@ -47,6 +52,10 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
@@ -54,7 +63,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $this->currentCurrencyProvider = $this->createMock(CurrentCurrencyProviderInterface::class);
 
         $this->userCurrencyManager = new UserCurrencyManager(
-            $this->session,
+            $this->requestStack,
             $this->tokenStorage,
             $this->doctrine,
             $this->currencyProvider,
@@ -162,6 +171,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(UserCurrencyManager::SESSION_CURRENCIES)
             ->willReturn($sessionCurrencies);
+        $this->expectIfSessionCallTwice();
 
         $this->assertEquals($currency, $this->userCurrencyManager->getUserCurrency($website));
     }
@@ -184,6 +194,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->session->expects($this->never())
             ->method('get');
+        $this->expectIfSessionCallOnce();
 
         $this->assertEquals($currency, $this->userCurrencyManager->getUserCurrency($website));
     }
@@ -209,6 +220,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(UserCurrencyManager::SESSION_CURRENCIES)
             ->willReturn($sessionCurrencies);
+        $this->expectIfSessionCallTwice();
 
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
@@ -230,6 +242,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->session->expects($this->never())
             ->method('get');
+        $this->expectIfSessionCallOnce();
 
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
@@ -255,6 +268,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(UserCurrencyManager::SESSION_CURRENCIES)
             ->willReturn($sessionCurrencies);
+        $this->expectIfSessionCallTwice();
 
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
@@ -276,6 +290,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->session->expects($this->never())
             ->method('get');
+        $this->expectIfSessionCallOnce();
 
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
@@ -366,6 +381,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $this->session->expects($this->once())
             ->method('set')
             ->with(UserCurrencyManager::SESSION_CURRENCIES, [1 => 'USD', 2 => 'GBP']);
+        $this->expectIfSessionCallTwice();
 
         $this->userCurrencyManager->saveSelectedCurrency($currency, $website);
     }
@@ -385,6 +401,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get');
         $this->session->expects($this->never())
             ->method('set');
+        $this->expectIfSessionCallOnce();
 
         $this->userCurrencyManager->saveSelectedCurrency($currency, $website);
     }
@@ -409,6 +426,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $this->session->expects($this->once())
             ->method('set')
             ->with(UserCurrencyManager::SESSION_CURRENCIES, [1 => 'USD', 2 => 'GBP']);
+        $this->expectIfSessionCallTwice();
 
         $this->userCurrencyManager->saveSelectedCurrency($currency);
     }
@@ -429,7 +447,35 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get');
         $this->session->expects($this->never())
             ->method('set');
+        $this->expectIfSessionCallOnce();
 
         $this->userCurrencyManager->saveSelectedCurrency($currency);
+    }
+
+    protected function expectIfSessionCallOnce(): void
+    {
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects(self::once())
+            ->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects(self::once())
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
+    }
+
+    protected function expectIfSessionCallTwice(): void
+    {
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->method('getSession')
+            ->willReturn($this->session);
+        $requestMock->expects(self::exactly(2))
+            ->method('hasSession')
+            ->willReturn(true);
+        $this->requestStack->expects(self::exactly(2))
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
     }
 }
