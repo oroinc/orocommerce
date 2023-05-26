@@ -1,4 +1,4 @@
-import {uniqueId} from 'underscore';
+import {uniqueId, uniq} from 'underscore';
 
 /**
  *
@@ -11,12 +11,27 @@ export const addClass = (item, classNames = []) => {
     }
 
     const classes = item.row_class_name.split(' ');
-    item.row_class_name = classes.concat(classNames).join(' ');
+
+    item.row_class_name = uniq(classes.concat(classNames)).join(' ');
 };
 
-export const isHighlight = item => item.isUpcoming || (item.warnings && item.warnings.length);
+/**
+ *
+ * @param item
+ * @param classNames
+ */
+export const removeClass = (item, classNames = []) => {
+    if (item.row_class_name === void 0) {
+        return;
+    }
 
-export const isError = item => item.errors && item.errors.length;
+    item.row_class_name = item.row_class_name.split(' ')
+        .filter(className => !classNames.split(' ').includes(className)).join(' ');
+};
+
+export const isHighlight = item => item.isUpcoming || (item.warnings && item.warnings.length > 0);
+
+export const isError = item => item.errors && item.errors.length > 0;
 
 export const messageModel = (item, columnName, opts = {}) => {
     const messageItem = {

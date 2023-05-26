@@ -49,7 +49,7 @@
                 </div>
             <% } else { %>
                 <div class="grid-line-items__row-item height-as-image-mobile">
-                <% if (name.length <= clipLength) { %>
+                <% if (name && name.length <= clipLength) { %>
                     <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId, variantId)}) %>
                 <% } else { %>
                 <div class="grid-line-items__clip-container">

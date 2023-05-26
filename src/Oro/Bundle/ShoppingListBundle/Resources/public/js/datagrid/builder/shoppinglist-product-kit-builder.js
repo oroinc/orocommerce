@@ -1,8 +1,9 @@
+import ShoppingListProductKitRow from 'oroshoppinglist/js/datagrid/row/shopping-list-product-kit-row';
 import ShoppingListProductKitSubItemRow from '../row/shopping-list-product-kit-sub-item-row';
 import ProductKitInShoppingListRefreshPlugin
     from 'oroshoppinglist/js/datagrid/plugins/product-kit-in-shopping-list-refresh-plugin';
 
-import {addClass} from './utils';
+import {addClass, removeClass, isError, isHighlight} from './utils';
 
 const useKitSubItemRow = item => {
     if (!item.isMessage && !item.isAuxiliary) {
@@ -14,11 +15,28 @@ const productKitData = data => data.map(item => {
     item._isKitItemLineItem = false;
 
     if (item.isKit) {
-        addClass(item, 'group-row-product-kit');
+        addClass(item, 'grid-row-product-kit');
+        item.rowView = ShoppingListProductKitRow;
+
+        if (isError(item) || isHighlight(item)) {
+            addClass(item, 'grid-row-product-kit-error');
+            removeClass(item, 'group-row');
+        }
     }
 
-    if (!item.sku) {
-        addClass(item, 'no-product-sku-row');
+    if (item.kitHasGeneralError) {
+        addClass(item, 'product-kit-general-error');
+
+        if (Array.isArray(item.ids) && item.ids.length) {
+            const kitLineItemById = Object.fromEntries(item.ids.map(id => [id, true]));
+
+            data.forEach(kitLineItem => {
+                if (kitLineItemById[kitLineItem.id]) {
+                    kitLineItem.kitHasGeneralError = true;
+                    addClass(kitLineItem, 'product-kit-general-error');
+                }
+            });
+        }
     }
 
     item._hasKitItemLineItems = item.isKit && item.ids && item.ids.length;

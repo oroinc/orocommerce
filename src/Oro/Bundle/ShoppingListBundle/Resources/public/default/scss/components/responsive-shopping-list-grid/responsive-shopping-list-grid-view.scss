@@ -17,7 +17,7 @@
         }
     }
 
-    .group-row,
+    .group-row-has-children,
     .sub-row {
         .grid-body-cell-sku {
             &::before {
@@ -107,6 +107,16 @@
 
                 .grid-body-cell:last-child {
                     border-bottom: $responsive-shopping-view-body-cell-border-mobile;
+                }
+            }
+
+            &.notification-row {
+                padding-top: $responsive-shopping-extension-row-offset-top-mobile;
+
+                .grid-body-cell-item {
+                    padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+                    padding-bottom: $responsive-shopping-extension-row-offset-bottom-mobile;
+                    border-top: none;
                 }
             }
         }

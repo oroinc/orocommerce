@@ -16,30 +16,6 @@
         align-items: center;
     }
 
-    .sub-row-product-kit {
-        .grid-body-cell-sku:empty {
-            &::before {
-                content: '';
-
-                position: absolute;
-                inset: 0;
-
-                height: 1px;
-
-                margin: auto;
-                transform: translateX(-50%);
-
-                background-color: $responsive-shopping-sub-row-border-mobile-color;
-            }
-        }
-
-        &.sub-row-last .grid-body-cell-sku:empty {
-            &::before {
-                bottom: $datagrid-body-cell-offset - $responsive-shopping-sub-row-cell-inner-offset;
-            }
-        }
-    }
-
     .grid-header-cell-quantity {
         text-align: center;
     }
@@ -108,6 +84,11 @@
         }
     }
 
+    // Horizontal line occupies the next sku cell too
+    .no-product-sku-row .cell-line {
+        right: -($responsive-shopping-grid-body-cell-sku-width + $datagrid-body-cell-offset + $checkbox-size / 2);
+    }
+
     .filtered-out .select-row-cell::after {
         top: -1px;
         height:
@@ -129,6 +110,11 @@
         &.notification-row .select-row-cell::after {
             content: none;
         }
+    }
+
+    // Not necessary to draw vertical line for product kit's cells with errors
+    .grid-row-product-kit-error.extension-row .select-row-cell::after {
+        content: none;
     }
 }
 
@@ -163,6 +149,11 @@
                 }
             }
         }
+
+        // sku cell is hidden so no reason to stretch horizontal line
+        .no-product-sku-row .cell-line {
+            right: 0;
+        }
     }
 }
 
@@ -178,7 +169,8 @@
         // Hide the some grid body cells
         .grid-body-cell-sku,
         .grid-body-cell-inventoryStatus,
-        .grid-body-cell-unit {
+        .grid-body-cell-unit,
+        .grid-body-cell-subtotal:empty {
             display: none;
         }
 
@@ -220,15 +212,30 @@
             margin: 0;
         }
 
+        .grid-row-product-kit {
+            .grid-body-cell-item {
+                width:
+                        calc(
+                                100% -
+                                #{$responsive-shopping-list-edit-select-row-cell-width-mobile} -
+                                #{$responsive-shopping-list-edit-three-actions-cell-width-mobile}
+                        );
+            }
+        }
+
         .action-cell {
             order: 2;
             display: inline-flex;
             align-items: flex-end;
             align-self: flex-start;
-            width: $responsive-shopping-list-edit-action-cell-width-mobile;
+            width: auto;
             padding-left: 0;
             padding-right: 0;
             margin: 0;
+
+            &:empty {
+                display: none;
+            }
         }
 
         .grid-row {
@@ -470,10 +477,6 @@
                             100% - #{$responsive-shopping-list-edit-sub-row-offset} -
                             #{$responsive-shopping-list-edit-action-cell-width-mobile}
                         );
-                }
-
-                .action-cell:empty {
-                    display: none;
                 }
             }
         }

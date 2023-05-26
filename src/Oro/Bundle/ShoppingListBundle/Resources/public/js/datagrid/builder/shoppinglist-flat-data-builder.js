@@ -17,7 +17,14 @@ export const flattenData = data => {
             itemClassName.push('highlight-error');
         }
 
-        if (!subData) {
+        if (!item.sku) {
+            itemClassName.push('no-product-sku-row');
+        }
+
+        if (
+            subData === null ||
+            (Array.isArray(subData) && subData.length === 0)
+        ) {
             itemClassName.push('single-row');
             item.row_class_name = itemClassName.join(' ');
             flatData.push(item);
@@ -58,6 +65,10 @@ export const flattenData = data => {
 
                 if (isHighlight(subItem)) {
                     className.push('highlight');
+                }
+
+                if (!subItem.sku) {
+                    className.push('no-product-sku-row');
                 }
 
                 if (isHighlight(item)) {
@@ -116,26 +127,11 @@ export const flattenData = data => {
                 lastFiltered.row_class_name += ' filtered-out';
             }
 
+            flatData.push(...flatSubData);
             if (isError(item) || isHighlight(item)) {
                 const itemMessageModel = messageModel(item, 'item');
-                const itemMessageModelClasses = itemMessageModel.row_class_name.split(' ')
-                    .filter(className => !['group-row', 'group-row-has-children'].includes(className));
-
-                itemMessageModelClasses.push('sub-row');
-
-                itemMessageModel.row_class_name = itemMessageModelClasses.join(' ');
-
-                const prevSubItem = flatData.at(-1);
-
-                if (prevSubItem.isMessage) {
-                    prevSubItem.row_class_name = prevSubItem.row_class_name.split(' ')
-                        .filter(className => !['sub-row-last'].includes(className)).join(' ');
-                }
-
                 flatData.push(itemMessageModel);
             }
-
-            flatData.push(...flatSubData);
         }
 
         return flatData;

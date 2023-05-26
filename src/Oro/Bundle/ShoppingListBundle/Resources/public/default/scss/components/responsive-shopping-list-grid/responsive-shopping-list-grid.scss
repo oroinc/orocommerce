@@ -65,9 +65,12 @@
             padding-top: $responsive-shopping-sub-row-cell-inner-offset;
         }
 
-        &:not(.sub-row-last) .grid-cell {
-            padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
-            border-bottom-width: 0;
+        &:not(.sub-row-last),
+        &.parent-row-has-highlight,
+        &.parent-row-has-highlight-error {
+            .grid-cell {
+                border-bottom-width: 0;
+            }
         }
     }
 
@@ -279,6 +282,12 @@
 
             &.sub-row.extension-row {
                 padding-top: $responsive-shopping-extension-sub-row-offset-top-mobile;
+            }
+
+            &.parent-row-has-highlight.sub-row-last-product-kit,
+            &.parent-row-has-highlight-error.sub-row-last-product-kit {
+                padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
+                border-bottom-width: 0;
             }
         }
 

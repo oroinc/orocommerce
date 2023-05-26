@@ -95,7 +95,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     },
 
     isEditable(cell) {
-        if (cell.model && cell.model.get('isConfigurable') || cell.disableEditing === false) {
+        if (cell.model && cell.model.get('isConfigurable') || cell.disableEditing) {
             return false;
         }
 
