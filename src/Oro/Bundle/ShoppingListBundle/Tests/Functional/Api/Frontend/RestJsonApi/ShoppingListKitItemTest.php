@@ -991,4 +991,14 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         self::assertEquals($total, $totalEntity->getSubtotal()->getAmount());
         self::assertEquals($currency, $totalEntity->getCurrency());
     }
+
+    public function testOptions(): void
+    {
+        $response = $this->options(
+            $this->getListRouteName(),
+            ['entity' => 'shoppinglistkititems']
+        );
+
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST, DELETE');
+    }
 }
