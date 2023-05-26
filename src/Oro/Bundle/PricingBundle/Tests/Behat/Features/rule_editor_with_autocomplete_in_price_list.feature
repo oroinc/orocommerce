@@ -18,7 +18,7 @@ Feature: Rule Editor with Autocomplete in Price List
     And I should see "featured" in typeahead suggestions for "Product Assignment Rule"
     And I should see 20 typeahead suggestions for "Product Assignment Rule"
     When I type "product.featured " in "Product Assignment Rule"
-    Then I should see 16 typeahead suggestions for "Product Assignment Rule"
+    Then I should see 17 typeahead suggestions for "Product Assignment Rule"
     When type "product.featured + " in "Product Assignment Rule"
     Then I should see "product…" in typeahead suggestions for "Product Assignment Rule"
     And I should see "pricelist…" in typeahead suggestions for "Product Assignment Rule"
