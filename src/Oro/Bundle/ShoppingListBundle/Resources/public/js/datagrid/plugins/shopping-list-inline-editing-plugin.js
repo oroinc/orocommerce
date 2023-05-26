@@ -76,11 +76,16 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         this.toggleUpdateAll();
     },
 
-    patchCellConstructor(column) {
-        ShoppingListInlineEditingPlugin.__super__.patchCellConstructor.call(this, column);
+    /**
+     * Overwrite some methods for cell prototype
+     * @param {Constructor} Cell
+     * @returns {Constructor}
+     */
+    cellPatcher(Cell) {
+        const PatchedCell = ShoppingListInlineEditingPlugin.__super__.cellPatcher.call(this, Cell);
         const inlineEditingPlugin = this;
 
-        const cell = column.get('cell').extend({
+        return PatchedCell.extend({
             delayedIconRender() {},
             enterEditModeIfNeeded(e) {
                 if (this.isEditable()) {
@@ -90,8 +95,6 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
                 e.stopPropagation();
             }
         });
-
-        column.set('cell', cell);
     },
 
     isEditable(cell) {

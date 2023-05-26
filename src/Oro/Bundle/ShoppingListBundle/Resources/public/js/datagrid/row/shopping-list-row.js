@@ -51,12 +51,31 @@ const ShoppingListRow = Row.extend({
         const {type} = column.get('metadata') || {};
 
         if (column.get('name') in this.cellConstructorMap) {
-            return this.cellConstructorMap[column.get('name')];
+            return this.getCellConstructor(column.get('name'), column);
         } else if (type in this.cellConstructorMap) {
-            return this.cellConstructorMap[type];
+            return this.getCellConstructor(type, column);
         } else {
             return column.get('cell');
         }
+    },
+
+    /**
+     * Get new cell constructor from mapping
+     * Get patched cell constructor
+     *
+     * @param {string} name
+     * @param {object} column
+     * @returns {Constructor}
+     */
+    getCellConstructor(name, column) {
+        const cellPatcher = column.get('cellPatcher');
+
+        if (cellPatcher && typeof cellPatcher === 'function') {
+            // Call callback from inline editing plugin to get actually patched version for mapped cell constructor
+            return cellPatcher(this.cellConstructorMap[name]);
+        }
+
+        return this.cellConstructorMap[name];
     },
 
     renderItem(column) {
