@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\TranslationBundle\Translation\TranslationMessageSanitizerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolationInterface;
@@ -15,11 +15,11 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
  */
 class ProductKitItemCollectionIsAvailableForPurchaseValidator extends ConstraintValidator
 {
-    private LocalizationHelper $localizationHelper;
+    private TranslationMessageSanitizerInterface $translationMessageSanitizer;
 
-    public function __construct(LocalizationHelper $localizationHelper)
+    public function __construct(TranslationMessageSanitizerInterface $translationMessageSanitizer)
     {
-        $this->localizationHelper = $localizationHelper;
+        $this->translationMessageSanitizer = $translationMessageSanitizer;
     }
 
     /**
@@ -47,18 +47,19 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidator extends Constraint
                 $unavailableKitItemsCount++;
 
                 if ($productKitSku === null) {
-                    $productKitSku = (string)$kitItem->getProductKit()?->getSku();
+                    $productKitSku = $this->translationMessageSanitizer->sanitizeMessage(
+                        (string)$kitItem->getProductKit()?->getSku()
+                    );
                 }
 
                 if ($kitItem->isOptional() === false) {
-                    $kitItemLabel = (string)$this->localizationHelper->getLocalizedValue($kitItem->getLabels());
                     $reason = array_map(
-                        static fn (ConstraintViolationInterface $violation) => $violation->getMessage(),
+                        fn (ConstraintViolationInterface $violation) =>
+                            $this->translationMessageSanitizer->sanitizeMessage($violation->getMessage()),
                         iterator_to_array($constraintViolations)
                     );
                     $this->context
                         ->buildViolation($constraint->requiredKitItemNotAvailableMessage)
-                        ->setParameter('{{ product_kit_item_label }}', $this->formatValue($kitItemLabel))
                         ->setParameter('{{ product_kit_sku }}', $this->formatValue($productKitSku))
                         ->setParameter('{{ reason }}', $this->formatValues($reason))
                         ->setCode(ProductKitItemCollectionIsAvailableForPurchase::REQUIRED_KIT_ITEM_NOT_AVAILABLE_ERROR)

@@ -77,6 +77,8 @@ oro:
                 label: Edit Shopping List item Note
             update_product_kit_line_item:
                 label: Edit
+            delete_product_kit_line_item:
+                label: Delete
 
         mass_actions:
             delete_line_items:

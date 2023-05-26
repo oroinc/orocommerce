@@ -3,7 +3,7 @@ oro:
         validators:
             product_kit_item_collection_is_available_for_purchase:
                 required_not_available: 'Product kit {{ product_kit_sku }} is not available for purchase: {{ reason }}'
-                no_available: 'Product kit {{ product_kit_sku }} is not available for purchase: there are no available kit items'
+                no_available: 'Product kit is not available for purchase: there are no available kit items'
             product_kit_item_product_collection_is_available_for_purchase:
                 message: 'There are no products available for purchase in kit item {{ product_kit_item_label }}'
                 empty_message: 'There are no products available for purchase in kit item'

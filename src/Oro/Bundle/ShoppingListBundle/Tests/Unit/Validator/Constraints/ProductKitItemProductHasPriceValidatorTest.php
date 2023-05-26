@@ -51,6 +51,35 @@ class ProductKitItemProductHasPriceValidatorTest extends ConstraintValidatorTest
         $this->validator->validate($value, $constraint);
     }
 
+    public function testValidateWhenKitItemHasNoProductUnit(): void
+    {
+        $constraint = new ProductKitItemProductHasPrice();
+
+        $kitItem = new ProductKitItem();
+        $product = (new ProductStub())
+            ->setId(1);
+        $kitItemProduct = (new ProductKitItemProduct())
+            ->setProduct($product)
+            ->setKitItem($kitItem);
+
+        $this->frontendProductPricesDataProvider->expects(self::once())
+            ->method('getAllPricesForProducts')
+            ->with([$product])
+            ->willReturn([
+                1 => [
+                    'set' => [
+                        $this->createMock(ProductPriceInterface::class),
+                    ],
+                ]
+            ]);
+
+        $this->validator->validate($kitItemProduct, $constraint);
+
+        $this->buildViolation($constraint->productHasNoPriceMessage)
+            ->atPath('property.path.product')
+            ->assertRaised();
+    }
+
     public function testValidateWhenProductHasNoPrices(): void
     {
         $constraint = new ProductKitItemProductHasPrice();

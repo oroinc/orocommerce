@@ -907,9 +907,11 @@ datagrids:
         actions:
             update_product_kit_line_item:
                 type: update-product-kit-line-item
+                label: oro.shoppinglist.actions.update_product_kit_line_item.label
                 icon: pencil-square-o
             delete:
                 type: delete-product
+                label: oro.shoppinglist.actions.delete_product_kit_line_item.label
                 link: deleteLink
                 icon: trash-o
                 defaultMessages:

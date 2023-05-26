@@ -8,6 +8,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchase;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator;
+use Oro\Bundle\TranslationBundle\Translation\TranslationMessageSanitizerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -17,18 +19,24 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductKitItemProductCollectionIsAvailableForPurchaseValidatorTest extends ConstraintValidatorTestCase
 {
-    private LocalizationHelper $localizationHelper;
+    private LocalizationHelper|MockObject $localizationHelper;
+
+    private TranslationMessageSanitizerInterface|MockObject $translationMessageSanitizer;
 
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->translationMessageSanitizer = $this->createMock(TranslationMessageSanitizerInterface::class);
 
         parent::setUp();
     }
 
     protected function createValidator(): ProductKitItemProductCollectionIsAvailableForPurchaseValidator
     {
-        return new ProductKitItemProductCollectionIsAvailableForPurchaseValidator($this->localizationHelper);
+        return new ProductKitItemProductCollectionIsAvailableForPurchaseValidator(
+            $this->localizationHelper,
+            $this->translationMessageSanitizer
+        );
     }
 
     public function testValidateWhenInvalidConstraint(): void
@@ -101,54 +109,18 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidatorTest extends
             ->method('getLocalizedValue')
             ->willReturnCallback(static fn (iterable $values) => $values[0]->getString());
 
+        $this->translationMessageSanitizer
+            ->expects(self::once())
+            ->method('sanitizeMessage')
+            ->with($kitItemLabel)
+            ->willReturn($kitItemLabel . '_sanitized');
+
         $this->validator->validate($value, $constraint);
 
         $this
             ->buildViolation($constraint->message)
-            ->setParameter('{{ product_kit_item_label }}', '"' . $kitItemLabel . '"')
+            ->setParameter('{{ product_kit_item_label }}', '"' . $kitItemLabel . '_sanitized"')
             ->setCode(ProductKitItemProductCollectionIsAvailableForPurchase::NO_AVAILABLE_PRODUCTS_ERROR)
             ->assertRaised();
-    }
-
-    public function validate($value, Constraint $constraint): void
-    {
-        if (!$constraint instanceof ProductKitItemProductCollectionIsAvailableForPurchase) {
-            throw new UnexpectedTypeException(
-                $constraint,
-                ProductKitItemProductCollectionIsAvailableForPurchase::class
-            );
-        }
-
-        if (!is_iterable($value)) {
-            throw new UnexpectedValueException($value, 'iterable');
-        }
-
-        $validator = $this->context->getValidator();
-        $productsCount = $unavailableProductsCount = 0;
-        $kitItemLabel = null;
-        foreach ($value as $kitItemProduct) {
-            $productsCount++;
-            $constraintViolations = $validator->validate(
-                $kitItemProduct,
-                null,
-                ['product_kit_item_product_is_available_for_purchase']
-            );
-            if ($constraintViolations->count() > 0) {
-                $unavailableProductsCount++;
-
-                if ($kitItemLabel === null) {
-                    $kitItemLabel = (string)$this->localizationHelper
-                        ->getLocalizedValue($kitItemProduct->getKitItem()?->getLabels());
-                }
-            }
-        }
-
-        if ($productsCount === $unavailableProductsCount) {
-            $this->context
-                ->buildViolation($constraint->message)
-                ->setParameter('{{ product_kit_item_label }}', $this->formatValue($kitItemLabel))
-                ->setCode(ProductKitItemProductCollectionIsAvailableForPurchase::NO_AVAILABLE_PRODUCTS_ERROR)
-                ->addViolation();
-        }
     }
 }

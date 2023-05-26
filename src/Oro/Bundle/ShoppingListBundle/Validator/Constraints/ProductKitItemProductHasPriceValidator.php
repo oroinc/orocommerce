@@ -47,7 +47,7 @@ class ProductKitItemProductHasPriceValidator extends ConstraintValidator
         $prices = $this->frontendProductPricesDataProvider
             ->getAllPricesForProducts([$product]);
 
-        $productPrice = $prices[$product->getId()][$value->getKitItem()->getProductUnit()->getCode()] ?? null;
+        $productPrice = $prices[$product->getId()][$value->getKitItem()->getProductUnit()?->getCode()] ?? null;
         if ($productPrice === null) {
             $this->context
                 ->buildViolation($constraint->productHasNoPriceMessage)

@@ -285,6 +285,9 @@ oro_behat_extension:
     Add to Shopping List:
       selector: '.add-to-shopping-list-button:contains("Add to Shopping List")'
 
+    Configure and Add to Shopping List:
+      selector: '.add-to-shopping-list-button:contains("Configure and Add to Shopping List")'
+
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]'
 
@@ -321,6 +324,11 @@ oro_behat_extension:
 
     Remove Line Item:
       selector: 'a[aria-label="Delete row action"]'
+
+    Row 5 Edit Line Item:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="6"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Edit")]'
+        type: 'xpath'
 
     Shopping list Line items Grid:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchase;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchaseValidator;
+use Oro\Bundle\TranslationBundle\Translation\TranslationMessageSanitizerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -20,13 +21,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends ConstraintValidatorTestCase
 {
-    private LocalizationHelper $localizationHelper;
+    private TranslationMessageSanitizerInterface|MockObject $translationMessageSanitizer;
 
-    private ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validatorComponent;
+    private ValidatorInterface|MockObject $validatorComponent;
 
     protected function setUp(): void
     {
-        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->translationMessageSanitizer = $this->createMock(TranslationMessageSanitizerInterface::class);
         $this->validatorComponent = $this->createMock(ValidatorInterface::class);
 
         parent::setUp();
@@ -34,7 +35,7 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
 
     protected function createValidator(): ProductKitItemCollectionIsAvailableForPurchaseValidator
     {
-        return new ProductKitItemCollectionIsAvailableForPurchaseValidator($this->localizationHelper);
+        return new ProductKitItemCollectionIsAvailableForPurchaseValidator($this->translationMessageSanitizer);
     }
 
     protected function createContext()
@@ -176,18 +177,20 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
                 [$kitItem3, null, ['product_kit_item_is_available_for_purchase'], new ConstraintViolationList()],
             ]);
 
-        $this->localizationHelper
-            ->expects(self::any())
-            ->method('getLocalizedValue')
-            ->willReturnCallback(static fn (iterable $values) => $values[0]?->getString());
+        $this->translationMessageSanitizer
+            ->expects(self::exactly(3))
+            ->method('sanitizeMessage')
+            ->willReturnCallback(static fn (string $message) => $message . '_sanitized');
 
         $this->validator->validate($value, $constraint);
 
         $this
             ->buildViolation($constraint->requiredKitItemNotAvailableMessage)
-            ->setParameter('{{ product_kit_item_label }}', '"' . $kitItemLabel . '"')
-            ->setParameter('{{ product_kit_sku }}', '"' . $productKit->getSku() . '"')
-            ->setParameter('{{ reason }}', '"' . $violation1->getMessage() . '", "' . $violation2->getMessage() . '"')
+            ->setParameter('{{ product_kit_sku }}', '"' . $productKit->getSku() . '_sanitized"')
+            ->setParameter(
+                '{{ reason }}',
+                '"' . $violation1->getMessage() . '_sanitized", "' . $violation2->getMessage() . '_sanitized"'
+            )
             ->setCode(ProductKitItemCollectionIsAvailableForPurchase::REQUIRED_KIT_ITEM_NOT_AVAILABLE_ERROR)
             ->setCause($violationList)
             ->assertRaised();

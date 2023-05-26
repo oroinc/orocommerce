@@ -759,7 +759,7 @@ services:
     oro_shopping_list.validator.product_kit_item_collection_is_available_for_purchase:
         class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchaseValidator
         arguments:
-            - '@oro_locale.helper.localization'
+            - '@oro_translation.translation_message_sanitizer'
         tags:
             - { name: validator.constraint_validator }
 
@@ -767,6 +767,7 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator
         arguments:
             - '@oro_locale.helper.localization'
+            - '@oro_translation.translation_message_sanitizer'
         tags:
             - { name: validator.constraint_validator }
 
