@@ -5,6 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Factory;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalCreditCardPaymentMethodFactory;
 use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -25,11 +26,19 @@ class BasicPayPalCreditCardPaymentMethodFactoryTest extends \PHPUnit\Framework\T
      */
     private $factory;
 
+    /** @var TransactionOptionProvider */
+    private $transactionOptionProvider;
+
     protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);
         $this->router = $this->createMock(RouterInterface::class);
-        $this->factory = new BasicPayPalCreditCardPaymentMethodFactory($this->gateway, $this->router);
+        $this->transactionOptionProvider = $this->createMock(TransactionOptionProvider::class);
+        $this->factory = new BasicPayPalCreditCardPaymentMethodFactory(
+            $this->gateway,
+            $this->router
+        );
+        $this->factory->setTransactionOptionProvider($this->transactionOptionProvider);
     }
 
     public function testCreate()
@@ -37,8 +46,13 @@ class BasicPayPalCreditCardPaymentMethodFactoryTest extends \PHPUnit\Framework\T
         /** @var PayPalCreditCardConfigInterface $config */
         $config = $this->createMock(PayPalCreditCardConfigInterface::class);
 
-        $method = new PayPalCreditCardPaymentMethod($this->gateway, $config, $this->router);
+        $method = new PayPalCreditCardPaymentMethod(
+            $this->gateway,
+            $config,
+            $this->router,
+        );
+        $method->setTransactionOptionProvider($this->transactionOptionProvider);
 
-        $this->assertEquals($method, $this->factory->create($config));
+        self::assertEquals($method, $this->factory->create($config));
     }
 }
