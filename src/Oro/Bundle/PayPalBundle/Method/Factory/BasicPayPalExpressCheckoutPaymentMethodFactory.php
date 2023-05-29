@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -47,6 +48,9 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
      */
     private $propertyAccessor;
 
+    /** @var TransactionOptionProvider */
+    private $transactionOptionProvider;
+
     public function __construct(
         Gateway $gateway,
         RouterInterface $router,
@@ -69,7 +73,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
      */
     public function create(PayPalExpressCheckoutConfigInterface $config)
     {
-        return new PayPalExpressCheckoutPaymentMethod(
+        return (new PayPalExpressCheckoutPaymentMethod(
             $this->gateway,
             $config,
             $this->router,
@@ -77,6 +81,11 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
             $this->optionsProvider,
             $this->surchargeProvider,
             $this->propertyAccessor
-        );
+        ))->setTransactionOptionProvider($this->transactionOptionProvider);
+    }
+
+    public function setTransactionOptionProvider(TransactionOptionProvider $transactionOptionProvider)
+    {
+        $this->transactionOptionProvider = $transactionOptionProvider;
     }
 }

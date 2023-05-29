@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Billing address options
+ */
 class BillingAddress extends AbstractOption
 {
     const BILLTOFIRSTNAME = 'BILLTOFIRSTNAME';
@@ -12,6 +15,10 @@ class BillingAddress extends AbstractOption
     const BILLTOSTATE = 'BILLTOSTATE';
     const BILLTOZIP = 'BILLTOZIP';
     const BILLTOCOUNTRY = 'BILLTOCOUNTRY';
+    const BILLTOEMAIL = 'BILLTOEMAIL';
+    const BILLTOMIDDLENAME = 'BILLTOMIDDLENAME';
+    const BILLTOCOMPANY = 'BILLTOCOMPANY';
+    const BILLTOPHONENUM = 'BILLTOPHONENUM';
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
@@ -39,6 +46,10 @@ class BillingAddress extends AbstractOption
             BillingAddress::BILLTOSTATE,
             BillingAddress::BILLTOZIP,
             BillingAddress::BILLTOCOUNTRY,
+            BillingAddress::BILLTOEMAIL,
+            BillingAddress::BILLTOMIDDLENAME,
+            BillingAddress::BILLTOCOMPANY,
+            BillingAddress::BILLTOPHONENUM,
         ];
     }
 }

@@ -3,8 +3,10 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -15,9 +17,11 @@ use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -75,6 +79,14 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->surchargeProvider,
             PropertyAccess::createPropertyAccessor()
         );
+
+        $transactionOptionProvider = new TransactionOptionProvider(
+            $this->doctrineHelper,
+            $this->optionsProvider,
+            PropertyAccess::createPropertyAccessor()
+        );
+
+        $this->expressCheckout->setTransactionOptionProvider($transactionOptionProvider);
     }
 
     public function testExecute()
@@ -237,6 +249,93 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayNotHasKey('purchaseRedirectUrl', $result);
     }
 
+    public function testCompletePaymentTransactionWithEmailFromFrontendOwner()
+    {
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
+
+        $transaction = $this->createTransaction(PayPalExpressCheckoutPaymentMethod::COMPLETE);
+        $frontendOwnerEmail = 'owner@email.com';
+        $frontendOwner = $this->createCustomerUser(123, $frontendOwnerEmail);
+        $transaction->setFrontendOwner($frontendOwner);
+
+        $this->surchargeProvider->expects($this->never())
+            ->method('getSurcharges');
+
+        $this->gateway->expects($this->once())
+            ->method('request')
+            ->with(null)
+            ->willReturn(new Response(['RESPMSG' => 'NonApproved', 'RESULT' => '12', 'TOKEN' => self::TOKEN]));
+
+        $this->gateway->expects($this->any())
+            ->method('setTestMode')
+            ->with(false);
+
+        $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
+
+        self::assertEmpty($result);
+        self::assertArrayNotHasKey('purchaseRedirectUrl', $result);
+
+        $request = $transaction->getRequest();
+
+        self::assertArrayHasKey('CUSTCODE', $request);
+        self::assertEquals((string) $frontendOwner->getId(), $request['CUSTCODE']);
+
+        $emailKeys = ['SHIPTOEMAIL', 'BILLTOEMAIL', 'EMAIL'];
+
+        foreach ($emailKeys as $emailKey) {
+            self::assertArrayHasKey($emailKey, $request);
+            self::assertEquals($frontendOwnerEmail, $request[$emailKey]);
+        }
+    }
+
+    public function testPurchasePaymentTransactionWithEmailFromTransactionOptions()
+    {
+        $this->paymentConfig->expects($this->once())
+            ->method('getCredentials')
+            ->willReturn($this->getCredentials());
+
+        $transactionEmail = 'transaction@email.com';
+        $transaction = $this->createTransaction(PaymentMethodInterface::AUTHORIZE);
+        $transaction->setTransactionOptions(['email' => $transactionEmail]);
+        $frontendOwner = $this->createCustomerUser(123, 'owner@email.com');
+        $transaction->setFrontendOwner($frontendOwner);
+
+        $this->surchargeProvider->expects($this->never())
+            ->method('getSurcharges');
+
+        $this->gateway->expects($this->exactly(2))
+            ->method('request')
+            ->withConsecutive(['A'], ['A'])
+            ->willReturnOnConsecutiveCalls(
+                new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => self::TOKEN]),
+                new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'PENDINGREASON' => 'echeck'])
+            );
+
+        $this->gateway->expects($this->any())
+            ->method('setTestMode')
+            ->with(false);
+
+        $this->expressCheckout->execute($transaction->getAction(), $transaction);
+        $result = $this->expressCheckout->execute(PayPalExpressCheckoutPaymentMethod::COMPLETE, $transaction);
+
+        self::assertEmpty($result);
+        self::assertArrayNotHasKey('purchaseRedirectUrl', $result);
+
+        $request = $transaction->getRequest();
+
+        self::assertArrayHasKey('CUSTCODE', $request);
+        self::assertEquals((string) $frontendOwner->getId(), $request['CUSTCODE']);
+
+        $emailKeys = ['SHIPTOEMAIL', 'BILLTOEMAIL', 'EMAIL'];
+
+        foreach ($emailKeys as $emailKey) {
+            self::assertArrayHasKey($emailKey, $request);
+            self::assertEquals($transactionEmail, $request[$emailKey]);
+        }
+    }
+
     public function testPurchaseCheckRequest()
     {
         $this->paymentConfig->expects($this->once())
@@ -248,11 +347,12 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $requestData = array_merge(
             $this->getCredentials(),
-            $this->getAdditionalOptions(),
+            $this->getLineItemOptions(),
+            $this->getSurchargeOptions(),
             $this->getExpressCheckoutOptions(),
             $this->getShippingAddressOptions(),
-            $this->getLineItemOptions(),
-            $this->getSurchargeOptions()
+            $this->getAdditionalOptions(),
+            $this->getIPOptions(),
         );
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
@@ -294,11 +394,11 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('purchaseRedirectUrl', $result);
     }
 
-    private function configureShippingAddressOptions()
+    private function configureShippingAddressOptions(int $callsAmount = 1)
     {
         $entity = $this->getEntity();
 
-        $this->optionsProvider->expects($this->once())
+        $this->optionsProvider->expects(self::exactly($callsAmount))
             ->method('getShippingAddressOptions')
             ->with($entity->getShippingAddress())
             ->willReturn($this->getAddressOptionModel());
@@ -328,7 +428,8 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->getAdditionalOptions(),
             $this->getExpressCheckoutOptions(),
             $this->getLineItemOptions(),
-            $this->getSurchargeOptions()
+            $this->getSurchargeOptions(),
+            $this->getIPOptions(),
         );
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
@@ -469,7 +570,8 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
                     $this->getAdditionalOptions(),
                     $this->getExpressCheckoutOptions(),
                     $this->getShippingAddressOptions(),
-                    $this->getSurchargeOptions()
+                    $this->getSurchargeOptions(),
+                    $this->getIPOptions(),
                 ),
                 'getLineItemPaymentOptions calls' => 0
 
@@ -482,7 +584,8 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
                     $this->getExpressCheckoutOptions(),
                     $this->getShippingAddressOptions(),
                     $this->getSurchargeOptions(),
-                    ['ITEMAMT' => 0, 'TAXAMT' => 0]
+                    $this->getIPOptions(),
+                    ['ITEMAMT' => 0, 'TAXAMT' => 0],
                 ),
                 'getLineItemPaymentOptions calls' => 1
             ],
@@ -510,7 +613,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->getCredentials(),
             $this->getAdditionalOptions(),
             $this->getLineItemOptions(),
-            $this->getSurchargeOptions()
+            $this->getSurchargeOptions(),
+            $this->getShippingAddressOptions(),
+            $this->getIPOptions(),
         );
         $completeTransactionResponse = new Response(['RESPMSG' => 'Approved', 'RESULT' => '0']);
         $this->gateway->expects($this->exactly(2))
@@ -526,8 +631,9 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         // Start complete logic
 
-        $this->configureLineItemOptions();
         $entity = $this->getEntity();
+        $this->configureLineItemOptions($entity);
+        $this->configureShippingAddressOptions();
 
         $surcharge = new Surcharge();
         $surcharge->setShippingAmount(self::SHIPPING_COST);
@@ -620,7 +726,8 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
                 'AMT' => 10,
                 'TOKEN' => self::TOKEN,
                 'ACTION' => 'D',
-            ]
+            ],
+            $this->getIPOptions(),
         );
 
         $transaction = $this->createTransaction(PayPalExpressCheckoutPaymentMethod::COMPLETE);
@@ -676,6 +783,10 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
                 new Response(['RESPMSG' => 'Approved', 'RESULT' => '0'])
             );
 
+        $this->doctrineHelper->method('getEntityReference')
+            ->with('EntityClass', $transaction->getEntityIdentifier())
+            ->willReturn((new Order())->setIdentifier('123'));
+
         $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
         $this->assertTrue($transaction->isSuccessful());
@@ -713,6 +824,10 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->method('request')
             ->with('D', $requestOptions)
             ->willReturn(new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage]));
+
+        $this->doctrineHelper->method('getEntityReference')
+            ->with('EntityClass', $transaction->getEntityIdentifier())
+            ->willReturn((new Order())->setIdentifier('123'));
 
         $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
@@ -765,12 +880,20 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         return $paymentTransaction;
     }
 
+    private function createCustomerUser(int $id, string $email): CustomerUser
+    {
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, $id);
+        $customerUser->setEmail($email);
+        return $customerUser;
+    }
+
     private function getExpressCheckoutOptions(): array
     {
         return [
             'PAYMENTTYPE' => 'instantonly',
             'ADDROVERRIDE' => 1,
-            'AMT' => '10',
+            'AMT' => 10,
             'CURRENCY' => 'USD',
             'RETURNURL' => 'callbackReturnUrl',
             'CANCELURL' => 'callbackErrorUrl',
@@ -782,6 +905,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'SHIPTOFIRSTNAME' => 'First Name',
+            'SHIPTOMIDDLENAME' => 'M.',
             'SHIPTOLASTNAME' => 'Last Name',
             'SHIPTOSTREET' => 'Street',
             'SHIPTOSTREET2' => 'Street2',
@@ -789,6 +913,8 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             'SHIPTOSTATE' => 'State',
             'SHIPTOZIP' => 'Zip Code',
             'SHIPTOCOUNTRY' => 'US',
+            'SHIPTOCOMPANY' => 'Acme Inc.',
+            'SHIPTOPHONE' => '123-456-7890',
         ];
     }
 
@@ -800,18 +926,18 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             'L_COST1' => 55.4,
             'L_QTY1' => 15,
             'L_TAXAMT1' => 0,
-            'ITEMAMT' => 831,
-            'TAXAMT' => 0
+            'TAXAMT' => .0,
+            'ITEMAMT' => 831.0,
         ];
     }
 
     private function getSurchargeOptions(): array
     {
         return [
-            'FREIGHTAMT' => self::SHIPPING_COST,
-            'HANDLINGAMT' => 0,
+            'FREIGHTAMT' => (float) self::SHIPPING_COST,
+            'HANDLINGAMT' => .0,
             'DISCOUNT' => -self::DISCOUNT_AMOUNT,
-            'INSURANCEAMT' => 0,
+            'INSURANCEAMT' => .0,
         ];
     }
 
@@ -828,13 +954,16 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     {
         return (new AddressOptionModel())
             ->setFirstName('First Name')
+            ->setMiddleName('M.')
             ->setLastName('Last Name')
             ->setStreet('Street')
             ->setStreet2('Street2')
             ->setCity('City')
             ->setRegionCode('State')
             ->setPostalCode('Zip Code')
-            ->setCountryIso2('US');
+            ->setCountryIso2('US')
+            ->setOrganization('Acme Inc.')
+            ->setPhone('123-456-7890');
     }
 
     private function getDelayedCaptureOptions(): array
@@ -842,6 +971,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         return [
             'AMT' => '10',
             'ORIGID' => 'referenceId',
+            'ORDERID' => '123',
         ];
     }
 
@@ -854,6 +984,13 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'BUTTONSOURCE' => 'OroCommerce_SP'
+        ];
+    }
+
+    private function getIPOptions(): array
+    {
+        return [
+            'CUSTIP' => null
         ];
     }
 }

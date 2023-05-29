@@ -371,6 +371,7 @@ action_groups:
                     partiallyPaidUrl: $.partiallyPaidUrl
                     failedShippingAddressUrl: $.failedShippingAddressUrl
                     checkoutId: $.checkout.id
+                    email: $.email
                 - $.transactionOptions
 
             - '@payment_purchase':

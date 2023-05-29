@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\Tests\Behat\Mock\Method\PayPalExpressCheckoutPaymentMethodMock;
@@ -33,6 +34,10 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
     /** @var PropertyAccessor */
     private $propertyAccessor;
 
+    /** @var TransactionOptionProvider */
+
+    private $transactionOptionProvider;
+
     public function __construct(
         Gateway $gateway,
         RouterInterface $router,
@@ -49,12 +54,17 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
         $this->propertyAccessor = $propertyAccessor;
     }
 
+    public function setTransactionOptionProvider(TransactionOptionProvider $transactionOptionProvider)
+    {
+        $this->transactionOptionProvider = $transactionOptionProvider;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function create(PayPalExpressCheckoutConfigInterface $config)
     {
-        return new PayPalExpressCheckoutPaymentMethodMock(
+        return (new PayPalExpressCheckoutPaymentMethodMock(
             $this->gateway,
             $config,
             $this->router,
@@ -62,6 +72,6 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
             $this->optionsProvider,
             $this->surchargeProvider,
             $this->propertyAccessor
-        );
+        ))->setTransactionOptionProvider($this->transactionOptionProvider);
     }
 }

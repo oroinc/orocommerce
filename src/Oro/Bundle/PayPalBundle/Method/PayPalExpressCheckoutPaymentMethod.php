@@ -4,11 +4,13 @@ namespace Oro\Bundle\PayPalBundle\Method;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
@@ -57,6 +59,9 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     /** @var SurchargeProvider */
     protected $surchargeProvider;
 
+    /** @var TransactionOptionProvider */
+    protected $transactionOptionProvider;
+
     public function __construct(
         Gateway $gateway,
         PayPalExpressCheckoutConfigInterface $config,
@@ -73,6 +78,13 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $this->optionsProvider = $optionsProvider;
         $this->surchargeProvider = $surchargeProvider;
         $this->propertyAccessor = $propertyAccessor;
+    }
+
+    public function setTransactionOptionProvider(TransactionOptionProvider $transactionOptionProvider)
+    {
+        $this->transactionOptionProvider = $transactionOptionProvider;
+
+        return $this;
     }
 
     /**
@@ -126,7 +138,11 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $options = array_merge(
             $this->getCredentials(),
             $this->getSetExpressCheckoutOptions($paymentTransaction),
-            $this->getShippingAddressOptions($paymentTransaction)
+            $this->transactionOptionProvider->getShippingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getBillingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getCustomerUserOptions($paymentTransaction),
+            $this->transactionOptionProvider->getOrderOptions($paymentTransaction),
+            $this->transactionOptionProvider->getIPOptions($paymentTransaction),
         );
 
         $paymentTransaction->setRequest($options);
@@ -148,7 +164,12 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $options = array_merge(
             $this->getCredentials(),
             $this->getAdditionalOptions(),
-            $this->getDoExpressCheckoutOptions($paymentTransaction)
+            $this->getDoExpressCheckoutOptions($paymentTransaction),
+            $this->getShippingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getBillingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getCustomerUserOptions($paymentTransaction),
+            $this->transactionOptionProvider->getOrderOptions($paymentTransaction),
+            $this->transactionOptionProvider->getIPOptions($paymentTransaction),
         );
 
         $paymentTransaction->setRequest($options);
@@ -330,10 +351,21 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     {
         $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
 
-        return [
+        $options = [
             Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\OriginalTransaction::ORIGID => $sourceTransaction->getReference(),
         ];
+
+        $entity = $this->doctrineHelper->getEntityReference(
+            $paymentTransaction->getEntityClass(),
+            $paymentTransaction->getEntityIdentifier()
+        );
+
+        if ($entity instanceof Order) {
+            $options[Option\Order::ORDERID] = (string) $entity->getIdentifier();
+        }
+
+        return $options;
     }
 
     /**
@@ -367,13 +399,16 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 
         return [
             Option\ShippingAddress::SHIPTOFIRSTNAME => $addressOption->getFirstName(),
+            Option\ShippingAddress::SHIPTOMIDDLENAME => $addressOption->getMiddleName(),
             Option\ShippingAddress::SHIPTOLASTNAME => $addressOption->getLastName(),
             Option\ShippingAddress::SHIPTOSTREET => $addressOption->getStreet(),
             Option\ShippingAddress::SHIPTOSTREET2 => $addressOption->getStreet2(),
             Option\ShippingAddress::SHIPTOCITY => $addressOption->getCity(),
             Option\ShippingAddress::SHIPTOSTATE => $addressOption->getRegionCode(),
             Option\ShippingAddress::SHIPTOZIP => $addressOption->getPostalCode(),
-            Option\ShippingAddress::SHIPTOCOUNTRY => $addressOption->getCountryIso2()
+            Option\ShippingAddress::SHIPTOCOUNTRY => $addressOption->getCountryIso2(),
+            Option\ShippingAddress::SHIPTOCOMPANY => $addressOption->getOrganization(),
+            Option\ShippingAddress::SHIPTOPHONE => $addressOption->getPhone(),
         ];
     }
 

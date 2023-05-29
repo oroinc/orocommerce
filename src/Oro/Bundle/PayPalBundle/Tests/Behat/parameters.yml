@@ -50,6 +50,8 @@ services:
             - '@oro_paypal.options_provider.options'
             - '@oro_payment.provider.surcharge'
             - '@property_accessor'
+        calls:
+            - ['setTransactionOptionProvider', ['@oro_paypal.options_provider.transaction']]
 
     oro_paypal.test.express_payment.cache:
         parent: oro.data.cache
