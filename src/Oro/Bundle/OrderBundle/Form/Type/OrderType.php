@@ -20,6 +20,8 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -118,7 +120,15 @@ class OrderType extends AbstractType
             )
             ->add('sourceEntityClass', HiddenType::class)
             ->add('sourceEntityId', HiddenType::class)
-            ->add('sourceEntityIdentifier', HiddenType::class);
+            ->add('sourceEntityIdentifier', HiddenType::class)
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING)) {
+                    $event->getForm()->remove('billingAddress');
+                }
+                if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_SHIPPING)) {
+                    $event->getForm()->remove('shippingAddress');
+                }
+            });
         $this->addShippingFields($builder, $order);
         $this->addAddresses($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
