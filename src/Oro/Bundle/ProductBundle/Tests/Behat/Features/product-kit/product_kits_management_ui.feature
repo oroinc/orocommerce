@@ -33,7 +33,7 @@ Feature: Product kits management UI
     And I should not see "Kit Item 1"
     And I fill "ProductKitForm" with:
       | Label1     | Kit Item 1 |
-      | sortOrder1 | 2          |
+      | sortOrder1 | 3          |
     And I should see "Kit Item 1"
     And I save and close form
     Then I should see validation errors:
