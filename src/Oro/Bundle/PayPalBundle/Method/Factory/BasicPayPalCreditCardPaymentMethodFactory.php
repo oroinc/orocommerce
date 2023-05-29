@@ -5,25 +5,27 @@ namespace Oro\Bundle\PayPalBundle\Method\Factory;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Factory to create instance of PayPal credit card payment method.
+ */
 class BasicPayPalCreditCardPaymentMethodFactory implements PayPalCreditCardPaymentMethodFactoryInterface
 {
-    /**
-     * @var Gateway
-     */
-    private $gateway;
+    private Gateway $gateway;
+    private RouterInterface $router;
+    private TransactionOptionProvider $transactionOptionProvider;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
-
-    public function __construct(Gateway $gateway, RouterInterface $router)
-    {
+    public function __construct(
+        Gateway $gateway,
+        RouterInterface $router,
+        TransactionOptionProvider $transactionOptionProvider,
+    ) {
         $this->gateway = $gateway;
         $this->router = $router;
+        $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
     /**
@@ -35,7 +37,8 @@ class BasicPayPalCreditCardPaymentMethodFactory implements PayPalCreditCardPayme
         return new PayPalCreditCardPaymentMethod(
             $this->gateway,
             $config,
-            $this->router
+            $this->router,
+            $this->transactionOptionProvider,
         );
     }
 }

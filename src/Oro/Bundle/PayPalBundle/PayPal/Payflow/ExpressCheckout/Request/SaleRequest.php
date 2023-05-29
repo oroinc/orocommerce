@@ -3,9 +3,13 @@
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Request;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\AbstractRequest;
 
+/**
+ * PayPal Payflow sale request
+ */
 class SaleRequest extends AbstractRequest
 {
     /** {@inheritdoc} */
@@ -32,7 +36,13 @@ class SaleRequest extends AbstractRequest
             ->addOption(new ECOption\ShippingAddress())
             ->addOption(new ECOption\ShippingAddressOverride())
             ->addOption(new Option\Verbosity())
-            ->addOption(new Option\ButtonSource());
+            ->addOption(new Option\Order())
+            ->addOption(new Option\ButtonSource())
+            ->addOption(new Option\BillingAddress())
+            ->addOption(new Option\IPAddress())
+            ->addOption(new GatewayOption\Comment())
+            ->addOption(new GatewayOption\Customer(false))
+            ->addOption(new GatewayOption\Purchase());
 
         return $this;
     }
