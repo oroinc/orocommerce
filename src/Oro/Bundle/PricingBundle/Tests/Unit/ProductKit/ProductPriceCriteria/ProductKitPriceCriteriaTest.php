@@ -90,7 +90,10 @@ class ProductKitPriceCriteriaTest extends TestCase
         new ProductKitPriceCriteria($this->getProduct(42), new ProductUnit(), 1, 'USD');
     }
 
-    public function testConstructorQuantityException(): void
+    /**
+     * @dataProvider getConstructorQuantityExceptionDataProvider
+     */
+    public function testConstructorQuantityException(?float $quantity): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Quantity must be numeric and more than or equal zero.');
@@ -98,17 +101,36 @@ class ProductKitPriceCriteriaTest extends TestCase
         new ProductKitPriceCriteria(
             $this->getProduct(42),
             (new ProductUnit())->setCode('kg'),
-            -1,
+            $quantity,
             'USD'
         );
     }
 
-    public function testConstructorCurrencyException(): void
+    public function getConstructorQuantityExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [-1],
+        ];
+    }
+
+    /**
+     * @dataProvider getConstructorCurrencyExceptionDataProvider
+     */
+    public function testConstructorCurrencyException(?string $currency): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Currency must be non-empty string.');
 
-        new ProductKitPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, '');
+        new ProductKitPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, $currency);
+    }
+
+    public function getConstructorCurrencyExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [''],
+        ];
     }
 
     public function testGetIdentifier(): void

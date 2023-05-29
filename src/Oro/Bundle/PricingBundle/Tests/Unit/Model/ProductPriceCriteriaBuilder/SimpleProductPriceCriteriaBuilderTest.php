@@ -93,10 +93,12 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
     {
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
-            ->setProductUnit($productUnitItem);
+            ->setProductUnit($productUnitItem)
+            ->setQuantity($quantity);
 
         $throwable = new \InvalidArgumentException('Currency must be non-empty string.');
         $this->loggerMock
@@ -110,7 +112,7 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
                     'message' => $throwable->getMessage(),
                     'product_id' => $product->getId(),
                     'unit_code' => $productUnitItem->getCode(),
-                    'quantity' => null,
+                    'quantity' => $quantity,
                     'currency' => null,
                 ]
             );
@@ -124,6 +126,7 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
         $productUnitEachCode = 'each';
         $productUnitEach = (new ProductUnit())->setCode($productUnitEachCode);
         $currency = 'USD';
+        $quantity = 0.0;
 
         $this->entityManager
             ->expects(self::once())
@@ -134,7 +137,8 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
         $this->builder
             ->setProduct($product)
             ->setProductUnitCode($productUnitEachCode)
-            ->setCurrency($currency);
+            ->setCurrency($currency)
+            ->setQuantity($quantity);
 
         $this->assertLoggerNotCalled();
 
@@ -142,7 +146,7 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
             new ProductPriceCriteria(
                 $product,
                 $productUnitEach,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()
@@ -154,11 +158,13 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
         $currency = 'USD';
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
             ->setProductUnit($productUnitItem)
-            ->setCurrency($currency);
+            ->setCurrency($currency)
+            ->setQuantity($quantity);
 
         $this->assertLoggerNotCalled();
 
@@ -166,7 +172,7 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
             new ProductPriceCriteria(
                 $product,
                 $productUnitItem,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()
@@ -178,10 +184,12 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
         $currency = 'EUR';
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
-            ->setProductUnit($productUnitItem);
+            ->setProductUnit($productUnitItem)
+            ->setQuantity($quantity);
 
         $this->userCurrencyManager
             ->expects(self::once())
@@ -193,7 +201,7 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
             new ProductPriceCriteria(
                 $product,
                 $productUnitItem,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()
@@ -205,10 +213,12 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
         $currency = 'CAD';
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
-            ->setProductUnit($productUnitItem);
+            ->setProductUnit($productUnitItem)
+            ->setQuantity($quantity);
 
         $this->userCurrencyManager
             ->expects(self::once())
@@ -225,7 +235,7 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
             new ProductPriceCriteria(
                 $product,
                 $productUnitItem,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()

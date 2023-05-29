@@ -44,7 +44,7 @@ class ProductPriceCriteria
             throw new \InvalidArgumentException('ProductUnit must have code.');
         }
 
-        if ($this->quantity < 0) {
+        if ($this->quantity === null || $this->quantity < 0) {
             throw new \InvalidArgumentException('Quantity must be numeric and more than or equal zero.');
         }
 

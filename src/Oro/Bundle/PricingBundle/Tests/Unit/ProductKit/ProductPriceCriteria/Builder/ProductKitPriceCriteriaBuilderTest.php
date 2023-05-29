@@ -95,10 +95,12 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
     {
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
-            ->setProductUnit($productUnitItem);
+            ->setProductUnit($productUnitItem)
+            ->setQuantity($quantity);
 
         $throwable = new \InvalidArgumentException('Currency must be non-empty string.');
         $this->loggerMock
@@ -112,7 +114,7 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
                     'message' => $throwable->getMessage(),
                     'product_id' => $product->getId(),
                     'unit_code' => $productUnitItem->getCode(),
-                    'quantity' => null,
+                    'quantity' => $quantity,
                     'currency' => null,
                 ]
             );
@@ -126,6 +128,7 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
         $productUnitEachCode = 'each';
         $productUnitEach = (new ProductUnit())->setCode($productUnitEachCode);
         $currency = 'USD';
+        $quantity = 0.0;
 
         $this->entityManager
             ->expects(self::once())
@@ -136,7 +139,8 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
         $this->builder
             ->setProduct($product)
             ->setProductUnitCode($productUnitEachCode)
-            ->setCurrency($currency);
+            ->setCurrency($currency)
+            ->setQuantity($quantity);
 
         $this->assertLoggerNotCalled();
 
@@ -144,7 +148,7 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
             new ProductKitPriceCriteria(
                 $product,
                 $productUnitEach,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()
@@ -156,11 +160,13 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
         $currency = 'USD';
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
             ->setProductUnit($productUnitItem)
-            ->setCurrency($currency);
+            ->setCurrency($currency)
+            ->setQuantity($quantity);
 
         $this->assertLoggerNotCalled();
 
@@ -168,7 +174,7 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
             new ProductKitPriceCriteria(
                 $product,
                 $productUnitItem,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()
@@ -180,10 +186,12 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
         $currency = 'EUR';
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
-            ->setProductUnit($productUnitItem);
+            ->setProductUnit($productUnitItem)
+            ->setQuantity($quantity);
 
         $this->userCurrencyManager
             ->expects(self::once())
@@ -195,7 +203,7 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
             new ProductKitPriceCriteria(
                 $product,
                 $productUnitItem,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()
@@ -207,10 +215,12 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
         $product = (new ProductStub())->setId(10);
         $productUnitItem = (new ProductUnit())->setCode('item');
         $currency = 'CAD';
+        $quantity = 0.0;
 
         $this->builder
             ->setProduct($product)
-            ->setProductUnit($productUnitItem);
+            ->setProductUnit($productUnitItem)
+            ->setQuantity($quantity);
 
         $this->userCurrencyManager
             ->expects(self::once())
@@ -227,7 +237,7 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
             new ProductKitPriceCriteria(
                 $product,
                 $productUnitItem,
-                0.0,
+                $quantity,
                 $currency
             ),
             $this->builder->create()
@@ -258,6 +268,52 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
             ),
             $this->builder->create()
         );
+    }
+
+    public function testCreateWhenKitItemsProvidedWithoutQuantity(): void
+    {
+        $product = (new ProductStub())->setId(10);
+        $productUnitItem = (new ProductUnit())->setCode('item');
+        $productUnitEach = (new ProductUnit())->setCode('Each');
+        $currency = 'USD';
+
+        $this->builder
+            ->setProduct($product)
+            ->setProductUnit($productUnitItem)
+            ->setCurrency($currency);
+
+        $kitItem1 = new ProductKitItemStub(1);
+        $kitItem1Product = (new ProductStub())
+            ->setId(10);
+        $kitItem1Quantity = 0.1234;
+
+        $kitItem2 = new ProductKitItemStub(2);
+        $kitItem2Product = (new ProductStub())
+            ->setId(20);
+        $kitItem2Quantity = null;
+
+        $this->builder
+            ->addKitItemProduct($kitItem1, $kitItem1Product, $productUnitItem, $kitItem1Quantity)
+            ->addKitItemProduct($kitItem2, $kitItem2Product, $productUnitEach, $kitItem2Quantity);
+
+        $throwable = new \InvalidArgumentException('Quantity must be numeric and more than or equal zero.');
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with(
+                'Failed to create a product price criteria for: product #{product_id},'
+                . 'unit "{unit_code}", quantity "{quantity}", currency "{currency}". Error: {message}',
+                [
+                    'throwable' => $throwable,
+                    'message' => $throwable->getMessage(),
+                    'product_id' => $product->getId(),
+                    'unit_code' => $productUnitItem->getCode(),
+                    'quantity' => null,
+                    'currency' => $currency,
+                ]
+            );
+
+        self::assertNull($this->builder->create());
     }
 
     public function testCreateWhenKitItemsProvided(): void

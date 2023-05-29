@@ -54,13 +54,16 @@ class ProductKitItemPriceCriteriaTest extends TestCase
         ];
     }
 
-    public function testConstructorKitItemException(): void
+    /**
+     * @dataProvider constructorKitItemExceptionDataProvider
+     */
+    public function testConstructorKitItemException(?ProductKitItem $kitItem): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('ProductKitItem must have an id.');
 
         new ProductKitItemPriceCriteria(
-            new ProductKitItem(),
+            $kitItem,
             new Product(),
             (new ProductUnit())->setCode('kg'),
             1,
@@ -68,21 +71,43 @@ class ProductKitItemPriceCriteriaTest extends TestCase
         );
     }
 
-    public function testConstructorProductException(): void
+    public function constructorKitItemExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [new ProductKitItem()],
+        ];
+    }
+
+    /**
+     * @dataProvider constructorProductExceptionDataProvider
+     */
+    public function testConstructorProductException(?Product $product): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Product must have id.');
 
         new ProductKitItemPriceCriteria(
             new ProductKitItemStub(4242),
-            new Product(),
+            $product,
             (new ProductUnit())->setCode('kg'),
             1,
             'USD'
         );
     }
 
-    public function testConstructorProductUnitException(): void
+    public function constructorProductExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [new Product()],
+        ];
+    }
+
+    /**
+     * @dataProvider constructorProductUnitExceptionDataProvider
+     */
+    public function testConstructorProductUnitException(?ProductUnit $productUnit): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('ProductUnit must have code.');
@@ -90,13 +115,24 @@ class ProductKitItemPriceCriteriaTest extends TestCase
         new ProductKitItemPriceCriteria(
             new ProductKitItemStub(4242),
             $this->getProduct(42),
-            new ProductUnit(),
+            $productUnit,
             1,
             'USD'
         );
     }
 
-    public function testConstructorQuantityException(): void
+    public function constructorProductUnitExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [new ProductUnit()],
+        ];
+    }
+
+    /**
+     * @dataProvider getConstructorQuantityExceptionDataProvider
+     */
+    public function testConstructorQuantityException(?float $quantity): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Quantity must be numeric and more than or equal zero.');
@@ -105,12 +141,23 @@ class ProductKitItemPriceCriteriaTest extends TestCase
             new ProductKitItemStub(4242),
             $this->getProduct(42),
             (new ProductUnit())->setCode('kg'),
-            -1,
+            $quantity,
             'USD'
         );
     }
 
-    public function testConstructorCurrencyException(): void
+    public function getConstructorQuantityExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [-1],
+        ];
+    }
+
+    /**
+     * @dataProvider getConstructorCurrencyExceptionDataProvider
+     */
+    public function testConstructorCurrencyException(?string $currency): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Currency must be non-empty string.');
@@ -120,8 +167,16 @@ class ProductKitItemPriceCriteriaTest extends TestCase
             $this->getProduct(42),
             (new ProductUnit())->setCode('kg'),
             1,
-            ''
+            $currency
         );
+    }
+
+    public function getConstructorCurrencyExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [''],
+        ];
     }
 
     public function testGetIdentifier(): void

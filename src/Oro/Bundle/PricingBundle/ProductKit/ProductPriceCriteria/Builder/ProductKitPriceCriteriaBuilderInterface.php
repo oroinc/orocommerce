@@ -18,6 +18,6 @@ interface ProductKitPriceCriteriaBuilderInterface extends ProductPriceCriteriaBu
         ProductKitItem $productKitItem,
         Product $product,
         ProductUnit $productUnit,
-        float $quantity
+        ?float $quantity
     ): self;
 }

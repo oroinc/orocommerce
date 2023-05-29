@@ -12,24 +12,29 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class ProductKitItemPriceCriteria extends ProductPriceCriteria
 {
-    protected ProductKitItem $kitItem;
+    protected ?ProductKitItem $kitItem;
 
     private ?string $identifier = null;
 
     public function __construct(
-        ProductKitItem $productKitItem,
-        Product $product,
-        ProductUnit $productUnit,
-        float $quantity,
-        string $currency
+        ?ProductKitItem $productKitItem = null,
+        ?Product $product = null,
+        ?ProductUnit $productUnit = null,
+        ?float $quantity = null,
+        ?string $currency = null
     ) {
-        if (!$productKitItem->getId()) {
-            throw new \InvalidArgumentException('ProductKitItem must have an id.');
-        }
-
         $this->kitItem = $productKitItem;
 
         parent::__construct($product, $productUnit, $quantity, $currency);
+    }
+
+    protected function assertIsValid(): void
+    {
+        if (!$this->kitItem?->getId()) {
+            throw new \InvalidArgumentException('ProductKitItem must have an id.');
+        }
+
+        parent::assertIsValid();
     }
 
     public function getIdentifier(): string

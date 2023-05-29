@@ -25,7 +25,7 @@ class ProductKitPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
         ProductKitItem $productKitItem,
         Product $product,
         ProductUnit $productUnit,
-        float $quantity
+        ?float $quantity
     ): self {
         $this->kitItemsProducts[$productKitItem->getId()] = [$productKitItem, $product, $productUnit, $quantity];
 
