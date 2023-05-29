@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType as AddressFormType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -26,6 +27,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class CheckoutAddressTypeTest extends FormIntegrationTestCase
 {
@@ -175,6 +177,8 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
     protected function getExtensions(): array
     {
         $orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
+        $entityManager = $this->createMock(EntityManager::class);
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $orderAddressSecurityProvider->expects($this->any())
             ->method('isManualEditGranted')
             ->willReturn(true);
@@ -188,7 +192,7 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     new CheckoutAddressType(),
-                    new OrderAddressType($orderAddressSecurityProvider),
+                    new OrderAddressType($orderAddressSecurityProvider, $entityManager, $propertyAccessor),
                     AddressFormType::class => new AddressTypeStub(),
                     new CheckoutAddressSelectType(
                         $addressManager,
