@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Symfony\Component\Form\AbstractType;
@@ -30,13 +30,13 @@ class ProductKitLineItemType extends AbstractType
 {
     private FrontendProductPricesDataProvider $frontendProductPricesDataProvider;
 
-    private ProductLineItemsHolderFactory $lineItemsHolderFactory;
+    private ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory;
 
     private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
 
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
-        ProductLineItemsHolderFactory $lineItemsHolderFactory,
+        ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory,
         SubtotalProviderInterface $lineItemNotPricedSubtotalProvider
     ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;

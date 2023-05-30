@@ -21,6 +21,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,7 +52,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
      */
     private $listener;
 
-    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
 
     protected function setUp(): void
     {

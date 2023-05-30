@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
@@ -27,7 +27,7 @@ class PriceMatcherTest extends TestCase
 
     private PriceMatcher $matcher;
 
-    private ProductPriceCriteriaFactory|MockObject $productPriceCriteriaFactory;
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
 
     private OrderLineItem|MockObject $orderLineItem;
 
@@ -39,7 +39,7 @@ class PriceMatcherTest extends TestCase
     {
         $this->provider = $this->createMock(MatchingPriceProvider::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
-        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $this->order = $this->createMock(Order::class);
         $this->orderLineItem = $this->createMock(OrderLineItem::class);

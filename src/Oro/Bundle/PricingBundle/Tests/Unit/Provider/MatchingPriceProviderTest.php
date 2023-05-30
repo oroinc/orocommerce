@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -25,13 +25,13 @@ class MatchingPriceProviderTest extends TestCase
 
     private MatchingPriceProvider $provider;
 
-    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+    private ProductPriceCriteriaFactoryInterface&MockObject $productPriceCriteriaFactory;
 
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $this->provider = new MatchingPriceProvider(
             $this->productPriceProvider,

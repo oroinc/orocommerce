@@ -8,7 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -42,7 +42,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
 
     private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
 
-    private ProductLineItemsHolderFactory $lineItemsHolderFactory;
+    private ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory;
 
     private ManagerRegistry $managerRegistry;
 
@@ -54,7 +54,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         ShoppingListManager $shoppingListManager,
         ProductKitLineItemFactory $productKitLineItemFactory,
         SubtotalProviderInterface $lineItemNotPricedSubtotalProvider,
-        ProductLineItemsHolderFactory $lineItemsHolderFactory,
+        ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory,
         ManagerRegistry $managerRegistry,
         ValidatorInterface $validator
     ) {

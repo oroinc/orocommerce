@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -21,7 +21,7 @@ class DatagridLineItemsDataValidationListener
 
     private ValidatorInterface $validator;
 
-    private ProductLineItemsHolderFactory $lineItemsHolderFactory;
+    private ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory;
 
     private TranslatorInterface $translator;
 
@@ -29,7 +29,7 @@ class DatagridLineItemsDataValidationListener
 
     public function __construct(
         ValidatorInterface $validator,
-        ProductLineItemsHolderFactory $lineItemsHolderFactory,
+        ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory,
         TranslatorInterface $translator
     ) {
         $this->validator = $validator;
@@ -55,8 +55,8 @@ class DatagridLineItemsDataValidationListener
             $lineItemId = $lineItem->getEntityIdentifier();
 
             $lineItemData = $event->getDataForLineItem($lineItemId);
-            $lineItemData[self::WARNINGS] = $warnings[$index] ?? [];
-            $lineItemData[self::ERRORS] = $errors[$index] ?? [];
+            $lineItemData[self::WARNINGS] = array_merge($lineItemData[self::WARNINGS] ?? [], $warnings[$index] ?? []);
+            $lineItemData[self::ERRORS] = array_merge($lineItemData[self::ERRORS] ?? [], $errors[$index] ?? []);
 
             if ($lineItemData[DatagridKitLineItemsDataListener::IS_KIT] ?? false) {
                 $lineItemData[self::KIT_HAS_GENERAL_ERROR] = $lineItemData[self::KIT_HAS_GENERAL_ERROR] ?? false;
@@ -72,6 +72,9 @@ class DatagridLineItemsDataValidationListener
                         ->trans('oro.shoppinglist.product_kit_line_item.general_error.message', [], 'validators');
                 }
             }
+
+            $lineItemData[self::WARNINGS] = array_unique($lineItemData[self::WARNINGS]);
+            $lineItemData[self::ERRORS] = array_unique($lineItemData[self::ERRORS]);
 
             $event->setDataForLineItem($lineItemId, $lineItemData);
         }
