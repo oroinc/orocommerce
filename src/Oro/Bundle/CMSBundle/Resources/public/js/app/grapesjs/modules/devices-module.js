@@ -86,6 +86,7 @@ define(function(require) {
                     canvas.classList.add(sender.id);
                     editor.Canvas.deviceDecorator.classList.add(sender.id);
                 },
+
                 stop(editor, sender) {
                     const canvas = editor.Canvas.getElement();
 
@@ -96,13 +97,12 @@ define(function(require) {
         },
 
         patchDeviceModel() {
-            const {Devices} = this.builder;
+            const {Devices, Canvas} = this.builder;
 
             Devices.Devices.prototype.model = Devices.Device.extend({
                 editor: this.builder,
 
                 updateCalcPreviewDeviceWidth() {
-                    const {Canvas} = this.editor;
                     const canvasEl = Canvas.getElement();
                     const width = parseInt(this.get('width')) || 0;
 
