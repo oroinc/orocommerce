@@ -2,6 +2,12 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+### Removed
+
+#### CMSBundle
+* WYSIWYG editor
+  Removed `patchDeviceModel` method in `DevidesManager`.  is used `updateCalcPreviewDeviceWidth` from `DeviceManager` for update device preview width instead
+
 ## Changes in the Сommerce package versions
 
 - [5.1.0](#510-2023-03-31)
@@ -20,7 +26,6 @@ The current file describes significant changes in the code that may affect the u
 - [1.3.0](#130-2017-07-28)
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
-
 
 ## 5.1.0 (2023-03-31)
 [Show detailed list of changes](incompatibilities-5-1.md)
@@ -148,6 +153,8 @@ The current file describes significant changes in the code that may affect the u
 #### CMSBundle
 * Removed `text_with_placeholders`, `wysiwyg_style` layout block types. Use `wysiwyg_content` instead.
 * Removed app module `grapesjs-module.js`.
+* WYSIWYG editor
+  Removed `patchDeviceModel` method in `DevidesManager`.  is used `updateCalcPreviewDeviceWidth` from `DeviceManager` for update device preview width instead
 
 #### OrderBundle
 * Listener `oro_order.event_listener.frontend_order_datagrid` is removed. Its responsibility is merged
