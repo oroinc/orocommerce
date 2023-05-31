@@ -43,20 +43,6 @@ class CombinedPriceListActivationStatusHandler implements CombinedPriceListStatu
             return true;
         }
 
-        $activeRule = $cplActivationRepo->getActiveRuleByScheduledCpl($cpl, $activationDate);
-        if ($activeRule) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function getActivateDate(): \DateTime
-    {
-        $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
-        $activateDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $activateDate->add(new \DateInterval(sprintf('PT%dM', $offsetHours * 60)));
-
-        return $activateDate;
+        return $cplActivationRepo->hasActiveRuleByScheduledCpl($cpl, $activationDate);
     }
 }
