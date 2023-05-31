@@ -7,7 +7,8 @@ const ProductKitView = BaseView.extend({
     autoRender: true,
 
     optionNames: BaseView.prototype.optionNames.concat([
-        'fieldsNamespace', 'fields', 'kitItemId', 'sortOrderFieldSelector'
+        'fieldsNamespace', 'fields', 'kitItemId', 'sortOrderFieldSelector',
+         'submitted'
     ]),
 
     fields: null,
@@ -31,16 +32,24 @@ const ProductKitView = BaseView.extend({
 
         this.updateFields();
 
-        if (!this.kitItemId && this.sortOrderFieldSelector) {
+        if (!this.$el.data('rendered') && !this.kitItemId && !this.submitted) {
             this.$(this.sortOrderFieldSelector).val(this.getMaxSortOrder() + 1);
         }
+
+        this.$el.attr('data-rendered', true);
     },
 
+    /**
+     * Get max sort order value from product kit collection
+     * @returns {number}
+     */
     getMaxSortOrder() {
         return Math.max(
+            0,
             ...this.$el.closest('[data-role="collection-container"]')
-                .find(this.sortOrderFieldSelector)
-                .toArray().map(field => parseFloat(field.value))
+                .find(this.sortOrderFieldSelector) // Find all sibling sortOrder fields
+                .not(this.$(this.sortOrderFieldSelector)) // Ignore own sortOrder field
+                .toArray().map(field => field.value ? parseFloat(field.value) : 0)
         );
     },
 
