@@ -8,7 +8,7 @@ const ProductKitView = BaseView.extend({
 
     optionNames: BaseView.prototype.optionNames.concat([
         'fieldsNamespace', 'fields', 'kitItemId', 'sortOrderFieldSelector',
-         'submitted'
+        'submitted'
     ]),
 
     fields: null,

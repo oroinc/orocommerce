@@ -29,7 +29,7 @@
 {% endblock %}
 
 {% block _oro_product_kit_line_item_kitItemLineItems_entry_label %}
-    {{ form_label(form, value.kitItem.labels|localized_value|e ~ ':') }}
+    {{ form_label(form, value.kitItem.labels|localized_value ~ ':') }}
 {% endblock %}
 
 {% block _oro_product_kit_line_item_kitItemLineItems_entry_widget %}

@@ -213,6 +213,10 @@
         }
 
         .grid-row-product-kit {
+            .shift-mobile-row {
+                margin-right: -$responsive-shopping-list-edit-three-actions-cell-width-mobile;
+            }
+
             .grid-body-cell-item {
                 width:
                         calc(
