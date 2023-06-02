@@ -35,8 +35,8 @@ Feature: Product localizable names import
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | names.Dutch.value | names.Dutch.fallback | names.French.value | names.French.fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | SKU | NameENimport        |                        | NameENUSimport                      | system                                 | NameDEimport      |                      | NameFRimport       | parent_localization   | default_family       | enabled | in_stock            | set                            | 1                              |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Name.Dutch.value | Name.Dutch.fallback | Name.French.value | Name.French.fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | SKU | NameENimport       |                       | NameENUSimport                     | system                                | NameDEimport     |                     | NameFRimport      | parent_localization  | default_family      | enabled | in_stock            | set                        | 1                          |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
     When I go to Products/Products
@@ -50,8 +50,8 @@ Feature: Product localizable names import
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | names.Dutch.value | names.Dutch.fallback | names.French.value | names.French.fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | SKU | NameENimport2       |                        | NameENUSimport2                     |                                        | NameDEimport2     |                      | NameFRimport2      |                       | default_family       | enabled | in_stock            | set                            | 1                              |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Name.Dutch.value | Name.Dutch.fallback | Name.French.value | Name.French.fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | SKU | NameENimport2      |                       | NameENUSimport2                    |                                       | NameDEimport2    |                     | NameFRimport2     |                      | default_family      | enabled | in_stock            | set                        | 1                          |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
     When I go to Products/Products
@@ -65,8 +65,8 @@ Feature: Product localizable names import
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | names.Dutch.value | names.Dutch.fallback | names.French.value | names.French.fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | SKU | NameENimport        |                        | NameENUSimport                      | system                                 | NameDEimport      |                      | NameFRimport       | parent_localization   | default_family       | enabled | in_stock            | set                            | 1                              |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Name.Dutch.value | Name.Dutch.fallback | Name.French.value | Name.French.fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | SKU | NameENimport       |                       | NameENUSimport                     | system                                | NameDEimport     |                     | NameFRimport      | parent_localization  | default_family      | enabled | in_stock            | set                        | 1                          |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
     When I go to Products/Products
@@ -80,8 +80,8 @@ Feature: Product localizable names import
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | names.Dutch.value | names.Dutch.fallback | names.French.value | names.French.fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | SKU | NameENimport2       |                        | NameENUSimport2                     |                                        | NameDEimport2     |                      | NameFRimport2      |                       | default_family       | enabled | in_stock            | set                            | 1                              |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Name.Dutch.value | Name.Dutch.fallback | Name.French.value | Name.French.fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | SKU | NameENimport2      |                       | NameENUSimport2                    |                                       | NameDEimport2    |                     | NameFRimport2     |                      | default_family      | enabled | in_stock            | set                        | 1                          |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
     When I go to Products/Products
