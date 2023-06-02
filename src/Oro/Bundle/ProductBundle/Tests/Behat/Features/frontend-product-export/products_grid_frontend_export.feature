@@ -58,7 +58,7 @@ Feature: Products grid frontend export
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
-      | name      | sku   | inventory_status.id |
+      | Name      | SKU   | Inventory Status.Id |
       | Product 5 | PSKU5 | in_stock            |
       | Product 7 | PSKU7 | out_of_stock        |
 
@@ -70,7 +70,7 @@ Feature: Products grid frontend export
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
-      | name      | sku   | inventory_status.id |
+      | Name      | SKU   | Inventory Status.Id |
       | Product 1 | PSKU1 | in_stock            |
       | Product 2 | PSKU2 | in_stock            |
       | Product 3 | PSKU3 | in_stock            |
@@ -87,7 +87,7 @@ Feature: Products grid frontend export
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
-      | name      | sku   | inventory_status.id |
+      | Name      | SKU   | Inventory Status.Id |
       | Product 3 | PSKU3 | in_stock            |
       | Product 4 | PSKU4 | in_stock            |
 
@@ -102,6 +102,6 @@ Feature: Products grid frontend export
       | Body | Your products data export has been finished. Download Results |
     And take the link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
-      | name       | sku    | inventory_status.id |
+      | Name       | SKU    | Inventory Status.Id |
       | Product 2  | PSKU2  | in_stock            |
       | Product 20 | PSKU20 | in_stock            |
