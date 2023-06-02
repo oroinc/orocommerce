@@ -2,8 +2,8 @@ import mediator from 'oroui/js/mediator';
 import BasePlugin from 'oroui/js/app/plugins/base/plugin';
 
 const ProductKitInShoppingListRefreshPlugin = BasePlugin.extend({
-    constructor: function ShoppingListRefreshPlugin(grid, options) {
-        ShoppingListRefreshPlugin.__super__.constructor.call(this, grid, options);
+    constructor: function ProductKitInShoppingListRefreshPlugin(...args) {
+        ProductKitInShoppingListRefreshPlugin.__super__.constructor.apply(this, args);
     },
 
     enable: function() {
@@ -14,7 +14,6 @@ const ProductKitInShoppingListRefreshPlugin = BasePlugin.extend({
         this.listenTo(mediator, 'shopping-list:line-items:update-response', () => {
             mediator.trigger(`datagrid:doRefresh:${this.main.name}`);
         });
-
         ProductKitInShoppingListRefreshPlugin.__super__.enable.call(this);
     }
 });

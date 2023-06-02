@@ -1,5 +1,7 @@
 import ProductKitInShoppingListRefreshPlugin
     from 'oroshoppinglist/js/datagrid/plugins/product-kit-in-shopping-list-refresh-plugin';
+import ProductKitResetShoppingListsPlugin
+    from 'oroshoppinglist/js/datagrid/plugins/product-kit-reset-shopping-lists-plugin';
 import ShoppingListMessageRow from '../row/shopping-list-message-row';
 import {addClass, isError, isHighlight, messageModel} from './utils';
 import productKitItemMessage from 'tpl-loader!oroshoppinglist/templates/datagrid/cell/product-kit-item-message.html';
@@ -41,7 +43,15 @@ const ProductKitInShoppingListPluginsBuilder = {
             options.metadata.plugins = [];
         }
 
-        options.metadata.plugins.push(ProductKitInShoppingListRefreshPlugin);
+        options.metadata.plugins.push(
+            ProductKitInShoppingListRefreshPlugin,
+            {
+                constructor: ProductKitResetShoppingListsPlugin,
+                options: {
+                    productModel: options.productModel
+                }
+            }
+        );
 
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
