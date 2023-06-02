@@ -27,7 +27,7 @@ const ProductKitLineItemWidget = DialogWidget.extend({
     }),
 
     listen: {
-        'shopping-list:line-items:before-response mediator': 'hide',
+        'shopping-list:line-items:before-response mediator': '_hideDialog',
         'shopping-list:line-items:update-response mediator': 'onShoppingListLineItemsChange',
         'shopping-list:line-items:error-response mediator': 'onShoppingListLineItemsChange'
     },
@@ -82,6 +82,7 @@ const ProductKitLineItemWidget = DialogWidget.extend({
     },
 
     onShoppingListLineItemsChange(model, response) {
+        this._showDialog();
         if (typeof response === 'string') {
             this.show();
             this._onContentLoad(response);
@@ -116,6 +117,20 @@ const ProductKitLineItemWidget = DialogWidget.extend({
 
     _bindSubmitHandler() {
         // nothing to do
+    },
+
+    _hideDialog() {
+        const {uiDialog, overlay} = this.widget.dialog('instance');
+
+        $(uiDialog).addClass('invisible');
+        $(overlay).addClass('invisible');
+    },
+
+    _showDialog() {
+        const {uiDialog, overlay} = this.widget.dialog('instance');
+
+        $(uiDialog).removeClass('invisible');
+        $(overlay).removeClass('invisible');
     }
 });
 
