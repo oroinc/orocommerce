@@ -76,6 +76,6 @@ Feature: Products grid frontend export with additional attributes
       | Body | Your products data export has been finished. Download Results |
     When take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | name      | sku   | inventory_status.id | featured | MultiSelectField.1.name | MultiSelectField.2.name |
+      | Name      | SKU   | Inventory Status.Id | Is Featured | MultiSelectField.1.Name | MultiSelectField.2.Name |
       | Product 5 | PSKU5 | in_stock            | 0        | TestMultiValueOne       | TestMultiValueThree     |
       | Product 7 | PSKU7 | out_of_stock        | 0        |                         |                         |

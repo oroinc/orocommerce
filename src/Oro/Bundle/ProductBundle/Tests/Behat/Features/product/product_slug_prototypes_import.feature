@@ -36,8 +36,8 @@ Feature: Product slug prototypes import
     Given I go to Products/Products
     And I open "Products" import tab
     And fill import file with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | SKU | NameENimport1       |                        | NameENUSimport1                     |                                        | default_family       | enabled | in_stock            | set                            | 1                              |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | SKU | NameENimport1      |                       | NameENUSimport1                    |                                       | default_family      | enabled | in_stock            | set                        | 1                          |
     And I open "Products" import tab
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
@@ -51,8 +51,8 @@ Feature: Product slug prototypes import
     Given I go to Products/Products
     And I open "Products" import tab
     And fill import file with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.fallback | slugPrototypes.default.value | slugPrototypes.English (United States).fallback | slugPrototypes.English (United States).value |
-      | SKU | NameENimport2       |                        | NameENUSimport2                     |                                        | default_family       | enabled | in_stock            | set                            | 1                              |                                 | slugPrototypesEN             |                                                 | slugPrototypesENUS                           |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.fallback | URL Slug.default.value | URL Slug.English (United States).fallback | URL Slug.English (United States).value |
+      | SKU | NameENimport2      |                       | NameENUSimport2                    |                                       | default_family      | enabled | in_stock            | set                        | 1                          |                           | slugPrototypesEN       |                                           | slugPrototypesENUS                     |
     And I open "Products" import tab
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
@@ -66,8 +66,8 @@ Feature: Product slug prototypes import
     Given I go to Products/Products
     And I open "Products" import tab
     And fill import file with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.fallback | slugPrototypes.default.value | slugPrototypes.English (United States).fallback | slugPrototypes.English (United States).value |
-      | SKU | NameENimport3       |                        | NameENUSimport3                     |                                        | default_family       | enabled | in_stock            | set                            | 1                              |                                 | slugPrototypesEN1            | system                                          | slugPrototypesENUS                           |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.fallback | URL Slug.default.value | URL Slug.English (United States).fallback | URL Slug.English (United States).value |
+      | SKU | NameENimport3      |                       | NameENUSimport3                    |                                       | default_family      | enabled | in_stock            | set                        | 1                          |                           | slugPrototypesEN1      | system                                    | slugPrototypesENUS                     |
     And I open "Products" import tab
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
@@ -81,8 +81,8 @@ Feature: Product slug prototypes import
     Given I go to Products/Products
     And I open "Products" import tab
     And fill import file with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.fallback | slugPrototypes.default.value | slugPrototypes.English (United States).fallback | slugPrototypes.English (United States).value |
-      | SKU | NameENimport4       |                        | NameENUSimport4                     |                                        | default_family       | enabled | in_stock            | set                            | 1                              |                                 |                              |                                                 |                                              |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.fallback | URL Slug.default.value | URL Slug.English (United States).fallback | URL Slug.English (United States).value |
+      | SKU | NameENimport4      |                       | NameENUSimport4                    |                                       | default_family      | enabled | in_stock            | set                        | 1                          |                           |                        |                                           |                                        |
     And I open "Products" import tab
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
@@ -96,8 +96,8 @@ Feature: Product slug prototypes import
     Given I go to Products/Products
     And I open "Products" import tab
     And fill import file with data:
-      | sku | names.default.value | names.default.fallback | names.English (United States).value | names.English (United States).fallback | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.fallback | slugPrototypes.default.value | slugPrototypes.English (United States).fallback | slugPrototypes.English (United States).value |
-      | SKU | NameENimport5       |                        | NameENUSimport5                     |                                        | default_family       | enabled | in_stock            | set                            | 1                              |                                 |                              |                                                 | slugnameenusimport5                          |
+      | SKU | Name.default.value | Name.default.fallback | Name.English (United States).value | Name.English (United States).fallback | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.fallback | URL Slug.default.value | URL Slug.English (United States).fallback | URL Slug.English (United States).value |
+      | SKU | NameENimport5      |                       | NameENUSimport5                    |                                       | default_family      | enabled | in_stock            | set                        | 1                          |                           |                        |                                           | slugnameenusimport5                    |
     And I open "Products" import tab
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
