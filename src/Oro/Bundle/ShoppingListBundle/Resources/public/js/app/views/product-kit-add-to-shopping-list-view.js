@@ -112,6 +112,10 @@ const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
                 mediator.execute('hideLoading');
             }
         });
+    },
+
+    _onQuantityEnter() {
+        // Nothing to do because a form is sent using standard approach. Otherwise, it will be sent twice.
     }
 });
 
