@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Rest;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadBrandData;
