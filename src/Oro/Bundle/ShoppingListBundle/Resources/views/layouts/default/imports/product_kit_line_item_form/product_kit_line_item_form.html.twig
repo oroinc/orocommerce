@@ -23,8 +23,10 @@
 {% block oro_product_kit_line_item_widget %}
     <div class="product-kit-items">
         {{ form_row(form.kitItemLineItems, {label: false}) }}
-        <label class="h4 label label--full" for="{{ form.notes.vars.id }}">{{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.notes'|trans }}:</label>
-        {{ form_row(form.notes, {label: false}) }}
+        <div class="fields-row">
+            <label class="h4 label label--full" for="{{ form.notes.vars.id }}">{{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.notes'|trans }}:</label>
+            {{ form_row(form.notes, {label: false}) }}
+        </div>
     </div>
 {% endblock %}
 
