@@ -95,7 +95,7 @@
                                     <h3 class="grid-line-items__title">
                                         {{ UI.link({
                                             path: path('oro_product_frontend_product_view', {'id': product.id}),
-                                            label : productName|e
+                                            label : productName
                                         }) }}
                                     </h3>
                                 </div>
@@ -145,7 +145,7 @@
     {% set label %}
         {% if product is not null %}
             {% set productName = product.names|localized_value %}
-            <span class="sr-only">{{ product.skuUppercase ~ ' - ' ~ productName|e }}</span>
+            <span class="sr-only">{{ product.skuUppercase ~ ' - ' ~ productName }}</span>
         {% else %}
             <span class="sr-only">{{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.product_kit_item_line_item.product.choices.none'|trans }}</span>
         {% endif %}
