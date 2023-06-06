@@ -34,16 +34,17 @@ class ProductKitPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
 
     protected function doCreate(): ProductKitPriceCriteria
     {
+        $currency = $this->getCurrencyWithFallback();
         $productKitPriceCriteria = new ProductKitPriceCriteria(
             $this->product,
             $this->productUnit,
             $this->quantity,
-            $this->getCurrencyWithFallback()
+            $currency
         );
 
         foreach ($this->kitItemsProducts as [$productKitItem, $product, $productUnit, $quantity]) {
             $productKitPriceCriteria->addKitItemProductPriceCriteria(
-                new ProductKitItemPriceCriteria($productKitItem, $product, $productUnit, $quantity, $this->currency)
+                new ProductKitItemPriceCriteria($productKitItem, $product, $productUnit, $quantity, $currency)
             );
         }
 

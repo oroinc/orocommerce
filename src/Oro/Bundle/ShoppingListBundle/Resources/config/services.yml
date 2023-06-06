@@ -215,6 +215,7 @@ services:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_shopping_list.data_provider.shopping_list_line_items'
             - '@oro_pricing.formatter.product_price_formatter'
+            - '@oro_pricing.provider.product_line_item_price'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_products }
 

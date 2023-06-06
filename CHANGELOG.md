@@ -21,6 +21,14 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
+## UNRELEASED
+
+### Removed
+
+#### ShoppingListBundle
+* Removed option `productsMatchedPrices` from shopping_lists_awere_container layout block type, added productLineItemsPricesByShoppingList instead
+* Removed methods `getMatchedPrices`, `getMatchedPrice` from `\Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider`, added `getProductLineItemPricesForShoppingLists` instead.
+
 
 ## 5.1.0 (2023-03-31)
 [Show detailed list of changes](incompatibilities-5-1.md)

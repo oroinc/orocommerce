@@ -17,6 +17,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductKitPriceCriteriaBuilderTest extends TestCase
 {
     use LoggerAwareTraitTestTrait;
@@ -334,6 +337,68 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
         $kitItem1Product = (new ProductStub())
             ->setId(10);
         $kitItem1Quantity = 0.1234;
+
+        $kitItem2 = new ProductKitItemStub(2);
+        $kitItem2Product = (new ProductStub())
+            ->setId(20);
+        $kitItem2Quantity = 0.5678;
+        $this->builder
+            ->addKitItemProduct($kitItem1, $kitItem1Product, $productUnitItem, $kitItem1Quantity)
+            ->addKitItemProduct($kitItem2, $kitItem2Product, $productUnitEach, $kitItem2Quantity);
+
+        $this->assertLoggerNotCalled();
+
+        $kitItem1PriceCriteria = new ProductKitItemPriceCriteria(
+            $kitItem1,
+            $kitItem1Product,
+            $productUnitItem,
+            $kitItem1Quantity,
+            $currency
+        );
+        $kitItem2PriceCriteria = new ProductKitItemPriceCriteria(
+            $kitItem2,
+            $kitItem2Product,
+            $productUnitEach,
+            $kitItem2Quantity,
+            $currency
+        );
+        $productKitPriceCriteria = new ProductKitPriceCriteria(
+            $product,
+            $productUnitItem,
+            $quantity,
+            $currency
+        );
+        $productKitPriceCriteria
+            ->addKitItemProductPriceCriteria($kitItem1PriceCriteria)
+            ->addKitItemProductPriceCriteria($kitItem2PriceCriteria);
+
+        self::assertEquals($productKitPriceCriteria, $this->builder->create());
+    }
+
+    public function testCreateWhenKitItemsProvidedWithoutCurrency(): void
+    {
+        $product = (new ProductStub())->setId(10);
+        $productUnitItem = (new ProductUnit())->setCode('item');
+        $productUnitEach = (new ProductUnit())->setCode('Each');
+        $quantity = 12.3456;
+        $currency = 'USD';
+
+        $this->userCurrencyManager
+            ->expects(self::once())
+            ->method('getUserCurrency')
+            ->willReturn($currency);
+
+        $this->builder
+            ->setProduct($product)
+            ->setProductUnit($productUnitItem)
+            ->setQuantity($quantity);
+
+        $kitItem1Quantity = 0.1234;
+        $kitItem1 = (new ProductKitItemStub(1))
+            ->setProductUnit($productUnitItem)
+            ->setMinimumQuantity($kitItem1Quantity);
+        $kitItem1Product = (new ProductStub())
+            ->setId(10);
 
         $kitItem2 = new ProductKitItemStub(2);
         $kitItem2Product = (new ProductStub())
