@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '@OroCMS/layouts/blank/oro_cms_frontend_page_view/layout.html.twig'
+            themes: '@OroCMS/layouts/blank/oro_cms_frontend_page_view/layout_legacy.html.twig'
         - '@setOption':
             id: title
             optionName: params
@@ -19,11 +19,15 @@ layout:
         - '@addTree':
             items:
                 cms_page_content:
-                    blockType: wysiwyg_content
+                    blockType: text_with_placeholders
                     options:
-                        content: '=data["page"].getContent()'
-                        contentStyle: '=data["page"].getContentStyle()'
+                        text: '=data["page"].getContent()'
+                cms_page_style:
+                    blockType: wysiwyg_style
+                    options:
+                        content: '=data["page"].getContentStyle()'
             tree:
                 page_content:
+                    cms_page_style: ~
                     cms_page_content: ~
-    conditions: 'context["is_updated_after_507"]'
+    conditions: '!context["is_updated_after_507"]'

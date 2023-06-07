@@ -523,3 +523,18 @@ services:
             - '@oro_cms.provider.content_widget_layout'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_cms.layout_context_configurator.is_updated_after_507:
+        class: Oro\Bundle\CMSBundle\Layout\ContextConfigurator\IsUpdatedAfter507ContextConfigurator
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: layout.context_configurator }
+
+    oro_cms.event_listener.platform_update:
+        class: Oro\Bundle\CMSBundle\EventListener\PlatformUpdateListener
+        arguments:
+            - '@oro_distribution.handler.application_status'
+            - '@oro_config.global'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.pre_up, method: onPreUp }

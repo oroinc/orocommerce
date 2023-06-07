@@ -28,6 +28,9 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $config);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function configDataProvider(): array
     {
         return [
@@ -39,7 +42,11 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         Configuration::DIRECT_URL_PREFIX => [
                             'value' => '',
                             'scope' => 'app'
-                        ]
+                        ],
+                        Configuration::IS_UPDATED_AFTER_507 => [
+                            'value' => true,
+                            'scope' => 'app',
+                        ],
                     ],
                     Configuration::DIRECT_EDITING => [
                         Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false,
@@ -56,9 +63,13 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         Configuration::DIRECT_URL_PREFIX => [
                             'value' => '',
                             'scope' => 'app'
-                        ]
+                        ],
+                        Configuration::IS_UPDATED_AFTER_507 => [
+                            'value' => true,
+                            'scope' => 'app',
+                        ],
                     ],
-                    Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false]
+                    Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false],
                 ]
             ],
             'if empty login_page_css_field option' => [
@@ -73,7 +84,11 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         Configuration::DIRECT_URL_PREFIX => [
                             'value' => '',
                             'scope' => 'app'
-                        ]
+                        ],
+                        Configuration::IS_UPDATED_AFTER_507 => [
+                            'value' => true,
+                            'scope' => 'app',
+                        ],
                     ],
                     Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false]
                 ]
@@ -97,7 +112,11 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         Configuration::DIRECT_URL_PREFIX => [
                             'value' => '',
                             'scope' => 'app'
-                        ]
+                        ],
+                        Configuration::IS_UPDATED_AFTER_507 => [
+                            'value' => true,
+                            'scope' => 'app',
+                        ],
                     ],
                     Configuration::DIRECT_EDITING => [Configuration::LOGIN_PAGE_CSS_FIELD_OPTION => false],
                     'content_restrictions' => [
@@ -111,5 +130,13 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
         ];
+    }
+
+    public function testGetConfigKeyByName()
+    {
+        self::assertSame(
+            'oro_cms.is_updated_after_507',
+            Configuration::getConfigKeyByName(Configuration::IS_UPDATED_AFTER_507)
+        );
     }
 }
