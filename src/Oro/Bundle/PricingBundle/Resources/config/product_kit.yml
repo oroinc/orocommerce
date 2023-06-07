@@ -23,6 +23,7 @@ services:
         class: Oro\Bundle\PricingBundle\ProductKit\PriceByMatchingCriteria\ProductKitPriceByMatchingCriteriaProvider
         arguments:
             - '@oro_pricing.provider.product_price_by_matching_criteria.simple'
+            - '@oro_currency.rounding.price_rounding_service'
         tags:
             - { name: oro_pricing.provider.product_price_by_matching_criteria }
 

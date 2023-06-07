@@ -30,6 +30,43 @@ The current file describes significant changes in the code that may affect the u
 * Removed methods `getMatchedPrices`, `getMatchedPrice` from `\Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider`, added `getProductLineItemPricesForShoppingLists` instead.
 
 
+## UNRELEASED
+
+## Added
+
+### PricingBundle
+* Improved the mechanism of getting product prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-price.html).
+* Introduced the new mechanism of getting product line item prices, including product kit line item prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-line-item-price.html).
+* Added `\Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory` as the main entry point for creating `\Oro\Bundle\PricingBundle\Model\ProductPriceCriteria`. Eliminated all occurrences of manual creation of product price criteria with corresponding BC fallbacks.
+* Added `\Oro\Bundle\PricingBundle\Provider\MatchedProductPriceProviderInterface` implemented in `\Oro\Bundle\PricingBundle\Provider\ProductPriceProvider::getMatchedProductPrices` to get a collection of `\Oro\Bundle\PricingBundle\Model\ProductPriceInterface` product prices.
+* Added `\Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitPriceCriteria` and `\Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitItemPriceCriteria` product price criteria models for passing to the product price provider.
+* Added `\Oro\Bundle\PricingBundle\ProductKit\ProductPrice\ProductKitPriceDTO` and `\Oro\Bundle\PricingBundle\ProductKit\ProductPrice\ProductKitItemPriceDTO` as the DTO representing a product kit price.
+* Added `\Oro\Bundle\PricingBundle\Provider\PriceByMatchingCriteria\ProductPriceByMatchingCriteriaProvider` as the provider responsible for getting a product price matching the specified product price criteria. Made use of it in `\Oro\Bundle\PricingBundle\Provider\ProductPriceProvider`.
+* Added models representing product line item prices: `\Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice`, `\Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice`, `\Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitItemLineItemPrice`.
+* Added `\Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProvider` as the main entry point for getting product line item prices.
+
+### ProductBundle
+* Added `\Oro\Bundle\ProductBundle\Event\DatagridKitItemLineItemsDataEvent` as the event for collecting product kit item line items data for the product line items storefront datagrids.
+* Added `\Oro\Bundle\ProductBundle\Filter\ComposedSkuStringFilter` for SKU filter on the product line items storefront datagrids to take into account product kit item line items SKUs during filtration.
+* Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener` that switches status and inventory status of a product kit depending on its kit item products.
+* Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
+
+### RFPBundle
+* Added `\Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider` instead of the deprecated `\Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider`.
+* Disabled the ability to add a product kit to RFP via `\Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider::setNotAllowedProductTypes`.
+  
+### ShoppingListBundle
+* Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront.html).
+* Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the storefront API as `shoppinglistkititem` resource.
+* Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the back-office API.
+* Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.
+* Added `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice` validation constraint for checking if product kit item product has price.
+
+### VisibilityBundle
+* Added `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener` and `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityPrefetchListener` for adding visibility data to the product line items storefront datagrids.
+* Added `is_visible_product` TWIG function for checking if a product is visible.
+
+
 ## 5.1.0 (2023-03-31)
 [Show detailed list of changes](incompatibilities-5-1.md)
 

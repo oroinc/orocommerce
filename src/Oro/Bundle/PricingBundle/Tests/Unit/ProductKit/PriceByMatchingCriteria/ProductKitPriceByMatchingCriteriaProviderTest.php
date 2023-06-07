@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\PricingBundle\Tests\Unit\ProductKit\PriceByMatchingCriteria;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceCollectionDTO;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -34,9 +35,14 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
         $this->simpleProductPriceByMatchingCriteriaProvider = $this->createMock(
             ProductPriceByMatchingCriteriaProviderInterface::class
         );
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService
+            ->method('round')
+            ->willReturnCallback(static fn ($value) => round($value, 2));
 
         $this->provider = new ProductKitPriceByMatchingCriteriaProvider(
-            $this->simpleProductPriceByMatchingCriteriaProvider
+            $this->simpleProductPriceByMatchingCriteriaProvider,
+            $roundingService
         );
     }
 
@@ -94,9 +100,10 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
         );
     }
 
-    public function testGetProductPriceMatchingCriteriaWhenNoMatchingPriceForProductKitAndHasKitItems(): void
+    public function testGetProductPriceMatchingCriteriaWhenNoMatchingPriceForProductKitAndForOptionalKitItem(): void
     {
-        $kitItem1 = new ProductKitItemStub(1);
+        $kitItem1 = (new ProductKitItemStub(1))
+            ->setOptional(true);
         $kitItem1Product = (new ProductStub())
             ->setId(10);
         $kitItem2 = new ProductKitItemStub(2);
@@ -154,7 +161,7 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
         );
         $productKitPriceDTO = (new ProductKitPriceDTO(
             $productKitPriceCriteria->getProduct(),
-            Price::create(0.0, $productKitPriceCriteria->getCurrency()),
+            Price::create(12.68, $productKitPriceCriteria->getCurrency()),
             0.0,
             $productKitPriceCriteria->getProductUnit()
         ))
@@ -166,9 +173,55 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
         );
     }
 
+    public function testGetProductPriceMatchingCriteriaWhenNoMatchingPriceForProductKitAndForRequiredKitItem(): void
+    {
+        $kitItem1 = (new ProductKitItemStub(1));
+        $kitItem1Product = (new ProductStub())
+            ->setId(10);
+        $kitItem2 = new ProductKitItemStub(2);
+        $kitItem2Product = (new ProductStub())
+            ->setId(20);
+        $productKit = (new ProductStub())
+            ->setId(42)
+            ->setType(Product::TYPE_KIT);
+
+        $productUnitItem = (new ProductUnit())->setCode('item');
+        $kitItem1PriceCriteria = new ProductKitItemPriceCriteria(
+            $kitItem1,
+            $kitItem1Product,
+            $productUnitItem,
+            0.1234,
+            self::USD
+        );
+        $kitItem2PriceCriteria = new ProductKitItemPriceCriteria(
+            $kitItem2,
+            $kitItem2Product,
+            $productUnitItem,
+            0.5678,
+            self::USD
+        );
+        $productKitPriceCriteria = (new ProductKitPriceCriteria($productKit, $productUnitItem, 1.2345, self::USD))
+            ->addKitItemProductPriceCriteria($kitItem1PriceCriteria)
+            ->addKitItemProductPriceCriteria($kitItem2PriceCriteria);
+        $productPriceCollection = new ProductPriceCollectionDTO();
+
+        $this->simpleProductPriceByMatchingCriteriaProvider
+            ->expects(self::exactly(2))
+            ->method('getProductPriceMatchingCriteria')
+            ->willReturnMap([
+                [$productKitPriceCriteria, $productPriceCollection, null],
+                [$kitItem1PriceCriteria, $productPriceCollection, null],
+            ]);
+
+        self::assertNull(
+            $this->provider->getProductPriceMatchingCriteria($productKitPriceCriteria, $productPriceCollection)
+        );
+    }
+
     public function testGetProductPriceMatchingCriteriaWhenHasMatchingPriceForProductKitAndHasKitItems(): void
     {
-        $kitItem1 = new ProductKitItemStub(1);
+        $kitItem1 = (new ProductKitItemStub(1))
+            ->setOptional(true);
         $kitItem1Product = (new ProductStub())
             ->setId(10);
         $kitItem2 = new ProductKitItemStub(2);
@@ -234,7 +287,7 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
         );
         $productKitPriceDTO = (new ProductKitPriceDTO(
             $productKit,
-            Price::create(0.1122, self::USD),
+            Price::create(12.7922, self::USD),
             1.0,
             $productUnitItem
         ))

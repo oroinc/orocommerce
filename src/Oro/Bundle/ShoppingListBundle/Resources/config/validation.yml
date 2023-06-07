@@ -58,7 +58,10 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                 groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
                 payload:
                     jsValidation:
-                        type: Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero
+                        type: Range
+                        options:
+                            min: 0
+                            max: 100000000
             - NotBlank:
                 groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
         unit:

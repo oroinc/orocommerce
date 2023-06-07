@@ -24,10 +24,15 @@ class ProductKitPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
     public function addKitItemProduct(
         ProductKitItem $productKitItem,
         Product $product,
-        ProductUnit $productUnit,
-        ?float $quantity
+        ?ProductUnit $productUnit = null,
+        ?float $quantity = null
     ): self {
-        $this->kitItemsProducts[$productKitItem->getId()] = [$productKitItem, $product, $productUnit, $quantity];
+        $this->kitItemsProducts[$productKitItem->getId()] = [
+            $productKitItem,
+            $product,
+            $productUnit ?? $productKitItem->getProductUnit(),
+            $quantity ?? $productKitItem->getMinimumQuantity(),
+        ];
 
         return $this;
     }

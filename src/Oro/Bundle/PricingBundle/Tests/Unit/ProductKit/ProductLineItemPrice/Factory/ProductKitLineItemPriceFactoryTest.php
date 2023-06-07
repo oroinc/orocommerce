@@ -120,9 +120,6 @@ class ProductKitLineItemPriceFactoryTest extends TestCase
             1,
             $productUnitItem
         );
-        $productKitPrice = (new ProductKitPriceDTO($productKit, Price::create(12.345, self::USD), 1, $productUnitItem))
-            ->addKitItemPrice($kitItem1Price)
-            ->addKitItemPrice($kitItem2Price);
 
         $kitItemLineItem1Price = new ProductKitItemLineItemPrice(
             $kitItemLineItem1,
@@ -134,6 +131,19 @@ class ProductKitLineItemPriceFactoryTest extends TestCase
             $kitItem2Price->getPrice(),
             $kitItem2Price->getPrice()->getValue() * $kitItemLineItem2->getQuantity()
         );
+
+        $productKitPrice = (new ProductKitPriceDTO(
+            $productKit,
+            Price::create(
+                12.345 + $kitItemLineItem1Price->getSubtotal() + $kitItemLineItem2Price->getSubtotal(),
+                self::USD
+            ),
+            1,
+            $productUnitItem
+        ))
+            ->addKitItemPrice($kitItem1Price)
+            ->addKitItemPrice($kitItem2Price);
+
         $this->productLineItemPriceFactory
             ->expects(self::exactly(2))
             ->method('createForProductLineItem')
@@ -192,15 +202,22 @@ class ProductKitLineItemPriceFactoryTest extends TestCase
             1,
             $productUnitItem
         );
-        $productKitPrice = (new ProductKitPriceDTO($productKit, Price::create(12.345, self::USD), 1, $productUnitItem))
-            ->addKitItemPrice($kitItem1Price)
-            ->addKitItemPrice($kitItem2Price);
 
         $kitItemLineItem1Price = new ProductKitItemLineItemPrice(
             $kitItemLineItem1,
             $kitItem1Price->getPrice(),
             $kitItem1Price->getPrice()->getValue() * $kitItemLineItem1->getQuantity()
         );
+
+        $productKitPrice = (new ProductKitPriceDTO(
+            $productKit,
+            Price::create(12.345 + $kitItemLineItem1Price->getSubtotal(), self::USD),
+            1,
+            $productUnitItem
+        ))
+            ->addKitItemPrice($kitItem1Price)
+            ->addKitItemPrice($kitItem2Price);
+
         $this->productLineItemPriceFactory
             ->expects(self::exactly(2))
             ->method('createForProductLineItem')
@@ -304,14 +321,21 @@ class ProductKitLineItemPriceFactoryTest extends TestCase
             1,
             $productUnitItem
         );
-        $productKitPrice = (new ProductKitPriceDTO($productKit, Price::create(12.345, self::USD), 1, $productUnitItem))
-            ->addKitItemPrice($kitItem1Price);
 
         $kitItemLineItem1Price = new ProductKitItemLineItemPrice(
             $kitItemLineItem1,
             $kitItem1Price->getPrice(),
             $kitItem1Price->getPrice()->getValue() * $kitItemLineItem1->getQuantity()
         );
+
+        $productKitPrice = (new ProductKitPriceDTO(
+            $productKit,
+            Price::create(12.345 + $kitItemLineItem1Price->getSubtotal(), self::USD),
+            1,
+            $productUnitItem
+        ))
+            ->addKitItemPrice($kitItem1Price);
+
         $this->productLineItemPriceFactory
             ->expects(self::once())
             ->method('createForProductLineItem')

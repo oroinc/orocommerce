@@ -17,7 +17,7 @@ interface ProductKitPriceCriteriaBuilderInterface extends ProductPriceCriteriaBu
     public function addKitItemProduct(
         ProductKitItem $productKitItem,
         Product $product,
-        ProductUnit $productUnit,
-        ?float $quantity
+        ?ProductUnit $productUnit = null,
+        ?float $quantity = null
     ): self;
 }

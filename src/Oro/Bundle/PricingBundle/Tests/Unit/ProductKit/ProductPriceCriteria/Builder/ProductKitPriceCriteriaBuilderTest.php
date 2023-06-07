@@ -333,17 +333,19 @@ class ProductKitPriceCriteriaBuilderTest extends TestCase
             ->setQuantity($quantity)
             ->setCurrency($currency);
 
-        $kitItem1 = new ProductKitItemStub(1);
+        $kitItem1Quantity = 0.1234;
+        $kitItem1 = (new ProductKitItemStub(1))
+            ->setProductUnit($productUnitItem)
+            ->setMinimumQuantity($kitItem1Quantity);
         $kitItem1Product = (new ProductStub())
             ->setId(10);
-        $kitItem1Quantity = 0.1234;
 
         $kitItem2 = new ProductKitItemStub(2);
         $kitItem2Product = (new ProductStub())
             ->setId(20);
         $kitItem2Quantity = 0.5678;
         $this->builder
-            ->addKitItemProduct($kitItem1, $kitItem1Product, $productUnitItem, $kitItem1Quantity)
+            ->addKitItemProduct($kitItem1, $kitItem1Product)
             ->addKitItemProduct($kitItem2, $kitItem2Product, $productUnitEach, $kitItem2Quantity);
 
         $this->assertLoggerNotCalled();

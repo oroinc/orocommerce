@@ -40,10 +40,7 @@ class ProductKitLineItemPriceFactory implements ProductLineItemPriceFactoryInter
             return null;
         }
 
-        $initialKitPrice = $productPrice->getPrice();
-        $kitLineItemPriceValue = BigDecimal::of((float)$initialKitPrice->getValue());
         $kitItemLineItemsPrices = [];
-
         foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
             $kitItem = $kitItemLineItem->getKitItem();
             if ($kitItem === null) {
@@ -52,32 +49,31 @@ class ProductKitLineItemPriceFactory implements ProductLineItemPriceFactoryInter
 
             $kitItemPrice = $productPrice->getKitItemPrice($kitItem);
             if ($kitItemPrice === null) {
-                if (!$kitItem->isOptional()) {
-                    return null;
+                if ($kitItem->isOptional()) {
+                    // Optional product kit item does not have a price, but product kit line item price
+                    // still can be calculated.
+                    continue;
                 }
 
-                continue;
+                // Required product kit item does not have a price, so product kit line item price
+                // cannot be calculated as well.
+                return null;
             }
 
             $kitItemLineItemPrice = $this->productLineItemPriceFactory
                 ->createForProductLineItem($kitItemLineItem, $kitItemPrice);
             if ($kitItemLineItemPrice !== null) {
                 $kitItemLineItemsPrices[] = $kitItemLineItemPrice;
-                $kitLineItemPriceValue = $kitLineItemPriceValue->plus($kitItemLineItemPrice->getSubtotal());
             }
         }
 
-        $kitLineItemSubtotal = BigDecimal::of($kitLineItemPriceValue)
+        $kitLineItemPrice = $productPrice->getPrice();
+        $kitLineItemSubtotal = BigDecimal::of($kitLineItemPrice->getValue())
             ->multipliedBy((float)$lineItem->getQuantity())
             ->toFloat();
         $kitLineItemSubtotal = $this->roundingService->round($kitLineItemSubtotal);
 
-        $productKitLineItemPrice = new ProductKitLineItemPrice(
-            $lineItem,
-            Price::create($kitLineItemPriceValue->toFloat(), $initialKitPrice->getCurrency()),
-            $kitLineItemSubtotal
-        );
-
+        $productKitLineItemPrice = new ProductKitLineItemPrice($lineItem, $kitLineItemPrice, $kitLineItemSubtotal);
         foreach ($kitItemLineItemsPrices as $kitItemLineItemPrice) {
             $productKitLineItemPrice->addKitItemLineItemPrice($kitItemLineItemPrice);
         }
