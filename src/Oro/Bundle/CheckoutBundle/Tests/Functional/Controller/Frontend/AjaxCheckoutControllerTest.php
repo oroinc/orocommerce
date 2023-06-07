@@ -18,7 +18,7 @@ class AjaxCheckoutControllerTest extends FrontendWebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
+            self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
         $this->setCurrentWebsite('default');
         $this->loadFixtures(
@@ -35,14 +35,29 @@ class AjaxCheckoutControllerTest extends FrontendWebTestCase
         );
     }
 
-    public function testGetTotalsActionNotFound()
+    public function testGetTotalsActionNotFound(): void
     {
         $this->client->request('GET', $this->getUrl('oro_checkout_frontend_totals', ['entityId' => 0]));
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 404);
+        self::assertJsonResponseStatusCodeEquals($result, 404);
     }
 
-    public function testGetTotalsAction()
+    public function testGetTotalsAction(): void
+    {
+        $checkout = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_checkout_frontend_totals', ['entityId' => $checkout->getId()])
+        );
+        $result = $this->client->getResponse();
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+        $result = json_decode($result->getContent(), true);
+        self::assertArrayHasKey('total', $result);
+        self::assertArrayHasKey('subtotals', $result);
+    }
+
+    public function testGetTotalsActionOfAnotherCustomerUser(): void
     {
         $checkout = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1);
 
@@ -51,9 +66,6 @@ class AjaxCheckoutControllerTest extends FrontendWebTestCase
             $this->getUrl('oro_checkout_frontend_totals', ['entityId' => $checkout->getId()])
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-        $result = json_decode($result->getContent(), true);
-        $this->assertArrayHasKey('total', $result);
-        $this->assertArrayHasKey('subtotals', $result);
+        self::assertEquals(403, $result->getStatusCode());
     }
 }

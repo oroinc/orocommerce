@@ -483,6 +483,7 @@ workflows:
                             order: $order
                             transactionOptions:
                                 additionalData: $additional_data
+                                email: $email
                         results:
                             result.responseData: $.responseData
 

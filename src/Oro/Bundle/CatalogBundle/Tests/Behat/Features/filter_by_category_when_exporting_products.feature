@@ -14,7 +14,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 4 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU1 |
       | PSKU2 |
       | PSKU3 |
@@ -26,7 +26,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 1 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU2 |
 
   Scenario: Export products filtered by category including subcategories
@@ -35,7 +35,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 2 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU2 |
       | PSKU3 |
 
@@ -45,7 +45,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 3 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU2 |
       | PSKU3 |
       | PSKU4 |
@@ -59,7 +59,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 4 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU1 |
       | PSKU2 |
       | PSKU3 |
@@ -71,7 +71,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 1 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU2 |
 
   Scenario: Export products filtered by category including subcategories with grid filter
@@ -80,7 +80,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 2 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU2 |
       | PSKU3 |
 
@@ -90,7 +90,7 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 3 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU2 |
       | PSKU3 |
       | PSKU4 |
@@ -109,5 +109,5 @@ Feature: Filter by category when exporting products
     Then Email should contains the following "Export performed successfully. 1 products were exported. Download" text
     And take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | sku   |
+      | SKU   |
       | PSKU3 |

@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -49,6 +50,9 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
      */
     private $propertyAccessor;
 
+    /** @var TransactionOptionProvider */
+    private $transactionOptionProvider;
+
     protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);
@@ -57,6 +61,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
         $this->optionsProvider = $this->createMock(OptionsProvider::class);
         $this->surchargeProvider = $this->createMock(SurchargeProvider::class);
         $this->propertyAccessor = $this->createMock(PropertyAccessor::class);
+        $this->transactionOptionProvider = $this->createMock(TransactionOptionProvider::class);
 
         $this->factory = new BasicPayPalExpressCheckoutPaymentMethodFactory(
             $this->gateway,
@@ -66,6 +71,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
             $this->surchargeProvider,
             $this->propertyAccessor
         );
+        $this->factory->setTransactionOptionProvider($this->transactionOptionProvider);
     }
 
     public function testCreate()
@@ -82,6 +88,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
             $this->surchargeProvider,
             $this->propertyAccessor
         );
+        $method->setTransactionOptionProvider($this->transactionOptionProvider);
 
         $this->assertEquals($method, $this->factory->create($config));
     }

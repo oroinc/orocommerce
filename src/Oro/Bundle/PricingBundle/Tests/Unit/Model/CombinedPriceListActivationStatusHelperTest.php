@@ -63,11 +63,10 @@ class CombinedPriceListActivationStatusHelperTest extends \PHPUnit\Framework\Tes
             ->method('hasActivationRules')
             ->with($cpl)
             ->willReturn(true);
-        $rule = new CombinedPriceListActivationRule();
         $repo->expects($this->once())
-            ->method('getActiveRuleByScheduledCpl')
+            ->method('hasActiveRuleByScheduledCpl')
             ->with($cpl, $this->isInstanceOf(\DateTime::class))
-            ->willReturn($rule);
+            ->willReturn(true);
 
         $this->assertTrue($this->helper->isReadyForBuild($cpl));
     }
@@ -82,9 +81,9 @@ class CombinedPriceListActivationStatusHelperTest extends \PHPUnit\Framework\Tes
             ->with($cpl)
             ->willReturn(true);
         $repo->expects($this->once())
-            ->method('getActiveRuleByScheduledCpl')
+            ->method('hasActiveRuleByScheduledCpl')
             ->with($cpl, $this->isInstanceOf(\DateTime::class))
-            ->willReturn(null);
+            ->willReturn(false);
 
         $this->assertFalse($this->helper->isReadyForBuild($cpl));
     }

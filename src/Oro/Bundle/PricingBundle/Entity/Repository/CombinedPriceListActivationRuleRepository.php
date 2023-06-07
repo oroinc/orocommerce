@@ -67,9 +67,17 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
     ): ?CombinedPriceListActivationRule {
         $qb = $this->getActualRuleQb($activateDate)
             ->andWhere('rule.combinedPriceList = :cpl')
+            ->setMaxResults(1)
             ->setParameter('cpl', $cpl);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function hasActiveRuleByScheduledCpl(
+        CombinedPriceList $cpl,
+        \DateTime $activateDate
+    ): bool {
+        return (bool) $this->getActiveRuleByScheduledCpl($cpl, $activateDate);
     }
 
     public function hasActivationRules(CombinedPriceList $cpl): bool
@@ -80,7 +88,7 @@ class CombinedPriceListActivationRuleRepository extends EntityRepository
             ->setMaxResults(1)
             ->setParameter('cpl', $cpl);
 
-        return (bool)$existenceQB->getQuery()->getOneOrNullResult();
+        return (bool) $existenceQB->getQuery()->getOneOrNullResult();
     }
 
     /**

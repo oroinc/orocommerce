@@ -11,6 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
 {
@@ -281,6 +282,12 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
                 'activateAt' => $pastTime,
                 'expiredAt' => $futureTime
             ],
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $futureTime
+            ],
         ];
         $this->createRules($data);
 
@@ -292,5 +299,51 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
         $this->assertSame($cpl, $rule->getCombinedPriceList());
         $this->assertEquals($pastTime, $rule->getActivateAt());
         $this->assertEquals($futureTime, $rule->getExpireAt());
+    }
+
+    public function testHasActiveRuleByScheduledCpl()
+    {
+        $pastTime = new \DateTime('- 1 day', new \DateTimeZone('UTC'));
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $futureTime = new \DateTime('+ 1 day', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $futureTime
+            ],
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+            ],
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2f_1t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $pastTime
+            ],
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2t_3t',
+                'activateAt' => $pastTime,
+                'expiredAt' => $futureTime
+            ],
+            [
+                'cplName' => '2f',
+                'fullCPLName' => '2t_3t',
+            ],
+        ];
+        $this->createRules($data);
+
+        $cpl = $this->getReference('2f');
+        $this->assertTrue($this->repository->hasActiveRuleByScheduledCpl($cpl, $now));
+    }
+
+    public function testHasActiveRuleByScheduledCplFalse()
+    {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $cpl = $this->getReference('2f_1t_3t');
+        $this->assertFalse($this->repository->hasActiveRuleByScheduledCpl($cpl, $now));
     }
 }

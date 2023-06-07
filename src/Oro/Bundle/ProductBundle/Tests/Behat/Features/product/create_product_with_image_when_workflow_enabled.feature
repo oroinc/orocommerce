@@ -73,9 +73,9 @@ Feature: Create product with image when workflow enabled
     And I go to Products/ Products
     When I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | attributeFamily.code | sku   | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | names.default.value |
-      | default_family       | PSKU2 | enabled | simple | in_stock            | set                            | 3                              | Product2            |
-      | default_family       | PSKU3 | enabled | simple | in_stock            | item                           | 1                              | Product3            |
+      | Product Family.Code | SKU   | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Name.default.value |
+      | default_family      | PSKU2 | enabled | simple | in_stock            | set                        | 3                          | Product2           |
+      | default_family      | PSKU3 | enabled | simple | in_stock            | item                       | 1                          | Product3           |
     And import file
     Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And reload the page

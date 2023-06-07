@@ -46,12 +46,7 @@ class CombinedPriceListActivationStatusHelper implements CombinedPriceListActiva
             return true;
         }
 
-        $activeRule = $cplActivationRepo->getActiveRuleByScheduledCpl($cpl, $activationDate);
-        if ($activeRule) {
-            return true;
-        }
-
-        return false;
+        return $cplActivationRepo->hasActiveRuleByScheduledCpl($cpl, $activationDate);
     }
 
     /**

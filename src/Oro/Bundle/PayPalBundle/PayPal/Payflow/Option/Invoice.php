@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Invoice options
+ */
 class Invoice extends AbstractOption
 {
     const INVNUM = 'INVNUM';

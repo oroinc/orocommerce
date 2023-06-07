@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * Shipping address options
+ */
 class ShippingAddress extends AbstractOption
 {
     const SHIPTOFIRSTNAME = 'SHIPTOFIRSTNAME';
@@ -12,6 +15,10 @@ class ShippingAddress extends AbstractOption
     const SHIPTOSTATE = 'SHIPTOSTATE';
     const SHIPTOZIP = 'SHIPTOZIP';
     const SHIPTOCOUNTRY = 'SHIPTOCOUNTRY';
+    const SHIPTOEMAIL = 'SHIPTOEMAIL';
+    const SHIPTOMIDDLENAME = 'SHIPTOMIDDLENAME';
+    const SHIPTOCOMPANY = 'SHIPTOCOMPANY';
+    const SHIPTOPHONE = 'SHIPTOPHONE';
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
@@ -39,6 +46,10 @@ class ShippingAddress extends AbstractOption
             ShippingAddress::SHIPTOSTATE,
             ShippingAddress::SHIPTOZIP,
             ShippingAddress::SHIPTOCOUNTRY,
+            ShippingAddress::SHIPTOEMAIL,
+            ShippingAddress::SHIPTOMIDDLENAME,
+            ShippingAddress::SHIPTOCOMPANY,
+            ShippingAddress::SHIPTOPHONE,
         ];
     }
 }

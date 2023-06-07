@@ -17,8 +17,8 @@ Feature: Import Products Visibility
     And I open "Products" import tab
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | names.default.value | sku   | category.id | category.default.title | descriptions.default.value | attributeFamily.code | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | Test Product 1      | PSKU1 |             | Lighting Products      |                            | default_family       | enabled | simple | in_stock            | set                            | 1                              |
+      | Name.default.value | SKU   | Category.ID | category.default.title | Description.default.value | Product Family.Code | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | Test Product 1     | PSKU1 |             | Lighting Products      |                           | default_family      | enabled | simple | in_stock            | set                        | 1                          |
     When I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     And I reload the page
@@ -36,8 +36,8 @@ Feature: Import Products Visibility
   Scenario: Import product again with another category
     Given I proceed as the Admin
     And fill template with data:
-      | names.default.value | sku   | category.id | category.default.title | descriptions.default.value | attributeFamily.code | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | Test Product 1      | PSKU1 |             | Printers               |                            | default_family       | enabled | simple | in_stock            | set                            | 1                              |
+      | Name.default.value | SKU   | Category.ID | category.default.title | Description.default.value | Product Family.Code | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | Test Product 1     | PSKU1 |             | Printers               |                           | default_family      | enabled | simple | in_stock            | set                        | 1                          |
     When I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
 
