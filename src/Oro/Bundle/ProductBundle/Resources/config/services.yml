@@ -2257,3 +2257,10 @@ services:
             - '@oro_filter.filter_utility'
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: composed-sku-string }
+
+    oro_product.layout.data_provider.product_types:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductTypesProvider'
+        arguments:
+            - "@oro_product.provider.product_type_provider"
+        tags:
+            - { name: layout.data_provider, alias: product_types }
