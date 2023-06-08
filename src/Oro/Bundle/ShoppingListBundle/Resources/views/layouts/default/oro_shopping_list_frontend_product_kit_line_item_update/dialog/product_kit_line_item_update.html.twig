@@ -87,8 +87,7 @@
         'novalidate': 'novalidate',
         'data-page-component-view': 'oroshoppinglist/js/app/views/product-kit-form-view',
         'data-page-component-options': {
-            productId: lineItem.product.id,
-            subtotalUrl: 'oro_shopping_list_frontend_product_kit_line_item_create'
+            subtotalUrl: path('oro_shopping_list_frontend_product_kit_line_item_update', {id: lineItem.id, getSubtotal: true})
         }|json_encode,
         'data-extra-form-selector': '#' ~ extraFormId
     }) %}

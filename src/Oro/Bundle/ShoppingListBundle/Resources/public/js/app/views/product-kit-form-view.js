@@ -1,16 +1,14 @@
 import {throttle} from 'underscore';
 import $ from 'jquery';
 import BaseView from 'oroui/js/app/views/base/view';
-import routing from 'routing';
 import numberFormatter from 'orolocale/js/formatter/number';
-import urlHelper from 'orodatagrid/js/url-helper';
 
 const ProductKitFormView = BaseView.extend({
     /**
      * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
-        'kitLineItemProductSelector', 'kitLineItemQuantitySelector', 'subtotalUrl', 'productId', 'maskClass'
+        'kitLineItemProductSelector', 'kitLineItemQuantitySelector', 'subtotalUrl', 'maskClass'
     ]),
 
     kitLineItemProductSelector: '[data-role="kit-line-item-product"]',
@@ -18,8 +16,6 @@ const ProductKitFormView = BaseView.extend({
     kitLineItemQuantitySelector: '[data-role="kit-line-item-quantity"]',
 
     subtotalUrl: void 0,
-
-    productId: void 0,
 
     maskClass: 'loading-blur',
 
@@ -47,10 +43,6 @@ const ProductKitFormView = BaseView.extend({
      * @inheritdoc
      */
     initialize: function(options) {
-        if (this.productId === void 0) {
-            throw new Error('Option "productId" is required for ProductKitFormView');
-        }
-
         if (this.subtotalUrl === void 0) {
             throw new Error('Option "subtotalUrl" is required for ProductKitFormView');
         }
@@ -121,10 +113,7 @@ const ProductKitFormView = BaseView.extend({
 
         $.ajax({
             type: 'POST',
-            url: routing.generate(this.subtotalUrl, {
-                productId: urlHelper.encodeURI(this.productId),
-                getSubtotal: true
-            }),
+            url: this.subtotalUrl,
             beforeSend: () => {
                 this._activeAjaxActions++;
                 $(`#${this.$el.attr('id')}totals`).addClass(this.maskClass);
