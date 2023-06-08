@@ -29,7 +29,8 @@ const ProductKitLineItemWidget = DialogWidget.extend({
     listen: {
         'shopping-list:line-items:before-response mediator': '_hideDialog',
         'shopping-list:line-items:update-response mediator': 'onShoppingListLineItemsChange',
-        'shopping-list:line-items:error-response mediator': 'onShoppingListLineItemsChange'
+        'shopping-list:line-items:error-response mediator': 'onShoppingListLineItemsChange',
+        'widgetReady': 'onRenderComplete'
     },
 
     NAME: 'product-kit-line-item-dialog',
@@ -44,7 +45,7 @@ const ProductKitLineItemWidget = DialogWidget.extend({
     /**
      * @inheritdoc
      */
-    initialize: function(options) {
+    initialize(options) {
         this.model = this.model || options.productModel;
 
         options.initLayoutOptions = {
@@ -55,11 +56,11 @@ const ProductKitLineItemWidget = DialogWidget.extend({
         this.model.set('_widget_data', this._getWidgetData(), {silent: true});
     },
 
-    _onAdoptedFormSubmitClick: function($form, widget) {
+    _onAdoptedFormSubmitClick($form, widget) {
         return ProductKitLineItemWidget.__super__._onAdoptedFormSubmitClick.call(this, $form, widget);
     },
 
-    _onContentLoadFail: function(jqxhr) {
+    _onContentLoadFail(jqxhr) {
         if (jqxhr.responseJSON) {
             return this._onJsonContentResponse(jqxhr.responseJSON);
         } else {
@@ -67,7 +68,7 @@ const ProductKitLineItemWidget = DialogWidget.extend({
         }
     },
 
-    _onJsonContentResponse: function(response) {
+    _onJsonContentResponse(response) {
         if (response.successful) {
             mediator.trigger('shopping-list:refresh');
         }
@@ -91,7 +92,14 @@ const ProductKitLineItemWidget = DialogWidget.extend({
         }
     },
 
-    _renderActions: function() {
+    /**
+     * Listen to renderComplete event
+     */
+    onRenderComplete() {
+        $(`#${this.widget._extraFormIdentifier}`).validate();
+    },
+
+    _renderActions() {
         ProductKitLineItemWidget.__super__._renderActions.call(this);
 
         const container = this.getActionsElement();
@@ -102,15 +110,16 @@ const ProductKitLineItemWidget = DialogWidget.extend({
         }
     },
 
-    getActionsElement: function() {
+    getActionsElement() {
         if (!this.actionsEl) {
             this.actionsEl = $('<div class="form-actions widget-actions"/>').appendTo(
                 this.widget.dialog('actionsContainer')
             );
             const $extraForm = this.widget.find('[data-extra-form]');
+            const extraFormIdentifier = $extraForm.data('extra-form');
 
-            $extraForm.wrap(`<form id="${$extraForm.data('extra-form')}" />`);
-            $extraForm.parent().validate();
+            $extraForm.wrap(`<form id="${extraFormIdentifier}" />`);
+            this.widget._extraFormIdentifier = extraFormIdentifier;
         }
         return this.actionsEl;
     },

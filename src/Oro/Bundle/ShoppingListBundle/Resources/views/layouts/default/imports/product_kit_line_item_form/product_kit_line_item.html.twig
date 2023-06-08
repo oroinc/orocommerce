@@ -103,7 +103,10 @@
                 </div>
             </div>
         </div>
-        <div class="product-totals__controls" data-role="totals-controls">
+        <div class="product-totals__controls"
+             data-role="totals-controls"
+             data-page-component-view="oroproduct/js/app/views/product-unit-quantity-view"
+        >
             <div class="product-item-quantity product-item-quantity--justify-end fields-row"
                  data-extra-form="{{ extraFormId }}"
             >
@@ -112,14 +115,18 @@
                     'class': 'product-item-quantity__input',
                     'data-floating-error': '',
                     'data-role': 'quantity',
-                    'data-boundaries-element': '[role="dialog"]'
+                    'data-form-element': form.vars.id,
+                    'data-boundaries-element': '[role="dialog"]',
+                    'data-input-widget': 'number'
                 }}) }}
                 {{ form_widget(form.unit,{attr: {
                     'class': 'product-item-quantity__choice',
-                    'data-role': 'unit-label'
+                    'data-role': 'unit',
+                    'data-form-element': form.vars.id,
                 }}) }}
                 <div class="fields-row-error">
-                    {{- form_errors(form) -}}
+                    {{- form_errors(form.quantity) -}}
+                    {{- form_errors(form.unit) -}}
                 </div>
             </div>
             {{ block_widget(block) }}

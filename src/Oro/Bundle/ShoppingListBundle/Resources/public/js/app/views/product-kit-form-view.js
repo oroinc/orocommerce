@@ -69,6 +69,9 @@ const ProductKitFormView = BaseView.extend({
         ProductKitFormView.__super__.delegateEvents.call(this, events);
         // Handler is moved to parent element to allow preventing submit by validator
         this.$el.parent().on(`submit${this.eventNamespace()}`, this.onSubmit.bind(this));
+        // Elements are rendered outside but belong to form
+        $(`[data-form-element="${this.$el.attr('id')}"]`)
+            .on(`change${this.eventNamespace()}`, this.getSubtotal.bind(this));
     },
 
     /**
@@ -78,6 +81,7 @@ const ProductKitFormView = BaseView.extend({
         if (this.$el) {
             // this.$el might be not set yet
             this.$el.parent().off(this.eventNamespace());
+            $(`[data-form-element="${this.$el.attr('id')}"]`).off(this.eventNamespace());
         }
         ProductKitFormView.__super__.undelegateEvents.call(this);
     },

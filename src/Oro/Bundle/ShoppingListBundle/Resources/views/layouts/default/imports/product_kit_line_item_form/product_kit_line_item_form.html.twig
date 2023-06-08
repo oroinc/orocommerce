@@ -47,7 +47,9 @@
                     'data-floating-error': '',
                     'data-boundaries-element': '[role="dialog"]',
                     'data-role': 'kit-line-item-quantity',
-                    'data-value': value.kitItem.minimumQuantity|default(1)
+                    'data-input-widget': 'number',
+                    'data-value': value.kitItem.minimumQuantity|default(1),
+                    'data-precision': value.kitItem|oro_product_kit_item_unit_precision
                 }}) }}
                 <div class="fields-row-error">
                     {{ form_errors(form.quantity) }}
