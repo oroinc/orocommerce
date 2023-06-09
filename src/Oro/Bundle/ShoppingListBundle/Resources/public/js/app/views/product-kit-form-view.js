@@ -154,28 +154,39 @@ const ProductKitFormView = BaseView.extend({
     },
 
     /**
-     * Makes specific elements to be in "readonly" mode
+     * Makes related elements to be in "readonly" mode.
+     * Enables "readonly" mode when minimum quantity equals to maximum quantity.
      * @param {jQuery.Element} $el
      */
     lockRelatedElements($el) {
         const $relatedElements = $($el.data('relatedElements'));
+        const hasValue = Boolean($el.val());
 
-        if (Boolean($el.val())) {
-            $relatedElements.each((i, el) => {
-                $(el).removeAttr('readonly');
+        $relatedElements.each((i, relatedEl) => {
+            const $relatedEl = $(relatedEl);
+            const minimumQuantity = $relatedEl.data('minimumQuantity') || 1;
+            const maximumQuantity = $relatedEl.data('maximumQuantity');
 
-                if (!$(el).val()) {
-                    $(el).val($(el).data('value') || 1);
+            if (hasValue) {
+                if (minimumQuantity === maximumQuantity) {
+                    // Original value might be smaller than "minimumQuantity" in case of editing product kit.
+                    // As a result, there is no way to submit valid form, so we have to have value as "minimumQuantity".
+                    $relatedEl.attr('readonly', true).val(minimumQuantity);
+                } else {
+                    $relatedEl.removeAttr('readonly');
                 }
-            });
-        } else {
-            if (!$el.is(':checked')) {
-                return;
+
+                if (!$relatedEl.val()) {
+                    $relatedEl.val($relatedEl.data('value'));
+                }
+            } else {
+                // Update attributes only for selected elements,
+                // otherwise the last empty radio button will overwrite "minimumQuantity"
+                if ($el.is(':checked')) {
+                    $relatedEl.val('').attr('readonly', true);
+                }
             }
-            $relatedElements.each((i, el) => {
-                $(el).val('').attr('readonly', true);
-            });
-        }
+        });
     }
 });
 

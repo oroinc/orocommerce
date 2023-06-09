@@ -49,7 +49,9 @@
                     'data-role': 'kit-line-item-quantity',
                     'data-input-widget': 'number',
                     'data-value': value.kitItem.minimumQuantity|default(1),
-                    'data-precision': value.kitItem|oro_product_kit_item_unit_precision
+                    'data-precision': value.kitItem|oro_product_kit_item_unit_precision,
+                    'data-minimum-quantity': value.kitItem.minimumQuantity|default(1),
+                    'data-maximum-quantity': value.kitItem.maximumQuantity
                 }}) }}
                 <div class="fields-row-error">
                     {{ form_errors(form.quantity) }}
