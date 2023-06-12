@@ -6,6 +6,7 @@ import updateAllBtnTpl from 'tpl-loader!oroshoppinglist/templates/editor/shoppin
 import tools from 'oroui/js/tools';
 import __ from 'orotranslation/js/translator';
 import BaseComponent from 'oroui/js/app/components/base/component';
+import NumberFormatter from 'orolocale/js/formatter/number';
 
 /**
  * Recursive resolve query objects
@@ -206,6 +207,16 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
         const editor = this.getCellEditorOptions(cell);
         editor.viewOptions.className = this.buildClassNames(editor, cell).join(' ');
+
+        if (cell.el.contains(document.activeElement) && $(document.activeElement).is('div.input')) {
+            const formattedValue = document.activeElement.innerText
+                .trim()
+                .substring(0, window.getSelection().focusOffset);
+
+            editor.viewOptions.cursorOffset = formattedValue
+                ? NumberFormatter.unformat(formattedValue).toString().length
+                : 0;
+        }
 
         const CellEditorComponent = editor.component;
         const CellEditorView = editor.view;
