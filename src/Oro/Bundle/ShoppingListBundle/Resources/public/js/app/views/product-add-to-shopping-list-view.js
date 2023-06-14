@@ -28,7 +28,10 @@ define(function(require) {
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
-                success: 'oro.frontend.shoppinglist.lineitem.updated.label'
+                success: 'oro.frontend.shoppinglist.lineitem.updated.label',
+                remove: {
+                    success: 'oro.shoppinglist.actions.delete_line_item.success'
+                }
             },
             save_api_accessor: {
                 http_method: 'PUT',
@@ -460,7 +463,8 @@ define(function(require) {
 
             mediator.execute('showLoading');
             mediator.trigger('shopping-list:line-items:before-response', this.model);
-            $.ajax({
+
+            return $.ajax({
                 type: 'DELETE',
                 url: routing.generate(url, urlOptions),
                 data: formData,

@@ -365,6 +365,9 @@ class ShoppingListManager
         if ($duplicate) {
             $func($duplicate);
             $em->remove($lineItem);
+            // Ensures that ShoppingList::$lineItems collection is up-to-date. Required, for example for correct
+            // subtotal calculations.
+            $shoppingList->removeLineItem($lineItem);
         } elseif ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);

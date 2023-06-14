@@ -3,6 +3,7 @@ import routing from 'routing';
 import mediator from 'oroui/js/mediator';
 import $ from 'jquery';
 import _ from 'underscore';
+const __ = require('orotranslation/js/translator');
 
 const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
     /**
@@ -76,10 +77,19 @@ const ProductKitAddToShoppingListView = ProductAddToShoppingListView.extend({
      * @inheritdoc
      */
     _removeLineItem: function(url, urlOptions, formData) {
-        this._removeProductFromShoppingList(url, {
+        const xhrPromise = this._removeProductFromShoppingList(url, {
             id: urlOptions.productId,
+            onlyCurrent: 1,
             ...this.addWidgetUrlOptions()
         }, formData);
+
+        const messageOptions = {namespace: 'shopping_list'};
+        const flashMsg = __(this.options.messages.remove.success, {
+            name: this.model.get('name')
+        });
+        xhrPromise.done(response => {
+            mediator.execute('showFlashMessage', 'success', flashMsg, messageOptions);
+        });
     },
 
     /**

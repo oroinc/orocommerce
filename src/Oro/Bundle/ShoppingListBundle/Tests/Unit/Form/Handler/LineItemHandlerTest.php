@@ -158,53 +158,6 @@ class LineItemHandlerTest extends TestCase
         self::assertTrue($handler->process($lineItem));
     }
 
-    public function testProcessUpdateSuccess(): void
-    {
-        $shoppingList = $this->getShoppingList();
-        $lineItem = $this->getLineItem($shoppingList, 1);
-
-        $request = Request::create('/', 'PUT', [FrontendLineItemType::NAME => ['shoppingListLabel' => 'label']]);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())
-            ->method('beginTransaction');
-        $em->expects(self::once())
-            ->method('commit');
-        $em->expects(self::never())
-            ->method('rollback');
-        $em->expects(self::once())
-            ->method('commit');
-
-        $this->doctrine->expects(self::once())
-            ->method('getManagerForClass')
-            ->with(LineItem::class)
-            ->willReturn($em);
-
-        $this->form->expects(self::once())
-            ->method('submit')
-            ->with(['shoppingListLabel' => 'label', 'shoppingList' => 777]);
-        $this->form->expects(self::once())
-            ->method('isValid')
-            ->willReturn(true);
-
-        $this->shoppingListManager->expects(self::once())
-            ->method('updateLineItem')
-            ->with($lineItem, $lineItem->getShoppingList(), false)
-            ->willReturn($shoppingList);
-
-        $this->currentShoppingListManager->expects(self::once())
-            ->method('createCurrent')
-            ->willReturn($shoppingList);
-
-        $this->validator->expects(self::once())
-            ->method('validate')
-            ->with($shoppingList)
-            ->willReturn(new ConstraintViolationList());
-
-        $handler = $this->getLineItemHandler($request);
-        self::assertTrue($handler->process($lineItem));
-    }
-
     public function testProcessShoppingListNotValid(): void
     {
         $shoppingList = $this->getShoppingList();

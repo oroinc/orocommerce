@@ -68,40 +68,49 @@ class ProductStatusListener
         $this->processProductKitItemProduct($kitItemProduct);
     }
 
-    public function postPersistProductKit(ProductKitItem $productKitItem, PostPersistEventArgs $args): void
+    private function processProductKitItemProduct(ProductKitItemProduct $kitItemProduct): void
+    {
+        $productKit = $kitItemProduct->getKitItem()?->getProductKit();
+
+        if ($productKit && !$this->products->contains($productKit)) {
+            $this->products->add($productKit);
+        }
+    }
+
+    public function postPersistProductKitItem(ProductKitItem $productKitItem, PostPersistEventArgs $args): void
     {
         if (!$productKitItem->isOptional()) {
-            $product = $productKitItem->getProductKit();
+            $productKit = $productKitItem->getProductKit();
 
-            if ($product && !$this->products->contains($product)) {
-                $this->products->add($product);
+            if ($productKit && !$this->products->contains($productKit)) {
+                $this->products->add($productKit);
             }
         }
     }
 
-    public function preUpdateProductKit(ProductKitItem $productKitItem, PreUpdateEventArgs $args): void
+    public function preUpdateProductKitItem(ProductKitItem $productKitItem, PreUpdateEventArgs $args): void
     {
         if (!$args->hasChangedField('optional')) {
             return;
         }
 
-        $product = $productKitItem->getProductKit();
+        $productKit = $productKitItem->getProductKit();
 
-        if ($product && !$this->products->contains($product)) {
-            $this->products->add($product);
+        if ($productKit && !$this->products->contains($productKit)) {
+            $this->products->add($productKit);
         }
     }
 
-    public function preRemoveProductKit(ProductKitItem $productKitItem, PreRemoveEventArgs $args): void
+    public function preRemoveProductKitItem(ProductKitItem $productKitItem, PreRemoveEventArgs $args): void
     {
         if ($productKitItem->isOptional()) {
             return;
         }
 
-        $product = $productKitItem->getProductKit();
+        $productKit = $productKitItem->getProductKit();
 
-        if ($product && !$this->products->contains($product)) {
-            $this->products->add($product);
+        if ($productKit && !$this->products->contains($productKit)) {
+            $this->products->add($productKit);
         }
     }
 
@@ -177,15 +186,6 @@ class ProductStatusListener
             $this->inventoryStatusResolver->resolve(...$products);
             $this->products->clear();
             $this->registry->getManagerForClass(Product::class)->flush();
-        }
-    }
-
-    protected function processProductKitItemProduct(ProductKitItemProduct $kitItemProduct): void
-    {
-        $product = $kitItemProduct->getKitItem()?->getProductKit();
-
-        if ($product && !$this->products->contains($product)) {
-            $this->products->add($product);
         }
     }
 }

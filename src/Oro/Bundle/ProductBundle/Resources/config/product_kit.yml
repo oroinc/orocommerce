@@ -11,9 +11,9 @@ services:
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: postPersist, method: postPersistProduct }
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: preRemove, method: preRemoveProduct }
 
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: postPersist, method: postPersistProductKit }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preUpdate, method: preUpdateProductKit }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preRemove, method: preRemoveProductKit }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: postPersist, method: postPersistProductKitItem }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preUpdate, method: preUpdateProductKitItem }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preRemove, method: preRemoveProductKitItem }
 
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: postPersist, method: postPersistProductKitItemProduct }
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: preUpdate, method: preUpdateProductKitItemProduct }

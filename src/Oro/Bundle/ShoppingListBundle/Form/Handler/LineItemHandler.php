@@ -82,11 +82,7 @@ class LineItemHandler
 
         $this->submitPostPutRequest($this->form, $this->request);
         if ($this->form->isValid()) {
-            if ($lineItem->getId()) {
-                $this->shoppingListManager->updateLineItem($lineItem, $lineItem->getShoppingList(), false);
-            } else {
-                $this->shoppingListManager->addLineItem($lineItem, $lineItem->getShoppingList(), false, true);
-            }
+            $this->shoppingListManager->addLineItem($lineItem, $lineItem->getShoppingList(), false, true);
 
             if ($this->isShoppingListValid($lineItem->getShoppingList())) {
                 $em->flush();

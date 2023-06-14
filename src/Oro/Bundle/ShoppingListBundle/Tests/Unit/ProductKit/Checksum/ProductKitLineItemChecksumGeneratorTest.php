@@ -81,4 +81,40 @@ class ProductKitLineItemChecksumGeneratorTest extends TestCase
 
         self::assertEquals('42|item|10|4242|11|set|20|424242|22|each', $this->generator->getChecksum($lineItem));
     }
+
+    public function testGetChecksumWhenHasKitItemLineItemsWithReverseOrder(): void
+    {
+        $product = (new ProductStub())
+            ->setId(42)
+            ->setType(Product::TYPE_KIT);
+        $productUnitItem = (new ProductUnit())->setCode('item');
+
+        $kitItem1 = new ProductKitItemStub(10);
+        $kitItem1Product = (new ProductStub())->setId(4242);
+        $productUnitSet = (new ProductUnit())->setCode('set');
+        $kitItemLineItem1 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem1)
+            ->setProduct($kitItem1Product)
+            ->setQuantity(11)
+            ->setUnit($productUnitSet)
+            ->setSortOrder(20);
+
+        $kitItem2 = new ProductKitItemStub(20);
+        $kitItem2Product = (new ProductStub())->setId(424242);
+        $productUnitEach = (new ProductUnit())->setCode('each');
+        $kitItemLineItem2 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem2)
+            ->setProduct($kitItem2Product)
+            ->setQuantity(22)
+            ->setUnit($productUnitEach)
+            ->setSortOrder(10);
+
+        $lineItem = (new LineItem())
+            ->setProduct($product)
+            ->setUnit($productUnitItem)
+            ->addKitItemLineItem($kitItemLineItem1)
+            ->addKitItemLineItem($kitItemLineItem2);
+
+        self::assertEquals('42|item|10|4242|11|set|20|424242|22|each', $this->generator->getChecksum($lineItem));
+    }
 }
