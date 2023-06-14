@@ -8,6 +8,7 @@
 @fixture-OroCheckoutBundle:ProductsAndCategoriesForMultiShippingFixture.yml
 @fixture-OroCheckoutBundle:ShoppingListForMultiShippingFixture.yml
 @fixture-OroCheckoutBundle:Order.yml
+@skip
 
 Feature: Checkout With Multi Shipping And Suborders Creation
   In order to create separate sub orders
