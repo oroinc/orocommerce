@@ -1,6 +1,7 @@
 define(function(require) {
     'use strict';
 
+    const _ = require('underscore');
     const __ = require( 'orotranslation/js/translator');
     const mediator = require('oroui/js/mediator');
     const messenger = require('oroui/js/messenger');
@@ -40,7 +41,10 @@ define(function(require) {
          * @return {String}
          */
         getConfirmContentTitle() {
-            return __(this.messages.confirm_title, this.model.toJSON());
+            return __(
+                this.messages.confirm_title,
+                _.mapObject(this.model.toJSON(), value => _.isString(value) ? _.escape(value) : value)
+            );
         },
 
         /**

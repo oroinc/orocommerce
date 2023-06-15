@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import routing from 'routing';
 import mediator from 'oroui/js/mediator';
@@ -65,7 +66,7 @@ const AddNotesAction = ModelAction.extend({
         const modal = new Modal({
             className: 'modal oro-modal-normal shopping-list-notes-modal',
             title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
-                productName: this.model.get('name')
+                productName: _.escape(this.model.get('name'))
             }),
             okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.label`),
             cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
