@@ -28,6 +28,12 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue2:
         string: 'Control Product'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    product1Slug:
+        string: 'product-1'
+    product2Slug:
+        string: 'control-product'
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
         unit: '@each'
@@ -46,6 +52,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue1']
+            - addSlugPrototype: ['@product1Slug']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         taxCode: '@taxCode1'
@@ -58,6 +65,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue2']
+            - addSlugPrototype: ['@product2Slug']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 

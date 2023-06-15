@@ -530,7 +530,7 @@ class ProductControllerTest extends ProductHelperTestCase
             'Product name empty, redirect strategy empty' => [
                 'requestParams' => [],
                 'redirectStrategy' => Configuration::STRATEGY_ASK,
-                'expected' => '{"showRedirectConfirmation":true,"slugsData":[]}',
+                'expected' => '{"showRedirectConfirmation":false,"slugsData":[]}',
             ],
             'Product name set, redirect strategy ask' => [
                 'requestParams' => [
@@ -539,12 +539,28 @@ class ProductControllerTest extends ProductHelperTestCase
                 'redirectStrategy' => Configuration::STRATEGY_ASK,
                 'expected' => '{"showRedirectConfirmation":true,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
             ],
+            'Product name with tags, redirect strategy ask' => [
+                'requestParams' => [
+                    'productName' => '<a href="#">New product name</a>',
+                ],
+                'redirectStrategy' => Configuration::STRATEGY_ASK,
+                'expected' => '{"showRedirectConfirmation":true,'
+                    . '"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+            ],
             'Product name set, redirect strategy never' => [
                 'requestParams' => [
                     'productName' => 'New product name',
                 ],
                 'redirectStrategy' => Configuration::STRATEGY_NEVER,
                 'expected' => '{"showRedirectConfirmation":false,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+            ],
+            'Product name with tags, redirect strategy never' => [
+                'requestParams' => [
+                    'productName' => '<a href="#">New product name</a>',
+                ],
+                'redirectStrategy' => Configuration::STRATEGY_NEVER,
+                'expected' => '{"showRedirectConfirmation":false,'
+                    . '"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
             ],
         ];
         // @codingStandardsIgnoreEnd
