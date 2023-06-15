@@ -7,3 +7,12 @@ services:
         resource: '../../Controller/Api/Rest/*Controller.php'
         calls:
             - [setContainer, ['@service_container']]
+
+    Oro\Bundle\ProductBundle\Controller\Api\Rest\InlineEditProductController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: 'oro_ui.html_tag_helper' }
+            - { name: container.service_subscriber, id: 'oro_entity_config.slug.generator' }
+            - { name: container.service_subscriber, id: 'oro_config.manager' }
