@@ -1,6 +1,5 @@
 include:
     - '@OroCMSBundle:CMSPageFixture.yml'
-    - '@OroCMSBundle:copyright_content_widget_fixture.yml'
 
 Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate:
     testCMSPageMenuItem:

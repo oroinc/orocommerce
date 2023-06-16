@@ -1,44 +1,7 @@
-Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
-    businessUnit:
-        name: 'Common Business Unit'
-        organization: '@organization'
-
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision:
-        unit: '@item'
-        precision: '1'
-
-Oro\Bundle\ProductBundle\Entity\ProductName:
-    locValue:
-        string: '400-Watt Bulb Work Light'
-
-Oro\Bundle\ProductBundle\Entity\Product:
-    product:
-        sku: 'SKU123'
-        type: 'simple'
-        primaryUnitPrecision: '@precision'
-        __calls:
-            - addName: ['@locValue']
-        attributeFamily: '@defaultProductFamily'
-        inventoryStatus: '@enumInventoryStatuses'
-        organization: '@organization'
-        owner: '@businessUnit'
-        status: 'enabled'
-
-Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
-    priceRelationSku123ToPriceListDefault:
-        product: '@product'
-        priceList: '@defaultPriceList'
+include:
+    - '@OroCheckoutBundle:CheckoutProductCEFixture.yml'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
-    productPrice:
-        pricelist: '@defaultPriceList'
-        product: '@product'
-        productSku: 'SKU123'
-        quantity: 5
-        unit: '@item'
-        value: 2
-        currency: 'USD'
     productPriceEur:
         pricelist: '@defaultPriceList'
         product: '@product'

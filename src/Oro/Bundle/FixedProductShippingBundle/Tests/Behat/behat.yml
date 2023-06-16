@@ -41,3 +41,7 @@ oro_behat_extension:
         Shipping Cost Attribute Grid:
             selector: '.shipping-cost-attribute-view>div'
             class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+        Fast Shipping Rule Form:
+            selector: "form[id^='oro_shipping_methods_configs_rule-uid']"
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
