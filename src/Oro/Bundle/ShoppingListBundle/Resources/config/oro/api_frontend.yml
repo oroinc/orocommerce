@@ -72,6 +72,7 @@ api:
 
         Oro\Bundle\ShoppingListBundle\Entity\LineItem:
             documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list_item.md'
+            disable_meta_properties: [ title ]
             form_options:
                 constraints:
                     - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
@@ -130,6 +131,7 @@ api:
 
         Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list_kit_item.md'
+            disable_meta_properties: [ title ]
             fields:
                 lineItem: ~
                 kitItem: ~

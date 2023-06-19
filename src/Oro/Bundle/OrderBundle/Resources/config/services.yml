@@ -414,12 +414,6 @@ services:
         public: false
         lazy: true
 
-    oro_order.provider.order_entity_name:
-          class: 'Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider'
-          public: false
-          tags:
-            - { name: oro_entity.name_provider, priority: 100 }
-
     oro_order.datagrid.orders_view_list:
         class: Oro\Bundle\OrderBundle\Datagrid\OrdersViewList
         public: true

@@ -1644,14 +1644,17 @@ services:
             - { name: oro_featuretogle.voter }
 
     oro_product.provider.brand_entity_name:
-        class: 'Oro\Bundle\ProductBundle\Provider\BrandEntityNameProvider'
-        public: false
+        class: Oro\Bundle\ProductBundle\Provider\BrandEntityNameProvider
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
     oro_product.provider.product_entity_name:
-        class: 'Oro\Bundle\ProductBundle\Provider\ProductEntityNameProvider'
-        public: false
+        class: Oro\Bundle\ProductBundle\Provider\ProductEntityNameProvider
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_product.provider.product_kit_item_entity_name:
+        class: Oro\Bundle\ProductBundle\Provider\ProductKitItemEntityNameProvider
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 

@@ -2,6 +2,7 @@ api:
     entities:
         Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility:
             documentation_resource: '@OroVisibilityBundle/Resources/doc/api/product_visibility.md'
+            disable_meta_properties: [ title ]
             inner_join_associations: [ product ]
             fields:
                 id:
@@ -36,6 +37,7 @@ api:
 
         Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility:
             documentation_resource: '@OroVisibilityBundle/Resources/doc/api/customer_product_visibility.md'
+            disable_meta_properties: [ title ]
             inner_join_associations: [ product, scope.customer ]
             fields:
                 id:
@@ -85,6 +87,7 @@ api:
 
         Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility:
             documentation_resource: '@OroVisibilityBundle/Resources/doc/api/customer_group_product_visibility.md'
+            disable_meta_properties: [ title ]
             inner_join_associations: [ product, scope.customerGroup ]
             fields:
                 id:

@@ -7,8 +7,8 @@ use Oro\Bundle\CMSBundle\Entity\TabbedContentItem;
 use Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
-use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\TabbedContentItemStub;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -35,11 +35,10 @@ class TabbedContentItemTypeTest extends FormIntegrationTestCase
         self::assertTrue($form->isSynchronized());
 
         $expected = new TabbedContentItem();
-        $expected
-            ->setContentWidget(new ContentWidget())
-            ->setTitle('sample title')
-            ->setItemOrder(1)
-            ->setContent('test content');
+        $expected->setContentWidget(new ContentWidget());
+        $expected->setTitle('sample title');
+        $expected->setItemOrder(1);
+        $expected->setContent('test content');
 
         self::assertEquals($expected, $form->getData());
     }
@@ -47,11 +46,12 @@ class TabbedContentItemTypeTest extends FormIntegrationTestCase
     public function testSubmitExisting(): void
     {
         $contentWidget = new ContentWidget();
-        $tabbedContentItem = (new TabbedContentItemStub(42))
-            ->setTitle('sample title')
-            ->setItemOrder(1)
-            ->setContent('sample content')
-            ->setContentWidget($contentWidget);
+        $tabbedContentItem = new TabbedContentItem();
+        ReflectionUtil::setId($tabbedContentItem, 42);
+        $tabbedContentItem->setTitle('sample title');
+        $tabbedContentItem->setItemOrder(1);
+        $tabbedContentItem->setContent('sample content');
+        $tabbedContentItem->setContentWidget($contentWidget);
 
         $form = $this->factory->create(
             TabbedContentItemType::class,

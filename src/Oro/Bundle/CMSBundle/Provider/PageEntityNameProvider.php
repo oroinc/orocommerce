@@ -5,33 +5,54 @@ namespace Oro\Bundle\CMSBundle\Provider;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 /**
- * Represents Page entities by 'titles' localized field
+ * Provides a text representation of Page entity.
  */
 class PageEntityNameProvider implements EntityNameProviderInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName($format, $locale, $entity)
     {
-        if ($format === EntityNameProviderInterface::FULL && $entity instanceof Page) {
-            if ($locale instanceof Localization) {
-                $name = (string)$entity->getTitle($locale);
-            }
-
-            return $name ?? $entity->getDefaultTitle();
+        if (!$entity instanceof Page) {
+            return false;
         }
 
-        return false;
+        $localizedTitle = $locale instanceof Localization
+            ? (string)$entity->getTitle($locale)
+            : null;
+
+        return $localizedTitle ?: (string)$entity->getDefaultTitle();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getNameDQL($format, $locale, $className, $alias)
     {
-        return false;
+        if (!is_a($className, Page::class, true)) {
+            return false;
+        }
+
+        if ($locale instanceof Localization) {
+            return sprintf(
+                'CAST((SELECT COALESCE(%1$s_t.string, %1$s_t.text, %1$s_dt.string, %1$s_dt.text) FROM %2$s %1$s_dt'
+                . ' LEFT JOIN %2$s %1$s_t WITH %1$s_t MEMBER OF %1$s.titles AND %1$s_t.localization = %3$s'
+                . ' WHERE %1$s_dt MEMBER OF %1$s.titles AND %1$s_dt.localization IS NULL) AS string)',
+                $alias,
+                LocalizedFallbackValue::class,
+                $locale->getId()
+            );
+        }
+
+        return sprintf(
+            'CAST((SELECT COALESCE(%1$s_t.string, %1$s_t.text) FROM %2$s %1$s_t'
+            . ' WHERE %1$s_t MEMBER OF %1$s.titles AND %1$s_t.localization IS NULL) AS string)',
+            $alias,
+            LocalizedFallbackValue::class
+        );
     }
 }

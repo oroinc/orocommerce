@@ -8,49 +8,71 @@ use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Provider\ProductEntityNameProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\TranslationBundle\Entity\Language;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ProductEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductEntityNameProvider */
-    private $provider;
+    private ProductEntityNameProvider $provider;
 
     protected function setUp(): void
     {
         $this->provider = new ProductEntityNameProvider();
     }
 
-    public function testGetNameForShortFormat()
+    private function getProductName(string $string, Localization $localization = null): ProductName
     {
-        $this->assertFalse($this->provider->getName(EntityNameProviderInterface::SHORT, 'en', new Product()));
-        $this->assertFalse($this->provider->getName(null, 'en', new Product()));
+        $value = new ProductName();
+        $value->setString($string);
+        $value->setLocalization($localization);
+
+        return $value;
     }
 
-    public function testGetNameForUnsupportedEntity()
+    private function getLocalization(string $code): Localization
+    {
+        $language = new Language();
+        $language->setCode($code);
+
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, 123);
+        $localization->setLanguage($language);
+
+        return $localization;
+    }
+
+    public function testGetNameForUnsupportedEntity(): void
     {
         $this->assertFalse(
             $this->provider->getName(EntityNameProviderInterface::FULL, 'en', new \stdClass())
         );
     }
 
-    public function testGetNameForLocale()
+    public function testGetNameForShortFormat(): void
     {
-        $product = new Product();
-        $product
-            ->addName($this->getFallbackValue('default name'))
-            ->addName($this->getFallbackValue('localized name', $this->getLocalization('en')));
-
-        $this->assertEquals(
-            'default name',
-            $this->provider->getName(EntityNameProviderInterface::FULL, 'en', $product)
+        $this->assertFalse(
+            $this->provider->getName(EntityNameProviderInterface::SHORT, 'en', new Product())
         );
     }
 
-    public function testGetNameForLocalization()
+    public function testGetName(): void
     {
         $product = new Product();
-        $product
-            ->addName($this->getFallbackValue('default name'))
-            ->addName($this->getFallbackValue('localized name', $this->getLocalization('en')));
+        $product->setSku('SKU');
+        $product->addName($this->getProductName('default name'));
+        $product->addName($this->getProductName('localized name', $this->getLocalization('en')));
+
+        $this->assertEquals(
+            'default name',
+            $this->provider->getName(EntityNameProviderInterface::FULL, null, $product)
+        );
+    }
+
+    public function testGetNameForLocalization(): void
+    {
+        $product = new Product();
+        $product->setSku('SKU');
+        $product->addName($this->getProductName('default name'));
+        $product->addName($this->getProductName('localized name', $this->getLocalization('en')));
 
         $this->assertEquals(
             'localized name',
@@ -58,38 +80,56 @@ class ProductEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetNameDQL()
+    public function testGetNameForEmptyName(): void
     {
-        $this->assertFalse(
-            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', Product::class, 'product')
+        $product = new Product();
+        $product->setSku('SKU');
+        $product->addName($this->getProductName(''));
+
+        $this->assertEquals(
+            'SKU',
+            $this->provider->getName(EntityNameProviderInterface::FULL, null, $product)
         );
     }
 
-    /**
-     * @param string $string
-     * @param Localization|null $localization
-     * @return ProductName
-     */
-    protected function getFallbackValue($string, Localization $localization = null)
+    public function testGetNameDQLForUnsupportedEntity(): void
     {
-        $value = new ProductName();
-        $value->setString($string)->setLocalization($localization);
-
-        return $value;
+        self::assertFalse(
+            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', \stdClass::class, 'entity')
+        );
     }
 
-    /**
-     * @param string $code
-     * @return Localization
-     */
-    protected function getLocalization($code)
+    public function testGetNameDQLForShortFormat(): void
     {
-        $language = new Language();
-        $language->setCode($code);
+        $this->assertFalse(
+            $this->provider->getNameDQL(EntityNameProviderInterface::SHORT, 'en', Product::class, 'product')
+        );
+    }
 
-        $localization = new Localization();
-        $localization->setLanguage($language);
+    public function testGetNameDQL(): void
+    {
+        self::assertEquals(
+            'CAST((SELECT COALESCE(NULLIF(product_n.string, \'\'), product.sku)'
+            . ' FROM Oro\Bundle\ProductBundle\Entity\ProductName product_n'
+            . ' WHERE product_n MEMBER OF product.names AND product_n.localization IS NULL) AS string)',
+            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, null, Product::class, 'product')
+        );
+    }
 
-        return $localization;
+    public function testGetNameDQLForLocalization(): void
+    {
+        self::assertEquals(
+            'CAST((SELECT COALESCE(product_n.string, NULLIF(product_dn.string, \'\'), product.sku)'
+            . ' FROM Oro\Bundle\ProductBundle\Entity\ProductName product_dn'
+            . ' LEFT JOIN Oro\Bundle\ProductBundle\Entity\ProductName product_n'
+            . ' WITH product_n MEMBER OF product.names AND product_n.localization = 123'
+            . ' WHERE product_dn MEMBER OF product.names AND product_dn.localization IS NULL) AS string)',
+            $this->provider->getNameDQL(
+                EntityNameProviderInterface::FULL,
+                $this->getLocalization('en'),
+                Product::class,
+                'product'
+            )
+        );
     }
 }

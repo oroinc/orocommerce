@@ -2,7 +2,7 @@ api:
     entities:
         Oro\Bundle\LocaleBundle\Entity\Localization:
             documentation_resource: '@OroFrontendLocalizationBundle/Resources/doc/api_frontend/localization.md'
-            disable_meta_properties: true
+            disable_meta_properties: [ title ]
             disable_fieldset: true
             fields:
                 createdAt:

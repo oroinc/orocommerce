@@ -28,5 +28,9 @@ class OroCatalogExtension extends Extension
         $loader->load('image_placeholder.yml');
         $loader->load('controllers.yml');
         $loader->load('importexport.yml');
+
+        if ('test' === $container->getParameter('kernel.environment')) {
+            $loader->load('services_test.yml');
+        }
     }
 }
