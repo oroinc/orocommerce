@@ -21,7 +21,8 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\WebsiteTrait;
  */
 class LatestOrderedProductsTest extends WebTestCase implements ResettableCustomerUserRepositoryInterface
 {
-    use ResetCustomerUserTrait, WebsiteTrait;
+    use ResetCustomerUserTrait;
+    use WebsiteTrait;
 
     private OrderRepository $repository;
 

@@ -20,8 +20,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductPriceEntityListenerTest extends WebTestCase
 {
-    use MessageQueueExtension,
-        ProductPriceReference;
+    use MessageQueueExtension;
+    use ProductPriceReference;
 
     /**
      * {@inheritdoc}

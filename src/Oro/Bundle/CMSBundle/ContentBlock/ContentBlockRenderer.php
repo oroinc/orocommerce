@@ -7,7 +7,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Twig\Environment;
-use Twig\Template;
 
 /**
  * Renders content block.
@@ -26,9 +25,6 @@ class ContentBlockRenderer implements LoggerAwareInterface
 
     /** @var array */
     private $aliases = [];
-
-    /** @var Template|null */
-    private $template;
 
     public function __construct(ContentBlockDataProvider $contentBlockDataProvider, Environment $twig)
     {

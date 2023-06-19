@@ -62,7 +62,7 @@ abstract class AbstractLoadSearchResultHistoryData extends AbstractFixture imple
                 ->setCustomerUser($customerUser)
                 ->setLocalization($localization)
                 ->setResultType($row['type'])
-                ->setResultsCount($row['type'] === 'empty'? 0 :(int)$row['count'])
+                ->setResultsCount($row['type'] === 'empty' ? 0 : (int)$row['count'])
                 ->setSearchTerm($row['term'])
                 ->setCustomerVisitorId($row['visitor_id'] ? (int)$row['visitor_id'] : null)
                 ->setNormalizedSearchTermHash(md5(mb_strtolower($row['term'])))

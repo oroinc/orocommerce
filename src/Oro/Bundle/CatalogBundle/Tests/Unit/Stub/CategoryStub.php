@@ -14,7 +14,7 @@ class CategoryStub extends Category
     public function __construct(?int $id = null)
     {
         parent::__construct();
-        
+
         if ($id !== null) {
             $this->id = $id;
         }

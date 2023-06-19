@@ -17,9 +17,9 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
  */
 class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAccessorAwareInterface
 {
+    use ContextAccessorAwareTrait;
+    use ProductHolderTrait;
     const NAME = 'at_least_one_available_product';
-
-    use ContextAccessorAwareTrait, ProductHolderTrait;
 
     /** @var PropertyPathInterface */
     private $productIteratorPath;

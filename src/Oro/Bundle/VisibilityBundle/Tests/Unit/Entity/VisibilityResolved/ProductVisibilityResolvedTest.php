@@ -33,7 +33,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
 
     public function testGettersAndSetters()
     {
-        $entity = new ProductVisibilityResolved(new Scope, new Product());
+        $entity = new ProductVisibilityResolved(new Scope(), new Product());
 
         $this->assertPropertyAccessors(
             $entity,

@@ -30,11 +30,11 @@ class FreightClassesExtensionTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'not applicable' => [
-                'input' => (new FreightClass)->setCode('test_class'),
+                'input' => (new FreightClass())->setCode('test_class'),
                 'expected' => false,
             ],
             'applicable' => [
-                'input' => (new FreightClass)->setCode('parcel'),
+                'input' => (new FreightClass())->setCode('parcel'),
                 'expected' => true,
             ],
         ];

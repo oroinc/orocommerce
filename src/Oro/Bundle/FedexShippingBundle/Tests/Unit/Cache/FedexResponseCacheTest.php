@@ -164,7 +164,7 @@ class FedexResponseCacheTest extends TestCase
         );
     }
 
-    private function normalizeCacheKey(FedexResponseCacheKey $key) : string
+    private function normalizeCacheKey(FedexResponseCacheKey $key): string
     {
         return UniversalCacheKeyGenerator::normalizeCacheKey(
             $key->getCacheKey() . '_' .  $key->getSettings()->getId()

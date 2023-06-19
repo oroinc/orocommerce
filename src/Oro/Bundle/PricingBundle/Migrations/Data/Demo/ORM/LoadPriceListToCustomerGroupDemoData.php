@@ -40,7 +40,7 @@ class LoadPriceListToCustomerGroupDemoData extends LoadBasePriceListRelationDemo
                 ->setPriceList($priceList)
                 ->setWebsite($website)
                 ->setSortOrder($row['sort_order'])
-                ->setMergeAllowed((boolean)$row['mergeAllowed']);
+                ->setMergeAllowed((bool)$row['mergeAllowed']);
 
             $manager->persist($priceListToCustomerGroup);
         }

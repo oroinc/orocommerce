@@ -19,9 +19,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AddLineItemMassActionProvider implements MassActionProviderInterface
 {
-    const NAME_PREFIX = 'oro_shoppinglist_frontend_addlineitem';
-
     use FeatureCheckerHolderTrait;
+    const NAME_PREFIX = 'oro_shoppinglist_frontend_addlineitem';
 
     /**
      * @var CurrentShoppingListManager

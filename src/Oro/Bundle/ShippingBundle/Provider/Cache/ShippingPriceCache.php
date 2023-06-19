@@ -34,7 +34,7 @@ class ShippingPriceCache
         return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 
-    public function hasPrice(ShippingContextInterface $context, string $methodId, string $typeId, int $ruleId) : bool
+    public function hasPrice(ShippingContextInterface $context, string $methodId, string $typeId, int $ruleId): bool
     {
         return $this->cache->getItem($this->generateKey($context, $methodId, $typeId, $ruleId))->isHit();
     }
@@ -45,7 +45,7 @@ class ShippingPriceCache
         string $typeId,
         int $ruleId,
         Price $price
-    ) : void {
+    ): void {
         $cacheKey = $this->generateKey($context, $methodId, $typeId, $ruleId);
         $cacheItem = $this->cache->getItem($cacheKey);
         $cacheItem->set($price)->expiresAfter(static::CACHE_LIFETIME);
@@ -65,7 +65,7 @@ class ShippingPriceCache
         );
     }
 
-    public function deleteAllPrices() : void
+    public function deleteAllPrices(): void
     {
         $this->cache->clear();
     }

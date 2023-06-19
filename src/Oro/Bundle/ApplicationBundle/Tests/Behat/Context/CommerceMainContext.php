@@ -16,7 +16,8 @@ class CommerceMainContext extends OroFeatureContext implements
     OroPageObjectAware,
     SessionAliasProviderAwareInterface
 {
-    use PageObjectDictionary, SessionAliasProviderAwareTrait;
+    use PageObjectDictionary;
+    use SessionAliasProviderAwareTrait;
 
     /**
      * This step used for login bayer from frontend of commerce

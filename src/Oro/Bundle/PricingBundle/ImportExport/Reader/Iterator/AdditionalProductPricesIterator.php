@@ -54,7 +54,7 @@ class AdditionalProductPricesIterator implements \Iterator
     /**
      * {@inheritdoc}
      */
-    public function next():void
+    public function next(): void
     {
         $this->current = $this->read();
         if ($this->valid()) {

@@ -93,7 +93,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
     /**
      * Move collected changes from local cache to persistent cache and save changes.
      */
-    public function flushAll() : void
+    public function flushAll(): void
     {
         foreach (array_keys($this->usedKeys) as $cacheKey) {
             // Item isn't present in local cache. Nothing to move to persistent storage, continue.
@@ -122,7 +122,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
         $this->usedKeys = [];
     }
 
-    public function deleteAll() : void
+    public function deleteAll(): void
     {
         $this->localCache->clear();
         if ($this->persistentCache instanceof DirectoryAwareFileCacheInterface

@@ -53,7 +53,7 @@ class GzipSitemapFileWriter implements SitemapFileWriterInterface
         return $this->sitemapFileWriter->saveSitemap($gzippedContent, $path . '.gz');
     }
 
-    private function isCompressionSkipped(string $path):bool
+    private function isCompressionSkipped(string $path): bool
     {
         $fileName = basename($path);
         foreach ($this->skipCompressionForProviders as $providerType) {

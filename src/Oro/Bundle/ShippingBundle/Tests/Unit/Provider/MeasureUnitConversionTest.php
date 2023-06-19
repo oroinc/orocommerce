@@ -23,7 +23,7 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
             32.1,
             65.4,
             98.7,
-            (new LengthUnit)->setCode('cm')->setConversionRates([
+            (new LengthUnit())->setCode('cm')->setConversionRates([
                 'inch' => 0.393701,
                 'foot' => 0.0328084,
                 'm'    => 0.01
@@ -73,7 +73,7 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
                     32.1,
                     65.4,
                     98.7,
-                    (new LengthUnit)->setCode('cm')->setConversionRates([
+                    (new LengthUnit())->setCode('cm')->setConversionRates([
                         'inch' => 0.393701,
                         'foot' => 0.0328084,
                         'm'    => 0.01

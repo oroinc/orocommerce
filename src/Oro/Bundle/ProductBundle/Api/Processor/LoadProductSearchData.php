@@ -142,7 +142,7 @@ class LoadProductSearchData implements ProcessorInterface
                     if (DataType::BOOLEAN === $dataType) {
                         // convert boolean values to boolean data-type
                         // because the search index uses integer data-type for boolean values
-                        $value = (boolean)$value;
+                        $value = (bool)$value;
                     } elseif (DataType::DATETIME === $dataType && !$value instanceof \DateTimeInterface) {
                         // convert datetime, date and time values to DateTime object
                         // because elasticsearch storage engine store them as a string

@@ -13,10 +13,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
     private const CHECKOUT_CLASS_NAME = Checkout::class;
     private const CHECKOUT_SOURCE_CLASS_NAME = CheckoutSource::class;
-
-    use EntityTrait;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;

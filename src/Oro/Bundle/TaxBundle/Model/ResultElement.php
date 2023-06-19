@@ -27,7 +27,7 @@ final class ResultElement extends AbstractResultElement implements \JsonSerializ
         $taxAmount = null,
         $adjustment = null
     ) {
-        $resultElement = new static;
+        $resultElement = new static();
 
         $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
         $resultElement->offsetSet(self::EXCLUDING_TAX, $excludingTax);

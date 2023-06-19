@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;

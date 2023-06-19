@@ -180,7 +180,7 @@ class CanonicalUrlGenerator
         $this->cache->delete($this->getCacheKey($this->getConfigKey(Configuration::USE_LOCALIZED_CANONICAL)));
     }
 
-    private function getCachedConfigValue($key, WebsiteInterface $website = null) : mixed
+    private function getCachedConfigValue($key, WebsiteInterface $website = null): mixed
     {
         $configKey = $this->getConfigKey($key);
         $cacheKey = $this->getCacheKey($configKey, $website);
@@ -246,7 +246,7 @@ class CanonicalUrlGenerator
         return Configuration::ROOT_NODE . '.' . $configField;
     }
 
-    private function getCacheKey(string $configKey, WebsiteInterface $website = null) : string
+    private function getCacheKey(string $configKey, WebsiteInterface $website = null): string
     {
         $cacheKey  = $website ? sprintf('%s.%s', $configKey, $website->getId()) : $configKey;
         return UniversalCacheKeyGenerator::normalizeCacheKey($cacheKey);

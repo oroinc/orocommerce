@@ -35,7 +35,7 @@ class ProductTest extends WebTestCase
         $this->assertEquals($product->getDenormalizedDefaultNameUppercase(), mb_strtoupper($product->getDefaultName()));
 
         $product->removeName($defaultName);
-        $otherName = (new ProductName)->setString('Light lamp');
+        $otherName = (new ProductName())->setString('Light lamp');
         $product->addName($otherName);
         $manager->persist($product);
         $manager->flush();

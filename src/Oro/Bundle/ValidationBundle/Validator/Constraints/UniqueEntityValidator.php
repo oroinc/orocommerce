@@ -75,7 +75,7 @@ class UniqueEntityValidator extends ConstraintValidator
             ->addViolation();
     }
 
-    private function getEntityManager(object $entity, UniqueEntity $constraint) : ObjectManager
+    private function getEntityManager(object $entity, UniqueEntity $constraint): ObjectManager
     {
         if ($constraint->em) {
             $em = $this->doctrine->getManager($constraint->em);
@@ -150,7 +150,7 @@ class UniqueEntityValidator extends ConstraintValidator
         return $result;
     }
 
-    private function isNoDuplicates(mixed $result, object $entity) : bool
+    private function isNoDuplicates(mixed $result, object $entity): bool
     {
         return
             0 === \count($result)

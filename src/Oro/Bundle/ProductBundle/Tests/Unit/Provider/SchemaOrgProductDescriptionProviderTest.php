@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionProvider;
 use Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionProviderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class SchemaOrgProductDescriptionProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -70,8 +71,7 @@ class SchemaOrgProductDescriptionProviderTest extends \PHPUnit\Framework\TestCas
         return $description;
     }
 
-    private function getDescriptionProvider():
-    SchemaOrgProductDescriptionProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+    private function getDescriptionProvider(): SchemaOrgProductDescriptionProviderInterface|MockObject
     {
         $provider = $this->createMock(SchemaOrgProductDescriptionProviderInterface::class);
 

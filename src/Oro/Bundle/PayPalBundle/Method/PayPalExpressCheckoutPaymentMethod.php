@@ -243,7 +243,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 
         return sprintf($redirectUrl, $token);
     }
-    
+
     /**
      * @param PaymentTransaction $paymentTransaction
      * @param string $requestAction

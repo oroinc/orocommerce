@@ -822,7 +822,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->method('request')
             ->with('D', $requestOptions)
             ->willReturn(new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage]));
-        
+
         $this->doctrineHelper->method('getEntityReference')
             ->with('EntityClass', $transaction->getEntityIdentifier())
             ->willReturn((new Order())->setIdentifier('123'));

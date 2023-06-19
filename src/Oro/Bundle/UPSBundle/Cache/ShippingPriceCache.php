@@ -24,18 +24,18 @@ class ShippingPriceCache
         $this->lifetimeProvider = $lifetimeProvider;
     }
 
-    public function containsPrice(ShippingPriceCacheKey $key) : bool
+    public function containsPrice(ShippingPriceCacheKey $key): bool
     {
         return $this->cache->hasItem($this->generateStringKey($key));
     }
 
-    public function fetchPrice(ShippingPriceCacheKey $key) : bool|Price
+    public function fetchPrice(ShippingPriceCacheKey $key): bool|Price
     {
         $cacheItem = $this->cache->getItem($this->generateStringKey($key));
         return $cacheItem->isHit() ? $cacheItem->get() : false;
     }
 
-    public function savePrice(ShippingPriceCacheKey $key, Price $price) : bool
+    public function savePrice(ShippingPriceCacheKey $key, Price $price): bool
     {
         $cacheItem = $this->cache->getItem($this->generateStringKey($key));
         $lifetime = $this->lifetimeProvider->getLifetime($key->getTransport(), static::LIFETIME);
@@ -43,7 +43,7 @@ class ShippingPriceCache
         return $this->cache->save($cacheItem);
     }
 
-    public function deleteAll() : void
+    public function deleteAll(): void
     {
         $this->cache->clear();
     }
@@ -53,12 +53,12 @@ class ShippingPriceCache
         PriceRequest $priceRequest,
         string|null $methodId,
         string|null $typeId
-    ) : ShippingPriceCacheKey {
+    ): ShippingPriceCacheKey {
         return (new ShippingPriceCacheKey())->setTransport($transport)->setPriceRequest($priceRequest)
             ->setMethodId($methodId)->setTypeId($typeId);
     }
 
-    protected function generateStringKey(ShippingPriceCacheKey $key) : string
+    protected function generateStringKey(ShippingPriceCacheKey $key): string
     {
         return $this->lifetimeProvider->generateLifetimeAwareKey($key->getTransport(), $key->generateKey());
     }
