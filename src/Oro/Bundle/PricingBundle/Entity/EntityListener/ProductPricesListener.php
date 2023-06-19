@@ -17,7 +17,8 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
  */
 class ProductPricesListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
-    use FeatureCheckerHolderTrait, OptionalListenerTrait;
+    use FeatureCheckerHolderTrait;
+    use OptionalListenerTrait;
 
     private CombinedPriceListBuildTriggerHandler $combinedPriceListBuildTriggerHandler;
     private PriceListTriggerHandler $priceListTriggerHandler;

@@ -220,7 +220,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      *      ...
      * ]
      */
-    private function getSearchResultsData($search, $firstResult, $maxResults, $searchById) : array
+    private function getSearchResultsData($search, $firstResult, $maxResults, $searchById): array
     {
         if ($searchById) {
             $query = $this->productSearchRepository->createQuery()

@@ -31,7 +31,8 @@ class PriceRuleProcessor implements
     LoggerAwareInterface,
     FeatureToggleableInterface
 {
-    use LoggerAwareTrait, FeatureCheckerHolderTrait;
+    use LoggerAwareTrait;
+    use FeatureCheckerHolderTrait;
 
     private ManagerRegistry $doctrine;
     private ProductPriceBuilder $priceBuilder;

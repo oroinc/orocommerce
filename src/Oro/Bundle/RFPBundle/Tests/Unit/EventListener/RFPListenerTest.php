@@ -129,7 +129,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
     private function createAnonymousToken(): AnonymousCustomerUserToken
     {
         $visitor = new CustomerVisitor();
-        $visitor->setCustomerUser(new CustomerUser);
+        $visitor->setCustomerUser(new CustomerUser());
 
         return new AnonymousCustomerUserToken('', [], $visitor);
     }

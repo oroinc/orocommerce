@@ -21,7 +21,7 @@ class TaxResultElement extends AbstractResultElement
      */
     public static function create($taxCode, $rate, $taxableAmount, $taxAmount)
     {
-        $resultElement = new static;
+        $resultElement = new static();
 
         $resultElement->offsetSet(self::TAX, $taxCode);
         $resultElement->offsetSet(self::RATE, $rate);

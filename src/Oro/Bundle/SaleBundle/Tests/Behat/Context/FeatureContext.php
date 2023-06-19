@@ -25,7 +25,8 @@ class FeatureContext extends OroFeatureContext implements
     OroPageObjectAware,
     FixtureLoaderAwareInterface
 {
-    use PageObjectDictionary, FixtureLoaderDictionary;
+    use PageObjectDictionary;
+    use FixtureLoaderDictionary;
 
     /**
      * @var OroMainContext

@@ -129,7 +129,7 @@ class PriceRuleLexemeHandler
                 $lexeme->setClassName($realClassName);
                 $lexeme->setRelationId($containerId);
                 $lexeme->setFieldName(
-                    $fieldName ? : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
+                    $fieldName ?: $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
                 );
                 $lexeme->setPriceList($priceList);
 

@@ -19,7 +19,7 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
         $this->translator = $translator;
     }
 
-    public function getPossibleValues(string $fieldName) : array
+    public function getPossibleValues(string $fieldName): array
     {
         return [
             0 => $this->translator->trans('oro.product.variant_fields.no.label'),
@@ -27,19 +27,19 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
         ];
     }
 
-    public function getScalarValue(mixed $value) : mixed
+    public function getScalarValue(mixed $value): mixed
     {
         return (bool)$value;
     }
 
-    public function getHumanReadableValue(string $fieldName, mixed $value) : mixed
+    public function getHumanReadableValue(string $fieldName, mixed $value): mixed
     {
         $values = $this->getPossibleValues($fieldName);
 
         return array_key_exists((int) $value, $values) ? $values[(int) $value] : 'N/A';
     }
 
-    public function getType() : string
+    public function getType(): string
     {
         return self::TYPE;
     }

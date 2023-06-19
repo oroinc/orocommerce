@@ -20,7 +20,8 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class FlatPriceListRelationListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
-    use OptionalListenerTrait, FeatureCheckerHolderTrait;
+    use OptionalListenerTrait;
+    use FeatureCheckerHolderTrait;
 
     private const FIELD_NAME = 'priceList';
 

@@ -39,13 +39,13 @@ class FeaturedCategoriesProvider
         $this->websiteManager = $websiteManager;
     }
 
-    public function setCache(CacheInterface $cache, $lifeTime = 0) : void
+    public function setCache(CacheInterface $cache, $lifeTime = 0): void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
     }
 
-    public function getAll(array $categoryIds = []) : array //[['id' => id, 'title' => title, 'short' => short], ...]
+    public function getAll(array $categoryIds = []): array //[['id' => id, 'title' => title, 'short' => short], ...]
     {
         $user = $this->getCurrentUser();
         $cacheKey = $this->getCacheKey($categoryIds, $user);

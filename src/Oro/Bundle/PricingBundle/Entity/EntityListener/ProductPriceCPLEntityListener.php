@@ -29,7 +29,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProductPriceCPLEntityListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
-    use OptionalListenerTrait, FeatureCheckerHolderTrait;
+    use OptionalListenerTrait;
+    use FeatureCheckerHolderTrait;
 
     protected ExtraActionEntityStorageInterface $extraActionsStorage;
     protected ManagerRegistry $registry;

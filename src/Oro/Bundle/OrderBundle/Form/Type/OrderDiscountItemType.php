@@ -173,7 +173,7 @@ class OrderDiscountItemType extends AbstractType
         $form = $event->getForm();
         $data = $event->getData();
         if ($data && $form->has('value') && null !== $data->getValue()) {
-            $form->get('value')->setData((double)$data->getValue());
+            $form->get('value')->setData((float)$data->getValue());
         }
     }
 

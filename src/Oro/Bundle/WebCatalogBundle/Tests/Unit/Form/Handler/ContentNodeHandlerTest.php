@@ -38,7 +38,7 @@ class ContentNodeHandlerTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityManager');
 
-        $result = $this->handler->process(new \stdClass, $form, $request);
+        $result = $this->handler->process(new \stdClass(), $form, $request);
         self::assertFalse($result);
     }
 
@@ -53,7 +53,7 @@ class ContentNodeHandlerTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityManager');
 
-        $result = $this->handler->process(new \stdClass, $form, $request);
+        $result = $this->handler->process(new \stdClass(), $form, $request);
         self::assertFalse($result);
     }
 
@@ -65,7 +65,7 @@ class ContentNodeHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
         $request = new Request();
         $request->setMethod('POST');
-        $data = new \stdClass;
+        $data = new \stdClass();
         $manager = $this->createMock(EntityManager::class);
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
@@ -95,7 +95,7 @@ class ContentNodeHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
         $request = new Request();
         $request->setMethod('POST');
-        $data = new \stdClass;
+        $data = new \stdClass();
         $manager = $this->createMock(EntityManager::class);
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')

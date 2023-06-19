@@ -170,7 +170,7 @@ class ShoppingListRepository extends ServiceEntityRepository implements Resettab
             ->getQuery()
             ->getSingleScalarResult();
 
-        return (integer) $results;
+        return (int) $results;
     }
 
     public function hasEmptyConfigurableLineItems(ShoppingList $shoppingList): bool

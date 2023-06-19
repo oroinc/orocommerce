@@ -41,7 +41,7 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
 
         $shoppingListId = null;
         if (!empty($data[ProductDataStorage::ADDITIONAL_DATA_KEY])) {
-            $shoppingListId = (int)$data[ProductDataStorage::ADDITIONAL_DATA_KEY] ? : null;
+            $shoppingListId = (int)$data[ProductDataStorage::ADDITIONAL_DATA_KEY] ?: null;
         }
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 

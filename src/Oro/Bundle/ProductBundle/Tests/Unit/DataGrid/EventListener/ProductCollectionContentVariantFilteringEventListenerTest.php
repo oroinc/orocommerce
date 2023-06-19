@@ -360,7 +360,7 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
         if ($parameters['contentVariantId']) {
             $searchQuery->expects($this->once())
                 ->method('getSortOrder')
-                ->willReturn(empty($parameters['sortBy'])? null : 'ASC');
+                ->willReturn(empty($parameters['sortBy']) ? null : 'ASC');
 
             if (empty($parameters['sortBy'])) {
                 $searchQuery->expects($this->once())

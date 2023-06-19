@@ -21,7 +21,7 @@ class ProductIndexFieldsProvider implements ProductIndexAttributeProviderInterfa
     /**
      * @param string $field
      */
-    public function addForceIndexed(string $field) : void
+    public function addForceIndexed(string $field): void
     {
         if (!$this->fields->contains($field)) {
             $this->fields->add($field);
@@ -33,7 +33,7 @@ class ProductIndexFieldsProvider implements ProductIndexAttributeProviderInterfa
      *
      * @return bool
      */
-    public function isForceIndexed(string $field) : bool
+    public function isForceIndexed(string $field): bool
     {
         return $this->fields->contains($field);
     }

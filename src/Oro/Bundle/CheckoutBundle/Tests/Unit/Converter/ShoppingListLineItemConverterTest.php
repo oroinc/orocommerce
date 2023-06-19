@@ -32,7 +32,7 @@ class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'positive' => ['expected' => true, 'source' => $this->createMock(ShoppingList::class)],
-            'unsupported instance' => ['expected' => false, 'source' => new \stdClass],
+            'unsupported instance' => ['expected' => false, 'source' => new \stdClass()],
         ];
     }
 

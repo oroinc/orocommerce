@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;

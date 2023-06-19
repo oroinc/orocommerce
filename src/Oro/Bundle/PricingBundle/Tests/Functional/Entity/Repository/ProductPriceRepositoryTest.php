@@ -79,7 +79,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             ],
         ];
 
-        usort($actual, function (array $a, array $b) : int {
+        usort($actual, function (array $a, array $b): int {
             $aKey = sprintf('%s_%s_%s', $a['price_list_id'], $a['currency'], $a['unit']);
             $bKey = sprintf('%s_%s_%s', $b['price_list_id'], $b['currency'], $b['unit']);
 

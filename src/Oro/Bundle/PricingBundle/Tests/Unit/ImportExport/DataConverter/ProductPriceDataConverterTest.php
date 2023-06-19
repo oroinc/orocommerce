@@ -77,7 +77,7 @@ class ProductPriceDataConverterTest extends TestCase
         ];
     }
 
-    private function getBackendFormatData():array
+    private function getBackendFormatData(): array
     {
         return [
             'product' => [

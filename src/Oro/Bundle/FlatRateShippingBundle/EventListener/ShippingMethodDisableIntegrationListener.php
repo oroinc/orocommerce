@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\FlatRateShippingBundle\EventListener;
 
 use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
@@ -7,6 +8,9 @@ use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 
+/**
+ * Disables shipping method on channel disable
+ */
 class ShippingMethodDisableIntegrationListener
 {
     /**

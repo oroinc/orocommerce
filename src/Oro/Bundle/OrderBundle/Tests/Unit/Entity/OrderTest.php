@@ -56,7 +56,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ['totalDiscounts', new Price()],
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
-            ['parent', new Order],
+            ['parent', new Order()],
         ];
 
         $order = new Order();

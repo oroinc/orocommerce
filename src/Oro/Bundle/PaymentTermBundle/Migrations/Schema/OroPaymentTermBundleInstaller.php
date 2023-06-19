@@ -34,7 +34,8 @@ class OroPaymentTermBundleInstaller implements
     NameGeneratorAwareInterface,
     ExtendExtensionAwareInterface
 {
-    use PaymentTermExtensionAwareTrait, UpdateExtendRelationTrait;
+    use PaymentTermExtensionAwareTrait;
+    use UpdateExtendRelationTrait;
 
     /** @var AbstractPlatform */
     protected $platform;

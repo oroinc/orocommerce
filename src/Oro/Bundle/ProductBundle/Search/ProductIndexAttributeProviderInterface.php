@@ -13,7 +13,7 @@ interface ProductIndexAttributeProviderInterface
      * @param string $field
      * @return void
      */
-    public function addForceIndexed(string $field) : void;
+    public function addForceIndexed(string $field): void;
 
     /**
      * Check if field is presented in the list of force indexed attributes
@@ -21,5 +21,5 @@ interface ProductIndexAttributeProviderInterface
      * @param string $field
      * @return bool
      */
-    public function isForceIndexed(string $field) : bool;
+    public function isForceIndexed(string $field): bool;
 }

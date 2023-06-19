@@ -32,7 +32,7 @@ class FrontendCategorySortOrderDatagridListenerTest extends \PHPUnit\Framework\T
             $gridParameters = new ParameterBag([RequestProductHandler::CATEGORY_ID_KEY => $parameters['categoryId']]);
             $searchQuery->expects($this->once())
                 ->method('getSortOrder')
-                ->willReturn(empty($parameters['sortBy'])? null : 'ASC');
+                ->willReturn(empty($parameters['sortBy']) ? null : 'ASC');
 
             if (empty($parameters['sortBy'])) {
                 $searchQuery->expects($this->once())

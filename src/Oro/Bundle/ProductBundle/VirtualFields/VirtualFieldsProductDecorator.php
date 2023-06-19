@@ -51,7 +51,7 @@ class VirtualFieldsProductDecorator
         $this->product = $product;
     }
 
-    public function __get($name) : mixed
+    public function __get($name): mixed
     {
         $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
             sprintf('%s_%s', $this->product->getId(), $name)

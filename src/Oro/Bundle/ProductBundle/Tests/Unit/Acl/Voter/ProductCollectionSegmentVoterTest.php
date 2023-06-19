@@ -58,7 +58,7 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
      */
     public function testAbstainOnUnsupportedClass(array $attributes)
     {
-        $object = new \stdClass;
+        $object = new \stdClass();
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')

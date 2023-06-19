@@ -197,7 +197,7 @@ class WebsiteSearchCategoryIndexerListener
      * @param Category $category
      * @return Category[]
      */
-    protected function getParentCategories(Category $category) : array
+    protected function getParentCategories(Category $category): array
     {
         $parentCategoryIds = explode(Category::MATERIALIZED_PATH_DELIMITER, $category->getMaterializedPath());
 
@@ -225,7 +225,7 @@ class WebsiteSearchCategoryIndexerListener
      * @param Localization $localization
      * @return string
      */
-    protected function generateIdWithParentCategories(array $parentCategories, Localization $localization) : string
+    protected function generateIdWithParentCategories(array $parentCategories, Localization $localization): string
     {
         $parts = [];
 

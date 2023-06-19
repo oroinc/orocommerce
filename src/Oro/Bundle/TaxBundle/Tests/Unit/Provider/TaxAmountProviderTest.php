@@ -90,7 +90,7 @@ class TaxAmountProviderTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('loadTax')
             ->with($this->sourceEntity)
-            ->willThrowException(new $exceptionClass);
+            ->willThrowException(new $exceptionClass());
 
         $this->expectException($exceptionClass);
 

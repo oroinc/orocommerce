@@ -34,7 +34,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
-    ) : bool {
+    ): bool {
         return $this->cacheProvider->hasItem($this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate));
     }
 
@@ -42,7 +42,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
-    ) : TimeInTransitResultInterface|null {
+    ): TimeInTransitResultInterface|null {
         $cacheItem = $this->cacheProvider->getItem(
             $this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate)
         );
@@ -53,11 +53,11 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
-    ) : bool {
+    ): bool {
         return $this->cacheProvider->deleteItem($this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate));
     }
 
-    public function deleteAll() : bool
+    public function deleteAll(): bool
     {
         return $this->cacheProvider->clear();
     }
@@ -68,7 +68,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         \DateTime $pickupDate,
         TimeInTransitResultInterface $timeInTransitResult,
         $lifeTime = self::CACHE_LIFETIME
-    ) : bool {
+    ): bool {
         $cacheItem = $this->cacheProvider->getItem(
             $this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate)
         );
@@ -82,7 +82,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
-    ) : string {
+    ): string {
         $key = sprintf(
             '%s:%s:%s:%s:%s',
             $shipFromAddress->getCountryIso2(),

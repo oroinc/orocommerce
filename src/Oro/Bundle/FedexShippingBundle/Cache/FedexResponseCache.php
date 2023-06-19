@@ -25,7 +25,7 @@ class FedexResponseCache implements FedexResponseCacheInterface
         return $this->cache->getItem($this->generateCacheKey($key))->isHit();
     }
 
-    public function get(FedexResponseCacheKeyInterface $key) : FedexRateServiceResponseInterface|null
+    public function get(FedexResponseCacheKeyInterface $key): FedexRateServiceResponseInterface|null
     {
         $cacheKey = $this->cache->getItem($this->generateCacheKey($key));
         return $cacheKey->isHit() ? $cacheKey->get() : null;
@@ -64,7 +64,7 @@ class FedexResponseCache implements FedexResponseCacheInterface
         return $interval;
     }
 
-    private function generateCacheKey(FedexResponseCacheKeyInterface $key) : string
+    private function generateCacheKey(FedexResponseCacheKeyInterface $key): string
     {
         return UniversalCacheKeyGenerator::normalizeCacheKey(
             $key->getCacheKey() . '_' .  $key->getSettings()->getId()
