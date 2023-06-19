@@ -172,11 +172,10 @@ services:
 
     oro_sale.provider.quote_entity_name:
           class: Oro\Bundle\SaleBundle\Provider\QuoteEntityNameProvider
-          public: false
           arguments:
-            - "@translator"
+              - "@translator"
           tags:
-            - { name: oro_entity.name_provider, priority: 100 }
+              - { name: oro_entity.name_provider, priority: 100 }
 
     oro_sale.provider.quote_checkout:
         class: Oro\Bundle\SaleBundle\Provider\QuoteCheckoutProvider

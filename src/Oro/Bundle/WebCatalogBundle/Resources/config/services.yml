@@ -242,6 +242,11 @@ services:
             - '@doctrine'
             - '@oro_config.manager'
 
+    oro_web_catalog.content_node_entity_name_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\ContentNodeEntityNameProvider
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
     oro_web_catalog.content_node_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider
         arguments:

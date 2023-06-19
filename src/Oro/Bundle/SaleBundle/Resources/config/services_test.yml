@@ -1,0 +1,15 @@
+services:
+    oro_sale.tests.entity_name_resolver.classes_provider:
+        class: Oro\Bundle\EntityBundle\Tests\Functional\Environment\TestEntityNameResolverConfigurableClassesProvider
+        decorates: oro_entity.tests.entity_name_resolver.classes_provider
+        arguments:
+            - '@.inner'
+            -
+                - 'Oro\Bundle\SaleBundle\Entity\Quote'
+
+    oro_sale.tests.entity_name_resolver.data_loader:
+        class: Oro\Bundle\SaleBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoader
+        decorates: oro_entity.tests.entity_name_resolver.data_loader
+        arguments:
+            - '@.inner'
+            - '@translator'

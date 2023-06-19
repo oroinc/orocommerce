@@ -1,0 +1,5 @@
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+            full: [ label ]
+            short: [ label ]

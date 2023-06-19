@@ -21,6 +21,11 @@ knp_gaufrette:
             adapter: import_files
             alias: import_product_images_filesystem
 
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\ProductBundle\Entity\Product:
+            short: [ sku ]
+
 oro_product:
     product_types:
         - simple

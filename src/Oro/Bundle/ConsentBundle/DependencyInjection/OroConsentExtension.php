@@ -23,5 +23,9 @@ class OroConsentExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
         $loader->load('controllers.yml');
+
+        if ('test' === $container->getParameter('kernel.environment')) {
+            $loader->load('services_test.yml');
+        }
     }
 }

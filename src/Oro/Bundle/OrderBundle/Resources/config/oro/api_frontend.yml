@@ -120,6 +120,7 @@ api:
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_line_item.md'
+            disable_meta_properties: [ title ]
             form_options:
                 constraints:
                     - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:

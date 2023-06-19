@@ -3,3 +3,15 @@ doctrine:
         dql:
             string_functions:
                 uuid: Oro\Bundle\PricingBundle\ORM\Query\AST\Functions\String\UUID
+
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\PricingBundle\Entity\PriceList:
+            full: [ name ]
+            short: [ name ]
+        Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+            full: [ name ]
+            short: [ name ]
+        Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+            full: [ name ]
+            short: [ name ]
