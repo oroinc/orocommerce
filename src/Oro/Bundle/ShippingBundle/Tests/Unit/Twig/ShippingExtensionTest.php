@@ -140,7 +140,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function (ShippingMethodConfigDataEvent $event) use ($methodName) {
                 self::assertEquals($methodName, $event->getMethodIdentifier());
                 $event->setTemplate('@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig');
-                
+
                 return $event;
             });
 

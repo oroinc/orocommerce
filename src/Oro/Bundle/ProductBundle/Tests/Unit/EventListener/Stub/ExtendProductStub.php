@@ -15,7 +15,7 @@ class ExtendProductStub extends Product
     private array $titleManyToMany = [];
     private array $titleOneToMany = [];
 
-    
+
     public function getTitleManyToOne(): ?LocalizedFallbackValue
     {
         return $this->titleManyToOne;

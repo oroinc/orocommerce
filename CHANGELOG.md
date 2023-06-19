@@ -23,15 +23,6 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
-### Removed
-
-#### ShoppingListBundle
-* Removed option `productsMatchedPrices` from shopping_lists_awere_container layout block type, added productLineItemsPricesByShoppingList instead
-* Removed methods `getMatchedPrices`, `getMatchedPrice` from `\Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider`, added `getProductLineItemPricesForShoppingLists` instead.
-
-
-## UNRELEASED
-
 ## Added
 
 ### PricingBundle
@@ -65,6 +56,16 @@ The current file describes significant changes in the code that may affect the u
 ### VisibilityBundle
 * Added `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener` and `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityPrefetchListener` for adding visibility data to the product line items storefront datagrids.
 * Added `is_visible_product` TWIG function for checking if a product is visible.
+
+### Removed
+
+#### CMSBundle
+* WYSIWYG editor
+  Removed `patchDeviceModel` method in `DevidesManager`.  Use `updateCalcPreviewDeviceWidth` from `DeviceManager` for update device preview width instead.
+
+#### ShoppingListBundle
+* Removed option `productsMatchedPrices` from shopping_lists_awere_container layout block type, added productLineItemsPricesByShoppingList instead
+* Removed methods `getMatchedPrices`, `getMatchedPrice` from `\Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider`, added `getProductLineItemPricesForShoppingLists` instead.
 
 
 ## 5.1.0 (2023-03-31)

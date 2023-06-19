@@ -55,8 +55,8 @@ Feature: Import Product with attributes and null values
     And I open "Products" import tab
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | SizeAttribute.name | IntegerAttribute | sku  | attributeFamily.code | names.default.value | descriptions.default.value | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      | 0                  | 0                | SKU1 | default_family       | Test Product 1      | Product Description 1      | enabled | simple | in_stock            | set                            | 1                              |
+      | SizeAttribute.name | IntegerAttribute | SKU  | Product Family.Code | Name.default.value | Description.default.value | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      | 0                  | 0                | SKU1 | default_family      | Test Product 1     | Product Description 1     | enabled | simple | in_stock            | set                        | 1                          |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
 
@@ -71,8 +71,8 @@ Feature: Import Product with attributes and null values
     And I open "Products" import tab
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | SizeAttribute.name | IntegerAttribute | sku  | attributeFamily.code | names.default.value | descriptions.default.value | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision |
-      |                    |                  | SKU1 | default_family       | Test Product 1      | Product Description 1      | enabled | simple | in_stock            | set                            | 1                              |
+      | SizeAttribute.name | IntegerAttribute | SKU  | Product Family.Code | Name.default.value | Description.default.value | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision |
+      |                    |                  | SKU1 | default_family      | Test Product 1     | Product Description 1     | enabled | simple | in_stock            | set                        | 1                          |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
 

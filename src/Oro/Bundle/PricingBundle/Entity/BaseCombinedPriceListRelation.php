@@ -127,7 +127,7 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
     public function setVersion(?int $version): self
     {
         $this->version = $version;
-        
+
         return $this;
     }
 

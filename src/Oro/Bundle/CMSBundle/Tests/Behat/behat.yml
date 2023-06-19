@@ -529,6 +529,7 @@ oro_behat_extension:
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
                 - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
                 - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
                 - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
                 - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\ActionBundle\Tests\Behat\Context\OroActionContext

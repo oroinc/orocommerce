@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Model;
 
 /**

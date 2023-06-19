@@ -75,7 +75,7 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->voter->vote($this->token, $subject, ['DELETE']));
     }
 
-    public function voteProvider() : array
+    public function voteProvider(): array
     {
         return [
             [

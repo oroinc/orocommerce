@@ -20,9 +20,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 {
-    const FEATURE = 'test_feature';
-
     use EntityTrait;
+    const FEATURE = 'test_feature';
 
     /**
      * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject

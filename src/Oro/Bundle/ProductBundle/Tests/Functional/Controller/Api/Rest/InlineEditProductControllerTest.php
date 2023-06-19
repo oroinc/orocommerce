@@ -97,10 +97,39 @@ class InlineEditProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        $this->assertEquals(['productName' => self::NEW_PRODUCT_NAME], self::getJsonResponseContent($result, 200));
         $this->assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
         $this->assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
         $this->assertEquals($expectedCreateRedirect, $product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+    }
+
+    public function testProductEditNameWhenContainsTags(): void
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_NAME, $product1->getName());
+        $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
+
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_redirect.redirect_generation_strategy', Configuration::STRATEGY_ASK);
+        $configManager->flush();
+        $configManager->reload();
+
+        $this->client->jsonRequest(
+            'PATCH',
+            $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
+            [
+                'productName' => '<a href="#">'. self::NEW_PRODUCT_NAME . '</a>',
+                'createRedirect' => true,
+            ]
+        );
+        $result = $this->client->getResponse();
+
+        $this->assertEquals(['productName' => self::NEW_PRODUCT_NAME], self::getJsonResponseContent($result, 200));
+        $this->assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
+        $this->assertEquals(self::NEW_PRODUCT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
+        $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
     }
 
     public function testProductEditNameMissingProduct()

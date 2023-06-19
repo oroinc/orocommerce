@@ -15,10 +15,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
     const ENABLED_PROMOTION_ID = 7;
     const DISABLED_PROMOTION_ID = 2;
-
-    use EntityTrait;
 
     /**
      * @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject

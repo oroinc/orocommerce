@@ -43,5 +43,5 @@ Feature: Products grid frontend export localized
       | Body | Your products data export has been finished. Download Results |
     When take the link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
-      | name           | sku      | inventory_status.id |
+      | Name           | SKU      | Inventory Status.Id |
       | ProductInZulu1 | SKUZULU1 | in_stock            |

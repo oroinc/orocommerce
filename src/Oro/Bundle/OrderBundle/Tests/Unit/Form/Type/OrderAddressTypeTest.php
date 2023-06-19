@@ -21,62 +21,70 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderAddressTypeTest extends FormIntegrationTestCase
 {
-    /** @var OrderAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $orderAddressSecurityProvider;
+    private OrderAddressSecurityProvider|MockObject $orderAddressSecurityProvider;
 
     protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
-        $this->orderAddressSecurityProvider->expects($this->any())
-            ->method('isManualEditGranted')
-            ->willReturn(true);
 
         parent::setUp();
     }
 
-    public function testGetBlockPrefix()
+    public function testGetBlockPrefix(): void
     {
+        $this->orderAddressSecurityProvider->expects(self::any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
         $type = new OrderAddressType($this->orderAddressSecurityProvider);
         $this->assertEquals('oro_order_address_type', $type->getBlockPrefix());
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setRequired')
             ->with(['object', 'addressType'])
             ->willReturnSelf();
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
             ->with([
                 'data_class' => OrderAddress::class,
-                'constraints' => [new NameOrOrganization()]
+                'constraints' => [new NameOrOrganization()],
             ])
             ->willReturnSelf();
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setAllowedValues')
             ->with('addressType', ['billing', 'shipping'])
             ->willReturnSelf();
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setAllowedTypes')
             ->with('object', CustomerOwnerAwareInterface::class)
             ->willReturnSelf();
+
+        $this->orderAddressSecurityProvider->expects(self::any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
 
         $type = new OrderAddressType($this->orderAddressSecurityProvider);
         $type->configureOptions($resolver);
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
+        $this->orderAddressSecurityProvider->expects(self::any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
+
         $form = $this->factory->create(OrderAddressType::class, null, [
             'object' => new Order(),
-            'addressType' => 'billing'
+            'addressType' => 'billing',
         ]);
 
         $this->assertTrue($form->has('id'));
@@ -96,8 +104,12 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('phone'));
     }
 
-    public function testGetParent()
+    public function testGetParent(): void
     {
+        $this->orderAddressSecurityProvider->expects(self::any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
+
         $type = new OrderAddressType($this->orderAddressSecurityProvider);
 
         $this->assertIsString($type->getParent());
@@ -107,11 +119,15 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(OrderAddress $defaultData, array $submittedData, OrderAddress $expectedData)
+    public function testSubmit(OrderAddress $defaultData, array $submittedData, OrderAddress $expectedData): void
     {
+        $this->orderAddressSecurityProvider->expects(self::any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
+
         $form = $this->factory->create(OrderAddressType::class, $defaultData, [
             'object' => new Order(),
-            'addressType' => 'billing'
+            'addressType' => 'billing',
         ]);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -124,13 +140,40 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
+    /**
+     * @dataProvider submitDataProvider
+     */
+    public function testSubmitWithManualEditNotGrantedAndFormHasNoParent(
+        OrderAddress $defaultData,
+        array $submittedData,
+        OrderAddress $expectedData
+    ): void {
+        $this->orderAddressSecurityProvider->expects(self::any())
+            ->method('isManualEditGranted')
+            ->willReturn(false);
+
+        $form = $this->factory->create(OrderAddressType::class, $defaultData, [
+            'object' => new Order(),
+            'addressType' => 'billing',
+        ]);
+
+        $this->assertEquals($defaultData, $form->getData());
+        $this->assertEquals($defaultData, $form->getViewData());
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+
+        $this->assertEquals(null, $form->getData());
+    }
+
     public function submitDataProvider(): array
     {
         return [
             'new order address' => [
                 'defaultData' => $this->getOrderAddress(),
                 'submittedData' => [
-                    'label' => 'new address'
+                    'label' => 'new address',
                 ],
                 'expectedData' => $this->getOrderAddress('new address'),
             ],
@@ -150,7 +193,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
                     '0123456789_stripped',
                     'Street'
                 ),
-            ]
+            ],
         ];
     }
 
@@ -160,13 +203,15 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     protected function getExtensions(): array
     {
         $addressManager = $this->createMock(OrderAddressManager::class);
-        $addressManager->expects($this->any())
+        $addressManager->expects(self::any())
             ->method('getGroupedAddresses')
             ->willReturn(new TypedOrderAddressCollection(null, 'billing', []));
 
+        $orderAddressType = new OrderAddressType($this->orderAddressSecurityProvider);
+
         return [
             new PreloadedExtension([
-                new OrderAddressType($this->orderAddressSecurityProvider),
+                $orderAddressType,
                 AddressFormType::class => new AddressTypeStub(),
                 TranslatableEntityType::class => new EntityTypeStub([
                     AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
@@ -177,11 +222,20 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
                     $this->createMock(AddressFormatter::class),
                     $this->orderAddressSecurityProvider,
                     $this->createMock(Serializer::class)
-                )
+                ),
             ], [
-                FormType::class => [new StripTagsExtensionStub($this)]
-            ])
+                FormType::class => [new StripTagsExtensionStub($this)],
+            ]),
         ];
+    }
+
+    private function getOrder(int $orderId): Order
+    {
+        $order = new Order();
+        $reflection = new \ReflectionObject($order);
+        $reflection->getProperty('id')->setValue($order, $orderId);
+
+        return $order;
     }
 
     private function getOrderAddress(

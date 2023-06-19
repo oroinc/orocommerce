@@ -19,17 +19,17 @@ class SegmentEntityListener
         $this->productCache = $productCache;
     }
 
-    public function preRemove(Segment $segment) : void
+    public function preRemove(Segment $segment): void
     {
         $this->productCache->clear();
     }
 
-    public function postPersist(Segment $segment) : void
+    public function postPersist(Segment $segment): void
     {
         $this->productCache->clear();
     }
 
-    public function preUpdate(Segment $segment, PreUpdateEventArgs $eventArgs) : void
+    public function preUpdate(Segment $segment, PreUpdateEventArgs $eventArgs): void
     {
         if ($eventArgs->getEntityChangeSet()) {
             $this->productCache->clear();

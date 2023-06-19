@@ -22,7 +22,7 @@ class MatchingProductsProvider
         $this->matchingProductsCache = $matchingProductsCache;
     }
 
-    public function hasMatchingProducts(Segment $segment, array $lineItems) : bool
+    public function hasMatchingProducts(Segment $segment, array $lineItems): bool
     {
         if (empty($lineItems)) {
             return false;
@@ -36,7 +36,7 @@ class MatchingProductsProvider
         return !empty($queryBuilder->getQuery()->getArrayResult());
     }
 
-    public function getMatchingProducts(Segment $segment, array $lineItems) : array
+    public function getMatchingProducts(Segment $segment, array $lineItems): array
     {
         if (empty($lineItems)) {
             return [];
@@ -49,7 +49,7 @@ class MatchingProductsProvider
         });
     }
 
-    private function modifyQueryBuilder(Segment $segment, array $lineItems) : QueryBuilder
+    private function modifyQueryBuilder(Segment $segment, array $lineItems): QueryBuilder
     {
         $queryBuilder = $this->segmentManager->getEntityQueryBuilder($segment);
 

@@ -82,7 +82,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         ?string $parentCategory,
         ?string $expectedParentCategory
     ): void {
-        $this->context->setValue('rawItemData', ['parentCategory.title' => $parentCategory]);
+        $this->context->setValue('rawItemData', ['parentCategory.titles' => $parentCategory]);
 
         $category = $this->createCategoryWithTitle('title');
         $category->setParentCategory($this->createCategory());
@@ -113,7 +113,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     {
         $this->context->setValue(
             'rawItemData',
-            ['parentCategory.title' => LoadCategoryData::FIRST_LEVEL]
+            ['parentCategory.titles' => LoadCategoryData::FIRST_LEVEL]
         );
 
         $category = $this->createCategoryWithTitle('title');
@@ -130,7 +130,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $category = $this->createCategoryWithTitle('title');
         $category->setParentCategory($this->createCategory());
 
-        $this->context->setValue('rawItemData', ['parentCategory.title' => 'All Products / new_category']);
+        $this->context->setValue('rawItemData', ['parentCategory.titles' => 'All Products / new_category']);
 
         $this->assertSame(
             $newCategory,
@@ -202,7 +202,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $category = $this->createCategoryWithTitle('sample category');
         $category->setParentCategory($this->createCategory());
 
-        $this->context->setValue('rawItemData', $itemData = ['parentCategory.title' => 'All Products / non-existing']);
+        $this->context->setValue('rawItemData', $itemData = ['parentCategory.titles' => 'All Products / non-existing']);
 
         $category = $this->strategy->process($category);
 
@@ -234,7 +234,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
 
         $this->assertNull($category);
         $this->assertContains(
-            'Error in row #0. Title Localization Name: Category Title should not be blank.',
+            'Error in row #0. titles Localization Name: Category Title should not be blank.',
             $this->context->getErrors()
         );
     }

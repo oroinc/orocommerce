@@ -18,7 +18,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class ProductPriceFlatEntityListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
-    use OptionalListenerTrait, FeatureCheckerHolderTrait;
+    use OptionalListenerTrait;
+    use FeatureCheckerHolderTrait;
 
     private EventDispatcherInterface $eventDispatcher;
 

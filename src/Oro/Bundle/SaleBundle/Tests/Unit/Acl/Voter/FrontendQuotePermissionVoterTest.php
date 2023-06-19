@@ -65,7 +65,7 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function voteProvider() : array
+    public function voteProvider(): array
     {
         return [
             [

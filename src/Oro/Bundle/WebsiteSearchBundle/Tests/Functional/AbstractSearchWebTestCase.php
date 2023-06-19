@@ -503,7 +503,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         );
     }
 
-    protected function getItemName(Item $item) : string
+    protected function getItemName(Item $item): string
     {
         $fieldName = 'names_' . $this->getDefaultLocalizationId();
 

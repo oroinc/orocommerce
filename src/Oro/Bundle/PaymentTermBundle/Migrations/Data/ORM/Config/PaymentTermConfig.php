@@ -50,7 +50,7 @@ class PaymentTermConfig
         return true;
     }
 
-    private function getConfigValue(string $key):? bool
+    private function getConfigValue(string $key): ?bool
     {
         return $this->configManager->get('oro_payment_term' . ConfigManager::SECTION_MODEL_SEPARATOR . $key);
     }

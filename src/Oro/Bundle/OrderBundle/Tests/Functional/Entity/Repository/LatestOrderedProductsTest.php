@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Entity\Repository;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
@@ -21,7 +21,8 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\WebsiteTrait;
  */
 class LatestOrderedProductsTest extends WebTestCase implements ResettableCustomerUserRepositoryInterface
 {
-    use ResetCustomerUserTrait, WebsiteTrait;
+    use ResetCustomerUserTrait;
+    use WebsiteTrait;
 
     private OrderRepository $repository;
 

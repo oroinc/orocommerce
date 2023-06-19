@@ -60,8 +60,6 @@ define(function(require) {
 
             const {Commands, Canvas} = this.builder;
 
-            this.patchDeviceModel();
-
             this.canvasEl = Canvas.getElement();
             this.$builderIframe = $(Canvas.getFrameEl());
             this.$framesArea = $(Canvas.canvasView.framesArea);
@@ -74,11 +72,13 @@ define(function(require) {
             this.listenTo(this.builder, 'change:device', this.updateSelectedElement.bind(this));
 
             Commands.add('setDevice', {
+                updateCalcPreviewDeviceWidth: this.updateCalcPreviewDeviceWidth.bind(this),
+
                 run(editor, sender) {
                     const {Devices} = editor;
                     const device = Devices.get(sender.id);
 
-                    device.updateCalcPreviewDeviceWidth();
+                    this.updateCalcPreviewDeviceWidth(device);
 
                     editor.setDevice(sender.id);
                     const canvas = editor.Canvas.getElement();
@@ -86,6 +86,7 @@ define(function(require) {
                     canvas.classList.add(sender.id);
                     editor.Canvas.deviceDecorator.classList.add(sender.id);
                 },
+
                 stop(editor, sender) {
                     const canvas = editor.Canvas.getElement();
 
@@ -95,24 +96,21 @@ define(function(require) {
             });
         },
 
-        patchDeviceModel() {
-            const {Devices} = this.builder;
+        /**
+         * Update preview device width according canvas width
+         *
+         * @param {Model} deviceModel
+         */
+        updateCalcPreviewDeviceWidth(deviceModel) {
+            const {Canvas} = this.builder;
+            const canvasEl = Canvas.getElement();
+            const width = parseInt(deviceModel.get('width')) || 0;
 
-            Devices.Devices.prototype.model = Devices.Device.extend({
-                editor: this.builder,
-
-                updateCalcPreviewDeviceWidth() {
-                    const {Canvas} = this.editor;
-                    const canvasEl = Canvas.getElement();
-                    const width = parseInt(this.get('width')) || 0;
-
-                    if (width >= canvasEl.offsetWidth - 100) {
-                        this.set('width', (canvasEl.offsetWidth - 100) + 'px');
-                    } else {
-                        this.set('width', this.get('widthMedia'));
-                    }
-                }
-            });
+            if (width >= canvasEl.offsetWidth - 100) {
+                deviceModel.set('width', (canvasEl.offsetWidth - 100) + 'px');
+            } else {
+                deviceModel.set('width', deviceModel.get('widthMedia'));
+            }
         },
 
         renderDeviceDecoration() {
@@ -132,7 +130,7 @@ define(function(require) {
             const {Devices} = this.builder;
             const currentDevice = Devices.getSelected();
 
-            currentDevice && currentDevice.updateCalcPreviewDeviceWidth();
+            currentDevice && this.updateCalcPreviewDeviceWidth(currentDevice);
         },
 
         initButtons() {

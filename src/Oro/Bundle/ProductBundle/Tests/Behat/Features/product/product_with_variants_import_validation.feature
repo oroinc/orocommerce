@@ -47,8 +47,8 @@ Feature: Product with variants import validation
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku    | names.default.value  | attributeFamily.code | status  | inventory_status.id | type         | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | XXXAAA | Configurable Product | default_family       | enabled | in_stock            | configurable | kg                             | 3                              | 1                                   | 1                         |
+      | SKU    | Name.default.value   | Product Family.Code | Status  | Inventory Status.Id | Type         | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell |
+      | XXXAAA | Configurable Product | default_family      | enabled | in_stock            | configurable | kg                         | 3                          | 1                                | 1                     |
     When I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     When I go to System/ Jobs
@@ -93,8 +93,8 @@ Feature: Product with variants import validation
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | names.default.value | variantLinks.1.product.sku | variantLinks.1.visible | attributeFamily.code | status  | inventory_status.id | type         | variantFields | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | 1GB83 | Slip-On Clog        | 1GB82                      | 1                      | default_family       | enabled | in_stock            | configurable | Color,Size    | kg                             | 3                              | 1                                   | 1                         |
+      | SKU   | Name.default.value | Product Variant Links.1.Product.SKU | Product Variant Links.1.Visible | Product Family.Code | Status  | Inventory Status.Id | Type         | Configurable Attributes | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell |
+      | 1GB83 | Slip-On Clog       | 1GB82                               | 1                               | default_family      | enabled | in_stock            | configurable | Color,Size              | kg                         | 3                          | 1                                | 1                     |
     When I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
     When I click View 1GB83 in grid
@@ -105,9 +105,9 @@ Feature: Product with variants import validation
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | names.default.value   | variantLinks.1.product.sku | variantLinks.1.visible | variantLinks.2.product.sku | variantLinks.2.visible | attributeFamily.code | status  | inventory_status.id | type         | variantFields | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | 1GB84 | Black Slip-On Clog XL |                            |                        |                            |                        | default_family       | enabled | in_stock            | simple       |               | kg                             | 3                              | 1                                   | 1                         |
-      | 1GB83 | Slip-On Clog          | 1GB81/*<111>*/АРТ          | 1                      | 1GB82                      | 1                      | default_family       | enabled | in_stock            | configurable | Color,Size    | kg                             | 3                              | 1                                   | 1                         |
+      | SKU   | Name.default.value    | Product Variant Links.1.Product.SKU | Product Variant Links.1.Visible | Product Variant Links.2.Product.SKU | Product Variant Links.2.Visible | Product Family.Code | Status  | Inventory Status.Id | Type         | Configurable Attributes | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell |
+      | 1GB84 | Black Slip-On Clog XL |                                     |                                 |                                     |                                 | default_family      | enabled | in_stock            | simple       |                         | kg                         | 3                          | 1                                | 1                     |
+      | 1GB83 | Slip-On Clog          | 1GB81/*<111>*/АРТ                   | 1                               | 1GB82                               | 1                               | default_family      | enabled | in_stock            | configurable | Color,Size              | kg                         | 3                          | 1                                | 1                     |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
@@ -122,9 +122,9 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | names.default.value      | attributeFamily.code | status  | inventory_status.id | type   | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | 1GB84 | Black Slip-On Clog XL UP | default_family       | enabled | in_stock            | simple | kg                             | 3                              | 1                                   | 1                         |
-      | 1GB82 | White Slip-On Clog M UP  | default_family       | enabled | in_stock            | simple | unknown                        | 3                              | 1                                   | 1                         |
+      | SKU   | Name.default.value       | Product Family.Code | Status  | Inventory Status.Id | Type   | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell |
+      | 1GB84 | Black Slip-On Clog XL UP | default_family      | enabled | in_stock            | simple | kg                         | 3                          | 1                                | 1                     |
+      | 1GB82 | White Slip-On Clog M UP  | default_family      | enabled | in_stock            | simple | unknown                    | 3                          | 1                                | 1                     |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
@@ -139,10 +139,10 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | names.default.value       | variantLinks.1.product.sku | variantLinks.1.visible | variantLinks.2.product.sku | variantLinks.2.visible | attributeFamily.code | status  | inventory_status.id | type         | variantFields | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | 1GB84 | Black Slip-On Clog XL UP2 |                            |                        |                            |                        | default_family       | enabled | in_stock            | simple       |               | kg                             | 3                              | 1                                   | 1                         |
-      | 1GB82 | White Slip-On Clog M UP   |                            |                        |                            |                        | default_family       | enabled | in_stock            | simple       |               | unknown                        | 3                              | 1                                   | 1                         |
-      | 1GB83 | Slip-On Clog              | 1GB81                      | 1                      | 1GB82                      | 1                      | default_family       | enabled | in_stock            | configurable | Color,Size    | kg                             | 3                              | 1                                   | 1                         |
+      | SKU   | Name.default.value        | Product Variant Links.1.Product.SKU | Product Variant Links.1.Visible | Product Variant Links.2.Product.SKU | Product Variant Links.2.Visible | Product Family.Code | Status  | Inventory Status.Id | Type         | Configurable Attributes | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell |
+      | 1GB84 | Black Slip-On Clog XL UP2 |                                     |                                 |                                     |                                 | default_family      | enabled | in_stock            | simple       |                         | kg                         | 3                          | 1                                | 1                     |
+      | 1GB82 | White Slip-On Clog M UP   |                                     |                                 |                                     |                                 | default_family      | enabled | in_stock            | simple       |                         | unknown                    | 3                          | 1                                | 1                     |
+      | 1GB83 | Slip-On Clog              | 1GB81                               | 1                               | 1GB82                               | 1                               | default_family      | enabled | in_stock            | configurable | Color,Size              | kg                         | 3                          | 1                                | 1                     |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
@@ -157,10 +157,10 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | names.default.value       | variantLinks.1.product.sku | variantLinks.1.visible | variantLinks.2.product.sku | variantLinks.2.visible | attributeFamily.code | status  | inventory_status.id | type         | variantFields | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | 1GB84 | Black Slip-On Clog XL UP2 |                            |                        |                            |                        | default_family       | enabled | in_stock            | simple       |               | kg                             | 3                              | 1                                   | 1                         |
-      | 1GB81 | Black Slip-On Clog L UP   |                            |                        |                            |                        | default_family       | enabled | in_stock            | simple       |               | unknown                        | 3                              | 1                                   | 1                         |
-      | 1GB83 | Slip-On Clog              | 1GB81                      | 1                      | 1GB82                      | 1                      | default_family       | enabled | in_stock            | configurable | Color,Size    | unk                            | 3                              | 1                                   | 1                         |
+      | SKU   | Name.default.value        | Product Variant Links.1.Product.SKU | Product Variant Links.1.Visible | Product Variant Links.2.Product.SKU | Product Variant Links.2.Visible | Product Family.Code | Status  | Inventory Status.Id | Type         | Configurable Attributes | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell |
+      | 1GB84 | Black Slip-On Clog XL UP2 |                                     |                                 |                                     |                                 | default_family      | enabled | in_stock            | simple       |                         | kg                         | 3                          | 1                                | 1                     |
+      | 1GB81 | Black Slip-On Clog L UP   |                                     |                                 |                                     |                                 | default_family      | enabled | in_stock            | simple       |                         | unknown                    | 3                          | 1                                | 1                     |
+      | 1GB83 | Slip-On Clog              | 1GB81                               | 1                               | 1GB82                               | 1                               | default_family      | enabled | in_stock            | configurable | Color,Size              | unk                        | 3                          | 1                                | 1                     |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
@@ -179,9 +179,9 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku    | names.default.value    | variantLinks.1.product.sku | variantLinks.2.product.sku | attributeFamily.code | status  | inventory_status.id | type         | variantFields | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell |
-      | CFG001 | Configurable Product 1 | 1GB82                      |                            | default_family       | enabled | in_stock            | configurable | Color,Size    | item                           | 3                              | 1                                   | 1                         |
-      | CFG002 | Configurable Product 2 | 1GB81                      | DUPLICATE                  | default_family       | enabled | in_stock            | configurable | Color,Size    | item                           | 3                              | 1                                   | 1                         |
+      | SKU    | Name.default.value     | Product Variant Links.1.Product.SKU | Product Variant Links.2.Product.SKU | Product Family.Code | Status  | Inventory Status.Id | Type         | Configurable Attributes | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell |
+      | CFG001 | Configurable Product 1 | 1GB82                               |                                     | default_family      | enabled | in_stock            | configurable | Color,Size              | item                       | 3                          | 1                                | 1                     |
+      | CFG002 | Configurable Product 2 | 1GB81                               | DUPLICATE                           | default_family      | enabled | in_stock            | configurable | Color,Size              | item                       | 3                          | 1                                | 1                     |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
@@ -195,8 +195,8 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell | names.default.fallback | names.default.value | variantFields | variantLinks.1.product.sku | featured | newArrival | slugPrototypes.default.value |
-      | 1GB83 | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   | Non-ex                     | 0        | 0          | slip-on-clog                 |
+      | SKU   | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell | Name.default.fallback | Name.default.value | Configurable Attributes | Product Variant Links.1.Product.SKU | Is Featured | New Arrival | URL Slug.default.value |
+      | 1GB83 | default_family      | enabled | in_stock            | kg                         | 3                          | 1                                | 1                     |                       | Slip-On Clog       | Color, Size             | Non-ex                              | 0           | 0           | slip-on-clog           |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
@@ -211,8 +211,8 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku   | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell | names.default.fallback | names.default.value | variantFields | variantLinks.1.product.sku | variantLinks.2.product.sku | featured | newArrival | slugPrototypes.default.value |
-      | 1GB83 | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   | Non-ex                     | 1GB82                      | 0        | 0          | slip-on-clog                 |
+      | SKU   | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell | Name.default.fallback | Name.default.value | Configurable Attributes | Product Variant Links.1.Product.SKU | Product Variant Links.2.product.sku | Is Featured | New Arrival | URL Slug.default.value |
+      | 1GB83 | default_family      | enabled | in_stock            | kg                         | 3                          | 1                                | 1                     |                       | Slip-On Clog       | Color, Size             | Non-ex                              | 1GB82                               | 0           | 0           | slip-on-clog           |
 
   @skipWait
   Scenario: Check import error page from the email after importing file
@@ -227,9 +227,9 @@ Feature: Product with variants import validation
     And I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | sku    | attributeFamily.code | status  | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | primaryUnitPrecision.conversionRate | primaryUnitPrecision.sell | names.default.fallback | names.default.value | variantFields | variantLinks.1.product.sku | variantLinks.2.product.sku | featured | newArrival | slugPrototypes.default.value |
-      | 1GB83  | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   | Non-ex                     | 1GB82                      | 0        | 0          | slip-on-clog                 |
-      | CFG001 | default_family       | enabled | in_stock            | kg                             | 3                              | 1                                   | 1                         |                        | Slip-On Clog        | Color, Size   |                            | 1GB82                      | 0        | 0          | slip-on-clog                 |
+      | SKU    | Product Family.Code | Status  | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Unit of Quantity.Conversion Rate | Unit of Quantity.Sell | Name.default.fallback | Name.default.value | Configurable Attributes | Product Variant Links.1.Product.SKU | Product Variant Links.2.product.sku | Is Featured | New Arrival | URL Slug.default.value |
+      | 1GB83  | default_family      | enabled | in_stock            | kg                         | 3                          | 1                                | 1                     |                       | Slip-On Clog       | Color, Size             | Non-ex                              | 1GB82                               | 0           | 0           | slip-on-clog           |
+      | CFG001 | default_family      | enabled | in_stock            | kg                         | 3                          | 1                                | 1                     |                       | Slip-On Clog       | Color, Size             |                                     | 1GB82                               | 0           | 0           | slip-on-clog           |
 
   @skipWait
   Scenario: Check import error page from the email after importing file

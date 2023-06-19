@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Handler;
 
 use Doctrine\ORM\EntityManager;

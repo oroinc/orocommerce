@@ -19,7 +19,8 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class FlatPriceListRelationSystemConfigListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
-    use OptionalListenerTrait, FeatureCheckerHolderTrait;
+    use OptionalListenerTrait;
+    use FeatureCheckerHolderTrait;
 
     private const DEFAULT_PRICE_LIST_KEY = Configuration::ROOT_NODE . '.' . Configuration::DEFAULT_PRICE_LIST;
 

@@ -21,22 +21,22 @@ Feature: Product import validation
     Given I go to Products/Products
     When I download "Products" Data Template file with processor "oro_product_product_export_template"
     Then I see the following columns in the downloaded csv template:
-       | names.English (United States).fallback |
-       | names.English (United States).value    |
-       | names.Ukrainian.fallback               |
-       | names.Ukrainian.value                  |
-       | shortDescriptions.default.fallback     |
-       | shortDescriptions.default.value        |
-       | shortDescriptions.English (United States).fallback     |
-       | shortDescriptions.English (United States).value        |
-       | shortDescriptions.Ukrainian.fallback   |
-       | shortDescriptions.Ukrainian.value      |
+      | Name.English (United States).fallback              |
+      | Name.English (United States).value                 |
+      | Name.Ukrainian.fallback                            |
+      | Name.Ukrainian.value                               |
+      | Short Description.default.fallback                 |
+      | Short Description.default.value                    |
+      | Short Description.English (United States).fallback |
+      | Short Description.English (United States).value    |
+      | Short Description.Ukrainian.fallback               |
+      | Short Description.Ukrainian.value                  |
     And fill template with data:
-      | names.default.value                                                                                               | attributeFamily.code | sku   | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.value |
-      | <b>Test</b><br><img src="http://test.jpg"><strong>Test</strong><a href="http://test.pdf" target="_blank">Test</a> | default_family       | PSKU1 | enabled | simple | in_stock            | set                            | 1                              | invalid,slug^&               |
-      |                                                                                                                   | default_family       | PSKU2 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
-      | Product 3                                                                                                         | default_family       | PSKU3 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
-      | Product 4                                                                                                         | default_family       | PSKU4 | enabled | simple | in_stock            | set                            | 1                              |                              |
+      | Name.default.value                                                                                                | Product Family.Code | SKU   | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.value |
+      | <b>Test</b><br><img src="http://test.jpg"><strong>Test</strong><a href="http://test.pdf" target="_blank">Test</a> | default_family      | PSKU1 | enabled | simple | in_stock            | set                        | 1                          | invalid,slug^&         |
+      |                                                                                                                   | default_family      | PSKU2 | enabled | simple | in_stock            | set                        | 1                          | valid-slug             |
+      | Product 3                                                                                                         | default_family      | PSKU3 | enabled | simple | in_stock            | set                        | 1                          | valid-slug             |
+      | Product 4                                                                                                         | default_family      | PSKU4 | enabled | simple | in_stock            | set                        | 1                          |                        |
 
   Scenario: Check import error page from the email after validating import file
     Given I validate file
@@ -50,11 +50,11 @@ Feature: Product import validation
     Given I go to Products/Products
     And I download "Products" Data Template file with processor "oro_product_product_export_template"
     And fill template with data:
-      | attributeFamily.code | names.default.value | names.Ukrainian.value | sku   | status  | type   | inventory_status.id | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.value |
-      | default_family       | Product 1           | Product 1 Ukr         | PSKU1 | enabled | simple | in_stock            | set                            | 1                              | invalid,slug^&               |
-      | default_family       |                     | Product 2 Ukr         | PSKU2 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
-      | default_family       | Product 3           | Product 2 Ukr         | PSKU3 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
-      | default_family       | Product 4           | Product 3 Ukr         | PSKU4 | enabled | simple | in_stock            | set                            | 1                              |                              |
+      | Product Family.Code | Name.default.value | Name.Ukrainian.value | SKU   | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.value |
+      | default_family      | Product 1          | Product 1 Ukr        | PSKU1 | enabled | simple | in_stock            | set                        | 1                          | invalid,slug^&         |
+      | default_family      |                    | Product 2 Ukr        | PSKU2 | enabled | simple | in_stock            | set                        | 1                          | valid-slug             |
+      | default_family      | Product 3          | Product 2 Ukr        | PSKU3 | enabled | simple | in_stock            | set                        | 1                          | valid-slug             |
+      | default_family      | Product 4          | Product 3 Ukr        | PSKU4 | enabled | simple | in_stock            | set                        | 1                          |                        |
 
   Scenario: Check import error page from the email after importing file
     Given I import file
@@ -63,6 +63,7 @@ Feature: Product import validation
     Then I should see "Error in row #1. slugPrototypes[default]: This value should contain only latin letters, numbers and symbols \"-._~\""
     Then I should see "Error in row #2. Name Localization Name: Product default name is blank"
     And I login as administrator
+
   Scenario: Check imported products
     Given I go to Products/Products
     Then I should see following grid:

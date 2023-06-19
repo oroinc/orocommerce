@@ -82,7 +82,7 @@ class TaxValueManager
     {
         if (!$taxValue) {
             /** @var TaxValue $taxValue */
-            $taxValue = new $this->taxValueClass;
+            $taxValue = new $this->taxValueClass();
             $taxValue
                 ->setEntityClass($entityClass)
                 ->setEntityId($entityId);

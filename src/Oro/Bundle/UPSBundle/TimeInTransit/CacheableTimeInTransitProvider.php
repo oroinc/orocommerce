@@ -49,7 +49,7 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
         return $result;
     }
 
-    private function createCacheProvider(UPSTransport $transport) : TimeInTransitCacheProviderInterface
+    private function createCacheProvider(UPSTransport $transport): TimeInTransitCacheProviderInterface
     {
         return $this->timeInTransitCacheProviderFactory->createCacheProviderForTransport($transport);
     }

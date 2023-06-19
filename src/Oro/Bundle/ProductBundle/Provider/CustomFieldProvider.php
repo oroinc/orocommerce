@@ -33,7 +33,7 @@ class CustomFieldProvider
         $this->cacheLifeTime = $lifeTime;
     }
 
-    public function getEntityCustomFields(string $entityName) : array
+    public function getEntityCustomFields(string $entityName): array
     {
         $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey($entityName);
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($entityName) {

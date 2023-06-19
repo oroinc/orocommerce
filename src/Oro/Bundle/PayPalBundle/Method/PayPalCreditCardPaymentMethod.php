@@ -6,6 +6,7 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -30,20 +31,21 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     // PayPal BN code
     const BUTTON_SOURCE = 'OroCommerce_SP';
 
-    /** @var Gateway */
-    protected $gateway;
+    protected Gateway $gateway;
+    protected RouterInterface $router;
+    protected PayPalCreditCardConfigInterface $config;
+    protected TransactionOptionProvider $transactionOptionProvider;
 
-    /** @var RouterInterface */
-    protected $router;
-
-    /** @var PayPalCreditCardConfigInterface */
-    protected $config;
-
-    public function __construct(Gateway $gateway, PayPalCreditCardConfigInterface $config, RouterInterface $router)
-    {
+    public function __construct(
+        Gateway $gateway,
+        PayPalCreditCardConfigInterface $config,
+        RouterInterface $router,
+        TransactionOptionProvider $transactionOptionProvider,
+    ) {
         $this->gateway = $gateway;
         $this->config = $config;
         $this->router = $router;
+        $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
     /** {@inheritdoc} */
@@ -72,11 +74,16 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
             return;
         }
 
-        $response = $this->gateway
-            ->request(
-                Option\Transaction::AUTHORIZATION,
-                $this->combineOptions((array)$paymentTransaction->getRequest())
-            );
+        $options = array_merge(
+            $this->combineOptions((array)$paymentTransaction->getRequest()),
+            $this->transactionOptionProvider->getOrderOptions($paymentTransaction),
+            $this->transactionOptionProvider->getShippingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getBillingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getCustomerUserOptions($paymentTransaction),
+            $this->transactionOptionProvider->getIPOptions($paymentTransaction),
+        );
+
+        $response = $this->gateway->request(Option\Transaction::AUTHORIZATION, $options);
 
         $paymentTransaction
             ->setSuccessful($response->isSuccessful())
@@ -104,11 +111,16 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
      */
     public function charge(PaymentTransaction $paymentTransaction)
     {
-        $response = $this->gateway
-            ->request(
-                Option\Transaction::SALE,
-                $this->combineOptions((array)$paymentTransaction->getRequest())
-            );
+        $options = array_merge(
+            $this->combineOptions((array)$paymentTransaction->getRequest()),
+            $this->transactionOptionProvider->getOrderOptions($paymentTransaction),
+            $this->transactionOptionProvider->getShippingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getBillingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getCustomerUserOptions($paymentTransaction),
+            $this->transactionOptionProvider->getIPOptions($paymentTransaction),
+        );
+
+        $response = $this->gateway->request(Option\Transaction::SALE, $options);
 
         $paymentTransaction
             ->setSuccessful($response->isSuccessful())

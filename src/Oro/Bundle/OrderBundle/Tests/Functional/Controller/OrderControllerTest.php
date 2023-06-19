@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;

@@ -7,6 +7,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\EntityBundle\Exception\InvalidEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Manages checkout workflow state data
+ */
 class CheckoutDiffStorage implements CheckoutDiffStorageInterface
 {
     /**
@@ -36,7 +39,7 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
     public function addState($entity, array $data, $options = [])
     {
         /** @var CheckoutWorkflowState $storageEntity */
-        $storageEntity = new $this->checkoutWorkflowStateEntity;
+        $storageEntity = new $this->checkoutWorkflowStateEntity();
         $storageEntity->setStateData($data);
         $storageEntity->setEntityClass($this->doctrineHelper->getEntityClass($entity));
         $storageEntity->setEntityId($this->doctrineHelper->getSingleEntityIdentifier($entity));

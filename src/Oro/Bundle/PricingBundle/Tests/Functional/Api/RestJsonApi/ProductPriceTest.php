@@ -170,7 +170,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER,
             self::getContainer()->get('oro_pricing.shard_manager')
         );
-        
+
         self::assertContains('product_price_', $query->getSQL());
 
         $productPrice = $query->getOneOrNullResult();

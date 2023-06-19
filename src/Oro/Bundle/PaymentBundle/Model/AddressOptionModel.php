@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Model;
 
+/**
+ * Address option model
+ */
 class AddressOptionModel
 {
     /** @var string */
@@ -9,6 +12,9 @@ class AddressOptionModel
 
     /** @var string */
     private $lastName;
+
+    /** @var string */
+    private $middleName;
 
     /** @var string */
     private $street;
@@ -27,6 +33,12 @@ class AddressOptionModel
 
     /** @var string */
     private $countryIso2;
+
+    /** @var string */
+    private $organization;
+
+    /** @var string */
+    private $phone;
 
     /**
      * @return string
@@ -176,6 +188,63 @@ class AddressOptionModel
     public function setPostalCode($postalCode)
     {
         $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMiddleName()
+    {
+        return $this->middleName;
+    }
+
+    /**
+     * @param string $middleName
+     * @return $this
+     */
+    public function setMiddleName(string $middleName)
+    {
+        $this->middleName = $middleName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrganization(): string
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param string $organization
+     * @return $this
+     */
+    public function setOrganization(string $organization)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @param string $phone
+     * @return $this
+     */
+    public function setPhone(string $phone)
+    {
+        $this->phone = $phone;
 
         return $this;
     }

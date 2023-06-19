@@ -7,6 +7,9 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
+/**
+ * Loads demo data for price lists to websites relations
+ */
 class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
@@ -33,7 +36,7 @@ class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
             $priceListToCustomer->setWebsite($website)
                 ->setPriceList($priceList)
                 ->setSortOrder($row['sort_order'])
-                ->setMergeAllowed((boolean)$row['mergeAllowed']);
+                ->setMergeAllowed((bool)$row['mergeAllowed']);
             $manager->persist($priceListToCustomer);
         }
 

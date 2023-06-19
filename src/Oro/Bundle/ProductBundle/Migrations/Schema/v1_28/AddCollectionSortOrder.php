@@ -43,7 +43,7 @@ class AddCollectionSortOrder implements Migration
     /**
      * Add foreign keys to the oro_product_collection_sort_order table
      */
-    public function addCollectionSortOrderForeignKeys(Schema $schema) : void
+    public function addCollectionSortOrderForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME);
         $table->addForeignKeyConstraint(

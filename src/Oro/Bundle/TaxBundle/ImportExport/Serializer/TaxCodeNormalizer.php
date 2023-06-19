@@ -40,7 +40,7 @@ class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAware
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         /** @var AbstractTaxCode $object */
-        $object = new $type;
+        $object = new $type();
         if (!is_array($data)) {
             $data = ['code' => $data];
         }

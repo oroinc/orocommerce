@@ -21,7 +21,7 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
 
     onFocusin(e) {
         if (!this.$el.is('[data-ignore-tabbable]')) {
-            _.defer(() => {
+            _.debounce(() => {
                 // original focusin event's call stack has preserved
                 this.enterEditModeIfNeeded(e);
             });

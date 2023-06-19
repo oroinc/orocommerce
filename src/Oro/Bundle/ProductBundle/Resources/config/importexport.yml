@@ -5,7 +5,6 @@ services:
         calls:
             - [setEntityName, ['Oro\Bundle\ProductBundle\Entity\Product']]
             - [setEventDispatcher, ['@event_dispatcher']]
-            - [setTranslateUsingLocale, [false]]
 
     oro_product.importexport.data_converter.product_image:
         class: 'Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductImageDataConverter'

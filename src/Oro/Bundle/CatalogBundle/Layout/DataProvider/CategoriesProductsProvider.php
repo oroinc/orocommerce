@@ -24,13 +24,13 @@ class CategoriesProductsProvider
         $this->searchRepository = $searchRepository;
     }
 
-    public function setCache(CacheInterface $cache, $lifeTime = 0) : void
+    public function setCache(CacheInterface $cache, $lifeTime = 0): void
     {
         $this->cache = $cache;
         $this->cacheLifeTime = $lifeTime;
     }
 
-    public function getCountByCategories(array $categoriesIds) : array //[category id => number of products, ...]
+    public function getCountByCategories(array $categoriesIds): array //[category id => number of products, ...]
     {
         $cacheKey = 'categories_products_' . implode('_', $categoriesIds);
 

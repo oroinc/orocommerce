@@ -106,7 +106,7 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
         $checkoutSource = $this->createMock(CheckoutSource::class);
         $checkoutSource->expects($this->any())
             ->method('getEntity')
-            ->willReturn($sourceEntityClass ? new $sourceEntityClass : null);
+            ->willReturn($sourceEntityClass ? new $sourceEntityClass() : null);
         $checkout = new Checkout();
         $checkout->setSource($checkoutSource);
 

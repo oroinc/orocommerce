@@ -6,6 +6,9 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\AbstractRequest;
 
+/**
+ * Sale request implementation
+ */
 class SaleRequest extends AbstractRequest
 {
     /** {@inheritdoc} */
@@ -25,6 +28,7 @@ class SaleRequest extends AbstractRequest
             ->addOption(new GatewayOption\ExpirationDate())
             ->addOption(new Option\BillingAddress())
             ->addOption(new Option\ShippingAddress())
+            ->addOption(new Option\Company())
             ->addOption(new Option\OriginalTransaction())
             ->addOption(new GatewayOption\Comment())
             ->addOption(new GatewayOption\Code())
@@ -37,7 +41,8 @@ class SaleRequest extends AbstractRequest
             ->addOption(new GatewayOption\SecureTokenIdentifier())
             ->addOption(new GatewayOption\CreateSecureToken())
             ->addOption(new GatewayOption\SilentPost())
-            ->addOption(new Option\ButtonSource());
+            ->addOption(new Option\ButtonSource())
+            ->addOption(new Option\Order());
 
         return $this;
     }

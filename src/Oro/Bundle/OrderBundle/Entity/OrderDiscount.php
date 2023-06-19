@@ -193,7 +193,7 @@ class OrderDiscount
     public function getAmountPrice()
     {
         if ($this->amountPrice === null) {
-            $this->amountPrice = Price::create((double)$this->getAmount(), $this->getOrder()->getCurrency());
+            $this->amountPrice = Price::create((float)$this->getAmount(), $this->getOrder()->getCurrency());
         }
         return $this->amountPrice;
     }

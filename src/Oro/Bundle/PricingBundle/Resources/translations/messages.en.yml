@@ -323,7 +323,7 @@ oro.pricing:
                     In order to update the existing prices please run the following command:
             pricing_strategy.label: Pricing Strategy
             strategy_type:
-                choises:
+                choices:
                     merge_by_priority: Merge by priority
                     minimal_prices: Minimal prices
             rounding_type:
