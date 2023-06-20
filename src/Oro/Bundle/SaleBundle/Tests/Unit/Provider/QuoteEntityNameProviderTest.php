@@ -1,52 +1,61 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Provider\QuoteEntityNameProvider;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class OrderEntityNameProviderTest extends \PHPUnit\Framework\TestCase
+class QuoteEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OrderEntityNameProvider */
-    private $provider;
+    private QuoteEntityNameProvider $provider;
 
     protected function setUp(): void
     {
-        $this->provider = new OrderEntityNameProvider();
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
+            ->method('trans')
+            ->with('oro.frontend.sale.quote.title.label')
+            ->willReturnCallback(function (string $id, array $parameters) {
+                return str_replace('%id%', $parameters['%id%'] ?? '%id%', 'Quote - %id%');
+            });
+
+        $this->provider = new QuoteEntityNameProvider($translator);
     }
 
     /**
      * @dataProvider getNameDataProvider
      */
-    public function testGetName(string $format, ?string $locale, object $entity, string|false $expected)
+    public function testGetName(string $format, ?string $locale, object $entity, string|false $expected): void
     {
         $this->assertEquals($expected, $this->provider->getName($format, $locale, $entity));
     }
 
     public function getNameDataProvider(): array
     {
-        $order = new Order();
-        $order->setPoNumber('po_number')->setIdentifier('identifier')->setCurrency('USD');
+        $quote = new Quote();
+        ReflectionUtil::setId($quote, 123);
 
         return [
-            'test unsupported class' => [
+            'unsupported class' => [
                 'format' => '',
                 'locale' => null,
                 'entity' => new \stdClass(),
                 'expected' => false
             ],
-            'test unsupported format' => [
+            'unsupported format' => [
                 'format' => '',
                 'locale' => null,
-                'entity' => $order,
+                'entity' => $quote,
                 'expected' => false
             ],
             'correct data' => [
                 'format' => EntityNameProviderInterface::FULL,
-                'locale' => '',
-                'entity' => $order,
-                'expected' => 'identifier po_number USD'
+                'locale' => 'en',
+                'entity' => $quote,
+                'expected' => 'Quote - 123'
             ]
         ];
     }
@@ -60,33 +69,33 @@ class OrderEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         string $className,
         string $alias,
         string|false $expected
-    ) {
+    ): void {
         $this->assertEquals($expected, $this->provider->getNameDQL($format, $locale, $className, $alias));
     }
 
     public function getNameDQLDataProvider(): array
     {
         return [
-            'test unsupported class Name' => [
+            'unsupported class Name' => [
                 'format' => '',
                 'locale' => null,
                 'className' => '',
-                'alias' => '',
+                'alias' => 'test',
                 'expected' => false
             ],
-            'test unsupported format' => [
+            'unsupported format' => [
                 'format' => '',
                 'locale' => null,
-                'className' => Order::class,
-                'alias' => '',
+                'className' => Quote::class,
+                'alias' => 'test',
                 'expected' => false
             ],
             'correct data' => [
                 'format' => EntityNameProviderInterface::FULL,
-                'locale' => null,
-                'className' => Order::class,
+                'locale' => 'en',
+                'className' => Quote::class,
                 'alias' => 'test',
-                'expected' => 'test.identifier'
+                'expected' => 'CONCAT(\'Quote - \', test.id, \'\')'
             ]
         ];
     }

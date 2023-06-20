@@ -8,89 +8,100 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Provider\BrandEntityNameProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Brand;
 use Oro\Bundle\TranslationBundle\Entity\Language;
+use Oro\Component\Testing\ReflectionUtil;
 
 class BrandEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var BrandEntityNameProvider */
-    protected $provider;
+    private BrandEntityNameProvider $provider;
 
     protected function setUp(): void
     {
         $this->provider = new BrandEntityNameProvider();
     }
 
-    public function testGetNameForShortFormat()
+    private function getBrandName(string $string, Localization $localization = null): LocalizedFallbackValue
     {
-        $this->assertFalse(
-            $this->provider->getName(EntityNameProviderInterface::SHORT, 'en', new Brand())
-        );
+        $value = new LocalizedFallbackValue();
+        $value->setString($string);
+        $value->setLocalization($localization);
+
+        return $value;
     }
 
-    public function testGetNameForUnsupportedEntity()
+    private function getLocalization(string $code): Localization
+    {
+        $language = new Language();
+        $language->setCode($code);
+
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, 123);
+        $localization->setLanguage($language);
+
+        return $localization;
+    }
+
+    public function testGetNameForUnsupportedEntity(): void
     {
         $this->assertFalse(
             $this->provider->getName(EntityNameProviderInterface::FULL, 'en', new \stdClass())
         );
     }
 
-    public function testGetNameForLocale()
+    public function testGetName(): void
     {
         $brand = new Brand();
-        $brand->addName($this->getFallbackValue('default name'))
-            ->addName($this->getFallbackValue('localized name', $this->getLocalization('en')));
+        $brand->addName($this->getBrandName('default name'));
+        $brand->addName($this->getBrandName('localized name', $this->getLocalization('en')));
 
         $this->assertEquals(
             'default name',
-            $this->provider->getName(EntityNameProviderInterface::FULL, 'en', $brand)
+            $this->provider->getName(EntityNameProviderInterface::FULL, null, $brand)
         );
     }
 
-    public function testGetNameForLocalization()
+    public function testGetNameForLocalization(): void
     {
-        $localization = $this->getLocalization('en');
-
         $brand = new Brand();
-        $brand->addName($this->getFallbackValue('default name'))
-            ->addName($this->getFallbackValue('localized name', $localization));
+        $brand->addName($this->getBrandName('default name'));
+        $brand->addName($this->getBrandName('localized name', $this->getLocalization('en')));
 
         $this->assertEquals(
             'localized name',
-            $this->provider->getName(EntityNameProviderInterface::FULL, $localization, $brand)
+            $this->provider->getName(EntityNameProviderInterface::FULL, $this->getLocalization('en'), $brand)
         );
     }
 
-    public function testGetNameDQL()
+    public function testGetNameDQLForUnsupportedEntity(): void
     {
-        $this->assertFalse(
-            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', Brand::class, 'brand')
+        self::assertFalse(
+            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', \stdClass::class, 'entity')
         );
     }
 
-    /**
-     * @param string $string
-     * @param Localization|null $localization
-     * @return LocalizedFallbackValue
-     */
-    protected function getFallbackValue($string, Localization $localization = null)
+    public function testGetNameDQL(): void
     {
-        $value = new LocalizedFallbackValue();
-        $value->setString($string)->setLocalization($localization);
-
-        return $value;
+        self::assertEquals(
+            'CAST((SELECT COALESCE(brand_n.string, brand_n.text)'
+            . ' FROM Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue brand_n'
+            . ' WHERE brand_n MEMBER OF brand.names AND brand_n.localization IS NULL) AS string)',
+            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, null, Brand::class, 'brand')
+        );
     }
 
-    /**
-     * @param string $code
-     * @return Localization
-     */
-    protected function getLocalization($code)
+    public function testGetNameDQLForLocalization(): void
     {
-        $language = new Language();
-        $language->setCode($code);
-
-        $localization = new Localization();
-        $localization->setLanguage($language);
-
-        return $localization;
+        self::assertEquals(
+            'CAST((SELECT COALESCE(brand_n.string, brand_n.text, brand_dn.string, brand_dn.text)'
+            . ' FROM Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue brand_dn'
+            . ' LEFT JOIN Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue brand_n'
+            . ' WITH brand_n MEMBER OF brand.names AND brand_n.localization = 123'
+            . ' WHERE brand_dn MEMBER OF brand.names AND brand_dn.localization IS NULL) AS string)',
+            $this->provider->getNameDQL(
+                EntityNameProviderInterface::FULL,
+                $this->getLocalization('en'),
+                Brand::class,
+                'brand'
+            )
+        );
     }
 }

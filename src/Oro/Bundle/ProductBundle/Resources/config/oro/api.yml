@@ -2,6 +2,7 @@ api:
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit_precision.md'
+            disable_meta_properties: [ title ]
 
         Oro\Bundle\ProductBundle\Entity\ProductUnit:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit.md'
@@ -21,9 +22,11 @@ api:
 
         Oro\Bundle\ProductBundle\Entity\ProductImage:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image.md'
+            disable_meta_properties: [ title ]
 
         Oro\Bundle\ProductBundle\Entity\ProductImageType:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_image_type.md'
+            disable_meta_properties: [ title ]
 
         Oro\Bundle\ProductBundle\Entity\ProductName:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_name.md'
@@ -81,6 +84,7 @@ api:
 
         Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
             documentation_resource: '@OroProductBundle/Resources/doc/api/related_product.md'
+            disable_meta_properties: [ title ]
             actions:
                 get:
                     description: Get Related Product Relationship
@@ -111,6 +115,7 @@ api:
 
         Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_variant_links.md'
+            disable_meta_properties: [ title ]
 
         Oro\Bundle\AttachmentBundle\Entity\File:
             documentation_resource: '@OroProductBundle/Resources/doc/api/file.md'
@@ -136,6 +141,7 @@ api:
 
         Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_kit_item_product.md'
+            disable_meta_properties: [ title ]
             actions:
                 create:
                     status_codes:

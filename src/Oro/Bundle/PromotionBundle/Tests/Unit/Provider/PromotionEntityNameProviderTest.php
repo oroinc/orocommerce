@@ -39,9 +39,18 @@ class PromotionEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetNameDQL(): void
+    public function testGetNameDQLForUnsupportedEntity(): void
     {
         self::assertFalse(
+            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', \stdClass::class, 'entity')
+        );
+    }
+
+    public function testGetNameDQL(): void
+    {
+        self::assertEquals(
+            '(SELECT promotion_rule.name FROM Oro\Bundle\RuleBundle\Entity\Rule promotion_rule'
+            . ' WHERE promotion_rule = promotion.rule)',
             $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', Promotion::class, 'promotion')
         );
     }

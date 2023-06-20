@@ -16,6 +16,7 @@ api:
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductImage:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_image.md'
+            disable_meta_properties: [ title ]
             fields:
                 mimeType:
                     data_type: string
@@ -411,6 +412,7 @@ api:
 
         Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_kit_item_product.md'
+            disable_meta_properties: [ title ]
             actions:
                 create: false
                 update: false

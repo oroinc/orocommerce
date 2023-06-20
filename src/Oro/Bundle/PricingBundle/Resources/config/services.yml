@@ -1545,8 +1545,7 @@ services:
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.provider.product_price_entity_name:
-        class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceEntityNameProvider'
-        public: false
+        class: Oro\Bundle\PricingBundle\Provider\ProductPriceEntityNameProvider
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 

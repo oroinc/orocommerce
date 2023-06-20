@@ -10,6 +10,7 @@ class OroPromotionExtensionTest extends \PHPUnit\Framework\TestCase
     public function testLoad(): void
     {
         $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'prod');
 
         $extension = new OroPromotionExtension();
         $extension->load([], $container);
