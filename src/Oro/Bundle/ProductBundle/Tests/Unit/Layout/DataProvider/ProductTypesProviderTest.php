@@ -32,7 +32,7 @@ class ProductTypesProviderTest extends \PHPUnit\Framework\TestCase
                 'oro.product.type.simple' => 'simple',
             ]);
 
-       self::assertSame($expected, $this->provider->isProductTypeEnabled($productType));
+        self::assertSame($expected, $this->provider->isProductTypeEnabled($productType));
     }
 
     public function productTypesDataProvider(): \Generator
