@@ -8,6 +8,8 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -53,6 +55,8 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
 
     protected ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
 
+    private ?ProductLineItemPriceProviderInterface $productLineItemsPriceProvider = null;
+
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
@@ -66,6 +70,12 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+    }
+
+    public function setProductLineItemsPriceProvider(
+        ?ProductLineItemPriceProviderInterface $productLineItemsPriceProvider
+    ): void {
+        $this->productLineItemsPriceProvider = $productLineItemsPriceProvider;
     }
 
     /**
@@ -89,6 +99,8 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param LineItemsNotPricedAwareInterface|CustomerOwnerAwareInterface|WebsiteAwareInterface $entity
      * @param string $currency
      *
@@ -100,9 +112,62 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             return null;
         }
 
+        $extraData = [];
+        if ($this->productLineItemsPriceProvider === null) {
+            // BC fallback.
+            $subtotalAmount = $this->doGetSubtotalByCurrency($entity, $currency, $extraData);
+        } else {
+            $subtotalAmount = BigDecimal::of(0);
+            $productLineItemsPrices = $this->productLineItemsPriceProvider
+                ->getProductLineItemsPricesForLineItemsHolder($entity, $currency);
+
+            foreach ($entity->getLineItems() as $key => $lineItem) {
+                if (!isset($productLineItemsPrices[$key])) {
+                    continue;
+                }
+
+                $subtotalAmount = $subtotalAmount->plus($productLineItemsPrices[$key]->getSubtotal());
+
+                $extraData[spl_object_hash($lineItem)] = [
+                    self::EXTRA_DATA_PRICE => $productLineItemsPrices[$key]->getPrice()->getValue(),
+                    self::EXTRA_DATA_SUBTOTAL => $productLineItemsPrices[$key]->getSubtotal(),
+                ];
+
+                if ($lineItem instanceof ProductKitItemLineItemsAwareInterface
+                    && $productLineItemsPrices[$key] instanceof ProductKitLineItemPrice
+                    && $lineItem->getKitItemLineItems()) {
+                    foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                        $kitItemLineItemPrice = $productLineItemsPrices[$key]
+                            ->getKitItemLineItemPrice($kitItemLineItem);
+                        if ($kitItemLineItemPrice === null) {
+                            continue;
+                        }
+
+                        $extraData[spl_object_hash($kitItemLineItem)] = [
+                            self::EXTRA_DATA_PRICE => $kitItemLineItemPrice->getPrice()->getValue(),
+                            self::EXTRA_DATA_SUBTOTAL => $kitItemLineItemPrice->getSubtotal(),
+                        ];
+                    }
+                }
+            }
+        }
+
+        $subtotal = $this->createSubtotal();
+        $subtotal->setData($extraData);
+        $subtotal->setAmount($subtotalAmount->toFloat());
+        $subtotal->setVisible($subtotal->getAmount() !== 0.0);
+        $subtotal->setCurrency($currency);
+
+        return $subtotal;
+    }
+
+    private function doGetSubtotalByCurrency(
+        LineItemsNotPricedAwareInterface $entity,
+        string $currency,
+        array &$extraData
+    ): BigDecimal {
         $subtotalAmount = BigDecimal::of(0);
         $priceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
-        $extraData = [];
         if ($priceCriteria) {
             $searchScope = $this->priceScopeCriteriaFactory->createByContext($entity);
             $prices = $this->productPriceProvider->getMatchedPrices($priceCriteria, $searchScope);
@@ -135,13 +200,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             }
         }
 
-        $subtotal = $this->createSubtotal();
-        $subtotal->setData($extraData);
-        $subtotal->setAmount($subtotalAmount->toFloat());
-        $subtotal->setVisible($subtotal->getAmount() !== 0.0);
-        $subtotal->setCurrency($currency);
-
-        return $subtotal;
+        return $subtotalAmount;
     }
 
     /**

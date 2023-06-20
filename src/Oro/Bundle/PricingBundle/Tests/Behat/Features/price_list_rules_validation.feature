@@ -24,20 +24,21 @@ Feature: Price list rules validation
       | Rule | product.featured == true |
 
   Scenario: Check price list rule quantity expressions validation
-    When I click "Add Price Calculation Rules"
+    Given I click "Add Price Calculation Rules"
     And I click "Enter expression unit"
     And I click "Enter expression currency"
-    And I fill "Price Calculation Rules Form" with:
+    When I fill "Price Calculation Rules Form" with:
+      | Priority | 21474836479 |
+    Then I should see "Price Calculation Rules Form" validation errors:
+      | Priority | This value should be between -2,147,483,648 and 2,147,483,647. |
+    When I fill "Price Calculation Rules Form" with:
       | Price for quantity | product.test.unit            |
       | Price Unit         | pricelist[1].prices.unit     |
       | Price Currency     | pricelist[1].prices.currency |
       | Calculate As       | pricelist[1].prices.value    |
-      | Priority           | 21474836479                  |
+      | Priority           | 1                            |
     And I save and close form
-    Then I should see validation errors:
-      | Price Calculation Quantity | Field "test" is not allowed to be used as "Quantity"           |
-      | Rule                       | Invalid expression                                             |
-      | Priority                   | This value should be between -2,147,483,648 and 2,147,483,647. |
+    Then I should see "Field \"test\" is not allowed to be used as \"Quantity\""
 
   Scenario: Check price list rule calculate as expressions validation
     When I fill "Price Calculation Rules Form" with:
@@ -45,10 +46,9 @@ Feature: Price list rules validation
       | Calculate As                  | pricelist[1].prices.value * "a" |
       | Priority                      | 1                               |
     And I save and close form
-    Then I should see validation errors:
+    Then I should see "Price Calculation Rules Form" validation errors:
       | Calculate As | Invalid expression |
-    And I should not see validation errors:
-      | Price Calculation Quantity | Field "test" is not allowed to be used as "Quantity |
+    Then I should not see "Field \"test\" is not allowed to be used as \"Quantity\""
 
   Scenario: Check price list rule condition expressions validation
     When I fill "Price Calculation Rules Form" with:

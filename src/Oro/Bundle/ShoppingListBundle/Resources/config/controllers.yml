@@ -25,5 +25,8 @@ services:
             - '@oro_shopping_list.manager.current_shopping_list'
             - '@oro_shopping_list.manager.shopping_list'
             - '@oro_shopping_list.product_kit.factory.product_kit_line_item'
+        tags:
+            - { name: container.service_subscriber, id: 'oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'}
+            - { name: container.service_subscriber, id: 'oro_product.model.product_line_items_holder_factory'}
 
     Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxMassActionController: ~

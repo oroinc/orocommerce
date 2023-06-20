@@ -303,12 +303,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
     And click "Edit"
-    And I click "More Actions"
-    And I click "Request Quote"
-    Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to RFQ without these products?"
-    When I click "Proceed"
-    Then I should see "Products with no quantities have not been added to this request."
-    And I should see "Request A Quote"
+    Then I should not see "More Actions"
+    And I should not see "Request Quote"
 
   Scenario: Order empty matrix form and a simple product
     Given type "SKU123" in "search"

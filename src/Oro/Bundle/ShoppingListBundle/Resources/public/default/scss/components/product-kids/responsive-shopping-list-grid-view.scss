@@ -1,0 +1,98 @@
+/* @theme: default; */
+
+.responsive-shopping-list-grid-view {
+    .grid-has-grouped-rows {
+        .grid-body-cell-sku {
+            padding-left: $responsive-shopping-grid-has-grouped-body-cell-sku-left-inner-offset;
+            min-width: $responsive-shopping-grid-has-grouped-body-cell-sku-width;
+        }
+    }
+
+    .sub-row-last,
+    .filtered-out {
+        .grid-body-cell-sku::after {
+            //  half of a standard datagrid cell's height + border width
+            height: $responsive-shopping-cell-half-height + 1px;
+            bottom: auto;
+        }
+    }
+
+    .group-row-has-children,
+    .sub-row {
+        // selector's wright is increased due to they conflicting with styles for warning messages
+        > .grid-cell.grid-body-cell-sku:first-child {
+            &::before {
+                position: absolute;
+                // half of a standard datagrid cell's height
+                top: $responsive-shopping-cell-half-height;
+                left: $table-th-inner-x-offset;
+
+                content: '';
+
+                width: 8px;
+                height: 1px;
+                background-color: $responsive-shopping-sub-row-border-mobile-color;
+            }
+
+            &::after {
+                position: absolute;
+                // cell border width
+                top: -1px;
+                bottom: 0;
+                left: $table-th-inner-x-offset;
+
+                content: '';
+
+                width: 1px;
+                background-color: $responsive-shopping-sub-row-border-mobile-color;
+            }
+        }
+    }
+
+    .no-product-sku-row {
+        > .grid-cell.grid-body-cell-sku:first-child {
+            &::before {
+                width: auto;
+                right: 0;
+            }
+        }
+    }
+
+    .group-row-has-children > .grid-cell.grid-body-cell-sku:first-child  {
+        &::after,
+        &::before {
+            //  half of a standard datagrid cell's height + border width
+            top: $responsive-shopping-cell-half-height + 1px;
+        }
+    }
+
+    .extension-row {
+        > .grid-cell.grid-body-cell-sku:first-child {
+            // Hide a horizontal line
+            &::before {
+                display: none;
+            }
+
+            &:after {
+                // cell border width
+                top: -1px;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-shopping-list-grid-view .grid-body {
+        .sub-row {
+            &.notification-row {
+                padding-top: $responsive-shopping-extension-row-offset-top-mobile;
+
+                .grid-body-cell-item {
+                    padding-top: $responsive-shopping-body-cell-offset-y-mobile;
+                    padding-bottom: $responsive-shopping-extension-row-offset-bottom-mobile;
+                    border-top: none;
+                }
+            }
+        }
+    }
+}

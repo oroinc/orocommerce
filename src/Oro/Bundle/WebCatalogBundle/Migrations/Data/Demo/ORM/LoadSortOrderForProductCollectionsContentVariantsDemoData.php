@@ -68,7 +68,7 @@ class LoadSortOrderForProductCollectionsContentVariantsDemoData extends Abstract
         $manager->flush();
     }
 
-    private function getAllProductData(): array
+    protected function getAllProductData(): array
     {
         $products = [];
 

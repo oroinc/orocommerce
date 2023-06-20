@@ -246,7 +246,11 @@
 
 {% block _main_menu_shopping_lists_dropdown_item_product_base_total_widget %}
     {% set product = lineItem.product %}
-    {% set productMatchedPrice = productsMatchedPrices[shoppingList.id][product.id][lineItem.productUnit.code] is defined ? productsMatchedPrices[shoppingList.id][product.id][lineItem.unit.code] : null %}
+    {% if not product.isKit() %}
+        {% set productMatchedPrice = productsMatchedPrices[shoppingList.id][product.id][lineItem.productUnit.code]|default(null) %}
+    {% else %}
+        {% set productMatchedPrice = productsMatchedPrices[shoppingList.id][product.id][lineItem.productUnit.code][lineItem.checksum]|default(null) %}
+    {% endif %}
     <div class="shopping-list-dropdown__product-total">
         {% set quantity = lineItem.quantity %}
         {% if oro_is_unit_code_visible(lineItem.productUnit.code) %}

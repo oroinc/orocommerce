@@ -108,6 +108,8 @@ services:
             - '@oro_pricing.user_currency_manager'
         calls:
             - [setMemoryCacheProvider, ['@oro_pricing.provider.product_price.cache']]
+            - [setProductPriceCriteriaDataExtractor, ['@oro_pricing.product_price_criteria_data_extractor']]
+            - [setPriceByMatchingCriteriaProvider, ['@oro_pricing.provider.product_price_by_matching_criteria']]
 
     Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface:
         alias: 'oro_pricing.provider.product_price'
@@ -150,6 +152,8 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+        calls:
+            - ['setProductPriceCriteriaFactory', ['@oro_pricing.product_price_criteria_factory']]
 
     Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider:
         alias: oro_pricing.provider.frontend_product_prices
@@ -815,6 +819,8 @@ services:
             - '@oro_entity.doctrine_helper'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - 'Oro\Bundle\ProductBundle\Entity\ProductUnit'
+        calls:
+            - [ 'setProductPriceCriteriaFactory', [ '@oro_pricing.product_price_criteria_factory' ] ]
 
     Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider:
         alias: 'oro_pricing.provider.matching_price'
@@ -863,6 +869,8 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.subtotal_processor.provider.arguments'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
+        calls:
+            - ['setProductLineItemsPriceProvider', ['@oro_pricing.provider.product_line_item_price']]
         tags:
             - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.not_priced_subtotal, priority: 0 }
 
@@ -1221,6 +1229,8 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.rounding.price_rounding_service'
+        calls:
+            - ['setProductPriceCriteriaFactory', ['@oro_pricing.product_price_criteria_factory']]
 
     oro_pricing.provider.website_currency_provider:
         class: Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider
@@ -1661,3 +1671,96 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrganizationBundle\Entity\Organization', event: prePersist }
             - { name: doctrine.event_listener, event: postFlush }
+
+    oro_pricing.product_price_criteria_factory:
+        class: Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory
+        arguments:
+            - '@oro_pricing.product_price_criteria_builder.registry'
+            - '@oro_pricing.product_line_item_price_criteria.factory'
+
+    oro_pricing.provider.product_line_items_holder_currency:
+        class: Oro\Bundle\PricingBundle\Provider\ProductLineItemsHolderCurrencyProvider
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.provider.website_currency_provider'
+
+    oro_pricing.provider.product_line_item_price:
+        class: Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProvider
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+            - '@oro_pricing.product_price_criteria_factory'
+            - '@oro_pricing.provider.product_line_items_holder_currency'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.product_line_item_price.factory'
+
+    oro_pricing.product_line_item_price_criteria.factory:
+        class: Oro\Bundle\PricingBundle\Model\ProductLineItemPriceCriteriaFactory\ProductLineItemPriceCriteriaFactory
+        arguments:
+            - !tagged_iterator { tag: oro_pricing.product_line_item_price_criteria.factory }
+
+    oro_pricing.product_line_item_price_criteria.factory.simple:
+        class: Oro\Bundle\PricingBundle\Model\ProductLineItemPriceCriteriaFactory\SimpleProductLineItemPriceCriteriaFactory
+        arguments:
+            - '@oro_pricing.product_price_criteria_builder.simple'
+        tags:
+            -
+                name: oro_pricing.product_line_item_price_criteria.factory
+                priority: -256 # Makes this factory the last one as the most general way of creating a product price criteria.
+
+    oro_pricing.product_line_item_price.factory:
+        class: Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\Factory\ProductLineItemPriceFactory
+        arguments:
+            - !tagged_iterator { tag: oro_pricing.product_line_item_price.factory }
+
+    oro_pricing.product_line_item_price.factory.simple:
+        class: Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\Factory\SimpleProductLineItemPriceFactory
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            -
+                name: oro_pricing.product_line_item_price.factory
+                priority: -256 # Makes this factory the last one as the most general way of creating a product line item price.
+
+    oro_pricing.provider.product_price_by_matching_criteria.simple:
+        class: Oro\Bundle\PricingBundle\Provider\PriceByMatchingCriteria\SimpleProductPriceByMatchingCriteriaProvider
+        tags:
+            -
+                name: oro_pricing.provider.product_price_by_matching_criteria
+                priority: -256 # Makes this provider the last one as the most general way of finding a product price.
+
+    oro_pricing.provider.product_price_by_matching_criteria:
+        class: Oro\Bundle\PricingBundle\Provider\PriceByMatchingCriteria\ProductPriceByMatchingCriteriaProvider
+        arguments:
+            - !tagged_iterator { tag: oro_pricing.provider.product_price_by_matching_criteria }
+
+    oro_pricing.product_price_criteria_data_extractor.simple:
+        class: Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaDataExtractor\SimpleProductPriceCriteriaDataExtractor
+        tags:
+            -
+                name: oro_pricing.product_price_criteria_data_extractor
+                priority: -256 # Makes this provider the last one as the most general way of extracting a product price criteria data.
+
+    oro_pricing.product_price_criteria_data_extractor:
+        class: Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaDataExtractor\ProductPriceCriteriaDataExtractor
+        arguments:
+            - !tagged_iterator { tag: oro_pricing.product_price_criteria_data_extractor }
+
+    oro_pricing.product_price_criteria_builder.registry:
+        class: Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaBuilder\ProductPriceCriteriaBuilderRegistry
+        arguments:
+            - !tagged_iterator { tag: oro_pricing.product_price_criteria_builder }
+
+    oro_pricing.product_price_criteria_builder.simple:
+        class: Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaBuilder\SimpleProductPriceCriteriaBuilder
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.user_currency_manager'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            -
+                name: oro_pricing.product_price_criteria_builder
+                priority: -256 # Makes this builder the last one as the most general way of building a product price criteria.
+            - { name: monolog.logger, channel: oro_pricing }

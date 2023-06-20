@@ -132,7 +132,9 @@
             .grid-body-cell-quantity,
             .grid-body-cell-unit,
             .action-cell {
-                padding-top: $responsive-shopping-sub-cell-desktop-offset;
+                &:not(:empty) {
+                    padding-top: $responsive-shopping-sub-cell-desktop-offset;
+                }
             }
         }
     }
@@ -302,8 +304,6 @@
 
         .sub-row {
             position: relative;
-
-            border-bottom: $responsive-shopping-sub-row-border-mobile;
 
             .grid-cell {
                 padding-top: $responsive-shopping-body-cell-offset-y-mobile;

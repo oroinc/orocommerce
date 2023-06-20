@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -27,6 +28,8 @@ class MatchingPriceProvider
     /** @var string */
     protected $productUnitClass;
 
+    private ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory = null;
+
     /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
@@ -43,6 +46,12 @@ class MatchingPriceProvider
         $this->doctrineHelper = $doctrineHelper;
         $this->productClass = (string)$productClass;
         $this->productUnitClass = (string)$productUnitClass;
+    }
+
+    public function setProductPriceCriteriaFactory(
+        ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+    ): void {
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -113,7 +122,16 @@ class MatchingPriceProvider
                 $quantity = (float)$this->getLineItemData($lineItem, 'qty');
                 $currency = (string)$this->getLineItemData($lineItem, 'currency');
 
-                $productsPriceCriteria[] = new ProductPriceCriteria($product, $unit, $quantity, $currency);
+                if ($this->productPriceCriteriaFactory === null) {
+                    // BC fallback.
+                    $productsPriceCriteria[] = new ProductPriceCriteria($product, $unit, $quantity, $currency);
+                } else {
+                    $productPriceCriterion = $this->productPriceCriteriaFactory
+                        ->create($product, $unit, $quantity, $currency);
+                    if ($productPriceCriterion !== null) {
+                        $productsPriceCriteria[] = $productPriceCriterion;
+                    }
+                }
             }
         }
 

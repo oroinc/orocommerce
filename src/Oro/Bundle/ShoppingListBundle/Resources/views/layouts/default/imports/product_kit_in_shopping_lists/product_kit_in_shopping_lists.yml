@@ -1,0 +1,58 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __shopping_lists_datagrid
+
+        -
+            id: line_item_buttons_kit
+            root: __shopping_lists_actions_new
+            namespace: product
+
+    actions:
+        - '@setBlockTheme':
+              themes: 'product_kit_in_shopping_lists.html.twig'
+        - '@addTree':
+              items:
+                  __wrapper:
+                      blockType: container
+                  __header_wrapper:
+                      blockType: container
+                  __header_product_picture:
+                      blockType: block
+                  __header_product_attributes:
+                      blockType: container
+                  __header_product_name:
+                      blockType: block
+                  __header_product_sku:
+                      blockType: block
+                  __shopping_lists_wrapper:
+                      blockType: container
+                  __shopping_lists_datagrid:
+                      blockType: container
+                  __shopping_lists_actions:
+                      blockType: container
+                  __shopping_lists_actions_new:
+                      blockType: container
+                  __shopping_lists_actions_close:
+                      blockType: button
+                      options:
+                          action: reset
+                          text:
+                              label: 'oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.button.close.label'
+                          style: ''
+                          attr:
+                              data-role: 'cancel'
+              tree:
+                  __root:
+                      __wrapper:
+                          __header_wrapper:
+                              __header_product_picture: ~
+                              __header_product_attributes:
+                                  __header_product_name: ~
+                                  __header_product_sku: ~
+                          __shopping_lists_wrapper:
+                              __shopping_lists_datagrid: ~
+                          __shopping_lists_actions:
+                            __shopping_lists_actions_new: ~
+                            __shopping_lists_actions_close: ~

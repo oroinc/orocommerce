@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -32,17 +33,22 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductPriceScopeCriteriaInterface|MockObject $scopeCriteria;
 
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
+
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $this->provider = new FrontendProductPricesDataProvider(
             $this->productPriceProvider,
             $this->userCurrencyManager,
             $this->scopeCriteriaRequestHandler
         );
+
+        $this->provider->setProductPriceCriteriaFactory($this->productPriceCriteriaFactory);
 
         $this->userCurrencyManager
             ->method('getUserCurrency')
@@ -63,10 +69,36 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
         array $lineItems,
         array $expectedResult
     ): void {
+        $this->productPriceCriteriaFactory
+            ->expects(self::once())
+            ->method('createListFromProductLineItems')
+            ->with($lineItems)
+            ->willReturn($criteriaArray);
+
         $this->productPriceProvider->expects(self::once())
             ->method('getMatchedPrices')
             ->with($criteriaArray, $this->scopeCriteria)
             ->willReturn($matchedPrices);
+
+        $result = $this->provider->getProductsMatchedPrice($lineItems);
+        self::assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @dataProvider getDataDataProvider
+     */
+    public function testGetProductsPricesWhenNoProductPriceCriteriaFactory(
+        array $criteriaArray,
+        array $matchedPrices,
+        array $lineItems,
+        array $expectedResult
+    ): void {
+        $this->productPriceProvider->expects(self::once())
+            ->method('getMatchedPrices')
+            ->with($criteriaArray, $this->scopeCriteria)
+            ->willReturn($matchedPrices);
+
+        $this->provider->setProductPriceCriteriaFactory(null);
 
         $result = $this->provider->getProductsMatchedPrice($lineItems);
         self::assertEquals($expectedResult, $result);

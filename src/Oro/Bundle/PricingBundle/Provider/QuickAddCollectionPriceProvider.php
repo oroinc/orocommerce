@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -22,6 +23,7 @@ class QuickAddCollectionPriceProvider
     private UserCurrencyManager $currencyManager;
     private DoctrineHelper $doctrineHelper;
     private RoundingServiceInterface $rounding;
+    private ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory = null;
 
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
@@ -33,6 +35,12 @@ class QuickAddCollectionPriceProvider
         $this->currencyManager = $currencyManager;
         $this->doctrineHelper = $doctrineHelper;
         $this->rounding = $rounding;
+    }
+
+    public function setProductPriceCriteriaFactory(
+        ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+    ): void {
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     public function addAllPrices(
@@ -87,7 +95,7 @@ class QuickAddCollectionPriceProvider
 
         $collectionSubtotal = [
             'value' => null,
-            'currency' => $this->currencyManager->getUserCurrency()
+            'currency' => $this->currencyManager->getUserCurrency(),
         ];
 
         /** @var QuickAddRow $quickAddRow */
@@ -100,12 +108,12 @@ class QuickAddCollectionPriceProvider
             $productPrice = $productPrices[$priceIndex];
             $rowUnitPrice = [
                 'value' => $productPrice->getValue(),
-                'currency' => $productPrice->getCurrency()
+                'currency' => $productPrice->getCurrency(),
             ];
             $quickAddRow->addAdditionalField(new QuickAddField('unitPrice', $rowUnitPrice));
             $rowPrice = [
                 'value' => $this->rounding->round($productPrice->getValue() * $quickAddRow->getQuantity()),
-                'currency' => $productPrice->getCurrency()
+                'currency' => $productPrice->getCurrency(),
             ];
             $quickAddRow->addAdditionalField(new QuickAddField('price', $rowPrice));
             $collectionSubtotal['value'] = $collectionSubtotal['value']
@@ -135,12 +143,24 @@ class QuickAddCollectionPriceProvider
         $result = [];
         /** @var QuickAddRow $row */
         foreach ($validRows as $row) {
-            $result[] = new ProductPriceCriteria(
-                $row->getProduct(),
-                $this->doctrineHelper->getEntityReference(ProductUnit::class, $row->getUnit()),
-                $row->getQuantity(),
-                $this->currencyManager->getUserCurrency()
-            );
+            if ($this->productPriceCriteriaFactory === null) {
+                // BC fallback.
+                $result[] = new ProductPriceCriteria(
+                    $row->getProduct(),
+                    $this->doctrineHelper->getEntityReference(ProductUnit::class, $row->getUnit()),
+                    $row->getQuantity(),
+                    $this->currencyManager->getUserCurrency()
+                );
+            } else {
+                $result[] = $this->productPriceCriteriaFactory->create(
+                    $row->getProduct(),
+                    $this->doctrineHelper->getEntityReference(
+                        ProductUnit::class,
+                        $row->getUnit()
+                    ),
+                    $row->getQuantity()
+                );
+            }
         }
 
         return $result;

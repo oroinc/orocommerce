@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\Event\DatagridKitItemLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
@@ -26,7 +26,7 @@ class DatagridKitItemLineItemsDataListenerTest extends TestCase
 
     public function testOnLineItemDataWhenNoLineItems(): void
     {
-        $event = $this->createMock(DatagridLineItemsDataEvent::class);
+        $event = $this->createMock(DatagridKitItemLineItemsDataEvent::class);
         $event
             ->expects(self::once())
             ->method('getLineItems')
@@ -39,25 +39,10 @@ class DatagridKitItemLineItemsDataListenerTest extends TestCase
         $this->listener->onLineItemData($event);
     }
 
-    public function testOnLineItemDataWhenNotKitItemLineItem(): void
-    {
-        $event = $this->createMock(DatagridLineItemsDataEvent::class);
-        $event
-            ->expects(self::once())
-            ->method('getLineItems')
-            ->willReturn([10 => new \stdClass()]);
-
-        $event
-            ->expects(self::never())
-            ->method('addDataForLineItem');
-
-        $this->listener->onLineItemData($event);
-    }
-
     public function testOnLineItemDataWhenNoKitItem(): void
     {
         $kitItemLineItemId = 10;
-        $event = $this->createMock(DatagridLineItemsDataEvent::class);
+        $event = $this->createMock(DatagridKitItemLineItemsDataEvent::class);
         $kitItemLineItem = $this->createMock(ProductKitItemLineItemInterface::class);
         $kitItemLineItem
             ->method('getEntityIdentifier')
@@ -70,7 +55,13 @@ class DatagridKitItemLineItemsDataListenerTest extends TestCase
         $event
             ->expects(self::once())
             ->method('addDataForLineItem')
-            ->with($kitItemLineItemId, ['id' => 'kit_item_line_item:' . $kitItemLineItemId]);
+            ->with(
+                $kitItemLineItemId,
+                [
+                    DatagridKitItemLineItemsDataListener::ID => 'productkititemlineitem:' . $kitItemLineItemId,
+                    DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem,
+                ]
+            );
 
         $this->listener->onLineItemData($event);
     }
@@ -78,7 +69,7 @@ class DatagridKitItemLineItemsDataListenerTest extends TestCase
     public function testOnLineItemDataWhenHasKitItem(): void
     {
         $kitItemLineItemId = 10;
-        $event = $this->createMock(DatagridLineItemsDataEvent::class);
+        $event = $this->createMock(DatagridKitItemLineItemsDataEvent::class);
         $kitItem = (new ProductKitItemStub())
             ->setDefaultLabel('Sample Kit Item');
         $kitItemLineItem = $this->createMock(ProductKitItemLineItemInterface::class);
@@ -98,7 +89,11 @@ class DatagridKitItemLineItemsDataListenerTest extends TestCase
             ->method('addDataForLineItem')
             ->with(
                 $kitItemLineItemId,
-                ['id' => 'kit_item_line_item:' . $kitItemLineItemId, 'kitItemLabel' => $kitItem->getDefaultLabel()]
+                [
+                    DatagridKitItemLineItemsDataListener::ID => 'productkititemlineitem:' . $kitItemLineItemId,
+                    DatagridKitItemLineItemsDataListener::KIT_ITEM_LABEL => $kitItem->getDefaultLabel(),
+                    DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem,
+                ]
             );
 
         $this->listener->onLineItemData($event);

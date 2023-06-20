@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
@@ -40,12 +41,14 @@ class LineItemValidationListener
                 continue;
             }
 
+            $checksum = $lineItem instanceof ProductKitItemLineItemsAwareInterface ? $lineItem->getChecksum() : null;
+
             if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $lineItem->getQuantity())) {
-                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $maxError);
+                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $maxError, $checksum);
                 continue;
             }
             if ($minError = $this->validatorService->getMinimumErrorIfInvalid($product, $lineItem->getQuantity())) {
-                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $minError);
+                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $minError, $checksum);
             }
         }
     }

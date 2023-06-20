@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\RFPBundle\Form\Extension;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -13,6 +12,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -82,6 +82,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
      */
     protected function fillItemsData($entity, array $itemsData = [])
     {
+        /** @var EntityManagerInterface $em */
         $em = $this->doctrineHelper->getEntityManagerForClass($this->dataClass);
         $canNotBeAddedToRFQ = [];
         foreach ($itemsData as $dataRow) {
@@ -147,18 +148,10 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         $this->fillEntityData($requestProductItem, $itemData);
 
         if (!$requestProductItem->getProductUnit()) {
-            /** @var ProductUnitPrecision $unitPrecision */
-            $unitPrecision = $product->getUnitPrecisions()->first();
-            if (!$unitPrecision) {
+            $unit = $this->getDefaultProductUnit($product);
+            if (null === $unit) {
                 return;
             }
-
-            /** @var ProductUnit $unit */
-            $unit = $unitPrecision->getUnit();
-            if (!$unit) {
-                return;
-            }
-
             $requestProductItem->setProductUnit($unit);
         }
 
@@ -174,6 +167,10 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
      */
     protected function isAllowedProduct(Product $product)
     {
+        if ($this->productAvailabilityProvider instanceof ProductRFPAvailabilityProvider) {
+            return $this->productAvailabilityProvider->isProductAllowedForRFP($product);
+        }
+
         if (!$this->supportedStatuses) {
             $this->supportedStatuses = (array)$this->configManager->get('oro_rfp.frontend_product_visibility');
         }

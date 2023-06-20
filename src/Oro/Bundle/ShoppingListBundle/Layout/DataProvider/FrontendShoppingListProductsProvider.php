@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -34,12 +38,8 @@ class FrontendShoppingListProductsProvider
      */
     protected $productPriceFormatter;
 
-    /**
-     * @param LineItemRepository $lineItemRepository
-     * @param FrontendProductPricesDataProvider $productPriceProvider
-     * @param $shoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider
-     * @param ProductPriceFormatter $productPriceFormatter
-     */
+    private ?ProductLineItemPriceProviderInterface $productLineItemPriceProvider = null;
+
     public function __construct(
         LineItemRepository $lineItemRepository,
         FrontendProductPricesDataProvider $productPriceProvider,
@@ -50,6 +50,12 @@ class FrontendShoppingListProductsProvider
         $this->productPriceProvider = $productPriceProvider;
         $this->shoppingListLineItemsDataProvider = $shoppingListLineItemsDataProvider;
         $this->productPriceFormatter = $productPriceFormatter;
+    }
+
+    public function setProductLineItemPriceProvider(
+        ?ProductLineItemPriceProviderInterface $productLineItemPriceProvider
+    ): void {
+        $this->productLineItemPriceProvider = $productLineItemPriceProvider;
     }
 
     /**
@@ -70,9 +76,23 @@ class FrontendShoppingListProductsProvider
     }
 
     /**
+     * @deprecated since 5.1, use getProductLineItemPricesForShoppingLists() instead.
+     *
      * @param ShoppingList|null $shoppingList
      *
      * @return array|null
+     *  [
+     *      10 => [ // simple product id
+     *          'each' => Price $price // price keyed with unit code
+     *      ],
+     *      20 => [ // product kit id
+     *          'each' => [ // unit code
+     *              'sample_checksum' => Price $price // price keyed with line item checksum
+     *              // ...
+     *          ],
+     *      ],
+     *      // ...
+     *  ]
      */
     public function getMatchedPrice(ShoppingList $shoppingList = null)
     {
@@ -80,14 +100,35 @@ class FrontendShoppingListProductsProvider
             return null;
         }
 
+        if ($this->productLineItemPriceProvider !== null) {
+            return $this->getMatchedPrices([$shoppingList])[$shoppingList->getId()] ?? [];
+        }
+
+        // BC fallback.
         $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
 
         return $this->productPriceProvider->getProductsMatchedPrice($lineItems);
     }
 
     /**
+     * @deprecated since 5.1, use getProductLineItemPricesForShoppingLists() instead.
+     *
      * @param ShoppingList[] $shoppingLists
      * @return array
+     *  [
+     *      42 => [ // shopping list id
+     *          10 => [ // simple product id
+     *              'each' => Price $price // price keyed with unit code
+     *          ],
+     *          20 => [ // product kit id
+     *              'each' => [ // unit code
+     *                  'sample_checksum' => Price $price // price keyed with line item checksum
+     *              ],
+     *          ],
+     *          // ...
+     *      ],
+     *      // ...
+     *  ]
      */
     public function getMatchedPrices(array $shoppingLists = [])
     {
@@ -95,12 +136,74 @@ class FrontendShoppingListProductsProvider
             return [];
         }
 
+        if ($this->productLineItemPriceProvider !== null) {
+            $matchedPrices = [];
+            $productLineItemPricesByShoppingList = $this->getProductLineItemPricesForShoppingLists($shoppingLists);
+            foreach ($productLineItemPricesByShoppingList as $shoppingListId => $productLineItemPrices) {
+                $matchedPrices[$shoppingListId] = [];
+                foreach ($productLineItemPrices as $productLineItemPrice) {
+                    $lineItem = $productLineItemPrice->getLineItem();
+                    $product = $lineItem->getProduct();
+                    $productUnitCode = $lineItem->getProductUnitCode();
+                    $productId = $product->getId();
+                    if ($lineItem instanceof ProductKitItemLineItemsAwareInterface && $product->isKit()) {
+                        $matchedPrices[$shoppingListId][$productId][$productUnitCode][$lineItem->getChecksum()] =
+                            $productLineItemPrice->getPrice();
+                    } else {
+                        $matchedPrices[$shoppingListId][$productId][$productUnitCode] =
+                            $productLineItemPrice->getPrice();
+                    }
+                }
+            }
+
+            return $matchedPrices;
+        }
+
+        // BC fallback.
         $prices = [];
         foreach ($shoppingLists as $shoppingList) {
             $prices[$shoppingList->getId()] = $this->getMatchedPrice($shoppingList);
         }
 
         return $prices;
+    }
+
+    /**
+     * @param array<ShoppingList> $shoppingLists
+     *
+     * @return array<int,array<ProductLineItemPrice>>
+     *  [
+     *      42 => [ // shopping list id
+     *          ProductLineItemPrice $productLineItemPrice1,
+     *          ProductLineItemPrice $productLineItemPrice2,
+     *          // ...
+     *      ],
+     *      // ...
+     *  ]
+     */
+    public function getProductLineItemPricesForShoppingLists(array $shoppingLists = []): array
+    {
+        if ($this->productLineItemPriceProvider === null) {
+            return [];
+        }
+
+        if (!$shoppingLists) {
+            return [];
+        }
+
+        $productLineItemPrices = [];
+        foreach ($shoppingLists as $shoppingList) {
+            $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+            if (!$lineItems) {
+                $productLineItemPrices[$shoppingList->getId()] = [];
+                continue;
+            }
+
+            $productLineItemPrices[$shoppingList->getId()] = $this->productLineItemPriceProvider
+                ->getProductLineItemsPrices($lineItems);
+        }
+
+        return $productLineItemPrices;
     }
 
     /**

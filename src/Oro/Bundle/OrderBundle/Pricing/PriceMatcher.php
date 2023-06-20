@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Pricing;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Psr\Log\LoggerInterface;
@@ -23,6 +24,8 @@ class PriceMatcher
     /** @var LoggerInterface */
     private $logger;
 
+    private ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory = null;
+
     public function __construct(
         MatchingPriceProvider $provider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
@@ -31,6 +34,12 @@ class PriceMatcher
         $this->provider = $provider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
         $this->logger = $logger;
+    }
+
+    public function setProductPriceCriteriaFactory(
+        ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+    ): void {
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -61,20 +70,36 @@ class PriceMatcher
     public function fillMatchingPrices(Order $order, array $matchedPrices = [])
     {
         $lineItems = $order->getLineItems()->toArray();
-        array_walk(
-            $lineItems,
-            function (OrderLineItem $orderLineItem) use ($matchedPrices) {
-                $productPriceCriteria = $this->createProductPriceCriteria($orderLineItem);
-                if (!$productPriceCriteria) {
-                    return;
-                }
 
+        if ($this->productPriceCriteriaFactory === null) {
+            // BC fallback.
+            array_walk(
+                $lineItems,
+                function (OrderLineItem $orderLineItem) use ($matchedPrices) {
+                    $productPriceCriteria = $this->createProductPriceCriteria($orderLineItem);
+                    if (!$productPriceCriteria) {
+                        return;
+                    }
+
+                    $identifier = $productPriceCriteria->getIdentifier();
+                    if (array_key_exists($identifier, $matchedPrices)) {
+                        $this->fillOrderLineItemData($orderLineItem, $matchedPrices[$identifier]);
+                    }
+                }
+            );
+        } else {
+            $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+                $lineItems,
+                $order->getCurrency()
+            );
+
+            foreach ($productsPriceCriteria as $lineItemIdx => $productPriceCriteria) {
                 $identifier = $productPriceCriteria->getIdentifier();
                 if (array_key_exists($identifier, $matchedPrices)) {
-                    $this->fillOrderLineItemData($orderLineItem, $matchedPrices[$identifier]);
+                    $this->fillOrderLineItemData($lineItems[$lineItemIdx], $matchedPrices[$identifier]);
                 }
             }
-        );
+        }
     }
 
     public function addMatchingPrices(Order $order)

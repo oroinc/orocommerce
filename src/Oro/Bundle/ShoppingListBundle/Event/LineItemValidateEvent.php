@@ -66,11 +66,18 @@ class LineItemValidateEvent extends Event
      * @param string $sku
      * @param string $unit
      * @param string $message
+     * @param string|null $checksum LineItem::$checksum - BC fallback.
+     *
      * @return $this
      */
-    public function addErrorByUnit(string $sku, string $unit, string $message): LineItemValidateEvent
-    {
-        $this->errors->add(['sku' => $sku, 'unit' => $unit, 'message' => $message]);
+    public function addErrorByUnit(
+        string $sku,
+        string $unit,
+        string $message
+        /*, ?string $checksum = null*/
+    ): LineItemValidateEvent {
+        $checksum = func_get_args()[3] ?? null;
+        $this->errors->add(['sku' => $sku, 'unit' => $unit, 'checksum' => $checksum, 'message' => $message]);
 
         return $this;
     }
@@ -79,11 +86,18 @@ class LineItemValidateEvent extends Event
      * @param string $sku
      * @param string $unit
      * @param string $message
+     * @param string|null $checksum LineItem::$checksum - BC fallback.
+
      * @return $this
      */
-    public function addWarningByUnit(string $sku, string $unit, string $message): LineItemValidateEvent
-    {
-        $this->warnings->add(['sku' => $sku, 'unit' => $unit, 'message' => $message]);
+    public function addWarningByUnit(
+        string $sku,
+        string $unit,
+        string $message
+        /*, ?string $checksum = null*/
+    ): LineItemValidateEvent {
+        $checksum = func_get_args()[3] ?? null;
+        $this->warnings->add(['sku' => $sku, 'unit' => $unit, 'checksum' => $checksum, 'message' => $message]);
 
         return $this;
     }

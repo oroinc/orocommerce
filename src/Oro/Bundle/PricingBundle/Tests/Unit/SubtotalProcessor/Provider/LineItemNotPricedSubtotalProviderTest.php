@@ -5,9 +5,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -39,6 +41,8 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
 
     private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
 
+    private ProductLineItemPriceProviderInterface|MockObject $productLineItemsPriceProvider;
+
     protected function setUp(): void
     {
         $currencyManager = $this->createMock(UserCurrencyManager::class);
@@ -47,6 +51,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
+        $this->productLineItemsPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);
 
         $this->provider = new LineItemNotPricedSubtotalProvider(
             $translator,
@@ -55,6 +60,8 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
             new SubtotalProviderConstructorArguments($currencyManager, $websiteCurrencyProvider),
             $this->priceScopeCriteriaFactory
         );
+
+        $this->provider->setProductLineItemsPriceProvider($this->productLineItemsPriceProvider);
 
         $translator
             ->method('trans')
@@ -72,6 +79,36 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
     }
 
     public function testGetSubtotal(): void
+    {
+        $entity = new EntityNotPricedStub();
+        $entity->setWebsite(new WebsiteStub(self::WEBSITE_ID));
+        $lineItem1 = $this->createLineItem(1, 3, 'kg');
+        $lineItem2 = $this->createLineItem(2, 7, 'item');
+        $entity
+            ->addLineItem($lineItem1)
+            ->addLineItem($lineItem2);
+
+        $lineItem1Price = new ProductLineItemPrice($lineItem1, Price::create(10, self::CURRENCY_USD), 100);
+        $lineItem2Price = new ProductLineItemPrice($lineItem2, Price::create(20, self::CURRENCY_USD), 200);
+
+        $this->productLineItemsPriceProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsPricesForLineItemsHolder')
+            ->with($entity, self::CURRENCY_USD)
+            ->willReturn([$lineItem1Price, $lineItem2Price]);
+
+        $subtotal = $this->provider->getSubtotal($entity);
+
+        self::assertInstanceOf(Subtotal::class, $subtotal);
+        self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals('test', $subtotal->getLabel());
+        self::assertEquals(self::CURRENCY_USD, $subtotal->getCurrency());
+        self::assertIsFloat($subtotal->getAmount());
+        self::assertSame(300.0, $subtotal->getAmount());
+        self::assertTrue($subtotal->isVisible());
+    }
+
+    public function testGetSubtotalWhenNoProductLineItemsPriceProvider(): void
     {
         $prices = [];
         $entity = new EntityNotPricedStub();
@@ -103,6 +140,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
             )
             ->willReturn($prices);
 
+        $this->provider->setProductLineItemsPriceProvider(null);
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
@@ -114,7 +152,39 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         self::assertTrue($subtotal->isVisible());
     }
 
-    public function testGetSubtotalWhenHasProductKitItemLineItems(): void
+    private function createLineItem(int $productId, float $quantity, string $unitCode): LineItemNotPricedStub
+    {
+        $product = (new ProductStub())->setId($productId);
+        $productUnit = (new ProductUnit())->setCode($unitCode);
+
+        $lineItem = new LineItemNotPricedStub();
+        $lineItem->setProduct($product);
+        $lineItem->setProductUnit($productUnit);
+        $lineItem->setQuantity($quantity);
+
+        return $lineItem;
+    }
+
+    public function testGetSubtotalWithoutLineItems(): void
+    {
+        $entity = new EntityNotPricedStub();
+
+        $subtotal = $this->provider->getSubtotal($entity);
+        self::assertInstanceOf(Subtotal::class, $subtotal);
+        self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals('test', $subtotal->getLabel());
+        self::assertEquals($entity->getCurrency(), $subtotal->getCurrency());
+        self::assertIsFloat($subtotal->getAmount());
+        self::assertEquals(0, $subtotal->getAmount());
+        self::assertFalse($subtotal->isVisible());
+    }
+
+    public function testGetSubtotalWithWrongEntity(): void
+    {
+        self::assertNull($this->provider->getSubtotal(new EntityStub()));
+    }
+
+    public function testGetSubtotalWhenNoProductLineItemsPriceProviderAndHasProductKitItemLineItems(): void
     {
         $prices = [];
         $entity = new EntityNotPricedStub();
@@ -160,6 +230,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
             )
             ->willReturn($prices);
 
+        $this->provider->setProductLineItemsPriceProvider(null);
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
@@ -193,7 +264,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         ], $subtotal->getData());
     }
 
-    public function testGetSubtotalWhenNoPriceButHasProductKitItemLineItems(): void
+    public function testGetSubtotalWhenNoProductLineItemsPriceProviderAndNoPriceButHasProductKitItemLineItems(): void
     {
         $prices = [];
         $entity = new EntityNotPricedStub();
@@ -234,6 +305,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
             )
             ->willReturn($prices);
 
+        $this->provider->setProductLineItemsPriceProvider(null);
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
@@ -273,19 +345,6 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         );
     }
 
-    private function createLineItem(int $productId, float $quantity, string $unitCode): LineItemNotPricedStub
-    {
-        $product = (new ProductStub())->setId($productId);
-        $productUnit = (new ProductUnit())->setCode($unitCode);
-
-        $lineItem = new LineItemNotPricedStub();
-        $lineItem->setProduct($product);
-        $lineItem->setProductUnit($productUnit);
-        $lineItem->setQuantity($quantity);
-
-        return $lineItem;
-    }
-
     private function createKitItemLineItem(
         int $productId,
         float $quantity,
@@ -300,26 +359,6 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
         $kitItemLineItem->setQuantity($quantity);
 
         return $kitItemLineItem;
-    }
-
-    public function testGetSubtotalWithoutLineItems(): void
-    {
-        $entity = new EntityNotPricedStub();
-
-        $subtotal = $this->provider->getSubtotal($entity);
-        self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
-        self::assertEquals('test', $subtotal->getLabel());
-        self::assertEquals($entity->getCurrency(), $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
-        self::assertEquals(0, $subtotal->getAmount());
-        self::assertFalse($subtotal->isVisible());
-        self::assertEquals([], $subtotal->getData());
-    }
-
-    public function testGetSubtotalWithWrongEntity(): void
-    {
-        self::assertNull($this->provider->getSubtotal(new EntityStub()));
     }
 
     public function testIsSupported(): void

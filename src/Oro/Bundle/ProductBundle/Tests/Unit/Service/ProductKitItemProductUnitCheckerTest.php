@@ -157,6 +157,7 @@ class ProductKitItemProductUnitCheckerTest extends \PHPUnit\Framework\TestCase
         $productUnitItem = (new ProductUnit())->setCode('item');
         $productUnitSet = (new ProductUnit())->setCode('set');
         $productUnitEach = (new ProductUnit())->setCode('each');
+        $productUnitKg = (new ProductUnit())->setCode('kg');
 
         $product1UnitPrecisionItem = (new ProductUnitPrecision())->setUnit($productUnitItem);
         $product1UnitPrecisionSet = (new ProductUnitPrecision())->setUnit($productUnitSet);
@@ -166,11 +167,15 @@ class ProductKitItemProductUnitCheckerTest extends \PHPUnit\Framework\TestCase
             ->addUnitPrecision($product1UnitPrecisionSet);
 
         $product2UnitPrecisionEach = (new ProductUnitPrecision())->setUnit($productUnitEach);
+        $product2UnitPrecisionKg = (new ProductUnitPrecision())
+            ->setUnit($productUnitKg)
+            ->setSell(false);
         $product2UnitPrecisionSet = (new ProductUnitPrecision())->setUnit($productUnitSet);
         $product2 = (new ProductStub())
             ->setId(2)
             ->addUnitPrecision($product2UnitPrecisionEach)
-            ->addUnitPrecision($product2UnitPrecisionSet);
+            ->addUnitPrecision($product2UnitPrecisionSet)
+            ->addUnitPrecision($product2UnitPrecisionKg);
 
         return [
             [
@@ -187,6 +192,11 @@ class ProductKitItemProductUnitCheckerTest extends \PHPUnit\Framework\TestCase
                 'unitCode' => 'each',
                 'products' => [$product1, $product2],
                 'expected' => [$product1],
+            ],
+            [
+                'unitCode' => 'kg',
+                'products' => [$product1, $product2],
+                'expected' => [$product1, $product2],
             ],
             [
                 'unitCode' => 'set',

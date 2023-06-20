@@ -3,42 +3,82 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
+use PHPUnit\Framework\TestCase;
 
-class LineItemValidateEventTest extends \PHPUnit\Framework\TestCase
+class LineItemValidateEventTest extends TestCase
 {
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $lineItems;
-
-    /**
-     * @var LineItemValidateEvent
-     */
-    protected $lineItemValidateEvent;
+    private LineItemValidateEvent $lineItemValidateEvent;
 
     protected function setUp(): void
     {
-        $context = [];
-        $this->lineItemValidateEvent = new LineItemValidateEvent($this->lineItems, $context);
+        $this->lineItemValidateEvent = new LineItemValidateEvent([], []);
     }
 
-    public function testAddErrorByUnit()
+    public function testAddErrorByUnit(): void
     {
         $this->lineItemValidateEvent->addErrorByUnit('testSku', 'item', 'testMessage');
         $errors = $this->lineItemValidateEvent->getErrors();
-        $this->assertCount(1, $errors);
-        $this->assertArrayHasKey('sku', $errors[0]);
-        $this->assertEquals($errors[0]['sku'], 'testSku');
-        $this->assertArrayHasKey('unit', $errors[0]);
-        $this->assertEquals($errors[0]['unit'], 'item');
-        $this->assertArrayHasKey('message', $errors[0]);
-        $this->assertEquals($errors[0]['message'], 'testMessage');
+        self::assertCount(1, $errors);
+        self::assertArrayHasKey('sku', $errors[0]);
+        self::assertEquals('testSku', $errors[0]['sku']);
+        self::assertArrayHasKey('unit', $errors[0]);
+        self::assertEquals('item', $errors[0]['unit']);
+        self::assertArrayHasKey('message', $errors[0]);
+        self::assertEquals('testMessage', $errors[0]['message']);
     }
 
-    public function testHasErrors()
+    public function testAddErrorByUnitWithChecksum(): void
     {
-        $this->assertFalse($this->lineItemValidateEvent->hasErrors());
+        $this->lineItemValidateEvent->addErrorByUnit('testSku', 'item', 'testMessage', 'sampleChecksum');
+        $errors = $this->lineItemValidateEvent->getErrors();
+        self::assertCount(1, $errors);
+        self::assertArrayHasKey('sku', $errors[0]);
+        self::assertEquals('testSku', $errors[0]['sku']);
+        self::assertArrayHasKey('unit', $errors[0]);
+        self::assertEquals('item', $errors[0]['unit']);
+        self::assertArrayHasKey('message', $errors[0]);
+        self::assertEquals('testMessage', $errors[0]['message']);
+        self::assertEquals('sampleChecksum', $errors[0]['checksum']);
+    }
+
+    public function testHasErrors(): void
+    {
+        self::assertFalse($this->lineItemValidateEvent->hasErrors());
         $this->lineItemValidateEvent->addErrorByUnit('testSku', 'item', 'testMessage');
-        $this->assertTrue($this->lineItemValidateEvent->hasErrors());
+        self::assertTrue($this->lineItemValidateEvent->hasErrors());
+    }
+
+    public function testAddWarningByUnit(): void
+    {
+        $this->lineItemValidateEvent->addWarningByUnit('testSku', 'item', 'testMessage');
+        $warnings = $this->lineItemValidateEvent->getWarnings();
+        self::assertCount(1, $warnings);
+        self::assertArrayHasKey('sku', $warnings[0]);
+        self::assertEquals('testSku', $warnings[0]['sku']);
+        self::assertArrayHasKey('unit', $warnings[0]);
+        self::assertEquals('item', $warnings[0]['unit']);
+        self::assertArrayHasKey('message', $warnings[0]);
+        self::assertEquals('testMessage', $warnings[0]['message']);
+    }
+
+    public function testAddWarningByUnitWithChecksum(): void
+    {
+        $this->lineItemValidateEvent->addWarningByUnit('testSku', 'item', 'testMessage', 'sampleChecksum');
+        $warnings = $this->lineItemValidateEvent->getWarnings();
+        self::assertCount(1, $warnings);
+        self::assertArrayHasKey('sku', $warnings[0]);
+        self::assertEquals('testSku', $warnings[0]['sku']);
+        self::assertArrayHasKey('unit', $warnings[0]);
+        self::assertEquals('item', $warnings[0]['unit']);
+        self::assertArrayHasKey('message', $warnings[0]);
+        self::assertEquals('testMessage', $warnings[0]['message']);
+        self::assertEquals('sampleChecksum', $warnings[0]['checksum']);
+    }
+
+    public function testHasWarnings(): void
+    {
+        self::assertFalse($this->lineItemValidateEvent->hasWarnings());
+        $this->lineItemValidateEvent->addWarningByUnit('testSku', 'item', 'testMessage');
+        self::assertTrue($this->lineItemValidateEvent->hasWarnings());
     }
 }

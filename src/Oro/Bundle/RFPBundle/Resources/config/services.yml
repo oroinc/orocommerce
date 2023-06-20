@@ -117,7 +117,18 @@ services:
 
     oro_rfp.provider.product_availability:
        class: Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider
-       public: false
+
+    oro_rfp.provider.product_rfp_availability:
+       class: Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider
+       arguments:
+           - '@oro_config.manager'
+           - '@doctrine'
+           - '@oro_security.acl_helper'
+       calls:
+           - setNotAllowedProductTypes:
+               -
+                   - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+                   - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_rfp.acl.voter.frontend_request:
         class: Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter

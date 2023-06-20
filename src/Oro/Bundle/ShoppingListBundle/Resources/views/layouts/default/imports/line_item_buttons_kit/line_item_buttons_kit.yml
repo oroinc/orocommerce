@@ -9,3 +9,4 @@ layout:
            options:
             vars:
                 product: '=data["product"]'
+                visible: '=context["is_logged_in"] || data["feature"].isFeatureEnabled("guest_shopping_list")'

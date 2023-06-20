@@ -11,6 +11,10 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
  */
 class DatagridKitItemLineItemsDataListener
 {
+    public const ID = 'id';
+    public const ENTITY = '_entity';
+    public const KIT_ITEM_LABEL = 'kitItemLabel';
+
     private LocalizationHelper $localizationHelper;
 
     public function __construct(LocalizationHelper $localizationHelper)
@@ -27,12 +31,13 @@ class DatagridKitItemLineItemsDataListener
 
             $kitItemLineItemId = $lineItem->getEntityIdentifier();
             $kitItemLineItemData = [
-                'id' => 'kit_item_line_item:' . $kitItemLineItemId,
+                self::ID => 'productkititemlineitem:' . $kitItemLineItemId,
+                self::ENTITY => $lineItem,
             ];
 
             $kitItem = $lineItem->getKitItem();
             if ($kitItem !== null) {
-                $kitItemLineItemData['kitItemLabel'] = (string)$this->localizationHelper
+                $kitItemLineItemData[self::KIT_ITEM_LABEL] = (string)$this->localizationHelper
                     ->getLocalizedValue($kitItem->getLabels());
             }
 

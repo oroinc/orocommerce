@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -52,6 +53,8 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
                 $this->applyShoppingListRootRestriction($qb, $from->getAlias(), $currentUser);
             } elseif (LineItem::class === $entityClass) {
                 $this->applyShoppingListItemItemRootRestriction($qb, $from->getAlias(), $currentUser);
+            } elseif (ProductKitItemLineItem::class === $entityClass) {
+                $this->applyKitItemLineItemRootRestriction($qb, $from->getAlias(), $currentUser);
             }
         }
     }
@@ -137,7 +140,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
 
     private function ensureShoppingListJoined(QueryBuilder $qb, string $rootAlias): string
     {
-        $shoppingListJoin = $this->getShoppingListJoin($qb, $rootAlias);
+        $shoppingListJoin = $this->getJoin($qb, $rootAlias, 'shoppingList');
         if (null !== $shoppingListJoin) {
             return $shoppingListJoin->getAlias();
         }
@@ -149,7 +152,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         return $shoppingListJoinAlias;
     }
 
-    private function getShoppingListJoin(QueryBuilder $qb, string $rootAlias): ?Expr\Join
+    private function getJoin(QueryBuilder $qb, string $rootAlias, string $fieldName): ?Expr\Join
     {
         $result = null;
         /** @var Expr\Join[] $joins */
@@ -157,7 +160,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
             if ($joinGroupAlias !== $rootAlias) {
                 continue;
             }
-            $expectedJoin = sprintf('%s.shoppingList', $rootAlias);
+            $expectedJoin = sprintf('%s.%s', $rootAlias, $fieldName);
             foreach ($joins as $key => $join) {
                 if ($join->getJoin() === $expectedJoin) {
                     if ($join->getJoinType() === Expr\Join::LEFT_JOIN) {
@@ -180,5 +183,36 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         }
 
         return $result;
+    }
+
+    private function applyKitItemLineItemRootRestriction(
+        QueryBuilder $qb,
+        string $rootAlias,
+        ?CustomerVisitor $visitor
+    ): void {
+        if (null === $visitor) {
+            // deny access to kit item line items
+            $qb->andWhere('1 = 0');
+        } else {
+            $this->applyCustomerVisitorRootRestriction(
+                $qb,
+                $this->ensureLineItemShoppingListJoined($qb, $rootAlias),
+                $visitor
+            );
+        }
+    }
+
+    private function ensureLineItemShoppingListJoined(QueryBuilder $qb, string $rootAlias): string
+    {
+        $kitLineItemJoin = $this->getJoin($qb, $rootAlias, 'lineItem');
+        if (null !== $kitLineItemJoin) {
+            return $this->ensureShoppingListJoined($qb, $kitLineItemJoin->getAlias());
+        }
+
+        $kitLineItemJoinAlias = 'kitlineitem';
+        QueryBuilderUtil::checkIdentifier($rootAlias);
+        $qb->innerJoin($rootAlias . '.lineItem', $kitLineItemJoinAlias);
+
+        return $this->ensureShoppingListJoined($qb, $kitLineItemJoinAlias);
     }
 }

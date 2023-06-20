@@ -524,13 +524,17 @@ services:
             - [initDoctrinePropertiesByManagerRegistry, ['@doctrine']]
             - [setAclHelper, ['@oro_security.acl_helper']]
             - [setPropertyAccessor, ['@property_accessor']]
+            - setNotAllowedProductTypes:
+                -
+                    - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+                    - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited }
 
     oro_product.autocomplete.configurable_product_visibility_limited.search_handler:
         parent: oro_product.autocomplete.product_visibility_limited.search_handler
         calls:
-            - [enableConfigurableProducts]
+            - [setNotAllowedProductTypes, [[]]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_all_product_visibility_limited }
 
@@ -666,6 +670,12 @@ services:
             - '@doctrine'
             - '@oro_product.product.manager'
             - '@oro_security.acl_helper'
+        calls:
+            -
+                setNotAllowedProductTypes:
+                    -
+                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
@@ -2251,3 +2261,34 @@ services:
 
     oro_product.model.product_line_items_holder_factory:
         class: Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory
+
+    oro_product.event_listener.payment_profile_grid_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductsSelectGridFrontendGridListener
+        calls:
+            -
+                setNotAllowedProductTypes:
+                    -
+                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
+
+    oro_product.datagrid.property.product_units:
+        class: Oro\Bundle\ProductBundle\DataGrid\Property\ProductUnitsProperty
+        # Public because used as a property callback in a datagrid.
+        public: true
+
+    oro_product.filter.composed_sku_string_filter:
+        class: Oro\Bundle\ProductBundle\Filter\ComposedSkuStringFilter
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: composed-sku-string }
+
+    oro_product.layout.data_provider.product_types:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductTypesProvider'
+        arguments:
+            - "@oro_product.provider.product_type_provider"
+        tags:
+            - { name: layout.data_provider, alias: product_types }

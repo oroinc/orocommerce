@@ -10,6 +10,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +20,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
+class LineItemHandlerTest extends TestCase
 {
     private const FORM_DATA = ['field' => 'value'];
     private const CONSTRAINT_ERROR_1 = 'Error 1';
@@ -27,20 +30,15 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
     private const CONSTRAINT_TEMPLATE_2 = 'error_template_2';
     private const CONSTRAINT_PARAMS_2 = ['parameter2' => '2'];
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface */
-    private $form;
+    private FormInterface|MockObject $form;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry|MockObject $doctrine;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
-    private $shoppingListManager;
+    private ShoppingListManager|MockObject $shoppingListManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
-    private $currentShoppingListManager;
+    private CurrentShoppingListManager|MockObject $currentShoppingListManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ValidatorInterface */
-    private $validator;
+    private ValidatorInterface|MockObject $validator;
 
     /**
      * {@inheritdoc}
@@ -53,17 +51,12 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
 
-        $this->form->expects($this->any())
+        $this->form->expects(self::any())
             ->method('getName')
             ->willReturn(FrontendLineItemType::NAME);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return LineItemHandler
-     */
-    private function getLineItemHandler(Request $request)
+    private function getLineItemHandler(Request $request): LineItemHandler
     {
         return new LineItemHandler(
             $this->form,
@@ -75,50 +68,50 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testProcessWrongMethod()
+    public function testProcessWrongMethod(): void
     {
         $lineItem = $this->createMock(LineItem::class);
 
         $request = Request::create('/');
 
-        $this->doctrine->expects($this->never())
+        $this->doctrine->expects(self::never())
             ->method('getManagerForClass');
 
         $handler = $this->getLineItemHandler($request);
-        $this->assertFalse($handler->process($lineItem));
+        self::assertFalse($handler->process($lineItem));
     }
 
-    public function testProcessFormNotValid()
+    public function testProcessFormNotValid(): void
     {
         $lineItem = $this->createMock(LineItem::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects($this->never())
+        $em->expects(self::never())
             ->method('commit');
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('rollback');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(LineItem::class)
             ->willReturn($em);
 
         $request = Request::create('/', 'POST', [FrontendLineItemType::NAME => self::FORM_DATA]);
 
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('submit')
             ->with(self::FORM_DATA);
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('isValid')
             ->willReturn(false);
 
         $handler = $this->getLineItemHandler($request);
-        $this->assertFalse($handler->process($lineItem));
+        self::assertFalse($handler->process($lineItem));
     }
 
-    public function testProcessSuccess()
+    public function testProcessAddSuccess(): void
     {
         $shoppingList = $this->getShoppingList();
         $lineItem = $this->getLineItem($shoppingList);
@@ -126,84 +119,84 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $request = Request::create('/', 'PUT', [FrontendLineItemType::NAME => ['shoppingListLabel' => 'label']]);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('commit');
-        $em->expects($this->never())
+        $em->expects(self::never())
             ->method('rollback');
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('commit');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(LineItem::class)
             ->willReturn($em);
 
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('submit')
             ->with(['shoppingListLabel' => 'label', 'shoppingList' => 777]);
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('isValid')
             ->willReturn(true);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('addLineItem')
             ->with($lineItem, $lineItem->getShoppingList(), false, true)
             ->willReturn($shoppingList);
 
-        $this->currentShoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects(self::once())
             ->method('createCurrent')
             ->willReturn($shoppingList);
 
-        $this->validator->expects($this->once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($shoppingList)
             ->willReturn(new ConstraintViolationList());
 
         $handler = $this->getLineItemHandler($request);
-        $this->assertTrue($handler->process($lineItem));
+        self::assertTrue($handler->process($lineItem));
     }
 
-    public function testProcessShoppingListNotValid()
+    public function testProcessShoppingListNotValid(): void
     {
         $shoppingList = $this->getShoppingList();
         $lineItem = $this->getLineItem($shoppingList);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects($this->never())
+        $em->expects(self::never())
             ->method('commit');
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('rollback');
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(LineItem::class)
             ->willReturn($em);
 
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('submit')
             ->with(['shoppingListLabel' => 'label', 'shoppingList' => 777]);
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('isValid')
             ->willReturn(true);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->shoppingListManager->expects(self::once())
             ->method('addLineItem')
             ->with($lineItem, $shoppingList, false, true);
 
-        $this->currentShoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects(self::once())
             ->method('createCurrent')
             ->willReturn($shoppingList);
 
-        $this->validator->expects($this->once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($shoppingList)
             ->willReturn($this->createConstraintViolationList());
 
-        $this->form->expects($this->exactly(2))
+        $this->form->expects(self::exactly(2))
             ->method('addError')
             ->withConsecutive(
                 [new FormError(
@@ -220,7 +213,7 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
         $request = Request::create('/', 'PUT', [FrontendLineItemType::NAME => ['shoppingListLabel' => 'label']]);
 
-        $this->assertFalse($this->getLineItemHandler($request)->process($lineItem));
+        self::assertFalse($this->getLineItemHandler($request)->process($lineItem));
     }
 
     private function createConstraintViolationList(): ConstraintViolationList
@@ -248,30 +241,22 @@ class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ShoppingList|\PHPUnit\Framework\MockObject\MockObject
+     * @return ShoppingList|MockObject
      */
     private function getShoppingList()
     {
         $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList->expects($this->once())
+        $shoppingList->expects(self::once())
             ->method('getId')
             ->willReturn(777);
 
         return $shoppingList;
     }
 
-    /**
-     * @param $shoppingList
-     *
-     * @return LineItem|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getLineItem($shoppingList)
+    private function getLineItem(ShoppingList $shoppingList, int $id = null): LineItem
     {
-        $lineItem = $this->createMock(LineItem::class);
-        $lineItem->expects($this->atLeastOnce())
-            ->method('getShoppingList')
-            ->willReturn($shoppingList);
-
-        return $lineItem;
+        return (new LineItemStub())
+            ->setId($id)
+            ->setShoppingList($shoppingList);
     }
 }

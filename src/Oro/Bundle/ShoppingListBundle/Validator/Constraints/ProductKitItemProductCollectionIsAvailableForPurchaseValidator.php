@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
+use Oro\Bundle\TranslationBundle\Translation\TranslationMessageSanitizerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -16,9 +17,18 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidator extends Con
 {
     private LocalizationHelper $localizationHelper;
 
-    public function __construct(LocalizationHelper $localizationHelper)
-    {
+    private ?TranslationMessageSanitizerInterface $translationMessageSanitizer = null;
+
+    public function __construct(
+        LocalizationHelper $localizationHelper
+    ) {
         $this->localizationHelper = $localizationHelper;
+    }
+
+    public function setTranslationMessageSanitizer(
+        ?TranslationMessageSanitizerInterface $translationMessageSanitizer
+    ): void {
+        $this->translationMessageSanitizer = $translationMessageSanitizer;
     }
 
     /**
@@ -52,8 +62,10 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidator extends Con
                 $unavailableProductsCount++;
 
                 if ($kitItemLabel === null) {
-                    $kitItemLabel = (string)$this->localizationHelper
-                        ->getLocalizedValue($kitItemProduct->getKitItem()?->getLabels());
+                    $kitItemLabel = $this->sanitizeMessage(
+                        (string)$this->localizationHelper
+                            ->getLocalizedValue($kitItemProduct->getKitItem()?->getLabels())
+                    );
                 }
             }
         }
@@ -70,5 +82,12 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidator extends Con
                 ->setCode(ProductKitItemProductCollectionIsAvailableForPurchase::NO_AVAILABLE_PRODUCTS_ERROR)
                 ->addViolation();
         }
+    }
+
+    private function sanitizeMessage(string $message): string
+    {
+        return $this->translationMessageSanitizer !== null
+            ? $this->translationMessageSanitizer->sanitizeMessage($message)
+            : $message;
     }
 }

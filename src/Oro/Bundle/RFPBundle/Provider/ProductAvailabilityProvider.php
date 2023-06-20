@@ -4,6 +4,11 @@ namespace Oro\Bundle\RFPBundle\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Checks if a product is applicable for RFP.
+ *
+ * @deprecated since 5.1, will be removed in 6.0. Use {@see ProductRFPAvailabilityProvider} instead.
+ */
 class ProductAvailabilityProvider implements ProductAvailabilityProviderInterface
 {
     /**
@@ -11,6 +16,6 @@ class ProductAvailabilityProvider implements ProductAvailabilityProviderInterfac
      */
     public function isProductApplicableForRFP(Product $product)
     {
-        return $product->getType() !== Product::TYPE_CONFIGURABLE;
+        return !$product->isConfigurable() && !$product->isKit();
     }
 }

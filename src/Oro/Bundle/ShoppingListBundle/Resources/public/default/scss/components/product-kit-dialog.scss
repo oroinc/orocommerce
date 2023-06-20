@@ -1,0 +1,27 @@
+/* @theme: default; */
+
+.product-kit-dialog {
+    .fullscreen-popup__actions-wrapper,
+    .widget-actions-section {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        align-items: flex-end;
+    }
+
+    .product-totals {
+        gap: 12px;
+
+        &__controls {
+            gap: 12px;
+        }
+
+        &__wrapper {
+            margin: 0;
+        }
+
+        &__label {
+            min-width: initial;
+        }
+    }
+}

@@ -72,7 +72,7 @@ services:
             - [setSession, ['@session']]
             - [setTranslator, ['@translator']]
             - [setContainer, ['@service_container']]
-            - [setProductAvailabilityProvider, ['@oro_rfp.provider.product_availability']]
+            - [setProductAvailabilityProvider, ['@oro_rfp.provider.product_rfp_availability']]
         tags:
             - { name: form.type_extension, alias: oro_rfp_frontend_request, extended_type: Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType }
 
@@ -92,6 +92,8 @@ services:
             - '@request_stack'
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
+        calls:
+            - ['setProductPriceCriteriaFactory', ['@oro_pricing.product_price_criteria_factory']]
         tags:
             - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
             - { name: oro_featuretogle.feature, feature: rfp }

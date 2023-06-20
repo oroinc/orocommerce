@@ -32,6 +32,8 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
     $updateAllButton: $(updateAllBtnTpl()),
 
+    massUpdate: true,
+
     /**
      * @inheritdoc
      */
@@ -42,6 +44,16 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
     constructor: function ShoppingListInlineEditingPlugin(...args) {
         ShoppingListInlineEditingPlugin.__super__.constructor.apply(this, args);
+    },
+
+    initialize: function(main, options) {
+        const {metadata} = options;
+
+        if (metadata.options.mass_update !== void 0) {
+            this.massUpdate = metadata.options.mass_update;
+        }
+
+        ShoppingListInlineEditingPlugin.__super__.initialize.call(this, main, options);
     },
 
     enable() {
@@ -65,11 +77,16 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         this.toggleUpdateAll();
     },
 
-    patchCellConstructor(column) {
-        ShoppingListInlineEditingPlugin.__super__.patchCellConstructor.call(this, column);
+    /**
+     * Overwrite some methods for cell prototype
+     * @param {Constructor} Cell
+     * @returns {Constructor}
+     */
+    cellPatcher(Cell) {
+        const PatchedCell = ShoppingListInlineEditingPlugin.__super__.cellPatcher.call(this, Cell);
         const inlineEditingPlugin = this;
 
-        const cell = column.get('cell').extend({
+        return PatchedCell.extend({
             delayedIconRender() {},
             enterEditModeIfNeeded(e) {
                 if (this.isEditable()) {
@@ -79,12 +96,10 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
                 e.stopPropagation();
             }
         });
-
-        column.set('cell', cell);
     },
 
     isEditable(cell) {
-        if (cell.model && cell.model.get('isConfigurable')) {
+        if (cell.model && cell.model.get('isConfigurable') || cell.disableEditing) {
             return false;
         }
 
@@ -96,6 +111,10 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
     },
 
     toggleUpdateAll() {
+        if (!this.massUpdate) {
+            return;
+        }
+
         if (!this.main.$el.find('.grid-header-cell-quantity [data-role="update-all"]').length) {
             this.main.$el.find('.grid-header-cell-quantity').append(this.$updateAllButton);
         }
@@ -117,7 +136,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         }
     },
 
-    saveItems(component) {
+    saveItems(component, routeParams = {}) {
         let componentsToSend = [];
         if (component instanceof BaseComponent && component.isChanged()) {
             componentsToSend = [component];
@@ -135,13 +154,15 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             data: componentsToSend.map(component => component.getServerUpdateData()),
             fetchData: _.extend(this.getGridFetchData(), {
                 appearanceType: this.main.collection.state.appearanceType
-            })
+            }),
+            gridName: this.options.gridName
         };
 
         componentsToSend.forEach(component => component.beforeSaveHook());
         const savePromise = this.saveApiAccessor.send({
             id: this.options.metadata.gridParams.shopping_list_id,
-            _wid: tools.createRandomUUID()
+            _wid: tools.createRandomUUID(),
+            ...routeParams
         }, sendData);
 
         const sendModels = componentsToSend.map(component => component.getModel());

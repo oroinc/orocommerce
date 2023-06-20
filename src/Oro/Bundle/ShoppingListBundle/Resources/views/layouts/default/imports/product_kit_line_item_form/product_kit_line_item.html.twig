@@ -1,12 +1,15 @@
 {% block __product_kit_line_item_form__wrapper_widget %}
     {% set class_prefix = 'product-kit-line-item-widget' %}
-
+    {% set extraFormId = form.vars.id ~ ''|uniqid %}
     {% do block|merge_context({
         class_prefix: class_prefix,
         form: form,
         product: product,
         shoppingList: shoppingList,
         shoppingLists: shoppingLists,
+        lineItem: lineItem ?? null,
+        productShoppingLists: productShoppingLists ?? [],
+        extraFormId: extraFormId
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -21,6 +24,7 @@
 {% block __product_kit_line_item_form__header_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-popup__header',
+        'data-dialog-extra-header-content': ''
     }) %}
     <div {{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
@@ -30,42 +34,103 @@
 {% block __product_kit_line_item_form__header_product_picture_widget %}
     {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
     {% set productName = product.names|localized_value %}
-    {% include '@OroAttachment/Twig/picture.html.twig' with {
-        sources: product_filtered_picture_sources(productImageData, 'product_small'),
-        picture_attrs: attr,
-        img_attrs: {class: "product-popup__header-img"}
-    } %}
+    <div class="product-item product-popup__header-img">
+        <div class="product-item__image-holder--aspect-ratio">
+            <div class="product-item__preview">
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    sources: product_filtered_picture_sources(productImageData, 'product_small'),
+                    picture_attrs: attr,
+                    picture_attrs: {
+                        class: 'product-item__preview-picture'
+                    },
+                    img_attrs: {
+                        class: 'product-item__preview-image'
+                    }
+                } %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block __product_kit_line_item_form__header_product_attributes_widget %}
-    <section {{ block('block_attributes') }}>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-attributes',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
-    </section>
+    </div>
 {% endblock %}
 
 {% block __product_kit_line_item_form__header_product_name_widget %}
-    <h4 {{ block('block_attributes') }}>
-        {{ product.names|localized_value|e }}
-    </h4>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'product-popup__header-title h1 h-normal',
+    }) %}
+
+    <p {{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+{% endblock %}
+
+{% block __product_kit_line_item_form__header_product_name_text_widget %}
+    {{ product.names|localized_value|e }}
 {% endblock %}
 
 {% block __product_kit_line_item_form__header_product_sku_widget %}
     <div {{ block('block_attributes') }}>
         {{ 'oro.product.frontend.index.item'|trans }}
-        <span class="product-item__sku-value">{{ product.sku }}</span>
+        <span>{{ product.sku }}</span>
     </div>
 {% endblock %}
 
-{% block __product_kit_line_item_form__form_start_widget %}
-    {% set form_route_name = 'oro_shopping_list_frontend_product_kit_line_item_create' %}
-    {% set form_route_parameters = form_route_parameters|merge({
-        productId: product.id,
-        shoppingListId: shoppingList is not empty ? shoppingList.id : null
-    }) %}
+{% block __product_kit_line_item_form__product_total_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__form fields-row',
-        'novalidate': 'novalidate'
+        'id': form.vars.id ~ 'totals',
+        '~class': ' product-totals',
+        'data-role': 'totals'
     }) %}
-    {{ parent_block_widget(block) }}
-    {{ form_widget(form._token) }}
+
+    <div {{ block('block_attributes') }}>
+        <div class="product-totals__wrapper">
+            <div class="product-totals__total-price">
+                <div class="product-totals__label">
+                    {{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.subtotal.label'|trans }}
+                </div>
+                <div id="{{ form.vars.id ~ 'amount' }}" class="product-totals__total-price-value">
+                    {% if form.vars.subtotal|default(null) is not null %}
+                        {{ form.vars.subtotal.amount|default(0)|oro_format_currency({'currency': form.vars.subtotal.currency|default(null)}) }}
+                    {% else %}
+                        {{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="product-totals__controls"
+             data-role="totals-controls"
+             data-page-component-view="oroproduct/js/app/views/product-unit-quantity-view"
+        >
+            <div class="product-item-quantity product-item-quantity--justify-end fields-row"
+                 data-extra-form="{{ extraFormId }}"
+            >
+                {{ form_widget(form.quantity, {label: false, attr: {
+                    'aria-label': 'oro.product.quantity.aria_label'|trans,
+                    'class': 'product-item-quantity__input',
+                    'data-floating-error': '',
+                    'data-role': 'quantity',
+                    'data-form-element': form.vars.id,
+                    'data-boundaries-element': '[role="dialog"]',
+                    'data-input-widget': 'number'
+                }}) }}
+                {{ form_widget(form.unit,{attr: {
+                    'class': 'product-item-quantity__choice',
+                    'data-role': 'unit',
+                    'data-form-element': form.vars.id,
+                }}) }}
+                <div class="fields-row-error">
+                    {{- form_errors(form.quantity) -}}
+                    {{- form_errors(form.unit) -}}
+                </div>
+            </div>
+            {{ block_widget(block) }}
+        </div>
+    </div>
 {% endblock %}
+

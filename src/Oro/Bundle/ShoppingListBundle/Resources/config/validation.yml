@@ -7,19 +7,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
                 groups: [product_kit_is_available_for_purchase]
             - EqualTo:
                 value: simple
-                groups: [product_kit_item_product_is_available_for_purchase]
+                groups:
+                    - product_kit_item_product_is_available_for_purchase
+                    - product_kit_item_line_item
         status:
             - EqualTo:
                 value: enabled
                 message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.status.enabled.message'
-                groups: [product_kit_is_available_for_purchase]
-            - EqualTo:
-                value: enabled
-                groups: [product_kit_item_product_is_available_for_purchase]
-        inventory_status:
-            - Expression:
-                expression: 'value.getId() === "in_stock"'
-                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.inventory_status.in_stock.message'
                 groups:
                     - product_kit_is_available_for_purchase
                     - product_kit_item_product_is_available_for_purchase
@@ -34,10 +28,13 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
                 groups: [product_kit_item_is_available_for_purchase]
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    constraints:
+        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice:
+            groups: [product_kit_item_product_is_available_for_purchase]
     properties:
         product:
             - Valid:
-                  groups: [product_kit_item_product_is_available_for_purchase]
+                groups: [product_kit_item_product_is_available_for_purchase]
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
@@ -49,18 +46,25 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     properties:
         product:
             - NotBlank:
-                groups: [create, update, add_product, add_product_kit_line_item]
+                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
-                groups: [create, update, add_product, add_product_kit_line_item]
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
-                value: 0
-                groups: [create, update, add_product, add_product_kit_line_item]
+                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
+            - Expression:
+                expression: "!this.product || this.product.isConfigurable() || this.quantity > 0"
+                message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
+                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
+                payload:
+                    jsValidation:
+                        type: Range
+                        options:
+                            min: 0
+                            max: 100000000
             - NotBlank:
-                groups: [create, update, add_product, add_product_kit_line_item]
+                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
         unit:
             - NotBlank:
-                groups: [create, update, add_product, add_product_kit_line_item]
+                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
         shoppingList:
             - NotBlank:
                 groups: [create, update]
@@ -69,11 +73,12 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                 max: 2048
                 groups: [Default, create, update, add_product, add_product_kit_line_item]
         kitItemLineItems:
-            - Valid: ~
+            - Valid:
+                groups: [add_product_kit_line_item]
         checksum:
             - NotNull: ~
             - Length:
-                  max: 40
+                max: 40
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
@@ -94,10 +99,11 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         subtotalValue:
             - Type:
                 type: numeric
-                groups: [create, update, add_product]
+                groups: [create, update, add_product, add_product_kit_line_item]
             - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 minMessage: 'oro.shoppinglist.subtotal.min.error.label'
                 maxMessage: 'oro.shoppinglist.subtotal.max.error.label'
+                groups: [Default, add_product_kit_line_item]
 
 Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
     constraints:
@@ -110,29 +116,81 @@ Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
 Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-              path: quantity
+            path: quantity
+            groups: [Default, create, update, add_product_kit_line_item]
     properties:
         lineItem:
-            - NotNull: ~
+            - NotNull:
+                groups: [Default, create, update, add_product_kit_line_item]
         kitItem:
-            - NotNull: ~
+            - NotNull:
+                groups: [Default, create, update, add_product_kit_line_item]
         product:
-            - NotNull: ~
-        quantity:
-            - Type: float
+            - NotNull:
+                groups: [Default, create, update, add_product_kit_line_item]
             - Expression:
-                  expression: 'value && this.product'
-                  message: 'oro.shoppinglist.product_kit_line_item.quantity.not_blank.message'
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
-            - Range:
-                  maxPropertyPath: 'kitItem.maximumQuantity'
-                  minPropertyPath: 'kitItem.minimumQuantity'
+                expression: 'this.kitItem && this.kitItem.getProducts().contains(value)'
+                message: 'oro.shoppinglist.product_kit_item_line_item.product.invalid.message'
+                groups: [Default, create, update, add_product_kit_line_item]
+            - AtLeastOneOf:
+                constraints:
+                    - Expression:
+                        expression: 'value && value.isEnabled()'
+                    - Expression:
+                        expression: 'this.kitItem && this.kitItem.optional'
+                message: 'oro.shoppinglist.product_kit_item_line_item.product.status_required.message'
+                includeInternalMessages: false
+                groups: [Default, create, update, add_product_kit_line_item]
+            - AtLeastOneOf:
+                constraints:
+                    - Expression:
+                        expression: 'value && value.isEnabled()'
+                    - Expression:
+                        expression: 'this.kitItem && !this.kitItem.optional'
+                message: 'oro.shoppinglist.product_kit_item_line_item.product.status_optional.message'
+                includeInternalMessages: false
+                groups: [Default, create, update, add_product_kit_line_item]
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidEmbeddable:
+                embeddedGroups: [product_kit_item_line_item]
+        quantity:
+            - Expression:
+                expression: 'value && this.product'
+                message: 'oro.shoppinglist.product_kit_item_line_item.quantity.not_blank.message'
+                groups: [Default, create, update, add_product_kit_line_item]
+            - Type:
+                type: float
+                groups: [Default, create, update, add_product_kit_line_item]
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                groups: [Default, create, update, add_product_kit_line_item]
+            - Sequentially:
+                payload:
+                    jsValidation:
+                        type: Range
+                        options:
+                            minPropertyPath: 'kitItem.minimumQuantity'
+                            maxPropertyPath: 'kitItem.maximumQuantity'
+                constraints:
+                    - Expression:
+                        expression: 'this.kitItem or !value'
+                        message: 'oro.shoppinglist.product_kit_item_line_item.quantity.kit_item.not_blank.message'
+                    - Range:
+                        minPropertyPath: 'kitItem.minimumQuantity'
+                        maxPropertyPath: 'kitItem.maximumQuantity'
+                groups: [Default, create, update, add_product_kit_line_item]
         unit:
-            - NotNull: ~
+            - NotNull:
+                groups: [Default, create, update, add_product_kit_line_item]
+            - Expression:
+                expression: 'this.kitItem && value == this.kitItem.productUnit'
+                message: 'oro.shoppinglist.product_kit_item_line_item.unit.invalid.message'
+                groups: [Default, create, update, add_product_kit_line_item]
         sortOrder:
-            - Type: integer
+            - Type:
+                type: integer
+                groups: [Default, create, update, add_product_kit_line_item]
             - Range:
-                  # Minimum of 4-byte integer value.
-                  min: -2147483648
-                  # Maximum of 4-byte integer value.
-                  max: 2147483647
+                # Minimum of 4-byte integer value.
+                min: -2147483648
+                # Maximum of 4-byte integer value.
+                max: 2147483647
+                groups: [Default, create, update, add_product_kit_line_item]

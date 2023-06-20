@@ -6,7 +6,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedDTO;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,6 +14,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactory;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -55,6 +56,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
             $this->frontendProductPricesDataProvider,
             $this->lineItemNotPricedSubtotalProvider
         );
+        $this->type->setLineItemsHolderFactory(new ProductLineItemsHolderFactory());
 
         $this->productKit = (new ProductStub())->setId(42);
         $this->kitItemProduct1 = (new ProductStub())->setId(142);
@@ -92,6 +94,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->assertFormOptionEqual(LineItem::class, 'data_class', $form);
 
         $this->assertFormContainsField('quantity', $form);
+        $this->assertFormOptionEqual([], 'constraints', $form->get('quantity'));
         $this->assertFormContainsField('unit', $form);
         $this->assertFormContainsField('kitItemLineItems', $form);
         $this->assertFormOptionEqual(false, 'required', $form->get('kitItemLineItems'));
@@ -102,6 +105,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         self::assertNull($form->getData());
         self::assertNull($form->get('quantity')->getData());
         self::assertNull($form->get('unit')->getData());
+        self::assertNull($form->get('notes')->getData());
         self::assertNull($form->get('kitItemLineItems')->getData());
 
         $formView = $form->createView();
@@ -125,7 +129,8 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
             ->setProduct($this->productKit)
             ->setQuantity(42.1)
             ->setUnit($this->productUnitItem)
-            ->addKitItemLineItem($kitItemLineItem);
+            ->addKitItemLineItem($kitItemLineItem)
+            ->setNotes('sample notes');
 
         $productPrices = [
             $this->productKit->getId() => ['sample_key1' => 'sample_value1'],
@@ -142,7 +147,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->lineItemNotPricedSubtotalProvider
             ->expects(self::once())
             ->method('getSubtotal')
-            ->with(new LineItemsNotPricedDTO(new ArrayCollection([$lineItem])))
+            ->with((new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection([$lineItem])))
             ->willReturn($subtotal);
 
         $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
@@ -150,8 +155,10 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         $this->assertFormOptionEqual(LineItem::class, 'data_class', $form);
 
         $this->assertFormContainsField('quantity', $form);
+        $this->assertFormOptionEqual([], 'constraints', $form->get('quantity'));
         $this->assertFormContainsField('unit', $form);
         $this->assertFormContainsField('kitItemLineItems', $form);
+        $this->assertFormContainsField('notes', $form);
         $this->assertFormOptionEqual(false, 'required', $form->get('kitItemLineItems'));
         $this->assertFormOptionEqual(false, 'allow_add', $form->get('kitItemLineItems'));
         $this->assertFormOptionEqual(false, 'allow_delete', $form->get('kitItemLineItems'));
@@ -160,6 +167,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         self::assertSame($lineItem, $form->getData());
         self::assertSame($lineItem->getQuantity(), $form->get('quantity')->getData());
         self::assertSame($lineItem->getUnit(), $form->get('unit')->getData());
+        self::assertSame($lineItem->getNotes(), $form->get('notes')->getData());
         self::assertEquals(new ArrayCollection([$kitItemLineItem]), $form->get('kitItemLineItems')->getData());
 
         $formView = $form->createView();
@@ -169,6 +177,55 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
         self::assertArrayHasKey('subtotal', $formView->vars);
         self::assertSame($subtotal, $formView->vars['subtotal']);
+    }
+
+    public function testBuildFormSortedKitItems(): void
+    {
+        $kitItem1 = (new ProductKitItem())
+            ->setSortOrder(3)
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1))
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct2));
+        $kitItem2 = (new ProductKitItem())
+            ->setSortOrder(2)
+            ->setOptional(true)
+            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1));
+        $kitItemLineItem1 = (new ProductKitItemLineItem())
+            ->setProduct($this->kitItemProduct1)
+            ->setSortOrder(1)
+            ->setKitItem($kitItem1);
+        $kitItemLineItem2 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem2);
+        $lineItem = (new LineItem())
+            ->setProduct($this->productKit)
+            ->setQuantity(42.1)
+            ->setUnit($this->productUnitItem)
+            ->addKitItemLineItem($kitItemLineItem1)
+            ->addKitItemLineItem($kitItemLineItem2);
+
+        $productPrices = [
+            $this->productKit->getId() => ['sample_key1' => 'sample_value1'],
+            $this->kitItemProduct1->getId() => ['sample_key2' => 'sample_value2'],
+            $this->kitItemProduct2->getId() => ['sample_key3' => 'sample_value3'],
+        ];
+        $this->frontendProductPricesDataProvider
+            ->expects(self::once())
+            ->method('getAllPricesForProducts')
+            ->with([$this->productKit, $this->kitItemProduct1, $this->kitItemProduct2, $this->kitItemProduct1])
+            ->willReturn($productPrices);
+
+        $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
+
+        self::assertSame($lineItem, $form->getData());
+        self::assertEquals(
+            new ArrayCollection([$kitItemLineItem1, $kitItemLineItem2]),
+            $form->get('kitItemLineItems')->getData()
+        );
+
+        $formView = $form->createView();
+
+        $kitItemLineItemsFormViews = $formView['kitItemLineItems']->children;
+        self::assertEquals($kitItemLineItem2, $kitItemLineItemsFormViews[0]->vars['data']);
+        self::assertEquals($kitItemLineItem1, $kitItemLineItemsFormViews[1]->vars['data']);
     }
 
     public function testSubmitWhenHasLineItem(): void
@@ -187,11 +244,13 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
 
+        $notes = 'sample notes';
         $form->submit(
             [
                 'quantity' => 42.2,
                 'unit' => 'each',
                 'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]],
+                'notes' => $notes,
             ]
         );
 
@@ -199,6 +258,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
         self::assertSame(42.2, $lineItem->getQuantity());
         self::assertEquals($this->productUnitEach, $lineItem->getUnit());
+        self::assertEquals($notes, $lineItem->getNotes());
         self::assertEquals($this->kitItemProduct2, $kitItemLineItem->getProduct());
         self::assertEquals(10.10, $kitItemLineItem->getQuantity());
     }

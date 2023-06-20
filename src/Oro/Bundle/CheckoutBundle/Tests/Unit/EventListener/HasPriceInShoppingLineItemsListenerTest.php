@@ -12,6 +12,7 @@ use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -20,6 +21,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -50,17 +52,21 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
      */
     private $listener;
 
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
+
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $this->listener = new HasPriceInShoppingLineItemsListener(
             $this->productPriceProvider,
             $this->userCurrencyManager,
             $this->scopeCriteriaRequestHandler
         );
+        $this->listener->setProductPriceCriteriaFactory($this->productPriceCriteriaFactory);
     }
 
     /**
@@ -139,7 +145,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
         $context = new ActionData(['checkout' => $checkout]);
 
         $this->userCurrencyManager
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn(self::CURRENCY);
 
@@ -149,26 +155,31 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getPriceScopeCriteria')
             ->willReturn($criteria);
 
+        $productsPricesCriteria = [
+            new ProductPriceCriteria(
+                $lineItems[0]->getProduct(),
+                $lineItems[0]->getProductUnit(),
+                $lineItems[0]->getQuantity(),
+                self::CURRENCY
+            ),
+            new ProductPriceCriteria(
+                $lineItems[1]->getProduct(),
+                $lineItems[1]->getProductUnit(),
+                $lineItems[1]->getQuantity(),
+                self::CURRENCY
+            ),
+        ];
+
+        $this->productPriceCriteriaFactory
+            ->expects(self::once())
+            ->method('createListFromProductLineItems')
+            ->with(new ArrayCollection([$lineItems[0],$lineItems[1]]), self::CURRENCY)
+            ->willReturn($productsPricesCriteria);
+
         $this->productPriceProvider
             ->expects($this->once())
             ->method('getMatchedPrices')
-            ->with(
-                $this->callback(function ($productsPricesCriteria) use ($lineItems) {
-                    /** @var ProductPriceCriteria[] $productsPricesCriteria */
-                    $this->assertCount(2, $productsPricesCriteria);
-                    $this->assertEquals($lineItems[0]->getProduct(), $productsPricesCriteria[0]->getProduct());
-                    $this->assertEquals($lineItems[1]->getProduct(), $productsPricesCriteria[1]->getProduct());
-                    $this->assertEquals($lineItems[0]->getProductUnit(), $productsPricesCriteria[0]->getProductUnit());
-                    $this->assertEquals($lineItems[1]->getProductUnit(), $productsPricesCriteria[1]->getProductUnit());
-                    $this->assertEquals($lineItems[0]->getQuantity(), $productsPricesCriteria[0]->getQuantity());
-                    $this->assertEquals($lineItems[1]->getQuantity(), $productsPricesCriteria[1]->getQuantity());
-                    $this->assertEquals(self::CURRENCY, $productsPricesCriteria[0]->getCurrency());
-                    $this->assertEquals(self::CURRENCY, $productsPricesCriteria[1]->getCurrency());
-
-                    return true;
-                }),
-                $criteria
-            )
+            ->with($productsPricesCriteria, $criteria)
             ->willReturn($prices);
 
         return new ExtendableConditionEvent($context);

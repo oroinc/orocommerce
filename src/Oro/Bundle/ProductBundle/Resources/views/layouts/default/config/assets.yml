@@ -34,6 +34,9 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/product-action-config.scss'
         - 'bundles/oroproduct/default/scss/variables/oro-more-info-toggler-config.scss'
 
+        # Product Kit Variables
+        - 'bundles/oroproduct/default/scss/variables/product-kit/product-kit-line-items-config.scss'
+
         - 'bundles/oroproduct/default/scss/components/filter-controls.scss'
         - 'bundles/oroproduct/default/scss/components/oro-more-info-toggler.scss'
         - 'bundles/oroproduct/default/scss/components/quick-order-add/quick-order-add.scss'
@@ -61,5 +64,11 @@ styles:
 
         # Product kit styles
         - 'bundles/oroproduct/default/scss/components/product-kit/product-kit-view.scss'
+        - 'bundles/oroproduct/default/scss/components/product-kit/product-kit-line-items.scss'
 
         - 'bundles/oroproduct/default/scss/styles.scss'
+
+product_kids_5_1_styles:
+    inputs:
+        # Variables
+        - 'bundles/oroproduct/default/scss/variables/product-item-config.scss'

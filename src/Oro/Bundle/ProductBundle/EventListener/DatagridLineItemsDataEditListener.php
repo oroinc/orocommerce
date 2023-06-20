@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\DataGrid\Property\ProductUnitsProperty;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 
 /**
@@ -10,6 +10,18 @@ use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
  */
 class DatagridLineItemsDataEditListener
 {
+    private ProductUnitsProperty $productUnitsProperty;
+
+    public function __construct()
+    {
+        $this->productUnitsProperty = new ProductUnitsProperty();
+    }
+
+    public function setProductUnitsProperty(ProductUnitsProperty $productUnitsProperty): void
+    {
+        $this->productUnitsProperty = $productUnitsProperty;
+    }
+
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         foreach ($event->getLineItems() as $lineItem) {
@@ -18,24 +30,8 @@ class DatagridLineItemsDataEditListener
             // Units list is needed for units dropdown.
             $event->addDataForLineItem(
                 $lineItem->getEntityIdentifier(),
-                ['units' => $this->getProductUnitsList($product)]
+                ['units' => $this->productUnitsProperty->getProductUnits($product)]
             );
         }
-    }
-
-    private function getProductUnitsList(Product $product): array
-    {
-        $list = [];
-        foreach ($product->getUnitPrecisions() as $unitPrecision) {
-            if (!$unitPrecision->isSell()) {
-                continue;
-            }
-
-            $list[$unitPrecision->getUnit()->getCode()] = [
-                'precision' => $unitPrecision->getPrecision(),
-            ];
-        }
-
-        return $list;
     }
 }

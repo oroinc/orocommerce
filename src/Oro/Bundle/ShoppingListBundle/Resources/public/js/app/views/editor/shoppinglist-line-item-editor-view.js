@@ -98,9 +98,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
             !select2.opened()
         ) {
             // original focusout event's call stack has preserved
-            _.defer(() => {
-                this.trigger('cancelAction');
-            });
+            setTimeout(() => this.trigger('cancelAction'));
         }
     },
 

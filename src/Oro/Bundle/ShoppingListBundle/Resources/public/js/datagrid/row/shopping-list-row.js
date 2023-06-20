@@ -1,6 +1,18 @@
 import Row from 'orodatagrid/js/datagrid/row';
 
 const ShoppingListRow = Row.extend({
+    /**
+     * Defined map of custom cell constructors of cell types or cell name
+     *
+     * {
+     *  'cell-type': CustomCellConstructor,
+     *  'cell-name': NewCustomCellConstructor
+     *  ...
+     * }
+     * @property {object}
+     */
+    cellConstructorMap: {},
+
     constructor: function ShoppingListRow(options) {
         ShoppingListRow.__super__.constructor.call(this, options);
     },
@@ -21,7 +33,7 @@ const ShoppingListRow = Row.extend({
                 const column = definitionColumn || options.model;
                 const cellOptions = rowView.getConfiguredCellOptions(column);
                 cellOptions.model = rowView.model;
-                const Cell = column.get('cell');
+                const Cell = rowView.columnCellMapping(column);
                 return new Cell(cellOptions);
             };
         }
@@ -29,8 +41,45 @@ const ShoppingListRow = Row.extend({
         ShoppingListRow.__super__.initialize.call(this, options);
     },
 
+    /**
+     * Match and replace cell view in depends of map configuration `cellTypesMap` and `cellNamesMap`
+     *
+     * @param {object} column
+     * @returns {object}
+     */
+    columnCellMapping(column) {
+        const {type} = column.get('metadata') || {};
+
+        if (column.get('name') in this.cellConstructorMap) {
+            return this.getCellConstructor(column.get('name'), column);
+        } else if (type in this.cellConstructorMap) {
+            return this.getCellConstructor(type, column);
+        } else {
+            return column.get('cell');
+        }
+    },
+
+    /**
+     * Get new cell constructor from mapping
+     * Get patched cell constructor
+     *
+     * @param {string} name
+     * @param {object} column
+     * @returns {Constructor}
+     */
+    getCellConstructor(name, column) {
+        const cellPatcher = column.get('cellPatcher');
+
+        if (cellPatcher && typeof cellPatcher === 'function') {
+            // Call callback from inline editing plugin to get actually patched version for mapped cell constructor
+            return cellPatcher(this.cellConstructorMap[name]);
+        }
+
+        return this.cellConstructorMap[name];
+    },
+
     renderItem(column) {
-        const cellView = Row.__super__.renderItem.call(this, column);
+        const cellView = ShoppingListRow.__super__.renderItem.call(this, column);
         const renderColumnName = this.model.get('renderColumnName');
         if (renderColumnName) {
             if (column.get('name') === renderColumnName) {

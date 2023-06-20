@@ -8,8 +8,10 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -49,6 +51,8 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
      */
     protected $priceScopeCriteriaFactory;
 
+    private ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory = null;
+
     public function __construct(
         RequestStack $requestStack,
         ProductPriceProviderInterface $productPriceProvider,
@@ -57,6 +61,12 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         $this->requestStack = $requestStack;
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+    }
+
+    public function setProductPriceCriteriaFactory(
+        ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+    ): void {
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -101,18 +111,13 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         $productsPriceCriteria = [];
         foreach ($order->getLineItems()->toArray() as $lineItem) {
             /** @var OrderLineItem $lineItem */
-            try {
-                $criteria = new ProductPriceCriteria(
-                    $lineItem->getProduct(),
-                    $lineItem->getProductUnit(),
-                    $lineItem->getQuantity(),
-                    $order->getCurrency()
-                );
-            } catch (\InvalidArgumentException $e) {
+            $productPriceCriteria = $this->createProductPriceCriteria($lineItem, $order->getCurrency());
+            if ($productPriceCriteria === null) {
                 continue;
             }
-            $lineItems[$criteria->getIdentifier()][] = $lineItem;
-            $productsPriceCriteria[] = $criteria;
+
+            $lineItems[$productPriceCriteria->getIdentifier()][] = $lineItem;
+            $productsPriceCriteria[] = $productPriceCriteria;
         }
         if (count($productsPriceCriteria) === 0) {
             return;
@@ -133,5 +138,26 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         $request = $this->requestStack->getCurrentRequest();
 
         return $this->isFeaturesEnabled() && $request && $request->get(DataStorageInterface::STORAGE_KEY);
+    }
+
+    private function createProductPriceCriteria(
+        ProductLineItemInterface $lineItem,
+        ?string $currency
+    ): ?ProductPriceCriteria {
+        if ($this->productPriceCriteriaFactory === null) {
+            // BC fallback.
+            try {
+                return new ProductPriceCriteria(
+                    $lineItem->getProduct(),
+                    $lineItem->getProductUnit(),
+                    $lineItem->getQuantity(),
+                    $currency
+                );
+            } catch (\InvalidArgumentException $e) {
+                return null;
+            }
+        } else {
+            return $this->productPriceCriteriaFactory->createFromProductLineItem($lineItem, $currency);
+        }
     }
 }

@@ -5,12 +5,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LineItemCollectionValidatorTest extends ConstraintValidatorTestCase
 {
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
+    private EventDispatcherInterface|MockObject $eventDispatcher;
 
     protected function setUp(): void
     {
@@ -55,6 +56,28 @@ class LineItemCollectionValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation('testMessage')
             ->atPath('property.path.product.testSku.item')
+            ->assertRaised();
+    }
+
+
+    public function testValidateBuildViolationWhenHasChecksum(): void
+    {
+        $this->eventDispatcher->expects($this->once())
+            ->method('hasListeners')
+            ->willReturn(true);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->willReturnCallback(function (LineItemValidateEvent $event) {
+                $event->addErrorByUnit('testSku', 'item', 'testMessage', 'sampleChecksum');
+
+                return $event;
+            });
+
+        $constraint = $this->createMock(LineItemCollection::class);
+        $this->validator->validate([], $constraint);
+
+        $this->buildViolation('testMessage')
+            ->atPath('property.path.product.testSku.item.sampleChecksum')
             ->assertRaised();
     }
 }

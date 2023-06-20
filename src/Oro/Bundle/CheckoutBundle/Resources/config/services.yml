@@ -546,6 +546,8 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+        calls:
+            - ['setProductPriceCriteriaFactory', ['@oro_pricing.product_price_criteria_factory']]
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
 

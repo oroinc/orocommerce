@@ -13,6 +13,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProviderInterface;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -43,6 +44,9 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     /** @var ProductAvailabilityProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productAvailabilityProvider;
 
+    /** @var ProductRFPAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRFPAvailabilityProvider;
+
     /** @var RFPRequest */
     private $entity;
 
@@ -62,6 +66,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->session = $this->createMock(Session::class);
         $this->flashBag = $this->createMock(FlashBagInterface::class);
         $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProviderInterface::class);
+        $this->productRFPAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);
 
         $requestStack = $this->createMock(RequestStack::class);
         $requestStack->expects($this->any())
@@ -160,6 +165,59 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertEquals($qty, $requestProductItem->getQuantity());
     }
 
+    public function testBuildFormWithProductRFPAvailabilityProvider(): void
+    {
+        $productId = 123;
+        $sku = 'TEST';
+        $qty = 3;
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ]
+            ]
+        ];
+
+        $productUnit = $this->getProductUnit('item');
+        $product = $this->getProduct($sku, $productUnit);
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsFindProduct($productId, $product);
+
+        $this->productRFPAvailabilityProvider
+            ->expects(self::once())
+            ->method('isProductApplicableForRFP')
+            ->with($product)
+            ->willReturn(true);
+
+        $this->productRFPAvailabilityProvider
+            ->expects(self::once())
+            ->method('isProductAllowedForRFP')
+            ->with($product)
+            ->willReturn(true);
+
+        $this->extension->setProductAvailabilityProvider($this->productRFPAvailabilityProvider);
+        $this->extension->buildForm($this->getFormBuilder(), []);
+
+        $this->assertCount(1, $this->entity->getRequestProducts());
+        /** @var RequestProduct $requestProduct */
+        $requestProduct = $this->entity->getRequestProducts()->first();
+
+        $this->assertEquals($product, $requestProduct->getProduct());
+        $this->assertEquals($product->getSku(), $requestProduct->getProductSku());
+
+        $this->assertCount(1, $requestProduct->getRequestProductItems());
+        /** @var RequestProductItem $requestProductItem */
+        $requestProductItem = $requestProduct->getRequestProductItems()->first();
+
+        $this->assertEquals($productUnit, $requestProductItem->getProductUnit());
+        $this->assertEquals($productUnit->getCode(), $requestProductItem->getProductUnitCode());
+        $this->assertEquals($qty, $requestProductItem->getQuantity());
+    }
+
     public function testBuildFormNotAllowedForRFPProduct(): void
     {
         $productId = 123;
@@ -194,6 +252,46 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
+        $this->extension->buildForm($this->getFormBuilder(), []);
+
+        $this->assertEmpty($this->entity->getRequestProducts());
+    }
+
+    public function testBuildFormWithProductRFPAvailabilityProviderNotAllowedForRFPProduct(): void
+    {
+        $productId = 123;
+        $sku = 'TEST';
+        $qty = 3;
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_ID_KEY => $productId,
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ]
+            ]
+        ];
+
+        $productUnit = $this->getProductUnit('item');
+        $product = $this->getProduct($sku, $productUnit);
+
+        $this->expectsGetStorageFromRequest();
+        $this->expectsGetDataFromStorage($data);
+        $this->expectsFindProduct($productId, $product);
+
+        $this->productRFPAvailabilityProvider
+            ->expects(self::once())
+            ->method('isProductApplicableForRFP')
+            ->with($product)
+            ->willReturn(true);
+
+        $this->productRFPAvailabilityProvider
+            ->expects(self::once())
+            ->method('isProductAllowedForRFP')
+            ->with($product)
+            ->willReturn(false);
+
+        $this->extension->setProductAvailabilityProvider($this->productRFPAvailabilityProvider);
         $this->extension->buildForm($this->getFormBuilder(), []);
 
         $this->assertEmpty($this->entity->getRequestProducts());

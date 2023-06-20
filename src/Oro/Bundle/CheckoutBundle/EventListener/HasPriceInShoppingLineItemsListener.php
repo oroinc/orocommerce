@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
@@ -33,6 +34,8 @@ class HasPriceInShoppingLineItemsListener
      */
     private $scopeCriteriaRequestHandler;
 
+    private ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory = null;
+
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
@@ -41,6 +44,12 @@ class HasPriceInShoppingLineItemsListener
         $this->productPriceProvider = $productPriceProvider;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
+    }
+
+    public function setProductPriceCriteriaFactory(
+        ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+    ): void {
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $conditionEvent)
@@ -102,13 +111,21 @@ class HasPriceInShoppingLineItemsListener
      */
     private function isThereAPricePresent(Collection $lineItems)
     {
-        $productsPricesCriteria = [];
+        if ($this->productPriceCriteriaFactory === null) {
+            // BC fallback.
+            $productsPricesCriteria = [];
 
-        foreach ($lineItems as $lineItem) {
-            $productsPricesCriteria[] = new ProductPriceCriteria(
-                $lineItem->getProduct(),
-                $lineItem->getProductUnit(),
-                $lineItem->getQuantity(),
+            foreach ($lineItems as $lineItem) {
+                $productsPricesCriteria[] = new ProductPriceCriteria(
+                    $lineItem->getProduct(),
+                    $lineItem->getProductUnit(),
+                    $lineItem->getQuantity(),
+                    $this->userCurrencyManager->getUserCurrency()
+                );
+            }
+        } else {
+            $productsPricesCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+                $lineItems,
                 $this->userCurrencyManager->getUserCurrency()
             );
         }

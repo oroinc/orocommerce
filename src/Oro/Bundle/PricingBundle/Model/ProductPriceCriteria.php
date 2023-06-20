@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * A model for storing product price data.
+ * A model for storing product price criteria data.
  */
 class ProductPriceCriteria
 {

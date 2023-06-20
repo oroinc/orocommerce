@@ -3,7 +3,7 @@ oro:
         validators:
             product_kit_item_collection_is_available_for_purchase:
                 required_not_available: 'Product kit {{ product_kit_sku }} is not available for purchase: {{ reason }}'
-                no_available: 'Product kit {{ product_kit_sku }} is not available for purchase: there are no available kit items'
+                no_available: 'Product kit is not available for purchase: there are no available kit items'
             product_kit_item_product_collection_is_available_for_purchase:
                 message: 'There are no products available for purchase in kit item {{ product_kit_item_label }}'
                 empty_message: 'There are no products available for purchase in kit item'
@@ -12,17 +12,13 @@ oro:
 
         lineitem:
             already_exists: "Line Item with the same product and unit already exists"
+            quantity.greater_than_zero: "Quantity must be greater than 0"
 
         subtotal:
             max.error.label: "Shopping list subtotal amount cannot exceed the {{ limit }}."
             min.error.label: "Shopping list subtotal amount cannot be less than {{ limit }}."
 
         create_not_allowed: "It is not allowed to create a new shopping list."
-
-        product_kit_line_item:
-            quantity:
-                not_blank:
-                    message: 'Quantity cannot be empty'
 
         product_kit_is_available_for_purchase:
             product:
@@ -35,10 +31,31 @@ oro:
                 inventory_status:
                     in_stock:
                         message: "This product is not in stock."
+                has_price:
+                    message: "This product has no price value."
             line_item:
                 kit_item_line_items:
                     count:
                         min_message: "This product kit does not contain any items available for purchase."
+
+        product_kit_line_item:
+            general_error.message: "The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list."
+
+        product_kit_item_line_item:
+            quantity:
+                not_blank:
+                    message: 'Quantity cannot be empty'
+                kit_item:
+                    not_blank:
+                        message: 'Quantity cannot be validated without Product Kit Item'
+            product:
+                status_optional.message: 'Original selection no longer available'
+                status_required.message: 'Selection required'
+                invalid:
+                    message: 'The selected product is not allowed'
+            unit:
+                invalid:
+                    message: 'The selected product unit is not allowed'
 
     product_unavailable: "This item is unavailable"
     non_valid_precision: "This value should be decimal with a precision {{ precision }}"

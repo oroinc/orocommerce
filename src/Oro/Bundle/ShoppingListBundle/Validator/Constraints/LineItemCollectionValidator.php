@@ -41,7 +41,7 @@ class LineItemCollectionValidator extends ConstraintValidator
         if ($event->hasErrors()) {
             foreach ($event->getErrors() as $error) {
                 $this->context->buildViolation($error['message'])
-                    ->atPath(sprintf('product.%s.%s', $error['sku'], $error['unit']))
+                    ->atPath($this->createViolationPath($error))
                     ->addViolation();
             }
         }
@@ -49,10 +49,21 @@ class LineItemCollectionValidator extends ConstraintValidator
         if ($event->hasWarnings()) {
             foreach ($event->getWarnings() as $warning) {
                 $this->context->buildViolation($warning['message'])
-                    ->atPath(sprintf('product.%s.%s', $warning['sku'], $warning['unit']))
+                    ->atPath($this->createViolationPath($warning))
                     ->setCause('warning')
                     ->addViolation();
             }
         }
+    }
+
+    private function createViolationPath(array $violationData): string
+    {
+        $path = sprintf('product.%s.%s', $violationData['sku'], $violationData['unit']);
+
+        if (!empty($violationData['checksum'])) {
+            $path .= '.'. $violationData['checksum'];
+        }
+
+        return $path;
     }
 }

@@ -2,47 +2,61 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Pricing;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class PriceMatcherTest extends \PHPUnit\Framework\TestCase
+class PriceMatcherTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $provider;
+    private MatchingPriceProvider|MockObject $provider;
 
-    /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceScopeCriteriaFactory;
+    private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private LoggerInterface|MockObject $logger;
 
-    /** @var PriceMatcher */
-    private $matcher;
+    private PriceMatcher $matcher;
+
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
+
+    private OrderLineItem|MockObject $orderLineItem;
+
+    private Order|MockObject $order;
 
     protected function setUp(): void
     {
         $this->provider = $this->createMock(MatchingPriceProvider::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->order = $this->createMock(Order::class);
+        $this->orderLineItem = $this->createMock(OrderLineItem::class);
+        $this->productPriceCriteria  = $this->createMock(ProductPriceCriteria::class);
 
         $this->matcher = new PriceMatcher(
             $this->provider,
             $this->priceScopeCriteriaFactory,
             $this->logger
         );
+
+        $this->matcher->setProductPriceCriteriaFactory($this->productPriceCriteriaFactory);
     }
 
-    public function testGetMatchingPrices()
+    public function testGetMatchingPrices(): void
     {
         $lineItemQuantity = 5;
         $productUnitCode = 'code';
@@ -87,13 +101,13 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         ];
 
         $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->priceScopeCriteriaFactory->expects($this->once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->with($order)
             ->willReturn($scopeCriteria);
 
         $matchedPrices = ['matched', 'prices'];
-        $this->provider->expects($this->once())
+        $this->provider->expects(self::once())
             ->method('getMatchingPrices')
             ->with($expectedLineItemsArray, $scopeCriteria)
             ->willReturn($matchedPrices);
@@ -101,44 +115,121 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         $this->matcher->getMatchingPrices($order);
     }
 
+    public function testThatOrderLinesAreFilledWithCurrencyAndValue(): void
+    {
+        $identifier = 'identifier';
+
+        $orderLineItems = new ArrayCollection([$this->orderLineItem]);
+
+        $this->order->method('getLineItems')->willReturn($orderLineItems);
+        $this->order->method('getCurrency')->willReturn('USD');
+        $this->productPriceCriteria->method('getIdentifier')->willReturn($identifier);
+        $this->provider->method('getMatchingPrices')->willReturn([
+            $identifier => [
+                'currency' => 'USD',
+                'value' => 123
+            ]
+        ]);
+
+        $this->productPriceCriteriaFactory->expects(self::once())
+            ->method('createListFromProductLineItems')
+            ->with(
+                self::equalTo([$this->orderLineItem]),
+                self::equalTo('USD')
+            )
+            ->willReturn([$this->productPriceCriteria]);
+
+        $this->orderLineItem->expects(self::once())->method('setCurrency')->with('USD');
+        $this->orderLineItem->expects(self::once())->method('setValue')->with('123');
+
+        $this->matcher->addMatchingPrices($this->order);
+    }
+
+    public function testThatOrderLineNotFilledWithValuesWhenProductPriceCriteriaIsNotCreated(): void
+    {
+        $identifier = 'identifier';
+
+        $orderLineItems = new ArrayCollection([$this->orderLineItem]);
+
+        $this->order->method('getLineItems')->willReturn($orderLineItems);
+        $this->provider->method('getMatchingPrices')->willReturn([
+            $identifier => [
+                'currency' => 'USD',
+                'value' => 123
+            ]
+        ]);
+
+        $this->productPriceCriteriaFactory->expects(self::once())
+            ->method('createListFromProductLineItems')
+            ->willReturn([]);
+        $this->orderLineItem->expects(self::never())->method('setCurrency');
+        $this->orderLineItem->expects(self::never())->method('setValue');
+
+        $this->matcher->addMatchingPrices($this->order);
+    }
+
+    public function testThatOrderLineNotFilledWithValuesWhenIdentifiersAreDifferent(): void
+    {
+        $identifier1 = 'identifier1';
+        $identifier2 = 'identifier2';
+
+        $this->order->method('getLineItems')->willReturn(
+            new ArrayCollection([$this->orderLineItem])
+        );
+        $this->provider->method('getMatchingPrices')->willReturn([
+            $identifier1 => []
+        ]);
+        $this->productPriceCriteria->method('getIdentifier')->willReturn($identifier2);
+
+        $this->productPriceCriteriaFactory->expects(self::once())
+            ->method('createListFromProductLineItems')
+            ->willReturn([$this->productPriceCriteria]);
+
+        $this->orderLineItem->expects(self::never())->method('setCurrency');
+        $this->orderLineItem->expects(self::never())->method('setValue');
+
+        $this->matcher->addMatchingPrices($this->order);
+    }
+
     /**
-     * @dataProvider orderEventAddMatchedPricesDataProvider
+     * @dataProvider orderEventAddMatchedPricesWhenNoProductPriceCriteriaFactoryDataProvider
      */
-    public function testAddMatchedPrices(
+    public function testAddMatchedPricesWhenNoProductPriceCriteriaFactory(
         array $orderLineItems = [],
         array $matchedPrices = [],
         array $expectedLineItemsPrices = []
-    ) {
+    ): void {
         $order = new Order();
         $order->setCurrency('USD');
 
         array_walk(
             $orderLineItems,
-            function (OrderLineItem $orderLineItem) use ($order) {
+            static function (OrderLineItem $orderLineItem) use ($order) {
                 $order->addLineItem($orderLineItem);
             }
         );
 
         $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->priceScopeCriteriaFactory->expects($this->once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->with($order)
             ->willReturn($scopeCriteria);
 
-        $this->provider->expects($this->once())
+        $this->provider->expects(self::once())
             ->method('getMatchingPrices')
-            ->with($this->isType('array'), $scopeCriteria)
+            ->with(self::isType('array'), $scopeCriteria)
             ->willReturn($matchedPrices);
 
+        $this->matcher->setProductPriceCriteriaFactory(null);
         $this->matcher->addMatchingPrices($order);
 
         foreach ($order->getLineItems() as $key => $orderLineItem) {
-            $this->assertArrayHasKey($key, $expectedLineItemsPrices);
-            $this->assertEquals($expectedLineItemsPrices[$key], $orderLineItem->getValue());
+            self::assertArrayHasKey($key, $expectedLineItemsPrices);
+            self::assertEquals($expectedLineItemsPrices[$key], $orderLineItem->getValue());
         }
     }
 
-    public function testFillMatchingPricesWithIncorrectLineItem()
+    public function testFillMatchingPricesWithIncorrectLineItemWhenNoProductPriceCriteriaFactory(): void
     {
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1]);
@@ -161,11 +252,11 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         $order->addLineItem($lineItem1);
         $order->addLineItem($lineItem2);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 'Got error while trying to create new ProductPriceCriteria with message: "{message}"',
-                $this->isType('array')
+                self::isType('array')
             );
 
         $matchedPrices = [
@@ -174,44 +265,46 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
                 'value' => 42
             ]
         ];
+        $this->matcher->setProductPriceCriteriaFactory(null);
         $this->matcher->fillMatchingPrices($order, $matchedPrices);
 
-        $this->assertEquals(42, $lineItem1->getValue());
+        self::assertEquals(42, $lineItem1->getValue());
     }
 
     /**
-     * @dataProvider orderEventAddMatchedPricesDataProvider
+     * @dataProvider orderEventAddMatchedPricesWhenNoProductPriceCriteriaFactoryDataProvider
      */
-    public function testFillMatchedPrices(
+    public function testFillMatchedPricesWhenNoProductPriceCriteriaFactory(
         array $orderLineItems = [],
         array $matchedPrices = [],
         array $expectedLineItemsPrices = []
-    ) {
+    ): void {
         $order = new Order();
         $order->setCurrency('USD');
 
         array_walk(
             $orderLineItems,
-            function (OrderLineItem $orderLineItem) use ($order) {
+            static function (OrderLineItem $orderLineItem) use ($order) {
                 $order->addLineItem($orderLineItem);
             }
         );
 
-        $this->provider->expects($this->never())
+        $this->provider->expects(self::never())
             ->method('getMatchingPrices');
 
+        $this->matcher->setProductPriceCriteriaFactory(null);
         $this->matcher->fillMatchingPrices($order, $matchedPrices);
 
         foreach ($order->getLineItems() as $key => $orderLineItem) {
-            $this->assertArrayHasKey($key, $expectedLineItemsPrices);
-            $this->assertEquals($expectedLineItemsPrices[$key], $orderLineItem->getValue());
+            self::assertArrayHasKey($key, $expectedLineItemsPrices);
+            self::assertEquals($expectedLineItemsPrices[$key], $orderLineItem->getValue());
         }
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function orderEventAddMatchedPricesDataProvider(): array
+    public function orderEventAddMatchedPricesWhenNoProductPriceCriteriaFactoryDataProvider(): array
     {
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $invalidProduct = $this->getEntity(Product::class);

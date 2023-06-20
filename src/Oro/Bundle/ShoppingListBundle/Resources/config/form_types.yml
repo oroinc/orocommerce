@@ -26,6 +26,8 @@ services:
         arguments:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        calls:
+            - ['setLineItemsHolderFactory', ['@oro_product.model.product_line_items_holder_factory']]
         tags:
             - { name: form.type }
 

@@ -1,3 +1,5 @@
+/* @theme: default; */
+
 .product-popup__header {
     height: $product-popup-header-height;
 
@@ -11,6 +13,18 @@
         height: $product-popup-header-img-height;
         margin: $product-popup-header-img-offset;
         border: $product-popup-header-img-border;
+    }
+
+    &-title {
+        width: 100%;
+        line-height: $base-line-height;
+    }
+
+    &-attributes {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        column-gap: $offset-x-m;
     }
 }
 

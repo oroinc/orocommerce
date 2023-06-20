@@ -10,17 +10,17 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 
-class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataViolationsListenerTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var LineItemViolationsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $violationsProvider;
+    private LineItemViolationsProvider|MockObject $violationsProvider;
 
-    /** @var DatagridLineItemsDataViolationsListener */
-    private $listener;
+    private DatagridLineItemsDataViolationsListener $listener;
 
     protected function setUp(): void
     {
@@ -33,11 +33,11 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('addDataForLineItem');
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
@@ -48,21 +48,21 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
         $lineItems = [new LineItem(), new LineItem()];
         $event
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getLineItems')
             ->willReturn($lineItems);
 
         $this->violationsProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getLineItemViolationLists')
             ->willReturn([]);
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('addDataForLineItem');
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
@@ -89,40 +89,117 @@ class DatagridLineItemsDataViolationsListenerTest extends \PHPUnit\Framework\Tes
         );
 
         $violation1 = $this->createMock(ConstraintViolation::class);
-        $violation1->expects($this->once())
+        $violation1->expects(self::once())
             ->method('getCause')
             ->willReturn('warning');
-        $violation1->expects($this->once())
+        $violation1->expects(self::once())
             ->method('getMessage')
             ->willReturn('warning_message1');
 
         $violation2 = $this->createMock(ConstraintViolation::class);
-        $violation2->expects($this->once())
+        $violation2->expects(self::once())
             ->method('getCause')
             ->willReturn('warning');
-        $violation2->expects($this->once())
+        $violation2->expects(self::once())
             ->method('getMessage')
             ->willReturn('warning_message2');
 
         $violation3 = $this->createMock(ConstraintViolation::class);
-        $violation3->expects($this->once())
+        $violation3->expects(self::once())
             ->method('getCause')
             ->willReturn('error');
-        $violation3->expects($this->once())
+        $violation3->expects(self::once())
             ->method('getMessage')
             ->willReturn('error_message3');
 
         $this->violationsProvider
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getLineItemViolationLists')
             ->willReturn(['product.sku1.item' => [$violation1], 'product.sku2.item' => [$violation2, $violation3]]);
 
         $this->listener->onLineItemData($event);
 
-        $this->assertEquals(['warnings' => ['warning_message1'], 'errors' => []], $event->getDataForLineItem(11));
-        $this->assertEquals(
+        self::assertEquals(['warnings' => ['warning_message1'], 'errors' => []], $event->getDataForLineItem(11));
+        self::assertEquals(
             ['warnings' => ['warning_message2'], 'errors' => ['error_message3']],
             $event->getDataForLineItem(22)
+        );
+    }
+
+    public function testOnLineItemDataWhenViolationsWithChecksum(): void
+    {
+        $productUnit = (new ProductUnit())->setCode('item');
+        $product1 = (new Product())->setSku('sku1');
+        $product2 = (new Product())->setSku('sku2');
+        $product3 = (new Product())->setSku('sku3');
+
+        $lineItem1 = $this->getEntity(
+            LineItem::class,
+            ['id' => 11, 'product' => $product1, 'unit' => $productUnit, 'checksum' => 'sample_checksum1']
+        );
+        $lineItem2 = $this->getEntity(LineItem::class, ['id' => 22, 'product' => $product2, 'unit' => $productUnit]);
+        $lineItem3 = $this->getEntity(
+            LineItem::class,
+            ['id' => 33, 'product' => $product3, 'unit' => $productUnit, 'checksum' => 'sample_checksum3']
+        );
+
+        $lineItems = [
+            $lineItem1->getEntityIdentifier() => $lineItem1,
+            $lineItem2->getEntityIdentifier() => $lineItem2,
+            $lineItem3->getEntityIdentifier() => $lineItem3,
+        ];
+        $event = new DatagridLineItemsDataEvent(
+            $lineItems,
+            [],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
+
+        $violation1 = $this->createMock(ConstraintViolation::class);
+        $violation1->expects(self::once())
+            ->method('getCause')
+            ->willReturn('warning');
+        $violation1->expects(self::once())
+            ->method('getMessage')
+            ->willReturn('warning_message1');
+
+        $violation2 = $this->createMock(ConstraintViolation::class);
+        $violation2->expects(self::once())
+            ->method('getCause')
+            ->willReturn('warning');
+        $violation2->expects(self::once())
+            ->method('getMessage')
+            ->willReturn('warning_message2');
+
+        $violation3 = $this->createMock(ConstraintViolation::class);
+        $violation3->expects(self::once())
+            ->method('getCause')
+            ->willReturn('error');
+        $violation3->expects(self::once())
+            ->method('getMessage')
+            ->willReturn('error_message3');
+
+        $this->violationsProvider
+            ->expects(self::once())
+            ->method('getLineItemViolationLists')
+            ->willReturn(
+                [
+                    'product.sku1.item.sample_checksum1' => [$violation1],
+                    'product.sku2.item' => [$violation2],
+                    'product.sku3.item.sample_checksum3' => [$violation3],
+                ]
+            );
+
+        $this->listener->onLineItemData($event);
+
+        self::assertEquals(['warnings' => ['warning_message1'], 'errors' => []], $event->getDataForLineItem(11));
+        self::assertEquals(
+            ['warnings' => ['warning_message2'], 'errors' => []],
+            $event->getDataForLineItem(22)
+        );
+        self::assertEquals(
+            ['warnings' => [], 'errors' => ['error_message3']],
+            $event->getDataForLineItem(33)
         );
     }
 }

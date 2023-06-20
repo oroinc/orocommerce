@@ -1,29 +1,8 @@
-import _ from 'underscore';
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
-
-const isHighlight = item => item.isUpcoming || (item.warnings && item.warnings.length);
-const isError = item => item.errors && item.errors.length;
-
-const messageModel = item => {
-    const messageItem = {
-        ...item,
-        id: item.id + _.uniqueId('-bind-'),
-        renderColumnName: 'item',
-        row_class_name: item.row_class_name + ' extension-row notification-row',
-        _templateKey: 'message',
-        isMessage: true,
-        isAuxiliary: true,
-        row_attributes: {
-            'aria-hidden': true
-        }
-    };
-
-    item.messageModelId = messageItem.id;
-    return messageItem;
-};
+import {isHighlight, isError, messageModel} from './utils';
 
 export const flattenData = data => {
     return data.reduce((flatData, rawData) => {
@@ -38,7 +17,14 @@ export const flattenData = data => {
             itemClassName.push('highlight-error');
         }
 
-        if (!subData) {
+        if (!item.sku) {
+            itemClassName.push('no-product-sku-row');
+        }
+
+        if (
+            subData === null ||
+            (Array.isArray(subData) && subData.length === 0)
+        ) {
             itemClassName.push('single-row');
             item.row_class_name = itemClassName.join(' ');
             flatData.push(item);
@@ -46,7 +32,7 @@ export const flattenData = data => {
             item._isVariant = false;
 
             if (isError(item) || isHighlight(item)) {
-                flatData.push(messageModel(item));
+                flatData.push(messageModel(item, 'item'));
             }
         } else {
             let filteredOutVariants = 0;
@@ -59,18 +45,21 @@ export const flattenData = data => {
                 itemClassName.push('group-row-has-children');
             }
 
+            if (item.isConfigurable) {
+                itemClassName.push('group-row-configurable');
+            }
+
             item.row_class_name = itemClassName.join(' ');
             item.ids = [];
             item._hasVariants = item.isConfigurable || false;
-            item._hasKitItemLineItems = item.isKit || false;
             item._isVariant = false;
-            item._isKitItemLineItem = false;
-
-            if (isError(item) || isHighlight(item)) {
-                flatData.push(messageModel(item));
-            }
 
             flatData.push(item);
+
+            if (isError(item) || isHighlight(item)) {
+                const itemMessageModel = messageModel(item, 'item');
+                flatData.push(itemMessageModel);
+            }
 
             const flatSubData = subData.reduce((subDataCollection, subItem, index) => {
                 const className = ['sub-row'];
@@ -79,16 +68,28 @@ export const flattenData = data => {
                     precisions.push(subItem.units[item.unit].precision);
                 }
 
-                if (subData.length - 1 === index) {
-                    className.push('sub-row-last');
-                }
-
                 if (isHighlight(subItem)) {
                     className.push('highlight');
                 }
 
+                if (!subItem.sku) {
+                    className.push('no-product-sku-row');
+                }
+
+                if (isHighlight(item)) {
+                    className.push('parent-row-has-highlight');
+                }
+
                 if (isError(subItem)) {
                     className.push('highlight-error');
+                }
+
+                if (isError(item)) {
+                    className.push('parent-row-has-highlight-error');
+                }
+
+                if (subData.length - 1 === index) {
+                    className.push('sub-row-last');
                 }
 
                 if (subItem.filteredOut) {
@@ -100,8 +101,7 @@ export const flattenData = data => {
 
                 item.ids.push(subItem.id);
                 subItem._isVariant = item._hasVariants || false;
-                subItem._isKitItemLineItem = item._hasKitItemLineItems || false;
-                subItem._groupId = item.isKit ? item.checksum : item.productId;
+                subItem._groupId = item.productId;
                 subItem.row_class_name = className.join(' ');
                 subItem.row_attributes = {
                     'data-product-group': subItem._groupId
@@ -109,8 +109,8 @@ export const flattenData = data => {
 
                 subDataCollection.push(subItem);
 
-                if (isError(subItem) || isHighlight(subItem)) {
-                    subDataCollection.push(messageModel(subItem));
+                if ((isError(subItem) && subItem.sku) || isHighlight(subItem)) {
+                    subDataCollection.push(messageModel(subItem, 'item'));
                 }
 
                 return subDataCollection;
@@ -147,15 +147,15 @@ const shoppingListFlatDataBuilder = {
         } = options.metadata.options;
 
         Object.assign(options.metadata.options, {
-            parseResponseModels: function(resp) {
+            parseResponseModels: resp => {
                 if (parseResponseModels) {
-                    resp = parseResponseModels.call(this, resp);
+                    resp = parseResponseModels(resp);
                 }
                 return 'data' in resp ? flattenData(resp.data) : resp;
             },
-            parseResponseOptions: function(resp = {}) {
+            parseResponseOptions: (resp = {}) => {
                 if (parseResponseOptions) {
-                    resp = parseResponseOptions.call(this, resp);
+                    resp = parseResponseOptions(resp);
                 }
                 const {options = {}} = resp;
                 return {

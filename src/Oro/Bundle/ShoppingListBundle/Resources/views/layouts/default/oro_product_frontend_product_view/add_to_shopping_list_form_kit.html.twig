@@ -1,22 +1,16 @@
-{% block __product_shopping_lists__shopping_lists_widget %}
-    {% import '@OroFrontend/layouts/default/utils.html.twig' as utils %}
-    {% set shoppingListsTemplate %}
-        {% apply spaceless %}
-            {{ block_widget(block) }}
-        {% endapply %}
-    {% endset %}
-
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oroshoppinglist/js/app/views/product-shopping-lists-view',
-            modelAttr: {
-                shopping_lists: productShoppingLists
+{% block _product_shopping_lists_popup_widget %}
+    {% if not is_one_shopping_list_enabled() %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroui/js/app/components/widget-component',
+            'data-page-component-options': {
+                type: 'product-kit-in-shopping-lists',
+                createOnEvent: 'click'
             },
-            template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>')
-        },
-        'data-product-shopping-lists': '',
-        'data-layout': 'separate',
-    }) %}
-    <div {{ block('block_attributes') }}></div>
+            'data-url': path('oro_shopping_list_frontend_product_kit_in_shopping_lists', {productId: product.id}),
+            '~class': 'btn btn--plain shopping-lists__area-trigger',
+            'title': 'Edit'|trans,
+            'aria-label': 'oro.frontend.shoppinglist.open_modal_btn.aria_label'|trans
+        }) %}
+        <button {{ block('block_attributes') }}></button>
+    {% endif %}
 {% endblock %}

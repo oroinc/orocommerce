@@ -10,22 +10,31 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 
 /**
  * Adds data needed for displaying grouped line items.
  */
 class LineItemsGroupedOnResultAfterListener
 {
-    /** @var AttachmentManager */
-    private $attachmentManager;
+    private AttachmentManager $attachmentManager;
 
-    /** @var NumberFormatter */
-    private $numberFormatter;
+    private NumberFormatter $numberFormatter;
 
-    public function __construct(AttachmentManager $attachmentManager, NumberFormatter $numberFormatter)
-    {
+    private ?ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider = null;
+
+    public function __construct(
+        AttachmentManager $attachmentManager,
+        NumberFormatter $numberFormatter
+    ) {
         $this->attachmentManager = $attachmentManager;
         $this->numberFormatter = $numberFormatter;
+    }
+
+    public function setResolvedProductVisibilityProvider(
+        ?ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
+    ): void {
+        $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
     }
 
     public function onResultAfter(OrmResultAfter $event): void
@@ -45,6 +54,10 @@ class LineItemsGroupedOnResultAfterListener
 
             $firstLineItem = reset($lineItems);
             if (!$firstLineItem instanceof ProductLineItemInterface) {
+                continue;
+            }
+            if ($firstLineItem->getProduct()?->isKit()) {
+                // Skips product-kit line items rows.
                 continue;
             }
 
@@ -68,6 +81,7 @@ class LineItemsGroupedOnResultAfterListener
                 'image' => $this->getImageUrl($parentProduct),
                 // It is assumed that first sub line item row already has a name of parent product.
                 'name' => $firstLineItemData['name'] ?? '',
+                'isVisible' => $this->resolvedProductVisibilityProvider?->isVisible($parentProductId) ?? true,
                 'quantity' => 0,
                 'unit' => $unitCode,
                 // It is assumed that first sub line item already has currency set.

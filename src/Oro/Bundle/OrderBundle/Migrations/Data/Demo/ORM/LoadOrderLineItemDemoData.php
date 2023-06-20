@@ -12,7 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -40,6 +40,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     /** @var array */
     protected $prices = [];
 
+    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+
     /**
      * {@inheritdoc}
      */
@@ -47,6 +49,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     {
         $this->container = $container;
         $this->productPriceProvider = $container->get('oro_pricing.provider.product_price');
+        $this->productPriceCriteriaFactory = $container->get('oro_pricing.product_price_criteria_factory');
     }
 
     /**
@@ -144,7 +147,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getOrder(EntityManagerInterface $manager, string $identifier): ?Order
     {
         if (!array_key_exists($identifier, $this->orders)) {
-            $this->orders[$identifier] = $manager->getRepository('OroOrderBundle:Order')
+            $this->orders[$identifier] = $manager->getRepository(Order::class)
                 ->findOneBy(['identifier' => $identifier]);
         }
 
@@ -154,7 +157,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     protected function getProduct(EntityManagerInterface $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroProductBundle:Product')->findOneBy(['sku' => $sku]);
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
@@ -162,7 +165,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
     protected function getProductUnit(EntityManagerInterface $manager, string $code): ?ProductUnit
     {
-        return $manager->getReference('OroProductBundle:ProductUnit', $code);
+        return $manager->getReference(ProductUnit::class, $code);
     }
 
     /**
@@ -182,7 +185,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         BasePriceList $priceList,
         Order $order
     ) {
-        $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
+        $productPriceCriteria = $this->productPriceCriteriaFactory
+            ->create($product, $productUnit, $quantity, $currency);
         $identifier = $productPriceCriteria->getIdentifier();
 
         $priceListId = $priceList->getId();

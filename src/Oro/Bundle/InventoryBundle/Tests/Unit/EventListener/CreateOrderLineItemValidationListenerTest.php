@@ -145,7 +145,8 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestC
                 [
                     'sku' => 'TEST001',
                     'unit' => 'item',
-                    'message' => 'oro.inventory.decrement_inventory.product.not_allowed (translated)'
+                    'message' => 'oro.inventory.decrement_inventory.product.not_allowed (translated)',
+                    'checksum' => null,
                 ]
             ],
             $event->getErrors()->toArray()
@@ -203,7 +204,8 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestC
                 [
                     'sku' => 'TEST001',
                     'unit' => 'item',
-                    'message' => 'oro.inventory.decrement_inventory.product.not_allowed (translated)'
+                    'message' => 'oro.inventory.decrement_inventory.product.not_allowed (translated)',
+                    'checksum' => null,
                 ]
             ],
             $event->getErrors()->toArray()

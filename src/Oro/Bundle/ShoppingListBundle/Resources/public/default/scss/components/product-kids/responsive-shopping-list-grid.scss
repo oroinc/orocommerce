@@ -1,0 +1,52 @@
+/* @theme: default; */
+
+.responsive-shopping-list-grid {
+    .checkbox-placeholder {
+        width: $checkbox-size;
+    }
+
+    // product kids that have line items and errors
+    .group-row-has-children.grid-row-product-kit-error {
+        .grid-cell {
+            padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
+            border-bottom-width: 0;
+        }
+    }
+}
+
+// recovering border for large screens. A mobile version has its own design
+@media (min-width: $breakpoint-mobile-landscape + 1) {
+    .responsive-shopping-list-grid {
+        .sub-row-last-product-kit.product-kit-general-error.highlight-error > .grid-body-cell {
+            border-bottom: $table-th-border-bottom;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-shopping-list-grid {
+        .grid-row {
+            &.grid-row-product-kit-error {
+                &:not(.sub-row) {
+                    .select-row-cell {
+                        display: inline-flex;
+                    }
+                }
+            }
+        }
+
+        // error after main product kit
+        .group-row-has-children.grid-row-product-kit-error {
+            padding-bottom: $responsive-shopping-sub-row-cell-inner-offset;
+            border-bottom-width: 0;
+        }
+
+        .sub-row-product-kit {
+            // Last row may be both kit line item and error, so selector's weight is reduced
+            &.sub-row.sub-row-last-product-kit {
+                padding-bottom: $responsive-shopping-grid-row-offset-mobile;
+                border-bottom: $responsive-shopping-grid-row-border-mobile;
+            }
+        }
+    }
+}

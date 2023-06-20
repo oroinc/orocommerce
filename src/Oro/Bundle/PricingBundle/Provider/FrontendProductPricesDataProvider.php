@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -30,6 +32,8 @@ class FrontendProductPricesDataProvider
      */
     protected $scopeCriteriaRequestHandler;
 
+    private ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory = null;
+
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
@@ -40,9 +44,15 @@ class FrontendProductPricesDataProvider
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
     }
 
+    public function setProductPriceCriteriaFactory(
+        ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+    ): void {
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
+    }
+
     /**
      * @param ProductLineItemInterface[] $lineItems
-     * @return array
+     * @return array<int,array<string,Price>>
      */
     public function getProductsMatchedPrice(array $lineItems)
     {
@@ -107,22 +117,27 @@ class FrontendProductPricesDataProvider
      */
     protected function getProductsPricesCriteria(array $lineItems)
     {
-        $productsPricesCriteria = [];
-        $currency = $this->userCurrencyManager->getUserCurrency();
-        foreach ($lineItems as $lineItem) {
-            if (!$this->isValidLineItem($lineItem)) {
-                continue;
+        if ($this->productPriceCriteriaFactory === null) {
+            // BC fallback.
+            $productsPricesCriteria = [];
+            $currency = $this->userCurrencyManager->getUserCurrency();
+            foreach ($lineItems as $lineItem) {
+                if (!$this->isValidLineItem($lineItem)) {
+                    continue;
+                }
+
+                $productsPricesCriteria[] = new ProductPriceCriteria(
+                    $lineItem->getProduct(),
+                    $lineItem->getProductUnit(),
+                    $lineItem->getQuantity(),
+                    $currency
+                );
             }
 
-            $productsPricesCriteria[] = new ProductPriceCriteria(
-                $lineItem->getProduct(),
-                $lineItem->getProductUnit(),
-                $lineItem->getQuantity(),
-                $currency
-            );
+            return $productsPricesCriteria;
         }
 
-        return $productsPricesCriteria;
+        return $this->productPriceCriteriaFactory->createListFromProductLineItems($lineItems);
     }
 
     /**

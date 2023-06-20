@@ -617,17 +617,6 @@
 
 @include breakpoint('strict-tablet') {
     .matrix-order-widget {
-        &__item {
-            &-content {
-                flex-basis: $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis;
-                padding: $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner;
-            }
-        }
-    }
-}
-
-@include breakpoint('tablet-small') {
-    .matrix-order-widget {
         &--dialog {
             padding-bottom: $matrix-order-widget-dialog-tablet-small-offset-bottom;
 
@@ -640,6 +629,17 @@
             }
         }
 
+        &__item {
+            &-content {
+                flex-basis: $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis;
+                padding: $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .matrix-order-widget {
         &__item {
             &-content {
                 flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;

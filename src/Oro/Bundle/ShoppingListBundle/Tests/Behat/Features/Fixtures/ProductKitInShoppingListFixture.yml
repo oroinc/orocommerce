@@ -1,0 +1,214 @@
+include:
+    - '@OroShoppingListBundle:MyShoppingListsFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_kit1:
+        sku: 'product-kit-1'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@product_kit1_name']
+            - addKitItem: ['@product_kit1_item1']
+            - addKitItem: ['@product_kit1_item2']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: ['@product_kit1_precision1']
+    disabled_product1:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'DD01'
+        attributeFamily: '@attribute_family'
+        primaryUnitPrecision: '@disabled_product1_precision2'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'disabled'
+        __calls:
+            - addName: ['@disabled_product1_name']
+    # all Kit Items are optional
+    product_kit2:
+        sku: 'product-kit-2'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@product_kit2_name']
+            - addKitItem: ['@product_kit2_item1']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@product_kit2_precision1'
+        unitPrecisions: ['@product_kit2_precision1']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_kit1_precision1:
+        unit: '@piece'
+        precision: '2'
+    disabled_product1_precision2:
+        unit: '@piece'
+        precision: '0'
+    product_kit2_precision1:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_kit1_name:
+        string: 'Product Kit 1'
+    disabled_product1_name:
+        string: 'Disabled Product 1'
+    product_kit2_name:
+        string: 'Product Kit 2 (All Kit Items are optional)'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 2
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            - addLabel: ['@product_kit1_item1_label']
+            - addKitItemProduct: ['@product_kit1_item1_disabled_product1']
+            - addKitItemProduct: ['@product_kit1_item1_product21']
+            - addKitItemProduct: ['@product_kit1_item1_product22']
+    product_kit1_item2:
+        optional: true
+        sortOrder: 1
+        minimumQuantity: 0
+        maximumQuantity: 5
+        productUnit: '@piece'
+        __calls:
+            - addLabel: ['@product_kit1_item2_label']
+            - addKitItemProduct: ['@product_kit1_item2_disabled_product1']
+            - addKitItemProduct: ['@product_kit1_item2_product23']
+    product_kit2_item1:
+        optional: true
+        sortOrder: 1
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            - addLabel: ['@product_kit2_item1_label']
+            - addKitItemProduct: ['@product_kit2_item1_product21']
+            - addKitItemProduct: ['@product_kit2_item1_product22']
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    product_kit1_item1_label:
+        string: 'Base Unit'
+    product_kit1_item2_label:
+        string: 'Barcode Scanner'
+    product_kit2_item1_label:
+        string: 'Base Unit'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_disabled_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@disabled_product1'
+        sortOrder: 1
+        productUnitPrecision: '@product_kit1_precision1'
+    product_kit1_item1_product21:
+        kitItem: '@product_kit1_item1'
+        product: '@product21'
+        sortOrder: 2
+        productUnitPrecision: '@product_kit1_precision1'
+    product_kit1_item1_product22:
+        kitItem: '@product_kit1_item1'
+        product: '@product22'
+        sortOrder: 3
+        productUnitPrecision: '@product_kit1_precision1'
+    product_kit1_item2_disabled_product1:
+        kitItem: '@product_kit1_item2'
+        product: '@disabled_product1'
+        sortOrder: 1
+        productUnitPrecision: '@product_kit1_precision1'
+    product_kit1_item2_product23:
+        kitItem: '@product_kit1_item2'
+        product: '@product23'
+        sortOrder: 2
+        productUnitPrecision: '@product_kit1_precision1'
+    product_kit2_item1_product21:
+        kitItem: '@product_kit2_item1'
+        product: '@product21'
+        sortOrder: 2
+        productUnitPrecision: '@product_kit2_precision1'
+    product_kit2_item1_product22:
+        kitItem: '@product_kit2_item1'
+        product: '@product22'
+        sortOrder: 3
+        productUnitPrecision: '@product_kit2_precision1'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 10
+    price_disabled_product1:
+        product: '@disabled_product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 17
+    price_product_kit2:
+        product: '@product_kit2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+    price_relation_disabled_product1:
+        product: '@disabled_product1'
+        priceList: '@defaultPriceList'
+    price_relation_product_kit2:
+        product: '@product_kit2'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    kitLineItemDiscountPromotionSegment:
+        name: 'Promotion Matching Product Kits'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"type","criterion":{"filter":"string","data":{"value":"kit","type":"3"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    kitLineItemDiscountPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'piece'
+            discount_value: 0.5
+            apply_to: 'each_item'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    kitLineItemDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Product Kit Line Item Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    kitLineItemDiscountPromotion:
+        productsSegment: '@kitLineItemDiscountPromotionSegment'
+        rule: '@kitLineItemDiscountPromotionRule'
+        discountConfiguration: '@kitLineItemDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+        __calls:
+            - addLabel: ['@kitLineItemDiscountPromotionLabel']
+            - addScope: ['@default_scope']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    kitLineItemDiscountPromotionLabel:
+        string: 'Product Kit Line Item Discount Promotion'

@@ -35,7 +35,7 @@
 
 {% block __matrix_grid_order__header_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-popup__header',
+        '~class': ' product-popup__header'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
@@ -84,7 +84,8 @@
 
 {% block __matrix_grid_order__form_summary_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__totals '
+        '~class': class_prefix ~ '__totals ',
+        'data-role': 'totals'
     }) %}
 
     <div{{ block('block_attributes') }}>

@@ -1,0 +1,76 @@
+/* @theme: default; */
+
+.responsive-shopping-list-grid-edit {
+    .grid-row-product-kit-error.extension-row {
+        .select-row-cell::after {
+            top: 0;
+        }
+    }
+
+    // Horizontal line occupies the next sku cell too
+    .no-product-sku-row .cell-line {
+        right: -($responsive-shopping-grid-body-cell-sku-width + $datagrid-body-cell-offset + $checkbox-size / 2);
+    }
+}
+
+@include breakpoint('tablet') {
+    .responsive-shopping-list-grid-edit {
+        // sku cell is hidden so no reason to stretch horizontal line
+        .no-product-sku-row .cell-line {
+            right: 0;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-shopping-list-grid-edit {
+        .grid-body-cell-subtotal:empty {
+            display: none;
+        }
+
+        .grid-row-product-kit {
+            .grid-body-cell-item {
+                width:
+                        calc(
+                                100% -
+                                #{$responsive-shopping-list-edit-select-row-cell-width-mobile} -
+                                #{$responsive-shopping-list-edit-three-actions-cell-width-mobile}
+                        );
+            }
+
+            .shift-mobile-row {
+                margin-right: -$responsive-shopping-list-edit-three-actions-cell-width-mobile;
+            }
+        }
+
+        .sub-row-product-kit {
+            // Product kit line items do not have actions, so no reason to shift a row
+            .shift-mobile-row {
+                margin-right: initial;
+            }
+        }
+
+        .action-cell {
+            // there are may be more than two actions in a row
+            width: auto;
+
+            &:empty {
+                display: none;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .responsive-shopping-list-grid-edit {
+        .sub-row-product-kit {
+            .grid-body-cell-item {
+                width:
+                    calc(
+                        100% - #{$responsive-shopping-list-edit-sub-row-offset} -
+                        #{$responsive-shopping-list-edit-action-cell-width-mobile}
+                    );
+            }
+        }
+    }
+}

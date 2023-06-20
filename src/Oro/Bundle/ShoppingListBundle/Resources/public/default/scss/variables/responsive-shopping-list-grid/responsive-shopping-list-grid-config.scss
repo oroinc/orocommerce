@@ -2,6 +2,8 @@
 $responsive-shopping-list-layout-background: get-color('additional', 'base') !default;
 $responsive-shopping-cell-desktop-offset: 23px !default;
 $responsive-shopping-sub-cell-desktop-offset: 18px !default;
+// Manually calculated a half of cells' height
+$responsive-shopping-cell-half-height: 28px !default;
 
 $responsive-shopping-list-notification-container-offset: 0 !default;
 $responsive-shopping-list-extension-row-top-offset: 0 !default;

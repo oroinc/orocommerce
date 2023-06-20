@@ -15,9 +15,14 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Stub\LineItemPriceAwareStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener;
+use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
+use Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -76,7 +81,7 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
         $event
             ->expects(self::never())
-            ->method('addDataForLineItem');
+            ->method('setDataForLineItem');
 
         $this->listener->onLineItemData($event);
     }
@@ -106,7 +111,7 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
         $event
             ->expects(self::never())
-            ->method('addDataForLineItem');
+            ->method('setDataForLineItem');
 
         $this->listener->onLineItemData($event);
     }
@@ -139,7 +144,7 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
         $event
             ->expects(self::exactly(2))
-            ->method('addDataForLineItem')
+            ->method('setDataForLineItem')
             ->withConsecutive(
                 [
                     $lineItems[0]->getEntityIdentifier(),
@@ -311,6 +316,90 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
                 DatagridLineItemsDataPricingListener::SUBTOTAL => '999USD',
             ],
             $event->getDataForLineItem(3)
+        );
+    }
+
+    public function testOnLineItemDataWhenKitItemLineItemHasNoDefinedPrice(): void
+    {
+        $kitLineItem = $this->getLineItem(1, 10, 'item');
+        $lineItems = [
+            $kitLineItem->getEntityIdentifier() => $kitLineItem,
+        ];
+
+        $kitItem1 = new ProductKitItemStub(100);
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(1000))
+            ->setKitItem($kitItem1);
+        $kitItem2 = new ProductKitItemStub(200);
+        $kitItemLineItem2 = (new ProductKitItemLineItemStub(2000))
+            ->setKitItem($kitItem2);
+        $event = new DatagridLineItemsDataEvent(
+            $lineItems,
+            [
+                $kitLineItem->getEntityIdentifier() => [
+                    DatagridKitLineItemsDataListener::IS_KIT => true,
+                    DatagridKitLineItemsDataListener::SUB_DATA => [
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1],
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2],
+                    ],
+                ],
+            ],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
+
+        $subtotal = new Subtotal();
+        $subtotal->setCurrency(self::CURRENCY_USD);
+        $kitLineItemHash = spl_object_hash($kitLineItem);
+        $kitItemLineItem1Hash = spl_object_hash($kitItemLineItem1);
+        $subtotalData = [
+            $kitLineItemHash => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 111.0,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 1110.0,
+            ],
+            $kitItemLineItem1Hash => [
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_PRICE => 1001.1234,
+                LineItemNotPricedSubtotalProvider::EXTRA_DATA_SUBTOTAL => 1001.1234,
+            ],
+        ];
+        $subtotal->setData($subtotalData);
+
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
+        $this->lineItemNotPricedSubtotalProvider
+            ->expects(self::once())
+            ->method('getSubtotal')
+            ->with($lineItemsHolder)
+            ->willReturn($subtotal);
+
+        $this->listener->onLineItemData($event);
+
+        self::assertSame(
+            [
+                DatagridKitLineItemsDataListener::IS_KIT => true,
+                DatagridKitLineItemsDataListener::SUB_DATA => [
+                    [
+                        DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1,
+                        DatagridLineItemsDataPricingListener::PRICE_VALUE => 1001.1234,
+                        DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => 1001.1234,
+                        DatagridLineItemsDataPricingListener::PRICE => 1001.1234 . self::CURRENCY_USD,
+                        DatagridLineItemsDataPricingListener::SUBTOTAL => 1001.1234 . self::CURRENCY_USD,
+                    ],
+                    [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2] + self::EMPTY_DATA,
+                ],
+                DatagridLineItemsDataPricingListener::PRICE_VALUE => 111.0,
+                DatagridLineItemsDataPricingListener::CURRENCY => self::CURRENCY_USD,
+                DatagridLineItemsDataPricingListener::SUBTOTAL_VALUE => 1110.0,
+                DatagridLineItemsDataPricingListener::PRICE => 111.0 . self::CURRENCY_USD,
+                DatagridLineItemsDataPricingListener::SUBTOTAL => 1110.0 . self::CURRENCY_USD,
+                DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR => true,
+            ],
+            $event->getDataForLineItem($kitLineItem->getEntityIdentifier())
         );
     }
 

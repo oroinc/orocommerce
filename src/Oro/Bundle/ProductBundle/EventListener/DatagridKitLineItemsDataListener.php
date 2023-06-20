@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\DatagridKitItemLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -37,6 +38,7 @@ class DatagridKitLineItemsDataListener
                 continue;
             }
 
+            $kitItemLineItemsByIdGroupedByLineItem[$lineItemId] = [];
             foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
                 $id = $kitItemLineItem->getEntityIdentifier();
                 $kitItemLineItemsByIdGroupedByLineItem[$lineItemId][$id] = $kitItemLineItem;
@@ -44,23 +46,24 @@ class DatagridKitLineItemsDataListener
             }
         }
 
+        $allKitItemLineItemsData = [];
         if ($allKitItemLineItemsById) {
-            $kitItemLineItemsDataEvent = new DatagridLineItemsDataEvent(
+            $kitItemLineItemsDataEvent = new DatagridKitItemLineItemsDataEvent(
                 $allKitItemLineItemsById,
                 [],
                 $event->getDatagrid(),
                 []
             );
             $this->eventDispatcher->dispatch($kitItemLineItemsDataEvent, $kitItemLineItemsDataEvent->getName());
-
             $allKitItemLineItemsData = $kitItemLineItemsDataEvent->getDataForAllLineItems();
-            foreach ($kitItemLineItemsByIdGroupedByLineItem as $lineItemId => $kitItemLineItemsById) {
-                $kitItemLineItemsData = array_intersect_key($allKitItemLineItemsData, $kitItemLineItemsById);
-                $event->addDataForLineItem(
-                    $lineItemId,
-                    [self::IS_KIT => true, self::SUB_DATA => array_values($kitItemLineItemsData)]
-                );
-            }
+        }
+
+        foreach ($kitItemLineItemsByIdGroupedByLineItem as $lineItemId => $kitItemLineItemsById) {
+            $kitItemLineItemsData = array_intersect_key($allKitItemLineItemsData, $kitItemLineItemsById);
+            $event->addDataForLineItem(
+                $lineItemId,
+                [self::IS_KIT => true, self::SUB_DATA => array_values($kitItemLineItemsData)]
+            );
         }
     }
 }

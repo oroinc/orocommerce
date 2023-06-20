@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * The base class for fixtures that load demo data for related products.
+ */
 abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -42,7 +45,7 @@ abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implement
      */
     public function getDependencies()
     {
-        return [LoadProductDemoData::class];
+        return [LoadProductKitDemoData::class];
     }
 
     /**

@@ -63,26 +63,16 @@ class LoadProductDemoData extends AbstractFixture implements
         $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
+        $locator = $this->container->get('file_locator');
 
         $inStockStatus = static::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_IN_STOCK);
         $outOfStockStatus = static::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_OUT_OF_STOCK);
         $allImageTypes = $this->getImageTypes();
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'rb');
-        $headers = fgetcsv($handler, 1000, ',');
-
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
         $loadedProducts = [];
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
-
+        foreach ($this->getProducts() as $row) {
             $name = new ProductName();
             $name->setString($row['name']);
 
@@ -146,7 +136,7 @@ class LoadProductDemoData extends AbstractFixture implements
             $productUnitPrecision
                 ->setProduct($product)
                 ->setUnit($productUnit)
-                ->setPrecision((int)$row['precision'])
+                ->setPrecision((int) $row['precision'])
                 ->setConversionRate(1)
                 ->setSell(true);
 
@@ -154,15 +144,34 @@ class LoadProductDemoData extends AbstractFixture implements
 
             $this->addImageToProduct($product, $manager, $locator, $row['sku'], $row['name'], $allImageTypes);
 
+            $this->applyAdditionalData($product, $row, $manager);
+
             $manager->persist($product);
             $loadedProducts[] = $product;
         }
 
         $manager->flush();
 
-        fclose($handler);
-
         $this->createSlugs($loadedProducts, $manager);
+    }
+
+    protected function getProducts(): \Iterator
+    {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            yield array_combine($headers, array_values($data));
+        }
+
+        fclose($handler);
     }
 
     /**
@@ -312,5 +321,9 @@ class LoadProductDemoData extends AbstractFixture implements
     protected function getImageFileName(string $sku, string $name): string
     {
         return trim($sku . '-' . preg_replace('/\W+/', '-', $name), '-');
+    }
+
+    protected function applyAdditionalData(Product $product, array $row, ObjectManager $manager): void
+    {
     }
 }

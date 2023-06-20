@@ -8,9 +8,9 @@
 
 .responsive-shopping-list-layout {
     .order-checkout-widget__container-wrapper {
-        padding: 20px;
+        padding: $offset-x;
 
-        border-radius: 4px;
+        border-radius: $base-ui-element-border-radius;
         background: $responsive-shopping-list-layout-background;
     }
 }

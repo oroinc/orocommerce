@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -47,6 +48,8 @@ class QuoteProductPriceProvider
      */
     private $aclHelper;
 
+    private ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory = null;
+
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
@@ -59,6 +62,12 @@ class QuoteProductPriceProvider
         $this->currencyProvider = $currencyProvider;
         $this->doctrineHelper = $doctrineHelper;
         $this->aclHelper = $aclHelper;
+    }
+
+    public function setProductPriceCriteriaFactory(
+        ?ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+    ): void {
+        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
     /**
@@ -127,7 +136,7 @@ class QuoteProductPriceProvider
             $matchedPrices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $scopeCriteria);
         }
 
-        return array_map(function ($price) {
+        return array_map(static function ($price) {
             if ($price instanceof Price) {
                 return [
                     'value' => $price->getValue(),
@@ -141,9 +150,50 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
-     * @return array
+     *
+     * @return array<ProductPriceCriteria>
      */
     protected function getProductsPriceCriteria(Quote $quote)
+    {
+        if ($this->productPriceCriteriaFactory === null) {
+            // BC fallback.
+            return $this->doGetProductsPriceCriteria($quote);
+        }
+
+        $validLineItemsChunks = [];
+
+        /** @var QuoteProduct $quoteProduct */
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
+                if (!$currency = $quoteProductOffer->getPrice()?->getCurrency()) {
+                    continue;
+                }
+
+                if (!isset($validLineItems[$currency])) {
+                    $validLineItems[$currency] = [];
+                }
+
+                $validLineItemsChunks[$currency][] = $quoteProductOffer;
+            }
+        }
+
+        $results = [];
+        foreach ($validLineItemsChunks as $currency => $validLineItemsChunk) {
+            $results[] = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+                $validLineItemsChunk,
+                $currency
+            );
+        }
+
+        return array_merge(...$results);
+    }
+
+    /**
+     * @param Quote $quote
+     *
+     * @return array<ProductPriceCriteria>
+     */
+    private function doGetProductsPriceCriteria(Quote $quote): array
     {
         $productsPriceCriteria = [];
 
@@ -230,16 +280,26 @@ class QuoteProductPriceProvider
             return null;
         }
 
-        $productPriceCriteria = new ProductPriceCriteria(
-            $product,
-            $unit,
-            $quantity,
-            $currencyCode
-        );
-        $scopeCriteria = $this->priceScopeCriteriaFactory->createByContext($quote);
+        if ($this->productPriceCriteriaFactory === null) {
+            // BC fallback.
+            $productPriceCriteria = new ProductPriceCriteria(
+                $product,
+                $unit,
+                $quantity,
+                $currencyCode
+            );
+        } else {
+            $productPriceCriteria = $this->productPriceCriteriaFactory
+                ->create($product, $unit, $quantity, $currencyCode);
+        }
 
+        if (!$productPriceCriteria) {
+            return null;
+        }
+
+        $scopeCriteria = $this->priceScopeCriteriaFactory->createByContext($quote);
         $matchedPrices = $this->productPriceProvider->getMatchedPrices([$productPriceCriteria], $scopeCriteria);
 
-        return $matchedPrices[$productPriceCriteria->getIdentifier()];
+        return $matchedPrices[$productPriceCriteria->getIdentifier()] ?? null;
     }
 }

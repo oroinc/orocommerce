@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -228,6 +230,22 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
      * @param array $itemData
      */
     abstract protected function addItem(Product $product, $entity, array $itemData = []);
+
+    protected function getDefaultProductUnit(Product $product): ?ProductUnit
+    {
+        /** @var ProductUnitPrecision $unitPrecision */
+        $unitPrecision = $product->getUnitPrecisions()->first();
+        if (!$unitPrecision) {
+            return null;
+        }
+
+        $unit = $unitPrecision->getUnit();
+        if (!$unit) {
+            return null;
+        }
+
+        return $unit;
+    }
 
     /**
      * @return ProductRepository

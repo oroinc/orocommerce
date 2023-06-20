@@ -144,7 +144,7 @@ class ProductKitItemLineItemTypeTest extends FormIntegrationTestCase
 
         $this->assertFormIsValid($form);
 
-        self::assertEquals(new ProductKitItemLineItem(), $form->getData());
+        self::assertEquals((new ProductKitItemLineItem())->setQuantity(null), $form->getData());
     }
 
     /**
@@ -181,12 +181,12 @@ class ProductKitItemLineItemTypeTest extends FormIntegrationTestCase
             'with empty data' => [
                 'submittedData' => [],
                 'isOptional' => true,
-                'expected' => new ProductKitItemLineItem(),
+                'expected' => (new ProductKitItemLineItem())->setQuantity(null),
             ],
             'with empty data and optional kitItem' => [
                 'submittedData' => [],
                 'isOptional' => false,
-                'expected' => new ProductKitItemLineItem(),
+                'expected' => (new ProductKitItemLineItem())->setQuantity(null),
             ],
             'with another product' => [
                 'submittedData' => ['product' => [142 => 142]],

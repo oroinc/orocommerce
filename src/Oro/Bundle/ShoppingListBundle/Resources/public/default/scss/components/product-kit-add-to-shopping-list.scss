@@ -1,0 +1,7 @@
+/* @theme: default; */
+
+.product-kit-add-to-shopping-list {
+    display: flex;
+
+    min-width: $product-item-quantity-input-width + $product-item-quantity-select-width;
+}

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider;
 use Symfony\Component\Validator\ConstraintViolation;
 
@@ -11,8 +12,7 @@ use Symfony\Component\Validator\ConstraintViolation;
  */
 class DatagridLineItemsDataViolationsListener
 {
-    /** @var LineItemViolationsProvider */
-    private $violationsProvider;
+    private LineItemViolationsProvider $violationsProvider;
 
     public function __construct(LineItemViolationsProvider $violationsProvider)
     {
@@ -31,10 +31,13 @@ class DatagridLineItemsDataViolationsListener
         }
 
         foreach ($lineItems as $lineItem) {
+            $checksum = $lineItem instanceof ProductKitItemLineItemsAwareInterface ? $lineItem->getChecksum() : null;
+
             [$warnings, $errors] = $this->getMessages(
                 $violations,
                 $lineItem->getProductSku(),
-                $lineItem->getProductUnitCode()
+                $lineItem->getProductUnitCode(),
+                $checksum
             );
 
             $event->addDataForLineItem($lineItem->getId(), ['warnings' => $warnings, 'errors' => $errors]);
@@ -46,13 +49,14 @@ class DatagridLineItemsDataViolationsListener
         return null;
     }
 
-    private function getMessages(array $violations, string $sku, string $unit): array
+    private function getMessages(array $violations, string $sku, string $unit, ?string $checksum): array
     {
         $warnings = [];
         $errors = [];
+        $violationsPath = $this->createViolationPath($sku, $unit, $checksum);
 
         /** @var ConstraintViolation $violation */
-        foreach ($violations[sprintf('product.%s.%s', $sku, $unit)] ?? [] as $violation) {
+        foreach ($violations[$violationsPath] ?? [] as $violation) {
             if ($violation->getCause() === 'warning') {
                 $warnings[] = $violation->getMessage();
             } else {
@@ -61,5 +65,16 @@ class DatagridLineItemsDataViolationsListener
         }
 
         return [$warnings, $errors];
+    }
+
+    private function createViolationPath(string $sku, string $unitCode, ?string $checksum): string
+    {
+        $path = sprintf('product.%s.%s', $sku, $unitCode);
+
+        if (!empty($checksum)) {
+            $path .= '.'. $checksum;
+        }
+
+        return $path;
     }
 }
