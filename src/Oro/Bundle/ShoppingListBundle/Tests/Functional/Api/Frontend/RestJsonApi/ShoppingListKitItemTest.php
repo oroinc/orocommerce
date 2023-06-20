@@ -110,7 +110,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
                 [
                     'title' => 'expression constraint',
-                    'detail' => 'Quantity cannot be validated without Product Kit Item.',
+                    'detail' => 'Quantity cannot be validated without Product Kit Item',
                     'source' => ['pointer' => '/data/attributes/quantity'],
                 ],
                 [
@@ -130,7 +130,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
                 [
                     'title' => 'expression constraint',
-                    'detail' => 'This value is not valid.',
+                    'detail' => 'The selected product is not allowed',
                     'source' => ['pointer' => '/data/relationships/product/data'],
                 ],
                 [
@@ -151,7 +151,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 [
                     'status' => '400',
                     'title' => 'expression constraint',
-                    'detail' => 'Unit must be equal to Product Kit Item unit.',
+                    'detail' => 'The selected product unit is not allowed',
                     'source' => [
                         'pointer' => '/data/relationships/unit/data',
                     ],
@@ -579,7 +579,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Quantity cannot be validated without Product Kit Item.',
+                        'detail' => 'Quantity cannot be validated without Product Kit Item',
                         'source' => ['pointer' => '/data/attributes/quantity'],
                     ],
                     [
@@ -645,7 +645,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
+                        'detail' => 'The selected product is not allowed',
                         'source' => ['pointer' => '/data/relationships/product/data'],
                     ],
                     [
@@ -669,7 +669,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
+                        'detail' => 'The selected product is not allowed',
                         'source' => ['pointer' => '/data/relationships/product/data'],
                     ],
                 ],
@@ -743,7 +743,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     [
                         'status' => '400',
                         'title' => 'expression constraint',
-                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'detail' => 'The selected product unit is not allowed',
                         'source' => [
                             'pointer' => '/data/relationships/unit/data',
                         ],
@@ -765,7 +765,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'detail' => 'The selected product unit is not allowed',
                         'source' => ['pointer' => '/data/relationships/unit/data'],
                     ],
                     [
@@ -790,7 +790,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     [
                         'status' => '400',
                         'title' => 'expression constraint',
-                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'detail' => 'The selected product unit is not allowed',
                         'source' => [
                             'pointer' => '/data/relationships/unit/data',
                         ],

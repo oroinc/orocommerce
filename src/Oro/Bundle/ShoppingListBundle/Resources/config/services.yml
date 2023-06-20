@@ -644,6 +644,7 @@ services:
         arguments:
             - '@oro_attachment.manager'
             - '@oro_locale.formatter.number'
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 512 }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 512 }

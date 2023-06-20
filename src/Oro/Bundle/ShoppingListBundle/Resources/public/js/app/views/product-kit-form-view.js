@@ -164,8 +164,12 @@ const ProductKitFormView = BaseView.extend({
 
         $relatedElements.each((i, relatedEl) => {
             const $relatedEl = $(relatedEl);
-            const minimumQuantity = $relatedEl.data('minimumQuantity') || 1;
             const maximumQuantity = $relatedEl.data('maximumQuantity');
+
+            let minimumQuantity = $relatedEl.data('minimumQuantity') || 1;
+            if (!minimumQuantity) {
+                minimumQuantity = 1;
+            }
 
             if (hasValue) {
                 if (minimumQuantity === maximumQuantity) {
@@ -177,7 +181,12 @@ const ProductKitFormView = BaseView.extend({
                 }
 
                 if (!$relatedEl.val()) {
-                    $relatedEl.val($relatedEl.data('value'));
+                    let relatedElValue = $relatedEl.data('value') || 1;
+                    if (!relatedElValue) {
+                        relatedElValue = 1;
+                    }
+
+                    $relatedEl.val(relatedElValue);
                 }
             } else {
                 // Update attributes only for selected elements,

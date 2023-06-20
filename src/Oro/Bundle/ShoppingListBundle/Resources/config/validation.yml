@@ -132,6 +132,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                 groups: [Default, create, update, add_product_kit_line_item]
             - Expression:
                 expression: 'this.kitItem && this.kitItem.getProducts().contains(value)'
+                message: 'oro.shoppinglist.product_kit_item_line_item.product.invalid.message'
                 groups: [Default, create, update, add_product_kit_line_item]
             - AtLeastOneOf:
                 constraints:
@@ -183,7 +184,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                 groups: [Default, create, update, add_product_kit_line_item]
             - Expression:
                 expression: 'this.kitItem && value == this.kitItem.productUnit'
-                message: 'oro.shoppinglist.product_kit_item_line_item.unit.kit_item.message'
+                message: 'oro.shoppinglist.product_kit_item_line_item.unit.invalid.message'
                 groups: [Default, create, update, add_product_kit_line_item]
         sortOrder:
             - Type:

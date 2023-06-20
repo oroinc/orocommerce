@@ -83,6 +83,36 @@ class DatagridLineItemsDataVisibilityPrefetchListenerTest extends TestCase
         $this->listener->onLineItemData($event);
     }
 
+    public function testOnLineItemDataWhenHasLineItemWithParentProduct(): void
+    {
+        $lineItem1 = (new ProductLineItemStub(10))
+            ->setProduct((new ProductStub())->setId(101)->setStatus(Product::STATUS_ENABLED))
+            ->setParentProduct((new ProductStub())->setId(1001)->setStatus(Product::STATUS_ENABLED));
+        $lineItem2 = (new ProductLineItemStub(20))
+            ->setProduct((new ProductStub())->setId(201)->setStatus(Product::STATUS_ENABLED))
+            ->setParentProduct((new ProductStub())->setId(1001)->setStatus(Product::STATUS_DISABLED));
+
+        $event = new DatagridLineItemsDataEvent(
+            [$lineItem1->getEntityIdentifier() => $lineItem1, $lineItem2->getEntityIdentifier() => $lineItem2],
+            [],
+            $this->createMock(Datagrid::class),
+            []
+        );
+
+        $this->resolvedProductVisibilityProvider
+            ->expects(self::once())
+            ->method('prefetch')
+            ->with(
+                [
+                    $lineItem1->getProduct()->getId(),
+                    $lineItem1->getParentProduct()->getId(),
+                    $lineItem2->getProduct()->getId(),
+                ]
+            );
+
+        $this->listener->onLineItemData($event);
+    }
+
     public function testOnLineItemDataWhenHasKitItemLineItemWithoutProduct(): void
     {
         $lineItem1 = (new ProductLineItemStub(10))

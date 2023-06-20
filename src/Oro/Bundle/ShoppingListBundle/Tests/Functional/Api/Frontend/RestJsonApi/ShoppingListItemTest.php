@@ -1101,7 +1101,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Quantity cannot be validated without Product Kit Item.',
+                        'detail' => 'Quantity cannot be validated without Product Kit Item',
                         'source' => ['pointer' => '/included/0/attributes/quantity'],
                     ],
                     [
@@ -1116,7 +1116,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
+                        'detail' => 'The selected product is not allowed',
                         'source' => ['pointer' => '/included/0/relationships/product/data'],
                     ],
                     [
@@ -1136,7 +1136,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'detail' => 'The selected product unit is not allowed',
                         'source' => ['pointer' => '/included/0/relationships/unit/data'],
                     ],
                 ],
@@ -1156,7 +1156,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Quantity cannot be validated without Product Kit Item.',
+                        'detail' => 'Quantity cannot be validated without Product Kit Item',
                         'source' => ['pointer' => '/included/0/attributes/quantity'],
                     ],
                     [
@@ -1166,12 +1166,12 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
+                        'detail' => 'The selected product is not allowed',
                         'source' => ['pointer' => '/included/0/relationships/product/data'],
                     ],
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'detail' => 'The selected product unit is not allowed',
                         'source' => ['pointer' => '/included/0/relationships/unit/data'],
                     ],
                 ],
@@ -1211,7 +1211,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'expression constraint',
-                        'detail' => 'Unit must be equal to Product Kit Item unit.',
+                        'detail' => 'The selected product unit is not allowed',
                         'source' => ['pointer' => '/included/0/relationships/unit/data'],
                     ],
                 ],

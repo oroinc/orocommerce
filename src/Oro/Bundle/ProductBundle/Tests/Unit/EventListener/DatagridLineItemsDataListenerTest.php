@@ -8,13 +8,16 @@ use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductImageStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -74,7 +77,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider onLineItemDataDataProvider
      */
     public function testOnLineItemData(
-        ProductLineItemStub $lineItem,
+        ProductLineItemInterface $lineItem,
         array $productConfiguration,
         array $expectedData
     ): void {
@@ -192,6 +195,8 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             ->setQuantity(5678)
             ->setUnit($productUnit5);
 
+        $nonKitItemProduct = (new ProductStub())->setStatus(Product::STATUS_ENABLED);
+
         return [
             'without parent product' => [
                 'lineItem' => $lineItemWithoutParent,
@@ -298,6 +303,21 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
             'with disabled product' => [
                 'lineItem' => (new ProductLineItemStub(10))
                     ->setProduct((new ProductStub()))
+                    ->setQuantity(123)
+                    ->setUnit($productUnit1),
+                'productConfiguration' => [],
+                'expectedData' => [
+                    'id' => 10,
+                    'sku' => null,
+                    'name' => '',
+                    'quantity' => 123,
+                    'unit' => $productUnit1->getCode(),
+                ],
+            ],
+            'with non-kit-item product' => [
+                'lineItem' => (new ProductKitItemLineItemStub(10))
+                    ->setKitItem(new ProductKitItem())
+                    ->setProduct($nonKitItemProduct)
                     ->setQuantity(123)
                     ->setUnit($productUnit1),
                 'productConfiguration' => [],

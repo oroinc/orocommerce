@@ -9,6 +9,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
@@ -169,6 +170,11 @@ class DatagridLineItemsDataPromotionsListener
 
     private function getDataKey(ProductLineItemInterface $item): string
     {
-        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        $dataKey = implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        if ($item instanceof ProductKitItemLineItemsAwareInterface) {
+            $dataKey .= ':' . $item->getChecksum();
+        }
+
+        return $dataKey;
     }
 }

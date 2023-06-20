@@ -31,6 +31,13 @@ class DatagridLineItemsDataVisibilityPrefetchListener
             $productId = $lineItemProduct->getId();
             $productIds[$productId] = $productId;
 
+            $lineItemParentProduct = $lineItem->getParentProduct();
+            if ($lineItemParentProduct?->isEnabled()) {
+                $parentProductId = $lineItemParentProduct->getId();
+                $productIds[$parentProductId] = $parentProductId;
+                continue;
+            }
+
             if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
                 $lineItemType = $event->getDataForLineItem($lineItemId)['type'] ?? '';
                 if ($lineItemType === Product::TYPE_KIT) {

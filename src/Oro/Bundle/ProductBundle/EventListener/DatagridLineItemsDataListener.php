@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -51,6 +52,12 @@ class DatagridLineItemsDataListener
         foreach ($event->getLineItems() as $lineItem) {
             $lineItemId = $lineItem->getEntityIdentifier();
             $product = $lineItem->getProduct();
+            if ($lineItem instanceof ProductKitItemLineItemInterface
+                && !$lineItem->getKitItem()?->getProducts()->contains($product)) {
+                // The selected product is not allowed.
+                $product = null;
+            }
+
             $lineItemData = $event->getDataForLineItem($lineItemId);
             $isEnabled = $product?->isEnabled() ?? false;
 

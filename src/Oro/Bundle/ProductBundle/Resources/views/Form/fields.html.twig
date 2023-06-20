@@ -687,7 +687,7 @@
     {% set collapseClass = 'collapse-' ~ id %}
     {% set collapseFormId = 'collapse-form-' ~ id %}
     {% set collapseViewId = 'collapse-view-' ~ id %}
-    {% set isShow = value.id is null or form.vars.name == '0' %}
+    {% set isShow = value.id is null or form.vars.name == '0' or not form.vars.valid %}
     {% set viewOptions = {
         fieldsNamespace: form.vars.full_name,
         kitItemId: value.id,

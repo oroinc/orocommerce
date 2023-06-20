@@ -198,6 +198,11 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//button[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
 
+    Product Kit Dialog Shopping List Dropdown:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@class, "product-kit-add-to-shopping-list")]//button[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
+
     Create New Shopping List:
       selector: '.add-to-shopping-list-button[title="Create New Shopping List"]'
 
@@ -324,6 +329,21 @@ oro_behat_extension:
 
     Remove Line Item:
       selector: 'a[aria-label="Delete row action"]'
+
+    Row 1 Edit Line Item:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Edit")]'
+        type: 'xpath'
+
+    Row 1 Delete Line Item:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Delete")]'
+        type: 'xpath'
+
+    Row 4 Edit Line Item:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="5"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Edit")]'
+        type: 'xpath'
 
     Row 5 Edit Line Item:
       selector:
@@ -578,6 +598,140 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//div[contains(@id, "oro_action_operation_lineItem_owner")]'
 
+    Product Kit Line Item Form:
+      selector: 'form[name="oro_product_kit_line_item"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Kit Item Line Item 1 Quantity: 'oro_product_kit_line_item[kitItemLineItems][0][quantity]'
+          Readonly Kit Item Line Item 1 Quantity:
+            locator: '//input[@name="oro_product_kit_line_item[kitItemLineItems][0][quantity]"][@readonly]'
+            type: xpath
+          Kit Item Line Item 1 Product 1:
+            type: 'css'
+            locator: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_0_product_0"]'
+          Kit Item Line Item 1 Product 2:
+            type: 'css'
+            locator: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_0_product_1"]'
+          Kit Item Line Item 2 Product 1:
+            type: 'css'
+            locator: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_1_product_0"]'
+          Kit Item Line Item 2 Product 2:
+            type: 'css'
+            locator: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_1_product_1"]'
+          Kit Item Line Item 2 Quantity: 'oro_product_kit_line_item[kitItemLineItems][1][quantity]'
+          Kit Item Line Item 2 Product: 'oro_product_kit_line_item[kitItemLineItems][1][product]'
+          Readonly Kit Item Line Item 2 Quantity:
+            locator: '//input[@name="oro_product_kit_line_item[kitItemLineItems][1][quantity]"][@readonly]'
+            type: xpath
+          Quantity: 'oro_product_kit_line_item[quantity]'
+          Notes: 'oro_product_kit_line_item[notes]'
+
+    Product Kit Line Item Totals Form:
+      selector: 'div.product-totals__controls form[id^="oro_product_kit_line_item-uid"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'oro_product_kit_line_item[quantity]'
+          Unit: 'oro_product_kit_line_item[unit]'
+
+    Kit Item Line Item 1 Product 1:
+      selector: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_0_product_0"]'
+    Kit Item Line Item 1 Product 2:
+      selector: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_0_product_1"]'
+    Kit Item Line Item 2 Product 1:
+      selector: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_1_product_0"]'
+    Kit Item Line Item 2 Product 2:
+      selector: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_1_product_1"]'
+
+    Product Kit Dialog:
+      selector: 'div.product-kit-dialog'
+      class: Oro\Bundle\UIBundle\Tests\Behat\Element\UiDialog
+    Product Kit Dialog Title:
+      selector: '.h1'
+    Product Kit Dialog Kit Item 1 Name:
+      selector: '.product-kit-items-table__row-entry:nth-child(1) .product-kit-items__label'
+    Product Kit Dialog Kit Item 2 Name:
+      selector: 'tr ~ tr.product-kit-items-table__row-entry .product-kit-items__label'
+    Product Kit Dialog Price:
+      selector: '.product-totals .product-totals__total-price'
+
+    Product Kit Dialog Kit Item 1 Product 1:
+      selector: '.product-kit-items-table__row-product:nth-child(2)'
+    Product Kit Dialog Kit Item 1 Product 2:
+      selector: '.product-kit-items-table__row-product:nth-child(3)'
+    Product Kit Dialog Kit Item 1 Product 3:
+      selector: '.product-kit-items-table__row-product:nth-child(4)'
+    Product Kit Dialog Kit Item 2 Product 1:
+      selector: '.product-kit-items-table__row-product:nth-child(5)'
+    Product Kit Dialog Kit Item 2 Product 2:
+      selector: '.product-kit-items-table__row-product:nth-child(6)'
+
+    Product Kit In Shopping List Dialog:
+      selector: 'div.product-kit-in-shopping-lists-dialog'
+      class: Oro\Bundle\UIBundle\Tests\Behat\Element\UiDialog
+    Product Kit In Shopping List Dialog Title:
+      selector: '.h1'
+    Product Kit In Shopping List Dialog No Data:
+      selector: 'div.no-data'
+    Product Kit In Shopping List Dialog Shopping List 1 Label:
+      selector: 'tr:nth-child(1) td.grid-body-cell-shoppingListLabel'
+    Product Kit In Shopping List Dialog Shopping List 1 Configuration:
+      selector: 'tr:nth-child(1) td.grid-body-cell-kitConfiguration'
+    Product Kit In Shopping List Dialog Shopping List 2 Label:
+      selector: 'tr:nth-child(2) td.grid-body-cell-shoppingListLabel'
+    Product Kit In Shopping List Dialog Shopping List 2 Configuration:
+      selector: 'tr:nth-child(2) td.grid-body-cell-kitConfiguration'
+    Product Kit In Shopping List Dialog Shopping List 3 Label:
+      selector: 'tr:nth-child(3) td.grid-body-cell-shoppingListLabel'
+    Product Kit In Shopping List Dialog Shopping List 3 Configuration:
+      selector: 'tr:nth-child(3) td.grid-body-cell-kitConfiguration'
+    Product Kit In Shopping List Dialog Action Panel:
+      selector: 'div[role="dialog"] .ui-dialog-buttonpane'
+    Product Kit In Shopping List Dialog Configure and Add to Shopping List Button:
+      selector: 'div.ui-dialog-buttonpane button.add-to-shopping-list-button'
+
+    Shopping List 1 Kit Line Item Quantity:
+      selector: 'tr:nth-child(1) div.input-qty'
+    Shopping List 1 Kit Line Item Quantity Input:
+      selector: 'tr:nth-child(1) form input[name="quantity"]'
+    Shopping List 1 Kit Line Item Unit Select:
+      selector: 'tr:nth-child(1) form select'
+    Shopping List 1 Kit Line Item Save Changes Button:
+      selector: 'tr:nth-child(1) form button[type="submit"]'
+    Shopping List 1 Kit Line Item Edit Button:
+      selector: 'tr:nth-child(1) td.action-cell a[title="Edit"]'
+    Shopping List 1 Kit Line Item Delete Button:
+      selector: 'tr:nth-child(1) td.action-cell a[title="Delete"]'
+
+    Shopping List 2 Kit Line Item Quantity:
+      selector: 'tr:nth-child(2) div.input-qty'
+    Shopping List 2 Kit Line Item Quantity Input:
+      selector: 'tr:nth-child(2) form input[name="quantity"]'
+    Shopping List 2 Kit Line Item Unit Select:
+      selector: 'tr:nth-child(2) form select'
+    Shopping List 2 Kit Line Item Save Changes Button:
+      selector: 'tr:nth-child(2) form button[type="submit"]'
+    Shopping List 2 Kit Line Item Edit Button:
+      selector: 'tr:nth-child(2) td.action-cell a[title="Edit"]'
+    Shopping List 2 Kit Line Item Delete Button:
+      selector: 'tr:nth-child(2) td.action-cell a[title="Delete"]'
+
+    Shopping List 3 Kit Line Item Quantity:
+      selector: 'tr:nth-child(3) div.input-qty'
+    Shopping List 3 Kit Line Item Quantity Input:
+      selector: 'tr:nth-child(3) form input[name="quantity"]'
+    Shopping List 3 Kit Line Item Unit Select:
+      selector: 'tr:nth-child(3) form select'
+    Shopping List 3 Kit Line Item Save Changes Button:
+      selector: 'tr:nth-child(3) form button[type="submit"]'
+    Shopping List 3 Kit Line Item Edit Button:
+      selector: 'tr:nth-child(3) td.action-cell a[title="Edit"]'
+    Shopping List 3 Kit Line Item Delete Button:
+      selector: 'tr:nth-child(3) td.action-cell a[title="Delete"]'
+
+    Floating Error Message:
+      selector: 'div.floating-error-message'
   suites:
     OroShoppingListBundle:
       contexts:
@@ -606,5 +760,8 @@ oro_behat_extension:
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
         - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

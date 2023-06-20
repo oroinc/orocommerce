@@ -487,6 +487,8 @@ datagrids:
                 frontend_type: boolean
             isKit:
                 frontend_type: boolean
+            isVisible:
+                frontend_type: boolean
             isUpcoming:
                 frontend_type: boolean
             isLowInventory:

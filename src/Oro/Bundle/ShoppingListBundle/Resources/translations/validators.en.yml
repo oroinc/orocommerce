@@ -47,13 +47,15 @@ oro:
                     message: 'Quantity cannot be empty'
                 kit_item:
                     not_blank:
-                        message: 'Quantity cannot be validated without Product Kit Item.'
+                        message: 'Quantity cannot be validated without Product Kit Item'
             product:
-                status_optional.message: "Original selection no longer available"
-                status_required.message: "Selection required"
+                status_optional.message: 'Original selection no longer available'
+                status_required.message: 'Selection required'
+                invalid:
+                    message: 'The selected product is not allowed'
             unit:
-                kit_item:
-                    message: 'Unit must be equal to Product Kit Item unit.'
+                invalid:
+                    message: 'The selected product unit is not allowed'
 
     product_unavailable: "This item is unavailable"
     non_valid_precision: "This value should be decimal with a precision {{ precision }}"

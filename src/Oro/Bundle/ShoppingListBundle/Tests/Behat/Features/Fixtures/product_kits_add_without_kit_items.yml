@@ -1,0 +1,103 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_kit2:
+        sku: 'product-kit-2'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@product_kit2_name']
+            - addKitItem: ['@product_kit2_item1']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@product_kit2_precision1'
+        unitPrecisions: ['@product_kit2_precision1']
+    simple_product{1..2}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@simple_product_name<current()>']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_kit2_precision1:
+        unit: '@piece'
+        precision: '0'
+
+    simple_product_precision{1..2}:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_kit2_name:
+        string: 'Product Kit 2'
+    simple_product_name{1..2}:
+        string: 'Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit2_item1:
+        optional: true
+        sortOrder: 1
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            - addLabel: ['@product_kit2_item1_label']
+            - addKitItemProduct: ['@product_kit2_item1_product1']
+            - addKitItemProduct: ['@product_kit2_item1_product2']
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    product_kit2_item1_label:
+        string: 'Base Unit'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit2_item1_product1:
+        kitItem: '@product_kit2_item1'
+        product: '@simple_product1'
+        sortOrder: 2
+        productUnitPrecision: '@product_kit2_precision1'
+    product_kit2_item1_product2:
+        kitItem: '@product_kit2_item1'
+        product: '@simple_product2'
+        sortOrder: 3
+        productUnitPrecision: '@product_kit2_precision1'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_kit2:
+        product: '@product_kit2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 10
+    price_simple_product{1..2}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 31
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_product_kit2:
+        product: '@product_kit2'
+        priceList: '@defaultPriceList'
+    price_relation_simple_product{1..2}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shopping_list1:
+        label: 'Shopping List 1'
+        customer: '@Customer_AmandaRCole'
+        customerUser: '@CustomerUser_AmandaRCole'
+        organization: '@organization'
+        website: '@website1'

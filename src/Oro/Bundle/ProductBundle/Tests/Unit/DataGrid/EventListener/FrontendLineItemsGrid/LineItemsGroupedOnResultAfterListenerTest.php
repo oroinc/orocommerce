@@ -18,6 +18,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductImageStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,16 +28,26 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
 
     private NumberFormatter|MockObject $numberFormatter;
 
+    private ResolvedProductVisibilityProvider|MockObject $resolvedProductVisibilityProvider;
+
     private LineItemsGroupedOnResultAfterListener $listener;
 
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
+        $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+
         $this->listener = new LineItemsGroupedOnResultAfterListener(
             $this->attachmentManager,
-            $this->numberFormatter
+            $this->numberFormatter,
+            $this->resolvedProductVisibilityProvider
         );
+
+        $this->numberFormatter
+            ->expects(self::any())
+            ->method('formatCurrency')
+            ->willReturnCallback(static fn ($value, $currency) => $value . $currency);
     }
 
     /**
@@ -183,10 +194,14 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
      */
     public function testOnResultAfter(array $recordData, array $expectedRecordData): void
     {
-        $this->numberFormatter
-            ->expects(self::any())
-            ->method('formatCurrency')
-            ->willReturnCallback(static fn ($value, $currency) => $value . $currency);
+        $this->resolvedProductVisibilityProvider
+            ->method('isVisible')
+            ->willReturnMap([
+                [11, true],
+                [111, true],
+                [1111, false],
+            ]);
+
 
         $this->attachmentManager
             ->expects(self::any())
@@ -217,8 +232,8 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
             ->setParentProduct($parentProduct)
             ->setUnit($productUnit);
 
-        $parentProductWithImage = (new ProductStub())->setId(11);
-        $lineItemWithImage = (new ProductLineItemStub(10))
+        $parentProductWithImage = (new ProductStub())->setId(111);
+        $lineItemWithImage = (new ProductLineItemStub(100))
             ->setParentProduct($parentProductWithImage)
             ->setUnit($productUnit);
 
@@ -226,6 +241,11 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
         $productImage->setImage((new File())->setFilename('sample_filename'));
         $productImage->addType('listing');
         $parentProductWithImage->addImage($productImage);
+
+        $parentProductInvisible = (new ProductStub())->setId(1111);
+        $lineItemWithInvisibleParentProduct = (new ProductLineItemStub(1000))
+            ->setParentProduct($parentProductInvisible)
+            ->setUnit($productUnit);
 
         return [
             'empty line items data' => [
@@ -242,6 +262,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                     'sku' => null,
                     'image' => '',
                     'name' => '',
+                    'isVisible' => true,
                     'quantity' => 0,
                     'unit' => $productUnit->getCode(),
                     'currency' => '',
@@ -282,6 +303,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                     'sku' => null,
                     'image' => '',
                     'name' => 'sample_name',
+                    'isVisible' => true,
                     'quantity' => 30,
                     'unit' => $productUnit->getCode(),
                     'currency' => 'USD',
@@ -312,7 +334,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                     LineItemsDataOnResultAfterListener::LINE_ITEMS => [
                         111 => $lineItem,
                         222 => $lineItem,
-                        333 => $lineItem
+                        333 => $lineItem,
                     ],
                     LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
@@ -340,7 +362,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                     LineItemsDataOnResultAfterListener::LINE_ITEMS => [
                         111 => $lineItem,
                         222 => $lineItem,
-                        333 => $lineItem
+                        333 => $lineItem,
                     ],
                     LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
@@ -367,6 +389,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                     'sku' => null,
                     'image' => '',
                     'name' => 'sample_name',
+                    'isVisible' => true,
                     'quantity' => 60,
                     'unit' => $productUnit->getCode(),
                     'currency' => 'USD',
@@ -419,6 +442,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                     'sku' => null,
                     'image' => 'sample_filename_product_small',
                     'name' => '',
+                    'isVisible' => true,
                     'quantity' => 0,
                     'unit' => $productUnit->getCode(),
                     'currency' => '',
@@ -443,6 +467,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                     'sku' => null,
                     'image' => 'sample_filename_product_small',
                     'name' => '',
+                    'isVisible' => true,
                     'quantity' => 0,
                     'unit' => $productUnit->getCode(),
                     'currency' => '',
@@ -452,6 +477,35 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                         ['id' => 111, 'filteredOut' => false],
                         ['id' => 222, 'filteredOut' => true],
                     ],
+                ],
+            ],
+            'with invisible parent product' => [
+                'recordData' => [
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [
+                        1111 => $lineItemWithInvisibleParentProduct,
+                        222 => $lineItem,
+                    ],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
+                ],
+                'expectedRecordData' => [
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [
+                        1111 => $lineItemWithInvisibleParentProduct,
+                        222 => $lineItem,
+                    ],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
+                    'id' => $parentProductInvisible->getId() . '_' . $productUnit->getCode(),
+                    'productId' => $parentProductInvisible->getId(),
+                    'sku' => null,
+                    'image' => '',
+                    'name' => '',
+                    'isVisible' => false,
+                    'quantity' => 0,
+                    'unit' => $productUnit->getCode(),
+                    'currency' => '',
+                    'subtotalValue' => 0,
+                    'discountValue' => 0,
+                    'subData' => [],
                 ],
             ],
         ];

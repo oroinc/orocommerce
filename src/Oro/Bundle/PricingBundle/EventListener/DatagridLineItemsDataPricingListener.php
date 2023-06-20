@@ -7,7 +7,6 @@ use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
-use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitItemLineItemsDataListener;
@@ -66,8 +65,7 @@ class DatagridLineItemsDataPricingListener
             $lineItemData = $event->getDataForLineItem($lineItemId);
             $this->setPricingData($lineItemData, $lineItem, $lineItemPrice);
 
-            if (($lineItemData[DatagridKitLineItemsDataListener::IS_KIT] ?? false)
-                && $lineItemPrice instanceof ProductKitLineItemPrice) {
+            if ($lineItemData[DatagridKitLineItemsDataListener::IS_KIT] ?? false) {
                 $kitItemLineItemsData = $lineItemData[DatagridKitLineItemsDataListener::SUB_DATA] ?? [];
 
                 foreach ($kitItemLineItemsData as $index => $kitItemLineItemDatum) {
@@ -79,7 +77,7 @@ class DatagridLineItemsDataPricingListener
                     $hasSubtotal = $this->setPricingData(
                         $lineItemData[DatagridKitLineItemsDataListener::SUB_DATA][$index],
                         $kitItemLineItem,
-                        $lineItemPrice->getKitItemLineItemPrice($kitItemLineItem)
+                        $lineItemPrice?->getKitItemLineItemPrice($kitItemLineItem)
                     );
 
                     if ($hasSubtotal === false

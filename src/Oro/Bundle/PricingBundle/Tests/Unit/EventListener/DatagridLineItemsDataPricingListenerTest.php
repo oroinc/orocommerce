@@ -409,6 +409,61 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         );
     }
 
+    public function testOnLineItemDataWhenProductKitLineItemHasNoDefinedPrice(): void
+    {
+        $kitLineItem = $this->getLineItem(1, 10, 'item');
+        $lineItems = [
+            $kitLineItem->getEntityIdentifier() => $kitLineItem,
+        ];
+
+        $kitItem1 = new ProductKitItemStub(100);
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(1000))
+            ->setKitItem($kitItem1);
+        $kitItem2 = new ProductKitItemStub(200);
+        $kitItemLineItem2 = (new ProductKitItemLineItemStub(2000))
+            ->setKitItem($kitItem2);
+        $event = new DatagridLineItemsDataEvent(
+            $lineItems,
+            [
+                $kitLineItem->getEntityIdentifier() => [
+                    DatagridKitLineItemsDataListener::IS_KIT => true,
+                    DatagridKitLineItemsDataListener::SUB_DATA => [
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1],
+                        [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2],
+                    ],
+                ],
+            ],
+            $this->createMock(DatagridInterface::class),
+            []
+        );
+
+        $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
+        $this->productLineItemsHolderFactory
+            ->expects(self::once())
+            ->method('createFromLineItems')
+            ->with($lineItems)
+            ->willReturn($lineItemsHolder);
+
+        $this->productLineItemsPriceProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsPricesForLineItemsHolder')
+            ->with($lineItemsHolder)
+            ->willReturn([]);
+
+        $this->listener->onLineItemData($event);
+
+        self::assertSame(
+            [
+                DatagridKitLineItemsDataListener::IS_KIT => true,
+                DatagridKitLineItemsDataListener::SUB_DATA => [
+                    [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem1] + self::EMPTY_DATA,
+                    [DatagridKitItemLineItemsDataListener::ENTITY => $kitItemLineItem2] + self::EMPTY_DATA,
+                ],
+            ] + self::EMPTY_DATA + [DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR => true],
+            $event->getDataForLineItem($kitLineItem->getEntityIdentifier())
+        );
+    }
+
     private function getLineItem(int $id, int $quantity, string $unit, float $price = null): ProductLineItemInterface
     {
         $product = $this->getEntity(Product::class, ['id' => $id * 10]);

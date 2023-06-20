@@ -1,6 +1,8 @@
 Oro\Bundle\ProductBundle\Entity\ProductName:
     localProductName{1..20}:
         string: 'Product <current()>'
+    product21_not_available_precision_name:
+        string: 'Product 21 (Unit Precision is not available for purchase)'
 
 Oro\Bundle\ProductBundle\Entity\ProductDescription:
     localProductDescription{1..20}:
@@ -51,6 +53,14 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision{1..20}:
         unit: '@each'
         precision: '1'
+    product21_not_available_precision1:
+        unit: '@piece'
+        precision: '0'
+    product21_not_available_precision2:
+        unit: '@each'
+        precision: '0'
+        conversionRate: 1
+        sell: false
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
@@ -349,7 +359,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         unitPrecisions: [ '@productUnitPrecision19' ]
         __calls:
             - addName: ['@localProductName19']
-            - addDescription: ['@localProductDescription19']œ
+            - addDescription: ['@localProductDescription19']
 
     product20:
         type: 'simple'
@@ -364,6 +374,20 @@ Oro\Bundle\ProductBundle\Entity\Product:
         __calls:
             - addName: ['@localProductName20']
             - addDescription: ['@localProductDescription20']
+
+    # Product with Product Unit Precision that is not available for purchase
+    product21_not_available_precision:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'NA01'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product21_not_available_precision1'
+        unitPrecisions: ['@product21_not_available_precision1', '@product21_not_available_precision2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - addName: ['@product21_not_available_precision_name']
 
 Doctrine\Common\Collections\ArrayCollection:
     products1:
