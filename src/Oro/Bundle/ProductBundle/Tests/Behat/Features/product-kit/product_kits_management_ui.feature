@@ -1,6 +1,6 @@
 @feature-BB-21124
 @ticket-BB-22446
-@fixture-OroProductBundle:products_grid.yml
+@fixture-OroProductBundle:product_kits_management_ui.yml
 
 Feature: Product kits management UI
   In order to manage product kits

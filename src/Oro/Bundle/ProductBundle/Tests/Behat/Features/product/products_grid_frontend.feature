@@ -13,43 +13,43 @@ Feature: Products Grid Frontend
     When open page number test of frontend product grid
     Then should not see "There was an error performing the requested operation. Please try again or contact us for assistance." flash message
     And I should see "PSKU1"
-    And number of records in "Product Frontend Grid" should be 20
+    And number of records in "Product Frontend Grid" should be 19
 
   Scenario: Check Fulltext Filter
-    Given number of records in "Product Frontend Grid" should be 20
+    Given number of records in "Product Frontend Grid" should be 19
     When I filter "Any Text" as contains "PSKU3"
     Then I should see "PSKU3"
     And I should not see "PSKU1"
     And I click "Clear All Filters"
 
   Scenario: Check Price Filter
-    Given number of records in "Product Frontend Grid" should be 20
+    Given number of records in "Product Frontend Grid" should be 19
     And I set range filter "Price" as min value "10" and max value "10" use "each" unit
     Then I should see "PSKU1"
     And I should not see "PSKU5"
     And I click "Clear All Filters"
 
   Scenario: Check Name Filter
-    Given number of records in "Product Frontend Grid" should be 20
+    Given number of records in "Product Frontend Grid" should be 19
     When I filter "Name" as does not contain "Product 19"
     Then I should not see "PSKU19"
     And I should see "PSKU1"
 
   Scenario: Check Filter Applies After Different Actions
-    Given number of records in "Product Frontend Grid" should be 19
+    Given number of records in "Product Frontend Grid" should be 18
     When I select 10 from per page list dropdown in "Product Frontend Grid"
     Then I should not see "PSKU19"
-    And number of records in "Product Frontend Grid" should be 19
+    And number of records in "Product Frontend Grid" should be 18
     When I go to next page in "Product Frontend Grid"
     Then I should not see "PSKU19"
-    And number of records in "Product Frontend Grid" should be 19
+    And number of records in "Product Frontend Grid" should be 18
     When I reload the page
     Then I should not see "PSKU19"
-    And number of records in "Product Frontend Grid" should be 19
+    And number of records in "Product Frontend Grid" should be 18
     When I hide filter "Name" in "Product Frontend Grid" frontend grid
     And I select 25 from per page list dropdown in "Product Frontend Grid"
     Then I should see "PSKU19"
-    And number of records in "Product Frontend Grid" should be 20
+    And number of records in "Product Frontend Grid" should be 19
 
   Scenario: Check Price Sorter
     Given I am on "/product"
@@ -74,11 +74,11 @@ Feature: Products Grid Frontend
     Then PSKU9 must be first record in "Product Frontend Grid"
     And PSKU8 must be second record in "Product Frontend Grid"
     When I go to next page in "Product Frontend Grid"
-    Then PSKU18 must be first record in "Product Frontend Grid"
-    And PSKU17 must be second record in "Product Frontend Grid"
+    Then PSKU17 must be first record in "Product Frontend Grid"
+    And PSKU16 must be second record in "Product Frontend Grid"
     When I reload the page
-    Then PSKU18 must be first record in "Product Frontend Grid"
-    And PSKU17 must be second record in "Product Frontend Grid"
+    Then PSKU17 must be first record in "Product Frontend Grid"
+    And PSKU16 must be second record in "Product Frontend Grid"
     When I sort frontend grid "Product Frontend Grid" by "Name (Low to High)"
     Then PSKU19 must be first record in "Product Frontend Grid"
     And PSKU2 must be second record in "Product Frontend Grid"
