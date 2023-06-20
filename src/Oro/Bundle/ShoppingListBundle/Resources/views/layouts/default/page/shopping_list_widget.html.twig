@@ -266,7 +266,7 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_item_product_base_title_widget %}
-    {% set product = lineItem.product %}
+    {% set product = get_visible_product(lineItem) %}
     {% set routeOptions = {'id': product.id} %}
     <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}" class="shopping-list-dropdown__product-title">
         {{- product.names|localized_value|e -}}
