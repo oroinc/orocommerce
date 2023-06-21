@@ -27,6 +27,8 @@ The current file describes significant changes in the code that may affect the u
 
 #### ShoppingListBundle
 * Deprecated methods `getMatchedPrices`, `getMatchedPrice` from `\Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider`, added `getProductLineItemPricesForShoppingLists` instead.
+* The datagrid on the shopping list page has been slightly redesigned. Excessive borders and offsets have been removed for desktop, tablet, and mobile versions. As a result, responsive behavior needs to be checked.
+  Moreover, changes in `Oro/Bundle/ShoppingListBundle/Resources/public/templates/datagrid/cell/item.html` and `Oro/Bundle/ShoppingListBundle/Resources/public/templates/macros/product-item__name.html` templates may impact the rendering and display of data in datagrid.
 
 
 ## UNRELEASED
