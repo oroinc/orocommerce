@@ -72,6 +72,10 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "group_name"="commerce",
  *              "category"="orders"
  *          },
+ *          "grid"={
+ *              "default"="orders-grid",
+ *              "context"="orders-for-context-grid"
+ *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
