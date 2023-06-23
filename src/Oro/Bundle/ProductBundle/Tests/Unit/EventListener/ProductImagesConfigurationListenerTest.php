@@ -12,26 +12,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const MESSAGE = 'message';
+    private const SCOPE_APP = 'app';
 
-    /**
-     * @internal
-     */
-    const SCOPE_APP = 'app';
-
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /**
-     * @var Session|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
-    /**
-     * @var ProductImagesConfigurationListener
-     */
+    /** @var ProductImagesConfigurationListener */
     protected $listener;
 
     protected function setUp(): void
@@ -121,20 +110,12 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
         ]));
     }
 
-    /**
-     * @param array $settings
-     *
-     * @return ConfigUpdateEvent
-     */
-    protected function prepareEvent(array $settings)
+    protected function prepareEvent(array $settings): ConfigUpdateEvent
     {
         return new ConfigUpdateEvent($settings, self::SCOPE_APP, null);
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function prepareFlashBag()
+    protected function prepareFlashBag(): FlashBag
     {
         $flashBag = $this->createMock(FlashBag::class);
         $flashBag->expects($this->exactly(2))

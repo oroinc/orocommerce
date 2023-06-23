@@ -17,7 +17,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
-use PHPUnit\Framework\SyntheticError;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -28,18 +27,11 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
     use DefaultWebsiteIdTestTrait;
     use ConfigManagerAwareTestTrait;
 
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
-     * @var CustomerPartialUpdateDriverInterface
-     */
-    private $driver;
+    private ConfigManager $configManager;
+    private CustomerPartialUpdateDriverInterface $driver;
 
     protected function setUp(): void
     {
@@ -50,30 +42,19 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
 
         $this->loadFixtures([LoadProductVisibilityScopedData::class]);
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
         $this->driver = $this->getContainer()->get('oro_website_search.driver.customer_partial_update_driver');
         $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 
-    /**
-     * @throws SyntheticError
-     */
-    abstract protected function checkTestToBeSkipped();
+    abstract protected function checkTestToBeSkipped(): void;
 
-    /**
-     * @param Customer $customer
-     * @return string
-     */
-    private function getVisibilityCustomerFieldName(Customer $customer)
+    private function getVisibilityCustomerFieldName(Customer $customer): string
     {
         return 'integer.visibility_customer.' . $customer->getId();
     }
 
-    /**
-     * @param Customer $customer
-     * @return Result
-     */
-    private function searchVisibilitiesForCustomer(Customer $customer)
+    private function searchVisibilitiesForCustomer(Customer $customer): Result
     {
         $query = new Query();
         $query
@@ -83,12 +64,10 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
             ->andWhere(Criteria::expr()->exists($this->getVisibilityCustomerFieldName($customer)))
             ->orderBy(['sku' => Criteria::ASC]);
 
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-
-        return $searchEngine->search($query);
+        return $this->getContainer()->get('oro_website_search.engine')->search($query);
     }
 
-    private function reindexProducts()
+    private function reindexProducts(): void
     {
         $this->getContainer()->get('event_dispatcher')->dispatch(
             new ReindexationRequestEvent([Product::class], [], [], false),

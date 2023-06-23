@@ -9,16 +9,17 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendProductExportOptionsPro
 
 class FrontendProductExportOptionsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private FrontendProductExportOptionsProvider $productExportOptionsProvider;
-
     /** @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private RequestProductHandler $requestProductHandler;
+    private $requestProductHandler;
 
-    /** @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject  */
-    private SearchProductHandler $searchProductHandler;
+    /** @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $searchProductHandler;
 
-    /** @var RequestContentVariantHandler|\PHPUnit\Framework\MockObject\MockObject  */
-    private RequestContentVariantHandler $requestHandler;
+    /** @var RequestContentVariantHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestHandler;
+
+    /** @var FrontendProductExportOptionsProvider */
+    private $productExportOptionsProvider;
 
     protected function setUp(): void
     {
@@ -82,7 +83,7 @@ class FrontendProductExportOptionsProviderTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expected, $optionsString);
     }
 
-    public function getDefaultGridExportRequestOptionsDataProviderWithCategoryId()
+    public function getDefaultGridExportRequestOptionsDataProviderWithCategoryId(): array
     {
         return [
             [

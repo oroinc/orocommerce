@@ -19,19 +19,16 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class FedexRateServiceRequestFactoryTest extends TestCase
+class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    const KEY = 'key';
-    const PASS = 'pass';
-    const ACCOUNT_NUMBER = 'account';
-    const METER_NUMBER = 'meter';
-    const PICKUP_TYPE = 'pickup';
+    private const KEY = 'key';
+    private const PASS = 'pass';
+    private const ACCOUNT_NUMBER = 'account';
+    private const METER_NUMBER = 'meter';
+    private const PICKUP_TYPE = 'pickup';
 
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $crypter;
 
     /**
@@ -39,19 +36,13 @@ class FedexRateServiceRequestFactoryTest extends TestCase
      */
     private $packageSettingsFactory;
 
-    /**
-     * @var FedexPackagesByLineItemsAndPackageSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexPackagesByLineItemsAndPackageSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $packagesFactory;
 
-    /**
-     * @var ShippingLineItemCollectionBySettingsModifierInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingLineItemCollectionBySettingsModifierInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $convertToFedexUnitsModifier;
 
-    /**
-     * @var FedexRateServiceRequestFactory
-     */
+    /** @var FedexRateServiceRequestFactory */
     private $factory;
 
     protected function setUp(): void
@@ -85,8 +76,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         );
 
         $packageSettings = $this->createMock(FedexPackageSettingsInterface::class);
-        $this->packageSettingsFactory
-            ->expects(static::once())
+        $this->packageSettingsFactory->expects(self::once())
             ->method('create')
             ->with($integrationSettings)
             ->willReturn($packageSettings);
@@ -94,19 +84,17 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         $lineItemsWithOptions = new DoctrineShippingLineItemCollection([]);
 
         $lineItemsConverted = new DoctrineShippingLineItemCollection([]);
-        $this->convertToFedexUnitsModifier
-            ->expects(static::once())
+        $this->convertToFedexUnitsModifier->expects(self::once())
             ->method('modify')
             ->with($lineItemsWithOptions, $integrationSettings)
             ->willReturn($lineItemsConverted);
 
-        $this->packagesFactory
-            ->expects(static::once())
+        $this->packagesFactory->expects(self::once())
             ->method('create')
             ->with($lineItemsConverted, $packageSettings)
             ->willReturn([]);
 
-        static::assertNull($this->factory->create($settings));
+        self::assertNull($this->factory->create($settings));
     }
 
     /**
@@ -128,32 +116,25 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             $rule
         );
 
-        $this->packageSettingsFactory
-            ->expects(static::once())
+        $this->packageSettingsFactory->expects(self::once())
             ->method('create')
             ->with($integrationSettings)
             ->willReturn($this->createMock(FedexPackageSettingsInterface::class));
 
-        $this->convertToFedexUnitsModifier
-            ->expects(static::once())
+        $this->convertToFedexUnitsModifier->expects(self::once())
             ->method('modify')
             ->willReturn($this->createMock(ShippingLineItemCollectionInterface::class));
 
-        $this->packagesFactory
-            ->expects(static::once())
+        $this->packagesFactory->expects(self::once())
             ->method('create')
             ->willReturn($packages);
 
-        $this->crypter
-            ->expects(static::never())
+        $this->crypter->expects(self::never())
             ->method('decryptData');
 
-        static::assertNull($this->factory->create($settings));
+        self::assertNull($this->factory->create($settings));
     }
 
-    /**
-     * @retrun array
-     */
     public function brokenContextDataProvider(): array
     {
         return [
@@ -191,29 +172,25 @@ class FedexRateServiceRequestFactoryTest extends TestCase
             $rule
         );
 
-        $this->packageSettingsFactory
-            ->expects(static::once())
+        $this->packageSettingsFactory->expects(self::once())
             ->method('create')
             ->with($integrationSettings)
             ->willReturn($this->createMock(FedexPackageSettingsInterface::class));
 
-        $this->convertToFedexUnitsModifier
-            ->expects(static::once())
+        $this->convertToFedexUnitsModifier->expects(self::once())
             ->method('modify')
             ->willReturn($this->createMock(ShippingLineItemCollectionInterface::class));
 
-        $this->packagesFactory
-            ->expects(static::once())
+        $this->packagesFactory->expects(self::once())
             ->method('create')
             ->willReturn($packages);
 
-        $this->crypter
-            ->expects(static::once())
+        $this->crypter->expects(self::once())
             ->method('decryptData')
             ->with(self::PASS)
             ->willReturn(self::PASS);
 
-        static::assertEquals($this->getExpectedRequest(), $this->factory->create($settings));
+        self::assertEquals($this->getExpectedRequest(), $this->factory->create($settings));
     }
 
     private function createPackages(): array
@@ -223,22 +200,16 @@ class FedexRateServiceRequestFactoryTest extends TestCase
 
     private function createContext(): ShippingContextInterface
     {
-        $context = new ShippingContext([
+        return new ShippingContext([
             ShippingContext::FIELD_SHIPPING_ORIGIN => $this->createShipperAddress(),
             ShippingContext::FIELD_SHIPPING_ADDRESS => $this->createRecipientAddress(),
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([]),
         ]);
-
-        return $context;
     }
 
-    /**
-     * @return Address
-     */
-    private function createShipperAddress()
+    private function createShipperAddress(): Address
     {
         $address = new Address();
-
         $address
             ->setStreet('street')
             ->setCity('city')
@@ -249,13 +220,9 @@ class FedexRateServiceRequestFactoryTest extends TestCase
         return $address;
     }
 
-    /**
-     * @return Address
-     */
-    private function createRecipientAddress()
+    private function createRecipientAddress(): Address
     {
         $address = new Address();
-
         $address
             ->setStreet('street2')
             ->setCity('city2')
@@ -269,7 +236,6 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     private function createIntegrationSettings(): FedexIntegrationSettings
     {
         $settings = new FedexIntegrationSettings();
-
         $settings
             ->setKey(self::KEY)
             ->setPassword(self::PASS)

@@ -16,10 +16,10 @@ class PriceListValueProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
     /** @var PriceListValueProvider */

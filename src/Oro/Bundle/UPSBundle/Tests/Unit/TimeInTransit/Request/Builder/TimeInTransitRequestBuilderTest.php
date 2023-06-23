@@ -9,63 +9,25 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuild
 
 class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const UPS_API_USERNAME = 'user';
+    private const UPS_API_USERNAME = 'user';
+    private const UPS_API_PASSWORD = 'pass';
+    private const UPS_API_KEY = 'key';
+    private const WEIGHT_UNIT_CODE = 'LBS';
+    private const WEIGHT = '1';
+    private const CUSTOMER_CONTEXT = 'sample context';
+    private const TRANSACTION_IDENTIFIER = 'sample id';
+    private const MAXIMUM_LIST_SIZE = '1';
 
-    /**
-     * @internal
-     */
-    const UPS_API_PASSWORD = 'pass';
-
-    /**
-     * @internal
-     */
-    const UPS_API_KEY = 'key';
-
-    /**
-     * @internal
-     */
-    const WEIGHT_UNIT_CODE = 'LBS';
-
-    /**
-     * @internal
-     */
-    const WEIGHT = '1';
-
-    /**
-     * @internal
-     */
-    const CUSTOMER_CONTEXT = 'sample context';
-
-    /**
-     * @internal
-     */
-    const TRANSACTION_IDENTIFIER = 'sample id';
-
-    /**
-     * @internal
-     */
-    const MAXIMUM_LIST_SIZE = '1';
-
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime */
     private $pickupDate;
 
-    /**
-     * @var AddressInterface
-     */
+    /** @var AddressInterface */
     private $address;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->address = new AddressStub();
         $this->pickupDate = new \DateTime();
+        $this->address = new AddressStub();
     }
 
     public function testCreate()
@@ -84,7 +46,7 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             $this->pickupDate
         );
 
-        static::assertEquals($expected, $builder->createRequest());
+        self::assertEquals($expected, $builder->createRequest());
     }
 
     public function testCreateWithOptionalParams()
@@ -109,13 +71,10 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             ->setCustomerContext(self::CUSTOMER_CONTEXT)
             ->setTransactionIdentifier(self::TRANSACTION_IDENTIFIER);
 
-        static::assertEquals($expected, $builder->createRequest());
+        self::assertEquals($expected, $builder->createRequest());
     }
 
-    /**
-     * @return array
-     */
-    private function getRequestData()
+    private function getRequestData(): array
     {
         $addressArray = [
             'StateProvinceCode' => $this->address->getRegionCode(),
@@ -124,7 +83,7 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             'City' => $this->address->getCity(),
         ];
 
-        $request = [
+        return [
             'Security' => [
                 'UsernameToken' => [
                     'Username' => self::UPS_API_USERNAME,
@@ -149,18 +108,11 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-
-        return $request;
     }
 
-    /**
-     * @return array
-     */
-    private function getRequestDataWithOptionalParams()
+    private function getRequestDataWithOptionalParams(): array
     {
-        $request = $this->getRequestData();
-
-        $request = array_merge_recursive($request, [
+        return array_merge_recursive($this->getRequestData(), [
             'TimeInTransitRequest' => [
                 'Request' => [
                     'TransactionReference' => [
@@ -177,7 +129,5 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
                 'MaximumListSize' => self::MAXIMUM_LIST_SIZE,
             ],
         ]);
-
-        return $request;
     }
 }

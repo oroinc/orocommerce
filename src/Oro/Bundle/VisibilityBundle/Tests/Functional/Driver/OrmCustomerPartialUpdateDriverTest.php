@@ -10,9 +10,9 @@ use Oro\Bundle\SearchBundle\Engine\Orm;
 class OrmCustomerPartialUpdateDriverTest extends AbstractCustomerPartialUpdateDriverTest
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function checkTestToBeSkipped()
+    protected function checkTestToBeSkipped(): void
     {
         $searchEngineName = $this->getContainer()
             ->get('oro_website_search.engine.parameters')

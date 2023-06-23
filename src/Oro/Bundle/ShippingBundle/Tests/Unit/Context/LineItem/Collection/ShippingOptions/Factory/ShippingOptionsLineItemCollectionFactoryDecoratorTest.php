@@ -21,18 +21,15 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Context\AbstractShippingLineItemTest;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShippingLineItemTest
 {
-    const TEST_PRODUCT_ID = 2002;
+    protected const TEST_PRODUCT_ID = 2002;
 
-    private ShippingLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $decoratedFactory;
-
-    private ProductShippingOptionsRepository|\PHPUnit\Framework\MockObject\MockObject $repository;
-
-    private LineItemBuilderByLineItemFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-        $builderByLineItemFactory;
-
+    private ShippingLineItemCollectionFactoryInterface|MockObject $decoratedFactory;
+    private ProductShippingOptionsRepository|MockObject $repository;
+    private LineItemBuilderByLineItemFactoryInterface|MockObject $builderByLineItemFactory;
     private ShippingOptions\Factory\ShippingOptionsLineItemCollectionFactoryDecorator $decorator;
 
     protected function setUp(): void
@@ -43,30 +40,25 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
         $this->repository = $this->createMock(ProductShippingOptionsRepository::class);
 
         $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry
-            ->expects(self::any())
+        $managerRegistry->expects(self::any())
             ->method('getRepository')
             ->with(ProductShippingOptions::class)
             ->willReturn($this->repository);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $managerRegistry
-            ->expects(self::any())
+        $managerRegistry->expects(self::any())
             ->method('getManagerForClass')
             ->withConsecutive([WeightUnit::class], [LengthUnit::class])
             ->willReturn($entityManager);
 
-        $entityManager
-            ->expects(self::any())
+        $entityManager->expects(self::any())
             ->method('getReference')
-            ->willReturnCallback(
-                static function (string $className, ?string $unitCode) {
-                    $unit = new $className();
-                    $unit->setCode($unitCode);
+            ->willReturnCallback(static function (string $className, ?string $unitCode) {
+                $unit = new $className();
+                $unit->setCode($unitCode);
 
-                    return $unit;
-                }
-            );
+                return $unit;
+            });
 
         $this->builderByLineItemFactory = $this->createMock(LineItemBuilderByLineItemFactoryInterface::class);
 
@@ -81,7 +73,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
     {
         $product2 = $this->createMock(Product::class);
 
-        $lineItem1 = $this->createLineItemWithoutShippingOptions($this->productMock);
+        $lineItem1 = $this->createLineItemWithoutShippingOptions($this->product);
         $lineItem2 = $this->createLineItemWithoutShippingOptions($product2);
 
         $shippingLineItems = [$lineItem1, $lineItem2];
@@ -93,8 +85,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->method('createBuilder')
             ->willReturnMap([[$lineItem1, $builder1], [$lineItem2, $builder2]]);
 
-        $this->repository
-            ->expects(self::once())
+        $this->repository->expects(self::once())
             ->method('findIndexedByProductsAndUnits')
             ->willReturn(
                 [
@@ -123,13 +114,12 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
 
         $lineItemCollection = $this->createMock(ShippingLineItemCollectionInterface::class);
 
-        $this->decoratedFactory
-            ->expects(self::once())
+        $this->decoratedFactory->expects(self::once())
             ->method('createShippingLineItemCollection')
             ->with(
                 [
                     $this->createLineItem(
-                        $this->productMock,
+                        $this->product,
                         Dimensions::create(11, 12, 13, (new LengthUnit())->setCode('meter')),
                         Weight::create(142, (new WeightUnit())->setCode('lbs'))
                     ),
@@ -143,7 +133,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
 
     public function testCreateShippingLineItemCollectionWhenNoDimensionsUnit(): void
     {
-        $lineItem1 = $this->createLineItemWithoutShippingOptions($this->productMock);
+        $lineItem1 = $this->createLineItemWithoutShippingOptions($this->product);
         $shippingLineItems = [$lineItem1];
         $builder1 = $this->createBuilderFromLineItem($lineItem1);
 
@@ -152,8 +142,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->with($lineItem1)
             ->willReturn($builder1);
 
-        $this->repository
-            ->expects(self::once())
+        $this->repository->expects(self::once())
             ->method('findIndexedByProductsAndUnits')
             ->willReturn(
                 [
@@ -172,13 +161,12 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
 
         $lineItemCollection = $this->createMock(ShippingLineItemCollectionInterface::class);
 
-        $this->decoratedFactory
-            ->expects(self::once())
+        $this->decoratedFactory->expects(self::once())
             ->method('createShippingLineItemCollection')
             ->with(
                 [
                     $this->createLineItem(
-                        $this->productMock,
+                        $this->product,
                         Dimensions::create(11, 12, 13, null),
                         Weight::create(142, (new WeightUnit())->setCode('lbs'))
                     ),
@@ -191,7 +179,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
 
     public function testCreateShippingLineItemCollectionWhenNoWeightUnit(): void
     {
-        $lineItem1 = $this->createLineItemWithoutShippingOptions($this->productMock);
+        $lineItem1 = $this->createLineItemWithoutShippingOptions($this->product);
         $shippingLineItems = [$lineItem1];
         $builder1 = $this->createBuilderFromLineItem($lineItem1);
 
@@ -200,8 +188,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
             ->with($lineItem1)
             ->willReturn($builder1);
 
-        $this->repository
-            ->expects(self::once())
+        $this->repository->expects(self::once())
             ->method('findIndexedByProductsAndUnits')
             ->willReturn(
                 [
@@ -220,13 +207,12 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
 
         $lineItemCollection = $this->createMock(ShippingLineItemCollectionInterface::class);
 
-        $this->decoratedFactory
-            ->expects(self::once())
+        $this->decoratedFactory->expects(self::once())
             ->method('createShippingLineItemCollection')
             ->with(
                 [
                     $this->createLineItem(
-                        $this->productMock,
+                        $this->product,
                         Dimensions::create(11, 12, 13, null),
                         Weight::create(142, null)
                     ),
@@ -241,15 +227,14 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
     {
         $collection = $this->createMock(ShippingLineItemCollectionInterface::class);
 
-        $this->repository
+        $this->repository->expects(self::any())
             ->method('findIndexedByProductsAndUnits')
             ->willReturn([]);
 
-        $this->builderByLineItemFactory
-            ->expects(self::never())
+        $this->builderByLineItemFactory->expects(self::never())
             ->method('createBuilder');
 
-        $this->decoratedFactory
+        $this->decoratedFactory->expects(self::any())
             ->method('createShippingLineItemCollection')
             ->with([])
             ->willReturn($collection);
@@ -268,11 +253,11 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
     {
         return new ShippingLineItem(
             [
-                ShippingLineItem::FIELD_PRICE => $this->priceMock,
-                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+                ShippingLineItem::FIELD_PRICE => $this->price,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnit,
                 ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_UNIT_CODE,
                 ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,
-                ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
+                ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
                 ShippingLineItem::FIELD_PRODUCT => $product,
                 ShippingLineItem::FIELD_PRODUCT_SKU => self::TEST_PRODUCT_SKU,
                 ShippingLineItem::FIELD_DIMENSIONS => $dimensions,
@@ -286,11 +271,11 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
     {
         return new ShippingLineItem(
             [
-                ShippingLineItem::FIELD_PRICE => $this->priceMock,
-                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+                ShippingLineItem::FIELD_PRICE => $this->price,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnit,
                 ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_UNIT_CODE,
                 ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,
-                ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
+                ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
                 ShippingLineItem::FIELD_PRODUCT => $product,
                 ShippingLineItem::FIELD_PRODUCT_SKU => self::TEST_PRODUCT_SKU,
                 ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ENTITY_ID,

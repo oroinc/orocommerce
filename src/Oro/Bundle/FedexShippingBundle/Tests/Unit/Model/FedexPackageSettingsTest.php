@@ -7,22 +7,22 @@ use PHPUnit\Framework\TestCase;
 
 class FedexPackageSettingsTest extends TestCase
 {
-    const WEIGHT_UNIT = 'kg';
-    const DIMENSIONS_UNIT = 'cm';
-    const EXPRESSION = '1 = 1';
-
     public function testGetters()
     {
+        $weightUnit = 'kg';
+        $dimensionsUnit = 'cm';
+        $expression = '1 = 1';
+
         $settings = new FedexPackageSettings(
-            self::WEIGHT_UNIT,
-            self::DIMENSIONS_UNIT,
-            self::EXPRESSION,
+            $weightUnit,
+            $dimensionsUnit,
+            $expression,
             true
         );
 
-        static::assertSame(self::WEIGHT_UNIT, $settings->getUnitOfWeight());
-        static::assertSame(self::DIMENSIONS_UNIT, $settings->getDimensionsUnit());
-        static::assertSame(self::EXPRESSION, $settings->getLimitationExpression());
-        static::assertTrue($settings->isDimensionsIgnored());
+        self::assertSame($weightUnit, $settings->getUnitOfWeight());
+        self::assertSame($dimensionsUnit, $settings->getDimensionsUnit());
+        self::assertSame($expression, $settings->getLimitationExpression());
+        self::assertTrue($settings->isDimensionsIgnored());
     }
 }

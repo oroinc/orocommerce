@@ -11,8 +11,7 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->productHolderMock
-            ->expects($this->once())
+        $this->productHolder->expects($this->once())
             ->method('getEntityIdentifier')
             ->willReturn(self::TEST_ENTITY_ID);
     }
@@ -20,18 +19,18 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
     public function testFullBuild()
     {
         $builder = new BasicShippingLineItemBuilder(
-            $this->productUnitMock,
+            $this->productUnit,
             self::TEST_UNIT_CODE,
             self::TEST_QUANTITY,
-            $this->productHolderMock
+            $this->productHolder
         );
 
         $builder
-            ->setProduct($this->productMock)
-            ->setPrice($this->priceMock)
+            ->setProduct($this->product)
+            ->setPrice($this->price)
             ->setProductSku(self::TEST_PRODUCT_SKU)
-            ->setDimensions($this->dimensionsMock)
-            ->setWeight($this->weightMock);
+            ->setDimensions($this->dimensions)
+            ->setWeight($this->weight);
 
         $shippingLineItem = $builder->getResult();
 
@@ -43,19 +42,19 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
     public function testOptionalBuild()
     {
         $builder = new BasicShippingLineItemBuilder(
-            $this->productUnitMock,
+            $this->productUnit,
             self::TEST_UNIT_CODE,
             self::TEST_QUANTITY,
-            $this->productHolderMock
+            $this->productHolder
         );
 
         $shippingLineItem = $builder->getResult();
 
         $expectedShippingLineItem = new ShippingLineItem([
-            ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+            ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnit,
             ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_UNIT_CODE,
             ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,
-            ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
+            ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
             ShippingLineItem::FIELD_ENTITY_IDENTIFIER => self::TEST_ENTITY_ID
         ]);
 
