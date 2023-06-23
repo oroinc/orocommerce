@@ -25,7 +25,7 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
     /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeProvider;
 
     /** @var VirtualFieldsProductDecoratorFactory */

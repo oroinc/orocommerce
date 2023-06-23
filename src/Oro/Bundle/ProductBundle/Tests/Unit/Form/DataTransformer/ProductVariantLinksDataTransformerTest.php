@@ -9,16 +9,8 @@ use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransfo
 
 class ProductVariantLinksDataTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_VARIANT_LINK_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink';
+    private ProductVariantLinksDataTransformer $transformer;
 
-    /**
-     * @var ProductVariantLinksDataTransformer
-     */
-    protected $transformer;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->transformer = new ProductVariantLinksDataTransformer();
@@ -39,8 +31,8 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($product1, $links->first()->getProduct());
         $this->assertSame($product2, $links->next()->getProduct());
 
-        $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->first());
-        $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->next());
+        $this->assertInstanceOf(ProductVariantLink::class, $links->first());
+        $this->assertInstanceOf(ProductVariantLink::class, $links->next());
     }
 
     public function testRemovesLinksFromCollection()
@@ -64,7 +56,7 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame([$variantLink2], $links->getValues());
         $this->assertSame($product2, $links->first()->getProduct());
-        $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->first());
+        $this->assertInstanceOf(ProductVariantLink::class, $links->first());
     }
 
     public function testAddsAndRemovesLinksFromCollection()
@@ -92,8 +84,8 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($product2, $links->first()->getProduct());
         $this->assertSame($product3, $links->next()->getProduct());
 
-        $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->first());
-        $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->next());
+        $this->assertInstanceOf(ProductVariantLink::class, $links->first());
+        $this->assertInstanceOf(ProductVariantLink::class, $links->next());
     }
 
     public function testInvalidValues()

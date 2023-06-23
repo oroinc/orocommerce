@@ -10,9 +10,10 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 class ProductLineItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
-    const IDENTIFIER = 'identifier';
-    const UNIT_CODE = 'unit_code';
-    const PRODUCT_SKU = 'product_sku';
+
+    private const IDENTIFIER = 'identifier';
+    private const UNIT_CODE = 'unit_code';
+    private const PRODUCT_SKU = 'product_sku';
 
     public function testProperties()
     {

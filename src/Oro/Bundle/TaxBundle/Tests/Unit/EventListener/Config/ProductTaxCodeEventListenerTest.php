@@ -24,7 +24,7 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
     private array $data = [];

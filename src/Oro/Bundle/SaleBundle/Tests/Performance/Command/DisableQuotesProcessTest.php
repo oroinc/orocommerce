@@ -5,34 +5,30 @@ namespace Oro\Bundle\SaleBundle\Tests\Performance\Command;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WorkflowBundle\Entity\ProcessTrigger;
 use Oro\Component\Testing\Performance\PerformanceMeasureTrait;
 
 class DisableQuotesProcessTest extends WebTestCase
 {
     use PerformanceMeasureTrait;
 
-    const PROCESS_DEFINITION = 'expire_quotes';
+    private const PROCESS_DEFINITION = 'expire_quotes';
+    private const MAX_EXECUTION_TIME = 120;
 
-    const MAX_EXECUTION_TIME = 120;
-
-    /** @var EntityManagerInterface */
-    protected $quoteEm;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private EntityManagerInterface $quoteEm;
+    private DoctrineHelper $doctrineHelper;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            ['Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance']
-        );
+        $this->loadFixtures([LoadQuoteDataForPerformance::class]);
         $this->doctrineHelper = $this->client->getContainer()->get('oro_entity.doctrine_helper');
-        $this->quoteEm = $this->doctrineHelper->getEntityManager('OroSaleBundle:Quote');
+        $this->quoteEm = $this->doctrineHelper->getEntityManager(Quote::class);
     }
 
     public function testDisableQuotesProcessPerformance()
@@ -48,10 +44,8 @@ class DisableQuotesProcessTest extends WebTestCase
         );
         $this->assertEquals(LoadQuoteDataForPerformance::QUOTES_TO_EXPIRE, $quotesToExpire);
 
-        $expireQuotesTrigger = $this->doctrineHelper->getEntityRepository('OroWorkflowBundle:ProcessTrigger')
-            ->findOneBy(
-                ['definition' => static::PROCESS_DEFINITION]
-            );
+        $expireQuotesTrigger = $this->doctrineHelper->getEntityRepository(ProcessTrigger::class)
+            ->findOneBy(['definition' => self::PROCESS_DEFINITION]);
 
         self::startMeasurement(__METHOD__);
         $this->runCommand('oro:process:handle-trigger', [
@@ -66,15 +60,11 @@ class DisableQuotesProcessTest extends WebTestCase
         $this->assertEquals(0, $quotesRemainingToExpire);
     }
 
-    /**
-     * @param bool $onlyNotExpired
-     * @return int
-     */
-    protected function getQuoteCount($onlyNotExpired = false)
+    private function getQuoteCount(bool $onlyNotExpired = false): int
     {
         $qb = $this->quoteEm->createQueryBuilder()
             ->select('COUNT(q)')
-            ->from('OroSaleBundle:Quote', 'q');
+            ->from(Quote::class, 'q');
 
         if ($onlyNotExpired) {
             $qb->where('q.expired = FALSE')
@@ -82,7 +72,6 @@ class DisableQuotesProcessTest extends WebTestCase
                 ->setParameter('date', new \DateTime('now', new \DateTimeZone('UTC')), Types::DATETIME_MUTABLE);
         }
 
-        return $qb->getQuery()
-            ->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 }

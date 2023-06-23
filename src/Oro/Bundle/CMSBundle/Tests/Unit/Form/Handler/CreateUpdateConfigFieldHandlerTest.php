@@ -13,39 +13,25 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Form\Handler\ConfigHelperHandler;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Form\Util\FieldSessionStorage;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class CreateUpdateConfigFieldHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const FIELD_NAME = 'field_name';
+    private const FIELD_TYPE = 'wysiwyg';
 
-    const FIELD_NAME = 'field_name';
-
-    const FIELD_TYPE = 'wysiwyg';
-
-    /**
-     * @var ConfigHelperHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigHelperHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $configHelperHandler;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ConfigHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $configHelper;
 
-    /**
-     * @var FieldSessionStorage|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FieldSessionStorage|\PHPUnit\Framework\MockObject\MockObject */
     private $sessionStorage;
 
-    /**
-     * @var CreateUpdateConfigFieldHandler
-     */
+    /** @var CreateUpdateConfigFieldHandler */
     private $handler;
 
     protected function setUp(): void
@@ -78,9 +64,9 @@ class CreateUpdateConfigFieldHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($extendEntityConfig, self::FIELD_TYPE, [])
             ->willReturn([self::FIELD_TYPE, $fieldOptions]);
 
-        $newFieldModel = $this->getEntity(FieldConfigModel::class);
-        $newFieldStyleModel = $this->getEntity(FieldConfigModel::class);
-        $newFieldPropertiesModel = $this->getEntity(FieldConfigModel::class);
+        $newFieldModel = new FieldConfigModel();
+        $newFieldStyleModel = new FieldConfigModel();
+        $newFieldPropertiesModel = new FieldConfigModel();
 
         $this->configManager->expects($this->any())
             ->method('createConfigFieldModel')

@@ -18,16 +18,16 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var DefaultMultipleShippingMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $multiShippingMethodProvider;
 
-    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingPriceProvider;
 
-    /** @var CheckoutLineItemsShippingManager|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var CheckoutLineItemsShippingManager|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItemsShippingManager;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var DefaultMultiShippingMethodSetter  */

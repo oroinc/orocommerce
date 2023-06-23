@@ -14,16 +14,11 @@ class ProductSelectGridTest extends WebTestCase
 {
     use MysqlVersionCheckTrait;
 
-    const DATAGRID_NAME = 'products-select-grid-frontend';
+    private const DATAGRID_NAME = 'products-select-grid-frontend';
 
-    /**
-     * @var Client
-     */
+    /** @var Client */
     protected $client;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient(
@@ -55,11 +50,8 @@ class ProductSelectGridTest extends WebTestCase
 
     /**
      * @dataProvider filterProvider
-     * @param array $filters
-     * @param array $expectedResult
-     * @param bool $isContains
      */
-    public function testGridCanBeFiltered(array $filters, array $expectedResult, $isContains = false)
+    public function testGridCanBeFiltered(array $filters, array $expectedResult, bool $isContains = false)
     {
         if ($isContains && $this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
             $this->markTestSkipped(
@@ -141,15 +133,14 @@ class ProductSelectGridTest extends WebTestCase
                 ],
                 true
             ],
-            // Uncomment after fix BAP-16099.
-//            [
-//                [
-//                    self::DATAGRID_NAME.'[_filter][productName][value]' => 'product-1.names',
-//                    self::DATAGRID_NAME.'[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
-//                ],
-//                [LoadProductData::PRODUCT_1],
-//                false
-//            ],
+            [
+                [
+                    self::DATAGRID_NAME.'[_filter][productName][value]' => 'product-1.names',
+                    self::DATAGRID_NAME.'[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
+                ],
+                [LoadProductData::PRODUCT_1],
+                false
+            ],
             [
                 [self::DATAGRID_NAME.'[_filter][inventoryStatus][value][]' => 'out_of_stock'],
                 [LoadProductData::PRODUCT_3],

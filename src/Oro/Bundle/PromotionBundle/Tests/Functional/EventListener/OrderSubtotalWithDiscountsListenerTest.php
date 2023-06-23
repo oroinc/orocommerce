@@ -314,7 +314,7 @@ class OrderSubtotalWithDiscountsListenerTest extends WebTestCase
             )
             ->setProductsSegment(
                 $this->createProductSegment(
-                    \sprintf('Items to Discount in promotion "%s"', $name),
+                    sprintf('Items to Discount in promotion "%s"', $name),
                     $owner,
                     $manager
                 )

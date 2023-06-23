@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Executor;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -28,21 +27,17 @@ class PromotionExecutorTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const STRATEGY_APPLY_ALL = 'apply_all';
-    const SHIPPING_METHOD = '';
-
-    /** @var ConfigManager */
-    protected $configManager;
+    private const STRATEGY_APPLY_ALL = 'apply_all';
+    private const SHIPPING_METHOD = '';
 
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            static::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
+            self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
         $this->client->useHashNavigation(true);
 
-        $this->configManager = self::getConfigManager('global');
         $this->loadFixtures([
             LoadOrderData::class,
             LoadCheckoutData::class,
@@ -53,25 +48,22 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::EMAIL);
         // Request needed for emulation front store request
-        static::getContainer()->get('request_stack')->push(new Request());
+        self::getContainer()->get('request_stack')->push(new Request());
     }
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $enabledPromotions
-     * @param string $strategy
-     * @param array $expected
      */
-    public function testExecute(array $enabledPromotions, $strategy, array $expected)
+    public function testExecute(array $enabledPromotions, string $strategy, array $expected)
     {
         $this->enablePromotions($enabledPromotions);
 
-        static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class)->flush();
+        self::getContainer()->get('doctrine')->getManagerForClass(Promotion::class)->flush();
 
         $this->setStrategy($strategy);
 
         // Execute calculation
-        $executor = static::getContainer()->get('oro_promotion.promotion_executor');
+        $executor = self::getContainer()->get('oro_promotion.promotion_executor');
         $checkout = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
 
         $actualDiscountContext = $executor->execute($checkout);
@@ -573,15 +565,11 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
     /**
      * @dataProvider executeAppliedPromotionsDataProvider
-     * @param array $enabledPromotions
-     * @param array $appliedPromotions
-     * @param string $strategy
-     * @param array $expected
      */
     public function testExecuteWithAppliedPromotions(
         array $enabledPromotions,
         array $appliedPromotions,
-        $strategy,
+        string $strategy,
         array $expected
     ) {
         $this->enablePromotions($enabledPromotions);
@@ -589,7 +577,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrderData::PROMOTION_ORDER_1);
 
-        $entityManager = static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
+        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
 
         // Create applied discounts data for order based on applied promotions
         foreach ($appliedPromotions as $appliedPromotionData) {
@@ -606,7 +594,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
         $this->setStrategy($strategy);
 
-        $executor = static::getContainer()->get('oro_promotion.promotion_executor');
+        $executor = self::getContainer()->get('oro_promotion.promotion_executor');
 
         $actualDiscountContext = $executor->execute($order);
 
@@ -829,7 +817,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrderData::PROMOTION_ORDER_1);
 
-        $entityManager = static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
+        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
 
         // Create applied discounts data for order based on applied promotions
         foreach ($appliedPromotions as $appliedPromotionData) {
@@ -850,7 +838,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
         $queryBuilder = $entityManager->getRepository(Promotion::class)->createQueryBuilder('p');
         $queryBuilder->delete(Promotion::class, 'p')->getQuery()->execute();
 
-        $actualDiscountContext = static::getContainer()->get('oro_promotion.promotion_executor')->execute($order);
+        $actualDiscountContext = self::getContainer()->get('oro_promotion.promotion_executor')->execute($order);
 
         $this->assertDiscountContextTotals($actualDiscountContext, $expected);
     }
@@ -991,7 +979,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
                                             ],
                                         ],
                                     ],
-                                ]),
+                                ], JSON_THROW_ON_ERROR),
                             ],
                         ],
                     ],
@@ -1041,7 +1029,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
                                             ],
                                         ],
                                     ],
-                                ]),
+                                ], JSON_THROW_ON_ERROR),
                             ],
                         ],
                     ],
@@ -1072,7 +1060,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
         $entityCouponsProvider = self::getContainer()->get('oro_promotion.provider.entity_coupons_provider');
 
-        $entityManager = static::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
+        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Promotion::class);
 
         foreach ($orderCoupons as $orderCouponReference) {
             $orderCoupon = $this->getReference($orderCouponReference);
@@ -1092,7 +1080,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
 
         $this->setStrategy(self::STRATEGY_APPLY_ALL);
 
-        $actualDiscountContext = static::getContainer()->get('oro_promotion.promotion_executor')->execute($order);
+        $actualDiscountContext = self::getContainer()->get('oro_promotion.promotion_executor')->execute($order);
 
         $this->assertDiscountContextTotals($actualDiscountContext, $expected);
     }
@@ -1210,16 +1198,15 @@ class PromotionExecutorTest extends FrontendWebTestCase
         ];
     }
 
-    private function assertDiscountContextTotals(DiscountContextInterface $discountContext, array $expected)
+    private function assertDiscountContextTotals(DiscountContextInterface $discountContext, array $expected): void
     {
-        // Check totals
-        static::assertSame($expected['totalLineItemsDiscount'], $discountContext->getTotalLineItemsDiscount());
-        static::assertSame($expected['subtotalDiscountTotal'], $discountContext->getSubtotalDiscountTotal());
-        static::assertSame($expected['discountAmount'], $discountContext->getTotalDiscountAmount());
-        static::assertSame($expected['shippingDiscountTotal'], $discountContext->getShippingDiscountTotal());
+        self::assertSame($expected['totalLineItemsDiscount'], $discountContext->getTotalLineItemsDiscount());
+        self::assertSame($expected['subtotalDiscountTotal'], $discountContext->getSubtotalDiscountTotal());
+        self::assertSame($expected['discountAmount'], $discountContext->getTotalDiscountAmount());
+        self::assertSame($expected['shippingDiscountTotal'], $discountContext->getShippingDiscountTotal());
     }
 
-    private function enablePromotions(array $enabledPromotions)
+    private function enablePromotions(array $enabledPromotions): void
     {
         // Enable only necessary promotions
         foreach ($enabledPromotions as $promotion) {
@@ -1233,7 +1220,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
     private function createAppliedPromotionWithDiscount(Order $order, array $data): AppliedPromotion
     {
         /** @var AppliedPromotionMapper $appliedPromotionMapper */
-        $appliedPromotionMapper = static::getContainer()->get('oro_promotion.mapper.applied_promotion');
+        $appliedPromotionMapper = self::getContainer()->get('oro_promotion.mapper.applied_promotion');
 
         /** @var Promotion $basePromotion */
         $basePromotion = $this->getReference($data['basePromotion']);
@@ -1259,10 +1246,10 @@ class PromotionExecutorTest extends FrontendWebTestCase
         return $appliedPromotion;
     }
 
-    private function setStrategy(string $strategy)
+    private function setStrategy(string $strategy): void
     {
         // Change calculation strategy
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
         $this->configManager->set('oro_promotion.' . Configuration::DISCOUNT_STRATEGY, $strategy);
         $this->configManager->flush();
     }

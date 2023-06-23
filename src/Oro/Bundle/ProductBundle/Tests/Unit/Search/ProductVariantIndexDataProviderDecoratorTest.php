@@ -20,7 +20,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $originalProvider;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var ProductVariantIndexDataProviderDecorator */

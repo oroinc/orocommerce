@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantT
 use Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,16 +16,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContentVariantContextUrlProviderTest extends TestCase
 {
-    use EntityTrait;
-
-    const DATA = 'someData';
+    private const DATA = 'someData';
 
     private RequestStack|MockObject $requestStack;
-
     private UrlCacheInterface|MockObject $cache;
-
     private LocalizationProviderInterface|MockObject $localizationProvider;
-
     private ContentVariantContextUrlProvider $provider;
 
     protected function setUp(): void
@@ -47,7 +42,8 @@ class ContentVariantContextUrlProviderTest extends TestCase
             ->willReturn(null);
         $url = 'URL';
         $localizationId = 1;
-        $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, $localizationId);
         $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
