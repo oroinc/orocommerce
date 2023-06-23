@@ -25,6 +25,9 @@ class ComputeWebCatalogTree implements ProcessorInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

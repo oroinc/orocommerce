@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductKitItemLabelTest extends RestJsonApiTestCase
 {
@@ -16,22 +17,25 @@ class ProductKitItemLabelTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testTryCreateProductKitItemLabelSeparatelyFromKitItem(): void
+    public function testTryToCreateProductKitItemLabelSeparatelyFromKitItem(): void
     {
-        $content = $this->getRequestData('create_product_kit_item_label.yml');
-
-        $response = $this->post(['entity' => 'productkititemlabels'], $content, [], false);
+        $response = $this->post(
+            ['entity' => 'productkititemlabels'],
+            'create_product_kit_item_label.yml',
+            [],
+            false
+        );
 
         $this->assertResponseContainsValidationErrors(
             [
                 [
                     'title' => 'access denied exception',
                     'detail' => 'Use API resource to create a product kit item. A product kit item label can be'
-                        . ' created only together with a product kit item.',
-                ],
+                        . ' created only together with a product kit item.'
+                ]
             ],
             $response,
-            403
+            Response::HTTP_FORBIDDEN
         );
     }
 }

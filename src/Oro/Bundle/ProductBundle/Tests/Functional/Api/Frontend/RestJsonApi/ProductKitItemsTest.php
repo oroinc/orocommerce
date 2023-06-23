@@ -25,7 +25,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml',
-            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml',
+            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_prices.yml'
         ]);
     }
 
@@ -72,9 +72,9 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
                     'type' => 'productkititems',
                     'id' => '<toString(@product_kit1_item1->id)>',
                     'attributes' => [
-                        'label' => 'Product Kit 1 Item 1 ES',
-                    ],
-                ],
+                        'label' => 'Product Kit 1 Item 1 ES'
+                    ]
+                ]
             ],
             $response
         );
@@ -82,19 +82,17 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
 
     public function testTryToUpdate(): void
     {
-        $data = [
-            'data' => [
-                'type' => 'productkititems',
-                'id' => '<toString(@product_kit1_item1->id)>',
-                'attributes' => [
-                    'label' => 'Updated Label',
-                ],
-            ],
-        ];
-
         $response = $this->patch(
             ['entity' => 'productkititems', 'id' => '<toString(@product_kit1_item1->id)>'],
-            $data,
+            [
+                'data' => [
+                    'type' => 'productkititems',
+                    'id' => '<toString(@product_kit1_item1->id)>',
+                    'attributes' => [
+                        'label' => 'Updated Label'
+                    ]
+                ]
+            ],
             [],
             false
         );
@@ -104,18 +102,16 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
 
     public function testTryToCreate(): void
     {
-        $data = [
-            'data' => [
-                'type' => 'productkititems',
-                'attributes' => [
-                    'label' => 'New Product Kit Item',
-                ],
-            ],
-        ];
-
         $response = $this->post(
             ['entity' => 'productkititems'],
-            $data,
+            [
+                'data' => [
+                    'type' => 'productkititems',
+                    'attributes' => [
+                        'label' => 'New Product Kit Item'
+                    ]
+                ]
+            ],
             [],
             false
         );
@@ -153,7 +149,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'productKit',
+                'association' => 'productKit'
             ]
         );
         $this->assertResponseContains(
@@ -164,9 +160,9 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'name' => 'Product Kit 1',
                         'createdAt' => '@product_kit1->createdAt->format("Y-m-d\TH:i:s\Z")',
-                        'updatedAt' => '@product_kit1->updatedAt->format("Y-m-d\TH:i:s\Z")',
-                    ],
-                ],
+                        'updatedAt' => '@product_kit1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+                    ]
+                ]
             ],
             $response
         );
@@ -178,15 +174,15 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'productKit',
+                'association' => 'productKit'
             ]
         );
         $this->assertResponseContains(
             [
                 'data' => [
                     'type' => 'products',
-                    'id' => '<toString(@product_kit1->id)>',
-                ],
+                    'id' => '<toString(@product_kit1->id)>'
+                ]
             ],
             $response
         );
@@ -198,7 +194,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'productKit',
+                'association' => 'productKit'
             ],
             [],
             [],
@@ -212,7 +208,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
         $response = $this->getSubresource([
             'entity' => 'productkititems',
             'id' => '<toString(@product_kit1_item1->id)>',
-            'association' => 'kitItemProducts',
+            'association' => 'kitItemProducts'
         ]);
         $this->assertResponseContains(
             [
@@ -222,26 +218,20 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
                         'id' => '<toString(@product_kit1_item1_product1->id)>',
                         'relationships' => [
                             'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                    'id' => '<toString(@product1->id)>',
-                                ],
-                            ],
-                        ],
+                                'data' => ['type' => 'products', 'id' => '<toString(@product1->id)>']
+                            ]
+                        ]
                     ],
                     [
                         'type' => 'productkititemproducts',
                         'id' => '<toString(@product_kit1_item1_product3->id)>',
                         'relationships' => [
                             'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                    'id' => '<toString(@product3->id)>',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                                'data' => ['type' => 'products', 'id' => '<toString(@product3->id)>']
+                            ]
+                        ]
+                    ]
+                ]
             ],
             $response
         );
@@ -252,14 +242,14 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
         $response = $this->getRelationship([
             'entity' => 'productkititems',
             'id' => '<toString(@product_kit1_item1->id)>',
-            'association' => 'kitItemProducts',
+            'association' => 'kitItemProducts'
         ]);
         $this->assertResponseContains(
             [
                 'data' => [
                     ['type' => 'productkititemproducts', 'id' => '<toString(@product_kit1_item1_product1->id)>'],
-                    ['type' => 'productkititemproducts', 'id' => '<toString(@product_kit1_item1_product3->id)>'],
-                ],
+                    ['type' => 'productkititemproducts', 'id' => '<toString(@product_kit1_item1_product3->id)>']
+                ]
             ],
             $response
         );
@@ -271,7 +261,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'kitItemProducts',
+                'association' => 'kitItemProducts'
             ],
             [],
             [],
@@ -286,7 +276,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'kitItemProducts',
+                'association' => 'kitItemProducts'
             ],
             [],
             [],
@@ -301,7 +291,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'kitItemProducts',
+                'association' => 'kitItemProducts'
             ],
             [],
             [],
@@ -315,7 +305,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
         $response = $this->getSubresource([
             'entity' => 'productkititems',
             'id' => '<toString(@product_kit1_item1->id)>',
-            'association' => 'productUnit',
+            'association' => 'productUnit'
         ]);
         $this->assertResponseContains(
             [
@@ -323,9 +313,9 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
                     'type' => 'productunits',
                     'id' => '<toString(@item->code)>',
                     'attributes' => [
-                        'label' => 'item',
-                    ],
-                ],
+                        'label' => 'item'
+                    ]
+                ]
             ],
             $response
         );
@@ -336,11 +326,11 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
         $response = $this->getRelationship([
             'entity' => 'productkititems',
             'id' => '<toString(@product_kit1_item1->id)>',
-            'association' => 'productUnit',
+            'association' => 'productUnit'
         ]);
         $this->assertResponseContains(
             [
-                'data' => ['type' => 'productunits', 'id' => '<toString(@item->code)>'],
+                'data' => ['type' => 'productunits', 'id' => '<toString(@item->code)>']
             ],
             $response
         );
@@ -352,7 +342,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'productUnit',
+                'association' => 'productUnit'
             ],
             [],
             [],
@@ -367,7 +357,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'productUnit',
+                'association' => 'productUnit'
             ],
             [],
             [],
@@ -382,7 +372,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
             [
                 'entity' => 'productkititems',
                 'id' => '<toString(@product_kit1_item1->id)>',
-                'association' => 'productUnit',
+                'association' => 'productUnit'
             ],
             [],
             [],

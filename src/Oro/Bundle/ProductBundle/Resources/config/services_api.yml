@@ -478,10 +478,10 @@ services:
         class: Oro\Bundle\ProductBundle\Api\Processor\SetProductKitItemProductUnit
         arguments:
             - '@oro_product.product_kit_item_product_unit_checker'
-        calls:
-            - [setLogger, ['@logger']]
+            - '@logger'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, class: Oro\Bundle\ProductBundle\Entity\ProductKitItem }
+            - { name: monolog.logger, channel: api }
 
     oro_product.api.disable_product_kit_item_label_creation:
         class: Oro\Bundle\ProductBundle\Api\Processor\DisableProductKitItemLabelCreation
