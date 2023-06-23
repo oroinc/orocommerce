@@ -23,7 +23,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testCreateProductKitWithInvalidQuantity(): void
+    public function testTryToCreateProductKitWithInvalidQuantity(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         $content['data']['attributes']['minimumQuantity'] = 123.456;
@@ -48,7 +48,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitNotSimpleProducts(): void
+    public function testTryToCreateProductKitNotSimpleProducts(): void
     {
         $response = $this->post(
             ['entity' => 'productkititems'],
@@ -67,7 +67,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitUnitNotAvailableForAllSpecifiedProducts(): void
+    public function testTryToCreateProductKitUnitNotAvailableForAllSpecifiedProducts(): void
     {
         $response = $this->post(
             ['entity' => 'productkititems'],
@@ -88,7 +88,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitItemProductUnitCanNotBeEmpty(): void
+    public function testTryToCreateProductKitItemProductUnitCanNotBeEmpty(): void
     {
         $content = $this->getRequestData('create_product_kit_item_unit_can_not_be_empty.yml');
         $response = $this->post(['entity' => 'productkititems'], $content, [], false);
@@ -103,7 +103,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitItemWithInvalidProductKit(): void
+    public function testTryToCreateProductKitItemWithInvalidProductKit(): void
     {
         $content = $this->getRequestData('create_product_kit_item_with_invalid_product_kit.yml');
         $response = $this->post(['entity' => 'productkititems'], $content, [], false);
@@ -129,7 +129,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testCreateProductKitItemWithoutLabels(): void
+    public function testTryToCreateProductKitItemWithoutLabels(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         unset($content['data']['relationships']['labels'], $content['included'][0]);
@@ -145,7 +145,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitItemWhenTooLongLabel(): void
+    public function testTryToCreateProductKitItemWhenTooLongLabel(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         $content['included'][0]['attributes']['string'] = str_pad('a', 300, 'a');
@@ -161,7 +161,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitItemWhenInvalidLabelFallback(): void
+    public function testTryToCreateProductKitItemWhenInvalidLabelFallback(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         $content['included'][0]['attributes']['fallback'] = 'invalid_fallback';
@@ -177,7 +177,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitItemWithoutProductKit(): void
+    public function testTryToCreateProductKitItemWithoutProductKit(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         unset($content['data']['relationships']['productKit']);
@@ -193,7 +193,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitItemWithoutKitItemProducts(): void
+    public function testTryToCreateProductKitItemWithoutKitItemProducts(): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         unset($content['data']['relationships']['kitItemProducts']);
@@ -222,7 +222,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
     /**
      * @dataProvider invalidSortOrderDataProvider
      */
-    public function testCreateProductKitItemWhenInvalidSortOrder(mixed $value): void
+    public function testTryToCreateProductKitItemWhenInvalidSortOrder(mixed $value): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         $content['data']['attributes']['sortOrder'] = $value;
@@ -246,7 +246,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
     /**
      * @dataProvider invalidQuantityDataProvider
      */
-    public function testCreateProductKitItemWhenInvalidMinimumQuantity(
+    public function testTryToCreateProductKitItemWhenInvalidMinimumQuantity(
         mixed $value,
         string $title,
         string $detail
@@ -269,18 +269,14 @@ class ProductKitItemTest extends RestJsonApiTestCase
     {
         return [
             ['value' => 'string', 'title' => 'form constraint', 'detail' => 'This value is not valid.'],
-            [
-                'value' => -42,
-                'title' => 'range constraint',
-                'detail' => 'This value should be 0 or more.',
-            ],
+            ['value' => -42, 'title' => 'range constraint', 'detail' => 'This value should be 0 or more.'],
         ];
     }
 
     /**
      * @dataProvider invalidQuantityDataProvider
      */
-    public function testCreateProductKitItemWhenInvalidMaximumQuantity(
+    public function testTryToCreateProductKitItemWhenInvalidMaximumQuantity(
         mixed $value,
         string $title,
         string $detail
@@ -302,7 +298,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
     /**
      * @dataProvider invalidOptionalDataProvider
      */
-    public function testCreateProductKitItemWhenInvalidOptional(mixed $value): void
+    public function testTryToCreateProductKitItemWhenInvalidOptional(mixed $value): void
     {
         $content = $this->getRequestData('create_product_kit_item.yml');
         $content['data']['attributes']['optional'] = $value;
@@ -343,7 +339,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_product_kit_item_by_id.yml', $response);
     }
 
-    public function testUpdateProductKitItemTryToChangeProductKit(): void
+    public function testTryToUpdateProductKitItemTryToChangeProductKit(): void
     {
         $response = $this->patch(
             ['entity' => 'productkititems', 'id' => '@product_kit1_item2->id'],
@@ -361,7 +357,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductKitItemWithEmptyKitItemProducts(): void
+    public function testTryToUpdateProductKitItemWithEmptyKitItemProducts(): void
     {
         $content = $this->getRequestData('update_product_kit_item.yml');
         $content['data']['relationships']['kitItemProducts'] = ['data' => []];
@@ -420,9 +416,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
 
         $response = $this->patchRelationship(
             ['entity' => 'productkititems', 'id' => $productKitItem->getId(), 'association' => 'kitItemProducts'],
-            [
-                'data' => [],
-            ],
+            ['data' => []],
             [],
             false
         );
@@ -436,7 +430,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryDeleteKitItemProductRelationshipWhenItIsLast(): void
+    public function testTryToDeleteKitItemProductRelationshipWhenItIsLast(): void
     {
         /** @var Product $product */
         $productKit = $this->getReference('product_kit3');

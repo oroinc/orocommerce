@@ -27,7 +27,7 @@ class SetProductKitItemProductUnit implements ProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(ContextInterface $context): void
     {
@@ -37,25 +37,26 @@ class SetProductKitItemProductUnit implements ProcessorInterface
         $productKitItem = $context->getData();
 
         $productKitItemUnit = $productKitItem->getProductUnit();
-        if ($productKitItemUnit !== null) {
-            // Skips further execution as product unit is already set.
+        if (null !== $productKitItemUnit) {
+            // product unit is already set
             return;
         }
 
         $productKitUnit = $productKitItem->getProductKit()?->getPrimaryUnitPrecision()->getUnit();
-        if ($productKitUnit === null) {
-            // Skips further execution as product unit is not set and cannot be set from product kit.
+        if (null === $productKitUnit) {
+            // product unit is not set and cannot be set from product kit
             return;
         }
 
-        if ($this->productUnitChecker
-            ->isProductUnitEligible($productKitUnit->getCode(), $productKitItem->getProducts())) {
-            $logMessage = '$productUnit is not specified for ProductKitItem, trying to use '
-                . 'product unit "{product_unit}" from the product kit primary unit precision';
-
+        if ($this->productUnitChecker->isProductUnitEligible(
+            $productKitUnit->getCode(),
+            $productKitItem->getProducts()
+        )) {
             $productKitItem->setProductUnit($productKitUnit);
+            $logMessage = '$productUnit is not specified for ProductKitItem, trying to use '
+                . 'product unit "{product_kit_unit}" from the product kit primary unit precision';
         } else {
-            $logMessage = '$productUnit is not specified for ProductKitItem, but product unit "{product_unit}"'
+            $logMessage = '$productUnit is not specified for ProductKitItem, but product unit "{product_kit_unit}"'
                 . ' from the product kit primary unit precision cannot be used because it is not present'
                 . ' in each product unit precisions collection of the ProductKitItem products';
         }

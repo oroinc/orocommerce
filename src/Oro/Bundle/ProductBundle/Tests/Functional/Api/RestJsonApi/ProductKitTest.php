@@ -23,7 +23,7 @@ class ProductKitTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testCreateProductKitWithEmptyProductKitItemsCollection(): void
+    public function testTryToCreateProductKitWithEmptyProductKitItemsCollection(): void
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -41,7 +41,7 @@ class ProductKitTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductKitWithKitItemOwnedByOtherKit(): void
+    public function testTryToCreateProductKitWithKitItemOwnedByOtherKit(): void
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -55,9 +55,7 @@ class ProductKitTest extends RestJsonApiTestCase
                 'title' => 'product kit items owned by product kit constraint',
                 'detail' => 'Kit item "Product Kit 1 Item 1" cannot be used because it already '
                     . 'belongs to the product kit "PKSKU1".',
-                "source" => [
-                    "pointer" => "/data/relationships/kitItems/data/0",
-                ],
+                'source' => ['pointer' => '/data/relationships/kitItems/data/0'],
             ],
             $response
         );
@@ -134,9 +132,7 @@ class ProductKitTest extends RestJsonApiTestCase
     {
         $response = $this->patchRelationship(
             ['entity' => 'products', 'id' => '<toString(@product_kit1->id)>', 'association' => 'kitItems'],
-            [
-                'data' => [],
-            ],
+            ['data' => []],
             [],
             false
         );
@@ -197,10 +193,7 @@ class ProductKitTest extends RestJsonApiTestCase
         $id = $product->getId();
 
         $response = $this->delete(
-            [
-                'entity' => 'products',
-                'id' => (string)$id,
-            ],
+            ['entity' => 'products', 'id' => (string)$id],
             [],
             [],
             false
@@ -210,8 +203,7 @@ class ProductKitTest extends RestJsonApiTestCase
             [
                 'title' => 'access denied exception',
                 'detail' => 'The delete operation is forbidden. Reason: Product "PSKU1" cannot be deleted '
-                    . 'because it is used in the following product kits: '
-                    . 'PKSKU2, PKSKU1.',
+                    . 'because it is used in the following product kits: PKSKU2, PKSKU1.',
             ],
             $response,
             Response::HTTP_FORBIDDEN
