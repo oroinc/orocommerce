@@ -303,7 +303,7 @@ services:
             - { name: form.type }
 
     oro_product.form.data_transformer.product_kit_item_products.view:
-        class: Oro\Bundle\MultiCurrencyBundle\Form\Transformer\ArrayToJsonTransformer
+        class: Oro\Bundle\FormBundle\Form\DataTransformer\ArrayToJsonTransformer
 
     oro_product.form.data_transformer.product_kit_item_products.model:
         class: Oro\Bundle\ProductBundle\Form\DataTransformer\ProductKitItemProductsDataTransformer

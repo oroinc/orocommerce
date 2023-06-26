@@ -41,8 +41,8 @@ class QuantityToOrderValidator extends ConstraintValidator
             return;
         }
 
-        $this->validateMinimum($product, $value->getQuantity(), $constraint);
-        $this->validateMaximum($product, $value->getQuantity(), $constraint);
+        $this->validateMinimum($product, (float) $value->getQuantity(), $constraint);
+        $this->validateMaximum($product, (float) $value->getQuantity(), $constraint);
     }
 
     private function validateMinimum(Product $product, float $quantity, QuantityToOrder $constraint): void

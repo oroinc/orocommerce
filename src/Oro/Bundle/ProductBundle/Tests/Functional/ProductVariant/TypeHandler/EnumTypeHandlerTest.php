@@ -13,16 +13,13 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class EnumTypeHandlerTest extends WebTestCase
 {
-    const FIELD_NAME = 'test_field';
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var EnumTypeHandler */
-    private $handler;
+    private const FIELD_NAME = 'test_field';
 
     /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $qb;
+
+    /** @var EnumTypeHandler */
+    private $handler;
 
     protected function setUp(): void
     {
@@ -31,13 +28,13 @@ class EnumTypeHandlerTest extends WebTestCase
         $container = $this->getContainer();
         $class = Product::class;
 
-        $this->configManager = $this->createMock(ConfigManager::class);
-        $this->configManager->expects($this->any())
+        $configManager = $this->createMock(ConfigManager::class);
+        $configManager->expects($this->any())
             ->method('getConfigFieldModel')
             ->with($class, self::FIELD_NAME)
             ->willReturn($this->getFieldConfigModel());
 
-        $this->handler = new EnumTypeHandler($container->get('form.factory'), $class, $this->configManager);
+        $this->handler = new EnumTypeHandler($container->get('form.factory'), $class, $configManager);
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->any())
@@ -83,10 +80,7 @@ class EnumTypeHandlerTest extends WebTestCase
         }
     }
 
-    /**
-     * @return FieldConfigModel
-     */
-    private function getFieldConfigModel()
+    private function getFieldConfigModel(): FieldConfigModel
     {
         $model = new FieldConfigModel(self::FIELD_NAME);
         $model->fromArray('extend', ['target_entity' => Item::class]);
@@ -94,11 +88,7 @@ class EnumTypeHandlerTest extends WebTestCase
         return $model;
     }
 
-    /**
-     * @param string $name
-     * @return Item
-     */
-    private function getItem($name)
+    private function getItem(string $name): Item
     {
         $item = new Item();
         $item->id = $name;

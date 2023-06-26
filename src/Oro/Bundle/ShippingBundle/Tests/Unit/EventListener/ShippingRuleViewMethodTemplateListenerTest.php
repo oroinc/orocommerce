@@ -8,19 +8,12 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const TEMPLATE = '@Foo/bar.html.twig';
+    private const TEMPLATE = '@Foo/bar.html.twig';
 
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
-    /**
-     * @var ShippingRuleViewMethodTemplateListener
-     */
+    /** @var ShippingRuleViewMethodTemplateListener */
     private $listener;
 
     protected function setUp(): void
@@ -35,8 +28,7 @@ class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\Test
         $methodIdentifier = 'method_1';
         $event = new ShippingMethodConfigDataEvent($methodIdentifier);
 
-        $this->provider
-            ->expects(static::once())
+        $this->provider->expects(self::once())
             ->method('hasShippingMethod')
             ->with($methodIdentifier)
             ->willReturn(true);
@@ -51,8 +43,7 @@ class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\Test
         $methodIdentifier = 'method_1';
         $event = new ShippingMethodConfigDataEvent($methodIdentifier);
 
-        $this->provider
-            ->expects(static::once())
+        $this->provider->expects(self::once())
             ->method('hasShippingMethod')
             ->with($methodIdentifier)
             ->willReturn(false);

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
@@ -87,5 +88,111 @@ class ProductKitItemRepository extends ServiceEntityRepository
             ->setParameter('product_kit_id', $productKitId, Types::INTEGER)
             ->getQuery()
             ->getResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+    }
+
+    /**
+     * Return example:
+     *   [
+     *        2902 => [
+     *            0 =>
+     *                [
+     *                    'product' => 2902,
+     *                    'product_kit_item' => 1447,
+     *                    'status' =>
+     *                        [
+     *                            0 => 'enabled',
+     *                            1 => 'disabled',
+     *                        ],
+     *                ],
+     *           ....
+     *        ],
+     *        ....
+     *    ]
+     */
+    public function getRequiredProductKitItemStatuses(int ...$productKitIds): array
+    {
+        $qb = $this->getEntityManager()->getConnection()->createQueryBuilder();
+        $qb->from('oro_product', 'p1')
+            ->select([
+                'p1.id as product',
+                'pki.id as product_kit_item',
+                'string_agg(p2.status, \',\') as status',
+            ]);
+        $qb->where($qb->expr()->eq('p1.type', ':type'));
+        $qb->setParameter('type', Product::TYPE_KIT, Types::STRING);
+        $qb->andWhere($qb->expr()->in('p1.id', ':ids'));
+        $qb->setParameter('ids', $productKitIds, Connection::PARAM_INT_ARRAY);
+        $qb->innerJoin('p1', 'oro_product_kit_item', 'pki', 'pki.product_kit_id = p1.id AND pki.optional <> true');
+        $qb->innerJoin('pki', 'oro_product_kit_item_product', 'pkip', 'pki.id = pkip.product_kit_item_id');
+        $qb->innerJoin('pkip', 'oro_product', 'p2', 'pkip.product_id = p2.id');
+        $qb->addGroupBy('p1.id', 'pki.id');
+        $qb->orderBy('p1.id');
+
+        $data = $qb->execute()->fetchAllAssociative();
+
+        $result = [];
+
+        foreach ($productKitIds as $productKitId) {
+            $result[$productKitId] = array_filter($data, static fn (array $item) => $item['product'] == $productKitId);
+            foreach ($result[$productKitId] as $k => $item) {
+                $result[$productKitId][$k]['status'] = explode(',', $result[$productKitId][$k]['status']);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return example:
+     *   [
+     *        2902 => [
+     *            0 =>
+     *                [
+     *                    'product' => 2902,
+     *                    'product_kit_item' => 1447,
+     *                    'status' =>
+     *                        [
+     *                            0 => 'in_stock',
+     *                            1 => 'out_of_stock',
+     *                            2 => 'discontinued',
+     *                        ],
+     *                ],
+     *           ....
+     *        ],
+     *        ....
+     *    ]
+     */
+    public function getRequiredProductKitItemInventoryStatuses(int ...$productKitIds): array
+    {
+        $qb = $this->getEntityManager()->getConnection()->createQueryBuilder();
+        $qb->from('oro_product', 'p1')
+            ->select([
+                'p1.id as product',
+                'pki.id as product_kit_item',
+                'string_agg(pis.id, \',\') as status',
+            ]);
+        $qb->where($qb->expr()->eq('p1.type', ':type'));
+        $qb->setParameter('type', Product::TYPE_KIT, Types::STRING);
+        $qb->andWhere($qb->expr()->in('p1.id', ':ids'));
+        $qb->setParameter('ids', $productKitIds, Connection::PARAM_INT_ARRAY);
+        $qb->innerJoin('p1', 'oro_product_kit_item', 'pki', 'pki.product_kit_id = p1.id AND pki.optional <> true');
+        $qb->innerJoin('pki', 'oro_product_kit_item_product', 'pkip', 'pki.id = pkip.product_kit_item_id');
+        $qb->innerJoin('pkip', 'oro_product', 'p2', 'pkip.product_id = p2.id');
+        $qb->innerJoin('p2', 'oro_enum_prod_inventory_status', 'pis', 'p2.inventory_status_id = pis.id');
+        $qb->addGroupBy('p1.id', 'pki.id');
+        $qb->orderBy('p1.id');
+
+        $data = $qb->execute()->fetchAllAssociative();
+
+        $result = [];
+
+        foreach ($productKitIds as $productKitId) {
+            $result[$productKitId] = array_filter($data, static fn (array $item) => $item['product'] == $productKitId);
+            foreach ($result[$productKitId] as $k => $item) {
+                $result[$productKitId][$k]['status'] = explode(',', $result[$productKitId][$k]['status']);
+            }
+        }
+
+        return $result;
     }
 }

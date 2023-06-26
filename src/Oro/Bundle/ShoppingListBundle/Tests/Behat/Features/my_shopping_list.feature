@@ -410,10 +410,10 @@ Feature: My Shopping List
       | BB12 | Configurable Product 1 Color: Blue Size: S Note 12 text  | In Stock     | 7   | items  | $23.00 | $161.00 -$80.50 $80.50   |
       | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | Out of Stock | 7   | sets   | $19.00 | $133.00                  |
 
-  Scenario: Check Show All and Group similar
+  Scenario: Check Show All and Group Product Variants
     When I reset grid
     And I click "Show All"
-    And I click "Group Similar"
+    And I click "Group Product Variants"
     Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -449,7 +449,7 @@ Feature: My Shopping List
       | CC34 | Product 34 Note 34 text                                  | In Stock     | 13  | pieces | $31.00 | $403.00                  |
       | CC35 | Product 35 Note 35 text                                  | In Stock     | 13  | pieces | $31.00 | $403.00                  |
     When I reload the page
-    Then I should see "Ungroup Similar"
+    Then I should see "Ungroup Product Variants"
     And I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
       | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3   | items  | $11.00 | $33.00 -$16.50 $16.50    |
@@ -525,8 +525,8 @@ Feature: My Shopping List
       | CC34 | Product 34 Note 34 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC35 | Product 35 Note 35 text | In Stock | 13  | pieces | $31.00 | $403.00  |
 
-  Scenario: Check Ungroup similar
-    When I click "Ungroup Similar"
+  Scenario: Check Ungroup Product Variants
+    When I click "Ungroup Product Variants"
     Then I should see following grid:
       | SKU  | Item                    |          | Qty | Unit   | Price  | Subtotal |
       | CC31 | Product 31 Note 31 text | In Stock | 13  | pieces | $31.00 | $403.00  |
@@ -563,7 +563,7 @@ Feature: My Shopping List
 
   Scenario: Check Availability filter
     Given I reset grid
-    When I click "Group Similar"
+    When I click "Group Product Variants"
     And I check "Out of Stock" in Availability filter
     Then I should see following grid:
       | SKU  | Item                                                     |              | Qty | Unit   | Price  | Subtotal                 |
@@ -687,9 +687,9 @@ Feature: My Shopping List
     And I click "Request Quote"
     And Page title equals to "Request A Quote - Requests For Quote - My Account"
 
-  Scenario: Inline edit quantity and unit with Group similar
+  Scenario: Inline edit quantity and unit with Group Product Variants
     When I open page with shopping list Shopping List 3
-    And I click "Group Similar"
+    And I click "Group Product Variants"
     And I sort grid by "SKU"
     Then I should see following grid with exact columns order:
       | SKU  | Item                             |              | Qty Update All | Price  | Subtotal                 |
@@ -711,7 +711,7 @@ Feature: My Shopping List
       | BB05 | Color: Green Size: L Note 5 text                      | Out of Stock | 3 item         | $11.00 | $33.00 -$16.50 $16.50  |
       | BB12 | Color: Blue Size: S Note 12 text                      | In Stock     | 7 item         | $23.00 | $161.00 -$80.50 $80.50 |
 
-  Scenario: Update all with Group similar
+  Scenario: Update all with Group Product Variants
     When I set quantity for shopping list line item with sku "BB04" to "3"
     And I set unit for shopping list line item with sku "BB04" to "item"
     And I set quantity for shopping list line item with sku "BB05" to "5"

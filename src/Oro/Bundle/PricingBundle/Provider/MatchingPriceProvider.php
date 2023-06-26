@@ -118,12 +118,11 @@ class MatchingPriceProvider
                 $quantity = (float)$this->getLineItemData($lineItem, 'qty');
                 $currency = (string)$this->getLineItemData($lineItem, 'currency');
 
-                $productsPriceCriteria[] = $this->productPriceCriteriaFactory->build(
-                    $product,
-                    $unit,
-                    $quantity,
-                    $currency
-                );
+                $productPriceCriterion = $this->productPriceCriteriaFactory
+                    ->create($product, $unit, $quantity, $currency);
+                if ($productPriceCriterion !== null) {
+                    $productsPriceCriteria[] = $productPriceCriterion;
+                }
             }
         }
 

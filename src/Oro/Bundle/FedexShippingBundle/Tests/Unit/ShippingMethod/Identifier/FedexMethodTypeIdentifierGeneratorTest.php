@@ -8,15 +8,15 @@ use PHPUnit\Framework\TestCase;
 
 class FedexMethodTypeIdentifierGeneratorTest extends TestCase
 {
-    const CODE = 'code';
-
-    public function testGenerate()
+    public function testGenerate(): void
     {
-        $service = new FedexShippingService();
-        $service->setCode(self::CODE);
+        $code = 'code';
 
-        static::assertSame(
-            self::CODE,
+        $service = new FedexShippingService();
+        $service->setCode($code);
+
+        self::assertSame(
+            $code,
             (new FedexMethodTypeIdentifierGenerator())->generate($service)
         );
     }

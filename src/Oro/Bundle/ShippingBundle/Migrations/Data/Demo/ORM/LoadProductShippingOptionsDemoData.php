@@ -45,20 +45,9 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager): void
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'r');
-        $headers = fgetcsv($handler, 1000, ',');
-
         $processedPairs = [];
 
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
-
+        foreach ($this->getProducts() as $row) {
             $product = $this->getProductBySku($manager, $row['sku']);
             $productUnit = $this->getProductUnit($manager, $row['unit']);
 
@@ -85,8 +74,6 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
             $manager->persist($productShippingOptions);
         }
 
-        fclose($handler);
-
         $manager->flush();
 
         $this->products = [];
@@ -94,6 +81,25 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         $this->weightUnits = [];
         $this->lengthUnits = [];
         $this->freightClasses = [];
+    }
+
+    protected function getProducts(): \Iterator
+    {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            yield array_combine($headers, array_values($data));
+        }
+
+        fclose($handler);
     }
 
     private function getProductBySku(ObjectManager $manager, string $sku): ?Product

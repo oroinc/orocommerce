@@ -11,6 +11,8 @@
             class="input input-qty"
             aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.quantity.aria_label') %>"
             autocomplete="off"
+            data-floating-error
+            data-boundaries-element="[role='dialog']"
         >
         <select name="unitCode" class="select input" aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.unit.aria_label') %>" required>
             <% _.each(data.units, function(data, value) { %>

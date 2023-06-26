@@ -13,7 +13,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -23,6 +23,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
@@ -44,7 +45,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private FeatureChecker $featureChecker;
 
-    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
 
     protected function setUp(): void
     {
@@ -54,7 +55,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())

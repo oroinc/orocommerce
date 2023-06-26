@@ -9,13 +9,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
 class InventoryDecrementFallbackTest extends WebTestCase
 {
     use FallbackTestTrait;
 
-    const VIEW_DECREMENT_INVENTORY_XPATH =
+    private const VIEW_DECREMENT_INVENTORY_XPATH =
         "//label[text() = 'Decrement Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
     protected function setUp(): void
@@ -44,23 +43,19 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $this->assertEquals('No (custom)', $value);
     }
 
-    /**
-     * @param Product $product
-     * @param mixed   $ownValue
-     * @param mixed   $fallbackValue
-     * @return Crawler
-     */
-    protected function setProductDecrementQuantityField($product, $ownValue, $fallbackValue)
-    {
+    private function setProductDecrementQuantityField(
+        Product $product,
+        mixed $ownValue,
+        mixed $fallbackValue
+    ): Crawler {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
 
         $this->updateFallbackField($form, $ownValue, $fallbackValue, 'oro_product', 'decrementQuantity');
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         return $this->client->submit($form);
     }
@@ -75,7 +70,6 @@ class InventoryDecrementFallbackTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
         $inventoryDecrementValue = $form->get('oro_catalog_category[decrementQuantity][scalarValue]')->getValue();
         $this->assertEmpty($inventoryDecrementValue);
@@ -83,7 +77,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
         $form['oro_catalog_category[decrementQuantity][useFallback]'] = false;
         $form['oro_catalog_category[decrementQuantity][scalarValue]'] = $newCategoryFallbackValue;
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         $crawler = $this->client->submit($form);
 

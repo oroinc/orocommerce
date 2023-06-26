@@ -2,168 +2,214 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
-use Oro\Bundle\PricingBundle\Exception\ProductPriceCriteriaBuildingFailedException;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPriceCriteriaFactory\ProductLineItemPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaBuilder\ProductPriceCriteriaBuilderInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaBuilder\ProductPriceCriteriaBuilderRegistry;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Component\Testing\ReflectionUtil;
-use Psr\Log\LoggerInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ProductPriceCriteriaFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $currencyManager;
+    private ProductPriceCriteriaBuilderRegistry|MockObject $productPriceCriteriaBuilderRegistry;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private ProductLineItemPriceCriteriaFactoryInterface|MockObject $productLineItemPriceCriteriaFactory;
 
-    /** @var ProductPriceCriteriaFactory */
-    private $productPriceCriteriaFactory;
+    private ProductPriceCriteriaFactory $factory;
 
     protected function setUp(): void
     {
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->productPriceCriteriaBuilderRegistry = $this->createMock(ProductPriceCriteriaBuilderRegistry::class);
+        $this->productLineItemPriceCriteriaFactory = $this->createMock(
+            ProductLineItemPriceCriteriaFactoryInterface::class
+        );
 
-        $this->productPriceCriteriaFactory = new ProductPriceCriteriaFactory(
-            $this->currencyManager,
-            $this->logger
+        $this->factory = new ProductPriceCriteriaFactory(
+            $this->productPriceCriteriaBuilderRegistry,
+            $this->productLineItemPriceCriteriaFactory
         );
     }
 
-    private function getProduct(int $id): Product
+    public function testCreate(): void
     {
-        $product = new Product();
-        ReflectionUtil::setId($product, $id);
+        $product = (new ProductStub())->setId(42);
+        $productUnit = (new ProductUnit())->setCode('item');
+        $quantity = 12.3456;
+        $currency = 'USD';
+        $builder = $this->createMock(ProductPriceCriteriaBuilderInterface::class);
 
-        return $product;
+        $this->productPriceCriteriaBuilderRegistry
+            ->expects(self::once())
+            ->method('getBuilderForProduct')
+            ->with($product)
+            ->willReturn($builder);
+
+        $builder
+            ->expects(self::once())
+            ->method('setProduct')
+            ->with($product)
+            ->willReturnSelf();
+
+        $builder
+            ->expects(self::once())
+            ->method('setProductUnit')
+            ->with($productUnit)
+            ->willReturnSelf();
+
+        $builder
+            ->expects(self::once())
+            ->method('setQuantity')
+            ->with($quantity)
+            ->willReturnSelf();
+
+        $builder
+            ->expects(self::once())
+            ->method('setCurrency')
+            ->with($currency)
+            ->willReturnSelf();
+
+        $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
+        $builder
+            ->expects(self::once())
+            ->method('create')
+            ->willReturn($productPriceCriteria);
+
+        self::assertSame($productPriceCriteria, $this->factory->create($product, $productUnit, $quantity, $currency));
     }
 
-    private function getProductUnit(string $code): ProductUnit
+    public function testBuildFromProduct(): void
     {
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($code);
+        $product = (new ProductStub())->setId(42);
+        $builder = $this->createMock(ProductPriceCriteriaBuilderInterface::class);
 
-        return $productUnit;
+        $this->productPriceCriteriaBuilderRegistry
+            ->expects(self::once())
+            ->method('getBuilderForProduct')
+            ->with($product)
+            ->willReturn($builder);
+
+        $builder
+            ->expects(self::once())
+            ->method('setProduct')
+            ->with($product)
+            ->willReturnSelf();
+
+        self::assertSame($builder, $this->factory->buildFromProduct($product));
     }
 
-    public function testThatProductPriceCriteriaCanBeBuilt()
+    public function testCreateFromProductLineItem(): void
     {
+        $productLineItem = $this->createMock(ProductLineItemInterface::class);
+        $currency = 'USD';
+        $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
+
+        $this->productLineItemPriceCriteriaFactory
+            ->expects(self::once())
+            ->method('createFromProductLineItem')
+            ->with($productLineItem, $currency)
+            ->willReturn($productPriceCriteria);
+
+        self::assertSame($productPriceCriteria, $this->factory->createFromProductLineItem($productLineItem, $currency));
+    }
+
+    public function testCreateListFromProductLineItemsWhenNoLineItems(): void
+    {
+        $this->productLineItemPriceCriteriaFactory
+            ->expects(self::never())
+            ->method('createFromProductLineItem');
+
+        self::assertEquals([], $this->factory->createListFromProductLineItems([]));
+    }
+
+    public function testCreateListFromProductLineItems(): void
+    {
+        $productLineItem1 = $this->createMock(ProductLineItemInterface::class);
+        $productLineItem2 = $this->createMock(ProductLineItemInterface::class);
+        $currency = 'USD';
+        $productPriceCriterion1 = $this->createMock(ProductPriceCriteria::class);
+        $productPriceCriterion2 = $this->createMock(ProductPriceCriteria::class);
+
+        $this->productLineItemPriceCriteriaFactory
+            ->expects(self::exactly(2))
+            ->method('createFromProductLineItem')
+            ->willReturnMap([
+                [$productLineItem1, $currency, $productPriceCriterion1],
+                [$productLineItem2, $currency, $productPriceCriterion2],
+            ]);
+
+        self::assertSame(
+            [10 => $productPriceCriterion1, 20 => $productPriceCriterion2],
+            $this->factory->createListFromProductLineItems(
+                [10 => $productLineItem1, 20 => $productLineItem2],
+                $currency
+            )
+        );
+    }
+
+    public function testCreateListFromProductLineItemsWhenOneProductPriceCriteriaCannotBeCreated(): void
+    {
+        $productLineItem1 = $this->createMock(ProductLineItemInterface::class);
+        $productLineItem2 = $this->createMock(ProductLineItemInterface::class);
+        $currency = 'USD';
+        $productPriceCriterion2 = $this->createMock(ProductPriceCriteria::class);
+
+        $this->productLineItemPriceCriteriaFactory
+            ->expects(self::exactly(2))
+            ->method('createFromProductLineItem')
+            ->willReturnMap([
+                [$productLineItem1, $currency, null],
+                [$productLineItem2, $currency, $productPriceCriterion2],
+            ]);
+
+        self::assertSame(
+            [20 => $productPriceCriterion2],
+            $this->factory->createListFromProductLineItems(
+                [10 => $productLineItem1, 20 => $productLineItem2],
+                $currency
+            )
+        );
+    }
+
+    public function testCreateListFromProductLineItemsWhenAllProductPriceCriteriaCannotBeCreated(): void
+    {
+        $productLineItem1 = $this->createMock(ProductLineItemInterface::class);
+        $productLineItem2 = $this->createMock(ProductLineItemInterface::class);
         $currency = 'USD';
 
-        $result = $this->productPriceCriteriaFactory->build(
-            $this->getProduct(1),
-            $this->getProductUnit('code'),
-            123,
-            $currency
-        );
+        $this->productLineItemPriceCriteriaFactory
+            ->expects(self::exactly(2))
+            ->method('createFromProductLineItem')
+            ->willReturnMap([
+                [$productLineItem1, $currency, null],
+                [$productLineItem2, $currency, null],
+            ]);
 
-        $this->assertInstanceOf(ProductPriceCriteria::class, $result);
-        $this->assertEquals($currency, $result->getCurrency());
-    }
-
-    public function testThatProductPriceCriteriaCanBeBuiltWithoutUserCurrency()
-    {
-        $currency = 'EUR';
-
-        $this->currencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn($currency);
-
-        $result = $this->productPriceCriteriaFactory->build(
-            $this->getProduct(1),
-            $this->getProductUnit('code'),
-            123
-        );
-
-        $this->assertInstanceOf(ProductPriceCriteria::class, $result);
-        $this->assertEquals($currency, $result->getCurrency());
-    }
-
-    public function testThatProductPriceCriteriaCanNotBeBuiltWithNotValidParams()
-    {
-        $this->expectException(ProductPriceCriteriaBuildingFailedException::class);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Got error while trying to create new ProductPriceCriteria with message: "{message}"',
-                $this->arrayHasKey('message')
-            );
-
-        $this->productPriceCriteriaFactory->build(
-            $this->getProduct(1),
-            $this->getProductUnit('code'),
-            -123,
-            'USD'
+        self::assertSame(
+            [],
+            $this->factory->createListFromProductLineItems(
+                [10 => $productLineItem1, 20 => $productLineItem2],
+                $currency
+            )
         );
     }
 
-    public function testThatProductPriceCriteriaCanBeBuiltFromProductLineItem()
+    public function testCreateListFromProductLineItemsWhenNotProductLineItem(): void
     {
-        $productLineItem = $this->createMock(ProductLineItemInterface::class);
+        $object = new \stdClass();
 
-        $productLineItem->expects($this->exactly(2))
-            ->method('getProduct')
-            ->willReturn($this->getProduct(1));
-        $productLineItem->expects($this->exactly(2))
-            ->method('getProductUnit')
-            ->willReturn($this->getProductUnit('code'));
-        $productLineItem->expects($this->exactly(2))
-            ->method('getQuantity')
-            ->willReturn(321);
-
-        $result= $this->productPriceCriteriaFactory->createListFromProductLineItems(
-            [$productLineItem],
-            'USD'
+        $this->expectExceptionObject(
+            new \LogicException(
+                sprintf(
+                    '$lineItems were expected to contain only %s, got %s',
+                    ProductLineItemInterface::class,
+                    get_debug_type($object)
+                )
+            )
         );
 
-        foreach ($result as $item) {
-            $this->assertInstanceOf(ProductPriceCriteria::class, $item);
-        }
-    }
-
-    /**
-     * @dataProvider provideProductLineItemNullMethod
-     */
-    public function testThatProductPriceCriteriaCanNotBeBuiltWhenArgumentIsNull(string $nullMethod)
-    {
-        $map = [
-            'getProduct' => $this->getProduct(1),
-            'getProductUnit' => $this->getProductUnit('code'),
-            'getQuantity' => 123
-        ];
-        unset($map[$nullMethod]);
-
-        $productLineItem = $this->createMock(ProductLineItemInterface::class);
-        foreach ($map as $method => $data) {
-            $productLineItem->expects($this->any())
-                ->method($method)
-                ->willReturn($data);
-        }
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Got error while trying to create new ProductPriceCriteria with message: "{message}"',
-                $this->arrayHasKey('message')
-            );
-
-        $this->productPriceCriteriaFactory->createListFromProductLineItems(
-            [$productLineItem],
-            'USD'
-        );
-    }
-
-    private function provideProductLineItemNullMethod(): array
-    {
-        return [
-            ['getProduct'],
-            ['getQuantity'],
-            ['getProductUnit']
-        ];
+        $this->factory->createListFromProductLineItems([$object]);
     }
 }

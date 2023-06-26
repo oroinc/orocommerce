@@ -1,5 +1,11 @@
-<% if (!obj._isKitItemLineItem) { %>
-    <label class="checkbox-label cell-checkbox">
+<% if (obj._isKitItemLineItem) { %>
+    <span class="checkbox-label cell-checkbox no-gap" aria-hidden="true">
+        <span class="checkbox-placeholder">
+            <span class="cell-line" aria-hidden="true"></span>
+        </span>
+    </span>
+<% } else { %>
+    <label class="checkbox-label cell-checkbox no-gap">
         <input type="checkbox" data-role="select-row-cell" class="select-row-cell-input" <% if (checked) { %> checked="checked"<% } %>>
         <span class="cell-line" aria-hidden="true"></span>
         <span class="sr-only"><%- _.__('oro.datagrid.action.select_row') %></span>

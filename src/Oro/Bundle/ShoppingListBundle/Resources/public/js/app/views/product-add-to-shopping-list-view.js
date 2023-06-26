@@ -21,11 +21,17 @@ define(function(require) {
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
             shoppingListCreateEnabled: true,
+            shoppingListAddToEnabled: true,
+            shoppingListRemoveEnabled: true,
+            shoppingListUpdateEnabled: true,
             showSingleAddToShoppingListButton: true,
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
-                success: 'oro.frontend.shoppinglist.lineitem.updated.label'
+                success: 'oro.frontend.shoppinglist.lineitem.updated.label',
+                remove: {
+                    success: 'oro.shoppinglist.actions.delete_line_item.success'
+                }
             },
             save_api_accessor: {
                 http_method: 'PUT',
@@ -65,6 +71,10 @@ define(function(require) {
 
             this.dropdownWidget = options.dropdownWidget;
             this.$form = this.dropdownWidget.element.closest('form');
+
+            if (this.dropdownWidget.element.attr('data-form')) {
+                this.$form = $(`#${this.dropdownWidget.element.attr('data-form')}`);
+            }
 
             this.initModel(options);
 
@@ -166,17 +176,10 @@ define(function(require) {
                 return [$addNewButton];
             }
 
-            const currentShoppingList = this.findCurrentShoppingList();
-            this._addShippingListButtons(buttons, currentShoppingList);
-
             this.shoppingListCollection.sort();
             this.shoppingListCollection.each(function(model) {
                 const shoppingList = model.toJSON();
-                if (shoppingList.id === currentShoppingList.id) {
-                    return;
-                }
-
-                this._addShippingListButtons(buttons, shoppingList);
+                this._addShoppingListButtons(buttons, shoppingList);
             }, this);
 
             if (this.options.shoppingListCreateEnabled) {
@@ -193,7 +196,7 @@ define(function(require) {
             return buttons;
         },
 
-        _addShippingListButtons: function(buttons, shoppingList) {
+        _addShoppingListButtons: function(buttons, shoppingList) {
             let $button = $(this.options.buttonTemplate(shoppingList));
             if (!this.model) {
                 buttons.push($button);
@@ -203,9 +206,11 @@ define(function(require) {
             if (hasLineItems) {
                 $button = this.updateLabel($button, shoppingList, hasLineItems);
             }
-            buttons.push($button);
+            if (this.options.shoppingListAddToEnabled || this.options.shoppingListUpdateEnabled) {
+                buttons.push($button);
+            }
 
-            if (hasLineItems) {
+            if (this.options.shoppingListRemoveEnabled && hasLineItems) {
                 const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
                 $removeButton.find('a, button').attr('data-intention', 'remove');
                 buttons.push($removeButton);
@@ -317,7 +322,8 @@ define(function(require) {
             }
             const url = $button.data('url');
             const intention = $button.data('intention');
-            const formData = this.$form.serialize();
+            // some fields may be rendered outside the main form
+            const formData = this.$form.add(this.$form.data('extra-form-selector')).serialize();
 
             const urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id
@@ -352,7 +358,7 @@ define(function(require) {
             let label;
             let intention;
 
-            if (shoppingList && hasLineItems) {
+            if (this.options.shoppingListUpdateEnabled && shoppingList && hasLineItems) {
                 label = _.__('oro.shoppinglist.actions.update_shopping_list', {
                     shoppingList: shoppingList.label
                 });
@@ -431,17 +437,20 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            const self = this;
 
             mediator.execute('showLoading');
+            mediator.trigger('shopping-list:line-items:before-response', this.model);
             $.ajax({
                 type: 'POST',
                 url: routing.generate(url, urlOptions),
                 data: formData,
-                success: function(response) {
-                    mediator.trigger('shopping-list:line-items:update-response', self.model, response);
+                success: response => {
+                    mediator.trigger('shopping-list:line-items:update-response', this.model, response);
                 },
-                complete: function() {
+                error: error => {
+                    mediator.trigger('shopping-list:line-items:error-response', this.model, error);
+                },
+                complete: () => {
                     mediator.execute('hideLoading');
                 }
             });
@@ -451,15 +460,19 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            const self = this;
 
             mediator.execute('showLoading');
-            $.ajax({
+            mediator.trigger('shopping-list:line-items:before-response', this.model);
+
+            return $.ajax({
                 type: 'DELETE',
                 url: routing.generate(url, urlOptions),
                 data: formData,
-                success: function(response) {
-                    mediator.trigger('shopping-list:line-items:update-response', self.model, response);
+                success: response => {
+                    mediator.trigger('shopping-list:line-items:update-response', this.model, response);
+                },
+                error: error => {
+                    mediator.trigger('shopping-list:line-items:error-response', this.model, error);
                 },
                 complete: function() {
                     mediator.execute('hideLoading');

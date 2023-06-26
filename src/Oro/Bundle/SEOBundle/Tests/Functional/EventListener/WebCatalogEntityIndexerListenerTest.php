@@ -19,16 +19,14 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const QUERY = 'web_catalog_entity_indexer_listener_test_query_string';
+    private const QUERY = 'web_catalog_entity_indexer_listener_test_query_string';
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         OrmIndexerTest::checkSearchEngine($this);
         $this->setCurrentWebsite();
-        $this->loadFixtures([
-            LoadWebCatalogWithContentNodes::class,
-        ]);
+        $this->loadFixtures([LoadWebCatalogWithContentNodes::class]);
         $this->getContainer()->get('request_stack')->push(Request::create(''));
     }
 

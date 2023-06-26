@@ -4,11 +4,9 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Workflow;
 
 class QuoteBackofficeDefaultWorkflowTest extends BaseQuoteBackofficeWorkflowTestCase
 {
-    const WORKFLOW_NAME = 'b2b_quote_backoffice_default';
-
-    const WORKFLOW_TITLE = 'Quote Management Flow';
-
-    const WORKFLOW_BUTTONS = [
+    protected const WORKFLOW_NAME = 'b2b_quote_backoffice_default';
+    protected const WORKFLOW_TITLE = 'Quote Management Flow';
+    protected const WORKFLOW_BUTTONS = [
         'Edit',
         'Clone',
         'Delete',
@@ -22,8 +20,7 @@ class QuoteBackofficeDefaultWorkflowTest extends BaseQuoteBackofficeWorkflowTest
         'Decline by Customer',
         'Reopen',
     ];
-
-    const TRANSITIONS = [
+    protected const TRANSITIONS = [
         'edit_transition',
         'clone_transition',
         'delete_transition',
@@ -45,7 +42,7 @@ class QuoteBackofficeDefaultWorkflowTest extends BaseQuoteBackofficeWorkflowTest
         $this->assertApplicableWorkflows();
     }
 
-    protected function activateWorkflow()
+    protected function activateWorkflow(): void
     {
         $this->manager->deactivateWorkflow('b2b_quote_backoffice_approvals');
         $this->manager->resetWorkflowData('b2b_quote_backoffice_approvals');

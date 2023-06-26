@@ -10,16 +10,13 @@ use PHPUnit\Framework\TestCase;
 
 class PriceAttributeProductPriceDataConverterTest extends TestCase
 {
-    const PRODUCT_SKU = 'sku';
-    const PRICE_ATTRIBUTE = 'MAP';
-    const UNIT_CODE = 'unit';
-    const CURRENCY = 'USD';
-    const PRICE = '10.47';
+    private const PRODUCT_SKU = 'sku';
+    private const PRICE_ATTRIBUTE = 'MAP';
+    private const UNIT_CODE = 'unit';
+    private const CURRENCY = 'USD';
+    private const PRICE = '10.47';
 
-    /**
-     * @var PriceAttributeProductPriceDataConverter
-     */
-    private $converter;
+    private PriceAttributeProductPriceDataConverter $converter;
 
     protected function setUp(): void
     {
@@ -32,7 +29,7 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
 
     public function testConvertToImportFormat()
     {
-        static::assertSame(
+        self::assertSame(
             $this->getBackendFormatData(),
             $this->converter->convertToImportFormat($this->getFileFormatData())
         );
@@ -40,7 +37,7 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
 
     public function testConvertToExportFormat()
     {
-        static::assertSame(
+        self::assertSame(
             $this->getFileFormatData(),
             $this->converter->convertToExportFormat($this->getBackendFormatData())
         );

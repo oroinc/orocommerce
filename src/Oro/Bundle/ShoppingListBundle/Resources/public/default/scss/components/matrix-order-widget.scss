@@ -516,29 +516,6 @@
         max-width: $matrix-order-widget-pinned-dropdown-max-width;
     }
 
-    //Should reset default dialog widget classes
-    &--dialog {
-        .ui-dialog-titlebar {
-            padding: $matrix-order-widget-dialog-ui-dialog-titlebar-offset-inner;
-        }
-
-        .ui-dialog-title {
-            display: $matrix-order-widget-dialog-ui-dialog-title-display;
-        }
-
-        .ui-widget-content {
-            padding: $matrix-order-widget-dialog-ui-widget-content-offset-inner;
-        }
-
-        .ui-widget-header {
-            padding: $matrix-order-widget-dialog-ui-widget-header-offset-inner;
-        }
-
-        .ui-dialog-buttonpane {
-            padding: $matrix-order-widget-dialog-ui-dialog-buttonpane-offset-inner;
-        }
-    }
-
     &--dialog & {
         max-width: $matrix-order-widget-dialog-max-width;
 
@@ -564,19 +541,6 @@
 
         &__form__col {
             flex-grow: $matrix-order-widget-dialog-form-col-flex-grow;
-        }
-    }
-
-    &--dialog-fullscreen {
-        position: $matrix-order-widget-dialog-fullscreen-position;
-
-        .ui-dialog-titlebar,
-        .ui-dialog-buttonpane {
-            display: $matrix-order-widget-dialog-fullscreen-position-ui-dialog-hidden-item;
-        }
-
-        .ui-widget-content {
-            padding: $matrix-order-widget-dialog-fullscreen-ui-widget-content-offset-inner;
         }
     }
 
@@ -628,18 +592,6 @@
 
 @include breakpoint('tablet-small') {
     .matrix-order-widget {
-        &--dialog {
-            padding-bottom: $matrix-order-widget-dialog-tablet-small-offset-bottom;
-
-            .ui-widget-content {
-                padding: $matrix-order-widget-dialog-ui-widget-content-tablet-small-offset;
-            }
-
-            .ui-dialog-buttonpane {
-                padding: $matrix-order-widget-ui-dialog-buttonpane-tablet-small-offset;
-            }
-        }
-
         &__item {
             &-content {
                 flex-basis: $matrix-order-widget-dialog-item-content-tablet-small-flex-basis;

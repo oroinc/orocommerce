@@ -7,7 +7,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 {
-    private ProductAvailabilityProvider $productAvailabilityProvider;
+    private ProductRFPAvailabilityProvider $productAvailabilityProvider;
     private FeatureChecker $featureChecker;
 
     /**
@@ -35,7 +35,7 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
         RequestStack $requestStack,
         TranslatorInterface $translator,
         UrlGeneratorInterface $urlGenerator,
-        ProductAvailabilityProvider $productAvailabilityProvider,
+        ProductRFPAvailabilityProvider $productAvailabilityProvider,
         FeatureChecker $featureChecker
     ) {
         parent::__construct(

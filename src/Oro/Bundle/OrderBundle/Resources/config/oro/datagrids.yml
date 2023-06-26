@@ -398,6 +398,89 @@ datagrids:
                 acl_resource:  oro_order_view
         views_list: '@oro_order.datagrid.orders_view_list'
 
+    orders-for-context-grid:
+        acl_resource: oro_order_view
+        source:
+            type: orm
+            query:
+                select:
+                    - order1.id
+                    - order1.identifier
+                    - order1.poNumber
+                    - CASE WHEN IDENTITY(order1.parent) IS NULL THEN 1 ELSE 2 END as orderType
+                    - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
+                    - customer.name as customerName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                from:
+                    - { table: 'Oro\Bundle\OrderBundle\Entity\Order', alias: order1 }
+                join:
+                    left:
+                        - { join: order1.owner, alias: order_owner }
+                        - { join: order1.customer, alias: customer }
+                        - { join: order1.customerUser, alias: customerUser }
+        columns:
+            id:
+                label: oro.order.id.label
+            identifier:
+                label: oro.order.identifier.label
+            poNumber:
+                label: oro.order.po_number.label
+            orderType:
+                label: oro.order.order_type.label
+                frontend_type: select
+                choices: "@oro_order.provider.order_types->getOrderTypeChoices"
+            owner:
+                label: oro.order.owner.label
+            customerName:
+                label: oro.order.customer.label
+            customerUserName:
+                label: oro.order.customer_user.label
+        sorters:
+            columns:
+                identifier:
+                    data_name: order1.identifier
+                poNumber:
+                    data_name: order1.poNumber
+                orderType:
+                    data_name: orderType
+                owner:
+                    data_name: owner
+                customerName:
+                    data_name: customerName
+                customerUserName:
+                    data_name: customerUserName
+        filters:
+            columns:
+                identifier:
+                    type: string
+                    data_name: order1.identifier
+                poNumber:
+                    type: string
+                    data_name: order1.poNumber
+                orderType:
+                    type: single_choice
+                    data_name: orderType
+                    enabled: false
+                    options:
+                        field_options:
+                            choices: "@oro_order.provider.order_types->getOrderTypeChoices"
+                owner:
+                    type: string
+                    data_name: owner
+                customerName:
+                    type: string
+                    data_name: customerName
+                customerUserName:
+                    type: string
+                    data_name: customerUserName
+        options:
+            entityHint: oro.order.entity_plural_label
+            entity_pagination: true
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+            routerEnabled: false
+
     suborders-grid:
         extends: orders-grid
         source:

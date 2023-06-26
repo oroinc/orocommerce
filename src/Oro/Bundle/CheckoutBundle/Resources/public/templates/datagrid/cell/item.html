@@ -13,7 +13,7 @@
             <% } %>
             <div class="grid-line-items__row-item">
                 <% var popover_image_sources = [{srcset: obj.imageWebp, type: 'image/webp'}]; %>
-                <% if (name.length <= clipLength) { %>
+                <% if (name && name.length <= clipLength) { %>
                     <%= oroshoppinglist.renderProductItemName({...obj, link: productId ? productUrl(productId, variantId) : null, popover_image_src: obj.image}) %>
                 <% } else { %>
                 <div class="grid-line-items__clip-container">

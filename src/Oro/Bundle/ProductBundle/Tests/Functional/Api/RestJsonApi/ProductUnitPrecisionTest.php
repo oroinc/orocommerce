@@ -15,15 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductUnitPrecisionTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
-            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml',
+            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml'
         ]);
     }
 
@@ -79,22 +76,16 @@ class ProductUnitPrecisionTest extends RestJsonApiTestCase
             [
                 'title'  => 'unique entity constraint',
                 'detail' => 'This value is already used.',
-                'source' => [
-                    'pointer' => '/data/relationships/product/data'
-                ]
+                'source' => ['pointer' => '/data/relationships/product/data']
             ],
-            $response,
-            Response::HTTP_BAD_REQUEST
+            $response
         );
     }
 
     public function testUpdate(): void
     {
         $response = $this->patch(
-            [
-                'entity' => 'productunitprecisions',
-                'id' => '<toString(@product1_precision2->id)>'
-            ],
+            ['entity' => 'productunitprecisions', 'id' => '<toString(@product1_precision2->id)>'],
             ['data' => [
                 'type'       => 'productunitprecisions',
                 'id'         => '<toString(@product1_precision2->id)>',
@@ -111,23 +102,17 @@ class ProductUnitPrecisionTest extends RestJsonApiTestCase
     public function testTryToUpdateUnitWhenReferencedByProductKitItem(): void
     {
         $response = $this->patch(
-            [
-                'entity' => 'productunitprecisions',
-                'id' => '<toString(@product1_precision->id)>',
-            ],
+            ['entity' => 'productunitprecisions', 'id' => '<toString(@product1_precision->id)>'],
             [
                 'data' => [
                     'type' => 'productunitprecisions',
                     'id' => '<toString(@product1_precision->id)>',
                     'relationships' => [
                         'unit' => [
-                            'data' => [
-                                'type' => 'productunits',
-                                'id' => 'hour',
-                            ],
-                        ],
-                    ],
-                ],
+                            'data' => ['type' => 'productunits', 'id' => 'hour']
+                        ]
+                    ]
+                ]
             ],
             [],
             false
@@ -136,11 +121,8 @@ class ProductUnitPrecisionTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'product unit precision referenced by product kit items constraint',
-                'detail' => 'Unit cannot be changed because it is used in the following product kits: '
-                    . 'PKSKU3, PKSKU1.',
-                'source' => [
-                    'pointer' => '/data/relationships/unit/data',
-                ],
+                'detail' => 'Unit cannot be changed because it is used in the following product kits: PKSKU3, PKSKU1.',
+                'source' => ['pointer' => '/data/relationships/unit/data']
             ],
             $response
         );
@@ -149,12 +131,7 @@ class ProductUnitPrecisionTest extends RestJsonApiTestCase
     public function testDelete(): void
     {
         $id = $this->getReference('product1_precision2')->getId();
-        $this->delete(
-            [
-                'entity' => 'productunitprecisions',
-                'id' => (string)$id
-            ]
-        );
+        $this->delete(['entity' => 'productunitprecisions', 'id' => (string)$id]);
 
         $this->assertNull($this->getEntityManager()->find(ProductUnitPrecision::class, $id));
     }
@@ -162,10 +139,7 @@ class ProductUnitPrecisionTest extends RestJsonApiTestCase
     public function testTryToDeletePrimaryProductUnitPrecision(): void
     {
         $response = $this->delete(
-            [
-                'entity' => 'productunitprecisions',
-                'id' => '<toString(@product1_precision->id)>'
-            ],
+            ['entity' => 'productunitprecisions', 'id' => '<toString(@product1_precision->id)>'],
             [],
             [],
             false
@@ -184,10 +158,7 @@ class ProductUnitPrecisionTest extends RestJsonApiTestCase
     public function testTryToDeleteProductUnitPrecisionReferencedByProductKitItem(): void
     {
         $response = $this->delete(
-            [
-                'entity' => 'productunitprecisions',
-                'id' => '<toString(@product1_precision1->id)>'
-            ],
+            ['entity' => 'productunitprecisions', 'id' => '<toString(@product1_precision1->id)>'],
             [],
             [],
             false
@@ -211,11 +182,7 @@ class ProductUnitPrecisionTest extends RestJsonApiTestCase
 
         $this->cdelete(
             ['entity' => 'productunitprecisions'],
-            [
-                'filter' => [
-                    'id' => [$id, $id1]
-                ]
-            ]
+            ['filter' => ['id' => [$id, $id1]]]
         );
 
         $this->assertNull($this->getEntityManager()->find(ProductUnitPrecision::class, $id));

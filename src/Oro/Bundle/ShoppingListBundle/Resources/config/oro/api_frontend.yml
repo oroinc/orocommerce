@@ -103,9 +103,6 @@ api:
                     depends_on: [product, quantity, unit]
                 kitItems:
                     property_path: kitItemLineItems
-                    max_results: -1
-                    form_options:
-                        mapped: false
             actions:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
@@ -138,19 +135,35 @@ api:
                 unit: ~
                 currency:
                     data_type: string
+                    form_options:
+                        mapped: false
                 value:
                     data_type: money
+                    form_options:
+                        mapped: false
                 sortOrder:
                     data_type: integer
             actions:
-                create: false
-                update: false
+                create:
+                    acl_resource: oro_shopping_list_frontend_update
+                    form_options:
+                        validation_groups: [create, api]
+                update:
+                    acl_resource: oro_shopping_list_frontend_update
+                    form_options:
+                        validation_groups: [update, api]
+                    fields:
+                        lineItem:
+                            form_options:
+                                mapped: false
                 get:
                     acl_resource: oro_shopping_list_frontend_view
                 get_list:
                     acl_resource: oro_shopping_list_frontend_view
-                delete: false
-                delete_list: false
+                delete:
+                    acl_resource: oro_shopping_list_frontend_update
+                delete_list:
+                    acl_resource: oro_shopping_list_frontend_update
                 get_subresource: false
                 get_relationship: false
                 update_relationship: false

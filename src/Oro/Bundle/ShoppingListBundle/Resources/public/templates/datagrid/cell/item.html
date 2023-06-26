@@ -1,12 +1,14 @@
 <% let clipLength = 30 %>
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<% productId = typeof productId !== 'undefined' ? productId : null %>
+<% variantId = typeof variantId !== 'undefined' ? variantId : null %>
 
 <div class="product-item grid-line-items">
     <%= oroshoppinglist.renderProductItemImage({
         src: obj.image,
         srcWebp: obj.imageWebp,
         placeholder: _metadata.image_placeholder,
-        productId: typeof variantId !== 'undefined' && variantId ? variantId : productId,
+        productId: variantId ? variantId : productId,
         title: sku,
         alt: name,
         isConfigurable: obj.isConfigurable,
@@ -39,20 +41,15 @@
                 <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>
             <% } %>
-        <% } else if (obj._isKitItemLineItem) { %>
-            <div class="grid-line-items__row-item height-as-image-mobile">
-                <div data-role="kit-item-label" class="bold"><%= obj.kitItemLabel %>:</div>
-                <% if (name.length <= clipLength) { %>
-                    <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId)}) %>
-                <% } else { %>
-                <div class="grid-line-items__clip-container">
-                    <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrl(productId)}) %>
-                </div>
-                <% } %>
-            </div>
         <% } else { %>
-            <div class="grid-line-items__row-item height-as-image-mobile">
-                <% if (name.length <= clipLength) { %>
+            <% if (obj._isKitItemLineItem) { %>
+                <div class="grid-line-items__row-item height-as-image-mobile column-on-mobile">
+                    <div class="bold"><%- obj.kitItemLabel %>:</div>
+                    <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId)}) %>
+                </div>
+            <% } else { %>
+                <div class="grid-line-items__row-item height-as-image-mobile">
+                <% if (name && name.length <= clipLength) { %>
                     <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId, variantId)}) %>
                 <% } else { %>
                 <div class="grid-line-items__clip-container">
@@ -60,22 +57,23 @@
                 </div>
                 <% } %>
             </div>
+            <% } %>
             <% if (obj.subTitle) { %>
                 <div class="grid-line-items__sub-title shift-mobile-row mobile-row">
                     <%= obj.subTitle %>
                 </div>
             <% } %>
             <% if (obj.sku || obj.inventoryStatus) { %>
-            <div class="grid-line-items__row-entry shift-mobile-row mobile-row show-in-tablet">
+            <div class="grid-line-items__row-entry show-in-tablet mobile-row shift-mobile-row<% if (!obj.inventoryStatus) { %> shift-start-mobile-row <% } %>">
                 <% if (obj.sku) { %>
                     <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <% } %>
-                <% if (!obj.isConfigurable) { %>
+                <% if (obj.inventoryStatus && !obj.isConfigurable) { %>
                     <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
                 <% } %>
             </div>
             <% } %>
-            <% if (productConfiguration) { %>
+            <% if (obj.productConfiguration) { %>
             <div class="grid-line-items__configuration shift-mobile-row">
                 <% _.each(productConfiguration, function(field) { %>
                 <div class="grid-line-items__field">
@@ -85,7 +83,7 @@
                 <% }) %>
             </div>
             <% } %>
-            <% if (notes) { %>
+            <% if (obj.notes) { %>
             <div class="shift-mobile-row">
                 <%= oroshoppinglist.renderNotes({notes: notes}) %>
             </div>

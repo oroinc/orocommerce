@@ -152,7 +152,7 @@ Delete a collection of shopping list item records.
 
 {@inheritdoc}
 
-**The read-only field. A passed value will be ignored.**
+**The field is required if base product is kit**
 
 ### shoppingList
 
@@ -172,10 +172,30 @@ Delete a collection of shopping list item records.
 
 The product price.
 
+#### create
+
+{@inheritdoc}
+
 **The read-only field. A passed value will be ignored.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
 
 ### currency
 
 The currency for the product price.
 
+#### create
+
+{@inheritdoc}
+
 **The read-only field. A passed value will be ignored.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**

@@ -1,0 +1,97 @@
+data:
+    type: shoppinglistitems
+    id: '<toString(@kit_line_item1->id)>'
+    attributes:
+        quantity: 2
+        notes: 'New Kit Line Item Notes'
+        currency: USD
+        value: '12.34'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        parentProduct:
+            data: null
+        kitItems:
+            data:
+                -
+                    type: shoppinglistkititems
+                    id: '<toString(@product_kit_item1_line_item1->id)>'
+                -
+                    type: shoppinglistkititems
+                    id: '<toString(@product_kit_item1_line_item2->id)>'
+                -
+                    type: shoppinglistkititems
+                    id: kit_3
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'
+included:
+    -
+        type: shoppinglistkititems
+        id: '<toString(@product_kit_item1_line_item1->id)>'
+        attributes:
+            quantity: 3
+        relationships:
+            lineItem:
+                data:
+                    type: shoppinglistitems
+                    id: '<toString(@kit_line_item1->id)>'
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: shoppinglistkititems
+        id: '<toString(@product_kit_item1_line_item2->id)>'
+        attributes:
+            quantity: 2
+        relationships:
+            lineItem:
+                data:
+                    type: shoppinglistitems
+                    id: '<toString(@kit_line_item1->id)>'
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: shoppinglistkititems
+        id: kit_3
+        attributes:
+            quantity: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item3->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product4->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

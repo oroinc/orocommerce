@@ -6,40 +6,14 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResult;
 
 class TimeInTransitResultTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const STATUS = true;
+    private const STATUS = true;
+    private const STATUS_DESCRIPTION = 'sample';
+    private const ESTIMATED_ARRIVALS = ['1DM' => ['sample arrival']];
+    private const AUTO_DUTY_CODE = '1';
+    private const CUSTOMER_CONTEXT = 'sample context';
+    private const TRANSACTION_IDENTIFIER = 'sample id';
 
-    /**
-     * @internal
-     */
-    const STATUS_DESCRIPTION = 'sample';
-
-    /**
-     * @internal
-     */
-    const ESTIMATED_ARRIVALS = ['1DM' => ['sample arrival']];
-
-    /**
-     * @internal
-     */
-    const AUTO_DUTY_CODE = '1';
-
-    /**
-     * @internal
-     */
-    const CUSTOMER_CONTEXT = 'sample context';
-
-    /**
-     * @internal
-     */
-    const TRANSACTION_IDENTIFIER = 'sample id';
-
-    /**
-     * @var TimeInTransitResult
-     */
-    private $timeInTransitResult;
+    private TimeInTransitResult $timeInTransitResult;
 
     protected function setUp(): void
     {
@@ -55,31 +29,25 @@ class TimeInTransitResultTest extends \PHPUnit\Framework\TestCase
 
     public function testAccessors()
     {
-        static::assertSame(self::STATUS, $this->timeInTransitResult->getStatus());
-        static::assertSame(self::STATUS_DESCRIPTION, $this->timeInTransitResult->getStatusDescription());
-        static::assertSame(self::ESTIMATED_ARRIVALS, $this->timeInTransitResult->getEstimatedArrivals());
-        static::assertSame(self::AUTO_DUTY_CODE, $this->timeInTransitResult->getAutoDutyCode());
-        static::assertSame(self::CUSTOMER_CONTEXT, $this->timeInTransitResult->getCustomerContext());
-        static::assertSame(self::TRANSACTION_IDENTIFIER, $this->timeInTransitResult->getTransactionIdentifier());
+        self::assertSame(self::STATUS, $this->timeInTransitResult->getStatus());
+        self::assertSame(self::STATUS_DESCRIPTION, $this->timeInTransitResult->getStatusDescription());
+        self::assertSame(self::ESTIMATED_ARRIVALS, $this->timeInTransitResult->getEstimatedArrivals());
+        self::assertSame(self::AUTO_DUTY_CODE, $this->timeInTransitResult->getAutoDutyCode());
+        self::assertSame(self::CUSTOMER_CONTEXT, $this->timeInTransitResult->getCustomerContext());
+        self::assertSame(self::TRANSACTION_IDENTIFIER, $this->timeInTransitResult->getTransactionIdentifier());
     }
 
     /**
      * @dataProvider estimatedArrivalByServiceDataProvier
-     *
-     * @param string     $serviceCode
-     * @param array|null $expectedResult
      */
-    public function testGetEstimatedArrivalByService($serviceCode, $expectedResult)
+    public function testGetEstimatedArrivalByService(string $serviceCode, ?array $expectedResult)
     {
         $result = $this->timeInTransitResult->getEstimatedArrivalByService($serviceCode);
 
-        static::assertEquals($result, $expectedResult);
+        self::assertEquals($result, $expectedResult);
     }
 
-    /**
-     * @return array
-     */
-    public function estimatedArrivalByServiceDataProvier()
+    public function estimatedArrivalByServiceDataProvier(): array
     {
         return [
             [

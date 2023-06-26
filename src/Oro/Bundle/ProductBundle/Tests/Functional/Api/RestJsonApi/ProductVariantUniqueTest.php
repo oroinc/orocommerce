@@ -26,7 +26,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testAddSimpleProductWithoutAttributes()
+    public function testTryToAddSimpleProductWithoutAttributes()
     {
         $response = $this->post(
             ['entity' => 'productvariantlinks'],
@@ -44,7 +44,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         );
     }
 
-    public function testAddSimpleProductWithTheSameConfigureAttribute()
+    public function testTryToAddSimpleProductWithTheSameConfigureAttribute()
     {
         $response = $this->post(
             ['entity' => 'productvariantlinks'],
@@ -65,7 +65,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
     /**
      * @dataProvider failedUpdateDataProvider
      */
-    public function testChangeSimpleProductToProductWithTheSameConfigureAttribute(string $requestFile)
+    public function testTryToChangeSimpleProductToProductWithTheSameConfigureAttribute(string $requestFile)
     {
         $response = $this->patch(
             ['entity' => 'productvariantlinks', 'id' => '<toString(@configurable_product1_variant2_link->id)>'],
@@ -94,7 +94,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
     /**
      * @dataProvider failedUpdateWithoutAttributesDataProvider
      */
-    public function testChangeSimpleProductToProductWithNoAttributes(string $requestFile)
+    public function testTryToChangeSimpleProductToProductWithNoAttributes(string $requestFile)
     {
         $response = $this->patch(
             ['entity' => 'productvariantlinks', 'id' => '<toString(@configurable_product1_variant2_link->id)>'],
@@ -186,7 +186,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         $this->assertContains($productSimpleWhichWasChange->getId(), $simpleProductIds);
     }
 
-    public function testChangeParentProduct()
+    public function testTryToChangeParentProduct()
     {
         $response = $this->patch(
             ['entity' => 'productvariantlinks', 'id' => '<toString(@configurable_product4_variant1_link->id)>'],

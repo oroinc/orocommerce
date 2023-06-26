@@ -8,7 +8,7 @@ layout:
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.cssClass
-            optionValue: 'responsive-shopping-list-grid'
+            optionValue: 'responsive-shopping-list-grid grid-inline-editing-quantity grid-side-effects'
 
         - '@setOption':
             id: __datagrid

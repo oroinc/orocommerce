@@ -7,18 +7,12 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicLineIt
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Context\AbstractShippingLineItemTest;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class BasicLineItemBuilderByLineItemFactoryTest extends AbstractShippingLineItemTest
 {
-    /**
-     * @var ShippingLineItemBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $lineItemBuilderFactory;
-
-    /**
-     * @var BasicLineItemBuilderByLineItemFactory
-     */
-    private $factory;
+    private ShippingLineItemBuilderFactoryInterface|MockObject $lineItemBuilderFactory;
+    private BasicLineItemBuilderByLineItemFactory $factory;
 
     protected function setUp(): void
     {
@@ -40,7 +34,7 @@ class BasicLineItemBuilderByLineItemFactoryTest extends AbstractShippingLineItem
             $lineItem->getProductHolder()
         );
 
-        $this->lineItemBuilderFactory
+        $this->lineItemBuilderFactory->expects(self::any())
             ->method('createBuilder')
             ->willReturn($builder);
 

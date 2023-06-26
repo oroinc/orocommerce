@@ -89,7 +89,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
      *      }
      * )
      */
-    protected ?float $quantity = null;
+    protected ?float $quantity = 1;
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")

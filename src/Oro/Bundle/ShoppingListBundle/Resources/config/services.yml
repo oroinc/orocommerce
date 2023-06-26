@@ -215,6 +215,7 @@ services:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_shopping_list.data_provider.shopping_list_line_items'
             - '@oro_pricing.formatter.product_price_formatter'
+            - '@oro_pricing.provider.product_line_item_price'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_products }
 
@@ -350,7 +351,7 @@ services:
     oro_shopping_list.condition.rfp_allowed:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
         arguments:
-            - '@oro_rfp.provider.product_availability'
+            - '@oro_rfp.provider.product_rfp_availability'
         tags:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
 
@@ -610,6 +611,11 @@ services:
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }
 
+    oro_shopping_list.access_rule.frontend_product_kit_item_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ProductKitItemLineItemAccessRule
+        tags:
+            - {name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, frontend: true}
+
     oro_shopping_list.layout.extension.shopping_list_limit_context:
         class: Oro\Bundle\ShoppingListBundle\Layout\Extension\ShoppingListLimitContextConfigurator
         arguments:
@@ -638,6 +644,7 @@ services:
         arguments:
             - '@oro_attachment.manager'
             - '@oro_locale.formatter.number'
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 512 }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 512 }
@@ -754,7 +761,7 @@ services:
     oro_shopping_list.validator.product_kit_item_collection_is_available_for_purchase:
         class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchaseValidator
         arguments:
-            - '@oro_locale.helper.localization'
+            - '@oro_translation.translation_message_sanitizer'
         tags:
             - { name: validator.constraint_validator }
 
@@ -762,6 +769,7 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator
         arguments:
             - '@oro_locale.helper.localization'
+            - '@oro_translation.translation_message_sanitizer'
         tags:
             - { name: validator.constraint_validator }
 
@@ -816,3 +824,24 @@ services:
         class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator
         arguments:
             - '@.inner'
+
+    oro_shopping_list.delete_handler.product_kit_item_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Handler\ProductKitItemLineItemDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem }
+
+    oro_shopping_list.extension.action.type.update_product_kit_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Extension\Action\Actions\UpdateProductKitLineItemAction
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: update-product-kit-line-item }
+
+    oro_shopping_list.validator.product_kit_item_product_has_price:
+        class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPriceValidator
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices'
+        tags:
+            - { name: validator.constraint_validator }

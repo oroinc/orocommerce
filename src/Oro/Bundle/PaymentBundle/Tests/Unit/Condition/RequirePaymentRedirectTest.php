@@ -12,21 +12,22 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
 {
-    const PAYMENT_METHOD_KEY = 'payment_method';
-
-    /** @var RequirePaymentRedirect */
-    protected $condition;
+    private const PAYMENT_METHOD_KEY = 'payment_method';
 
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentMethodProvider;
+    private $paymentMethodProvider;
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dispatcher;
+    private $dispatcher;
+
+    /** @var RequirePaymentRedirect */
+    private $condition;
 
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $this->condition = new RequirePaymentRedirect($this->paymentMethodProvider, $this->dispatcher);
     }
 
@@ -93,7 +94,7 @@ class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
     {
         $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $result = $this->condition->compile('');
-        static::assertStringContainsString(RequirePaymentRedirect::NAME, $result);
-        static::assertStringContainsString('payment_method', $result);
+        self::assertStringContainsString(RequirePaymentRedirect::NAME, $result);
+        self::assertStringContainsString('payment_method', $result);
     }
 }

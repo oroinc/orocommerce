@@ -56,6 +56,10 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "grid"={
+ *              "default"="rfp-requests-grid",
+ *              "context"="rfp-requests-for-context-grid"
  *          }
  *      }
  * )

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Provides information about shopping lists to which a product can be added.
@@ -36,6 +37,24 @@ class FrontendShoppingListProductUnitsQuantityProvider
         $this->setByProducts([$productId]);
 
         return $this->shoppingLists[$productId];
+    }
+
+    /**
+     * @param Product|ProductView|null $product
+     * @param ShoppingList $shoppingList
+     *
+     * @return array|null [shopping list data (array)]
+     */
+    public function getByProductAndShoppingList(Product|ProductView|null $product, ShoppingList $shoppingList): ?array
+    {
+        $shoppingListsByProduct = $this->getByProduct($product) ?? [];
+        foreach ($shoppingListsByProduct as $shoppingListData) {
+            if ($shoppingListData['id'] === $shoppingList->getId()) {
+                return [$shoppingListData];
+            }
+        }
+
+        return null;
     }
 
     /**

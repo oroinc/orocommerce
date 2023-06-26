@@ -33,6 +33,7 @@ class LineItemsActionsOnResultAfterListener
             'add_notes' => false,
             'edit_notes' => false,
             'update_configurable' => false,
+            'update_product_kit_line_item' => false,
             'delete' => $isEditGranted,
         ];
 
@@ -89,6 +90,7 @@ class LineItemsActionsOnResultAfterListener
     ): array {
         $actionsConfig = $defaultActionsConfig;
         $actionsConfig['add_notes'] = $isEditGranted && (string)$record->getValue('notes') === '';
+        $actionsConfig['update_product_kit_line_item'] = $isEditGranted;
 
         return $actionsConfig;
     }

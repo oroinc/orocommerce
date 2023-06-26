@@ -10,16 +10,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'stdClass';
+    private const DATA_CLASS = 'stdClass';
 
-    /**
-     * @var ProductShippingOptionsCollectionType
-     */
-    protected $formType;
+    private ProductShippingOptionsCollectionType $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,8 +33,7 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
                 'entry_options' => [
                     'data_class' => self::DATA_CLASS
                 ]
-            ])
-        ;
+            ]);
 
         $this->formType->configureOptions($resolver);
     }

@@ -29,6 +29,7 @@ class OroPricingExtension extends Extension
         $loader->load('controllers.yml');
         $loader->load('mq_processors.yml');
         $loader->load('mq_topics.yml');
+        $loader->load('product_kit.yml');
 
         if ('test' === $container->getParameter('kernel.environment')) {
             $loader->load('services_test.yml');

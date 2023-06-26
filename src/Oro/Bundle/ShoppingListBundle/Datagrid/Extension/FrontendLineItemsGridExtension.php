@@ -25,17 +25,13 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         'frontend-customer-user-shopping-list-edit-grid',
     ];
 
-    /** @var ManagerRegistry */
-    private $registry;
+    private ManagerRegistry $registry;
 
-    /** @var ConfigManager */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
+    private TokenAccessorInterface $tokenAccessor;
 
-    /** @var array */
-    private $cache = [];
+    private array $cache = [];
 
     public function __construct(
         ManagerRegistry $registry,
@@ -82,11 +78,14 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         if ($this->isLineItemsGrouped()) {
             $queryParts[] = '(SELECT GROUP_CONCAT(innerItem.id ORDER BY innerItem.id ASC) ' .
                 'FROM Oro\Bundle\ShoppingListBundle\Entity\LineItem innerItem ' .
-                'WHERE (innerItem.parentProduct = lineItem.parentProduct OR innerItem.product = lineItem.product) ' .
+                'WHERE ('.
+                '  innerItem.parentProduct = lineItem.parentProduct OR '.
+                '  (innerItem.product = lineItem.product AND innerItem.checksum = lineItem.checksum)'.
+                ') ' .
                 'AND innerItem.shoppingList = lineItem.shoppingList ' .
                 'AND innerItem.unit = lineItem.unit) as allLineItemsIds';
             $queryParts[] = 'GROUP_CONCAT(' .
-                'COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
+                '  COALESCE(CONCAT(parentProduct.sku, \':\', product.sku), product.sku)' .
                 ') as sortSku';
         } else {
             $queryParts[] = 'lineItem.id';

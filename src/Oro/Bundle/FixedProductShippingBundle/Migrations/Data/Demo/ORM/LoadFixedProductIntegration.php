@@ -35,7 +35,7 @@ class LoadFixedProductIntegration extends AbstractFixture implements
     use ContainerAwareTrait;
     use UserUtilityTrait;
 
-    public const PRODUCT_ID_THRESHOLD = 21;
+    public const PRODUCT_ID_THRESHOLD = 20;
 
     public function getDependencies(): array
     {

@@ -25,14 +25,17 @@ data:
         attributes:
             name: 'Shopping List 2'
             currency: USD
-            total: '20.2'
-            subTotal: '20.2'
+            total: '49.8'
+            subTotal: '49.8'
         relationships:
             items:
                 data:
                     -
                         type: shoppinglistitems
                         id: '<toString(@line_item3->id)>'
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@kit_line_item2->id)>'
     -
         type: shoppinglists
         id: '<toString(@shopping_list5->id)>'

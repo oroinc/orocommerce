@@ -86,6 +86,8 @@ oro:
         overridden_shipping_cost_amount:
             label:                        'Overridden Shipping Cost Amount'
             description:                  Sales manager can enter the Overridden Shipping Cost Amount to manually override the shipping cost for the order.
+        number_of_items:
+            label:                        'Number of Items'
         total_currency.label:             'Total currency'
         total_value:
             label:                        'Total'

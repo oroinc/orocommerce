@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -15,7 +15,7 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
 {
     private const PROPERTY_PATH_NAME = 'lineItems';
 
-    /** @var ProductAvailabilityProvider */
+    /** @var ProductRFPAvailabilityProvider */
     private $productAvailabilityProvider;
 
     /** @var PropertyPathInterface */
@@ -26,7 +26,7 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->productAvailabilityProvider = $this->createMock(ProductAvailabilityProvider::class);
+        $this->productAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);
 
         $this->propertyPath = $this->createMock(PropertyPathInterface::class);
         $this->propertyPath->expects(self::any())
