@@ -9,6 +9,8 @@ class Page extends BasePage
 {
     use LocalizedEntityTrait;
 
+    protected $organizationField;
+
     /**
      * @var array
      */
@@ -39,5 +41,18 @@ class Page extends BasePage
     public function __set($name, $value)
     {
         return $this->localizedFieldSet($this->localizedFields, $name, $value);
+    }
+
+
+    public function getOrganizationField()
+    {
+        return $this->organizationField;
+    }
+
+    public function setOrganizationField($organizationField): self
+    {
+        $this->organizationField = $organizationField;
+
+        return $this;
     }
 }
