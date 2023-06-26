@@ -213,7 +213,7 @@ services:
             - { name: oro.api.processor, action: delete_list, group: normalize_input, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Entity\ProductPrice, priority: -120 }
 
     oro_pricing.api.build_single_item_query:
-        class: Oro\Bundle\ApiBundle\Processor\Shared\BuildSingleItwigtemQuery
+        class: Oro\Bundle\ApiBundle\Processor\Shared\BuildSingleItemQuery
         arguments:
             - '@oro_api.doctrine_helper'
             - '@oro_api.entity_id_helper'
