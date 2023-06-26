@@ -4,7 +4,10 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\MathException;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -12,6 +15,7 @@ use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
@@ -34,6 +38,7 @@ class CheckoutLineItem implements
     PriceTypeAwareInterface,
     ProductLineItemInterface,
     ProductLineItemsHolderAwareInterface,
+    ProductKitItemLineItemsAwareInterface,
     ShippingAwareInterface
 {
     /**
@@ -174,6 +179,32 @@ class CheckoutLineItem implements
      * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
      */
     protected $shippingEstimateAmount;
+
+    /**
+     * @var Collection<CheckoutProductKitItemLineItem>
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="CheckoutProductKitItemLineItem",
+     *     mappedBy="lineItem",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
+     * @OrderBy({"sortOrder"="ASC"})
+     */
+    protected $kitItemLineItems;
+
+    /**
+     * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
+     * moving the logic of distinguishing of such line items out of the entity class.
+     *
+     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
+     */
+    protected string $checksum = '';
+
+    public function __construct()
+    {
+        $this->kitItemLineItems = new ArrayCollection();
+    }
 
     /**
      * @return string
@@ -638,5 +669,42 @@ class CheckoutLineItem implements
     public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
     {
         return $this->checkout;
+    }
+
+    /**
+     * @return Collection<CheckoutProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(CheckoutProductKitItemLineItem $productKitItemLineItem): self
+    {
+        if (!$this->kitItemLineItems->contains($productKitItemLineItem)) {
+            $productKitItemLineItem->setLineItem($this);
+            $this->kitItemLineItems->add($productKitItemLineItem);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(CheckoutProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
     }
 }

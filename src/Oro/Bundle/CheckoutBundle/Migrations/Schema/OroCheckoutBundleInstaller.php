@@ -33,7 +33,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_13';
+        return 'v1_14';
     }
 
     /**
@@ -46,11 +46,13 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $this->createOroCheckoutTable($schema);
         $this->createCheckoutWorkflowStateTable($schema);
         $this->createOroCheckoutLineItemTable($schema);
+        $this->createCheckoutProductKitItemLineItemTable($schema);
         $this->createOroCheckoutSubtotalTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCheckoutForeignKeys($schema);
         $this->addOroCheckoutLineItemForeignKeys($schema);
+        $this->addCheckoutProductKitItemLineItemForeignKeys($schema);
         $this->addOroCheckoutSubtotalForeignKeys($schema);
 
         $this->addOrderCheckoutSource($schema);
@@ -243,6 +245,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
+        $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -331,5 +334,54 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
                 ]
             );
         }
+    }
+
+    private function createCheckoutProductKitItemLineItemTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_checkout_product_kit_item_line_item');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('line_item_id', 'integer');
+        $table->addColumn('product_kit_item_id', 'integer');
+        $table->addColumn('product_id', 'integer');
+        $table->addColumn('unit_code', 'string', ['length' => 255]);
+        $table->addColumn('quantity', 'float');
+        $table->addColumn('sort_order', 'integer', ['default' => 0]);
+        $table->addColumn(
+            'value',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('is_price_fixed', 'boolean', ['notnull' => true, 'default' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    private function addCheckoutProductKitItemLineItemForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_checkout_product_kit_item_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_checkout_line_item'),
+            ['line_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_unit'),
+            ['unit_code'],
+            ['code'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }

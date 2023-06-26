@@ -4,20 +4,24 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class CheckoutLineItemTest extends \PHPUnit\Framework\TestCase
+class CheckoutLineItemTest extends TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $id = 123;
+        $checksum = sha1('sample-line-item');
         $properties = [
             ['id', $id],
             ['checkout', new Checkout()],
@@ -34,56 +38,59 @@ class CheckoutLineItemTest extends \PHPUnit\Framework\TestCase
             ['productUnitCode', 'PRODUCT_UNIT_CODE'],
             ['value', 2.0],
             ['currency', 'USD'],
-            ['priceType', CheckoutLineItem::PRICE_TYPE_BUNDLED],
+            ['priceType', PriceTypeAwareInterface::PRICE_TYPE_BUNDLED],
             ['fromExternalSource', true],
             ['comment', 'comment'],
             ['shippingMethod', 'SHIPPING_METHOD'],
             ['shippingMethodType', 'SHIPPING_METHOD_TYPE'],
-            ['shippingEstimateAmount', 3.0]
+            ['shippingEstimateAmount', 3.0],
+            ['checksum', $checksum],
         ];
 
         $entity = new CheckoutLineItem();
         /** Assert Default Values */
-        $this->assertFalse($entity->isFromExternalSource());
-        $this->assertFalse($entity->isPriceFixed());
+        self::assertFalse($entity->isFromExternalSource());
+        self::assertFalse($entity->isPriceFixed());
 
-        $this->assertPropertyAccessors($entity, $properties);
+        self::assertPropertyAccessors($entity, $properties);
         $this->setValue($entity, 'id', $id);
-        $this->assertSame($id, $entity->getEntityIdentifier());
-        $this->assertSame($entity, $entity->getProductHolder());
+        self::assertSame($id, $entity->getEntityIdentifier());
+        self::assertSame($entity, $entity->getProductHolder());
+
+        self::assertPropertyCollection($entity, 'kitItemLineItems', new CheckoutProductKitItemLineItem());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $entity = new CheckoutLineItem();
         $entity->setProductSku('SKU');
-        $this->assertEquals('SKU', sprintf('%s', $entity));
+        self::assertEquals('SKU', sprintf('%s', $entity));
     }
 
-    public function testPrice()
+    public function testPrice(): void
     {
         $entity = new CheckoutLineItem();
-        $this->assertNull($entity->getPrice());
-        $this->assertNull($entity->getCurrency());
-        $this->assertNull($entity->getValue());
+        self::assertNull($entity->getPrice());
+        self::assertNull($entity->getCurrency());
+        self::assertNull($entity->getValue());
 
         $price = Price::create(1, 'USD');
         $entity->setPrice($price);
-        $this->assertSame($price->getCurrency(), $entity->getCurrency());
-        $this->assertSame((float)$price->getValue(), $entity->getValue());
+        self::assertSame($price->getCurrency(), $entity->getCurrency());
+        self::assertSame((float)$price->getValue(), $entity->getValue());
     }
 
-    public function testShippingCost()
+    public function testShippingCost(): void
     {
         $entity = new CheckoutLineItem();
-        $this->assertNull($entity->getShippingCost());
+        self::assertNull($entity->getShippingCost());
         $entity->setCurrency('USD');
         $entity->setShippingEstimateAmount(5.00);
 
         $shippingCost = $entity->getShippingCost();
-        $this->assertInstanceOf(Price::class, $shippingCost);
-        $this->assertSame($shippingCost->getCurrency(), $entity->getCurrency());
-        $this->assertSame((float)$shippingCost->getValue(), $entity->getShippingEstimateAmount());
+        self::assertInstanceOf(Price::class, $shippingCost);
+        self::assertSame($shippingCost->getCurrency(), $entity->getCurrency());
+        self::assertSame((float)$shippingCost->getValue(), $entity->getShippingEstimateAmount());
     }
 
     /**
@@ -92,13 +99,13 @@ class CheckoutLineItemTest extends \PHPUnit\Framework\TestCase
      * @param bool $expected
      * @dataProvider getDataToTestShippingMethods
      */
-    public function testHasShippingMethod(?string $shippingMethod, ?string $shippingMethodType, bool $expected)
+    public function testHasShippingMethod(?string $shippingMethod, ?string $shippingMethodType, bool $expected): void
     {
         $lineItem = new CheckoutLineItem();
         $lineItem->setShippingMethod($shippingMethod)
             ->setShippingMethodType($shippingMethodType);
 
-        $this->assertEquals($expected, $lineItem->hasShippingMethodData());
+        self::assertEquals($expected, $lineItem->hasShippingMethodData());
     }
 
     public function getDataToTestShippingMethods(): array

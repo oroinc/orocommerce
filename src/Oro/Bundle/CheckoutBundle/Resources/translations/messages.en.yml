@@ -77,6 +77,39 @@ oro:
             from_external_source.label: 'Created from External Source'
             price_type.label: 'Price Type'
 
+        checkoutproductkititemlineitem:
+            entity_label: Checkout Kit Item Line Item
+            entity_plural_label: Checkout Kit Item Line Items
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_frontend_grid_all_view_label: All %entity_plural_label%
+            entity_description: Represents the line item of a product kit item in a checkout
+            id.label: ID
+            line_item:
+                label: Checkout Line Item
+                description: The related checkout line item
+            kit_item:
+                label: Product Kit Item
+                description: The related product kit item
+            product:
+                label: Product
+                description: The kit item product to be purchased
+            quantity:
+                label: Quantity
+                description: The quantity of product kit item units to be purchased
+                aria_label: Product Kit Item Quantity
+            unit:
+                label: Unit of Quantity
+                description: The unit of quantity of the kit item product to be purchased in
+            sort_order:
+                label: Sort Order
+                description: Used to sort kit item line item products when displaying
+            price:
+                label: Price
+            value:
+                label: Price Value
+            currency:
+                label: Price Currency
+
         checkoutsubtotal:
             entity_label: 'Checkout Subtotal'
             entity_plural_label: 'Checkout Subtotals'

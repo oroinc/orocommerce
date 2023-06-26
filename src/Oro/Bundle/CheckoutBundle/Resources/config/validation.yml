@@ -10,3 +10,34 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                 allowEmptyString: true
         shippingEstimateAmount:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+
+Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
+    properties:
+        lineItem:
+            - NotNull: ~
+        kitItem:
+            - NotNull: ~
+        product:
+            - NotNull: ~
+        quantity:
+            - NotNull: ~
+            - Type:
+                  type: float
+        unit:
+            - NotNull: ~
+        sortOrder:
+            - NotNull: ~
+            - Type:
+                  type: integer
+            - Range:
+                  # Minimum of 4-byte integer value.
+                  min: -2147483648
+                  # Maximum of 4-byte integer value.
+                  max: 2147483647
+        value:
+            - NotNull: ~
+            - Type:
+                  type: numeric
+        currency:
+            - NotNull: ~
+            - Currency: ~

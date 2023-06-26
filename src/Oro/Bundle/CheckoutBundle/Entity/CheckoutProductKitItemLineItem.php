@@ -1,38 +1,33 @@
 <?php
 
-declare(strict_types=1);
+namespace Oro\Bundle\CheckoutBundle\Entity;
 
-namespace Oro\Bundle\ShoppingListBundle\Entity;
-
+use Brick\Math\BigDecimal;
+use Brick\Math\Exception\MathException;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
-use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 
 /**
- * Represents a shopping list line item of a product kit item.
+ * Represents a checkout line item of a product kit item.
  *
- * @ORM\Table(
- *      name="oro_shopping_list_product_kit_item_line_item"
- * )
+ * @ORM\Table(name="oro_checkout_product_kit_item_line_item")
  * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *      }
+ *      mode="hidden"
  * )
  */
-class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLineItemInterface
+class CheckoutProductKitItemLineItem implements
+    PriceAwareInterface,
+    ProductKitItemLineItemInterface
 {
-    use ExtendEntityTrait;
-
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
@@ -41,7 +36,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
     protected ?int $id = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="LineItem", inversedBy="kitItemLineItems")
+     * @ORM\ManyToOne(targetEntity="CheckoutLineItem", inversedBy="kitItemLineItems")
      * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -51,7 +46,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
      *      }
      * )
      */
-    protected ?LineItem $lineItem = null;
+    protected ?CheckoutLineItem $lineItem = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductKitItem")
@@ -109,6 +104,25 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
      */
     protected int $sortOrder = 0;
 
+    /**
+     * @ORM\Column(name="value", type="money", nullable=true)
+     */
+    protected ?float $value = null;
+
+    /**
+     * @ORM\Column(name="currency", type="string", nullable=true)
+     */
+    protected ?string $currency = null;
+
+    /**
+     * Holds flag to determine if price can be changed
+     *
+     * @ORM\Column(name="is_price_fixed", type="boolean", options={"default"=false})
+     */
+    protected bool $priceFixed = false;
+
+    protected ?Price $price = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -119,14 +133,14 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
         return $this->id;
     }
 
-    public function setLineItem(?LineItem $lineItem): self
+    public function setLineItem(?CheckoutLineItem $lineItem): self
     {
         $this->lineItem = $lineItem;
 
         return $this;
     }
 
-    public function getLineItem(): ?LineItem
+    public function getLineItem(): ?CheckoutLineItem
     {
         return $this->lineItem;
     }
@@ -212,6 +226,85 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
     public function setSortOrder(int $sortOrder): self
     {
         $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
+
+    public function isPriceFixed(): bool
+    {
+        return $this->priceFixed;
+    }
+
+    public function setPriceFixed(bool $isPriceFixed): self
+    {
+        $this->priceFixed = $isPriceFixed;
+
+        return $this;
+    }
+
+    public function getPrice(): ?Price
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?Price $price = null): self
+    {
+        $this->price = $price;
+
+        $this->updatePrice();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function createPrice(): void
+    {
+        if (null !== $this->value && null !== $this->currency) {
+            $this->price = Price::create($this->value, $this->currency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updatePrice(): void
+    {
+        $this->value = $this->price?->getValue();
+        $this->currency = $this->price?->getCurrency();
+    }
+
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?string $currency): self
+    {
+        $this->currency = $currency;
+        $this->createPrice();
+
+        return $this;
+    }
+
+    public function getValue(): ?float
+    {
+        if ($this->value !== null) {
+            try {
+                return BigDecimal::of($this->value)->toFloat();
+            } catch (MathException $e) {
+            }
+        }
+
+        return $this->value;
+    }
+
+    public function setValue(?float $value): self
+    {
+        $this->value = $value;
+        $this->createPrice();
 
         return $this;
     }
