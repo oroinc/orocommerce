@@ -120,7 +120,7 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
         return $this->container->get('oro_action.layout.data_provider.button_provider');
     }
 
-    public function getFeatureChecker(): FeatureChecker
+    private function getFeatureChecker(): FeatureChecker
     {
         return $this->container->get(FeatureChecker::class);
     }
