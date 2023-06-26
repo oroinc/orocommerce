@@ -1,4 +1,5 @@
 @ticket-BB-17908
+@ticket-BB-22542
 @fixture-OroCMSBundle:web_catalog.yml
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 Feature: Landing Page Drafts
@@ -204,3 +205,129 @@ Feature: Landing Page Drafts
       | Draft 2 | draft-2 | John Doe |
       | Draft 2 | draft-2 | John Doe |
     And number of records in "CMS Page Drafts Grid" should be 2
+
+  Scenario: Change the organization to global
+    Given I go to System/ User Management/ Organizations
+    When click "edit" on first row in grid
+    And I fill form with:
+      | Name          | Oro  |
+      | Global Access | Yes  |
+    And save and close form
+    Then I should see "Organization saved" flash message
+
+  Scenario: Create a new organization
+    Given I go to System/ User Management/ Organizations
+    And click "Create Organization"
+    When I fill form with:
+      | Name | Test, Inc |
+    And save and close form
+    Then I should see "Organization saved" flash message
+
+  Scenario: Create Draft from View Landing Page
+    Given I go to Marketing/ Landing Pages
+    And I click "Create Landing Page"
+    Then I should see "Please Select An Organization For The New Entity"
+    When I fill form with:
+      | Organization | Test, Inc |
+    And I click "Continue"
+    When I fill in Landing Page Titles field with "Test page"
+    Then I should see URL Slug field filled with "test-page"
+    When I fill in WYSIWYG "CMS Page Content" with "Test content"
+    And I save and close form
+    Then I should see "Page has been saved" flash message
+    When I click "Create draft"
+    Then I should see "UiWindow" with elements:
+      | Title        | Action Confirmation                                                                                                                                    |
+      | Content      | Only the changes from the following fields will be transferred to a draft: metaDescriptions, metaTitles, metaKeywords, slugPrototypes, titles, content |
+      | okButton     | Yes                                                                                                                                                    |
+      | cancelButton | Cancel                                                                                                                                                 |
+    When I click "Yes" in confirmation dialogue
+    Then I should not see following page actions:
+      | Save As draft |
+    When I fill in Landing Page Titles field with "Draft 1"
+    Then I should see URL Slug field filled with "draft-1"
+    And fill "CMS Page Form" with:
+      | Meta Title       | Default Meta Title       |
+      | Meta Description | Default Meta Description |
+    And I save and close form
+    Then I should see "Draft has been saved" flash message
+    And I reload the page
+    And I should see Landing Page with:
+      | Title | Draft 1    |
+      | Slugs | [/draft-1] |
+    When I click "Edit"
+    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS Draft content"
+    And I save and close form
+    Then I should see "Draft has been saved" flash message
+    And I should see "GrapesJS Draft content"
+    And I should see available page actions:
+      | Duplicate     |
+      | Edit          |
+      | Delete        |
+      | Publish draft |
+    When I go to Marketing/ Landing Pages
+    And I click view "Test page" in grid
+    And I should see following grid:
+      | Title   | Slug    | Owner    |
+      | Draft 1 | draft-1 | John Doe |
+    And I should see following actions for Draft 1 in grid:
+      | View          |
+      | Edit          |
+      | Delete        |
+      | Duplicate     |
+      | Publish draft |
+
+  Scenario: Publish Draft
+    When I go to Marketing/ Landing Pages
+    And I click view "Test page" in grid
+    And I click edit "Draft 1" in grid
+    And I fill in Landing Page Titles field with "New landing page"
+    And I fill in URL Slug field with "new-landing-page"
+    And I save and close form
+    Then I should see "Draft has been saved" flash message
+    When I click "Publish draft"
+    And I click "Yes" in confirmation dialogue
+    Then I should see "Draft has been published" flash message
+
+  Scenario: Create Draft from View Landing Page global org and check page actions
+    Given I click on "Organizations switcher"
+    And click "Oro"
+    Then I should see "ORO" in the "Current Organization" element
+    When I go to Marketing/ Landing Pages
+    And I click view "New landing page" in grid
+    When I click "Create draft"
+    Then I should see "UiWindow" with elements:
+      | Title        | Action Confirmation                                                                                                                                    |
+      | Content      | Only the changes from the following fields will be transferred to a draft: metaDescriptions, metaTitles, metaKeywords, slugPrototypes, titles, content |
+      | okButton     | Yes                                                                                                                                                    |
+      | cancelButton | Cancel                                                                                                                                                 |
+    When I click "Yes" in confirmation dialogue
+    Then I should not see following page actions:
+      | Save As draft |
+    When I fill in Landing Page Titles field with "Draft 1"
+    Then I should see URL Slug field filled with "draft-1"
+    And fill "CMS Page Form" with:
+      | Meta Title       | Default Meta Title       |
+      | Meta Description | Default Meta Description |
+    And I save and close form
+    Then I should see "Draft has been saved" flash message
+    And I reload the page
+    And I should see Landing Page with:
+      | Title | Draft 1    |
+      | Slugs | [/draft-1] |
+
+    Given I click on "Organizations switcher"
+    And click "Test, Inc"
+    Then I should see "Test, Inc" in the "Current Organization" element
+    When I go to Marketing/ Landing Pages
+    And I click view "New landing page" in grid
+    And I should see following grid:
+      | Title   | Slug    |
+      | Draft 1 | draft-1 |
+    And I should see following actions for Draft 1 in grid:
+      | View          |
+      | Edit          |
+      | Delete        |
+      | Duplicate     |
+      | Publish draft |
+
