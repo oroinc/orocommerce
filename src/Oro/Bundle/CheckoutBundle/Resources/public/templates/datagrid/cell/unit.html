@@ -1,6 +1,8 @@
 <% if (quantity === 0 && obj.isConfigurable) { %>
     <%- _.__('oro.shoppinglist.lineitem.empty_configurable_product') %>
-<% } else { %>
+<% } else  if (unit){ %>
     <% var oroshoppinglist = _.macros('oroshoppinglist') %>
     <%- oroshoppinglist.renderUnit({unit: unit, quantity: quantity}) %>
+<% } else { %>
+    <%- _blankContent %>
 <% } %>

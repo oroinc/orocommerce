@@ -189,6 +189,7 @@ datagrids:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-product-kit-builder
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
@@ -203,19 +204,31 @@ datagrids:
             type: orm
             query:
                 select:
-                    - >
-                        (
-                            CASE WHEN parentProduct.id IS NOT NULL
-                            THEN
-                                true
-                            ELSE
-                                CASE WHEN product.type = 'configurable' THEN true ELSE false END
-                            END
-                        ) as isConfigurable
+                    - COALESCE(parentProduct.type, product.type) as type
                     - COALESCE(parentProduct.id, product.id) as mainProductId
                     - COALESCE(parentProduct.sku, product.sku) as sku
                     - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
                     - MAX(lineItem.id) as sortId
+                    - >
+                        UPPER(
+                            CASE WHEN product.type = 'kit'
+                            THEN 
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(DISTINCT product.sku SEPARATOR ''),
+                                    GROUP_CONCAT(kitItemLineItemProduct.sku SEPARATOR ''),
+                                    ''
+                                )
+                            ELSE
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(product.sku SEPARATOR ''),
+                                    ''
+                                )
+                            END
+                        ) as composedSku
                 from:
                     - { table: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem', alias: lineItem }
                 join:
@@ -223,11 +236,13 @@ datagrids:
                         - { join: lineItem.product, alias: product }
                         - { join: lineItem.parentProduct, alias: parentProduct }
                         - { join: lineItem.productUnit, alias: unit}
+                        - { join: lineItem.kitItemLineItems, alias: kitItemLineItem }
+                        - { join: kitItemLineItem.product, alias: kitItemLineItemProduct }
                 where:
                     and:
                         - IDENTITY(lineItem.checkout) = :checkout_id
                         - lineItem.id NOT IN (:unacceptable_ids)
-                groupBy: mainProductId, unit.code
+                groupBy: mainProductId, unit.code, product.type
             bind_parameters:
                 - checkout_id
                 -
@@ -279,11 +294,13 @@ datagrids:
                 id: ASC
         filters:
             columns:
-                sku:
-                    type:             string
-                    data_name:        COALESCE(product.skuUppercase, UPPER(lineItem.productSku))
+                composedSku:
+                    label:            oro.checkout.frontend.checkout.lineitem.filter.sku.label
+                    type:             composed-sku-string
+                    data_name:        composedSku
                     case_insensitive: false
                     value_conversion: mb_strtoupper
+                    filter_by_having: true
                 inventoryStatus:
                     type:             choice
                     data_name:        product.inventory_status
@@ -316,6 +333,10 @@ datagrids:
             initialSubtotal: ~
             discount: ~
             isConfigurable:
+                frontend_type: boolean
+            isKit:
+                frontend_type: boolean
+            isVisible:
                 frontend_type: boolean
             isUpcoming:
                 frontend_type: boolean

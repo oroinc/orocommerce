@@ -381,6 +381,7 @@ oro:
                     delete.aria_label: "Delete checkout started from %startedFromLabel%"
                 lineitem:
                     filter:
+                        sku.label: 'SKU'
                         inventory_status.label: 'Availability'
                         quantity.label: 'Quantity'
                         unit.label: 'Unit'
