@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\ConfigBundle\Utils\TreeUtils;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -14,7 +16,17 @@ class Configuration implements ConfigurationInterface
     /**
      * @var string
      */
+    public const ROOT_NAME = 'oro_cms';
+
+    /**
+     * @var string
+     */
     public const DIRECT_EDITING = 'direct_editing';
+
+    /**
+     * @var string
+     */
+    public const IS_UPDATED_AFTER_507 = 'is_updated_after_507';
 
     /**
      * @var string
@@ -86,10 +98,19 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::DIRECT_URL_PREFIX => ['value' => '']
+                self::DIRECT_URL_PREFIX => ['value' => ''],
+                self::IS_UPDATED_AFTER_507 => [
+                    'type' => 'boolean',
+                    'value' => true, //Default value is 'true' for new instances or any updated from version below 5.0.7
+                ],
             ]
         );
 
         return $treeBuilder;
+    }
+
+    public static function getConfigKeyByName(string $name): string
+    {
+        return TreeUtils::getConfigKey(self::ROOT_NAME, $name, ConfigManager::SECTION_MODEL_SEPARATOR);
     }
 }
