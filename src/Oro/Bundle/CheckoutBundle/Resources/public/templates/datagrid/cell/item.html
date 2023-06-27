@@ -18,7 +18,7 @@
                 <span class="highlighted-in-mobile break-all"><%- sku %></span>
                 <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
             </div>
-            <div class="grid-line-items__configuration shift-mobile-row">
+            <div class="grid-line-items__configuration">
                 <% _.each(productConfiguration, function(field) { %>
                     <div class="grid-line-items__field">
                         <span class="grid-line-items__field-val"><%- field.label %>:</span>
@@ -27,9 +27,7 @@
                 <% }) %>
             </div>
             <% if (notes) { %>
-                <div class="shift-mobile-row">
-                    <%= oroshoppinglist.renderNotes({notes: notes}) %>
-                </div>
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
             <% } %>
         <% } else { %>
             <% if (obj._isKitItemLineItem) { %>
@@ -55,7 +53,7 @@
                 </div>
             <% } %>
             <% if (obj.subTitle) { %>
-                <div class="grid-line-items__sub-title shift-mobile-row mobile-row">
+                <div class="grid-line-items__sub-title mobile-row">
                     <%= obj.subTitle %>
                 </div>
             <% } %>
@@ -70,7 +68,7 @@
             </div>
             <% } %>
             <% if (obj.productConfiguration) { %>
-                <div class="grid-line-items__configuration shift-mobile-row">
+                <div class="grid-line-items__configuration">
                     <% _.each(productConfiguration, function(field) { %>
                         <div class="grid-line-items__field">
                             <span class="grid-line-items__field-val"><%- field.label %>:</span>
@@ -80,9 +78,7 @@
                 </div>
             <% } %>
             <% if (obj.notes) { %>
-                <div class="shift-mobile-row">
-                    <%= oroshoppinglist.renderNotes({notes: notes}) %>
-                </div>
+                <%= oroshoppinglist.renderNotes({notes: notes}) %>
             <% } %>
         <% } %>
     </div>

@@ -77,6 +77,33 @@
     }
 }
 
+@include breakpoint('desktop') {
+    .responsive-shopping-list-grid-desktop-alignment {
+        .sub-row-last,
+        .filtered-out {
+            .grid-body-cell-sku::after {
+                height: $responsive-shopping-cell-line-size-desktop;
+            }
+        }
+
+        .group-row-has-children,
+        .sub-row {
+            .grid-body-cell-sku {
+                &::before {
+                    top: $responsive-shopping-cell-line-size-desktop;
+                }
+            }
+        }
+
+        .group-row-has-children .grid-body-cell-sku:first-child {
+            &::after,
+            &::before {
+                top: $responsive-shopping-cell-line-size-desktop;
+            }
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .responsive-shopping-list-grid-view .grid-body {
         .sub-row {
