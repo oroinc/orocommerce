@@ -82,7 +82,11 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
         $attributeFamilies = $this->getAttributeFamilyRepository()
             ->getFamilyIdsForAttributesByOrganization($attributes, $website->getOrganization());
 
+        $countVariantLinks = 0;
+        $batchSize = 2000;
+
         foreach ($products as $product) {
+            $countVariantLinks += $product->getVariantLinks()->count();
             $productId = $product->getId();
 
             foreach ($attributes as $attribute) {
@@ -129,6 +133,11 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
                     'variant_fields_count',
                     count($product->getVariantFields())
                 );
+            }
+
+            if ($countVariantLinks > $batchSize) {
+                $this->doctrine->getManager()->clear();
+                $countVariantLinks = 0;
             }
         }
     }
