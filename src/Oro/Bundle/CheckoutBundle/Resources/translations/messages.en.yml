@@ -76,6 +76,12 @@ oro:
             free_form_product.label: 'Product (free-form)'
             from_external_source.label: 'Created from External Source'
             price_type.label: 'Price Type'
+            kit_item_line_items:
+                label: Kit Item Line Items
+                description: Stores the collection of kit item line items when the line item product is a kit.
+            checksum:
+                label: Checksum
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
 
         checkoutproductkititemlineitem:
             entity_label: Checkout Kit Item Line Item

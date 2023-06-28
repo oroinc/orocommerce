@@ -5,7 +5,11 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\LineItem;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
+use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
@@ -19,18 +23,18 @@ use Symfony\Contracts\Cache\CacheInterface;
  */
 class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 {
-    protected FrontendProductPricesDataProvider $frontendProductPricesDataProvider;
+    private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
     private AuthorizationCheckerInterface $authorizationChecker;
     private CacheInterface $productAvailabilityCache;
     private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
 
     public function __construct(
-        FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
+        ProductLineItemPriceProviderInterface $productLineItemPriceProvider,
         AuthorizationCheckerInterface $authorizationChecker,
         CacheInterface $productAvailabilityCache,
         ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
     ) {
-        $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
+        $this->productLineItemPriceProvider = $productLineItemPriceProvider;
         $this->authorizationChecker = $authorizationChecker;
         $this->productAvailabilityCache = $productAvailabilityCache;
         $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
@@ -38,57 +42,111 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
     /**
      * @param Checkout $entity
+     *
+     * @return array<int|string,array<string,mixed>> Line items data
+     *  [
+     *      [
+     *          'product' => Product $product,
+     *          'productUnit' => ProductUnit $productUnit,
+     *          'quantity' => float 12.3456,
+     *          // ...
+     *      ],
+     *      // ...
+     *  ]
      */
     protected function prepareData($entity): array
     {
         $lineItems = $entity->getLineItems();
-        $lineItemsPrices = $this->getLineItemsPrices($lineItems);
-
         $this->prefetchProductsVisibility($lineItems);
 
-        $data = [];
+        $skippedLineItems = [];
+        $productLineItemPrices = $this->getLineItemsPrices($lineItems, $skippedLineItems);
+
+        $lineItemsData = [];
 
         /** @var CheckoutLineItem $lineItem */
-        foreach ($lineItems as $lineItem) {
-            $unitCode = $lineItem->getProductUnitCode();
-            $product = $lineItem->getProduct();
-            $productId = $product ? $product->getId() : null;
+        foreach ($lineItems as $key => $lineItem) {
+            if (isset($skippedLineItems[$key])) {
+                continue;
+            }
 
-            if ($this->isLineItemNeeded($lineItem)) {
-                $data[] = [
-                    'productSku' => $lineItem->getProductSku(),
-                    'comment' => $lineItem->getComment(),
-                    'quantity' => $lineItem->getQuantity(),
-                    'productUnit' => $lineItem->getProductUnit(),
-                    'productUnitCode' => $unitCode,
-                    'product' => $product,
-                    'parentProduct' => $lineItem->getParentProduct(),
-                    'freeFormProduct' => $lineItem->getFreeFormProduct(),
-                    'fromExternalSource' => $lineItem->isFromExternalSource(),
-                    'price' => $lineItem->getPrice() ?: ($lineItemsPrices[$productId][$unitCode] ?? null),
-                    'shippingMethod' => $lineItem->getShippingMethod(),
-                    'shippingMethodType' => $lineItem->getShippingMethodType(),
-                    'shippingEstimateAmount' => $lineItem->getShippingEstimateAmount(),
+            $kitItemLineItemsData = [];
+            $productLineItemPrice = $productLineItemPrices[$key] ?? null;
+
+            foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                $kitItemLineItemsData[] = [
+                    'kitItem' => $kitItemLineItem->getKitItem(),
+                    'product' => $kitItemLineItem->getProduct(),
+                    'productSku' => $kitItemLineItem->getProductSku(),
+                    'unit' => $kitItemLineItem->getProductUnit(),
+                    'productUnitCode' => $kitItemLineItem->getProductUnitCode(),
+                    'quantity' => $kitItemLineItem->getQuantity(),
+                    'price' => $this->getKitItemLineItemPrice($kitItemLineItem, $productLineItemPrice),
+                    'sortOrder' => $kitItemLineItem->getSortOrder(),
                 ];
             }
+
+            $lineItemsData[] = [
+                'productSku' => $lineItem->getProductSku(),
+                'comment' => $lineItem->getComment(),
+                'quantity' => $lineItem->getQuantity(),
+                'productUnit' => $lineItem->getProductUnit(),
+                'productUnitCode' => $lineItem->getProductUnitCode(),
+                'product' => $lineItem->getProduct(),
+                'parentProduct' => $lineItem->getParentProduct(),
+                'freeFormProduct' => $lineItem->getFreeFormProduct(),
+                'fromExternalSource' => $lineItem->isFromExternalSource(),
+                'price' => $lineItem->getPrice() ?: $productLineItemPrice?->getPrice(),
+                'shippingMethod' => $lineItem->getShippingMethod(),
+                'shippingMethodType' => $lineItem->getShippingMethodType(),
+                'shippingEstimateAmount' => $lineItem->getShippingEstimateAmount(),
+                'checksum' => $lineItem->getChecksum(),
+                'kitItemLineItems' => $kitItemLineItemsData,
+            ];
         }
 
-        return $data;
+        return $lineItemsData;
     }
 
-    private function getLineItemsPrices(Collection $lineItems): array
+    /**
+     * @param Collection<CheckoutLineItem> $lineItems
+     *
+     * @return array<int,ProductLineItemPrice>
+     */
+    private function getLineItemsPrices(Collection $lineItems, array &$skippedLineItems): array
     {
-        $lineItemsWithoutPrice = [];
-        foreach ($lineItems as $lineItem) {
-            if ($lineItem instanceof ProductHolderInterface && $lineItem->getProduct()) {
-                if (!$lineItem->isPriceFixed() && !$lineItem->getPrice()) {
-                    $lineItemsWithoutPrice[] = $lineItem;
-                }
+        $lineItemsWithoutFixedPrice = [];
+        foreach ($lineItems as $key => $lineItem) {
+            if (!$this->isLineItemNeeded($lineItem)) {
+                $skippedLineItems[$key] = $lineItem;
+                continue;
+            }
+
+            if ($lineItem->getProduct() && !$lineItem->isPriceFixed() && !$lineItem->getPrice()) {
+                $lineItemsWithoutFixedPrice[$key] = $lineItem;
             }
         }
 
-        return $lineItemsWithoutPrice ? $this->frontendProductPricesDataProvider
-            ->getProductsMatchedPrice($lineItemsWithoutPrice) : [];
+        if (!$lineItemsWithoutFixedPrice) {
+            return [];
+        }
+
+        return $this->productLineItemPriceProvider->getProductLineItemsPrices($lineItemsWithoutFixedPrice);
+    }
+
+    private function getKitItemLineItemPrice(
+        CheckoutProductKitItemLineItem $lineItem,
+        ?ProductLineItemPrice $productLineItemPrice
+    ): ?Price {
+        if ($lineItem->getPrice() !== null) {
+            return $lineItem->getPrice();
+        }
+
+        if ($productLineItemPrice instanceof ProductKitLineItemPrice) {
+            return $productLineItemPrice->getKitItemLineItemPrice($lineItem)?->getPrice();
+        }
+
+        return null;
     }
 
     private function prefetchProductsVisibility(Collection $lineItems): void
@@ -100,7 +158,9 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
             }
         }
 
-        $this->resolvedProductVisibilityProvider->prefetch(array_unique($productIds));
+        if ($productIds) {
+            $this->resolvedProductVisibilityProvider->prefetch(array_unique($productIds));
+        }
     }
 
     public function isEntitySupported($transformData): bool
@@ -113,16 +173,12 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
      */
     protected function isLineItemNeeded(CheckoutLineItem $lineItem): bool
     {
-        if (!$lineItem instanceof ProductHolderInterface) {
-            return true;
-        }
-
         $product = $lineItem->getProduct();
         if (!$product) {
             return true;
         }
 
-        return $this->productAvailabilityCache->get((string) $product->getId(), function () use ($product) {
+        return $this->productAvailabilityCache->get((string)$product->getId(), function () use ($product) {
             return $product->getStatus() === Product::STATUS_ENABLED
                 && $this->authorizationChecker->isGranted('VIEW', $product);
         });

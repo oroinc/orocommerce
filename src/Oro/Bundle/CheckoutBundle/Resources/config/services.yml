@@ -644,7 +644,7 @@ services:
     oro_checkout.data_provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider'
         arguments:
-            - '@oro_pricing.provider.frontend_product_prices'
+            - '@oro_pricing.provider.product_line_item_price'
             - '@security.authorization_checker'
             - '@oro_checkout.product_availability.cache'
             - '@oro_visibility.provider.resolved_product_visibility_provider'

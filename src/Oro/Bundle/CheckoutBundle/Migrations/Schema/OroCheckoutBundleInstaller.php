@@ -46,13 +46,13 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $this->createOroCheckoutTable($schema);
         $this->createCheckoutWorkflowStateTable($schema);
         $this->createOroCheckoutLineItemTable($schema);
-        $this->createCheckoutProductKitItemLineItemTable($schema);
+        $this->createOroCheckoutProductKitItemLineItemTable($schema);
         $this->createOroCheckoutSubtotalTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCheckoutForeignKeys($schema);
         $this->addOroCheckoutLineItemForeignKeys($schema);
-        $this->addCheckoutProductKitItemLineItemForeignKeys($schema);
+        $this->addOroCheckoutProductKitItemLineItemForeignKeys($schema);
         $this->addOroCheckoutSubtotalForeignKeys($schema);
 
         $this->addOrderCheckoutSource($schema);
@@ -336,7 +336,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         }
     }
 
-    private function createCheckoutProductKitItemLineItemTable(Schema $schema): void
+    private function createOroCheckoutProductKitItemLineItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_checkout_product_kit_item_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -356,7 +356,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->setPrimaryKey(['id']);
     }
 
-    private function addCheckoutProductKitItemLineItemForeignKeys(Schema $schema): void
+    private function addOroCheckoutProductKitItemLineItemForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_checkout_product_kit_item_line_item');
         $table->addForeignKeyConstraint(
