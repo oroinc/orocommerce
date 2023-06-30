@@ -1,0 +1,25 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  productName{1..10}:
+    string: 'Product <current()>'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+  category:
+    string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision{1..10}:
+    unit: '@each'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product{1..10}:
+    sku: 'PSKU-<current()>'
+    status: 'enabled'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@business_unit'
+    attributeFamily: '@defaultProductFamily'
+    primaryUnitPrecision: '@precision<current()>'
+    __calls:
+      - addName: ['@productName<current()>']
+    inventoryStatus: '@enumInventoryStatuses'
