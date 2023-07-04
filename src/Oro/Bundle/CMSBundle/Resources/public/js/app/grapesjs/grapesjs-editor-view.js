@@ -12,6 +12,8 @@ import mediator from 'oroui/js/mediator';
 import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 import StateModel from 'orocms/js/app/grapesjs/modules/state-model';
 
+import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
+
 import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/sorter-hints';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
@@ -314,12 +316,16 @@ const GrapesjsEditorView = BaseView.extend({
         'layout:reposition mediator': 'onLayoutReposition'
     },
 
+    THROTTLE_TIMEOUT: 250,
+
+    DEBOUNCE_TIMEOUT: 500,
+
     /**
      * @inheritdoc
      */
     constructor: function GrapesjsEditorView(options) {
-        this.throttleEnableEditor = _.throttle(this.enableEditor.bind(this), 250);
-        this.throttleDisableEditor = _.throttle(this.disableEditor.bind(this), 250);
+        this.throttleEnableEditor = _.throttle(this.enableEditor.bind(this), this.THROTTLE_TIMEOUT);
+        this.throttleDisableEditor = _.throttle(this.disableEditor.bind(this), this.THROTTLE_TIMEOUT);
 
         GrapesjsEditorView.__super__.constructor.call(this, options);
     },
@@ -373,6 +379,10 @@ const GrapesjsEditorView = BaseView.extend({
             entityLabels: options.entityLabels
         };
 
+        this.subview('loadingMask', new LoadingMaskView({
+            container: this.$el.parent()
+        }));
+
         GrapesjsEditorView.__super__.initialize.call(this, options);
     },
 
@@ -380,6 +390,10 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritdoc
      */
     render() {
+        this.editorRenderPromises = [];
+
+        this.subview('loadingMask').show();
+
         this.renderStart = true;
         this.timeoutId = null;
 
@@ -414,7 +428,7 @@ const GrapesjsEditorView = BaseView.extend({
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
         }
-        this.timeoutId = setTimeout(() => callback(), 250);
+        this.timeoutId = setTimeout(() => callback(), this.THROTTLE_TIMEOUT);
     },
 
     /**
@@ -428,6 +442,16 @@ const GrapesjsEditorView = BaseView.extend({
         if (!this.builder || !this.enabled) {
             return;
         }
+
+        // Found all assigment events with debounced callback
+        // Cancel debounce callback before editor will disable
+        Object.values(this.builder.em._events).forEach(values => {
+            values.forEach(value => {
+                if (value.callback.cancel) {
+                    value.callback.cancel();
+                }
+            });
+        });
 
         this.builder.trigger('destroy');
         this.builderUndelegateEvents();
@@ -873,6 +897,8 @@ const GrapesjsEditorView = BaseView.extend({
                 builder: this.builder,
                 allowBreakpoints: this.allowBreakpoints
             });
+
+            this.editorRenderPromises.push(this._devicesModule.deferredInitPromise);
         }
 
         this.setActiveButton('options', 'sw-visibility');
@@ -897,10 +923,11 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         this.enabled = true;
-        _.delay(() => {
+        Promise.all(this.editorRenderPromises).then(() => {
             this.renderStart = false;
             this.builder.trigger('editor:rendered');
-        }, 250);
+            this.subview('loadingMask').hide();
+        }).catch(error => console.error(error));
     },
 
     /**
