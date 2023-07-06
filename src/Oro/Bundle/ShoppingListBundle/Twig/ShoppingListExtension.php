@@ -3,6 +3,9 @@
 namespace Oro\Bundle\ShoppingListBundle\Twig;
 
 use Oro\Bundle\ActionBundle\Layout\DataProvider\LayoutButtonProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
@@ -40,6 +43,7 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
             new TwigFunction('is_one_shopping_list_enabled', [$this, 'isOnlyOneShoppingListEnabled']),
             new TwigFunction('oro_shopping_list_frontend_url', [$this, 'getShoppingListFrontendUrl']),
             new TwigFunction('get_shopping_list_widget_buttons', [$this, 'getShoppingListWidgetButtons']),
+            new TwigFunction('get_visible_product', [$this, 'getVisibleProduct']),
         ];
     }
 
@@ -84,6 +88,19 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
         ];
     }
 
+    public function getVisibleProduct(LineItem $lineItem): Product
+    {
+        $featureChecker = $this->getFeatureChecker();
+        $product = $lineItem->getProduct();
+        if ($featureChecker->isFeatureEnabled('simple_variations_view_restriction')
+            && $product->getParentVariantLinks()->count()
+        ) {
+            return $lineItem->getParentProduct();
+        }
+
+        return $product;
+    }
+
     private function getShoppingListLimitManager(): ShoppingListLimitManager
     {
         if (null === $this->shoppingListLimitManager) {
@@ -101,5 +118,10 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
     private function getLayoutButtonProvider(): LayoutButtonProvider
     {
         return $this->container->get('oro_action.layout.data_provider.button_provider');
+    }
+
+    private function getFeatureChecker(): FeatureChecker
+    {
+        return $this->container->get(FeatureChecker::class);
     }
 }
