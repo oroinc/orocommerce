@@ -22,8 +22,6 @@ Oro\Bundle\CMSBundle\Entity\ContentBlock:
         titles:
             - NotBlank: ~
             - Valid: ~
-        scopes:
-            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
         contentVariants:
             - Valid: ~
             - Count:
@@ -97,8 +95,6 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:
-        scopes:
-            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
         content:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~

@@ -131,6 +131,11 @@ services:
         tags:
             - { name: form.type_extension }
 
+    oro_cms.form.extension.text_content_variant_default_scopes:
+        class: Oro\Bundle\CMSBundle\Form\Extension\TextContentVariantDefaultScopesExtensions
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType }
+
     oro_cms.form.event_subscriber.digital_asset_twig_tags:
         class: Oro\Bundle\CMSBundle\Form\EventSubscriber\DigitalAssetTwigTagsEventSubscriber
         arguments:

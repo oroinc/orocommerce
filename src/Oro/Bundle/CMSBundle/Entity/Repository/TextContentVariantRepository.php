@@ -19,19 +19,26 @@ class TextContentVariantRepository extends EntityRepository
         ScopeCriteria $scopeCriteria
     ): ?TextContentVariant {
         $qb = $this->createQueryBuilder('variant');
-        $qb->leftJoin('variant.scopes', 'scopes', Join::WITH)
+
+        // Since content blocks with restrictions without specific conditions are equivalent to blocks
+        // without restrictions, prefer content blocks that are set by default.
+        $condition = $qb->expr()->orX(
+            $qb->expr()->isNotNull('scopes.website'),
+            $qb->expr()->isNotNull('scopes.customerGroup'),
+            $qb->expr()->isNotNull('scopes.customer'),
+            $qb->expr()->isNotNull('scopes.localization'),
+        );
+
+        $qb
+            ->leftJoin('variant.scopes', 'scopes', Join::WITH, $condition)
             ->addSelect('scopes.id as matchedScopeId')
             ->where($qb->expr()->eq('variant.contentBlock', ':contentBlock'))
-            ->setParameter('contentBlock', $contentBlock);
+            ->setParameter('contentBlock', $contentBlock)
+            ->setMaxResults(1);
 
         $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
 
-        $result = $qb->getQuery()->getResult(MatchingVariantHydrator::NAME);
-        if (!$result) {
-            return null;
-        }
-
-        return reset($result);
+        return $qb->getQuery()->getOneOrNullResult(MatchingVariantHydrator::NAME);
     }
 
     public function getDefaultContentVariantForContentBlock(
