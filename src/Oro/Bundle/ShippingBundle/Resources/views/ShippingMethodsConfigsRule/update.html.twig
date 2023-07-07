@@ -108,31 +108,37 @@
                     ]
                 }
             ]
-        },
-        {
-            'title': 'oro.shipping.sections.shippingrule_conditions'|trans,
-            'subblocks': [
+        }
+    ] %}
+    {% if form.rule is defined and form.rule.expression is defined%}
+        {% set dataBlocks = dataBlocks|merge([
+            {
+                'title': 'oro.shipping.sections.shippingrule_conditions'|trans,
+                'subblocks': [
                 {
                     'data': [
-                        form_row(form.rule.expression),
-                    ]
+                    form_row(form.rule.expression),
+                ]
                 }
             ]
-        },
+            }
+        ]) %}
+    {% endif %}
+    {% set dataBlocks = dataBlocks|merge([
         {
             'title': 'oro.shipping.sections.shippingrule_configurations.label'|trans,
             'content_attr': {
-                'class': 'shipping-rule-methods-wrapper'
-            },
-            'subblocks': [
-                {
-                    'data': [
-                        block('oro_shipping_rule_methods')
-                    ]
-                }
-            ]
+            'class': 'shipping-rule-methods-wrapper'
         },
-    ] %}
+            'subblocks': [
+            {
+                'data': [
+                block('oro_shipping_rule_methods')
+            ]
+            }
+        ]
+        }
+    ]) %}
 
     {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'Additional'|trans)) %}
 
