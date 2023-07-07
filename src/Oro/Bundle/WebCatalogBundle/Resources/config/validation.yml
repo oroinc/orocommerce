@@ -17,8 +17,6 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
             - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueScope: ~
             - Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopes: ~
             - Valid: ~
-        scopes:
-            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
         titles:
             - Valid: ~
         slugPrototypes:
@@ -27,6 +25,3 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
     constraints:
         - Oro\Bundle\WebCatalogBundle\Validator\Constraint\SameOrganization: ~
-    properties:
-        scopes:
-            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~

@@ -132,6 +132,10 @@ oro_behat_extension:
                         type: 'xpath'
                         locator: '//*[@name="oro_cms_content_block[contentVariants][1][content]"]'
                         class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+                    Content Variant 1 Website:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][1][scopes][0][website]"]'
+                        class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
         Content Variant 1 form:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
