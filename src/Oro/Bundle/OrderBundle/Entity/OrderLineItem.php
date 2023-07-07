@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroOrderBundle_Entity_OrderLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -36,6 +37,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @mixin OroOrderBundle_Entity_OrderLineItem
  */
 class OrderLineItem implements
     ProductLineItemInterface,

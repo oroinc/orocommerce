@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPaymentBundle_Entity_PaymentMethodConfig;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
@@ -14,6 +15,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository")
  * @ORM\Table(name="oro_payment_method_config")
  * @Config()
+ * @mixin OroPaymentBundle_Entity_PaymentMethodConfig
  */
 class PaymentMethodConfig implements ExtendEntityInterface
 {

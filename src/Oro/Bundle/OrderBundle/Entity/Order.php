@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroOrderBundle_Entity_Order;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrencyHolderInterface;
@@ -89,6 +90,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *
  * @method AbstractEnumValue getInternalStatus()
  * @method $this setInternalStatus(AbstractEnumValue $status)
+ * @mixin OroOrderBundle_Entity_Order
  */
 class Order implements
     OrganizationAwareInterface,

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_AppliedCoupon;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -19,6 +20,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  *
  * @method Order getOrder()
  * @method setOrder(Order $order)
+ * @mixin OroPromotionBundle_Entity_AppliedCoupon
  */
 class AppliedCoupon implements CreatedAtAwareInterface, ExtendEntityInterface
 {

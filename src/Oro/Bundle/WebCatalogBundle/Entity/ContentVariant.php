@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroWebCatalogBundle_Entity_ContentVariant;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -35,6 +36,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  * })
  * @ORM\Table(name="oro_web_catalog_variant")
  * @Config
+ * @mixin OroWebCatalogBundle_Entity_ContentVariant
  */
 class ContentVariant implements
     ContentVariantInterface,

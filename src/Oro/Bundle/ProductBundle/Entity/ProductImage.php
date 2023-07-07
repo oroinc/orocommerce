@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroProductBundle_Entity_ProductImage;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -22,6 +23,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *
  * @method File getImage()
  * @method ProductImage setImage(File $image)
+ * @mixin OroProductBundle_Entity_ProductImage
  */
 class ProductImage implements ExtendEntityInterface
 {

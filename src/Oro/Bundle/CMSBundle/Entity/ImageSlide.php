@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCMSBundle_Entity_ImageSlide;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -38,6 +39,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  * @method ImageSlide setMediumImage(File $image)
  * @method null|File getSmallImage()
  * @method ImageSlide setSmallImage(File $image)
+ * @mixin OroCMSBundle_Entity_ImageSlide
  */
 class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
 {

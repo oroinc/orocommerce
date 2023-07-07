@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPaymentBundle_Entity_PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
@@ -17,6 +18,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  * @Config(
  *     mode="hidden",
  * )
+ * @mixin OroPaymentBundle_Entity_PaymentMethodsConfigsRuleDestinationPostalCode
  */
 class PaymentMethodsConfigsRuleDestinationPostalCode implements ExtendEntityInterface
 {

@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroSaleBundle_Entity_Quote;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -78,6 +79,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @method AbstractEnumValue getInternalStatus()
  * @method AbstractEnumValue getCustomerStatus()
+ * @mixin OroSaleBundle_Entity_Quote
  */
 class Quote implements
     CustomerOwnerAwareInterface,

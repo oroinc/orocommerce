@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroSaleBundle_Entity_QuoteAddress;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -29,6 +30,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *      }
  * )
  * @ORM\Entity
+ * @mixin OroSaleBundle_Entity_QuoteAddress
  */
 class QuoteAddress extends AbstractAddress implements ExtendEntityInterface
 {

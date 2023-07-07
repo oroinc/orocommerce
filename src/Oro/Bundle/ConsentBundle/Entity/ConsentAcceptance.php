@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ConsentBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroConsentBundle_Entity_ConsentAcceptance;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
@@ -30,6 +31,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *
  * @method CustomerUser getCustomerUser()
  * @method setCustomerUser(CustomerUser $customerUser)
+ * @mixin OroConsentBundle_Entity_ConsentAcceptance
  */
 class ConsentAcceptance implements
     CreatedAtAwareInterface,

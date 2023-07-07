@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroWebCatalogBundle_Entity_ContentNode;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
@@ -71,6 +72,7 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
  * @method setDefaultTitle($title)
  * @method setDefaultSlugPrototype($slug)
  * @method $this cloneLocalizedFallbackValueAssociations()
+ * @mixin OroWebCatalogBundle_Entity_ContentNode
  */
 class ContentNode implements
     ContentNodeInterface,

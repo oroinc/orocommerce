@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroProductBundle_Entity_CollectionSortOrder;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
@@ -29,6 +30,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
  *          }
  *      }
  * )
+ * @mixin OroProductBundle_Entity_CollectionSortOrder
  */
 class CollectionSortOrder implements ExtendEntityInterface
 {

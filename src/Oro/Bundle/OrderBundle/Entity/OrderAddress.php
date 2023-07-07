@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroOrderBundle_Entity_OrderAddress;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
@@ -35,6 +36,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *      }
  * )
  * @ORM\Entity
+ * @mixin OroOrderBundle_Entity_OrderAddress
  */
 class OrderAddress extends AbstractAddress implements
     AddressPhoneAwareInterface,

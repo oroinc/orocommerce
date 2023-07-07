@@ -5,6 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPaymentBundle_Entity_PaymentMethodsConfigsRule;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
@@ -41,6 +42,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          }
  *      }
  * )
+ * @mixin OroPaymentBundle_Entity_PaymentMethodsConfigsRule
  */
 class PaymentMethodsConfigsRule implements
     RuleOwnerInterface,

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCMSBundle_Entity_ContentTemplate;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -44,6 +45,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          },
  *      }
  * )
+ * @mixin OroCMSBundle_Entity_ContentTemplate
  */
 class ContentTemplate implements DatesAwareInterface, OrganizationAwareInterface, ExtendEntityInterface
 {

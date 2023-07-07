@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroShoppingListBundle_Entity_ShoppingList;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -71,6 +72,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @method ArrayCollection|CustomerVisitor[] getVisitors()
+ * @mixin OroShoppingListBundle_Entity_ShoppingList
  */
 class ShoppingList implements
     OrganizationAwareInterface,
