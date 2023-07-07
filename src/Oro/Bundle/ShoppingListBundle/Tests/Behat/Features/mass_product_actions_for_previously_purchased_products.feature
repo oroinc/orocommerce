@@ -1,6 +1,6 @@
 @regression
 @fixture-OroOrderBundle:previously-purchased.yml
-@skip
+
 Feature: Mass Product Actions for Previously purchased products
   In order to add multiple products to a shopping list
   As a Customer User
@@ -44,10 +44,10 @@ Feature: Mass Product Actions for Previously purchased products
     Then should see an "Create New Shopping List popup" element
     And type "New Shopping List" in "Shopping List Name"
     When click "Create and Add"
-    Then should see 'Shopping list "New Shopping List" was created successfully' flash message
+    Then should see '2 products were added' flash message
     When I hover on "Shopping Cart"
-    And click "New Shopping List"
-    Then I should see following line items in "Shopping List Line Items Table":
-      | SKU   | Quantity | Unit |
-      | PSKU1 | 10       | item |
-      | PSKU2 | 15       | item |
+    And I click "New Shopping List" on shopping list widget
+    Then I should see following grid containing rows:
+      | SKU   | Item      |          | Qty Update All |
+      | PSKU1 | Product 1 | In Stock | 10 item        |
+      | PSKU2 | Product 2 | In Stock | 15 item        |
