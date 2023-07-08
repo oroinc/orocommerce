@@ -184,9 +184,6 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         );
     }
 
-    /**
-     * @throws LogicException
-     */
     private function getEntityIdentifierField(MassActionHandlerArgs $args): string
     {
         $massAction = $args->getMassAction();
