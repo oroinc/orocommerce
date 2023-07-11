@@ -6,13 +6,6 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_validator }
 
-    oro_shopping_list.validator.line_item_collection:
-        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator'
-        arguments:
-            - '@event_dispatcher'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_collection_validator }
-
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         public: true
@@ -365,13 +358,6 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage'
         arguments:
             - '@oro_shopping_list.shopping_list_provider.cache'
-
-    oro_shopping_list.validator_service.line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider'
-        arguments:
-            - '@validator'
-        tags:
-            - { name: layout.data_provider, alias: oro_line_item_violations }
 
     oro_shopping_list.validator.matrix_collection:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'

@@ -11,7 +11,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionAfterEvent;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
@@ -118,14 +117,7 @@ class CheckoutWorkflowHelper
             $this->checkoutLineItemGroupingInvalidationHelper->invalidateLineItemGrouping($checkout, $workflowItem);
         }
 
-        if ($request->isMethod(Request::METHOD_POST) &&
-            $this->isCheckoutRestartRequired($workflowItem)
-        ) {
-            $this->restartCheckout($workflowItem, $checkout);
-            $workflowItem = $this->getWorkflowItem($checkout);
-        } else {
-            $this->processHandlers($workflowItem, $request);
-        }
+        $this->processHandlers($workflowItem, $request);
 
         $currentStep = $this->validateStep($workflowItem);
         if ($this->isValidationNeeded($checkout, $workflowItem, $request)) {
@@ -152,59 +144,28 @@ class CheckoutWorkflowHelper
         return reset($items);
     }
 
-    /**
-     * @param WorkflowItem $workflowItem
-     *
-     * @return bool
-     */
-    protected function isCheckoutRestartRequired(WorkflowItem $workflowItem)
+    protected function validateOrderLineItems(Checkout $checkout, Request $request)
     {
-        $event = new CheckoutValidateEvent($workflowItem);
-        if (false == $this->eventDispatcher->hasListeners(CheckoutValidateEvent::NAME)) {
-            return false;
+        $allOrderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
+
+        if ($allOrderLineItemsCount) {
+            $orderLineItemsCount = $this->lineItemsManager->getData($checkout)->count();
+            if ($allOrderLineItemsCount !== $orderLineItemsCount) {
+                $rfpOrderLineItems = $this->lineItemsManager
+                    ->getData($checkout, true, 'oro_rfp.frontend_product_visibility');
+                $message = $rfpOrderLineItems->isEmpty()
+                    ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
+                    : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
+                $request->getSession()->getFlashBag()->add('warning', $message);
+            }
+            return;
         }
 
-        $this->eventDispatcher->dispatch($event, CheckoutValidateEvent::NAME);
-
-        return $event->isCheckoutRestartRequired();
-    }
-
-    /**
-     * @throws ForbiddenActionGroupException
-     * @throws \Exception
-     */
-    protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
-    {
-        $workflowName = $workflowItem->getWorkflowName();
-
-        $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
-        $this->workflowManager->resetWorkflowItem($workflowItem);
-        $this->workflowManager->startWorkflow($workflowName, $checkout);
-
-        $actionData = new ActionData(['shoppingList' => $shoppingList, 'forceStartCheckout' => true]);
-        $this->actionGroupRegistry->findByName('start_shoppinglist_checkout')->execute($actionData);
-    }
-
-    protected function validateOrderLineItems(CheckoutInterface $checkout, Request $request)
-    {
-        $orderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
-
-        if ($this->lineItemsManager->getLineItemsWithoutQuantity($checkout)->count()) {
+        if ($allOrderLineItemsCount !== $checkout->getLineItems()->count()) {
             $request->getSession()->getFlashBag()->add(
                 'warning',
                 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
             );
-
-            return;
-        }
-
-        if ($orderLineItemsCount && $orderLineItemsCount !== $this->lineItemsManager->getData($checkout)->count()) {
-            $orderLineItemsRfp = $this->lineItemsManager
-                ->getData($checkout, true, 'oro_rfp.frontend_product_visibility');
-            $message = $orderLineItemsRfp->isEmpty()
-                ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
-                : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
-            $request->getSession()->getFlashBag()->add('warning', $message);
         }
     }
 

@@ -49,7 +49,7 @@ api:
                         add_subresource:
                             description: Add or Update Items
                             form_options:
-                                validation_groups: [create, api]
+                                validation_groups: [[Default, create, add_product_kit_line_item], api]
                             fields:
                                 id:
                                     direction: output-only
@@ -107,11 +107,11 @@ api:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [create, api]
+                        validation_groups: [[Default, create, add_product_kit_line_item], api]
                 update:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [update, api]
+                        validation_groups: [[Default, update, add_product_kit_line_item], api]
                 get:
                     acl_resource: oro_shopping_list_frontend_view
                 get_list:
@@ -147,11 +147,11 @@ api:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [create, api]
+                        validation_groups: [[Default, add_product_kit_line_item], api]
                 update:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [update, api]
+                        validation_groups: [[Default, add_product_kit_line_item], api]
                     fields:
                         lineItem:
                             form_options:

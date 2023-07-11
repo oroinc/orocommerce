@@ -10,6 +10,10 @@ use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
  */
 class DatagridLineItemsDataListener
 {
+    public const SKU = 'sku';
+    public const NAME = 'name';
+    public const NOTES = 'notes';
+
     public function onLineItemData(DatagridLineItemsDataEvent $event): void
     {
         $lineItems = $event->getLineItems();
@@ -27,12 +31,17 @@ class DatagridLineItemsDataListener
         /** @var CheckoutLineItem[] $lineItems */
         foreach ($lineItems as $lineItem) {
             $lineItemData = [
-                'notes' => (string) $lineItem->getComment(),
+                self::NOTES => (string) $lineItem->getComment(),
             ];
 
             $currentLineItemData = $event->getDataForLineItem($lineItem->getEntityIdentifier());
-            if (empty($currentLineItemData['name'])) {
-                $lineItemData['name'] = $lineItem->getFreeFormProduct();
+
+            if (empty($currentLineItemData[self::SKU])) {
+                $lineItemData[self::SKU] = $lineItem->getProductSku();
+            }
+
+            if (empty($currentLineItemData[self::NAME])) {
+                $lineItemData[self::NAME] = $lineItem->getFreeFormProduct();
             }
 
             $event->addDataForLineItem($lineItem->getEntityIdentifier(), $lineItemData);

@@ -5,39 +5,35 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension;
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
+class FrontendLineItemsGridExtensionTest extends TestCase
 {
-    /** @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutRepository;
+    private CheckoutRepository|MockObject $checkoutRepository;
 
-    /** @var CheckoutLineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemRepository;
+    private CheckoutLineItemRepository|MockObject $lineItemRepository;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
+    private ConfigManager|MockObject $configManager;
 
-    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutLineItemsManager;
+    private CheckoutLineItemsProvider|MockObject $checkoutLineItemsProvider;
 
-    /** @var ParameterBag */
-    private $parameters;
+    private ParameterBag $parameters;
 
-    /** @var FrontendLineItemsGridExtension */
-    private $extension;
+    private FrontendLineItemsGridExtension $extension;
 
     protected function setUp(): void
     {
@@ -45,41 +41,41 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->lineItemRepository = $this->createMock(CheckoutLineItemRepository::class);
 
         $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
+        $manager
             ->method('getRepository')
             ->willReturnMap(
                 [
                     [Checkout::class, $this->checkoutRepository],
-                    [CheckoutLineItem::class, $this->lineItemRepository]
+                    [CheckoutLineItem::class, $this->lineItemRepository],
                 ]
             );
 
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $registry
             ->method('getManagerForClass')
             ->willReturn($manager);
 
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
+        $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);
 
         $this->parameters = new ParameterBag();
 
         $this->extension = new FrontendLineItemsGridExtension(
             $registry,
             $this->configManager,
-            $this->checkoutLineItemsManager
+            $this->checkoutLineItemsProvider
         );
         $this->extension->setParameters($this->parameters);
     }
 
     public function testIsApplicable(): void
     {
-        $this->assertTrue(
+        self::assertTrue(
             $this->extension->isApplicable(
                 DatagridConfiguration::create(['name' => 'frontend-checkout-line-items-grid'])
             )
         );
-        $this->assertTrue(
+        self::assertTrue(
             $this->extension->isApplicable(
                 DatagridConfiguration::create(['name' => 'frontend-single-page-checkout-line-items-grid'])
             )
@@ -90,7 +86,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $config = DatagridConfiguration::create(['name' => 'checkout-line-items-grid']);
 
-        $this->assertFalse($this->extension->isApplicable($config));
+        self::assertFalse($this->extension->isApplicable($config));
     }
 
     public function testSetParameters(): void
@@ -107,7 +103,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 ParameterBag::MINIFIED_PARAMETERS => [
                     'g' => [
@@ -126,7 +122,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->extension->setParameters(new ParameterBag());
 
-        $this->assertEquals([], $this->extension->getParameters()->all());
+        self::assertEquals([], $this->extension->getParameters()->all());
     }
 
     public function testProcessConfigs(): void
@@ -145,26 +141,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->configManager->expects($this->any())
+        $this->configManager
             ->method('get')
             ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(900);
 
-        $this->checkoutRepository->expects($this->once())
+        $this->checkoutRepository->expects(self::once())
             ->method('find')
             ->with(42)
             ->willReturn($checkout);
 
-        $this->checkoutLineItemsManager->expects($this->once())
-            ->method('getData')
+        $this->checkoutLineItemsProvider->expects(self::once())
+            ->method('getCheckoutLineItems')
             ->with($checkout)
-            ->willReturn($checkout->getLineItems()->toArray());
+            ->willReturn($checkout->getLineItems());
 
         $this->extension->processConfigs($config);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'options' => [
                     'toolbarOptions' => [
@@ -176,8 +172,8 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                                 100,
                                 [
                                     'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
-                                    'size' => 1000
-                                ]
+                                    'size' => 1000,
+                                ],
                             ],
                         ],
                     ],
@@ -208,12 +204,12 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->checkoutRepository->expects($this->never())
+        $this->checkoutRepository->expects(self::never())
             ->method('find');
 
         $this->extension->processConfigs($config);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'options' => [
                     'toolbarOptions' => [
@@ -250,26 +246,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->configManager->expects($this->any())
+        $this->configManager
             ->method('get')
             ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(2000);
 
-        $this->checkoutRepository->expects($this->once())
+        $this->checkoutRepository->expects(self::once())
             ->method('find')
             ->with(42)
             ->willReturn($checkout);
 
-        $this->checkoutLineItemsManager->expects($this->once())
-            ->method('getData')
+        $this->checkoutLineItemsProvider->expects(self::once())
+            ->method('getCheckoutLineItems')
             ->with($checkout)
-            ->willReturn($checkout->getLineItems()->toArray());
+            ->willReturn($checkout->getLineItems());
 
         $this->extension->processConfigs($config);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'options' => [
                     'toolbarOptions' => [
@@ -306,26 +302,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->configManager->expects($this->any())
+        $this->configManager
             ->method('get')
             ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(999);
 
-        $this->checkoutRepository->expects($this->once())
+        $this->checkoutRepository->expects(self::once())
             ->method('find')
             ->with(42)
             ->willReturn($checkout);
 
-        $this->checkoutLineItemsManager->expects($this->once())
-            ->method('getData')
+        $this->checkoutLineItemsProvider->expects(self::once())
+            ->method('getCheckoutLineItems')
             ->with($checkout)
-            ->willReturn($checkout->getLineItems()->toArray());
+            ->willReturn($checkout->getLineItems());
 
         $this->extension->processConfigs($config);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'options' => [
                     'toolbarOptions' => [
@@ -337,8 +333,8 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                                 100,
                                 [
                                     'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
-                                    'size' => 1000
-                                ]
+                                    'size' => 1000,
+                                ],
                             ],
                         ],
                     ],
@@ -371,12 +367,12 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->configManager->expects($this->never())
+        $this->configManager->expects(self::never())
             ->method('get');
 
         $this->extension->processConfigs($config);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'options' => [
                     'toolbarOptions' => [
@@ -420,26 +416,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->configManager->expects($this->any())
+        $this->configManager
             ->method('get')
             ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(10);
 
-        $this->checkoutRepository->expects($this->once())
+        $this->checkoutRepository->expects(self::once())
             ->method('find')
             ->with(42)
             ->willReturn($checkout);
 
-        $this->checkoutLineItemsManager->expects($this->once())
-            ->method('getData')
+        $this->checkoutLineItemsProvider->expects(self::once())
+            ->method('getCheckoutLineItems')
             ->with($checkout)
-            ->willReturn($checkout->getLineItems()->toArray());
+            ->willReturn($checkout->getLineItems());
 
         $this->extension->processConfigs($config);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'options' => [
                     'toolbarOptions' => [
@@ -451,8 +447,8 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                                 100,
                                 [
                                     'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
-                                    'size' => 1000
-                                ]
+                                    'size' => 1000,
+                                ],
                             ],
                         ],
                     ],
@@ -464,13 +460,13 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
                         ],
                         'where' => [
                             'and' => [
-                                'lineItem.id IN (:acceptable_ids)'
-                            ]
-                        ]
+                                'lineItem.id IN (:acceptable_ids)',
+                            ],
+                        ],
                     ],
                     'bind_parameters' => [
-                        'acceptable_ids'
-                    ]
+                        'acceptable_ids',
+                    ],
                 ],
             ],
             $config->toArray()
@@ -483,14 +479,14 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $data = MetadataObject::create([]);
 
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('canBeGrouped')
             ->with(42)
             ->willReturn(true);
 
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'canBeGrouped' => true,
                 'initialState' => [
@@ -512,12 +508,12 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $data = MetadataObject::create([]);
 
-        $this->lineItemRepository->expects($this->never())
+        $this->lineItemRepository->expects(self::never())
             ->method('canBeGrouped');
 
         $this->extension->visitMetadata(DatagridConfiguration::create([]), $data);
 
-        $this->assertEquals([], $data->toArray());
+        self::assertEquals([], $data->toArray());
     }
 
     public function testVisitResult(): void
@@ -526,26 +522,26 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $data = ResultsObject::create([]);
 
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('canBeGrouped')
             ->with(42)
             ->willReturn(true);
 
         $this->extension->visitResult(DatagridConfiguration::create([]), $data);
 
-        $this->assertTrue($data->offsetGetByPath('[metadata][canBeGrouped]'));
+        self::assertTrue($data->offsetGetByPath('[metadata][canBeGrouped]'));
     }
 
     public function testVisitResultWithoutId(): void
     {
         $data = ResultsObject::create([]);
 
-        $this->lineItemRepository->expects($this->never())
+        $this->lineItemRepository->expects(self::never())
             ->method('canBeGrouped');
 
         $this->extension->visitResult(DatagridConfiguration::create([]), $data);
 
-        $this->assertEquals([], $data->toArray());
+        self::assertEquals([], $data->toArray());
     }
 
     private function createCheckout(int $lineItemsCount): Checkout

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
+use Oro\Bundle\FormBundle\Utils\ValidationGroupUtils;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\TranslationBundle\Translation\TranslationMessageSanitizerInterface;
@@ -47,20 +48,17 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidator extends Con
         $validator = $this->context->getValidator();
         $productsCount = $unavailableProductsCount = 0;
         $kitItemLabel = null;
+        $validationGroups = ValidationGroupUtils::resolveValidationGroups($constraint->validationGroups);
         foreach ($value as $kitItemProduct) {
             $productsCount++;
-            $constraintViolations = $validator->validate(
-                $kitItemProduct,
-                null,
-                ['product_kit_item_product_is_available_for_purchase']
-            );
+            $constraintViolations = $validator->validate($kitItemProduct, null, $validationGroups);
             if ($constraintViolations->count() > 0) {
                 $unavailableProductsCount++;
 
                 if ($kitItemLabel === null) {
                     $kitItemLabel = $this->translationMessageSanitizer->sanitizeMessage(
                         (string)$this->localizationHelper
-                        ->getLocalizedValue($kitItemProduct->getKitItem()?->getLabels())
+                            ->getLocalizedValue($kitItemProduct->getKitItem()?->getLabels())
                     );
                 }
             }

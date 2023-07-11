@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
+use Oro\Bundle\FormBundle\Utils\ValidationGroupUtils;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\TranslationBundle\Translation\TranslationMessageSanitizerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -39,10 +40,10 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidator extends Constraint
         $validator = $this->context->getValidator();
         $kitItemsCount = $unavailableKitItemsCount = 0;
         $productKitSku = null;
+        $validationGroups = ValidationGroupUtils::resolveValidationGroups($constraint->validationGroups);
         foreach ($value as $kitItem) {
             $kitItemsCount++;
-            $constraintViolations = $validator
-                ->validate($kitItem, null, ['product_kit_item_is_available_for_purchase']);
+            $constraintViolations = $validator->validate($kitItem, null, $validationGroups);
             if ($constraintViolations->count() > 0) {
                 $unavailableKitItemsCount++;
 

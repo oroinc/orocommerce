@@ -10,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollection
 use Oro\Bundle\TranslationBundle\Translation\TranslationMessageSanitizerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Context\ExecutionContext;
@@ -25,10 +26,14 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
 
     private ValidatorInterface|MockObject $validatorComponent;
 
+    private array $validationGroups = [];
+
     protected function setUp(): void
     {
         $this->translationMessageSanitizer = $this->createMock(TranslationMessageSanitizerInterface::class);
         $this->validatorComponent = $this->createMock(ValidatorInterface::class);
+
+        $this->validationGroups = [new GroupSequence(['Default', 'product_kit_item_is_available_for_purchase'])];
 
         parent::setUp();
     }
@@ -102,10 +107,11 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
         $this->validatorComponent
             ->expects(self::exactly(2))
             ->method('validate')
-            ->willReturnMap([
-                [$kitItem1, null, ['product_kit_item_is_available_for_purchase'], new ConstraintViolationList()],
-                [$kitItem2, null, ['product_kit_item_is_available_for_purchase'], new ConstraintViolationList()],
-            ]);
+            ->withConsecutive(
+                [$kitItem1, null, $this->validationGroups],
+                [$kitItem2, null, $this->validationGroups]
+            )
+            ->willReturn(new ConstraintViolationList());
 
         $this->validator->validate($value, $constraint);
 
@@ -124,17 +130,16 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
         $this->validatorComponent
             ->expects(self::exactly(2))
             ->method('validate')
-            ->willReturnMap([
-                [
-                    $kitItem1,
-                    null,
-                    ['product_kit_item_is_available_for_purchase'],
-                    new ConstraintViolationList(
-                        [new ConstraintViolation('sample_error1', null, [], $kitItem1, null, $kitItem1)]
-                    ),
-                ],
-                [$kitItem2, null, ['product_kit_item_is_available_for_purchase'], new ConstraintViolationList()],
-            ]);
+            ->withConsecutive(
+                [$kitItem1, null, $this->validationGroups],
+                [$kitItem2, null, $this->validationGroups]
+            )
+            ->willReturnOnConsecutiveCalls(
+                new ConstraintViolationList(
+                    [new ConstraintViolation('sample_error1', null, [], $kitItem1, null, $kitItem1)]
+                ),
+                new ConstraintViolationList()
+            );
 
         $this->validator->validate($value, $constraint);
 
@@ -166,16 +171,15 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
         $this->validatorComponent
             ->expects(self::exactly(3))
             ->method('validate')
-            ->willReturnMap([
-                [
-                    $kitItem1,
-                    null,
-                    ['product_kit_item_is_available_for_purchase'],
-                    new ConstraintViolationList([$violation1, $violation2]),
-                ],
-                [$kitItem2, null, ['product_kit_item_is_available_for_purchase'], new ConstraintViolationList()],
-                [$kitItem3, null, ['product_kit_item_is_available_for_purchase'], new ConstraintViolationList()],
-            ]);
+            ->withConsecutive(
+                [$kitItem1, null, $this->validationGroups],
+                [$kitItem2, null, $this->validationGroups]
+            )
+            ->willReturnOnConsecutiveCalls(
+                new ConstraintViolationList([$violation1, $violation2]),
+                new ConstraintViolationList(),
+                new ConstraintViolationList(),
+            );
 
         $this->translationMessageSanitizer
             ->expects(self::exactly(3))

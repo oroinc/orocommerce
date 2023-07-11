@@ -5,17 +5,23 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\LineItem;
 use Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
+use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Constraints\GroupSequence;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -23,13 +29,21 @@ use Symfony\Contracts\Cache\CacheInterface;
  */
 class CheckoutLineItemsDataProviderTest extends TestCase
 {
+    private const VALIDATION_GROUPS = [['Default', 'checkout_line_items_data']];
+
     private ProductLineItemPriceProviderInterface|MockObject $productLineItemPriceProvider;
 
     private CheckoutLineItemsDataProvider $provider;
 
     private AuthorizationCheckerInterface|MockObject $authorizationChecker;
 
+    private CheckoutValidationGroupsBySourceEntityProvider|MockObject $validationGroupsProvider;
+
+    private ValidatorInterface|MockObject $validator;
+
     private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
+
+    private array $processedValidationGroups = [];
 
     protected function setUp(): void
     {
@@ -37,13 +51,19 @@ class CheckoutLineItemsDataProviderTest extends TestCase
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $productAvailabilityCache = $this->createMock(CacheInterface::class);
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+        $this->validationGroupsProvider = $this->createMock(CheckoutValidationGroupsBySourceEntityProvider::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
 
         $this->provider = new CheckoutLineItemsDataProvider(
             $this->productLineItemPriceProvider,
             $this->authorizationChecker,
             $productAvailabilityCache,
-            $this->resolvedProductVisibilityProvider
+            $this->resolvedProductVisibilityProvider,
+            $this->validationGroupsProvider,
+            $this->validator
         );
+
+        $this->processedValidationGroups = [new GroupSequence(self::VALIDATION_GROUPS)];
 
         $productAvailabilityCache
             ->method('get')
@@ -82,6 +102,14 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->expects(self::never())
             ->method(self::anything());
 
+        $this->validationGroupsProvider
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->validator
+            ->expects(self::never())
+            ->method(self::anything());
+
         self::assertEquals([], $this->provider->getData($checkout));
     }
 
@@ -102,6 +130,18 @@ class CheckoutLineItemsDataProviderTest extends TestCase
         $this->authorizationChecker
             ->expects(self::never())
             ->method(self::anything());
+
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
 
         self::assertEquals([
             [
@@ -142,6 +182,18 @@ class CheckoutLineItemsDataProviderTest extends TestCase
         $this->authorizationChecker
             ->expects(self::never())
             ->method(self::anything());
+
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
 
         self::assertEquals([
             [
@@ -186,6 +238,18 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->expects(self::never())
             ->method(self::anything());
 
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
+
         self::assertEquals([
             [
                 'productSku' => null,
@@ -210,7 +274,7 @@ class CheckoutLineItemsDataProviderTest extends TestCase
     public function testGetDataWhenRegularProductWithFixedPrice(): void
     {
         $checkout = new Checkout();
-        $product = (new ProductStub())->setId(42)->setSku('SKU1')->setStatus(Product::STATUS_ENABLED);
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
         $unitItem = (new ProductUnit())->setCode('item');
         $lineItemWithRegularProductWithFixedPrice = (new CheckoutLineItem())
             ->setProduct($product)
@@ -237,6 +301,18 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
+
         self::assertEquals([
             [
                 'productSku' => $product->getSku(),
@@ -261,7 +337,7 @@ class CheckoutLineItemsDataProviderTest extends TestCase
     public function testGetDataWhenRegularProductWithFixedPriceButWithoutPrice(): void
     {
         $checkout = new Checkout();
-        $product = (new ProductStub())->setId(42)->setSku('SKU1')->setStatus(Product::STATUS_ENABLED);
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
         $unitItem = (new ProductUnit())->setCode('item');
         $lineItemWithRegularProductWithFixedPrice = (new CheckoutLineItem())
             ->setProduct($product)
@@ -287,6 +363,18 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
+
         self::assertEquals([
             [
                 'productSku' => $product->getSku(),
@@ -311,7 +399,7 @@ class CheckoutLineItemsDataProviderTest extends TestCase
     public function testGetDataWhenRegularProductWithNotFixedPrice(): void
     {
         $checkout = new Checkout();
-        $product = (new ProductStub())->setId(42)->setSku('SKU1')->setStatus(Product::STATUS_ENABLED);
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
         $unitItem = (new ProductUnit())->setCode('item');
         $lineItemWithRegularProductWithNotFixedPrice = (new CheckoutLineItem())
             ->setProduct($product)
@@ -346,6 +434,18 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
+
         $expected = [
             [
                 'productSku' => $product->getSku(),
@@ -374,7 +474,7 @@ class CheckoutLineItemsDataProviderTest extends TestCase
     public function testGetDataWhenRegularProductWithNotFixedPriceWhenNoPrice(): void
     {
         $checkout = new Checkout();
-        $product = (new ProductStub())->setId(42)->setSku('SKU1')->setStatus(Product::STATUS_ENABLED);
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
         $unitItem = (new ProductUnit())->setCode('item');
         $lineItemWithRegularProductWithNotFixedPrice = (new CheckoutLineItem())
             ->setProduct($product)
@@ -401,6 +501,18 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
+
         self::assertEquals([
             [
                 'productSku' => $product->getSku(),
@@ -422,10 +534,12 @@ class CheckoutLineItemsDataProviderTest extends TestCase
         ], $this->provider->getData($checkout));
     }
 
-    public function testGetDataWhenRegularProductWhenNotEnabled(): void
+    public function testGetDataWhenRegularProductWhenNotValid(): void
     {
-        $checkout = new Checkout();
-        $product = (new ProductStub())->setId(42)->setSku('SKU1')->setStatus(Product::STATUS_DISABLED);
+        $shoppingList = new ShoppingList();
+        $checkout = (new Checkout())
+            ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
         $unitItem = (new ProductUnit())->setCode('item');
         $lineItemWithRegularProductWithNotFixedPrice = (new CheckoutLineItem())
             ->setProduct($product)
@@ -448,13 +562,40 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->expects(self::never())
             ->method('isGranted');
 
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $shoppingList)
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(
+                new ConstraintViolationList(
+                    [
+                        new ConstraintViolation(
+                            'sample error',
+                            null,
+                            [],
+                            $lineItemWithRegularProductWithNotFixedPrice,
+                            '[0].quantity',
+                            42
+                        ),
+                    ]
+                )
+            );
+
         self::assertEquals([], $this->provider->getData($checkout));
     }
 
-    public function testGetDataWhenRegularProductWhenNotGranted(): void
+    public function testGetDataWhenRegularProductWhenHasViolationWithoutPropertyPath(): void
     {
-        $checkout = new Checkout();
-        $product = (new ProductStub())->setId(42)->setSku('SKU1')->setStatus(Product::STATUS_ENABLED);
+        $shoppingList = new ShoppingList();
+        $checkout = (new Checkout())
+            ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
         $unitItem = (new ProductUnit())->setCode('item');
         $lineItemWithRegularProductWithNotFixedPrice = (new CheckoutLineItem())
             ->setProduct($product)
@@ -478,6 +619,132 @@ class CheckoutLineItemsDataProviderTest extends TestCase
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(false);
+
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $shoppingList)
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(
+                new ConstraintViolationList(
+                    [
+                        new ConstraintViolation(
+                            'sample error',
+                            null,
+                            [],
+                            $lineItemWithRegularProductWithNotFixedPrice,
+                            null,
+                            42
+                        ),
+                    ]
+                )
+            );
+
+        self::assertEquals([], $this->provider->getData($checkout));
+    }
+
+    public function testGetDataWhenRegularProductWhenHasViolationForNotCollectionElement(): void
+    {
+        $shoppingList = new ShoppingList();
+        $checkout = (new Checkout())
+            ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
+        $unitItem = (new ProductUnit())->setCode('item');
+        $lineItemWithRegularProductWithNotFixedPrice = (new CheckoutLineItem())
+            ->setProduct($product)
+            ->setProductUnit($unitItem)
+            ->setQuantity(3);
+        $lineItemWithRegularProductWithNotFixedPrice->preSave();
+
+        $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
+
+        $this->resolvedProductVisibilityProvider
+            ->expects(self::once())
+            ->method('prefetch')
+            ->with([$product->getId()]);
+
+        $this->productLineItemPriceProvider
+            ->expects(self::never())
+            ->method('getProductLineItemsPrices');
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->with(BasicPermission::VIEW, $product)
+            ->willReturn(false);
+
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $shoppingList)
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(
+                new ConstraintViolationList(
+                    [
+                        new ConstraintViolation(
+                            'sample error',
+                            null,
+                            [],
+                            $lineItemWithRegularProductWithNotFixedPrice,
+                            'sampleProperty',
+                            42
+                        ),
+                    ]
+                )
+            );
+
+        self::assertEquals([], $this->provider->getData($checkout));
+    }
+
+    public function testGetDataWhenRegularProductWhenNotGranted(): void
+    {
+        $checkout = new Checkout();
+        $product = (new ProductStub())->setId(42)->setSku('SKU1');
+        $unitItem = (new ProductUnit())->setCode('item');
+        $lineItemWithRegularProductWithNotFixedPrice = (new CheckoutLineItem())
+            ->setProduct($product)
+            ->setProductUnit($unitItem)
+            ->setQuantity(3);
+        $lineItemWithRegularProductWithNotFixedPrice->preSave();
+
+        $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
+
+        $this->resolvedProductVisibilityProvider
+            ->expects(self::once())
+            ->method('prefetch')
+            ->with([$product->getId()]);
+
+        $this->productLineItemPriceProvider
+            ->expects(self::never())
+            ->method('getProductLineItemsPrices');
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->with(BasicPermission::VIEW, $product)
+            ->willReturn(false);
+
+        $this->validationGroupsProvider
+            ->expects(self::once())
+            ->method('getValidationGroupsBySourceEntity')
+            ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
+            ->willReturn($this->processedValidationGroups);
+
+        $this->validator
+            ->expects(self::once())
+            ->method('validate')
+            ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
+            ->willReturn(new ConstraintViolationList());
 
         self::assertEquals([], $this->provider->getData($checkout));
     }

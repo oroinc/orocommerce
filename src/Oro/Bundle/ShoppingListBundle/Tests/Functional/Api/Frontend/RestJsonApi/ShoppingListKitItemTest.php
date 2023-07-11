@@ -104,16 +104,6 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title' => 'expression constraint',
-                    'detail' => 'Quantity cannot be empty',
-                    'source' => ['pointer' => '/data/attributes/quantity'],
-                ],
-                [
-                    'title' => 'expression constraint',
-                    'detail' => 'Quantity cannot be validated without Product Kit Item',
-                    'source' => ['pointer' => '/data/attributes/quantity'],
-                ],
-                [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
                     'source' => ['pointer' => '/data/relationships/lineItem/data'],
@@ -129,32 +119,9 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     'source' => ['pointer' => '/data/relationships/product/data'],
                 ],
                 [
-                    'title' => 'expression constraint',
-                    'detail' => 'The selected product is not allowed',
-                    'source' => ['pointer' => '/data/relationships/product/data'],
-                ],
-                [
-                    'title' => 'at least one of constraint',
-                    'detail' => 'Selection required',
-                    'source' => ['pointer' => '/data/relationships/product/data'],
-                ],
-                [
-                    'title' => 'at least one of constraint',
-                    'detail' => 'Original selection no longer available',
-                    'source' => ['pointer' => '/data/relationships/product/data'],
-                ],
-                [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
                     'source' => ['pointer' => '/data/relationships/unit/data'],
-                ],
-                [
-                    'status' => '400',
-                    'title' => 'expression constraint',
-                    'detail' => 'The selected product unit is not allowed',
-                    'source' => [
-                        'pointer' => '/data/relationships/unit/data',
-                    ],
                 ],
             ],
             $response
@@ -514,7 +481,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
                 'expectedErrors' => [
                     [
-                        'title' => 'expression constraint',
+                        'title' => 'not blank constraint',
                         'detail' => 'Quantity cannot be empty',
                         'source' => ['pointer' => '/data/attributes/quantity'],
                     ],
@@ -578,11 +545,6 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
                 'expectedErrors' => [
                     [
-                        'title' => 'expression constraint',
-                        'detail' => 'Quantity cannot be validated without Product Kit Item',
-                        'source' => ['pointer' => '/data/attributes/quantity'],
-                    ],
-                    [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/data/relationships/kitItem/data'],
@@ -641,16 +603,6 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
-                    ],
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product is not allowed',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
-                    ],
-                    [
-                        'title' => 'at least one of constraint',
-                        'detail' => 'Original selection no longer available',
                         'source' => ['pointer' => '/data/relationships/product/data'],
                     ],
                 ],
@@ -740,14 +692,6 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/data/relationships/unit/data'],
                     ],
-                    [
-                        'status' => '400',
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product unit is not allowed',
-                        'source' => [
-                            'pointer' => '/data/relationships/unit/data',
-                        ],
-                    ],
                 ],
             ],
             'unit when no KitItem' => [
@@ -763,11 +707,6 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                     ],
                 ],
                 'expectedErrors' => [
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product unit is not allowed',
-                        'source' => ['pointer' => '/data/relationships/unit/data'],
-                    ],
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',

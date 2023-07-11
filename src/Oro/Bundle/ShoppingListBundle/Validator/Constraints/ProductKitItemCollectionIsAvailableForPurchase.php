@@ -17,6 +17,8 @@ class ProductKitItemCollectionIsAvailableForPurchase extends Constraint
         self::NO_AVAILABLE_KIT_ITEMS_ERROR => 'NO_AVAILABLE_KIT_ITEMS_ERROR',
     ];
 
+    public array $validationGroups = [['Default' ,'product_kit_item_is_available_for_purchase']];
+
     public string $requiredKitItemNotAvailableMessage
         = 'oro.shoppinglist.validators.product_kit_item_collection_is_available_for_purchase.required_not_available';
     public string $noAvailableKitItemsMessage

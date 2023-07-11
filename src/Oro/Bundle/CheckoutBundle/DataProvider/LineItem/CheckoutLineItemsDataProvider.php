@@ -6,15 +6,17 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -27,17 +29,34 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     private AuthorizationCheckerInterface $authorizationChecker;
     private CacheInterface $productAvailabilityCache;
     private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
+    private CheckoutValidationGroupsBySourceEntityProvider $validationGroupsProvider;
+    private ValidatorInterface $validator;
+
+    /** @var array<string|array<string>>  */
+    private array $validationGroups = [['Default', 'checkout_line_items_data']];
 
     public function __construct(
         ProductLineItemPriceProviderInterface $productLineItemPriceProvider,
         AuthorizationCheckerInterface $authorizationChecker,
         CacheInterface $productAvailabilityCache,
-        ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider
+        ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider,
+        CheckoutValidationGroupsBySourceEntityProvider $checkoutValidationGroupsBySourceEntityProvider,
+        ValidatorInterface $validator
     ) {
         $this->productLineItemPriceProvider = $productLineItemPriceProvider;
         $this->authorizationChecker = $authorizationChecker;
         $this->productAvailabilityCache = $productAvailabilityCache;
         $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
+        $this->validationGroupsProvider = $checkoutValidationGroupsBySourceEntityProvider;
+        $this->validator = $validator;
+    }
+
+    /**
+     * @param array<string> $validationGroups
+     */
+    public function setValidationGroups(array $validationGroups): void
+    {
+        $this->validationGroups = $validationGroups;
     }
 
     /**
@@ -59,14 +78,14 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
         $lineItems = $entity->getLineItems();
         $this->prefetchProductsVisibility($lineItems);
 
-        $skippedLineItems = [];
-        $productLineItemPrices = $this->getLineItemsPrices($lineItems, $skippedLineItems);
+        $invalidLineItems = $this->getInvalidLineItems($entity);
+        $productLineItemPrices = $this->getLineItemsPrices($lineItems, $invalidLineItems);
 
         $lineItemsData = [];
 
         /** @var CheckoutLineItem $lineItem */
         foreach ($lineItems as $key => $lineItem) {
-            if (isset($skippedLineItems[$key])) {
+            if (isset($invalidLineItems[$key])) {
                 continue;
             }
 
@@ -110,20 +129,25 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
     /**
      * @param Collection<CheckoutLineItem> $lineItems
+     * @param array<int,CheckoutLineItem> $invalidLineItems
      *
      * @return array<int,ProductLineItemPrice>
      */
-    private function getLineItemsPrices(Collection $lineItems, array &$skippedLineItems): array
+    private function getLineItemsPrices(Collection $lineItems, array &$invalidLineItems): array
     {
         $lineItemsWithoutFixedPrice = [];
-        foreach ($lineItems as $key => $lineItem) {
+        foreach ($lineItems as $index => $lineItem) {
+            if (isset($invalidLineItems[$index])) {
+                continue;
+            }
+
             if (!$this->isLineItemNeeded($lineItem)) {
-                $skippedLineItems[$key] = $lineItem;
+                $invalidLineItems[$index] = $lineItem;
                 continue;
             }
 
             if ($lineItem->getProduct() && !$lineItem->isPriceFixed() && !$lineItem->getPrice()) {
-                $lineItemsWithoutFixedPrice[$key] = $lineItem;
+                $lineItemsWithoutFixedPrice[$index] = $lineItem;
             }
         }
 
@@ -132,6 +156,40 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
         }
 
         return $this->productLineItemPriceProvider->getProductLineItemsPrices($lineItemsWithoutFixedPrice);
+    }
+
+    /**
+     * @param Checkout $checkout
+     *
+     * @return array<int,CheckoutLineItem>
+     */
+    private function getInvalidLineItems(Checkout $checkout): array
+    {
+        $lineItems = $checkout->getLineItems();
+        if (!$lineItems->count()) {
+            return [];
+        }
+
+        $validationGroups = $this->validationGroupsProvider
+            ->getValidationGroupsBySourceEntity($this->validationGroups, $checkout->getSourceEntity());
+
+        $violationList = $this->validator->validate($lineItems, null, $validationGroups);
+        $invalidLineItems = [];
+        foreach ($violationList as $violation) {
+            if (!$violation->getPropertyPath()) {
+                continue;
+            }
+
+            $propertyPath = new PropertyPath($violation->getPropertyPath());
+            if (!$propertyPath->isIndex(0)) {
+                continue;
+            }
+
+            $index = $propertyPath->getElement(0);
+            $invalidLineItems[$index] = $lineItems[$index];
+        }
+
+        return $invalidLineItems;
     }
 
     private function getKitItemLineItemPrice(
@@ -179,8 +237,7 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
         }
 
         return $this->productAvailabilityCache->get((string)$product->getId(), function () use ($product) {
-            return $product->getStatus() === Product::STATUS_ENABLED
-                && $this->authorizationChecker->isGranted('VIEW', $product);
+            return $this->authorizationChecker->isGranted('VIEW', $product);
         });
     }
 }

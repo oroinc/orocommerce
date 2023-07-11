@@ -13,8 +13,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -71,76 +69,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->assertCurrentStep($crawler);
         $crawler = $this->goToNextStep($crawler);
         $this->assertCurrentStep($crawler);
-    }
-
-    public function testCheckoutRestartsOnQuantityErrorOnEachStep()
-    {
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $lineItem = $shoppingList->getLineItems()[0];
-        $product = $lineItem->getProduct();
-        $this->initProductLimitAsSystemFallback($product);
-        $lineItem->setQuantity(3);
-        $this->registry->getManagerForClass(LineItem::class)->flush();
-
-        $this->startCheckout($shoppingList);
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
-
-        // set limits outside of current quantity and verify errors
-        $this->setInvalidLimitAndVerifyCheckoutRestarted($crawler, $product);
-
-        // set limits inside of current quantity and verify step1 with no errors
-        $this->updateSystemQuantityLimits(2, 5);
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
-        $this->verifyQuantityError($crawler, $product, false, false, true);
-        // go to step 2
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-
-        // being on step 2 set limits outside of quantity and verify errors and checkout reset
-        $crawler = $this->setInvalidLimitAndVerifyCheckoutRestarted($crawler, $product);
-
-        // set correct limits and continue to step 2
-        $this->updateSystemQuantityLimits(2, 5);
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-        // continue to step 3
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-
-        // set invalid limits and verify checkout restart with error
-        $crawler = $this->setInvalidLimitAndVerifyCheckoutRestarted($crawler, $product);
-
-        // set correct limits and continue to step 2
-        $this->updateSystemQuantityLimits(2, 5);
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-        // continue to step 3
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-        // continue to step 4
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-
-        // set invalid limits and verify checkout restart with error
-        $crawler = $this->setInvalidLimitAndVerifyCheckoutRestarted($crawler, $product);
-
-        // set correct limits and continue to step 2
-        $this->updateSystemQuantityLimits(2, 5);
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-        // continue to step 3
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-        // continue to step 4
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-        // continue to step 5
-        $crawler = $this->goToNextStep($crawler);
-        $this->validateStep($crawler, $product);
-
-        // set invalid limits and verify checkout restart with error
-        $this->setInvalidLimitAndVerifyCheckoutRestarted($crawler, $product);
     }
 
     private function assertCurrentStep(Crawler $crawler, bool $shouldBeFirstStep = false): void

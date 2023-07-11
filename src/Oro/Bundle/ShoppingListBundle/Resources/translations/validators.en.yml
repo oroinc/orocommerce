@@ -45,9 +45,6 @@ oro:
             quantity:
                 not_blank:
                     message: 'Quantity cannot be empty'
-                kit_item:
-                    not_blank:
-                        message: 'Quantity cannot be validated without Product Kit Item'
             product:
                 status_optional.message: 'Original selection no longer available'
                 status_required.message: 'Selection required'

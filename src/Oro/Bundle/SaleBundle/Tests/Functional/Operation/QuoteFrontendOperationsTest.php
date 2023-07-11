@@ -36,15 +36,15 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
     {
         // start checkout from first user
         $this->loginUser(LoadUserData::ACCOUNT1_USER2);
-        $firstData = $this->startCheckout($this->getReference(LoadQuoteData::QUOTE4));
+        $firstData = $this->startCheckout($this->getReference(LoadQuoteData::QUOTE3));
         // continue checkout from first user
-        $secondData = $this->startCheckout($this->getReference(LoadQuoteData::QUOTE4));
+        $secondData = $this->startCheckout($this->getReference(LoadQuoteData::QUOTE3));
 
         $this->assertEquals($firstData->attr('action'), $secondData->attr('action'));
 
         // start checkout from second user
         $this->loginUser(LoadUserData::ACCOUNT1_USER3);
-        $startData = $this->startCheckout($this->getReference(LoadQuoteData::QUOTE4));
+        $startData = $this->startCheckout($this->getReference(LoadQuoteData::QUOTE3));
 
         $this->assertNotEquals($firstData->attr('action'), $startData->attr('action'));
     }

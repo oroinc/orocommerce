@@ -619,11 +619,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/attributes/quantity'],
                 ],
-                [
-                    'title' => 'expression constraint',
-                    'detail' => 'Quantity must be greater than 0',
-                    'source' => ['pointer' => '/data/attributes/quantity'],
-                ],
             ],
             $response
         );
@@ -1095,49 +1090,19 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'request' => 'create_kit_line_item_without_kit_item_line_items_data.yml',
                 'expectedErrors' => [
                     [
-                        'title' => 'expression constraint',
-                        'detail' => 'Quantity cannot be empty',
-                        'source' => ['pointer' => '/included/0/attributes/quantity'],
+                        'title' => 'not null constraint',
+                        'detail' => 'This value should not be null.',
+                        'source' => ['pointer' => '/included/0/relationships/product/data'],
                     ],
                     [
-                        'title' => 'expression constraint',
-                        'detail' => 'Quantity cannot be validated without Product Kit Item',
-                        'source' => ['pointer' => '/included/0/attributes/quantity'],
+                        'title' => 'not null constraint',
+                        'detail' => 'This value should not be null.',
+                        'source' => ['pointer' => '/included/0/relationships/unit/data'],
                     ],
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/included/0/relationships/kitItem/data'],
-                    ],
-                    [
-                        'title' => 'not null constraint',
-                        'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/included/0/relationships/product/data'],
-                    ],
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product is not allowed',
-                        'source' => ['pointer' => '/included/0/relationships/product/data'],
-                    ],
-                    [
-                        'title' => 'at least one of constraint',
-                        'detail' => 'Selection required',
-                        'source' => ['pointer' => '/included/0/relationships/product/data'],
-                    ],
-                    [
-                        'title' => 'at least one of constraint',
-                        'detail' => 'Original selection no longer available',
-                        'source' => ['pointer' => '/included/0/relationships/product/data'],
-                    ],
-                    [
-                        'title' => 'not null constraint',
-                        'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/included/0/relationships/unit/data'],
-                    ],
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product unit is not allowed',
-                        'source' => ['pointer' => '/included/0/relationships/unit/data'],
                     ],
                 ],
             ],
@@ -1151,28 +1116,13 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     ],
                 ],
             ],
-            'no KitItem' => [
+            'no kitItem' => [
                 'request' => 'create_kit_line_item_kit_item_line_item_without_kit_item.yml',
                 'expectedErrors' => [
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'Quantity cannot be validated without Product Kit Item',
-                        'source' => ['pointer' => '/included/0/attributes/quantity'],
-                    ],
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/included/0/relationships/kitItem/data'],
-                    ],
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product is not allowed',
-                        'source' => ['pointer' => '/included/0/relationships/product/data'],
-                    ],
-                    [
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product unit is not allowed',
-                        'source' => ['pointer' => '/included/0/relationships/unit/data'],
                     ],
                 ],
             ],

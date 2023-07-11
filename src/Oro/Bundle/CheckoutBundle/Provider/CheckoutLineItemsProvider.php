@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -54,7 +55,7 @@ class CheckoutLineItemsProvider
 
     /**
      * Gets checkout line items which expected to be converted into OrderLineItems filtering items
-     * which could not be ordered.
+     * which could not be ordered. Array keys are preserved.
      *
      * @psalm-return ArrayCollection<int, CheckoutLineItem>
      */
@@ -70,6 +71,11 @@ class CheckoutLineItemsProvider
 
     private function getLineItemKey(ProductLineItemInterface $item): string
     {
-        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        $key = implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        if ($item instanceof ProductKitItemLineItemsAwareInterface) {
+            $key .= ':' . $item->getChecksum();
+        }
+
+        return $key;
     }
 }

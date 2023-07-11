@@ -80,8 +80,7 @@ class DatagridLineItemsDataPricingListener
                         $lineItemPrice?->getKitItemLineItemPrice($kitItemLineItem)
                     );
 
-                    if ($hasSubtotal === false
-                        && empty($lineItemData[DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR])) {
+                    if ($hasSubtotal === false) {
                         $lineItemData[DatagridLineItemsDataValidationListener::KIT_HAS_GENERAL_ERROR] = true;
                     }
                 }

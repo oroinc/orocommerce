@@ -338,6 +338,8 @@ datagrids:
                 frontend_type: boolean
             isVisible:
                 frontend_type: boolean
+            kitHasGeneralError:
+                frontend_type: boolean
             isUpcoming:
                 frontend_type: boolean
             isLowInventory:
