@@ -126,9 +126,6 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($result);
     }
 
-    /**
-     * @return array
-     */
     public function normalizationDataProvider(): array
     {
         $productImage = new StubProductImage();

@@ -210,7 +210,7 @@ class ProductAttributeValueLoader
      * @param bool                         $isCollection
      * @param EntityMetadata               $metadata
      * @param EntityIdTransformerInterface $idTransformer
-     * @param string[]                     $targetFieldNames
+     * @param string[]|null $targetFieldNames
      *
      * @return array
      */

@@ -24,7 +24,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
 
     /**
      * @param null|float|integer $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -35,7 +35,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
 
     /**
      * @param null|float|integer $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */

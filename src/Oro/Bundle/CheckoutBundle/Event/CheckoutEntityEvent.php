@@ -31,9 +31,6 @@ class CheckoutEntityEvent extends Event
         return $this->checkoutEntity;
     }
 
-    /**
-     * @param CheckoutInterface $checkoutEntity
-     */
     public function setCheckoutEntity(CheckoutInterface $checkoutEntity = null)
     {
         $this->checkoutEntity = $checkoutEntity;

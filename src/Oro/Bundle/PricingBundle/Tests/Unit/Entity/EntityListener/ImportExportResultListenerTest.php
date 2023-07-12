@@ -173,8 +173,6 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider importExportResultProvider
-     *
-     * @return void
      */
     public function testPostPersistWithoutOption(ImportExportResult $importExportResult): void
     {

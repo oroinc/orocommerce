@@ -34,7 +34,6 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->method('getLineItems')
             ->willReturn([]);
 
-
         $this->eventDispatcher
             ->expects(self::never())
             ->method('dispatch');

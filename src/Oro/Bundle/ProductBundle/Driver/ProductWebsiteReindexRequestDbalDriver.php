@@ -24,11 +24,6 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
     }
 
     /**
-     * @param int $relatedJobId
-     * @param array $websiteIds
-     * @param array $productIds
-     * @param int $chunkSize
-     * @return int
      * @throws Exception
      */
     public function insertMultipleRequests(
@@ -63,10 +58,6 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
     }
 
     /**
-     * @param int $relatedJobId
-     * @param int $websiteId
-     * @param array $productIds
-     * @return int
      * @throws Exception
      */
     public function deleteProcessedRequestItems(int $relatedJobId, int $websiteId, array $productIds): int
@@ -115,10 +106,6 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
     }
 
     /**
-     * @param int $relatedJobId
-     * @param int $websiteId
-     * @param int $batchSize
-     * @return \Traversable
      * @throws Exception
      */
     public function getProductIdIteratorByRelatedJobIdAndWebsiteId(
@@ -162,8 +149,6 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
     }
 
     /**
-     * @param array $params
-     * @return int
      * @throws Exception
      */
     protected function executeInserts(array $params): int

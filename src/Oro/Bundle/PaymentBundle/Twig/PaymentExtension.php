@@ -130,7 +130,6 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
         return $this->getPaymentStatusProvider()->getPaymentStatus($entity);
     }
 
-
     /**
      * {@inheritdoc}
      */

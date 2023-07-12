@@ -108,20 +108,11 @@ class PayPalOuterRedirectEventListener
         return $cardNumber === self::SUCCESS_TRANSACTION_CARD_NUM;
     }
 
-    /**
-     * @param bool $transactionResult
-     * @return string
-     */
     protected function getRedirectRoute(bool $transactionResult): string
     {
         return $transactionResult ? self::SUCCESS_REDIRECT_ROUTE : self::FAILURE_REDIRECT_ROUTE;
     }
 
-    /**
-     * @param string $route
-     * @param array $params
-     * @return string
-     */
     protected function generateUrl(string $route, array $params): string
     {
         return $this->router->generate(

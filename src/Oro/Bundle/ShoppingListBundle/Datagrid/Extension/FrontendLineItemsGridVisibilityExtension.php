@@ -87,10 +87,6 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param Collection $lineItems
-     * @return void
-     */
     private function prefetchProductsVisibility(Collection $lineItems): void
     {
         $productIds = [];

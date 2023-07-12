@@ -281,11 +281,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *
      * @When /^(?:|I )add "(?P<text>(?:[^"]|\\")*)" to dialog code editor$/
      * @When /^(?:|I )add "(?P<text>(?:[^"]|\\")*)" to dialog code editor with (?P<save>(?:[^"]|\\")*)$/
-     *
-     * @param string $text
-     * @param string $save
-     *
-     * @return void
      */
     public function addContentToDialogCodeEditor(string $text, string $save = ''): void
     {
@@ -312,9 +307,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *  | StyleName2 | StyleValue2 |
      *
      * @When /^(?:|I )update selected component "(?P<sector>(?:[^"]|\\")*)" styles:$/
-     *
-     * @param string $sector
-     * @param TableNode $table
      */
     public function updateComponentStyles(string $sector, TableNode $table): void
     {
@@ -351,8 +343,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *  | TraitName2 | TraitValue2 |
      *
      * @When /^(?:|I )update selected component settings:$/
-     *
-     * @param TableNode $table
      */
     public function updateComponentTrait(TableNode $table): void
     {
@@ -375,7 +365,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
             $fieldElement = $fieldWrap->find('css', 'input, select');
 
-
             if ($fieldElement->getAttribute('type') === 'checkbox') {
                 if ($fieldElement->isChecked() !== $value) {
                     $fieldElement->getParent()->click();
@@ -391,8 +380,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: I click on "Clone" action for selected component
      *
      * @When /^(?:|I )click on "(?P<toolName>(?:[^"]|\\")*)" action for selected component$/
-     *
-     * @param string $toolName
      */
     public function clickToolbarAction(string $toolName): void
     {
@@ -421,9 +408,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *              Second column is "Order in list of types on current level"
      *
      * @When /^(?:|I )add new component "(?P<blockName>(?:[^"]|\\")*)" by click from panel to:$/
-     *
-     * @param string $blockName
-     * @param TableNode $table
      */
     public function addNewComponentToByClick(string $blockName, TableNode $table): void
     {
@@ -443,9 +427,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *              Second column is "Order in list of types on current level"
      *
      * @When /^(?:|I )add new component "(?P<blockName>(?:[^"]|\\")*)" from panel to:$/
-     *
-     * @param string $blockName
-     * @param TableNode $table
      */
     public function addNewComponentTo(string $blockName, TableNode $table): void
     {
@@ -457,8 +438,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: I add new component "Text" from panel to editor area
      *
      * @When /^(?:|I )add new component "(?P<blockName>(?:[^"]|\\")*)" from panel to editor area$/
-     *
-     * @param string $blockName
      */
     public function addNewComponentFromPanel(string $blockName): void
     {
@@ -517,9 +496,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *
      * @When /^(?:|I )move "(?P<blockElement>(?:[^"]|\\")*)" to "(?P<destinationElement>(?:[^"]|\\")*)" in editor canvas$/
      *
-     * @param string $blockElement
-     * @param string $destinationElement
-
      * @codingStandardsIgnoreEnd
      */
     public function moveComponentTo(string $blockElement, string $destinationElement): void
@@ -562,9 +538,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     /**
      * Example: I enter "Test text" text to "TextComponent" component
      * @When /^(?:|I )enter "(?P<text>(?:[^"]|\\")*)" text to "(?P<selector>(?:[^"]|\\")*)" component$/
-     *
-     * @param string $selector
-     * @param string $text
      */
     public function editTextComponentWith(string $text, string $selector): void
     {
@@ -590,8 +563,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * @When /^(?:|I )put caret (?P<position>(?:[^"]|\\")*) "(?P<rangeText>(?:[^"]|\\")*)" in selected component$/
      * @When /^(?:|I )select text "(?P<rangeText>(?:[^"]|\\")*)" range in selected component$/
      * @When /^(?:|I )select all text in selected component$/
-     *
-     * @param string $rangeText
      */
     public function selectTextRange(string $rangeText = '', string $position = ''): void
     {
@@ -615,9 +586,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: I check wysiwyg content in "CMS Page Content":
      *
      * @When /^(?:|I )check wysiwyg content in "(?P<wysiwygElementName>[^"]+)":$/
-     *
-     * @param string $wysiwygElementName
-     * @param TableNode $table
      */
     public function checkWysiwygContent(string $wysiwygElementName, TableNode $table): void
     {
@@ -706,8 +674,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: I enter to edit mode "Text" component in canvas
      *
      * @When /^(?:|I )enter to edit mode "(?P<componentName>[^"]+)" component in canvas$/
-     *
-     * @param string $componentName
      */
     public function enterToEditModeComponentInCanvas(string $componentName): void
     {
@@ -725,9 +691,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *
      * @When /^(?:|I )apply "(?P<action>[^"]+)" action in RTE$/
      * @When /^(?:|I )apply "(?P<action>[^"]+)" action with "(?P<value>[^"]+)" in RTE$/
-     *
-     * @param string $action
-     * @param string $value
      */
     public function applyActionInRte(string $action, string $value = ''): void
     {
@@ -757,8 +720,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: And I press "Esc" key on "Default Addresses" element in canvas
      *
      * @When /^(?:|I )press "(?P<key>[^"]*)" key on "(?P<elementName>[\w\s]*)" element in canvas$/
-     * @param string $key
-     * @param string $elementName
      */
     public function pressKeyboardKeyInCanvas(string $key, string $elementName): void
     {
@@ -791,8 +752,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: I make line break after "text" in current editing
      *
      * @When /^(?:|I )make line break after "(?P<strPos>[^"]+)" in current editing$/
-     *
-     * @param string $strPos
      */
     public function makeLineBreakInCurrentEditing(string $strPos): void
     {

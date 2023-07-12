@@ -29,13 +29,6 @@ class MatchingPriceProvider
 
     private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
 
-    /**
-     * @param ProductPriceProviderInterface $productPriceProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
-     * @param string $productClass
-     * @param string $productUnitClass
-     */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         DoctrineHelper $doctrineHelper,

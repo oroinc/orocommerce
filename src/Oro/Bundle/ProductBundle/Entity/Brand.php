@@ -401,7 +401,7 @@ class Brand implements
         return $this;
     }
     /**
-     * @param OrganizationInterface $organization
+     * @param OrganizationInterface|null $organization
      * @return Brand
      */
     public function setOrganization(OrganizationInterface $organization = null)

@@ -56,9 +56,6 @@ abstract class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCas
 
     /**
      * @dataProvider getProductsDataProvider
-     *
-     * @param mixed $storageData
-     * @param array $expectedData
      */
     public function testGet(mixed $storageData, array $expectedData): void
     {

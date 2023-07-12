@@ -51,14 +51,12 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
      */
     protected $fullChainPriceList;
 
-
     /**
      * @var int
      *
      * @ORM\Column(name="version", type="integer", nullable=true)
      */
     protected $version;
-
 
     /**
      * @return CombinedPriceList

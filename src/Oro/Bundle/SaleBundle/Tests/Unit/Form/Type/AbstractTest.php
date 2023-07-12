@@ -176,9 +176,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param int                   $productId
-     * @param int                   $type
-     * @param string                $comment
-     * @param string                $commentCustomer
+     * @param int|null $type
+     * @param string|null $comment
+     * @param string|null $commentCustomer
      * @param QuoteProductRequest[] $requests
      * @param QuoteProductOffer[]   $offers
      *

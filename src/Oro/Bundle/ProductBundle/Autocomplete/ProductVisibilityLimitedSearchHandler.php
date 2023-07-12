@@ -29,14 +29,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     protected ProductSearchRepository $searchRepository;
     protected LocalizationHelper $localizationHelper;
 
-    /**
-     * @param string                  $entityName
-     * @param RequestStack            $requestStack
-     * @param ProductManager          $productManager
-     * @param ProductSearchRepository $searchRepository
-     * @param LocalizationHelper      $localizationHelper
-     * @param FrontendHelper          $frontendHelper
-     */
     public function __construct(
         string $entityName,
         RequestStack $requestStack,

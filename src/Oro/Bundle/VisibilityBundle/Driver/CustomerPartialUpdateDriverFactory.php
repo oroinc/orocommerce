@@ -12,9 +12,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class CustomerPartialUpdateDriverFactory
 {
     /**
-     * @param ServiceLocator $locator
-     * @param EngineParameters $engineParameters
-     * @return CustomerPartialUpdateDriverInterface
      * @throws UnexpectedTypeException
      */
     public static function create(

@@ -40,9 +40,6 @@ class MergePricesCombiningStrategyTest extends AbstractPricesCombiningStrategyTe
         $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
     }
 
-    /**
-     * @return array
-     */
     public function combinePricesDataProvider(): array
     {
         return [
@@ -111,9 +108,6 @@ class MergePricesCombiningStrategyTest extends AbstractPricesCombiningStrategyTe
         $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
     }
 
-    /**
-     * @return array
-     */
     public function addedCombinePricesDataProvider(): array
     {
         return [
@@ -186,9 +180,6 @@ class MergePricesCombiningStrategyTest extends AbstractPricesCombiningStrategyTe
         $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
     }
 
-    /**
-     * @return array
-     */
     public function updatedCombinePricesDataProvider(): array
     {
         return [
@@ -260,9 +251,6 @@ class MergePricesCombiningStrategyTest extends AbstractPricesCombiningStrategyTe
         $this->assertCombinedPriceListContainsPrices($combinedPriceList, $expectedPrices);
     }
 
-    /**
-     * @return array
-     */
     public function removedCombinePricesDataProvider(): array
     {
         return [

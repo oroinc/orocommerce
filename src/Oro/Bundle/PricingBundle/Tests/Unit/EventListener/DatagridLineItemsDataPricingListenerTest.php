@@ -96,7 +96,6 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
             ->method('getLineItems')
             ->willReturn($lineItems);
 
-
         $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
         $this->productLineItemsHolderFactory
             ->expects(self::once())
@@ -179,7 +178,6 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
             ->addKitItemLineItemPrice($kitItemLineItem2Price);
 
         $lineItem3Price = new ProductKitLineItemPrice($lineItem3, Price::create(0.0, self::CURRENCY_USD), 0.0);
-
 
         $lineItemsHolder = (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems));
         $this->productLineItemsHolderFactory

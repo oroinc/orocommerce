@@ -125,7 +125,6 @@ class QuoteController extends AbstractController
         return $this->createQuote($request, $quote, $saveAndReturnActionFormTemplateDataProvider);
     }
 
-
     /**
      * Create sales quote form for customer user
      *
@@ -268,7 +267,7 @@ class QuoteController extends AbstractController
      * @param Quote $quote
      * @param string $template
      *
-     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
     private function handleRequestAndRedirectBack(Request $request, Quote $quote, $template)
     {

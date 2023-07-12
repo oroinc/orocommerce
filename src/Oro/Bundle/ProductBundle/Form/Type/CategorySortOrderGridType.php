@@ -57,9 +57,6 @@ class CategorySortOrderGridType extends AbstractType
         $view->vars['sortOrderConstraints'] = $this->getSortOrderConstraints();
     }
 
-    /**
-     * @return array
-     */
     protected function getSortOrderConstraints(): array
     {
         // build fake field to get correct definitions of JS constraints

@@ -19,9 +19,6 @@ class ProductCollectionContentVariantDatagridListenerTest extends WebTestCase
 
     /**
      * @dataProvider requestAndResultDataProviderWithSegment
-     *
-     * @param array $request
-     * @param array $expectedFilteredProducts
      */
     public function testOnBuildAfterWithSegment(array $request, array $expectedFilteredProducts): void
     {

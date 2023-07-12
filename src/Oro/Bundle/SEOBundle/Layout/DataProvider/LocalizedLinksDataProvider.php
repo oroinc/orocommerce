@@ -50,7 +50,7 @@ class LocalizedLinksDataProvider
     }
 
     /**
-     * @param SlugAwareInterface|SluggableInterface $data
+     * @param SlugAwareInterface $data
      * @return array|AlternateUrl[]
      */
     public function getAlternates(SlugAwareInterface $data)

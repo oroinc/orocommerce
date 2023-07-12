@@ -257,9 +257,6 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $parameters);
     }
 
-    /**
-     * @return array
-     */
     protected function getFormData(): array
     {
         return [

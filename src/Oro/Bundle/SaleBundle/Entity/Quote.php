@@ -438,10 +438,6 @@ class Quote implements
         return $this->qid;
     }
 
-    /**
-     * @param string $guestAccessId
-     * @return Quote
-     */
     public function setGuestAccessId(?string $guestAccessId): Quote
     {
         $this->guestAccessId = $guestAccessId;
@@ -449,9 +445,6 @@ class Quote implements
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getGuestAccessId(): ?string
     {
         return $this->guestAccessId;
@@ -460,7 +453,7 @@ class Quote implements
     /**
      * Set validUntil
      *
-     * @param \DateTime $validUntil
+     * @param \DateTime|null $validUntil
      * @return Quote
      */
     public function setValidUntil(\DateTime $validUntil = null)
@@ -526,7 +519,7 @@ class Quote implements
     /**
      * Set request
      *
-     * @param Request $request
+     * @param Request|null $request
      *
      * @return Quote
      */
@@ -645,7 +638,7 @@ class Quote implements
     /**
      * Set shipUntil
      *
-     * @param \DateTime $shipUntil
+     * @param \DateTime|null $shipUntil
      *
      * @return Quote
      */
@@ -675,7 +668,7 @@ class Quote implements
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
     public function setWebsite(Website $website = null)

@@ -78,8 +78,6 @@ class SegmentMessageFactory
     }
 
     /**
-     * @param array $data
-     * @return Segment
      * @throws InvalidArgumentException
      */
     public function getSegmentFromMessage(array $data): Segment
@@ -105,36 +103,21 @@ class SegmentMessageFactory
         return $segment;
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
     public function getWebsiteIdsFromMessage(array $data): array
     {
         return $data[Topic::OPTION_NAME_WEBSITE_IDS];
     }
 
-    /**
-     * @param array $data
-     * @return bool
-     */
     public function getIsFull(array $data): bool
     {
         return $data[Topic::OPTION_NAME_IS_FULL];
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
     public function getAdditionalProductsFromMessage(array $data): array
     {
         return $data[Topic::OPTION_NAME_ADDITIONAL_PRODUCTS] ?? [];
     }
 
-    /**
-     * @return SegmentRepository
-     */
     private function getSegmentRepository(): SegmentRepository
     {
         if (null === $this->segmentRepository) {

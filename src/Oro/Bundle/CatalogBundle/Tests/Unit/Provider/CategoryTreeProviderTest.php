@@ -152,7 +152,6 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-
     public function getUserDataProvider(): array
     {
         return [

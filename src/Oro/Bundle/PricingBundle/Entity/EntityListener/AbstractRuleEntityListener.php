@@ -38,7 +38,7 @@ abstract class AbstractRuleEntityListener
 
     /**
      * @param array $changeSet
-     * @param Product $product
+     * @param Product|null $product
      * @param int|null $relationId
      */
     protected function recalculateByEntityFieldsUpdate(array $changeSet, Product $product = null, $relationId = null)

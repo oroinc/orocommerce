@@ -22,7 +22,6 @@ class TaxJurisdictionController extends AbstractController
      * @Route("/", name="oro_tax_jurisdiction_index")
      * @Template
      * @AclAncestor("oro_tax_jurisdiction_view")     *
-     * @return
      */
     public function indexAction(): array
     {

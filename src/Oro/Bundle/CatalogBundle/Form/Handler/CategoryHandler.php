@@ -121,13 +121,6 @@ class CategoryHandler implements FormHandlerInterface
         }
     }
 
-    /**
-     * @param Category $category
-     * @param array $appendProducts
-     * @param array $removeProducts
-     * @param array $sortOrder
-     * @return void
-     */
     protected function sortProducts(
         Category $category,
         array $appendProducts,
@@ -154,12 +147,6 @@ class CategoryHandler implements FormHandlerInterface
         }
     }
 
-    /**
-     * @param array $appendProducts
-     * @param array $removeProducts
-     * @param array $sortOrder
-     * @return void
-     */
     protected function cleanProducts(
         array $appendProducts,
         array $removeProducts,

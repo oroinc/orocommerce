@@ -346,7 +346,7 @@ class Checkout implements
     }
 
     /**
-     * @param \DateTime $shipUntil
+     * @param \DateTime|null $shipUntil
      * @return Checkout
      */
     public function setShipUntil(\DateTime $shipUntil = null)
@@ -415,7 +415,7 @@ class Checkout implements
     /**
      * Set shipping estimate
      *
-     * @param Price $shippingCost
+     * @param Price|null $shippingCost
      * @return $this
      */
     public function setShippingCost(Price $shippingCost = null)

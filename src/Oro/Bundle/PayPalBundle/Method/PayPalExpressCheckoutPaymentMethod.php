@@ -260,10 +260,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         return $this->gateway->request($transactionType, $options);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return null|string
-     */
     protected function getTransactionType(PaymentTransaction $paymentTransaction): ?string
     {
         $request = $paymentTransaction->getRequest();

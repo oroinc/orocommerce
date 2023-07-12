@@ -30,13 +30,6 @@ class ProductImagesURLsProvider
         $this->productImageHelper = $productImageHelper;
     }
 
-    /**
-     * @param int $productId
-     * @param array $filtersNames
-     * @param string $initialImageType
-     *
-     * @return array
-     */
     public function getFilteredImagesByProductId(
         int $productId,
         array $filtersNames,

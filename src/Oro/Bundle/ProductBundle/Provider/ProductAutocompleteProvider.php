@@ -92,9 +92,7 @@ class ProductAutocompleteProvider
     }
 
     /**
-     * @param array|Item[]  $productItems
-     * @param Request $request
-     *
+     * @param array|Item[] $productItems
      * @return array
      */
     protected function getProductData(array $productItems): array

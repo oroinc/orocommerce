@@ -14,19 +14,19 @@ interface ProductUnitFieldsSettingsInterface
     public function isProductUnitSelectionVisible(Product $product);
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return bool
      */
     public function isProductPrimaryUnitVisible(Product $product = null);
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return bool
      */
     public function isAddingAdditionalUnitsToProductAvailable(Product $product = null);
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return ProductUnit[]
      */
     public function getAvailablePrimaryUnitChoices(Product $product = null);

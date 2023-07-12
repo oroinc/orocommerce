@@ -314,7 +314,6 @@ class NewArrivalsProviderTest extends OrmTestCase
         $this->assertEquals($productViews, $this->provider->getProducts());
     }
 
-
     public function testGetProductsWhenMinItemsLimitDoesNotReached(): void
     {
         $segment = $this->getSegment(42);

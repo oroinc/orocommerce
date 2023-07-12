@@ -195,9 +195,6 @@ class OrderRepositoryTest extends WebTestCase
             ->findOneBy(['email' => $email]);
     }
 
-    /**
-     * @return OrderRepository
-     */
     private function getRepository(): OrderRepository
     {
         return self::getContainer()

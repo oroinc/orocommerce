@@ -18,9 +18,6 @@ class ProductIndexFieldsProvider implements ProductIndexAttributeProviderInterfa
         $this->fields = new ArrayCollection();
     }
 
-    /**
-     * @param string $field
-     */
     public function addForceIndexed(string $field): void
     {
         if (!$this->fields->contains($field)) {
@@ -28,11 +25,6 @@ class ProductIndexFieldsProvider implements ProductIndexAttributeProviderInterfa
         }
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
     public function isForceIndexed(string $field): bool
     {
         return $this->fields->contains($field);

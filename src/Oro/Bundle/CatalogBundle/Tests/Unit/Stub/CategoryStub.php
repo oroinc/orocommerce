@@ -20,17 +20,11 @@ class CategoryStub extends Category
         }
     }
 
-    /**
-     * @return CategoryTitle
-     */
     public function getDefaultTitle(): ?CategoryTitle
     {
         return $this->getDefaultFallbackValue($this->titles);
     }
 
-    /**
-     * @return LocalizedFallbackValue
-     */
     public function getDefaultSlugPrototype(): ?LocalizedFallbackValue
     {
         return $this->getDefaultFallbackValue($this->slugPrototypes);

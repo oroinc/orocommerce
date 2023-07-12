@@ -225,7 +225,7 @@ class OrderLineItem implements
     /**
      * Set order
      *
-     * @param Order $order
+     * @param Order|null $order
      * @return $this
      */
     public function setOrder(Order $order = null)
@@ -248,7 +248,7 @@ class OrderLineItem implements
     /**
      * Set product
      *
-     * @param Product $product
+     * @param Product|null $product
      * @return $this
      */
     public function setProduct(Product $product = null)
@@ -392,7 +392,7 @@ class OrderLineItem implements
     /**
      * Set productUnit
      *
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @return $this
      */
     public function setProductUnit(ProductUnit $productUnit = null)
@@ -438,7 +438,7 @@ class OrderLineItem implements
     /**
      * Set price
      *
-     * @param Price $price
+     * @param Price|null $price
      * @return $this
      */
     public function setPrice(Price $price = null)
@@ -574,7 +574,7 @@ class OrderLineItem implements
     }
 
     /**
-     * @param \DateTime $shipBy
+     * @param \DateTime|null $shipBy
      * @return $this
      */
     public function setShipBy(\DateTime $shipBy = null)
@@ -584,18 +584,11 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getShippingMethod(): ?string
     {
         return $this->shippingMethod;
     }
 
-    /**
-     * @param string|null $shippingMethod
-     * @return OrderLineItem
-     */
     public function setShippingMethod(?string $shippingMethod): OrderLineItem
     {
         $this->shippingMethod = $shippingMethod;
@@ -603,18 +596,11 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getShippingMethodType(): ?string
     {
         return $this->shippingMethodType;
     }
 
-    /**
-     * @param string|null $shippingMethodType
-     * @return OrderLineItem
-     */
     public function setShippingMethodType(?string $shippingMethodType): OrderLineItem
     {
         $this->shippingMethodType = $shippingMethodType;
@@ -622,18 +608,11 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getShippingEstimateAmount(): ?float
     {
         return $this->shippingEstimateAmount;
     }
 
-    /**
-     * @param float|null $shippingEstimateAmount
-     * @return OrderLineItem
-     */
     public function setShippingEstimateAmount(?float $shippingEstimateAmount): OrderLineItem
     {
         $this->shippingEstimateAmount = $shippingEstimateAmount;

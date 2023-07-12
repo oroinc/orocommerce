@@ -830,7 +830,7 @@ class Product implements
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime|null $createdAt
      *
      * @return Product
      */
@@ -850,7 +850,7 @@ class Product implements
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param \DateTime|null $updatedAt
      *
      * @return Product
      */
@@ -910,7 +910,7 @@ class Product implements
     }
 
     /**
-     * @param OrganizationInterface $organization
+     * @param OrganizationInterface|null $organization
      *
      * @return Product
      */

@@ -152,7 +152,7 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
     }
 
     /**
-     * @param Scope $scope
+     * @param Scope|null $scope
      * @return $this
      */
     public function setScope(Scope $scope = null)

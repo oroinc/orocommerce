@@ -15,9 +15,6 @@ class ProductVariantLinksType extends AbstractType
     /** @var ProductVariantLinksDataTransformer */
     protected $transformer;
 
-    /**
-     * @param ProductVariantLinksDataTransformer $transformer
-     */
     public function __construct(ProductVariantLinksDataTransformer $transformer = null)
     {
         $this->transformer = $transformer ?: new ProductVariantLinksDataTransformer();

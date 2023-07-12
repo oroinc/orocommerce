@@ -32,12 +32,6 @@ class OrderLineItemCurrencyHandler
         }
     }
 
-    /**
-     * @param FormInterface $formLineItems
-     * @param int $index
-     *
-     * @return bool|null
-     */
     private function isPriceChanged(FormInterface $formLineItems, int $index): bool
     {
         if (!$formLineItems->offsetExists($index)) {

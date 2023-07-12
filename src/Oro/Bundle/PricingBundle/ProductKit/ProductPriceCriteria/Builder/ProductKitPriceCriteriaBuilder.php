@@ -53,7 +53,6 @@ class ProductKitPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
             );
         }
 
-
         return $productKitPriceCriteria;
     }
 

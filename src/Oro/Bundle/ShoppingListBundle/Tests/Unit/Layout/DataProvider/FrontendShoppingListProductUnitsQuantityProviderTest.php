@@ -192,7 +192,6 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends TestCase
             ],
         ];
 
-
         return [
             'no prices' => [
                 'product' => $product,

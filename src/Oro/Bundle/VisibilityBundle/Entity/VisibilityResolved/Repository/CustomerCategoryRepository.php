@@ -83,7 +83,7 @@ class CustomerCategoryRepository extends ServiceEntityRepository
      * @param int $visibility
      * @param int $configValue
      * @param Scope $scope
-     * @param Scope $groupScope
+     * @param Scope|null $groupScope
      * @return array
      */
     public function getCategoryIdsByVisibility($visibility, $configValue, Scope $scope, Scope $groupScope = null)
@@ -172,7 +172,7 @@ class CustomerCategoryRepository extends ServiceEntityRepository
     /**
      * @param Category $category
      * @param Scope $scope
-     * @param Scope $groupScope
+     * @param Scope|null $groupScope
      * @param int $configValue
      * @return bool
      */

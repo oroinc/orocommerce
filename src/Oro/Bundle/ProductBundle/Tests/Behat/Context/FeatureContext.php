@@ -1506,9 +1506,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: When I click on dropdown element in grid row contains "Charlie"
      *
      * @Given /^(?:|I )click on "(?P<elementName>[\w\s]*)" element in grid row contains "(?P<content>(?:[^"]|\\")*)"$/
-     *
-     * @param string $elementName
-     * @param string $content
      */
     public function clickOnElementInCell(string $elementName, string $content)
     {

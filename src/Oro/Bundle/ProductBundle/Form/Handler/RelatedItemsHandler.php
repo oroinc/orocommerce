@@ -66,10 +66,6 @@ class RelatedItemsHandler
         return !$hasErrors;
     }
 
-    /**
-     * @param FormInterface $form
-     * @param string|null $message
-     */
     private function addFormError(FormInterface $form, ?string $message)
     {
         $form->addError(

@@ -709,7 +709,7 @@ class Category implements
     /**
      * Set unitPrecision
      *
-     * @param CategoryDefaultProductOptions $defaultProductOptions
+     * @param CategoryDefaultProductOptions|null $defaultProductOptions
      *
      * @return Category
      */

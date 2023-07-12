@@ -38,9 +38,6 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * If 'Exclude Direct URLs Of Landing Pages' is unchecked and
      * 'Include Landing Pages Not Used In Web Catalog' is unchecked
      * indicates that the sitemap for landing pages will only contain pages that belong to the web catalog.
-     *
-     * @param WebsiteInterface|null $website
-     * @return bool
      */
     public function isRestrictedToPagesBelongToWebCatalogOnly(WebsiteInterface $website = null): bool
     {
@@ -52,9 +49,6 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * If 'Exclude Direct URLs Of Landing Pages' is checked and
      * 'Include Landing Pages Not Used In Web Catalog' is unchecked
      * A sitemap for landing pages will not be generated.
-     *
-     * @param WebsiteInterface|null $website
-     * @return bool
      */
     public function isUrlItemsExcluded(WebsiteInterface $website = null): bool
     {
@@ -67,9 +61,6 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * and both 'Exclude Direct URLs Of Landing Pages' and 'Include Landing Pages Not Used In Web Catalog'
      * options are checked (the pages do not belong to the web directory)
      * or unchecked (the pages belong to the web directory).
-     *
-     * @param WebsiteInterface|null $website
-     * @return bool
      */
     public function isRestrictionActive(WebsiteInterface $website = null): bool
     {
@@ -86,9 +77,6 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
 
     /**
      * Exclude direct URLs of landing pages option.
-     *
-     * @param WebsiteInterface|null $website
-     * @return bool
      */
     private function isExcludedPagesBelongToWebCatalog(WebsiteInterface $website = null): bool
     {
@@ -102,9 +90,6 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
 
     /**
      * Include landing pages that are not used in web catalog option.
-     *
-     * @param WebsiteInterface|null $website
-     * @return bool
      */
     private function isIncludedPagesNotBelongToWebCatalog(WebsiteInterface $website = null): bool
     {

@@ -138,7 +138,7 @@ class QuoteProductDemand implements
     }
 
     /**
-     * @param Price $price
+     * @param Price|null $price
      * @return $this
      * @throws \LogicException
      */

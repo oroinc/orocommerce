@@ -75,17 +75,11 @@ class PriceListConfig implements PriceListAwareInterface
         return $this;
     }
 
-    /**
-     * @return bool|null
-     */
     public function isMergeAllowed(): ?bool
     {
         return $this->mergeAllowed;
     }
 
-    /**
-     * @param bool|null $mergeAllowed
-     */
     public function setMergeAllowed(?bool $mergeAllowed)
     {
         $this->mergeAllowed = $mergeAllowed;

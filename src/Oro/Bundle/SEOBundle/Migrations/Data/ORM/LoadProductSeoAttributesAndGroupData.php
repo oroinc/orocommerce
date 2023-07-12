@@ -65,8 +65,6 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
 
     /**
      * If metaKeywords is already attribute then old version of AttributeFamilyData migration was applied.
-     *
-     * @return bool
      */
     private function skipIfAppliedPreviously(): bool
     {

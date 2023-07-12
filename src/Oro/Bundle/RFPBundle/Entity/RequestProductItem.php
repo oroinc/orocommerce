@@ -140,7 +140,7 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
     /**
      * Set requestProduct
      *
-     * @param RequestProduct $requestProduct
+     * @param RequestProduct|null $requestProduct
      * @return RequestProductItem
      */
     public function setRequestProduct(RequestProduct $requestProduct = null)
@@ -163,7 +163,7 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
     /**
      * Set productUnit
      *
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @return RequestProductItem
      */
     public function setProductUnit(ProductUnit $productUnit = null)
@@ -210,7 +210,7 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
     }
 
     /**
-     * @param Price $price
+     * @param Price|null $price
      * @return RequestProductItem
      */
     public function setPrice(Price $price = null)

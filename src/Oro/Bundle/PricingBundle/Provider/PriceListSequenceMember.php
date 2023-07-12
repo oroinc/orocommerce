@@ -9,33 +9,21 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
  */
 class PriceListSequenceMember
 {
-    /** @var PriceList */
     protected PriceList $priceList;
 
-    /** @var bool|null */
     protected ?bool $mergeAllowed;
 
-    /**
-     * @param PriceList $priceList
-     * @param bool|null $mergeAllowed
-     */
     public function __construct(PriceList $priceList, ?bool $mergeAllowed)
     {
         $this->priceList = $priceList;
         $this->mergeAllowed = $mergeAllowed;
     }
 
-    /**
-     * @return PriceList
-     */
     public function getPriceList(): PriceList
     {
         return $this->priceList;
     }
 
-    /**
-     * @return bool
-     */
     public function isMergeAllowed(): bool
     {
         return (bool) $this->mergeAllowed;

@@ -10,7 +10,7 @@ class CouponUsageRepository extends EntityRepository
 {
     /**
      * @param Coupon $coupon
-     * @param CustomerUser $customerUser
+     * @param CustomerUser|null $customerUser
      * @return int
      */
     public function getCouponUsageCount(Coupon $coupon, CustomerUser $customerUser = null)

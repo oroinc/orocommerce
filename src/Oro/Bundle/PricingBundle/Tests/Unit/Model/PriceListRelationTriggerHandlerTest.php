@@ -67,9 +67,6 @@ class PriceListRelationTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->{$method}(...$args);
     }
 
-    /**
-     * @return \Generator
-     */
     public function methodsDataProvider(): ?\Generator
     {
         $website = $this->createMock(Website::class);

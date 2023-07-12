@@ -53,7 +53,6 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
                 ['oro_checkout.enable_line_item_grouping', false, false, null, false],
             ]);
 
-
         $this->assertFalse($this->configProvider->isLineItemsGroupingEnabled());
     }
 

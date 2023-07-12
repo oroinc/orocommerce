@@ -23,12 +23,6 @@ class ShippingCostProvider
         $this->registry = $registry;
     }
 
-    /**
-     * @param ShippingLineItemCollectionInterface $lineItems
-     * @param string $currency
-     *
-     * @return float
-     */
     public function getCalculatedProductShippingCost(
         ShippingLineItemCollectionInterface $lineItems,
         string $currency
