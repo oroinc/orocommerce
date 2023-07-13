@@ -36,9 +36,6 @@ class CheckoutSource implements ExtendEntityInterface
      */
     protected $deleted = false;
 
-    /**
-     * @return int
-     */
     public function getId(): ?int
     {
         return $this->id;

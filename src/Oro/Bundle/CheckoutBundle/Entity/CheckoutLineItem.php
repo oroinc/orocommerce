@@ -228,7 +228,7 @@ class CheckoutLineItem implements
     }
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      *
      * @return $this
      */
@@ -256,7 +256,7 @@ class CheckoutLineItem implements
     }
 
     /**
-     * @param Product $parentProduct
+     * @param Product|null $parentProduct
      *
      * @return $this
      */
@@ -328,7 +328,7 @@ class CheckoutLineItem implements
     }
 
     /**
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      *
      * @return $this
      */
@@ -368,7 +368,7 @@ class CheckoutLineItem implements
     }
 
     /**
-     * @param Price $price
+     * @param Price|null $price
      *
      * @return $this
      */
@@ -522,18 +522,11 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getShippingMethod(): ?string
     {
         return $this->shippingMethod;
     }
 
-    /**
-     * @param null|string $shippingMethod
-     * @return CheckoutLineItem
-     */
     public function setShippingMethod(?string $shippingMethod): CheckoutLineItem
     {
         $this->shippingMethod = $shippingMethod;
@@ -541,18 +534,11 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getShippingMethodType(): ?string
     {
         return $this->shippingMethodType;
     }
 
-    /**
-     * @param null|string $shippingMethodType
-     * @return CheckoutLineItem
-     */
     public function setShippingMethodType(?string $shippingMethodType): CheckoutLineItem
     {
         $this->shippingMethodType = $shippingMethodType;
@@ -560,18 +546,11 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getShippingEstimateAmount(): ?float
     {
         return $this->shippingEstimateAmount;
     }
 
-    /**
-     * @param null|float $shippingEstimateAmount
-     * @return CheckoutLineItem
-     */
     public function setShippingEstimateAmount(?float $shippingEstimateAmount): CheckoutLineItem
     {
         $this->shippingEstimateAmount = $shippingEstimateAmount;

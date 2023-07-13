@@ -32,12 +32,6 @@ interface ProductWebsiteReindexRequestDriverInterface
      */
     public function getWebsiteIdsByRelatedJobId(int $relatedJobId): array;
 
-    /**
-     * @param int $relatedJobId
-     * @param int $websiteId
-     * @param int $batchSize
-     * @return \Traversable
-     */
     public function getProductIdIteratorByRelatedJobIdAndWebsiteId(
         int $relatedJobId,
         int $websiteId,

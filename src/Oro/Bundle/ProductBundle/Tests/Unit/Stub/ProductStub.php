@@ -63,9 +63,6 @@ class ProductStub extends Product
         return $this->getFallbackValue($this->names, $localization);
     }
 
-    /**
-     * @return LocalizedFallbackValue
-     */
     public function getDefaultSlugPrototype(): ?LocalizedFallbackValue
     {
         return $this->getDefaultFallbackValue($this->slugPrototypes);

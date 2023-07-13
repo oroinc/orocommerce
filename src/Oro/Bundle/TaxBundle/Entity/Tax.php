@@ -214,7 +214,7 @@ class Tax implements DatesAwareInterface
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime|null $createdAt
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt = null)
@@ -233,7 +233,7 @@ class Tax implements DatesAwareInterface
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param \DateTime|null $updatedAt
      *
      * @return $this
      */

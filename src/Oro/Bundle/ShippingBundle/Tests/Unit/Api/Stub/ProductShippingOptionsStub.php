@@ -12,33 +12,21 @@ class ProductShippingOptionsStub implements ProductShippingOptionsInterface
 
     private ?Dimensions $dimensions;
 
-    /**
-     * @return Dimensions|null
-     */
     public function getDimensions(): ?Dimensions
     {
         return $this->dimensions;
     }
 
-    /**
-     * @param Dimensions|null $dimensions
-     */
     public function setDimensions(?Dimensions $dimensions): void
     {
         $this->dimensions = $dimensions;
     }
 
-    /**
-     * @return Weight|null
-     */
     public function getWeight(): ?Weight
     {
         return $this->weight;
     }
 
-    /**
-     * @param Weight|null $weight
-     */
     public function setWeight(?Weight $weight): void
     {
         $this->weight = $weight;

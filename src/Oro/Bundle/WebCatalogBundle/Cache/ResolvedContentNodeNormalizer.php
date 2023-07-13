@@ -31,12 +31,6 @@ class ResolvedContentNodeNormalizer
         $this->resolvedContentNodeFactory = $resolvedContentNodeFactory;
     }
 
-    /**
-     * @param ResolvedContentNode $resolvedNode
-     * @param array $context
-     *
-     * @return array
-     */
     public function normalize(ResolvedContentNode $resolvedNode, array $context = []): array
     {
         return [

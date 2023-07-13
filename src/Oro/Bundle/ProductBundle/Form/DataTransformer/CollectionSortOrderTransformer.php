@@ -73,11 +73,6 @@ class CollectionSortOrderTransformer implements DataTransformerInterface
         return $value;
     }
 
-    /**
-     * @param int $productId
-     * @param Product $product
-     * @return CollectionSortOrder
-     */
     private function buildCollection(int $productId, Product $product): CollectionSortOrder
     {
         $collection = null;

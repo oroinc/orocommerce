@@ -104,7 +104,7 @@ class AjaxQuoteController extends AbstractController
     }
 
     /**
-     * @param CustomerUser $customerUser
+     * @param CustomerUser|null $customerUser
      * @return null|Customer
      */
     protected function getCustomer(CustomerUser $customerUser = null)

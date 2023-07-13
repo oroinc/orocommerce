@@ -43,7 +43,6 @@ class Page extends BasePage
         return $this->localizedFieldSet($this->localizedFields, $name, $value);
     }
 
-
     public function getOrganizationField()
     {
         return $this->organizationField;

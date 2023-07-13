@@ -174,7 +174,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
     /**
      * @param Category $category
-     * @param array $restrictedCustomerGroupIds
+     * @param array|null $restrictedCustomerGroupIds
      * @return array
      */
     protected function getCategoryCustomerGroupIdsWithVisibilityFallbackToParent(
@@ -193,7 +193,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
     /**
      * @param Category $category
-     * @param array $restrictedCustomerIds
+     * @param array|null $restrictedCustomerIds
      * @return array
      */
     protected function getCustomerIdsWithFallbackToParent(Category $category, array $restrictedCustomerIds = null)

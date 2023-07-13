@@ -62,12 +62,6 @@ class ProductWebsiteReindexRequestDataStorage implements ProductWebsiteReindexRe
         return $this->driver->getWebsiteIdsByRelatedJobId($relatedJobId);
     }
 
-    /**
-     * @param int $relatedJobId
-     * @param int $websiteId
-     * @param int $batchSize
-     * @return \Traversable
-     */
     public function getProductIdIteratorByRelatedJobIdAndWebsiteId(
         int $relatedJobId,
         int $websiteId,

@@ -201,7 +201,7 @@ class TaxRule implements DatesAwareInterface
     }
 
     /**
-     * @param ProductTaxCode $productTaxCode
+     * @param ProductTaxCode|null $productTaxCode
      *
      * @return $this
      */
@@ -221,7 +221,7 @@ class TaxRule implements DatesAwareInterface
     }
 
     /**
-     * @param CustomerTaxCode $customerTaxCode
+     * @param CustomerTaxCode|null $customerTaxCode
      *
      * @return $this
      */
@@ -241,7 +241,7 @@ class TaxRule implements DatesAwareInterface
     }
 
     /**
-     * @param Tax $tax
+     * @param Tax|null $tax
      *
      * @return $this
      */
@@ -261,7 +261,7 @@ class TaxRule implements DatesAwareInterface
     }
 
     /**
-     * @param TaxJurisdiction $taxJurisdiction
+     * @param TaxJurisdiction|null $taxJurisdiction
      *
      * @return $this
      */
@@ -289,7 +289,7 @@ class TaxRule implements DatesAwareInterface
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime|null $createdAt
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt = null)
@@ -308,7 +308,7 @@ class TaxRule implements DatesAwareInterface
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param \DateTime|null $updatedAt
      *
      * @return $this
      */

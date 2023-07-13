@@ -64,7 +64,6 @@ class LoadPromotionDemoData extends AbstractFixture implements ContainerAwareInt
             ->findOrCreate('promotion', ['website' => null, 'customerGroup' => null, 'customer' => null]);
         $sortOrder = 1;
 
-
         $offTotalName = 'Seasonal Sale | 25% Off the order total with a coupon code';
         $offTotalPromo = (new Promotion())
             ->setOrganization($user->getOrganization())
@@ -113,7 +112,6 @@ class LoadPromotionDemoData extends AbstractFixture implements ContainerAwareInt
         ;
         $manager->persist($coupon);
 
-
         $buyXgetYName = 'Buy 10 Get 5 with $2 off on new arrivals in Medical Footwear';
         $buyXgetYPromo = (new Promotion())
             ->setOrganization($user->getOrganization())
@@ -150,7 +148,6 @@ class LoadPromotionDemoData extends AbstractFixture implements ContainerAwareInt
             ->setDefaultLabel($buyXgetYName)
         ;
         $manager->persist($buyXgetYPromo);
-
 
         /** @var ChannelRepository $intChannelRepo */
         $integrationChannelRepo = $manager->getRepository(Channel::class);
@@ -201,7 +198,6 @@ class LoadPromotionDemoData extends AbstractFixture implements ContainerAwareInt
             ->setDefaultLabel($freeShippingLabel)
         ;
         $manager->persist($freeFixedShippingPromo);
-
 
         /** @var ChannelRepository $intChannelRepo */
         $integrationChannelRepo = $manager->getRepository(Channel::class);

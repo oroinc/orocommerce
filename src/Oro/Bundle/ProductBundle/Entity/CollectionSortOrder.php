@@ -59,8 +59,6 @@ class CollectionSortOrder implements ExtendEntityInterface
     protected $sortOrder;
 
     /**
-     * @var Product
-     *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
@@ -77,8 +75,6 @@ class CollectionSortOrder implements ExtendEntityInterface
     protected Product $product;
 
     /**
-     * @var Segment
-     *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment")
      * @ORM\JoinColumn(name="segment_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
@@ -102,9 +98,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this->id;
     }
 
-    /**
-     * @return Product
-     */
     public function getProduct(): Product
     {
         return $this->product;
@@ -120,9 +113,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this;
     }
 
-    /**
-     * @return Segment
-     */
     public function getSegment(): Segment
     {
         return $this->segment;
@@ -138,9 +128,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getSortOrder(): ?float
     {
         return $this->sortOrder;

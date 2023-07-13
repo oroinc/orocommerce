@@ -177,7 +177,7 @@ class TaxJurisdiction implements DatesAwareInterface
     /**
      * Set country
      *
-     * @param Country $country
+     * @param Country|null $country
      *
      * @return TaxJurisdiction
      */
@@ -201,7 +201,7 @@ class TaxJurisdiction implements DatesAwareInterface
     /**
      * Set region
      *
-     * @param Region $region
+     * @param Region|null $region
      *
      * @return TaxJurisdiction
      */

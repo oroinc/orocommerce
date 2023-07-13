@@ -124,16 +124,13 @@ class Redirect
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getFromPrototype(): ?string
     {
         return $this->fromPrototype;
     }
 
     /**
-     * @param string $fromPrototype
+     * @param string|null $fromPrototype
      * @return $this
      */
     public function setFromPrototype(?string $fromPrototype): Redirect
@@ -163,16 +160,13 @@ class Redirect
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getToPrototype(): ?string
     {
         return $this->toPrototype;
     }
 
     /**
-     * @param string $toPrototype
+     * @param string|null $toPrototype
      * @return $this
      */
     public function setToPrototype(?string $toPrototype): Redirect

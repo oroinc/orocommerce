@@ -297,19 +297,12 @@ class Subtotal
 
     /**
      * Check after total calculation.
-     *
-     * @return bool
      */
     public function isRemovable(): bool
     {
         return $this->removable;
     }
 
-    /**
-     * @param bool $removable
-     *
-     * @return Subtotal
-     */
     public function setRemovable(bool $removable): Subtotal
     {
         $this->removable = $removable;

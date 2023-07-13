@@ -14,9 +14,6 @@ class PaymentTermAwareStub implements CustomerOwnerAwareInterface
     /** @var Customer */
     private $customer;
 
-    /**
-     * @param PaymentTerm $paymentTerm
-     */
     public function __construct(PaymentTerm $paymentTerm = null)
     {
         $this->paymentTerm = $paymentTerm;

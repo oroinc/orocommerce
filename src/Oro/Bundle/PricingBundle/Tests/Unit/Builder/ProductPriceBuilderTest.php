@@ -345,7 +345,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @param array $fields
      * @param array $rules
-     * @param int[]|Product[]|null $products
+     * @param int[]|Product[] $products
      * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private function assertInsertCall(array $fields, array $rules, array $products = [])

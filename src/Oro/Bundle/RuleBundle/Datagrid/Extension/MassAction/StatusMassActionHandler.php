@@ -37,12 +37,6 @@ class StatusMassActionHandler implements MassActionHandlerInterface
      */
     protected $translator;
 
-    /**
-     * @param string $responseMessage
-     * @param string $repositoryClassPath
-     * @param EntityManager $entityManager
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         string $responseMessage,
         string $repositoryClassPath,

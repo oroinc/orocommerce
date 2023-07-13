@@ -49,11 +49,6 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
         return $this->isOrderChanged($entity);
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return bool
-     */
     private function isOrderChanged(Order $order): bool
     {
         $originalOrderData = $this->getOriginalEntityData($order);

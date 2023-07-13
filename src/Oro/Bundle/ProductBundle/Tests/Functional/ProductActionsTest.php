@@ -44,10 +44,6 @@ class ProductActionsTest extends WebTestCase
         self::assertEquals(['success' => [0 => 'Product has been duplicated']], $flashMessages);
     }
 
-    /**
-     * @param Product $product
-     * @param string $operationName
-     */
     protected function executeOperation(Product $product, string $operationName): void
     {
         $entityId = $product->getId();

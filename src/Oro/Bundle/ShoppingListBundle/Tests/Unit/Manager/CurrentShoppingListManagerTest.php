@@ -247,9 +247,6 @@ class CurrentShoppingListManagerTest extends TestCase
             ->method('getShoppingListsForCustomerVisitor');
     }
 
-    /**
-     * @param int $customerUserId
-     */
     private function setCustomerUserForTokenAccessor(int $customerUserId = 234): void
     {
         $customerUser = $this->getCustomerUser($customerUserId);
@@ -258,10 +255,6 @@ class CurrentShoppingListManagerTest extends TestCase
             ->willReturn($customerUser);
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param int $customerUserId
-     */
     private function setCustomerUserForShoppingList(ShoppingList $shoppingList, int $customerUserId = 2345): void
     {
         $customerUser = $this->getCustomerUser($customerUserId);

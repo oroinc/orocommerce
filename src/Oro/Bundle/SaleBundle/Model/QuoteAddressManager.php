@@ -35,8 +35,8 @@ class QuoteAddressManager extends AbstractAddressManager
     }
 
     /**
-     * @param AbstractAddress $address
-     * @param QuoteAddress $quoteAddress
+     * @param AbstractAddress|null $address
+     * @param QuoteAddress|null $quoteAddress
      *
      * @return QuoteAddress
      */

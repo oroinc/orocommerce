@@ -211,9 +211,6 @@ class AddressOptionModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOrganization(): string
     {
         return $this->organization;

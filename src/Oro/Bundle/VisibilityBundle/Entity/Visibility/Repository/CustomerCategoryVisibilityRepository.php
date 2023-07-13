@@ -9,7 +9,7 @@ class CustomerCategoryVisibilityRepository extends AbstractCategoryVisibilityRep
     /**
      * @param Category $category
      * @param string $visibility
-     * @param array $restrictedCustomerIds
+     * @param array|null $restrictedCustomerIds
      * @return array
      */
     public function getCategoryCustomerIdsByVisibility(

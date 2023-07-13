@@ -734,7 +734,7 @@ class Request implements
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
     public function setWebsite(Website $website = null)

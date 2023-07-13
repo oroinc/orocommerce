@@ -40,9 +40,6 @@ class ProductPriceRemove extends Event
         return $this->price;
     }
 
-    /**
-     * @return EntityManager
-     */
     public function getEntityManager(): ?EntityManager
     {
         return $this->entityManager;

@@ -15,7 +15,7 @@ interface InventoryQuantityProviderInterface
     public function getAvailableQuantity(Product $product, ProductUnit $unit);
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return bool
      */
     public function canDecrement(Product $product = null);

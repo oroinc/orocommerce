@@ -60,8 +60,6 @@ abstract class AbstractSessionDataStorage extends AbstractDataStorage implements
 
     /**
      * Returns the key for the element that stores storage data in a session bag.
-     *
-     * @return string
      */
     abstract protected function getKey(): string;
 }

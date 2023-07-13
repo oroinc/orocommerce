@@ -202,7 +202,6 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-
     /**
      * @dataProvider getAllPricesForProductsProvider
      */

@@ -172,8 +172,6 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
-     * @return void
      * @throws AccessDeniedException
      *
      */

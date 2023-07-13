@@ -137,12 +137,6 @@ class WebCatalogEntityIndexerListener
 
     /**
      * Rules which information to add to index depending on context (partial indexation group)
-     *
-     * @param IndexEntityEvent $event
-     * @param int $websiteId
-     * @param array $relations
-     * @param array $nodes
-     * @return void
      */
     protected function processInformationAndAddToIndex(
         IndexEntityEvent $event,
@@ -270,10 +264,6 @@ class WebCatalogEntityIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @param array $relations
-     */
     protected function addCollectionSortOrderInformationToIndex(IndexEntityEvent $event, array $relations): void
     {
         foreach ($relations as $relation) {
@@ -285,11 +275,6 @@ class WebCatalogEntityIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @param array $relation
-     * @return void
-     */
     protected function addCollectionSortOrderInformation(IndexEntityEvent $event, array $relation): void
     {
         $recordId = $this->contentVariantProvider->getRecordId($relation);

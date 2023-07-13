@@ -203,12 +203,6 @@ SQL;
         return null;
     }
 
-
-    /**
-     * @param PriceList $priceList
-     *
-     * @return bool
-     */
     public function hasCombinedPriceListWithPriceList(PriceList $priceList): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

@@ -206,7 +206,6 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
                 [1111, false],
             ]);
 
-
         $this->attachmentManager
             ->expects(self::any())
             ->method('getFilteredImageUrl')

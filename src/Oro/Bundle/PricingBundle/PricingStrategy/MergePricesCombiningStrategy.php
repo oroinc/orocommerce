@@ -122,10 +122,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         );
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @return bool
-     */
     private function canUseTempTable(CombinedPriceList $combinedPriceList): bool
     {
         if (!$this->getInsertSelectExecutor() instanceof ShardQueryExecutorNativeSqlInterface) {

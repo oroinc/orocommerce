@@ -112,7 +112,7 @@ class RequestProduct implements ProductHolderInterface
     /**
      * Set request
      *
-     * @param Request $request
+     * @param Request|null $request
      * @return RequestProduct
      */
     public function setRequest(Request $request = null)
@@ -135,7 +135,7 @@ class RequestProduct implements ProductHolderInterface
     /**
      * Set product
      *
-     * @param Product $product
+     * @param Product|null $product
      * @return RequestProduct
      */
     public function setProduct(Product $product = null)

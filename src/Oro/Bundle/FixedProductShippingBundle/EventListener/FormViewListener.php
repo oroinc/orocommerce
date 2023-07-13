@@ -31,8 +31,6 @@ class FormViewListener
     }
 
     /**
-     * @param BeforeListRenderEvent $event
-     *
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
@@ -60,8 +58,6 @@ class FormViewListener
     }
 
     /**
-     * @param BeforeListRenderEvent $event
-     *
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError

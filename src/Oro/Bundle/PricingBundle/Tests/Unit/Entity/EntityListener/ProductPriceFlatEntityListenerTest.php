@@ -55,11 +55,6 @@ class ProductPriceFlatEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider featureAndListenerDataProvider
-     *
-     * @param string $feature
-     * @param bool $enabled
-     *
-     * @return void
      */
     public function testOnSaveWithFeatureAndListenerDisabled(string $feature, bool $enabled): void
     {
@@ -95,11 +90,6 @@ class ProductPriceFlatEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider featureAndListenerDataProvider
-     *
-     * @param string $feature
-     * @param bool $enabled
-     *
-     * @return void
      */
     public function testOnRemoveWithFeatureAndListenerDisabled(string $feature, bool $enabled): void
     {

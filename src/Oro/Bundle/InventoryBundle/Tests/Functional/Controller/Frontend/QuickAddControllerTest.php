@@ -45,12 +45,6 @@ class QuickAddControllerTest extends WebTestCase
     }
 
     /**
-     * @param int $quantity
-     * @param int $minLimit
-     * @param int $maxLimit
-     * @param string $errorMessage
-     * @param int $errorLimit
-     *
      * @dataProvider getQuickAddData
      */
     public function testQuickAddReturnsErrorIfQuantityOutOfBound(

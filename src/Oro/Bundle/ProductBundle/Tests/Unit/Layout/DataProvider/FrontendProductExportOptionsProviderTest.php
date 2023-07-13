@@ -36,12 +36,6 @@ class FrontendProductExportOptionsProviderTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider getDefaultGridExportRequestOptionsDataProviderWithCategoryId
-     * @param int|null $categoryId
-     * @param bool|null $includeSubcategories
-     * @param int $categoryContentId
-     * @param bool $overrideConfiguration
-     * @param string|null $searchString
-     * @param string|null $expected
      */
     public function testGetDefaultGridExportRequestOptionsWithCategoryId(
         ?int $categoryId,

@@ -124,8 +124,8 @@ abstract class AbstractPriceListTreeHandler
     }
 
     /**
-     * @param Customer|null $customer
-     * @param Website|null $website
+     * @param Customer $customer
+     * @param Website $website
      * @return null|BasePriceList
      */
     protected function getPriceListByCustomerGroup(Customer $customer, Website $website)

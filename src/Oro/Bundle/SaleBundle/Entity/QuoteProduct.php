@@ -266,7 +266,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * Set quote
      *
-     * @param Quote $quote
+     * @param Quote|null $quote
      * @return QuoteProduct
      */
     public function setQuote(Quote $quote = null)
@@ -289,7 +289,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * Set product
      *
-     * @param Product $product
+     * @param Product|null $product
      * @return QuoteProduct
      */
     public function setProduct(Product $product = null)
@@ -363,7 +363,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * Set productReplacement
      *
-     * @param Product $productReplacement
+     * @param Product|null $productReplacement
      * @return QuoteProduct
      */
     public function setProductReplacement(Product $productReplacement = null)

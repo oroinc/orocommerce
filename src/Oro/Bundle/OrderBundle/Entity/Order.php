@@ -1136,7 +1136,7 @@ class Order implements
     /**
      * Set total discounts
      *
-     * @param Price $totalDiscounts
+     * @param Price|null $totalDiscounts
      * @return Order
      */
     public function setTotalDiscounts(Price $totalDiscounts = null)

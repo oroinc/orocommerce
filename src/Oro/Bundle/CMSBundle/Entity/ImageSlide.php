@@ -162,9 +162,6 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
      */
     protected $textAlignment = self::TEXT_ALIGNMENT_CENTER;
 
-    /**
-     * @return int
-     */
     public function getId(): ?int
     {
         return $this->id;

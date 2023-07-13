@@ -78,11 +78,6 @@ class ContentVariantListener
         $this->propertyAccessor->setValue($object, $property, $value);
     }
 
-    /**
-     * @param object $entity
-     * @param BusinessUnit|null $businessUnit
-     * @param OrganizationInterface|null $organization
-     */
     private function setEntityOwner(
         object $entity,
         ?BusinessUnit $businessUnit,

@@ -30,11 +30,6 @@ class CouponValidationService
         return !$this->getViolations($coupon, $customerUser);
     }
 
-    /**
-     * @param Coupon $coupon
-     * @param CustomerUser $customerUser
-     * @return array
-     */
     public function getViolations(Coupon $coupon, CustomerUser $customerUser = null): array
     {
         $violations = [];
@@ -82,11 +77,6 @@ class CouponValidationService
             &&$coupon->getUsesPerCoupon() <= $this->couponUsageManager->getCouponUsageCount($coupon);
     }
 
-    /**
-     * @param Coupon $coupon
-     * @param CustomerUser $customerUser
-     * @return bool
-     */
     private function isCouponUsagePerCustomerUserLimitExceeded(Coupon $coupon, CustomerUser $customerUser = null): bool
     {
         return $customerUser

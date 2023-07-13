@@ -73,7 +73,6 @@ class CategoryProvider
         return $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);
     }
 
-
     private function getCustomerUser(): ?CustomerUser
     {
         $token = $this->tokenAccessor->getToken();

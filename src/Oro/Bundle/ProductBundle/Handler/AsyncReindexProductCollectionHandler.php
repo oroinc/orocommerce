@@ -43,10 +43,6 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
      * reindex product collection child jobs and dependent job scheduled,
      * 'false' when failed to run job or throws exception.
      *
-     * @param iterable $childJobPartialMessages
-     * @param string $uniqueJobName
-     * @param bool $throwExceptionOnFailToRunJob
-     * @return bool
      * @throws FailedToRunReindexProductCollectionJobException
      */
     public function handle(

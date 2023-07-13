@@ -29,11 +29,6 @@ class LoadPricesAttributeOrganizationData extends AbstractFixture
             ->execute();
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return Organization|object
-     */
     private function getFirstOrganization(ObjectManager $manager): Organization
     {
         /** @var ArrayCollection $organizations */

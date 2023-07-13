@@ -125,15 +125,6 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         }
     }
 
-    /**
-     * @param JobRunner $jobRunner
-     * @param Job $job
-     * @param int $websiteId
-     * @param array $productIds
-     * @param int $batchId
-     * @param array|null $fieldGroups
-     * @return void
-     */
     protected function sendToReindex(
         JobRunner $jobRunner,
         Job $job,

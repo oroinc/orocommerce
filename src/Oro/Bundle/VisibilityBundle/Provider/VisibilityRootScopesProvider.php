@@ -22,7 +22,7 @@ class VisibilityRootScopesProvider implements VisibilityRootScopesProviderInterf
     }
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return Scope[]
      */
     public function getScopes(Product $product = null)
