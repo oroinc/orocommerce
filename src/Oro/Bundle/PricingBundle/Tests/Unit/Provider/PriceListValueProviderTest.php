@@ -10,20 +10,18 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Provider\PriceListValueProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PriceListValueProviderTest extends \PHPUnit\Framework\TestCase
+class PriceListValueProviderTest extends TestCase
 {
-    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shardManager;
+    private ShardManager|MockObject $shardManager;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|MockObject $doctrine;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
+    private AclHelper|MockObject $aclHelper;
 
-    /** @var PriceListValueProvider */
-    private $priceListValueProvider;
+    private PriceListValueProvider $priceListValueProvider;
 
     protected function setUp(): void
     {
@@ -73,15 +71,21 @@ class PriceListValueProviderTest extends \PHPUnit\Framework\TestCase
 
         $repo->expects(self::once())
             ->method('createQueryBuilder')
+            ->with('p')
             ->willReturn($qb);
 
         $qb->expects(self::once())
             ->method('orderBy')
-            ->willReturn($qb);
-
+            ->with('p.id')
+            ->willReturnSelf();
+        $qb->expects(self::once())
+            ->method('select')
+            ->with('p.id')
+            ->willReturnSelf();
         $qb->expects(self::once())
             ->method('setMaxResults')
-            ->willReturn($qb);
+            ->with(1)
+            ->willReturnSelf();
 
         $this->aclHelper->expects(self::once())
             ->method('apply')
