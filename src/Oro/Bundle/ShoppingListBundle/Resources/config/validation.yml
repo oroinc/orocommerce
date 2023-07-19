@@ -116,6 +116,12 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                     - update
                     # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                     - datagrid_line_items_data
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
+                groups:
+                    # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                    - add_product_kit_line_item
+                    # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                    - datagrid_line_items_data
     properties:
         product:
             -   NotBlank:

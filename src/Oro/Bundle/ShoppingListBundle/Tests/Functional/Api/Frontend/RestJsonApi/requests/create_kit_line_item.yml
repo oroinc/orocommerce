@@ -18,10 +18,10 @@ data:
             data:
                 -
                     type: shoppinglistkititems
-                    id: kit_1
+                    id: kititemlineitem1
                 -
                     type: shoppinglistkititems
-                    id: kit_2
+                    id: kititemlineitem2
         unit:
             data:
                 type: productunits
@@ -29,7 +29,7 @@ data:
 included:
     -
         type: shoppinglistkititems
-        id: kit_1
+        id: kititemlineitem1
         attributes:
             quantity: 1
         relationships:
@@ -47,7 +47,7 @@ included:
                     id: '<toString(@item->code)>'
     -
         type: shoppinglistkititems
-        id: kit_2
+        id: kititemlineitem2
         attributes:
             quantity: 1
         relationships:

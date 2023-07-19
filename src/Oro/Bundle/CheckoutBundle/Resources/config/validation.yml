@@ -8,7 +8,6 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
                     - checkout_before_order_create_from_order
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener
                     - checkout_pre_order_create_from_quotedemand
-
     properties:
         lineItems:
             -   Count:
@@ -76,6 +75,14 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                     - checkout_pre_order_create_from_order
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
                     - checkout_pre_order_create_from_quotedemand
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
+                groups:
+                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
+                    - checkout_start_from_order
+                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
+                    - checkout_start_from_quotedemand
+                    # Used by \Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider
+                    - checkout_line_items_data
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\IsLowInventoryLevel:
                 payload:
                     # Option "severity" is handled by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
@@ -234,6 +241,10 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                     - checkout_start_from_shoppinglist
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
+                groups:
+                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
+                    - checkout_start_from_shoppinglist
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
                 groups:
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                     - checkout_start_from_shoppinglist

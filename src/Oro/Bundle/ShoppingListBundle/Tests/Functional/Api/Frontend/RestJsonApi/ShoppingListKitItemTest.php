@@ -198,8 +198,8 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
             $lineItemId,
-            $this->getReference('product_kit1_item3')->getId(),
-            $this->getReference('product4')->getId(),
+            $this->getReference('product_kit1_item1')->getId(),
+            $this->getReference('product1')->getId(),
             $productUnitCode,
             5,
             1
@@ -220,7 +220,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
 
         $kitItemLineItemShoppingList = $lineItem->getShoppingList();
         self::assertEquals($shoppingList5->getId(), $kitItemLineItemShoppingList->getId());
-        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 285.13, 'USD');
+        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 186.13, 'USD');
     }
 
     public function testCreateTogetherWithShoppingList(): void
@@ -247,8 +247,8 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
             $lineItemId,
-            $this->getReference('product_kit1_item3')->getId(),
-            $this->getReference('product4')->getId(),
+            $this->getReference('product_kit1_item1')->getId(),
+            $this->getReference('product1')->getId(),
             $productUnitCode,
             5,
             1
@@ -268,7 +268,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         );
 
         $kitItemLineItemShoppingList = $lineItem->getShoppingList();
-        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 283.9, 'USD');
+        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 184.9, 'USD');
     }
 
     public function testCreateForDefaultShoppingListForUserWithoutShoppingLists(): void
@@ -309,8 +309,8 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
             $lineItemId,
-            $this->getReference('product_kit1_item3')->getId(),
-            $this->getReference('product4')->getId(),
+            $this->getReference('product_kit1_item1')->getId(),
+            $this->getReference('product1')->getId(),
             $productUnitCode,
             5,
             1
@@ -329,7 +329,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
             'New Line Item Notes'
         );
 
-        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 283.9, 'USD');
+        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 184.9, 'USD');
     }
 
     public function testCreateTogetherWithShoppingListWhenShoppingListLimitExceeded(): void
@@ -387,8 +387,8 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
             $lineItemId,
-            $this->getReference('product_kit1_item3')->getId(),
-            $this->getReference('product4')->getId(),
+            $this->getReference('product_kit1_item1')->getId(),
+            $this->getReference('product1')->getId(),
             $productUnitCode,
             5,
             1
@@ -409,7 +409,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
 
         $kitItemLineItemShoppingList = $lineItem->getShoppingList();
         self::assertEquals($shoppingList2Id, $kitItemLineItemShoppingList->getId());
-        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 333.7, 'USD');
+        $this->assertShoppingListTotal($kitItemLineItemShoppingList, 234.7, 'USD');
     }
 
     public function testCreateForShoppingListFromAnotherWebsite(): void

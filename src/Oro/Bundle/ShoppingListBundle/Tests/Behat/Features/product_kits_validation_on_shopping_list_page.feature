@@ -195,6 +195,7 @@ Feature: Product kits validation on shopping list page
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
       | product-kit-01                  | Product Kit 1 Missing required kit item                                                                                          | In Stock     | 2      | pieces | $10.00 | $20.00   |
+      |                                 | Product kit "product-kit-01" is missing the required kit item "Base Unit"                                                        |              |        |        |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid required kit item                                                                                          | In Stock     | 2      | pieces |        |          |
       |                                 | Base Unit: The selected product is not allowed                                                                                   |              | 1      | piece  |        |          |
@@ -281,6 +282,7 @@ Feature: Product kits validation on shopping list page
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Missing required kit item                                                                                          | In Stock     | 2 piece        | $10.00 | $20.00   |
+      |                                 | Product kit "product-kit-01" is missing the required kit item "Base Unit"                                                        |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid required kit item                                                                                          | In Stock     | 2 pieces       |        |          |
       |                                 | Base Unit: The selected product is not allowed                                                                                   |              | 1 piece        |        |          |
@@ -366,6 +368,7 @@ Feature: Product kits validation on shopping list page
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Missing required kit item                                                                                          | In Stock     | 2 piece        | $10.00 | $20.00   |
+      |                                 | Product kit "product-kit-01" is missing the required kit item "Base Unit"                                                        |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid required kit item                                                                                          | In Stock     | 2 pieces       |        |          |
       |                                 | Base Unit: The selected product is not allowed                                                                                   |              | 1 piece        |        |          |

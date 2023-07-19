@@ -1090,6 +1090,11 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'request' => 'create_kit_line_item_without_kit_item_line_items_data.yml',
                 'expectedErrors' => [
                     [
+                        'title' => 'product kit line item contains required kit items constraint',
+                        'detail' => 'Product kit "KIT1" is missing the required kit item "Product Kit 1 Item 1"',
+                        'source' => ['pointer' => '/data/relationships/kitItems/data'],
+                    ],
+                    [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/included/0/relationships/product/data'],
@@ -1112,13 +1117,18 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'range constraint',
                         'detail' => 'This value should be between 0 and 5.',
-                        'source' => ['pointer' => '/included/0/attributes/quantity'],
+                        'source' => ['pointer' => '/included/1/attributes/quantity'],
                     ],
                 ],
             ],
             'no kitItem' => [
                 'request' => 'create_kit_line_item_kit_item_line_item_without_kit_item.yml',
                 'expectedErrors' => [
+                    [
+                        'title' => 'product kit line item contains required kit items constraint',
+                        'detail' => 'Product kit "KIT1" is missing the required kit item "Product Kit 1 Item 1"',
+                        'source' => ['pointer' => '/data/relationships/kitItems/data'],
+                    ],
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
@@ -1132,12 +1142,12 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'at least one of constraint',
                         'detail' => 'Original selection no longer available',
-                        'source' => ['pointer' => '/included/0/relationships/product/data'],
+                        'source' => ['pointer' => '/included/1/relationships/product/data'],
                     ],
                     [
                         'title' => 'access granted constraint',
                         'detail' => 'The "VIEW" permission is denied for the related resource.',
-                        'source' => ['pointer' => '/included/0/relationships/product/data'],
+                        'source' => ['pointer' => '/included/1/relationships/product/data'],
                     ],
                 ],
             ],
@@ -1172,7 +1182,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
     /**
      * @dataProvider getCreateKitLineItemWithoutKitItemLineItemsDataProvider
      */
-    public function testCreateKitLineItemWithoutKitItemLineItems(string $request): void
+    public function testCreateKitLineItemWithoutKitItemLineItems(string $request, array $expectedErrors): void
     {
         $shoppingList = $this->getReference('shopping_list1');
         self::assertCount(3, $shoppingList->getLineItems());
@@ -1180,23 +1190,12 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $response = $this->post(
             ['entity' => 'shoppinglistitems'],
-            $this->getRequestData($request)
+            $this->getRequestData($request),
+            [],
+            false
         );
 
-        $lineItemId = (int) $this->getResourceId($response);
-        /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
-        self::assertNotNull($lineItem);
-        $shoppingList = $lineItem->getShoppingList();
-        self::assertNotNull($shoppingList);
-        self::assertCount(4, $shoppingList->getLineItems());
-
-        $responseContent = $this->updateResponseContent('create_kit_line_item.yml', $response);
-        $responseContent['data']['relationships']['kitItems']['data'] = [];
-        $this->assertResponseContains($responseContent, $response);
-        $this->assertShoppingListTotal($shoppingList, 182.55, 'USD');
+        $this->assertResponseValidationErrors($expectedErrors, $response);
     }
 
     public function getCreateKitLineItemWithoutKitItemLineItemsDataProvider(): array
@@ -1206,11 +1205,9 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'request' => 'create_kit_line_item_without_kit_items_data.yml',
                 'expectedErrors' => [
                     [
-                        'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
-                        'source' => [
-                            'pointer' => '/data/relationships/kitItems/data',
-                        ],
+                        'title' => 'product kit line item contains required kit items constraint',
+                        'detail' => 'Product kit "KIT1" is missing the required kit item "Product Kit 1 Item 1"',
+                        'source' => ['pointer' => '/data/relationships/kitItems/data'],
                     ],
                 ],
             ],
@@ -1218,11 +1215,9 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'request' => 'create_kit_line_item_with_empty_kit_items.yml',
                 'expectedErrors' => [
                     [
-                        'title' => 'expression constraint',
-                        'detail' => 'This value is not valid.',
-                        'source' => [
-                            'pointer' => '/data/relationships/kitItems/data',
-                        ],
+                        'title' => 'product kit line item contains required kit items constraint',
+                        'detail' => 'Product kit "KIT1" is missing the required kit item "Product Kit 1 Item 1"',
+                        'source' => ['pointer' => '/data/relationships/kitItems/data'],
                     ],
                 ],
             ],
