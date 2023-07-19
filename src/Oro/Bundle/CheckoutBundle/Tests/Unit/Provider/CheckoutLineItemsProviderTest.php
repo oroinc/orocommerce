@@ -55,15 +55,17 @@ class CheckoutLineItemsProviderTest extends TestCase
         $lineItems = new ArrayCollection([
             $this->getCheckoutLineItem('SKU1', 'item', 100, ''),
             $this->getCheckoutLineItem('SKU2', 'set', 50, ''),
+            $this->getCheckoutLineItem('SKU2', 'set', 50, 'sample_checksum1'),
         ]);
         $sourceLineItems = new ArrayCollection([
             $this->getCheckoutLineItem('SKU1', 'item', 100, ''),
             $this->getCheckoutLineItem('SKU2', 'set', 100, ''),
+            $this->getCheckoutLineItem('SKU2', 'set', 50, 'sample_checksum2'),
             $this->getCheckoutLineItem('SKU3', 'box', 100, ''),
         ]);
 
         self::assertEquals(
-            ['SKU2', 'SKU3'],
+            ['SKU2', 'SKU2', 'SKU3'],
             $this->provider->getProductSkusWithDifferences($lineItems, $sourceLineItems)
         );
     }

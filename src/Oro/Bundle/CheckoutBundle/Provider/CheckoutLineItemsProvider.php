@@ -24,7 +24,7 @@ class CheckoutLineItemsProvider
     }
 
     /**
-     * Returns an array of product SKUs which were removed or have different quantity or unit.
+     * Returns an array of product SKUs which were removed or have different quantity, unit or checksum.
      *
      * @param Collection<ProductLineItemInterface> $lineItems
      * @param Collection<ProductLineItemInterface> $sourceLineItems
@@ -34,18 +34,10 @@ class CheckoutLineItemsProvider
     public function getProductSkusWithDifferences(Collection $lineItems, Collection $sourceLineItems): array
     {
         $changed = [];
+        $lineItemsKeys = array_map([$this, 'getLineItemKey'], $lineItems->toArray());
         foreach ($sourceLineItems as $sourceLineItem) {
-            $found = false;
-            foreach ($lineItems as $lineItem) {
-                if ($sourceLineItem->getProductSku() === $lineItem->getProductSku()
-                    && $sourceLineItem->getProductUnitCode() === $lineItem->getProductUnitCode()
-                    && $sourceLineItem->getQuantity() === $lineItem->getQuantity()
-                ) {
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
+            $sourceLineItemKey = $this->getLineItemKey($sourceLineItem);
+            if (!in_array($sourceLineItemKey, $lineItemsKeys, true)) {
                 $changed[] = $sourceLineItem->getProductSku();
             }
         }
