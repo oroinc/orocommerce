@@ -348,6 +348,7 @@ oro_behat_extension:
           SelectField:
             type: 'css'
             locator: '[id^="oro_product_SelectField"]'
+            element: Select2Offscreen
           TextField:
             type: 'css'
             locator: '[id^="oro_product_TextField"]'
