@@ -6,12 +6,11 @@ use Brick\Math\BigDecimal;
 use Brick\Math\Exception\MathException;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
 
 /**
  * Represents a checkout line item of a product kit item.
@@ -24,8 +23,7 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
  * )
  */
 class CheckoutProductKitItemLineItem implements
-    PriceAwareInterface,
-    ProductKitItemLineItemInterface
+    ProductKitItemLineItemPriceAwareInterface
 {
     /**
      * @ORM\Id

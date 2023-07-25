@@ -2,40 +2,42 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Converter\Basic;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCase
+class ShippingContextToRulesValuesConverterTest extends TestCase
 {
     use EntityTrait;
+    use ShippingLineItemTrait;
 
-    /** @var DecoratedProductLineItemFactory */
-    private $factory;
+    private DecoratedProductLineItemFactory|MockObject $decoratedProductLineItemFactory;
 
-    /** @var ShippingContextToRulesValuesConverter */
-    private $shippingContextToRuleValuesConverter;
+    private ShippingContextToRulesValuesConverter $shippingContextToRuleValuesConverter;
 
     protected function setUp(): void
     {
-        $this->factory = new DecoratedProductLineItemFactory(
-            $this->createMock(VirtualFieldsProductDecoratorFactory::class)
-        );
+        $this->decoratedProductLineItemFactory = $this->createMock(DecoratedProductLineItemFactory::class);
 
         $this->shippingContextToRuleValuesConverter = new ShippingContextToRulesValuesConverter(
-            $this->factory
+            $this->decoratedProductLineItemFactory
         );
     }
 
@@ -44,17 +46,32 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
      */
     public function testConvert(ShippingContext $context): void
     {
-        $products = array_map(
+        $shippingKitItemLineItems = [];
+        $shippingLineItems = $context->getLineItems()->toArray();
+        /** @var ShippingLineItem[] $shippingLineItems */
+        foreach ($shippingLineItems as $shippingLineItem) {
+            $shippingKitItemLineItems = array_merge(
+                $shippingKitItemLineItems,
+                $shippingLineItem->getKitItemLineItems()->toArray()
+            );
+        }
+
+        $lineItems = array_merge($shippingLineItems, $shippingKitItemLineItems);
+
+        $productIds = array_map(
             static function (ProductHolderInterface $lineItem) {
-                return $lineItem->getProduct();
+                return $lineItem->getProduct()?->getId();
             },
-            $context->getLineItems()->toArray()
+            $lineItems
         );
 
+        $this->decoratedProductLineItemFactory->expects(self::once())
+            ->method('createShippingLineItemWithDecoratedProduct')
+            ->with($shippingLineItems[0], $productIds)
+            ->willReturn($shippingLineItems[0]);
+
         $expectedValues = [
-            'lineItems' => array_map(function (ShippingLineItem $lineItem) use ($products) {
-                return $this->factory->createShippingLineItemWithDecoratedProduct($lineItem, $products);
-            }, $context->getLineItems()->toArray()),
+            'lineItems' => $shippingLineItems,
             'shippingOrigin' => $context->getShippingOrigin(),
             'billingAddress' => $context->getBillingAddress(),
             'shippingAddress' => $context->getShippingAddress(),
@@ -64,18 +81,37 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
             'customer' => $context->getCustomer(),
             'customerUser' => $context->getCustomerUser(),
         ];
-        $this->assertEquals($expectedValues, $this->shippingContextToRuleValuesConverter->convert($context));
+
+        self::assertEquals($expectedValues, $this->shippingContextToRuleValuesConverter->convert($context));
     }
 
     public function convertDataProvider(): array
     {
+        $productUnit = $this->createMock(ProductUnit::class);
+        $unitCode = 'unit_code';
+        $quantity = 1;
+        $productHolder = $this->createMock(ProductHolderInterface::class);
+        $product = (new ProductStub())
+            ->setId(2)
+            ->setSku('sku2');
+
+        $shippingKitItemLineItem = (new ShippingKitItemLineItem(
+            $productUnit,
+            $unitCode,
+            $quantity,
+            $productHolder
+        ))
+            ->setProduct($product);
+
         return [
             [
                 'context' => new ShippingContext([
-                    ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([
-                        new ShippingLineItem([
-                            ShippingLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 1]),
-                        ]),
+                    ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection([
+                        $this->getShippingLineItem()
+                            ->setProduct($this->getEntity(Product::class, ['id' => 1]))
+                            ->setKitItemLineItems(new ArrayCollection([
+                                $shippingKitItemLineItem,
+                            ])),
                     ]),
                     ShippingContext::FIELD_SHIPPING_ORIGIN => $this->getEntity(ShippingAddressStub::class, [
                         'region' => $this->getEntity(Region::class, [

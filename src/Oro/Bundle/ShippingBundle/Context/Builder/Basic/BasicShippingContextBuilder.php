@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle\Context\Builder\Basic;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -19,7 +19,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
 {
     private object $sourceEntity;
     private mixed $sourceEntityIdentifier;
-    private ?ShippingLineItemCollectionInterface $lineItems = null;
+    private ?Collection $lineItems = null;
     private ?AddressInterface $billingAddress = null;
     private ?AddressInterface $shippingAddress = null;
     private ?AddressInterface $shippingOrigin = null;
@@ -36,9 +36,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         $this->sourceEntityIdentifier = $sourceEntityIdentifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getResult(): ShippingContextInterface
     {
         $params = $this->getMandatoryParams();
@@ -50,16 +47,13 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setLineItems(ShippingLineItemCollectionInterface $lineItemCollection): static
+    public function setLineItems(Collection $lineItemCollection): static
     {
         $this->lineItems = $lineItemCollection;
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setBillingAddress(?AddressInterface $billingAddress): static
     {
         $this->billingAddress = $billingAddress;
@@ -67,9 +61,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setShippingAddress(?AddressInterface $shippingAddress): static
     {
         $this->shippingAddress = $shippingAddress;
@@ -77,9 +68,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setShippingOrigin(?AddressInterface $shippingOrigin): static
     {
         $this->shippingOrigin = $shippingOrigin;
@@ -87,9 +75,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setPaymentMethod(?string $paymentMethod): static
     {
         $this->paymentMethod = $paymentMethod;
@@ -97,9 +82,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setCustomer(?Customer $customer): static
     {
         $this->customer = $customer;
@@ -107,9 +89,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setCustomerUser(?CustomerUser $customerUser): static
     {
         $this->customerUser = $customerUser;
@@ -117,9 +96,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setSubTotal(?Price $subTotal): static
     {
         $this->subTotal = $subTotal;
@@ -127,9 +103,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setCurrency(?string $currency): static
     {
         $this->currency = $currency;
@@ -137,9 +110,6 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setWebsite(?Website $website): static
     {
         $this->website = $website;

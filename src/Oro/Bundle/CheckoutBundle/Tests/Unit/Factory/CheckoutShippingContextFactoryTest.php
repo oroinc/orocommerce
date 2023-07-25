@@ -17,33 +17,29 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
+class CheckoutShippingContextFactoryTest extends TestCase
 {
-    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutLineItemsManager;
+    use ShippingLineItemTrait;
 
-    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutSubtotalProvider;
+    private CheckoutLineItemsManager|MockObject $checkoutLineItemsManager;
 
-    /** @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingLineItemConverter;
+    private SubtotalProviderInterface|MockObject $checkoutSubtotalProvider;
 
-    /** @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextBuilder;
+    private OrderShippingLineItemConverterInterface|MockObject $shippingLineItemConverter;
 
-    /** @var CheckoutShippingOriginProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingOriginProvider;
+    private ShippingContextBuilderInterface|MockObject $contextBuilder;
 
-    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingContextBuilderFactory;
+    private CheckoutShippingOriginProviderInterface|MockObject $shippingOriginProvider;
 
-    /** @var CheckoutShippingContextFactory */
-    private $factory;
+    private ShippingContextBuilderFactoryInterface|MockObject $shippingContextBuilderFactory;
+
+    private CheckoutShippingContextFactory $factory;
 
     protected function setUp(): void
     {
@@ -63,11 +59,11 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $checkout = $this->prepareCheckout();
-        $convertedLineItems = new DoctrineShippingLineItemCollection([
-            new ShippingLineItem([])
+        $convertedLineItems = new ArrayCollection([
+            $this->getShippingLineItem()
         ]);
 
         $this->shippingLineItemConverter->expects(self::once())

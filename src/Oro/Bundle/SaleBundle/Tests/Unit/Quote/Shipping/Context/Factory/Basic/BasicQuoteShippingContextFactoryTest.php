@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\Context\Factory\Basic;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -15,27 +16,23 @@ use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippin
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
+class BasicQuoteShippingContextFactoryTest extends TestCase
 {
-    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingContextBuilderFactory;
+    private ShippingContextBuilderFactoryInterface|MockObject $shippingContextBuilderFactory;
 
-    /** @var QuoteToShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $quoteToShippingLineItemConverter;
+    private QuoteToShippingLineItemConverterInterface|MockObject $quoteToShippingLineItemConverter;
 
-    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $totalProcessorProvider;
+    private TotalProcessorProvider|MockObject $totalProcessorProvider;
 
-    /** @var CalculableQuoteFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $calculableQuoteFactory;
+    private CalculableQuoteFactoryInterface|MockObject $calculableQuoteFactory;
 
-    /** @var BasicQuoteShippingContextFactory */
-    private $basicQuoteShippingContextFactory;
+    private BasicQuoteShippingContextFactory $basicQuoteShippingContextFactory;
 
     protected function setUp(): void
     {
@@ -52,7 +49,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $quoteId = 5;
         $currency = 'USD';
@@ -62,7 +59,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $total = $this->getTotal($amount, $currency);
         $calculableQuote = $this->createMock(CalculableQuoteInterface::class);
         $shippingAddress = new QuoteAddress();
-        $shippingLineItems = $this->createMock(DoctrineShippingLineItemCollection::class);
+        $shippingLineItems = new ArrayCollection([]);
         $customer = new Customer();
         $customerUser = new CustomerUser();
         $website = new Website();
@@ -70,60 +67,60 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $builder = $this->createMock(ShippingContextBuilderInterface::class);
         $quote = $this->createQuote($quoteId, $currency, $shippingAddress, $website, $customer, $customerUser);
 
-        $this->calculableQuoteFactory->expects($this->once())
+        $this->calculableQuoteFactory->expects(self::once())
             ->method('createCalculableQuote')
             ->with($shippingLineItems)
             ->willReturn($calculableQuote);
 
-        $this->totalProcessorProvider->expects($this->once())
+        $this->totalProcessorProvider->expects(self::once())
             ->method('getTotal')
             ->with($calculableQuote)
             ->willReturn($total);
 
-        $this->quoteToShippingLineItemConverter->expects($this->once())
+        $this->quoteToShippingLineItemConverter->expects(self::once())
             ->method('convertLineItems')
             ->with($quote)
             ->willReturn($shippingLineItems);
 
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('setShippingAddress')
             ->with($shippingAddress);
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('getResult')
             ->willReturn($shippingContext);
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('setLineItems')
             ->with($shippingLineItems)
             ->willReturnSelf();
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('setSubTotal')
             ->with($subTotal)
             ->willReturnSelf();
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('setCurrency')
             ->with($currency)
             ->willReturnSelf();
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('setWebsite')
             ->with($website);
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('setCustomer')
             ->with($customer);
-        $builder->expects($this->once())
+        $builder->expects(self::once())
             ->method('setCustomerUser')
             ->with($customerUser);
 
-        $this->shippingContextBuilderFactory->expects($this->once())
+        $this->shippingContextBuilderFactory->expects(self::once())
             ->method('createShippingContextBuilder')
             ->with($quote, $quoteId)
             ->willReturn($builder);
 
         $actualContext = $this->basicQuoteShippingContextFactory->create($quote);
 
-        $this->assertEquals($shippingContext, $actualContext);
+        self::assertEquals($shippingContext, $actualContext);
     }
 
-    public function testUnsupportedEntity()
+    public function testUnsupportedEntity(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->basicQuoteShippingContextFactory->create(new \stdClass());
@@ -132,10 +129,10 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     private function getTotal(float $amount, string $currency): Subtotal
     {
         $total = $this->createMock(Subtotal::class);
-        $total->expects($this->once())
+        $total->expects(self::once())
             ->method('getAmount')
             ->willReturn($amount);
-        $total->expects($this->once())
+        $total->expects(self::once())
             ->method('getCurrency')
             ->willReturn($currency);
 

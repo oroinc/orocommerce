@@ -2,24 +2,21 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Factory;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilderInterface;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
+/**
+ * Creates FedEx packages by collection of {@see ShippingLineItem} and {@see FedexPackageSettingsInterface}.
+ */
 class FedexPackagesByLineItemsAndPackageSettingsFactory implements
     FedexPackagesByLineItemsAndPackageSettingsFactoryInterface
 {
-    /**
-     * @var ShippingPackagesByLineItemBuilderInterface
-     */
-    private $packagesBuilder;
+    private ShippingPackagesByLineItemBuilderInterface $packagesBuilder;
 
-    /**
-     * @var FedexPackageByShippingPackageOptionsFactoryInterface
-     */
-    private $fedexPackageFactory;
+    private FedexPackageByShippingPackageOptionsFactoryInterface $fedexPackageFactory;
 
     public function __construct(
         ShippingPackagesByLineItemBuilderInterface $packagesBuilder,
@@ -33,12 +30,12 @@ class FedexPackagesByLineItemsAndPackageSettingsFactory implements
      * {@inheritDoc}
      */
     public function create(
-        ShippingLineItemCollectionInterface $lineItemCollection,
+        Collection $lineItemCollection,
         FedexPackageSettingsInterface $packageSettings
     ): array {
         $this->packagesBuilder->init($packageSettings);
 
-        /** @var ShippingLineItemInterface $item */
+        /** @var ShippingLineItem $item */
         foreach ($lineItemCollection as $item) {
             if (!$item->getWeight() || !$item->getDimensions()) {
                 return [];

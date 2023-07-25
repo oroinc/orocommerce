@@ -295,4 +295,9 @@ class VirtualFieldsProductDecorator
 
         return null;
     }
+
+    public function getProduct(): Product
+    {
+        return $this->product;
+    }
 }

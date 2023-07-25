@@ -2,14 +2,19 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShoppingListLineItemDiffMapper;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
@@ -17,12 +22,13 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $shipContextProvider;
+    private CheckoutShippingContextProvider|MockObject $shipContextProvider;
 
     protected function setUp(): void
     {
@@ -38,8 +44,13 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     public function testGetCurrentState(): void
     {
+        $productKitItemLineItem = new ProductKitItemLineItem();
+
+        $lineItem = new LineItem();
+        $lineItem->addKitItemLineItem($productKitItemLineItem);
+
         $shoppingList = new ShoppingList();
-        $shoppingList->addLineItem(new LineItem());
+        $shoppingList->addLineItem($lineItem);
         $shoppingList->addLineItem(new LineItem());
 
         $checkout = $this->createMock(Checkout::class);
@@ -49,6 +60,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
         $prod1 = $this->getProduct('SKU123', 'in_stock');
         $prod2 = $this->getProduct('SKU123', 'in_stock');
+        $prod3 = $this->getProduct('SKU124', 'in_stock');
         $price1 = $this->getPrice(120);
         $price2 = $this->getPrice(10);
         $weight1 = $this->getWeight(10);
@@ -56,13 +68,28 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $dms1 = $this->getDimension(1, 2, 3);
         $dms2 = $this->getDimension(1, 2, 3);
 
+        $shippingKitItemLineItem = $this->getShippingKitItemLineItem(
+            $prod1,
+            new ProductKitItem()
+        );
+
         $item1 = $this->getShippingLineItem('set', 1, 'SKU123', $price1, $weight1, $dms1, $prod1);
         $item2 = $this->getShippingLineItem('item', 1, 'SKU123', $price2, $weight2, $dms2, $prod2);
+        $item3 = $this->getShippingLineItem(
+            'item',
+            1,
+            'SKU124',
+            $price2,
+            $weight2,
+            $dms2,
+            $prod3,
+            [$shippingKitItemLineItem]
+        );
 
         $shipContext = $this->createMock(ShippingContextInterface::class);
         $shipContext->expects($this->once())
             ->method('getLineItems')
-            ->willReturn([$item1, $item2]);
+            ->willReturn([$item1, $item2, $item3]);
         $this->shipContextProvider->expects($this->once())
             ->method('getContext')
             ->with($checkout)
@@ -73,7 +100,8 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertEquals(
             [
                 'sSKU123-uset-q1-pUSD120-w10kg-d1x2x3cm-iin_stock',
-                'sSKU123-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock'
+                'sSKU123-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock',
+                'sSKU124-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock-kilisSKU123-kiliuunit_code-kiliq1-kilipUSD13'
             ],
             $result
         );
@@ -218,6 +246,14 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
                     'sSKU123-uitem-q1-pUSD10-w2kg-d1x1x1cm-iin_stock'
                 ],
             ],
+            'kit with different configurations' => [
+                'state1' => [
+                    'sSKU124-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock-kilisSKU121-kiliuunit_code-kiliq1-kilipUSD13',
+                ],
+                'state2' => [
+                    'sSKU124-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock-kilisSKU122-kiliuunit_code-kiliq1-kilipUSD14',
+                ],
+            ],
         ];
     }
 
@@ -236,19 +272,38 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         Price $price,
         Weight $weight,
         Dimensions $dimension,
-        ?StubProduct $product = null
+        ?StubProduct $product = null,
+        array $kitItemLineItems = []
     ): ShippingLineItem {
-        return new ShippingLineItem(
-            [
-                ShippingLineItem::FIELD_PRICE => $price,
-                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
-                ShippingLineItem::FIELD_QUANTITY => $quantity,
-                ShippingLineItem::FIELD_PRODUCT_SKU => $sku,
-                ShippingLineItem::FIELD_WEIGHT => $weight,
-                ShippingLineItem::FIELD_DIMENSIONS => $dimension,
-                ShippingLineItem::FIELD_PRODUCT => $product,
-            ]
-        );
+        return (new ShippingLineItem(
+            $this->createMock(ProductUnit::class),
+            $unitCode,
+            $quantity,
+            $this->createMock(ProductHolderInterface::class)
+        ))
+            ->setPrice($price)
+            ->setProduct($product)
+            ->setProductSku($sku)
+            ->setWeight($weight)
+            ->setDimensions($dimension)
+            ->setKitItemLineItems(new ArrayCollection($kitItemLineItems));
+    }
+
+    private function getShippingKitItemLineItem(
+        StubProduct $product,
+        ProductKitItem $productKitItem
+    ): ShippingKitItemLineItem {
+        return (new ShippingKitItemLineItem(
+            $this->createMock(ProductUnit::class),
+            'unit_code',
+            1,
+            $this->createMock(ProductHolderInterface::class)
+        ))
+            ->setProduct($product)
+            ->setProductSku('sku')
+            ->setPrice(Price::create(13, 'USD'))
+            ->setKitItem($productKitItem)
+            ->setSortOrder(1);
     }
 
     private function getProduct(string $sku, string $inventoryStatusCode): StubProduct

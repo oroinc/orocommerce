@@ -17,26 +17,25 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
+class OrderShippingContextFactoryTest extends TestCase
 {
+    use ShippingLineItemTrait;
+
     private const TEST_PAYMENT_METHOD = 'SomePaymentMethod';
     private const TEST_SHIPPING_METHOD = 'SomeShippingMethod';
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|MockObject $doctrine;
 
-    /** @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingLineItemConverter;
+    private OrderShippingLineItemConverterInterface|MockObject $shippingLineItemConverter;
 
-    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingContextBuilderFactory;
+    private ShippingContextBuilderFactoryInterface|MockObject $shippingContextBuilderFactory;
 
-    /** @var OrderShippingContextFactory */
-    private $factory;
+    private OrderShippingContextFactory $factory;
 
     protected function setUp(): void
     {
@@ -58,7 +57,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         Website $website,
         Customer $customer,
         CustomerUser $customerUser
-    ): ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject {
+    ): ShippingContextBuilderInterface|MockObject {
         $contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
         $contextBuilder->expects(self::any())
             ->method('setShippingAddress')
@@ -144,23 +143,19 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $order = $this->getOrder();
 
         $shippingLineItems = [
-            new ShippingLineItem(
-                [
-                    ShippingLineItem::FIELD_QUANTITY => 10,
-                    ShippingLineItem::FIELD_PRICE => Price::create($order->getSubtotal(), $order->getCurrency()),
-                ]
-            ),
+            $this->getShippingLineItem(quantity: 10)
+                ->setPrice(Price::create($order->getSubtotal(), $order->getCurrency())),
             (new OrderLineItem())
                 ->setQuantity(20)
                 ->setPrice(Price::create($order->getSubtotal(), $order->getCurrency())),
         ];
 
-        $shippingLineItemCollection = new DoctrineShippingLineItemCollection($shippingLineItems);
+        $shippingLineItemCollection = new ArrayCollection($shippingLineItems);
 
         $this->shippingLineItemConverter->expects($this->once())
             ->method('convertLineItems')
@@ -190,7 +185,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory->create($order);
     }
 
-    public function testUnsupportedEntity()
+    public function testUnsupportedEntity(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->factory->create(new \stdClass());

@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Factory;
 
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -12,6 +12,10 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 
+/**
+ * Creates {@see PriceRequest} by {@see UPSTransport}, {@see ShippingContextInterface},
+ * Request option and {@see ShippingService}.
+ */
 class PriceRequestFactory
 {
     const MAX_PACKAGE_WEIGHT_KGS = 70;
@@ -95,9 +99,9 @@ class PriceRequestFactory
     }
 
     /**
-     * @param ShippingLineItemInterface[] $lineItems
-     * @param string                      $unitOfWeight
-     * @param int                         $weightLimit
+     * @param ShippingLineItem[] $lineItems
+     * @param string $unitOfWeight
+     * @param int $weightLimit
      *
      * @return Package[]|array
      * @throws \UnexpectedValueException
@@ -135,8 +139,8 @@ class PriceRequestFactory
     }
 
     /**
-     * @param ShippingLineItemInterface[] $lineItems
-     * @param string                      $upsWeightUnit
+     * @param ShippingLineItem[] $lineItems
+     * @param string $upsWeightUnit
      *
      * @return array
      */
@@ -158,12 +162,12 @@ class PriceRequestFactory
     }
 
     /**
-     * @param ShippingLineItemInterface $lineItem
-     * @param string                    $weightUnit
+     * @param ShippingLineItem $lineItem
+     * @param string $weightUnit
      *
      * @return float|null
      */
-    protected function getLineItemWeightByUnit(ShippingLineItemInterface $lineItem, $weightUnit)
+    protected function getLineItemWeightByUnit(ShippingLineItem $lineItem, $weightUnit)
     {
         $upsWeight = null;
         $lineItemWeight = $lineItem->getWeight();

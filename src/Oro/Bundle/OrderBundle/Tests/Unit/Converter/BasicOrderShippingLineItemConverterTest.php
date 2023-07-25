@@ -6,32 +6,34 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrineShippingLineItemCollectionFactory;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCase
+class BasicOrderShippingLineItemConverterTest extends TestCase
 {
+    private ShippingLineItemFromProductLineItemFactoryInterface|MockObject $shippingLineItemFactory;
+
     private BasicOrderShippingLineItemConverter $orderShippingLineItemConverter;
 
     protected function setUp(): void
     {
+        $this->shippingLineItemFactory = $this->createMock(ShippingLineItemFromProductLineItemFactoryInterface::class);
+
         $this->orderShippingLineItemConverter = new BasicOrderShippingLineItemConverter(
-            new DoctrineShippingLineItemCollectionFactory(),
-            new BasicShippingLineItemBuilderFactory()
+            $this->shippingLineItemFactory
         );
     }
 
     private function getProduct(int $id): Product
     {
-        $product = new Product();
-        ReflectionUtil::setId($product, $id);
-
-        return $product;
+        return (new ProductStub())
+            ->setId($id);
     }
 
     private function getProductUnit(string $code): ProductUnit
@@ -54,35 +56,50 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
         float $quantity,
         ?ProductUnit $productUnit,
         ?Price $price,
-        ?Product $product
+        ?Product $product,
+        array $kitItemLineItems = []
     ): OrderLineItem {
         $lineItem = new OrderLineItem();
         $lineItem->setQuantity($quantity);
         $lineItem->setProductUnit($productUnit);
         $lineItem->setPrice($price);
         $lineItem->setProduct($product);
+        foreach ($kitItemLineItems as $kitItemLineItem) {
+            $lineItem->addKitItemLineItem($kitItemLineItem);
+        }
 
         return $lineItem;
     }
 
-    private function createExpected(OrderLineItem $lineItem): array
-    {
-        return [
-            'quantity' => $lineItem->getQuantity(),
-            'product_holder' => $lineItem,
-            'product_unit' => $lineItem->getProductUnit(),
-            'product_unit_code' => $lineItem->getProductUnit()->getCode(),
-            'entity_id' => null
-        ];
+    private function getKitItemLineItem(
+        float $quantity,
+        ?ProductUnit $productUnit,
+        ?Price $price,
+        ?Product $product
+    ): OrderProductKitItemLineItem {
+        return (new OrderProductKitItemLineItem())
+            ->setProduct($product)
+            ->setUnit($productUnit)
+            ->setQuantity($quantity)
+            ->setPrice($price)
+            ->setSortOrder(1);
     }
 
     /**
      * @dataProvider lineItemsDataProvider
      */
-    public function testConvertLineItems(array $lineItems, array $expectedShippingLineItems)
-    {
-        $this->assertEquals(
-            new DoctrineShippingLineItemCollection($expectedShippingLineItems),
+    public function testConvertLineItems(
+        array $lineItems,
+        array $expectedLineItemsToConvert,
+        array $expectedShippingLineItems
+    ): void {
+        $this->shippingLineItemFactory->expects(self::once())
+            ->method('createCollection')
+            ->with($expectedLineItemsToConvert)
+            ->willReturn(new ArrayCollection($expectedShippingLineItems));
+
+        self::assertEquals(
+            new ArrayCollection($expectedShippingLineItems),
             $this->orderShippingLineItemConverter->convertLineItems(new ArrayCollection($lineItems))
         );
     }
@@ -93,26 +110,49 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
         $unit1 = $this->getProductUnit('item');
         $unit2 = $this->getProductUnit('set');
 
+        $kitItemLineItem = $this->getKitItemLineItem(
+            1,
+            $unit1,
+            $this->getPrice(13),
+            $this->getProduct(1)
+        );
+
         $lineItems = [
             $this->getLineItem(12.0, $unit1, $this->getPrice(10.5), null),
             $this->getLineItem(5.0, $unit2, null, $product),
-            $this->getLineItem(7.0, $unit2, $this->getPrice(99.9), $product)
+            $this->getLineItem(7.0, $unit2, $this->getPrice(99.9), $product, [$kitItemLineItem])
         ];
 
         return [
             'all line items have required properties' => [
                 'lineItems' => $lineItems,
+                'expectedLineItemsToConvert' => $lineItems,
                 'expectedShippingLineItems' => [
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[0]), [
-                        'price' => $lineItems[0]->getPrice(),
-                    ])),
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[1]), [
-                        'product' => $product,
-                    ])),
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[2]), [
-                        'product' => $product,
-                        'price' => $lineItems[2]->getPrice(),
-                    ]))
+                    (new ShippingLineItem(
+                        $lineItems[0]->getProductUnit(),
+                        $lineItems[0]->getProductUnit()->getCode(),
+                        $lineItems[0]->getQuantity(),
+                        $lineItems[0]->getProductHolder()
+                    ))
+                        ->setProduct(null)
+                        ->setPrice($lineItems[0]->getPrice()),
+                    (new ShippingLineItem(
+                        $lineItems[1]->getProductUnit(),
+                        $lineItems[1]->getProductUnit()->getCode(),
+                        $lineItems[1]->getQuantity(),
+                        $lineItems[1]->getProductHolder()
+                    ))
+                        ->setProduct($product)
+                        ->setPrice(null),
+                    (new ShippingLineItem(
+                        $lineItems[2]->getProductUnit(),
+                        $lineItems[2]->getProductUnit()->getCode(),
+                        $lineItems[2]->getQuantity(),
+                        $lineItems[2]->getProductHolder()
+                    ))
+                        ->setProduct($product)
+                        ->setPrice($lineItems[2]->getPrice())
+                        ->setKitItemLineItems(new ArrayCollection([$kitItemLineItem])),
                 ],
             ],
             'some line items have no product unit' => [
@@ -120,6 +160,7 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
                     $this->getLineItem(12.0, $unit1, $this->getPrice(10.5), null),
                     $this->getLineItem(1.0, null, $this->getPrice(1.3), null),
                 ],
+                'expectedLineItemsToConvert' => [],
                 'expectedShippingLineItems' => [],
             ],
         ];

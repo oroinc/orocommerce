@@ -362,8 +362,7 @@ services:
     oro_order.shipping_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
         arguments:
-            - '@oro_shipping.context.line_item_collection_factory.set_shipping_options_if_null'
-            - '@oro_shipping.line_item.factory_basic'
+            - '@oro_shipping.context.line_item.factory.shipping_line_item_from_product_line_item_factory'
 
     oro_order.payment_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderPaymentLineItemConverter'

@@ -2,33 +2,27 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Factory;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilderInterface;
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageByShippingPackageOptionsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactory;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettings;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
 {
-    /**
-     * @var ShippingPackagesByLineItemBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $packagesBuilder;
+    use ShippingLineItemTrait;
 
-    /**
-     * @var FedexPackageByShippingPackageOptionsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $fedexPackageFactory;
+    private ShippingPackagesByLineItemBuilderInterface|MockObject $packagesBuilder;
 
-    /**
-     * @var FedexPackagesByLineItemsAndPackageSettingsFactory
-     */
-    private $factory;
+    private FedexPackageByShippingPackageOptionsFactoryInterface|MockObject $fedexPackageFactory;
+
+    private FedexPackagesByLineItemsAndPackageSettingsFactory $factory;
 
     protected function setUp(): void
     {
@@ -41,66 +35,61 @@ class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
         );
     }
 
-    public function testCreateLineItemCannotBeAdded()
+    public function testCreateLineItemCannotBeAdded(): void
     {
         $packageSettings = new FedexPackageSettings(0, 0, 0);
-        $lineItemCollection = new DoctrineShippingLineItemCollection([
-            new ShippingLineItem([
-                ShippingLineItem::FIELD_WEIGHT => Weight::create(0),
-                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(0, 0, 0),
-            ]),
+        $lineItemCollection = new ArrayCollection([
+            $this->getShippingLineItem()
+                ->setWeight(Weight::create(0))
+                ->setDimensions(Dimensions::create(0, 0, 0)),
         ]);
 
         $this->packagesBuilder
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('init')
             ->with($packageSettings);
 
         $this->packagesBuilder
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('addLineItem')
             ->willReturn(false);
 
-        static::assertEquals([], $this->factory->create($lineItemCollection, $packageSettings));
+        self::assertEquals([], $this->factory->create($lineItemCollection, $packageSettings));
     }
 
-    public function testCreateNoWeight()
+    public function testCreateNoWeight(): void
     {
         $packageSettings = new FedexPackageSettings(0, 0, 0);
-        $lineItemCollection = new DoctrineShippingLineItemCollection([
-            new ShippingLineItem([
-                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(0, 0, 0),
-            ]),
+        $lineItemCollection = new ArrayCollection([
+            $this->getShippingLineItem()
+                ->setDimensions(Dimensions::create(0, 0, 0)),
         ]);
 
-        static::assertEquals([], $this->factory->create($lineItemCollection, $packageSettings));
+        self::assertEquals([], $this->factory->create($lineItemCollection, $packageSettings));
     }
 
-    public function testCreateNoDimensions()
+    public function testCreateNoDimensions(): void
     {
         $packageSettings = new FedexPackageSettings(0, 0, 0);
-        $lineItemCollection = new DoctrineShippingLineItemCollection([
-            new ShippingLineItem([
-                ShippingLineItem::FIELD_WEIGHT => Weight::create(0),
-            ]),
+        $lineItemCollection = new ArrayCollection([
+            $this->getShippingLineItem()
+                ->setWeight(Weight::create(0)),
         ]);
 
-        static::assertEquals([], $this->factory->create($lineItemCollection, $packageSettings));
+        self::assertEquals([], $this->factory->create($lineItemCollection, $packageSettings));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $lineItems = [
-            new ShippingLineItem([
-                ShippingLineItem::FIELD_WEIGHT => Weight::create(0),
-                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(0, 0, 0),
-            ]),
-            new ShippingLineItem([
-                ShippingLineItem::FIELD_WEIGHT => Weight::create(2),
-                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(3, 4, 5),
-            ]),
+            $this->getShippingLineItem()
+                ->setWeight(Weight::create(0))
+                ->setDimensions(Dimensions::create(0, 0, 0)),
+            $this->getShippingLineItem()
+                ->setWeight(Weight::create(2))
+                ->setDimensions(Dimensions::create(3, 4, 5)),
         ];
-        $lineItemCollection = new DoctrineShippingLineItemCollection($lineItems);
+        $lineItemCollection = new ArrayCollection($lineItems);
         $packageSettings = new FedexPackageSettings(0, 0, 0);
         $packageOptions = [
             new ShippingPackageOptions(Dimensions::create(0, 0, 0), Weight::create(0)),
@@ -108,26 +97,26 @@ class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
         ];
 
         $this->packagesBuilder
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('init')
             ->with($packageSettings);
         $this->packagesBuilder
-            ->expects(static::exactly(2))
+            ->expects(self::exactly(2))
             ->method('addLineItem')
             ->withConsecutive([$lineItems[0]], [$lineItems[1]])
             ->willReturn(true);
         $this->packagesBuilder
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('getResult')
             ->willReturn($packageOptions);
 
         $fedexPackages = [['1'], ['2']];
         $this->fedexPackageFactory
-            ->expects(static::exactly(2))
+            ->expects(self::exactly(2))
             ->method('create')
             ->withConsecutive([$packageOptions[0]], [$packageOptions[1]])
             ->willReturnOnConsecutiveCalls($fedexPackages[0], $fedexPackages[1]);
 
-        static::assertSame($fedexPackages, $this->factory->create($lineItemCollection, $packageSettings));
+        self::assertSame($fedexPackages, $this->factory->create($lineItemCollection, $packageSettings));
     }
 }
