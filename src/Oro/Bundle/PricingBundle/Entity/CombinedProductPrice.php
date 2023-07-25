@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * Entity to store prices combined from price list chain by merge strategy.
@@ -38,6 +39,13 @@ use Doctrine\ORM\Mapping as ORM;
  *     }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="fa-usd"
+ *          }
+ *      }
+ * )
  * @method CombinedPriceList getPriceList()
  */
 class CombinedProductPrice extends BaseProductPrice

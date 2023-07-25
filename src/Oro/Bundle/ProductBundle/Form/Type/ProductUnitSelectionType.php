@@ -243,7 +243,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     }
 
     /**
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @param ProductUnitHolderInterface $productUnitHolder
      * @param Product $product
      * @param array $choices

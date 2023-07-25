@@ -65,7 +65,7 @@ class PriceRuleLexeme
     }
 
     /**
-     * @param PriceRule $priceRule
+     * @param PriceRule|null $priceRule
      * @return $this
      */
     public function setPriceRule(PriceRule $priceRule = null)
@@ -130,7 +130,7 @@ class PriceRuleLexeme
     }
 
     /**
-     * @param PriceList $priceList
+     * @param PriceList|null $priceList
      * @return $this
      */
     public function setPriceList(PriceList $priceList = null)

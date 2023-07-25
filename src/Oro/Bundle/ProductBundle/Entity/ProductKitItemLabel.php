@@ -29,8 +29,6 @@ class ProductKitItemLabel extends AbstractLocalizedFallbackValue
     protected $string;
 
     /**
-     * @var ProductKitItem|null
-     *
      * @ORM\ManyToOne(targetEntity="ProductKitItem", inversedBy="labels")
      * @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE")
      */

@@ -38,7 +38,6 @@ class ProductVariantsSelectedFieldsProvider implements SelectedFieldsProviderInt
         return [];
     }
 
-
     private function isSupported(DatagridConfiguration $configuration): bool
     {
         return self::GRID_NAME === $configuration->getName();

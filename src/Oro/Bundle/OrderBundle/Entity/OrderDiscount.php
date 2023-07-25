@@ -158,7 +158,7 @@ class OrderDiscount
     /**
      * Set order
      *
-     * @param Order $order
+     * @param Order|null $order
      *
      * @return OrderDiscount
      */

@@ -160,7 +160,7 @@ class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterf
     /**
      * Set quoteProduct
      *
-     * @param QuoteProduct $quoteProduct
+     * @param QuoteProduct|null $quoteProduct
      * @return $this
      */
     public function setQuoteProduct(QuoteProduct $quoteProduct = null)
@@ -183,7 +183,7 @@ class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterf
     /**
      * Set productUnit
      *
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @return $this
      */
     public function setProductUnit(ProductUnit $productUnit = null)

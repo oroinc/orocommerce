@@ -11,7 +11,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 abstract class AbstractVisibilityRepository extends ServiceEntityRepository
 {
     /**
-     * @param Scope $scope
+     * @param Scope|null $scope
      * @return int
      */
     public function clearTable(Scope $scope = null)

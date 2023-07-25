@@ -54,7 +54,7 @@ class CategoryDefaultProductOptions
     }
 
     /**
-     * @param CategoryUnitPrecision $unitPrecision
+     * @param CategoryUnitPrecision|null $unitPrecision
      *
      * @return Category
      */

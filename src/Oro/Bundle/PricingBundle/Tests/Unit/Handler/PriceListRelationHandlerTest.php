@@ -61,7 +61,6 @@ class PriceListRelationHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->isPriceListAlreadyUsed($priceList);
     }
 
-
     public function testIsPriceListAlreadyUsedWithCustomerRelations(): void
     {
         $this->assertListenerStatus();

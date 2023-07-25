@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Extend\Entity\Autocomplete\OroShoppingListBundle_Entity_LineItem;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -59,6 +60,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          }
  *      }
  * )
+ * @mixin OroShoppingListBundle_Entity_LineItem
  */
 class LineItem implements
     OrganizationAwareInterface,

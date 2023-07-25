@@ -2,46 +2,52 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Twig;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Button\ButtonInterface;
 use Oro\Bundle\ActionBundle\Layout\DataProvider\LayoutButtonProvider;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
 use Oro\Bundle\ShoppingListBundle\Twig\ShoppingListExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ShoppingListExtensionTest extends \PHPUnit\Framework\TestCase
+class ShoppingListExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListLimitManager;
+    private ShoppingListLimitManager|MockObject $shoppingListLimitManager;
 
-    /** @var ShoppingListUrlProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListUrlProvider;
+    private ShoppingListUrlProvider|MockObject $shoppingListUrlProvider;
 
-    /** @var LayoutButtonProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $layoutButtonProvider;
+    private LayoutButtonProvider|MockObject $layoutButtonProvider;
 
-    /** @var ShoppingListExtension */
-    private $extension;
+    private FeatureChecker|MockObject $featureChecker;
+
+    private ShoppingListExtension $extension;
 
     protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
         $this->shoppingListUrlProvider = $this->createMock(ShoppingListUrlProvider::class);
         $this->layoutButtonProvider = $this->createMock(LayoutButtonProvider::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_shopping_list.manager.shopping_list_limit', $this->shoppingListLimitManager)
             ->add(ShoppingListUrlProvider::class, $this->shoppingListUrlProvider)
             ->add('oro_action.layout.data_provider.button_provider', $this->layoutButtonProvider)
+            ->add(FeatureChecker::class, $this->featureChecker)
             ->getContainer($this);
 
         $this->extension = new ShoppingListExtension($container);
     }
 
-    public function testIsConfigurableSimple()
+    public function testIsConfigurableSimple(): void
     {
         $this->shoppingListLimitManager->expects($this->once())
             ->method('isOnlyOneEnabled')
@@ -64,7 +70,7 @@ class ShoppingListExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetShoppingListWidgetButtons()
+    public function testGetShoppingListWidgetButtons(): void
     {
         $button1 = $this->createMock(ButtonInterface::class);
         $button1->expects($this->once())
@@ -86,5 +92,23 @@ class ShoppingListExtensionTest extends \PHPUnit\Framework\TestCase
             [$button1],
             self::callTwigFunction($this->extension, 'get_shopping_list_widget_buttons', [$shoppingList])
         );
+    }
+
+    public function testGetVisibleProduct(): void
+    {
+        $product = new Product();
+        $configProduct = new Product();
+        $lineItem = new LineItem();
+        $lineItem->setProduct($product);
+        $lineItem->getParentProduct($configProduct);
+        $product->getParentVariantLinks(new ArrayCollection([$configProduct]));
+
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('simple_variations_view_restriction')
+            ->willReturn(true);
+
+        $result = $this->extension->getVisibleProduct($lineItem);
+        $this->assertEquals($configProduct, $result);
     }
 }

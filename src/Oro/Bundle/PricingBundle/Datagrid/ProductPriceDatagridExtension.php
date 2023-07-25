@@ -202,13 +202,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         return $repository->getAllUnitCodes();
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param string $unitCode
-     * @return array
-     */
     private function addColumnToConfig(
         DatagridConfiguration $config,
         string $columnName,

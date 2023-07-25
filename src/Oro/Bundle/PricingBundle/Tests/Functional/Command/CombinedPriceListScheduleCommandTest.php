@@ -141,11 +141,6 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
         return $websiteProvider->getWebsiteIds();
     }
 
-    /**
-     * @param Website $website
-     * @param CustomerGroup $customerGroup
-     * @param string $expectedActivePriceList
-     */
     protected function assertCustomerGroupActiveCPL(
         Website $website,
         CustomerGroup $customerGroup,

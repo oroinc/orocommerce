@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Handler;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -44,8 +45,11 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testUpdateLexemes()
+    public function testUpdateLexemes(): void
     {
+        $organization = new Organization();
+        $organization->setId(489);
+
         $assignmentRule = 'category.id == 2 or category == 10 or pricelist[4].prices.value == 50';
         $rule = 'product.msrp.value + 10';
         $ruleCondition = 'product.sku == test';
@@ -57,6 +61,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $priceList->setProductAssignmentRule($assignmentRule);
         $priceList->addPriceRule($priceRule);
+        $priceList->setOrganization($organization);
 
         $this->parser->expects($this->any())
             ->method('getUsedLexemes')
@@ -107,7 +112,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
         $priceAttributeRepository = $this->createMock(PriceRuleLexemeRepository::class);
         $priceAttributeRepository->expects($this->any())
             ->method('findOneBy')
-            ->with(['fieldName' => 'msrp'])
+            ->with(['fieldName' => 'msrp', 'organization' => $organization])
             ->willReturn($msrpPriceAttribute);
 
         $this->doctrineHelper->expects($this->any())

@@ -8,7 +8,7 @@ use Oro\Bundle\TranslationBundle\Entity\Language;
 
 class AlternateUrlTest extends \PHPUnit\Framework\TestCase
 {
-    const URL = 'http://someurl.com/';
+    private const URL = 'http://someurl.com/';
 
     public function testCreateWithoutLocalization()
     {

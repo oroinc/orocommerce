@@ -43,7 +43,7 @@ class ProductPriceProvider
     /**
      * @param ResultRecordInterface[] $productRecords
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @param string|null $currency
+     * @param string $currency
      * @return array
      */
     public function getPricesForProductsByPriceList(

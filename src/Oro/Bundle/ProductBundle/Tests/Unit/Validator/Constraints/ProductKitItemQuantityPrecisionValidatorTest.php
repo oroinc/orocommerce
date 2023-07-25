@@ -118,9 +118,6 @@ class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTe
 
     /**
      * @dataProvider invalidQuantityPrecisionDataProvider
-     *
-     * @param float $invalidQuantity
-     * @param float|null $validQuantity
      */
     public function testValidateWhenInvalidMinimumQuantityPrecision(
         float $invalidQuantity,
@@ -162,9 +159,6 @@ class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTe
 
     /**
      * @dataProvider invalidQuantityPrecisionDataProvider
-     *
-     * @param float $invalidQuantity
-     * @param float|null $validQuantity
      */
     public function testValidateWhenInvalidMaximumQuantityPrecision(
         float $invalidQuantity,
@@ -196,9 +190,6 @@ class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTe
 
     /**
      * @dataProvider validQuantityPrecisionDataProvider
-     *
-     * @param float|null $minimumQuantity
-     * @param float|null $maximumQuantity
      */
     public function testValidateWhenValidQuantityPrecision(
         ?float $minimumQuantity,

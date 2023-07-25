@@ -7,18 +7,18 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 
 class ResultElementTest extends \PHPUnit\Framework\TestCase
 {
-    const INCLUDING_TAX = 1.2;
-    const EXCLUDING_TAX = 1;
-    const TAX_AMOUNT = 2;
-    const ADJUSTMENT = 3.4;
+    private const INCLUDING_TAX = 1.2;
+    private const EXCLUDING_TAX = 1;
+    private const TAX_AMOUNT = 2;
+    private const ADJUSTMENT = 3.4;
 
     public function testProperties(): void
     {
         $resultElement = $this->createResultElementModel();
-        self::assertEquals(static::INCLUDING_TAX, $resultElement->getIncludingTax());
-        self::assertEquals(static::EXCLUDING_TAX, $resultElement->getExcludingTax());
-        self::assertEquals(static::TAX_AMOUNT, $resultElement->getTaxAmount());
-        self::assertEquals(static::ADJUSTMENT, $resultElement->getAdjustment());
+        self::assertEquals(self::INCLUDING_TAX, $resultElement->getIncludingTax());
+        self::assertEquals(self::EXCLUDING_TAX, $resultElement->getExcludingTax());
+        self::assertEquals(self::TAX_AMOUNT, $resultElement->getTaxAmount());
+        self::assertEquals(self::ADJUSTMENT, $resultElement->getAdjustment());
         self::assertFalse($resultElement->isDiscountsIncluded());
 
         self::assertCount(4, $resultElement);
@@ -57,10 +57,10 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
     protected function createResultElementModel(): ResultElement
     {
         return ResultElement::create(
-            static::INCLUDING_TAX,
-            static::EXCLUDING_TAX,
-            static::TAX_AMOUNT,
-            static::ADJUSTMENT
+            self::INCLUDING_TAX,
+            self::EXCLUDING_TAX,
+            self::TAX_AMOUNT,
+            self::ADJUSTMENT
         );
     }
 
@@ -70,10 +70,10 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
             $this->createResultElementModel(),
             new ResultElement(
                 [
-                    ResultElement::EXCLUDING_TAX => static::EXCLUDING_TAX,
-                    ResultElement::INCLUDING_TAX => static::INCLUDING_TAX,
-                    ResultElement::TAX_AMOUNT => static::TAX_AMOUNT,
-                    ResultElement::ADJUSTMENT => static::ADJUSTMENT,
+                    ResultElement::EXCLUDING_TAX => self::EXCLUDING_TAX,
+                    ResultElement::INCLUDING_TAX => self::INCLUDING_TAX,
+                    ResultElement::TAX_AMOUNT => self::TAX_AMOUNT,
+                    ResultElement::ADJUSTMENT => self::ADJUSTMENT,
                 ]
             )
         );

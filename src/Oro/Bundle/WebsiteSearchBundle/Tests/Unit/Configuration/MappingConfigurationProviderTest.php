@@ -49,7 +49,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
-        file_put_contents($this->cacheFile, \sprintf('<?php return %s;', \var_export($cachedConfig, true)));
+        file_put_contents($this->cacheFile, sprintf('<?php return %s;', \var_export($cachedConfig, true)));
 
         $this->assertEquals($cachedConfig, $this->configurationProvider->getConfiguration());
     }

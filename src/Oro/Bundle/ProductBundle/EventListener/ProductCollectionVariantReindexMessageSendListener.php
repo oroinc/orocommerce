@@ -58,11 +58,6 @@ class ProductCollectionVariantReindexMessageSendListener
         );
     }
 
-    /**
-     * @param Segment $segment
-     * @param bool $isFull
-     * @param array $additionalProducts
-     */
     public function scheduleSegment(Segment $segment, bool $isFull = false, array $additionalProducts = []): void
     {
         if (!array_key_exists($segment->getId(), $this->segments)) {

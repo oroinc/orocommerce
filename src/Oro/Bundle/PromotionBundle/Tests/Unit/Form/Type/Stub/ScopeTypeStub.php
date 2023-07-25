@@ -28,6 +28,7 @@ class ScopeTypeStub extends AbstractType
         $resolver->setDefault('data_class', ScopeStub::class);
         $resolver->setDefault('scope_type', 'test');
         $resolver->setDefault('scope_fields', []);
+        $resolver->setDefault('constraints', []);
     }
 
     /**

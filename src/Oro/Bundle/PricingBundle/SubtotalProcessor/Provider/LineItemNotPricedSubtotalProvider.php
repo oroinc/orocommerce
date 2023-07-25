@@ -85,9 +85,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         return $subtotal;
     }
 
-    /**
-     * @return Subtotal
-     */
     protected function createSubtotal(): Subtotal
     {
         $subtotal = new Subtotal();

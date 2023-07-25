@@ -42,9 +42,6 @@ class FixedProductSettings extends Transport
         $this->labels = new ArrayCollection();
     }
 
-    /**
-     * @return Collection
-     */
     public function getLabels(): Collection
     {
         return $this->labels;
@@ -78,9 +75,6 @@ class FixedProductSettings extends Transport
         return $this;
     }
 
-    /**
-     * @return ParameterBag
-     */
     public function getSettingsBag(): ParameterBag
     {
         if (null === $this->settings) {

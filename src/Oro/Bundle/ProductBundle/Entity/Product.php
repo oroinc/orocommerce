@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Extend\Entity\Autocomplete\OroProductBundle_Entity_Product;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
@@ -167,6 +168,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @method EntityFieldFallbackValue getPageTemplate()
  * @method $this setPageTemplate(EntityFieldFallbackValue $pageTemplate)
  * @method $this cloneLocalizedFallbackValueAssociations()
+ * @mixin OroProductBundle_Entity_Product
  */
 class Product implements
     OrganizationAwareInterface,
@@ -828,7 +830,7 @@ class Product implements
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime|null $createdAt
      *
      * @return Product
      */
@@ -848,7 +850,7 @@ class Product implements
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param \DateTime|null $updatedAt
      *
      * @return Product
      */
@@ -908,7 +910,7 @@ class Product implements
     }
 
     /**
-     * @param OrganizationInterface $organization
+     * @param OrganizationInterface|null $organization
      *
      * @return Product
      */

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RuleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroRuleBundle_Entity_Rule;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -32,6 +33,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *          },
  *      }
  * )
+ * @mixin OroRuleBundle_Entity_Rule
  */
 class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
 {

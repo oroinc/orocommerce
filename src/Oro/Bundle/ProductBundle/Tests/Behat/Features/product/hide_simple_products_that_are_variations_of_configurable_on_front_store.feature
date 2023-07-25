@@ -1,5 +1,6 @@
 @fixture-OroProductBundle:products_hide_variations.yml
 @ticket-BB-11940
+@ticket-BB-22211
 @regression
 
 Feature: Hide simple products that are variations of configurable on front store
@@ -9,12 +10,24 @@ Feature: Hide simple products that are variations of configurable on front store
 
   Scenario: Create sessions
     Given sessions active:
-      | User  | first_session  |
+      | Guest | first_session  |
       | Admin | second_session |
 
   Scenario: Prepare product attributes
     Given I proceed as the Admin
     Given I login as administrator
+    And go to System/ Configuration
+    And follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And fill "Shopping List Configuration Form" with:
+      | Enable Guest Shopping List Default | false |
+      | Enable Guest Shopping List         | true  |
+    And click "Save settings"
+    When I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And I fill "Display Simple Variations Form" with:
+      | Display Simple Variations Default | false           |
+      | Display Simple Variations         | Hide completely |
+    And I save form
+    Then I should see "Configuration saved" flash message
 
     # Create attribute 1
     And I go to Products / Product Attributes
@@ -42,7 +55,7 @@ Feature: Hide simple products that are variations of configurable on front store
     And I go to Products / Product Families
     And I click Edit Attribute Family in grid
     And set Attribute Groups with:
-      | Label           | Visible | Attributes                                                                                                                                                                       |
+      | Label           | Visible | Attributes    |
       | Attribute group | true    | [Attribute_1] |
     And I save form
     Then I should see "Successfully updated" flash message
@@ -100,8 +113,8 @@ Feature: Hide simple products that are variations of configurable on front store
 
   # Scenarios related to hide variations feature
   Scenario: Simple product variations are hidden by default from search result
-    Given I proceed as the User
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I proceed as the Guest
+    When I am on homepage
     And type "Product" in "search"
     And click "Search Button"
     Then I should see "CNF_A" product
@@ -147,6 +160,17 @@ Feature: Hide simple products that are variations of configurable on front store
     And I should see "PROD_B_12"
     And I should see "PROD_C_1"
     And I should see "PROD_C_2"
+    When I fill "One Dimensional Matrix Grid Form" with:
+      | Value 11 | Value 12 |
+      | 1        | 2        |
+    When I click "Add to Shopping List"
+    Then should see 'Shopping list "Shopping list" was updated successfully' flash message
+    When I open shopping list widget
+    Then I should see "Configurable Product A"
+    And I should see "Item #: PROD_A_1"
+    And I should see "Item #: PROD_A_2"
+    When I click "Configurable Product A"
+    Then I should not see "404 Not Found"
 
   Scenario: Change configuration to display simple variations everywhere
     Given I proceed as the Admin
@@ -156,18 +180,20 @@ Feature: Hide simple products that are variations of configurable on front store
       | Display Simple Variations Default | false      |
       | Display Simple Variations         | everywhere |
     And save form
+    Then I should see "Configuration saved" flash message
 
   Scenario: Simple product variations made visible in search result
-    Given I proceed as the User
+    Given I proceed as the Guest
+    When I am on homepage
     And type "Product" in "search"
     And click "Search Button"
     Then I should see "CNF_A" product
-    Then I should see "PROD_B_11" product
-    Then I should see "PROD_B_12" product
-    Then I should see "PROD_B_13" product
-    Then I should see "PROD_A_1" product
-    Then I should see "PROD_A_1" product
-    Then I should see "PROD_A_3" product
+    And I should see "PROD_B_11" product
+    And I should see "PROD_B_12" product
+    And I should see "PROD_B_13" product
+    And I should see "PROD_A_1" product
+    And I should see "PROD_A_1" product
+    And I should see "PROD_A_3" product
 
   Scenario: Simple prooduct variations made visible at homepage
     Given I am on the homepage
@@ -198,3 +224,10 @@ Feature: Hide simple products that are variations of configurable on front store
     And I should see "PROD_B_12"
     And I should see "PROD_C_1"
     And I should see "PROD_C_2"
+    When I open shopping list widget
+    Then I should see "Product A 1"
+    And I should see "Item #: PROD_A_1"
+    And I should see "Product A 2"
+    And I should see "Item #: PROD_A_2"
+    When I click "Product A 2"
+    Then I should not see "404 Not Found"

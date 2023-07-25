@@ -24,9 +24,6 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
         $this->categoryImportExportHelper = $categoryImportExportHelper;
     }
 
-    /**
-     * @param ManagerRegistry $doctrine
-     */
     public function setDoctrine(ManagerRegistry $doctrine): void
     {
         $this->doctrine = $doctrine;

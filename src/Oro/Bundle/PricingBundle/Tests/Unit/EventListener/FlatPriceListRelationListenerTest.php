@@ -101,12 +101,6 @@ class FlatPriceListRelationListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider accuracyDataProvider
-     *
-     * @param string $relationClassName
-     * @param string $accuracy
-     * @param int $exactly
-     *
-     * @return void
      */
     public function testAccuracyPreUpdate(string $relationClassName, string $accuracy, int $exactly): void
     {
@@ -135,12 +129,6 @@ class FlatPriceListRelationListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider accuracyDataProvider
-     *
-     * @param string $relationClassName
-     * @param string $accuracy
-     * @param int $exactly
-     *
-     * @return void
      */
     public function testAccuracyPrePersist(string $relationClassName, string $accuracy, int $exactly): void
     {

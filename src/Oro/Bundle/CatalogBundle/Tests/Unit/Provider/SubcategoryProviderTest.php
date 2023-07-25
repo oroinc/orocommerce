@@ -67,7 +67,7 @@ class SubcategoryProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Category $parentCategory
+     * @param Category|null $parentCategory
      * @param array $products
      * @return Category
      */

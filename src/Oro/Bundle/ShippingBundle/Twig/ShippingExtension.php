@@ -151,7 +151,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
 
     /**
      * @param float|int|null       $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -162,7 +162,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
 
     /**
      * @param float|int|null       $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -197,7 +197,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
 
     /**
      * @param float|int|null       $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -208,7 +208,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
 
     /**
      * @param float|int|null       $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */

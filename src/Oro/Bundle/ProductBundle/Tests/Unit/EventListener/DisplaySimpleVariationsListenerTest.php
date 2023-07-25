@@ -8,20 +8,17 @@ use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const CONFIG_KEY = 'oro_product.display_simple_variations';
+    private const CONFIG_KEY = 'oro_product.display_simple_variations';
 
     /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productCache;
+    private $productCache;
 
     /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $categoryCache;
+    private $categoryCache;
 
     /** @var DisplaySimpleVariationsListener */
-    protected $eventListener;
+    private $eventListener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->productCache = $this->createMock(AbstractAdapter::class);

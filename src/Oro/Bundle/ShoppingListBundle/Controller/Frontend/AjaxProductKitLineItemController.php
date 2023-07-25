@@ -182,10 +182,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
      * @throws AccessDeniedException
-     *
-     * @return void
      */
     private function checkShoppingListAcl(ShoppingList $shoppingList = null): void
     {

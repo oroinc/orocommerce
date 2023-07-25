@@ -94,9 +94,6 @@ class CheckoutLineItemTest extends TestCase
     }
 
     /**
-     * @param string|null $shippingMethod
-     * @param string|null $shippingMethodType
-     * @param bool $expected
      * @dataProvider getDataToTestShippingMethods
      */
     public function testHasShippingMethod(?string $shippingMethod, ?string $shippingMethodType, bool $expected): void

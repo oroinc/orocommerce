@@ -164,9 +164,6 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getProductFilteredPictureSourcesReturnsPlaceholderSourcesWhenFileIsNullDataProvider
-     *
-     * @param bool $isWebpEnabledIfSupported
-     * @param array $expected
      */
     public function testGetProductFilteredPictureSourcesReturnsPlaceholderSourcesWhenFileIsNull(
         bool $isWebpEnabledIfSupported,

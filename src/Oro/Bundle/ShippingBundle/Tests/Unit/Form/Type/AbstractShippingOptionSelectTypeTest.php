@@ -26,22 +26,14 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     /** @var array */
     protected $units = ['lbs', 'kg', 'custom'];
 
-    protected function configureProvider()
+    protected function configureProvider(): void
     {
         $this->provider = $this->createMock(MeasureUnitProvider::class);
     }
 
-    protected function configureFormatter()
+    protected function configureFormatter(): void
     {
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
-    }
-
-    public function testGetBlockPrefix()
-    {
-        $formType = new class() extends AbstractShippingOptionSelectType {
-            const NAME = 'testname';
-        };
-        self::assertEquals('testname', $formType->getBlockPrefix());
     }
 
     public function testGetParent()

@@ -242,10 +242,6 @@ class TransactionOptionProvider
         return $options;
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
     public function getLineItemOptions(PaymentTransaction $paymentTransaction): array
     {
         $entity = $this->loadEntity($paymentTransaction);
@@ -275,10 +271,6 @@ class TransactionOptionProvider
         return Option\LineItems::prepareOptions($options);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
     public function getSurcharges(PaymentTransaction $paymentTransaction): array
     {
         $entity = $this->loadEntity($paymentTransaction);

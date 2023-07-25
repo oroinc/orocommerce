@@ -16,10 +16,6 @@ class AppliedDiscountsProvider
      * Returns sum of all discounts amounts for given Order (including line item discounts, etc) without shipping
      *
      * @see \Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts::getDiscountsAmountByOrder
-     *
-     * @param Order $order
-     *
-     * @return float
      */
     public function getDiscountsAmountByOrder(Order $order): float
     {
@@ -39,9 +35,6 @@ class AppliedDiscountsProvider
      * Returns sum of all shipping discounts amounts for given Order
      *
      * @see \Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts::getShippingDiscountsAmountByOrder
-     *
-     * @param Order $order
-     * @return float
      */
     public function getShippingDiscountsAmountByOrder(Order $order): float
     {

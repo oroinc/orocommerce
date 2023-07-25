@@ -5,7 +5,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Workflow;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DomCrawler\Crawler;
@@ -15,23 +14,15 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
 {
-    const WORKFLOW_NAME = '';
-    const WORKFLOW_TITLE = '';
-    const WORKFLOW_BUTTONS = [];
-    const TRANSITIONS = [];
+    protected const WORKFLOW_NAME = '';
+    protected const WORKFLOW_TITLE = '';
+    protected const WORKFLOW_BUTTONS = [];
+    protected const TRANSITIONS = [];
 
-    /** @var WorkflowManager */
-    protected $manager;
+    protected WorkflowManager $manager;
+    protected WorkflowManager $systemManager;
+    protected Quote $quote;
 
-    /** @var WorkflowManager */
-    protected $systemManager;
-
-    /** @var Quote */
-    protected $quote;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,7 +35,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $this->quote = $this->getReference(LoadQuoteData::QUOTE1);
     }
 
-    protected function assertApplicableWorkflows()
+    protected function assertApplicableWorkflows(): void
     {
         if ($this->manager->isActiveWorkflow(static::WORKFLOW_NAME)) {
             $this->manager->deactivateWorkflow(static::WORKFLOW_NAME);
@@ -69,7 +60,6 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         /** @var Workflow $workflow */
         $workflow = $this->manager->getWorkflow(static::WORKFLOW_NAME);
 
-        /** @var TransitionManager $transitionManager */
         $transitionManager = $workflow->getTransitionManager();
 
         $this->assertEqualsCanonicalizing(
@@ -200,25 +190,19 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
     }
 
-    /**
-     * @param string $internalStatus
-     * @param string $customerStatus
-     */
-    protected function assertStatuses($internalStatus, $customerStatus)
+    protected function assertStatuses(string $internalStatus, string $customerStatus): void
     {
         $this->refreshQuoteEntity();
         $this->assertEquals($internalStatus, $this->quote->getInternalStatus()->getId());
         $this->assertEquals($customerStatus, $this->quote->getCustomerStatus()->getId());
     }
 
-    /**
-     * @param string $button
-     * @param string $internalStatus
-     * @param string $customerStatus
-     * @param array $availableButtons
-     */
-    protected function assertBackofficeTransition($button, $internalStatus, $customerStatus, array $availableButtons)
-    {
+    protected function assertBackofficeTransition(
+        string $button,
+        string $internalStatus,
+        string $customerStatus,
+        array $availableButtons
+    ): void {
         if ($button) {
             $this->transit($button);
         }
@@ -226,11 +210,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $this->assertButtonsAvailable($availableButtons);
     }
 
-    /**
-     * @param string $linkTitle
-     * @return array
-     */
-    protected function transit($linkTitle)
+    protected function transit(string $linkTitle): array
     {
         $crawler = $this->openQuoteWorkflowWidget();
 
@@ -248,17 +228,14 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $data = self::jsonToArray($this->client->getResponse()->getContent());
         $this->assertArrayHasKey('workflowItem', $data);
         $this->refreshQuoteEntity();
 
         return $data;
     }
 
-    /**
-     * @return null|Crawler
-     */
-    protected function openQuoteWorkflowWidget()
+    protected function openQuoteWorkflowWidget(): Crawler
     {
         $crawler = $this->client->request(
             'GET',
@@ -279,7 +256,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         return $crawler;
     }
 
-    protected function assertButtonsAvailable(array $buttonTitles)
+    protected function assertButtonsAvailable(array $buttonTitles): void
     {
         $crawler = $this->openQuoteWorkflowWidget();
         foreach ($buttonTitles as $title) {
@@ -291,7 +268,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         }
     }
 
-    protected function refreshQuoteEntity()
+    protected function refreshQuoteEntity(): void
     {
         $this->quote = $this->getContainer()->get('doctrine')->getManagerForClass(Quote::class)->find(
             Quote::class,
@@ -299,11 +276,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         );
     }
 
-    /**
-     * @param string $linkTitle
-     * @param array $formData
-     */
-    protected function transitWithForm($linkTitle, array $formData)
+    protected function transitWithForm(string $linkTitle, array $formData): void
     {
         $crawler = $this->openQuoteWorkflowWidget();
         $link = $this->selectExactLink($linkTitle, $crawler);
@@ -325,25 +298,20 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
     }
 
-    protected function assertSendToCustomer()
+    protected function assertSendToCustomer(): void
     {
         $this->transitWithForm('Send to Customer', ['oro_workflow_transition[email][to]' => 'test_email@test.tst']);
         $this->assertStatuses('sent_to_customer', 'open');
         $this->assertButtonsAvailable(['Expire', 'Cancel', 'Delete', 'Create new Quote']);
     }
 
-    protected function activateWorkflow()
+    protected function activateWorkflow(): void
     {
         $this->manager->activateWorkflow(static::WORKFLOW_NAME);
         $this->manager->startWorkflow(static::WORKFLOW_NAME, $this->quote);
     }
 
-    /**
-     * @param string $title
-     * @param Crawler $crawler
-     * @return null|Crawler
-     */
-    protected function selectExactLink($title, Crawler $crawler)
+    protected function selectExactLink(string $title, Crawler $crawler): ?Crawler
     {
         $link = $crawler->selectLink($title);
         for ($i = 0; $i < $link->count(); $i++) {

@@ -22,7 +22,7 @@ class CouponUsageManager
 
     /**
      * @param Coupon $coupon
-     * @param CustomerUser $customerUser
+     * @param CustomerUser|null $customerUser
      * @param bool $flush
      * @return CouponUsage
      */
@@ -59,7 +59,7 @@ class CouponUsageManager
 
     /**
      * @param Coupon $coupon
-     * @param $customerUser
+     * @param CustomerUser $customerUser
      * @return int
      */
     public function getCouponUsageCountByCustomerUser(Coupon $coupon, CustomerUser $customerUser)

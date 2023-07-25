@@ -85,7 +85,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
 
     /**
      * @param float|int|null       $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -96,7 +96,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
 
     /**
      * @param float|int|null       $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */

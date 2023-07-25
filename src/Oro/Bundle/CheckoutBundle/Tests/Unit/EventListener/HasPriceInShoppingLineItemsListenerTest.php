@@ -10,7 +10,6 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
@@ -20,44 +19,27 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
+use Oro\Component\Testing\ReflectionUtil;
 
 class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const CURRENCY = 'USD';
 
-    /**
-     * @var string
-     */
-    const CURRENCY = 'USD';
-
-    /**
-     * @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productPriceProvider;
 
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $userCurrencyManager;
-
-    /**
-     * @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $scopeCriteriaRequestHandler;
 
-    /**
-     * @var HasPriceInShoppingLineItemsListener
-     */
-    private $listener;
+    /** @var ProductPriceCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceCriteriaFactory;
 
-    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
+    /** @var HasPriceInShoppingLineItemsListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
-        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
         $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
@@ -68,116 +50,127 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
         );
     }
 
-    /**
-     * @return Collection|CheckoutLineItem[]
-     */
-    private function createCheckoutLineItems()
+    private function getProduct(int $id): Product
     {
-        $firstProduct = $this->getEntity(Product::class, ['id' => 1]);
-        $firstProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
-        $secondProduct = $this->getEntity(Product::class, ['id' => 2]);
-        $secondProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
-        $thirdProduct = $this->getEntity(Product::class, ['id' => 3]);
-        $thirdProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+
+        return $productUnit;
+    }
+
+    private function getCheckoutLineItem(
+        Product $product,
+        ProductUnit $productUnit,
+        int $quantity,
+        bool $priceFixed
+    ): CheckoutLineItem {
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setProduct($product);
+        $lineItem->setProductUnit($productUnit);
+        $lineItem->setQuantity($quantity);
+        $lineItem->setPriceFixed($priceFixed);
+
+        return $lineItem;
+    }
+
+    /**
+     * @return Collection<int, CheckoutLineItem>
+     */
+    private function createCheckoutLineItems(): Collection
+    {
+        $firstProduct = $this->getProduct(1);
+        $firstProductUnit = $this->getProductUnit('item');
+        $secondProduct = $this->getProduct(2);
+        $secondProductUnit = $this->getProductUnit('item');
+        $thirdProduct = $this->getProduct(3);
+        $thirdProductUnit = $this->getProductUnit('item');
 
         return new ArrayCollection([
-            $this->getEntity(CheckoutLineItem::class, [
-                'product' => $firstProduct,
-                'productUnit' => $firstProductUnit,
-                'quantity' => 1,
-                'priceFixed' => false
-            ]),
-            $this->getEntity(CheckoutLineItem::class, [
-                'product' => $secondProduct,
-                'productUnit' => $secondProductUnit,
-                'quantity' => 2,
-                'priceFixed' => false
-            ]),
-            $this->getEntity(CheckoutLineItem::class, [
-                'product' => $thirdProduct,
-                'productUnit' => $thirdProductUnit,
-                'quantity' => 0,
-                'priceFixed' => true
-            ]),
+            $this->getCheckoutLineItem($firstProduct, $firstProductUnit, 1, false),
+            $this->getCheckoutLineItem($secondProduct, $secondProductUnit, 2, false),
+            $this->getCheckoutLineItem($thirdProduct, $thirdProductUnit, 0, true),
         ]);
     }
 
     /**
-     * @return Collection|CheckoutLineItem[]
+     * @return Collection<int, CheckoutLineItem>
      */
-    private function createCheckoutLineItemsWithoutQuantity()
+    private function createCheckoutLineItemsWithoutQuantity(): Collection
     {
-        $firstProduct = $this->getEntity(Product::class, ['id' => 1]);
-        $firstProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
-        $secondProduct = $this->getEntity(Product::class, ['id' => 2]);
-        $secondProductUnit = $this->getEntity(ProductUnit::class, ['code' => 'item']);
+        $firstProduct = $this->getProduct(1);
+        $firstProductUnit = $this->getProductUnit('item');
+        $secondProduct = $this->getProduct(2);
+        $secondProductUnit = $this->getProductUnit('item');
 
         return new ArrayCollection([
-            $this->getEntity(CheckoutLineItem::class, [
-                'product' => $firstProduct,
-                'productUnit' => $firstProductUnit,
-                'quantity' => 0,
-                'priceFixed' => false
-            ]),
-            $this->getEntity(CheckoutLineItem::class, [
-                'product' => $secondProduct,
-                'productUnit' => $secondProductUnit,
-                'quantity' => 0,
-                'priceFixed' => false
-            ]),
+            $this->getCheckoutLineItem($firstProduct, $firstProductUnit, 0, false),
+            $this->getCheckoutLineItem($secondProduct, $secondProductUnit, 0, false),
         ]);
     }
 
-    /**
-     * @param ArrayCollection| Price[] $prices
-     * @return ExtendableConditionEvent
-     */
-    private function expectsPrepareLineItemsAndReturnPrices($prices)
+    private function expectsPrepareLineItemsAndReturnPrices(array $prices): ExtendableConditionEvent
     {
         $lineItems = $this->createCheckoutLineItems();
 
-        /** @var Checkout $checkout */
-        $checkout = $this->getEntity(Checkout::class, [
-            'lineItems' => $lineItems,
-        ]);
+        $checkout = new Checkout();
+        $checkout->setLineItems($lineItems);
 
         $context = $this->createMock(ActionData::class);
 
-        $context->method('get')->with('checkout')->willReturn($checkout);
+        $context->expects(self::any())
+            ->method('get')
+            ->with('checkout')
+            ->willReturn($checkout);
 
         $criteria =  $this->createMock(ProductPriceScopeCriteria::class);
 
-        $this->scopeCriteriaRequestHandler
-            ->expects($this->once())
+        $this->scopeCriteriaRequestHandler->expects($this->once())
             ->method('getPriceScopeCriteria')
             ->willReturn($criteria);
 
         $productPriceCriteria = $this->createMock(ProductPriceCriteria::class);
 
-        $this->productPriceCriteriaFactory->method('createListFromProductLineItems')->willReturn([
-            $productPriceCriteria,
-            $productPriceCriteria
-        ]);
+        $this->productPriceCriteriaFactory->expects(self::any())
+            ->method('createListFromProductLineItems')
+            ->willReturn([
+                $productPriceCriteria,
+                $productPriceCriteria
+            ]);
 
-        $productPriceCriteria->method('getProduct')->willReturnOnConsecutiveCalls(
-            $lineItems[0]->getProduct(),
-            $lineItems[1]->getProduct()
-        );
+        $productPriceCriteria->expects(self::any())
+            ->method('getProduct')
+            ->willReturnOnConsecutiveCalls(
+                $lineItems[0]->getProduct(),
+                $lineItems[1]->getProduct()
+            );
 
-        $productPriceCriteria->method('getQuantity')->willReturnOnConsecutiveCalls(
-            $lineItems[0]->getQuantity(),
-            $lineItems[1]->getQuantity()
-        );
+        $productPriceCriteria->expects(self::any())
+            ->method('getQuantity')
+            ->willReturnOnConsecutiveCalls(
+                $lineItems[0]->getQuantity(),
+                $lineItems[1]->getQuantity()
+            );
 
-        $productPriceCriteria->method('getProductUnit')->willReturnOnConsecutiveCalls(
-            $lineItems[0]->getProductUnit(),
-            $lineItems[1]->getProductUnit()
-        );
+        $productPriceCriteria->expects(self::any())
+            ->method('getProductUnit')
+            ->willReturnOnConsecutiveCalls(
+                $lineItems[0]->getProductUnit(),
+                $lineItems[1]->getProductUnit()
+            );
 
-        $productPriceCriteria->method('getCurrency')->willReturn(self::CURRENCY);
+        $productPriceCriteria->expects(self::any())
+            ->method('getCurrency')
+            ->willReturn(self::CURRENCY);
 
-        $this->productPriceProvider
-            ->expects($this->once())
+        $this->productPriceProvider->expects($this->once())
             ->method('getMatchedPrices')
             ->with(
                 $this->callback(function ($productsPricesCriteria) use ($lineItems) {
@@ -201,30 +194,19 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
         return new ExtendableConditionEvent($context);
     }
 
-    /**
-     * @return ExtendableConditionEvent
-     */
-    private function expectsPrepareLineItemsWithoutQuantity()
+    private function expectsPrepareLineItemsWithoutQuantity(): ExtendableConditionEvent
     {
         $lineItems = $this->createCheckoutLineItemsWithoutQuantity();
 
-        /** @var Checkout $checkout */
-        $checkout = $this->getEntity(Checkout::class, [
-            'lineItems' => $lineItems,
-        ]);
+        $checkout = new Checkout();
+        $checkout->setLineItems($lineItems);
 
         $context = new ActionData(['checkout' => $checkout]);
 
-        $this->userCurrencyManager
-            ->expects($this->never())
-            ->method('getUserCurrency');
-
-        $this->scopeCriteriaRequestHandler
-            ->expects($this->never())
+        $this->scopeCriteriaRequestHandler->expects($this->never())
             ->method('getPriceScopeCriteria');
 
-        $this->productPriceProvider
-            ->expects($this->never())
+        $this->productPriceProvider->expects($this->never())
             ->method('getMatchedPrices');
 
         return new ExtendableConditionEvent($context);
@@ -233,20 +215,13 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
     public function testOnStartCheckoutConditionCheckWhenContextIsNotActionData()
     {
         $event = new ExtendableConditionEvent(new \stdClass());
-        $this->userCurrencyManager
-            ->expects($this->never())
-            ->method('getUserCurrency');
 
         $this->listener->onStartCheckoutConditionCheck($event);
     }
 
     public function testOnStartCheckoutConditionCheckWhenCheckoutIsNotOfCheckoutType()
     {
-        $context = new ActionData(['checkout' => new \stdClass()]);
-        $event = new ExtendableConditionEvent($context);
-        $this->userCurrencyManager
-            ->expects($this->never())
-            ->method('getUserCurrency');
+        $event = new ExtendableConditionEvent(new ActionData(['checkout' => new \stdClass()]));
 
         $this->listener->onStartCheckoutConditionCheck($event);
     }
@@ -270,7 +245,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
 
     public function testOnStartCheckoutConditionCheckWhenCheckoutHasAtLeastOnePrice()
     {
-        $event = $this->expectsPrepareLineItemsAndReturnPrices([$this->getEntity(Price::class)]);
+        $event = $this->expectsPrepareLineItemsAndReturnPrices([new Price()]);
 
         $this->listener->onStartCheckoutConditionCheck($event);
 
@@ -279,10 +254,11 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
 
     public function testOnStartCheckoutConditionCheckWhenCheckoutHasNoItems()
     {
-        $shoppingList = $this->getEntity(ShoppingList::class, []);
+        $shoppingList = new ShoppingList();
         $checkoutSource = new CheckoutSourceStub();
         $checkoutSource->setShoppingList($shoppingList);
-        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
+        $checkout = new Checkout();
+        $checkout->setSource($checkoutSource);
 
         $context = new ActionData(['checkout' => $checkout]);
         $event = new ExtendableConditionEvent($context);

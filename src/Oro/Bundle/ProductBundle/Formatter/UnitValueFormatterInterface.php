@@ -8,7 +8,7 @@ interface UnitValueFormatterInterface
 {
     /**
      * @param null|float|integer $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -16,7 +16,7 @@ interface UnitValueFormatterInterface
 
     /**
      * @param null|float|integer $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */

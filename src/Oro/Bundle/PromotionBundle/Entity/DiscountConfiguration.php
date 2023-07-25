@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_DiscountConfiguration;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -21,6 +22,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  * )
  * @ORM\Entity()
  * @Config()
+ * @mixin OroPromotionBundle_Entity_DiscountConfiguration
  */
 class DiscountConfiguration implements ExtendEntityInterface
 {

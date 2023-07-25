@@ -182,7 +182,6 @@ class ProductKitLineItemPriceCriteriaFactoryTest extends TestCase
             ->with(self::USD)
             ->willReturnSelf();
 
-
         $this->productKitPriceCriteriaBuilder
             ->expects(self::never())
             ->method('addKitItemProduct');

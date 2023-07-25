@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCheckoutBundle_Entity_Checkout;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -57,6 +58,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *          }
  *      }
  * )
+ * @mixin OroCheckoutBundle_Entity_Checkout
  */
 class Checkout implements
     CheckoutInterface,
@@ -344,7 +346,7 @@ class Checkout implements
     }
 
     /**
-     * @param \DateTime $shipUntil
+     * @param \DateTime|null $shipUntil
      * @return Checkout
      */
     public function setShipUntil(\DateTime $shipUntil = null)
@@ -413,7 +415,7 @@ class Checkout implements
     /**
      * Set shipping estimate
      *
-     * @param Price $shippingCost
+     * @param Price|null $shippingCost
      * @return $this
      */
     public function setShippingCost(Price $shippingCost = null)

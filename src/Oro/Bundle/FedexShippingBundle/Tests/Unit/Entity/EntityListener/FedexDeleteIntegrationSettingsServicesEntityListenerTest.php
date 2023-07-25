@@ -18,33 +18,21 @@ use Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIden
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEventDispatcherInterface;
-use PHPUnit\Framework\TestCase;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
+class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const METHOD_ID = 'method';
+    private const METHOD_ID = 'method';
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $integrationIdentifierGenerator;
 
-    /**
-     * @var FedexMethodTypeIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexMethodTypeIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $typeIdentifierGenerator;
 
-    /**
-     * @var MethodTypeRemovalEventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MethodTypeRemovalEventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $typeRemovalEventDispatcher;
 
-    /**
-     * @var FedexDeleteIntegrationSettingsServicesEntityListener
-     */
+    /** @var FedexDeleteIntegrationSettingsServicesEntityListener */
     private $listener;
 
     protected function setUp(): void
@@ -65,8 +53,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
         $settings = $this->createSettings([]);
 
         $args = $this->createMock(LifecycleEventArgs::class);
-        $args
-            ->expects(static::never())
+        $args->expects(self::never())
             ->method('getObjectManager');
 
         $this->listener->postUpdate($settings, $args);
@@ -79,8 +66,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
             new FedexShippingService(),
         ]);
 
-        $this->typeRemovalEventDispatcher
-            ->expects(static::never())
+        $this->typeRemovalEventDispatcher->expects(self::never())
             ->method('dispatch');
 
         $this->listener->postUpdate($settings, $this->createArgs(null, $settings));
@@ -97,32 +83,24 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
 
         $settings = $this->createSettings($services);
 
-        $this->integrationIdentifierGenerator
-            ->expects(static::once())
+        $this->integrationIdentifierGenerator->expects(self::once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn(self::METHOD_ID);
 
-        $this->typeIdentifierGenerator
-            ->expects(static::exactly(2))
+        $this->typeIdentifierGenerator->expects(self::exactly(2))
             ->method('generate')
             ->withConsecutive([$services[0]], [$services[1]])
             ->willReturnOnConsecutiveCalls($typeIds[0], $typeIds[1]);
 
-        $this->typeRemovalEventDispatcher
-            ->expects(static::exactly(2))
+        $this->typeRemovalEventDispatcher->expects(self::exactly(2))
             ->method('dispatch')
             ->withConsecutive([self::METHOD_ID, $typeIds[0]], [self::METHOD_ID, $typeIds[1]]);
 
         $this->listener->postUpdate($settings, $this->createArgs($channel, $settings));
     }
 
-    /**
-     * @param FedexShippingService[] $deletedServices
-     *
-     * @return FedexIntegrationSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createSettings(array $deletedServices)
+    private function createSettings(array $deletedServices): FedexIntegrationSettings
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
@@ -144,24 +122,17 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
         $serviceCollection->clear();
 
         $settings = $this->createMock(FedexIntegrationSettings::class);
-        $settings->expects(static::once())
+        $settings->expects(self::once())
             ->method('getShippingServices')
             ->willReturn($serviceCollection);
 
         return $settings;
     }
 
-    /**
-     * @param Channel|null             $channel
-     * @param FedexIntegrationSettings $settings
-     *
-     * @return LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createArgs(Channel $channel = null, FedexIntegrationSettings $settings)
+    private function createArgs(?Channel $channel, FedexIntegrationSettings $settings): LifecycleEventArgs
     {
         $repository = $this->createMock(EntityRepository::class);
-        $repository
-            ->expects(static::once())
+        $repository->expects(self::once())
             ->method('findOneBy')
             ->with([
                 'type' => FedexChannel::TYPE,
@@ -170,14 +141,12 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
             ->willReturn($channel);
 
         $entityManager = $this->createMock(EntityManager::class);
-        $entityManager
-            ->expects(static::once())
+        $entityManager->expects(self::once())
             ->method('getRepository')
             ->willReturn($repository);
 
         $args = $this->createMock(LifecycleEventArgs::class);
-        $args
-            ->expects(static::once())
+        $args->expects(self::once())
             ->method('getObjectManager')
             ->willReturn($entityManager);
 

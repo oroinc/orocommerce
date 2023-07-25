@@ -26,9 +26,6 @@ class ProcessAutocompleteQueryEvent extends Event
         $this->query = $query;
     }
 
-    /**
-     * @return string
-     */
     public function getQueryString(): string
     {
         return $this->queryString;

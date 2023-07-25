@@ -71,7 +71,7 @@ class InventoryQuantityManager
     }
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return bool
      */
     public function shouldDecrement(Product $product = null)

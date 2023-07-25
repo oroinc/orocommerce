@@ -10,12 +10,9 @@ class ProductImageTypeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    const MAIN_TYPE = 'main';
+    private const MAIN_TYPE = 'main';
 
-    /**
-     * @var ProductImageType
-     */
-    protected $productImageType;
+    private ProductImageType $productImageType;
 
     protected function setUp(): void
     {

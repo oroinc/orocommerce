@@ -71,10 +71,6 @@ class ProductVariantLink
      */
     protected $visible = true;
 
-    /**
-     * @param Product $parentProduct
-     * @param Product $product
-     */
     public function __construct(Product $parentProduct = null, Product $product = null)
     {
         $this->parentProduct = $parentProduct;

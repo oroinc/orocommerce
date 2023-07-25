@@ -20,7 +20,6 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
     public const ALIAS = 'oro_product_attribute_value_usage_in_variant_field';
     private const MAX_PRODUCT_SKU_IN_MESSAGE = 10;
 
-
     public function __construct(
         private ManagerRegistry $registry,
         private EnumSynchronizer $enumSynchronizer

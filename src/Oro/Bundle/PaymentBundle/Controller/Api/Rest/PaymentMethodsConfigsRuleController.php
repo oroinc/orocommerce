@@ -24,7 +24,7 @@ class PaymentMethodsConfigsRuleController extends RestController
      * @ApiDoc(description="Enable Payment Rule", resource=true)
      * @AclAncestor("oro_payment_methods_configs_rule_update")
      *
-     * @param $id
+     * @param int $id
      * @return Response
      */
     public function enableAction(int $id)
@@ -65,7 +65,7 @@ class PaymentMethodsConfigsRuleController extends RestController
      * @ApiDoc(description="Disable Payment Rule", resource=true)
      * @AclAncestor("oro_payment_methods_configs_rule_update")
      *
-     * @param $id
+     * @param int $id
      * @return Response
      */
     public function disableAction(int $id)

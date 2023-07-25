@@ -132,9 +132,6 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
         self::assertEmpty($result);
     }
 
-    /**
-     * @return OrderRepository
-     */
     private function getRepository(): OrderRepository
     {
         return self::getContainer()
@@ -167,8 +164,8 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
                 return;
             }
         }
-        static::fail(\sprintf(
-            "Failed asserting that there is a record with product %s (product_id=%s)"
+        static::fail(sprintf(
+            'Failed asserting that there is a record with product %s (product_id=%s)'
             . " and customer user %s (customer_user_id=%s):\n%s",
             $productReference,
             $productId,

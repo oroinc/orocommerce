@@ -94,6 +94,6 @@ class CustomerControllersTest extends WebTestCase
     private function checkDatagridResponse(Response $response): void
     {
         $result = $this->getJsonResponseContent($response, 200);
-        self::assertStringContainsString(\sprintf('USD%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
+        self::assertStringContainsString(sprintf('USD%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
     }
 }

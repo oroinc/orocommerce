@@ -56,11 +56,6 @@ class ProductCollectionContentVariantDatagridListener
         }
     }
 
-    /**
-     * @param QueryBuilder$queryBuilder
-     * @param int|null $segmentId
-     * @return void
-     */
     private function joinProductCollectionSortOrder(QueryBuilder $queryBuilder, ?int $segmentId): void
     {
         $expr = $queryBuilder->expr();
@@ -86,10 +81,6 @@ class ProductCollectionContentVariantDatagridListener
         $queryBuilder->setParameter('segmentId', $segmentId);
     }
 
-    /**
-     * @param DatagridInterface $datagrid
-     * @return void
-     */
     public function buildCellSelectionSelector(DatagridInterface $datagrid): void
     {
         $datagrid->getConfig()->offsetSetByPath(
@@ -106,10 +97,6 @@ class ProductCollectionContentVariantDatagridListener
         );
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array
-     */
     private function getSegmentData(DatagridInterface $dataGrid): array
     {
         $parameters = $this->getSegmentDataFromGridParameters($dataGrid);
@@ -120,10 +107,6 @@ class ProductCollectionContentVariantDatagridListener
         return $parameters;
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array|null
-     */
     private function getSegmentDataFromGridParameters(DatagridInterface $dataGrid): ?array
     {
         $parameters = $dataGrid->getParameters();
@@ -139,10 +122,6 @@ class ProductCollectionContentVariantDatagridListener
         return null;
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array
-     */
     private function getSegmentDataFromRequest(DatagridInterface $dataGrid): array
     {
         $request = $this->requestStack->getCurrentRequest();

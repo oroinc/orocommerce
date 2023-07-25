@@ -15,8 +15,6 @@ class QuantityUnitPrecision extends Constraint
 
     /**
      * The path to the quantity field.
-     *
-     * @var string
      */
     public string $path = '';
 

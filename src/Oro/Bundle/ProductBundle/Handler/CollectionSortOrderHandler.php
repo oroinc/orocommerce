@@ -59,11 +59,6 @@ class CollectionSortOrderHandler
         }
     }
 
-    /**
-     * @param Product $product
-     * @param Segment $segment
-     * @return CollectionSortOrder|null
-     */
     public function getCollectionSortOrderByUnicity(Product $product, Segment $segment): ?CollectionSortOrder
     {
         return $this->getRepository()->findOneBy([
@@ -72,17 +67,11 @@ class CollectionSortOrderHandler
         ]);
     }
 
-    /**
-     * @return EntityRepository
-     */
     private function getRepository(): EntityRepository
     {
         return $this->doctrineHelper->getEntityRepositoryForClass(CollectionSortOrder::class);
     }
 
-    /**
-     * @return EntityManager
-     */
     private function getManager(): EntityManager
     {
         return $this->doctrineHelper->getEntityManager(CollectionSortOrder::class);

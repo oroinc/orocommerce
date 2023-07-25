@@ -24,9 +24,6 @@ class ProductKitItemProductUnitCheckerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productUnitEligibleDataDataProvider
-     *
-     * @param string $unitCode
-     * @param bool $expected
      */
     public function testIsProductUnitEligible(string $unitCode, bool $expected): void
     {

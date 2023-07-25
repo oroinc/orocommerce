@@ -90,7 +90,7 @@ class RequestAdditionalNote implements DatesAwareInterface
     }
 
     /**
-     * @param Request $request
+     * @param Request|null $request
      * @return $this
      */
     public function setRequest(Request $request = null)

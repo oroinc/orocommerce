@@ -148,7 +148,6 @@ class SegmentProductsQueryProviderTest extends \PHPUnit\Framework\TestCase
             ->method('setQuery')
             ->with($cacheKey, self::identicalTo($query));
 
-
         self::assertSame($query, $this->segmentProductsQueryProvider->getQuery($segment, 'test_query'));
     }
 
@@ -170,7 +169,6 @@ class SegmentProductsQueryProviderTest extends \PHPUnit\Framework\TestCase
             ->method('restrictQueryBuilder');
         $this->cache->expects(self::never())
             ->method('setQuery');
-
 
         self::assertNull($this->segmentProductsQueryProvider->getQuery($segment, 'test_query'));
     }

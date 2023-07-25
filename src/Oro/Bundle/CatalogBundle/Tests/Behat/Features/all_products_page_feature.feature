@@ -106,20 +106,3 @@ Feature: All products page feature
     And I should see "404 Not Found"
     Then I click "All Products (Web Catalog)"
     And I should see "404 Not Found"
-
-  @skip
-  Scenario: Installation with or without demo data
-    Given I'm performing application installation with demo data
-    When I login as "OroAdmin" user
-    And I go to System/ Configuration
-    And I click "COMMERCE"
-    And I click "Catalog"
-    And I click "Special Pages"
-    Then I should see feature enabled
-    But I'm performing application installation without demo data
-    When I login as "Administrator" user
-    And I go to System/ Configuration
-    And I click "COMMERCE"
-    And I click "Catalog"
-    And I click "Special Pages"
-    Then I should see feature disabled

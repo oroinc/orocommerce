@@ -7,7 +7,7 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 interface MessageFactoryInterface
 {
     /**
-     * @param SluggableInterface|object $entity
+     * @param SluggableInterface $entity
      * @return array
      */
     public function createMessage(SluggableInterface $entity);

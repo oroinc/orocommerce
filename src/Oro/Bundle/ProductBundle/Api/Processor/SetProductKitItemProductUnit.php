@@ -7,8 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Service\ProductKitItemProductUnitChecker;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use Psr\Log\LoggerAwareTrait;
-use Psr\Log\NullLogger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Sets the product unit from the product kit primary unit precision as the default value for
@@ -16,18 +15,17 @@ use Psr\Log\NullLogger;
  */
 class SetProductKitItemProductUnit implements ProcessorInterface
 {
-    use LoggerAwareTrait;
-
     private ProductKitItemProductUnitChecker $productUnitChecker;
+    private LoggerInterface $logger;
 
-    public function __construct(ProductKitItemProductUnitChecker $productUnitChecker)
+    public function __construct(ProductKitItemProductUnitChecker $productUnitChecker, LoggerInterface $logger)
     {
         $this->productUnitChecker = $productUnitChecker;
-        $this->logger = new NullLogger();
+        $this->logger = $logger;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(ContextInterface $context): void
     {
@@ -37,25 +35,26 @@ class SetProductKitItemProductUnit implements ProcessorInterface
         $productKitItem = $context->getData();
 
         $productKitItemUnit = $productKitItem->getProductUnit();
-        if ($productKitItemUnit !== null) {
-            // Skips further execution as product unit is already set.
+        if (null !== $productKitItemUnit) {
+            // product unit is already set
             return;
         }
 
         $productKitUnit = $productKitItem->getProductKit()?->getPrimaryUnitPrecision()->getUnit();
-        if ($productKitUnit === null) {
-            // Skips further execution as product unit is not set and cannot be set from product kit.
+        if (null === $productKitUnit) {
+            // product unit is not set and cannot be set from product kit
             return;
         }
 
-        if ($this->productUnitChecker
-            ->isProductUnitEligible($productKitUnit->getCode(), $productKitItem->getProducts())) {
-            $logMessage = '$productUnit is not specified for ProductKitItem, trying to use '
-                . 'product unit "{product_unit}" from the product kit primary unit precision';
-
+        if ($this->productUnitChecker->isProductUnitEligible(
+            $productKitUnit->getCode(),
+            $productKitItem->getProducts()
+        )) {
             $productKitItem->setProductUnit($productKitUnit);
+            $logMessage = '$productUnit is not specified for ProductKitItem, trying to use '
+                . 'product unit "{product_kit_unit}" from the product kit primary unit precision';
         } else {
-            $logMessage = '$productUnit is not specified for ProductKitItem, but product unit "{product_unit}"'
+            $logMessage = '$productUnit is not specified for ProductKitItem, but product unit "{product_kit_unit}"'
                 . ' from the product kit primary unit precision cannot be used because it is not present'
                 . ' in each product unit precisions collection of the ProductKitItem products';
         }

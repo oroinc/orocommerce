@@ -114,13 +114,6 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             ->setPriceList($newInstanceData['attribute']);
     }
 
-    /**
-     * @param Product $product
-     * @param array $attributes
-     * @param array $existingPrices
-     *
-     * @return array
-     */
     private function transformPriceAttributes(Product $product, array $attributes, array $existingPrices): array
     {
         $neededPrices = [];

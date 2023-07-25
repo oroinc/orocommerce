@@ -22,7 +22,7 @@ class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCa
     public function testValidateWithWrongConstraint(): void
     {
         $this->expectException(UnexpectedTypeException::class);
-        $this->expectExceptionMessage(\sprintf(
+        $this->expectExceptionMessage(sprintf(
             'Expected argument of type "%s", "%s" given',
             PrimaryProductUnitPrecision::class,
             NotNull::class

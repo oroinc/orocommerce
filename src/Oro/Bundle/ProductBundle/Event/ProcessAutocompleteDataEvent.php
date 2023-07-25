@@ -26,25 +26,16 @@ class ProcessAutocompleteDataEvent extends Event
         $this->data = $data;
     }
 
-    /**
-     * @return string
-     */
     public function getQueryString(): string
     {
         return $this->queryString;
     }
 
-    /**
-     * @return Result
-     */
     public function getResult(): Result
     {
         return $this->result;
     }
 
-    /**
-     * @param Result $result
-     */
     public function setResult(Result $result): void
     {
         $this->result = $result;

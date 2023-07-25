@@ -291,18 +291,11 @@ class CurrentShoppingListManager
             ->getRepository(ShoppingList::class);
     }
 
-    /**
-     * @return bool
-     */
     private function isShowAllInShoppingListWidget(): bool
     {
         return (bool)$this->configManager->get('oro_shopping_list.show_all_in_shopping_list_widget');
     }
 
-    /**
-     * @param ShoppingList|null $shoppingList
-     * @return bool
-     */
     private function shoppingListAvailableForCurrentUser(?ShoppingList $shoppingList): bool
     {
         if (is_null($shoppingList)) {

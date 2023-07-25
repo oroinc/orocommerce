@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroOrderBundle_Entity_Order;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrencyHolderInterface;
@@ -72,6 +73,10 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "group_name"="commerce",
  *              "category"="orders"
  *          },
+ *          "grid"={
+ *              "default"="orders-grid",
+ *              "context"="orders-for-context-grid"
+ *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -85,6 +90,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *
  * @method AbstractEnumValue getInternalStatus()
  * @method $this setInternalStatus(AbstractEnumValue $status)
+ * @mixin OroOrderBundle_Entity_Order
  */
 class Order implements
     OrganizationAwareInterface,
@@ -1132,7 +1138,7 @@ class Order implements
     /**
      * Set total discounts
      *
-     * @param Price $totalDiscounts
+     * @param Price|null $totalDiscounts
      * @return Order
      */
     public function setTotalDiscounts(Price $totalDiscounts = null)

@@ -119,7 +119,7 @@ class Taxable
     }
 
     /**
-     * @param AbstractAddress $origin
+     * @param AbstractAddress|null $origin
      * @return Taxable
      */
     public function setOrigin(AbstractAddress $origin = null)
@@ -138,7 +138,7 @@ class Taxable
     }
 
     /**
-     * @param AbstractAddress $destination
+     * @param AbstractAddress|null $destination
      * @return Taxable
      */
     public function setDestination(AbstractAddress $destination = null)
@@ -383,7 +383,7 @@ class Taxable
     }
 
     /**
-     * @param AbstractAddress $taxationAddress
+     * @param AbstractAddress|null $taxationAddress
      * @return Taxable
      */
     public function setTaxationAddress(AbstractAddress $taxationAddress = null)

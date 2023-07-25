@@ -6,6 +6,7 @@ namespace Oro\Bundle\CommerceBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CommerceBundle\Migrations\Schema\v4_1_0_0\RemoveInvoiceEntityConfig;
+use Oro\Bundle\CommerceBundle\Migrations\Schema\v4_1_0_1\RemoveExampleDocumentationTables;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -21,7 +22,7 @@ class OroCommerceBundleInstaller implements Installation, ContainerAwareInterfac
      */
     public function getMigrationVersion()
     {
-        return 'v4_1_0_0';
+        return 'v4_1_0_1';
     }
 
     /**
@@ -31,6 +32,7 @@ class OroCommerceBundleInstaller implements Installation, ContainerAwareInterfac
     {
         if ($this->container->get(ApplicationState::class)->isInstalled()) {
             RemoveInvoiceEntityConfig::removeInvoiceEntityConfig($queries);
+            RemoveExampleDocumentationTables::removeExampleDocumentationTables($queries);
         }
     }
 }
