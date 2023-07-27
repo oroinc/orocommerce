@@ -11,10 +11,21 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  */
 class BrandRepository extends EntityRepository
 {
-    public function getBrandByOrganizationQueryBuilder(OrganizationInterface $organization): QueryBuilder
+    /**
+     * Loads brands with an initialized collection of names.
+     */
+    public function getBrandQueryBuilder(): QueryBuilder
     {
         return $this
             ->createQueryBuilder('b')
+            ->select('b,n')
+            ->leftJoin('b.names', 'n');
+    }
+
+    public function getBrandByOrganizationQueryBuilder(OrganizationInterface $organization): QueryBuilder
+    {
+        return $this
+            ->getBrandQueryBuilder()
             ->leftJoin('b.organization', 'organization')
             ->where('organization = :organization')
             ->setParameter('organization', $organization);
