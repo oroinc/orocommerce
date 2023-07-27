@@ -42,7 +42,7 @@ data:
             data:
                 -
                     type: productshippingoptions
-                    id: '<toString(@product_shipping_options.1->id)>'
+                    id: product-shipping-option-1
 included:
     -
         type: productnames
@@ -65,3 +65,28 @@ included:
                 data:
                     type: productunits
                     id: each
+    -
+        type: 'productshippingoptions'
+        id: product-shipping-option-1
+        attributes:
+            weightValue: 24.57
+            dimensionsLength: 31.51
+            dimensionsWidth: 33.16
+            dimensionsHeight: 128.09
+        relationships:
+            productUnit:
+                data:
+                    id: '<toString(@product_unit.liter->code)>'
+                    type: 'productunits'
+            weightUnit:
+                data:
+                    id: '<toString(@weight_unit.kilo->code)>'
+                    type: 'weightunits'
+            dimensionsUnit:
+                data:
+                    id: '<toString(@length_unit.in->code)>'
+                    type: 'lengthunits'
+            freightClass:
+                data:
+                    id: '<toString(@freight_class.pcl->code)>'
+                    type: 'freightclasses'

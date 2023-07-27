@@ -451,12 +451,22 @@ oro_behat_extension:
 
     Shopping List Edit Grid Edit Note:
       selector:
-        locator: '// tr[@aria-rowindex="2"]//a[@title="Edit Shopping List item Note"]'
+        locator: '//tr[@aria-rowindex="2"]//a[contains(@title, "Edit") and contains(@title, "Note")]'
         type: 'xpath'
 
     Shopping List Edit Grid Select Row 1 Delete:
       selector:
-        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]//a[@title="Delete"]'
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]//a[contains(@title, "Delete")]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Edit Note Row 2:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="3"]//a[contains(@title, "Edit") and contains(@title, "Note")]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Delete Row 2:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="3"]/td[contains(@class, "action-cell")]//a[contains(@title, "Delete")]'
         type: 'xpath'
 
     Shopping List Edit Grid Header Mass Action:

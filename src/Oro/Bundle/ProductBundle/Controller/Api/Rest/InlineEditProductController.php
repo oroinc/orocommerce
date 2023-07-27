@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ *
+ * REST API controller for product inline editing.
+ *
  * @RouteResource("product_inline_edit")
  * @NamePrefix("oro_api_")
  */
@@ -52,6 +55,7 @@ class InlineEditProductController extends FOSRestController
                 break;
         }
 
+        $productName = $this->container->get('oro_ui.html_tag_helper')->stripTags($productName);
         $slug = $this->get('oro_entity_config.slug.generator')->slugify($productName);
 
         $product->setDefaultName($productName);
@@ -60,7 +64,7 @@ class InlineEditProductController extends FOSRestController
 
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
-        return parent::handleView($this->view([], Response::HTTP_OK));
+        return parent::handleView($this->view(['productName' => $productName], Response::HTTP_OK));
     }
 
     /**

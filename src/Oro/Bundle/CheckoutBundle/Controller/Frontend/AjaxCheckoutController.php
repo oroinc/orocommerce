@@ -33,9 +33,11 @@ class AjaxCheckoutController extends AbstractController
         /** @var Checkout $checkout */
         $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
             ->getRepository(Checkout::class)->getCheckoutWithRelations($entityId);
+
         if (!$checkout) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }
+        $this->denyAccessUnlessGranted('EDIT', $checkout);
 
         $this->setCorrectCheckoutShippingMethodData($checkout, $request);
 

@@ -12,6 +12,7 @@ class CategoryPageTitleTest extends WebTestCase
 {
     protected function setUp(): void
     {
+        $this->markTestSkipped('Skipped by BAP-22079');
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)

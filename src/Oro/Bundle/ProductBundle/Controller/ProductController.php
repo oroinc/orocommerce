@@ -19,6 +19,7 @@ use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -304,13 +305,14 @@ class ProductController extends AbstractController
 
         $slugsData = [];
         if ($newName !== null) {
+            $newName = $this->container->get('oro_ui.html_tag_helper')->stripTags($newName);
             $newSlug = $this->get(SlugGenerator::class)->slugify($newName);
             $slugsData = $this->get(ChangedSlugsHelper::class)
                 ->getChangedDefaultSlugData($product, $newSlug);
         }
 
         return new JsonResponse([
-            'showRedirectConfirmation' => $showRedirectConfirmation,
+            'showRedirectConfirmation' => $showRedirectConfirmation && !empty($slugsData),
             'slugsData' => $slugsData,
         ]);
     }
@@ -396,6 +398,7 @@ class ProductController extends AbstractController
                 ChangedSlugsHelper::class,
                 ConfigManager::class,
                 SlugGenerator::class,
+                'oro_ui.html_tag_helper' => HtmlTagHelper::class,
             ]
         );
     }
