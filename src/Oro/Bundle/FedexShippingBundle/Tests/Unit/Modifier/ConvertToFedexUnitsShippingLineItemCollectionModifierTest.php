@@ -43,27 +43,27 @@ class ConvertToFedexUnitsShippingLineItemCollectionModifierTest extends TestCase
         $lineItems = new ArrayCollection([
             (new ShippingLineItem(
                 $this->createMock(ProductUnit::class),
-                'item',
                 4,
                 $this->createMock(ProductHolderInterface::class)
             ))
+                ->setProductUnitCode('item')
                 ->setProduct($this->createMock(Product::class))
                 ->setWeight(Weight::create(20))
                 ->setDimensions(Dimensions::create(5, 10, 8)),
             (new ShippingLineItem(
                 $this->createMock(ProductUnit::class),
-                'each',
                 10,
                 $this->createMock(ProductHolderInterface::class)
             ))
+                ->setProductUnitCode('each')
                 ->setProduct($this->createMock(Product::class))
                 ->setDimensions(Dimensions::create(1, 3, 10)),
             (new ShippingLineItem(
                 $this->createMock(ProductUnit::class),
-                'each',
                 5,
                 $this->createMock(ProductHolderInterface::class)
             ))
+                ->setProductUnitCode('each')
                 ->setProduct($this->createMock(Product::class))
                 ->setProductSku('sku')
                 ->setPrice(Price::create(135, 'USD'))
@@ -91,28 +91,28 @@ class ConvertToFedexUnitsShippingLineItemCollectionModifierTest extends TestCase
             new ArrayCollection([
                 (new ShippingLineItem(
                     $this->createMock(ProductUnit::class),
-                    'item',
                     4,
                     $this->createMock(ProductHolderInterface::class)
                 ))
+                    ->setProductUnitCode('item')
                     ->setProduct($this->createMock(Product::class))
                     ->setWeight(Weight::create(7))
                     ->setDimensions(null),
                 (new ShippingLineItem(
                     $this->createMock(ProductUnit::class),
-                    'each',
                     10,
                     $this->createMock(ProductHolderInterface::class)
                 ))
+                    ->setProductUnitCode('each')
                     ->setProduct($this->createMock(Product::class))
                     ->setWeight(null)
                     ->setDimensions(null),
                 (new ShippingLineItem(
                     $this->createMock(ProductUnit::class),
-                    'each',
                     5,
                     $this->createMock(ProductHolderInterface::class)
                 ))
+                    ->setProductUnitCode('each')
                     ->setProduct($this->createMock(Product::class))
                     ->setProductSku('sku')
                     ->setPrice(Price::create(135, 'USD'))

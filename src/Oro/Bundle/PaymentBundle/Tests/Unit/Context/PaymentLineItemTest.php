@@ -2,79 +2,97 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
+class PaymentLineItemTest extends TestCase
 {
-    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
-    private $price;
+    private const QUANTITY = 15;
 
-    /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnit;
+    private Price|MockObject $price;
 
-    /** @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $productHolder;
+    private ProductUnit|MockObject $productUnit;
 
-    /** @var Product|\PHPUnit\Framework\MockObject\MockObject */
-    private $product;
+    private ProductHolderInterface|MockObject $productHolder;
+
+    private Product|MockObject $product;
 
     protected function setUp(): void
     {
-        $this->price = $this->createMock(Price::class);
+        $this->price = Price::create(123, 'USD');
+
         $this->productUnit = $this->createMock(ProductUnit::class);
+        $this->productUnit->method('getCode')->willReturn('productUnitCode');
+
         $this->productHolder = $this->createMock(ProductHolderInterface::class);
-        $this->product = $this->createMock(Product::class);
+        $this->productHolder->expects(self::any())
+            ->method('getEntityIdentifier')
+            ->willReturn('someId');
+
+        $this->product = (new ProductStub())
+            ->setId(1)
+            ->setSku('someSku');
     }
 
-    public function testGetters()
+    public function testOnlyRequiredParameters(): void
     {
-        $unitCode = 'someCode';
-        $quantity = 15;
-        $productSku = 'someSku';
-        $entityIdentifier = 'someId';
+        $paymentLineItem = (new PaymentLineItem(
+            $this->productUnit,
+            self::QUANTITY,
+            $this->productHolder
+        ));
 
-        $paymentLineItemParams = [
-            PaymentLineItem::FIELD_PRICE => $this->price,
-            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnit,
-            PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
-            PaymentLineItem::FIELD_QUANTITY => $quantity,
-            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
-            PaymentLineItem::FIELD_PRODUCT => $this->product,
-            PaymentLineItem::FIELD_PRODUCT_SKU => $productSku,
-            PaymentLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier,
-        ];
+        self::assertSame($this->productUnit, $paymentLineItem->getProductUnit());
+        self::assertEquals($this->productUnit->getCode(), $paymentLineItem->getProductUnitCode());
+        self::assertEquals(self::QUANTITY, $paymentLineItem->getQuantity());
+        self::assertSame($this->productHolder, $paymentLineItem->getProductHolder());
+        self::assertEquals($this->productHolder->getEntityIdentifier(), $paymentLineItem->getEntityIdentifier());
+        self::assertNull($paymentLineItem->getProduct());
+        self::assertNull($paymentLineItem->getProductSku());
+        self::assertNull($paymentLineItem->getPrice());
+        self::assertEquals(new ArrayCollection([]), $paymentLineItem->getKitItemLineItems());
+        self::assertEquals('', $paymentLineItem->getChecksum());
+    }
 
-        $paymentLineItem = new PaymentLineItem($paymentLineItemParams);
+    public function testFullSet(): void
+    {
+        $anotherProductUnitCode = 'anotherUnitCode';
+        $anotherQuantity = 123.123;
+        $anotherSku = 'anotherSku';
+        $checksum = 'checksum_1';
 
-        self::assertEquals($paymentLineItemParams[PaymentLineItem::FIELD_PRICE], $paymentLineItem->getPrice());
-        self::assertEquals(
-            $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_UNIT],
-            $paymentLineItem->getProductUnit()
-        );
-        self::assertEquals(
-            $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_UNIT_CODE],
-            $paymentLineItem->getProductUnitCode()
-        );
-        self::assertEquals(
-            $paymentLineItemParams[PaymentLineItem::FIELD_QUANTITY],
-            $paymentLineItem->getQuantity()
-        );
-        self::assertEquals(
-            $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_HOLDER],
-            $paymentLineItem->getProductHolder()
-        );
-        self::assertEquals($paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT], $paymentLineItem->getProduct());
-        self::assertEquals(
-            $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_SKU],
-            $paymentLineItem->getProductSku()
-        );
-        self::assertEquals(
-            $paymentLineItemParams[PaymentLineItem::FIELD_ENTITY_IDENTIFIER],
-            $paymentLineItem->getEntityIdentifier()
-        );
+        $paymentKitItemLineItems = new ArrayCollection([$this->createMock(PaymentKitItemLineItem::class)]);
+
+        $paymentLineItem = (new PaymentLineItem(
+            $this->productUnit,
+            self::QUANTITY,
+            $this->productHolder
+        ))
+            ->setProductUnitCode($anotherProductUnitCode)
+            ->setQuantity($anotherQuantity)
+            ->setProduct($this->product)
+            ->setProductSku($anotherSku)
+            ->setPrice($this->price)
+            ->setKitItemLineItems($paymentKitItemLineItems)
+            ->setChecksum($checksum);
+
+        self::assertSame($this->productUnit, $paymentLineItem->getProductUnit());
+        self::assertEquals($anotherProductUnitCode, $paymentLineItem->getProductUnitCode());
+        self::assertEquals($anotherQuantity, $paymentLineItem->getQuantity());
+        self::assertSame($this->productHolder, $paymentLineItem->getProductHolder());
+        self::assertEquals($this->productHolder->getEntityIdentifier(), $paymentLineItem->getEntityIdentifier());
+        self::assertSame($paymentKitItemLineItems, $paymentLineItem->getKitItemLineItems());
+        self::assertEquals($checksum, $paymentLineItem->getChecksum());
+        self::assertSame($this->product, $paymentLineItem->getProduct());
+        self::assertEquals($anotherSku, $paymentLineItem->getProductSku());
+        self::assertSame($this->price, $paymentLineItem->getPrice());
     }
 }

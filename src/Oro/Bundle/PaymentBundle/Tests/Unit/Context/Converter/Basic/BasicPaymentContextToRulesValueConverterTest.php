@@ -2,40 +2,37 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Converter\Basic;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\Converter\Basic\BasicPaymentContextToRulesValueConverter;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
-use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem;
 use Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Context\PaymentLineItemTrait;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\TestCase
+class BasicPaymentContextToRulesValueConverterTest extends TestCase
 {
-    use EntityTrait;
+    use PaymentLineItemTrait;
 
-    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingAddress;
+    private AddressInterface|MockObject $shippingAddress;
 
-    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $billingAddress;
+    private AddressInterface|MockObject $billingAddress;
 
-    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingOrigin;
+    private AddressInterface|MockObject $shippingOrigin;
 
-    /** @var Customer|\PHPUnit\Framework\MockObject\MockObject */
-    private $customer;
+    private Customer|MockObject $customer;
 
-    /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject */
-    private $customerUser;
+    private CustomerUser|MockObject $customerUser;
 
-    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
-    private $subtotal;
+    private Price|MockObject $subtotal;
 
     protected function setUp(): void
     {
@@ -49,19 +46,47 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
 
     public function testConvert(): void
     {
-        $factory = new DecoratedProductLineItemFactory(
-            $this->createMock(VirtualFieldsProductDecoratorFactory::class)
-        );
-
         $totalAmount = 10.0;
-        $product1 = $this->getEntity(Product::class, ['id' => 1]);
-        $product2 = $this->getEntity(Product::class, ['id' => 2]);
+        $product1 = (new ProductStub())->setId(1);
+        $product2 = (new ProductStub())->setId(2);
+        $product3 = (new ProductStub())->setId(3);
+        $productUnit = $this->createMock(ProductUnit::class);
+        $unitCode = 'unit_code';
+        $quantity = 1;
+        $productHolder = $this->createMock(ProductHolderInterface::class);
+
+        $paymentKitItemLineItem = (new PaymentKitItemLineItem(
+            $productUnit,
+            $quantity,
+            $productHolder
+        ))
+            ->setProductUnitCode($unitCode)
+            ->setProduct($product3);
+
+        $paymentLineItems = new ArrayCollection([
+            $this->getPaymentLineItem()
+                ->setProduct($product1)
+                ->setKitItemLineItems(new ArrayCollection([$paymentKitItemLineItem])),
+            $this->getPaymentLineItem()
+                ->setProduct($product2),
+        ]);
+
+        $productIds = [
+            $product1->getId(),
+            $product3->getId(),
+            $product2->getId(),
+        ];
+
+        $factory = $this->createMock(DecoratedProductLineItemFactory::class);
+        $factory->expects(self::exactly(2))
+            ->method('createPaymentLineItemWithDecoratedProduct')
+            ->willReturnMap([
+                [$paymentLineItems[0], $productIds, $paymentLineItems[0]],
+                [$paymentLineItems[1], $productIds, $paymentLineItems[1]],
+            ]);
 
         $paymentContext = new PaymentContext([
-            PaymentContext::FIELD_LINE_ITEMS => new DoctrinePaymentLineItemCollection([
-                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $product1]),
-                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $product2])
-            ]),
+            PaymentContext::FIELD_LINE_ITEMS => $paymentLineItems,
             PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddress,
             PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddress,
             PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOrigin,
@@ -75,11 +100,8 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
 
         $converter = new BasicPaymentContextToRulesValueConverter($factory);
 
-        $this->assertEquals([
-            'lineItems' => array_map(static function (PaymentLineItem $lineItem) use ($factory, $product1, $product2) {
-                return $factory
-                    ->createPaymentLineItemWithDecoratedProduct($lineItem, [$product1, $product2]);
-            }, $paymentContext->getLineItems()->toArray()),
+        self::assertEquals([
+            'lineItems' => $paymentLineItems->toArray(),
             'billingAddress' =>  $this->billingAddress,
             'shippingAddress' => $this->shippingAddress,
             'shippingOrigin' => $this->shippingOrigin,

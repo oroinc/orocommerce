@@ -67,12 +67,12 @@ class DecoratedProductLineItemFactoryTest extends TestCase
         $kitItem = new ProductKitItem();
         $sortOrder = 1;
 
-        $shippingKitItemLineItem1ToDecorate = (new ShippingKitItemLineItem(
+        $shippingKitItemLineItemToDecorate = (new ShippingKitItemLineItem(
             $productUnit,
-            $unitCode,
             $quantity,
             $productHolder
         ))
+            ->setProductUnitCode($unitCode)
             ->setProduct($product2)
             ->setProductSku($product2->getSku())
             ->setPrice($price)
@@ -80,7 +80,7 @@ class DecoratedProductLineItemFactoryTest extends TestCase
             ->setSortOrder($sortOrder);
 
         $shippingKitItemLineItemsToDecorate = new ArrayCollection([
-            $shippingKitItemLineItem1ToDecorate,
+            $shippingKitItemLineItemToDecorate,
         ]);
 
         $shippingLineItemToDecorate = $this->getShippingLineItem(quantity: 20, unitCode: 'each')
@@ -92,12 +92,12 @@ class DecoratedProductLineItemFactoryTest extends TestCase
             ->setKitItemLineItems($shippingKitItemLineItemsToDecorate)
             ->setChecksum('checksum_1');
 
-        $shippingKitItemLineItem1WithDecoratedProduct = (new ShippingKitItemLineItem(
+        $shippingKitItemLineItemWithDecoratedProduct = (new ShippingKitItemLineItem(
             $productUnit,
-            $unitCode,
             $quantity,
             $productHolder
         ))
+            ->setProductUnitCode($unitCode)
             ->setProduct($decoratedProduct2Mock)
             ->setProductSku($product2->getSku())
             ->setPrice($price)
@@ -105,7 +105,7 @@ class DecoratedProductLineItemFactoryTest extends TestCase
             ->setSortOrder($sortOrder);
 
         $kitItemLineItemsWithDecoratedProduct = new ArrayCollection([
-            $shippingKitItemLineItem1WithDecoratedProduct,
+            $shippingKitItemLineItemWithDecoratedProduct,
         ]);
 
         $expectedShippingLineItem = $this->getShippingLineItem(quantity: 20, unitCode: 'each')

@@ -32,10 +32,10 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends TestCa
 
         $expectedLineItem = (new ShippingLineItem(
             $productUnit,
-            $productUnitCode,
             $quantity,
             $quoteProductOffer
         ))
+            ->setProductUnitCode($productUnitCode)
             ->setProduct($product)
             ->setPrice($price);
 

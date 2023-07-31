@@ -76,7 +76,7 @@ class BasicShippingContextBuilderTest extends TestCase
             new ShippingContext([
                 ShippingContext::FIELD_SOURCE_ENTITY => $entity,
                 ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
-                ShippingContext::FIELD_LINE_ITEMS => null,
+                ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection([]),
             ]),
             $builder->getResult()
         );

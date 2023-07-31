@@ -277,10 +277,10 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
     ): ShippingLineItem {
         return (new ShippingLineItem(
             $this->createMock(ProductUnit::class),
-            $unitCode,
             $quantity,
             $this->createMock(ProductHolderInterface::class)
         ))
+            ->setProductUnitCode($unitCode)
             ->setPrice($price)
             ->setProduct($product)
             ->setProductSku($sku)
@@ -295,10 +295,10 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
     ): ShippingKitItemLineItem {
         return (new ShippingKitItemLineItem(
             $this->createMock(ProductUnit::class),
-            'unit_code',
             1,
             $this->createMock(ProductHolderInterface::class)
         ))
+            ->setProductUnitCode('unit_code')
             ->setProduct($product)
             ->setProductSku('sku')
             ->setPrice(Price::create(13, 'USD'))

@@ -113,12 +113,10 @@ class ShippingLineItemFromProductLineItemFactory implements ShippingLineItemFrom
         ProductLineItemInterface $productLineItem,
         array $shippingOptions
     ): ShippingLineItem {
-        $unitCode = $productLineItem->getProductUnit()->getCode();
         $product = $productLineItem->getProduct();
 
         $shippingLineItem = (new ShippingLineItem(
             $productLineItem->getProductUnit(),
-            $unitCode,
             $productLineItem->getQuantity(),
             $productLineItem
         ))
@@ -138,6 +136,7 @@ class ShippingLineItemFromProductLineItemFactory implements ShippingLineItemFrom
                 );
         }
 
+        $unitCode = $productLineItem->getProductUnit()->getCode();
         if ($product !== null && $unitCode !== null && isset($shippingOptions[$product->getId()][$unitCode])) {
             $shippingOptions = $shippingOptions[$product->getId()][$unitCode];
             // this shipping option is not the actual option.

@@ -130,7 +130,6 @@ class BasicOrderShippingLineItemConverterTest extends TestCase
                 'expectedShippingLineItems' => [
                     (new ShippingLineItem(
                         $lineItems[0]->getProductUnit(),
-                        $lineItems[0]->getProductUnit()->getCode(),
                         $lineItems[0]->getQuantity(),
                         $lineItems[0]->getProductHolder()
                     ))
@@ -138,7 +137,6 @@ class BasicOrderShippingLineItemConverterTest extends TestCase
                         ->setPrice($lineItems[0]->getPrice()),
                     (new ShippingLineItem(
                         $lineItems[1]->getProductUnit(),
-                        $lineItems[1]->getProductUnit()->getCode(),
                         $lineItems[1]->getQuantity(),
                         $lineItems[1]->getProductHolder()
                     ))
@@ -146,7 +144,6 @@ class BasicOrderShippingLineItemConverterTest extends TestCase
                         ->setPrice(null),
                     (new ShippingLineItem(
                         $lineItems[2]->getProductUnit(),
-                        $lineItems[2]->getProductUnit()->getCode(),
                         $lineItems[2]->getQuantity(),
                         $lineItems[2]->getProductHolder()
                     ))

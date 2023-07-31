@@ -59,11 +59,9 @@ class OrderPaymentContextFactory
         }
 
         $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($order->getLineItems());
-        if (!$convertedLineItems->isEmpty()) {
-            $paymentContextBuilder->setLineItems($convertedLineItems);
-        }
-
-        $paymentContextBuilder->setTotal((float)$order->getTotal());
+        $paymentContextBuilder
+            ->setLineItems($convertedLineItems)
+            ->setTotal((float)$order->getTotal());
 
         return $paymentContextBuilder->getResult();
     }

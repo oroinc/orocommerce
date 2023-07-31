@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\PaymentBundle\Context\Builder\Basic;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -21,8 +21,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
 {
     private object $sourceEntity;
     private mixed $sourceEntityIdentifier;
-    private PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory;
-    private array $lineItems = [];
+    private ?Collection $lineItems = null;
     private ?AddressInterface $billingAddress = null;
     private ?AddressInterface $shippingAddress = null;
     private ?AddressInterface $shippingOrigin = null;
@@ -36,17 +35,12 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
 
     public function __construct(
         object $sourceEntity,
-        mixed $sourceEntityIdentifier,
-        PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
+        mixed $sourceEntityIdentifier
     ) {
         $this->sourceEntity = $sourceEntity;
         $this->sourceEntityIdentifier = $sourceEntityIdentifier;
-        $this->paymentLineItemCollectionFactory = $paymentLineItemCollectionFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getResult(): PaymentContextInterface
     {
         $params = $this->getMandatoryParams();
@@ -58,26 +52,20 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setLineItems(PaymentLineItemCollectionInterface $lineItemCollection): static
+    public function setLineItems(Collection $lineItemCollection): static
     {
-        $this->lineItems = $lineItemCollection->toArray();
+        $this->lineItems = $lineItemCollection;
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function addLineItem(PaymentLineItemInterface $paymentLineItem): static
+    public function addLineItem(PaymentLineItem $paymentLineItem): static
     {
-        $this->lineItems[] = $paymentLineItem;
+        $this->lineItems->add($paymentLineItem);
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setBillingAddress(?AddressInterface $billingAddress): static
     {
         $this->billingAddress = $billingAddress;
@@ -85,9 +73,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setShippingAddress(?AddressInterface $shippingAddress): static
     {
         $this->shippingAddress = $shippingAddress;
@@ -95,9 +80,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setShippingOrigin(?AddressInterface $shippingOrigin): static
     {
         $this->shippingOrigin = $shippingOrigin;
@@ -105,9 +87,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setShippingMethod(?string $shippingMethod): static
     {
         $this->shippingMethod = $shippingMethod;
@@ -115,9 +94,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setCustomer(?Customer $customer): static
     {
         $this->customer = $customer;
@@ -125,9 +101,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setCustomerUser(?CustomerUser $customerUser): static
     {
         $this->customerUser = $customerUser;
@@ -135,9 +108,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setSubTotal(?Price $subTotal): static
     {
         $this->subTotal = $subTotal;
@@ -145,9 +115,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setCurrency(?string $currency): static
     {
         $this->currency = $currency;
@@ -155,9 +122,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setWebsite(?Website $website): static
     {
         $this->website = $website;
@@ -165,9 +129,6 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setTotal(?float $total): static
     {
         $this->total = $total;
@@ -180,8 +141,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return [
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
-            PaymentContext::FIELD_LINE_ITEMS => $this->paymentLineItemCollectionFactory
-                ->createPaymentLineItemCollection($this->lineItems)
+            PaymentContext::FIELD_LINE_ITEMS => $this->lineItems ?? new ArrayCollection([]),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Context\Builder\Basic;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -122,7 +123,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         return [
             ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
-            ShippingContext::FIELD_LINE_ITEMS => $this->lineItems,
+            ShippingContext::FIELD_LINE_ITEMS => $this->lineItems ?? new ArrayCollection([]),
         ];
     }
 

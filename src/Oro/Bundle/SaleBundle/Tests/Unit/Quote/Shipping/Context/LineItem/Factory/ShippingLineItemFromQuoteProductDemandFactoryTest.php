@@ -291,10 +291,10 @@ class ShippingLineItemFromQuoteProductDemandFactoryTest extends TestCase
     ): ShippingLineItem {
         $shippingLineItem = (new ShippingLineItem(
             $productUnit,
-            $unitCode,
             $quantity,
             $productHolder
         ))
+            ->setProductUnitCode($unitCode)
             ->setProduct($product)
             ->setProductSku($product->getSku());
 

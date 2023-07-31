@@ -8,7 +8,6 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -19,13 +18,11 @@ use Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConver
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
-use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ShippingContextToRulesValuesConverterTest extends TestCase
 {
-    use EntityTrait;
     use ShippingLineItemTrait;
 
     private DecoratedProductLineItemFactory|MockObject $decoratedProductLineItemFactory;
@@ -91,16 +88,14 @@ class ShippingContextToRulesValuesConverterTest extends TestCase
         $unitCode = 'unit_code';
         $quantity = 1;
         $productHolder = $this->createMock(ProductHolderInterface::class);
-        $product = (new ProductStub())
-            ->setId(2)
-            ->setSku('sku2');
+        $product = (new ProductStub())->setId(2);
 
         $shippingKitItemLineItem = (new ShippingKitItemLineItem(
             $productUnit,
-            $unitCode,
             $quantity,
             $productHolder
         ))
+            ->setProductUnitCode($unitCode)
             ->setProduct($product);
 
         return [
@@ -108,26 +103,19 @@ class ShippingContextToRulesValuesConverterTest extends TestCase
                 'context' => new ShippingContext([
                     ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection([
                         $this->getShippingLineItem()
-                            ->setProduct($this->getEntity(Product::class, ['id' => 1]))
+                            ->setProduct((new ProductStub())->setId(1))
                             ->setKitItemLineItems(new ArrayCollection([
                                 $shippingKitItemLineItem,
                             ])),
                     ]),
-                    ShippingContext::FIELD_SHIPPING_ORIGIN => $this->getEntity(ShippingAddressStub::class, [
-                        'region' => $this->getEntity(Region::class, [
-                            'code' => 'CA',
-                        ], ['US-CA']),
-                    ]),
-                    ShippingContext::FIELD_BILLING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
-                        'country' => new Country('US'),
-                    ]),
-                    ShippingContext::FIELD_SHIPPING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
-                        'country' => new Country('US'),
-                        'region' => $this->getEntity(Region::class, [
-                            'code' => 'CA',
-                        ], ['US-CA']),
-                        'postalCode' => '90401',
-                    ]),
+                    ShippingContext::FIELD_SHIPPING_ORIGIN => (new ShippingAddressStub())
+                        ->setRegion((new Region('US-CA'))->setCode('CA')),
+                    ShippingContext::FIELD_BILLING_ADDRESS => (new ShippingAddressStub())
+                        ->setCountry(new Country('US')),
+                    ShippingContext::FIELD_SHIPPING_ADDRESS => (new ShippingAddressStub())
+                        ->setCountry(new Country('US'))
+                        ->setRegion((new Region('US-CA'))->setCode('CA'))
+                        ->setPostalCode('90401'),
                     ShippingContext::FIELD_PAYMENT_METHOD => 'integration_payment_method',
                     ShippingContext::FIELD_CURRENCY => 'USD',
                     ShippingContext::FIELD_SUBTOTAL => Price::create(10.0, 'USD'),

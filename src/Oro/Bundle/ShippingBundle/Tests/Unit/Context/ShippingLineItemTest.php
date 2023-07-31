@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class ShippingLineItemTest extends TestCase
 {
-    private const UNIT_CODE = 'unitCode';
     private const QUANTITY = 15;
 
     private ProductUnit|MockObject $productUnit;
@@ -55,13 +54,12 @@ class ShippingLineItemTest extends TestCase
     {
         $shippingLineItem = (new ShippingLineItem(
             $this->productUnit,
-            self::UNIT_CODE,
             self::QUANTITY,
             $this->productHolder
         ));
 
         self::assertSame($this->productUnit, $shippingLineItem->getProductUnit());
-        self::assertEquals(self::UNIT_CODE, $shippingLineItem->getProductUnitCode());
+        self::assertEquals($this->productUnit->getCode(), $shippingLineItem->getProductUnitCode());
         self::assertEquals(self::QUANTITY, $shippingLineItem->getQuantity());
         self::assertSame($this->productHolder, $shippingLineItem->getProductHolder());
         self::assertEquals($this->productHolder->getEntityIdentifier(), $shippingLineItem->getEntityIdentifier());
@@ -76,28 +74,30 @@ class ShippingLineItemTest extends TestCase
 
     public function testFullSet(): void
     {
+        $anotherProductUnitCode = 'anotherUnitCode';
         $anotherQuantity = 123.123;
-        $checksum = 'checksum_1';
         $anotherSku = 'anotherSku';
+        $checksum = 'checksum_1';
+
         $shippingKitItemLineItems = new ArrayCollection([$this->createMock(ShippingKitItemLineItem::class)]);
 
         $shippingLineItem = (new ShippingLineItem(
             $this->productUnit,
-            self::UNIT_CODE,
             self::QUANTITY,
             $this->productHolder
         ))
+            ->setProductUnitCode($anotherProductUnitCode)
+            ->setQuantity($anotherQuantity)
             ->setPrice($this->price)
             ->setProduct($this->product)
             ->setProductSku($anotherSku)
             ->setDimensions($this->dimensions)
             ->setWeight($this->weight)
             ->setKitItemLineItems($shippingKitItemLineItems)
-            ->setChecksum($checksum)
-            ->setQuantity($anotherQuantity);
+            ->setChecksum($checksum);
 
         self::assertSame($this->productUnit, $shippingLineItem->getProductUnit());
-        self::assertEquals(self::UNIT_CODE, $shippingLineItem->getProductUnitCode());
+        self::assertEquals($anotherProductUnitCode, $shippingLineItem->getProductUnitCode());
         self::assertEquals($anotherQuantity, $shippingLineItem->getQuantity());
         self::assertSame($this->productHolder, $shippingLineItem->getProductHolder());
         self::assertEquals($this->productHolder->getEntityIdentifier(), $shippingLineItem->getEntityIdentifier());

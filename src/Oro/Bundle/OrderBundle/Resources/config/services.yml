@@ -367,8 +367,7 @@ services:
     oro_order.payment_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderPaymentLineItemConverter'
         arguments:
-            - '@oro_payment.context.doctrine_line_item_collection_factory'
-            - '@oro_payment.line_item.builder_factory_basic'
+            - '@oro_payment.context.line_item.factory.payment_line_item_from_product_line_item_factory'
 
     oro_order.provider.order_currency_checker:
         class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider

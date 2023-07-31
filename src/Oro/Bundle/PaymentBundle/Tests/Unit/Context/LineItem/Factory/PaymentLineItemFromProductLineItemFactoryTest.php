@@ -1,74 +1,34 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\LineItem\Factory;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\LineItem\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentKitItemLineItemFromProductKitItemLineItemFactory;
+use Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactory;
+use Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem;
+use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactory;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactory;
-use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
-use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
-use Oro\Bundle\ShippingBundle\Model\Dimensions;
-use Oro\Bundle\ShippingBundle\Model\Weight;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
+class PaymentLineItemFromProductLineItemFactoryTest extends TestCase
 {
     private const TEST_QUANTITY = 15;
 
-    private ProductShippingOptionsRepository|MockObject $repository;
-
-    private ShippingLineItemFromProductLineItemFactory $factory;
+    private PaymentLineItemFromProductLineItemFactory $factory;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(ProductShippingOptionsRepository::class);
-
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry
-            ->expects(self::any())
-            ->method('getRepository')
-            ->with(ProductShippingOptions::class)
-            ->willReturn($this->repository);
-
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $managerRegistry
-            ->expects(self::any())
-            ->method('getManagerForClass')
-            ->withConsecutive([WeightUnit::class], [LengthUnit::class])
-            ->willReturn($entityManager);
-
-        $entityManager
-            ->expects(self::any())
-            ->method('getReference')
-            ->willReturnCallback(
-                static function (string $className, ?string $unitCode) {
-                    $unit = new $className();
-                    $unit->setCode($unitCode);
-
-                    return $unit;
-                }
-            );
-
-        $this->factory = new ShippingLineItemFromProductLineItemFactory(
-            $managerRegistry,
-            new ShippingKitItemLineItemFromProductKitItemLineItemFactory()
+        $this->factory = new PaymentLineItemFromProductLineItemFactory(
+            new PaymentKitItemLineItemFromProductKitItemLineItemFactory()
         );
     }
 
@@ -84,24 +44,18 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $product->getSku()
         );
 
-        $this->repository->expects(self::once())
-            ->method('findIndexedByProductsAndUnits')
-            ->willReturn([]);
-
-        $expectedShippingLineItem = $this->createShippingLineItem(
+        $expectedPaymentLineItem = $this->createPaymentLineItem(
             $productLineItem->getQuantity(),
             $productLineItem->getProductUnit(),
             $productLineItem->getProductUnitCode(),
             $productLineItem,
             null,
             $productLineItem->getProduct(),
-            null,
-            null,
             null
         );
 
         self::assertEquals(
-            $expectedShippingLineItem,
+            $expectedPaymentLineItem,
             $this->factory->create($productLineItem)
         );
     }
@@ -124,24 +78,7 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             [$kitItemLineItem]
         );
 
-        $this->repository->expects(self::once())
-            ->method('findIndexedByProductsAndUnits')
-            ->willReturn(
-                [
-                    $product->getId() => [
-                        'item' => [
-                            'dimensionsHeight' => 3.0,
-                            'dimensionsLength' => 1.0,
-                            'dimensionsWidth' => 2.0,
-                            'dimensionsUnit' => 'in',
-                            'weightUnit' => 'kilo',
-                            'weightValue' => 42.0,
-                        ]
-                    ],
-                ]
-            );
-
-        $expectedShippingKitItemLineItem = $this->createShippingKitItemLineItem(
+        $expectedPaymentKitItemLineItem = $this->createPaymentKitItemLineItem(
             $kitItemLineItem->getProductUnit(),
             $kitItemLineItem->getQuantity(),
             $kitItemLineItem->getPrice(),
@@ -150,20 +87,18 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $kitItemLineItem->getSortOrder(),
             $kitItemLineItem->getKitItem()
         );
-        $expectedShippingLineItem = $this->createShippingLineItem(
+        $expectedPaymentLineItem = $this->createPaymentLineItem(
             $orderLineItem->getQuantity(),
             $orderLineItem->getProductUnit(),
             $orderLineItem->getProductUnitCode(),
             $orderLineItem,
             $orderLineItem->getPrice(),
             $orderLineItem->getProduct(),
-            Dimensions::create(1, 2, 3, (new LengthUnit())->setCode('in')),
-            Weight::create(42, (new WeightUnit())->setCode('kilo')),
-            new ArrayCollection([$expectedShippingKitItemLineItem])
+            new ArrayCollection([$expectedPaymentKitItemLineItem])
         );
 
         self::assertEquals(
-            $expectedShippingLineItem,
+            $expectedPaymentLineItem,
             $this->factory->create($orderLineItem)
         );
     }
@@ -207,7 +142,7 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
 
         $productLineItems = [$orderLineItem1, $orderLineItem2];
 
-        $expectedShippingKitItemLineItem1 = $this->createShippingKitItemLineItem(
+        $expectedPaymentKitItemLineItem1 = $this->createPaymentKitItemLineItem(
             $kitItemLineItem1->getProductUnit(),
             $kitItemLineItem1->getQuantity(),
             $kitItemLineItem1->getPrice(),
@@ -216,19 +151,17 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $kitItemLineItem1->getSortOrder(),
             $kitItemLineItem1->getKitItem()
         );
-        $expectedShippingLineItem1 = $this->createShippingLineItem(
+        $expectedPaymentLineItem1 = $this->createPaymentLineItem(
             $orderLineItem1->getQuantity(),
             $orderLineItem1->getProductUnit(),
             $orderLineItem1->getProductUnitCode(),
             $orderLineItem1,
             $orderLineItem1->getPrice(),
             $orderLineItem1->getProduct(),
-            Dimensions::create(1, 2, 3, (new LengthUnit())->setCode('in')),
-            Weight::create(42, (new WeightUnit())->setCode('kilo')),
-            new ArrayCollection([$expectedShippingKitItemLineItem1])
+            new ArrayCollection([$expectedPaymentKitItemLineItem1])
         );
 
-        $expectedShippingKitItemLineItem2 = $this->createShippingKitItemLineItem(
+        $expectedPaymentKitItemLineItem2 = $this->createPaymentKitItemLineItem(
             $kitItemLineItem2->getProductUnit(),
             $kitItemLineItem2->getQuantity(),
             $kitItemLineItem2->getPrice(),
@@ -237,58 +170,24 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $kitItemLineItem2->getSortOrder(),
             $kitItemLineItem2->getKitItem()
         );
-        $expectedShippingLineItem2 = $this->createShippingLineItem(
+        $expectedPaymentLineItem2 = $this->createPaymentLineItem(
             $orderLineItem2->getQuantity(),
             $orderLineItem2->getProductUnit(),
             $orderLineItem2->getProductUnitCode(),
             $orderLineItem2,
             $orderLineItem2->getPrice(),
             $orderLineItem2->getProduct(),
-            Dimensions::create(11, 12, 13, (new LengthUnit())->setCode('meter')),
-            Weight::create(142, (new WeightUnit())->setCode('lbs')),
-            new ArrayCollection([$expectedShippingKitItemLineItem2])
+            new ArrayCollection([$expectedPaymentKitItemLineItem2])
         );
 
-        $this->repository
-            ->expects(self::once())
-            ->method('findIndexedByProductsAndUnits')
-            ->willReturn(
-                [
-                    $product1->getId() => [
-                        'item' => [
-                            'dimensionsHeight' => 3.0,
-                            'dimensionsLength' => 1.0,
-                            'dimensionsWidth' => 2.0,
-                            'dimensionsUnit' => 'in',
-                            'weightUnit' => 'kilo',
-                            'weightValue' => 42.0,
-                        ]
-                    ],
-                    $product2->getId() => [
-                        'item' => [
-                            'dimensionsHeight' => 13.0,
-                            'dimensionsLength' => 11.0,
-                            'dimensionsWidth' => 12.0,
-                            'dimensionsUnit' => 'meter',
-                            'weightUnit' => 'lbs',
-                            'weightValue' => 142.0,
-                        ]
-                    ]
-                ]
-            );
-
         self::assertEquals(
-            new ArrayCollection([$expectedShippingLineItem1, $expectedShippingLineItem2]),
+            new ArrayCollection([$expectedPaymentLineItem1, $expectedPaymentLineItem2]),
             $this->factory->createCollection($productLineItems)
         );
     }
 
     public function testCreateCollectionEmpty(): void
     {
-        $this->repository
-            ->method('findIndexedByProductsAndUnits')
-            ->willReturn([]);
-
         self::assertEquals(new ArrayCollection([]), $this->factory->createCollection([]));
     }
 
@@ -367,18 +266,16 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             ->setSortOrder(1);
     }
 
-    private function createShippingLineItem(
+    private function createPaymentLineItem(
         float|int $quantity,
         ?ProductUnit $productUnit,
         string $unitCode,
         ProductLineItemInterface $productHolder,
         ?Price $price,
         ?Product $product,
-        ?Dimensions $dimensions,
-        ?Weight $weight,
         ?Collection $kitItemLineItems
-    ): ShippingLineItem {
-        $shippingLineItem = (new ShippingLineItem(
+    ): PaymentLineItem {
+        $paymentLineItem = (new PaymentLineItem(
             $productUnit,
             $quantity,
             $productHolder
@@ -387,22 +284,16 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             ->setProduct($product)
             ->setProductSku($product->getSku());
         if ($price) {
-            $shippingLineItem->setPrice($price);
-        }
-        if ($dimensions) {
-            $shippingLineItem->setDimensions($dimensions);
-        }
-        if ($weight) {
-            $shippingLineItem->setWeight($weight);
+            $paymentLineItem->setPrice($price);
         }
         if ($kitItemLineItems) {
-            $shippingLineItem->setKitItemLineItems($kitItemLineItems);
+            $paymentLineItem->setKitItemLineItems($kitItemLineItems);
         }
 
-        return $shippingLineItem;
+        return $paymentLineItem;
     }
 
-    private function createShippingKitItemLineItem(
+    private function createPaymentKitItemLineItem(
         ?ProductUnit $productUnit,
         float $quantity,
         ?Price $price,
@@ -410,8 +301,8 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
         ?ProductHolderInterface $productHolder,
         int $sortOrder,
         ?ProductKitItem $kitItem
-    ): ShippingKitItemLineItem {
-        return (new ShippingKitItemLineItem(
+    ): PaymentKitItemLineItem {
+        return (new PaymentKitItemLineItem(
             $productUnit,
             $quantity,
             $productHolder

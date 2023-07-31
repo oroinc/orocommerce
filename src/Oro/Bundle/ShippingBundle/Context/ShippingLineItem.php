@@ -44,13 +44,12 @@ class ShippingLineItem extends ParameterBag implements
 
     public function __construct(
         ProductUnit $productUnit,
-        string $productUnitCode,
         float|int $quantity,
         ProductHolderInterface $productHolder
     ) {
         parent::__construct([
             self::FIELD_PRODUCT_UNIT => $productUnit,
-            self::FIELD_PRODUCT_UNIT_CODE => $productUnitCode,
+            self::FIELD_PRODUCT_UNIT_CODE => $productUnit->getCode(),
             self::FIELD_QUANTITY => $quantity,
             self::FIELD_PRODUCT_HOLDER => $productHolder,
             self::FIELD_ENTITY_IDENTIFIER => $productHolder->getEntityIdentifier(),
@@ -123,6 +122,13 @@ class ShippingLineItem extends ParameterBag implements
     public function getChecksum(): string
     {
         return $this->get(self::FIELD_CHECKSUM, '');
+    }
+
+    public function setProductUnitCode(string $productUnitCode): self
+    {
+        $this->set(self::FIELD_PRODUCT_UNIT_CODE, $productUnitCode);
+
+        return $this;
     }
 
     public function setQuantity(float|int $quantity): self

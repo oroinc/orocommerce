@@ -13,8 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class ShippingKitItemLineItemTest extends TestCase
 {
-    private const UNIT_CODE = 'unitCode';
-    private const QUANTITY = 1;
+    private const QUANTITY = 15;
 
     private ProductUnit|MockObject $productUnit;
 
@@ -33,13 +32,12 @@ class ShippingKitItemLineItemTest extends TestCase
     {
         $shippingKitItemLineItem = (new ShippingKitItemLineItem(
             $this->productUnit,
-            self::UNIT_CODE,
             self::QUANTITY,
             $this->productHolder
         ));
 
         self::assertSame($this->productUnit, $shippingKitItemLineItem->getProductUnit());
-        self::assertEquals(self::UNIT_CODE, $shippingKitItemLineItem->getProductUnitCode());
+        self::assertEquals($this->productUnit->getCode(), $shippingKitItemLineItem->getProductUnitCode());
         self::assertEquals(self::QUANTITY, $shippingKitItemLineItem->getQuantity());
         self::assertSame($this->productHolder, $shippingKitItemLineItem->getProductHolder());
         self::assertEquals(
@@ -49,10 +47,7 @@ class ShippingKitItemLineItemTest extends TestCase
         self::assertNull($shippingKitItemLineItem->getProduct());
         self::assertNull($shippingKitItemLineItem->getProductSku());
         self::assertNull($shippingKitItemLineItem->getPrice());
-        self::assertEquals(
-            $this->productHolder->getEntityIdentifier(),
-            $shippingKitItemLineItem->getEntityIdentifier()
-        );
+        self::assertNull($shippingKitItemLineItem->getKitItem());
         self::assertEquals(0, $shippingKitItemLineItem->getSortOrder());
     }
 
@@ -66,13 +61,14 @@ class ShippingKitItemLineItemTest extends TestCase
         $sortOrder = 1;
         $anotherQuantity = 123.123;
         $anotherSku = 'anotherSku';
+        $anotherUnitCode = 'anotherUnitCode';
 
         $shippingKitItemLineItem = (new ShippingKitItemLineItem(
             $this->productUnit,
-            self::UNIT_CODE,
             self::QUANTITY,
             $this->productHolder
         ))
+            ->setProductUnitCode($anotherUnitCode)
             ->setQuantity($anotherQuantity)
             ->setProduct($product)
             ->setProductSku($anotherSku)
@@ -81,7 +77,7 @@ class ShippingKitItemLineItemTest extends TestCase
             ->setSortOrder($sortOrder);
 
         self::assertSame($this->productUnit, $shippingKitItemLineItem->getProductUnit());
-        self::assertEquals(self::UNIT_CODE, $shippingKitItemLineItem->getProductUnitCode());
+        self::assertEquals($anotherUnitCode, $shippingKitItemLineItem->getProductUnitCode());
         self::assertEquals($anotherQuantity, $shippingKitItemLineItem->getQuantity());
         self::assertSame($this->productHolder, $shippingKitItemLineItem->getProductHolder());
         self::assertEquals(

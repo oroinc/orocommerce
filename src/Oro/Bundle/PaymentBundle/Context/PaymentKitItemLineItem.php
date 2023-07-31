@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Context;
+namespace Oro\Bundle\PaymentBundle\Context;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
@@ -15,9 +15,9 @@ use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Container of values that represents Shipping Kit Item Line Item.
+ * Container of values that represents Payment Kit Item Line Item.
  */
-class ShippingKitItemLineItem extends ParameterBag implements
+class PaymentKitItemLineItem extends ParameterBag implements
     ProductUnitHolderInterface,
     ProductHolderInterface,
     QuantityAwareInterface,

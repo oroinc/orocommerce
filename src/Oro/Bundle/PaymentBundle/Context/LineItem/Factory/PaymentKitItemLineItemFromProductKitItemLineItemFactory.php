@@ -1,23 +1,23 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Context\LineItem\Factory;
+namespace Oro\Bundle\PaymentBundle\Context\LineItem\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 
 /**
  * Creates:
- *  - instance of {@see ShippingKitItemLineItem} by {@see ProductKitItemLineItemPriceAwareInterface};
- *  - collection of {@see ShippingKitItemLineItem} by iterable {@see ProductKitItemLineItemPriceAwareInterface}.
+ *  - instance of {@see PaymentKitItemLineItem} by {@see ProductKitItemLineItemPriceAwareInterface};
+ *  - collection of {@see PaymentKitItemLineItem} by iterable {@see ProductKitItemLineItemPriceAwareInterface}.
  */
-class ShippingKitItemLineItemFromProductKitItemLineItemFactory implements
-    ShippingKitItemLineItemFromProductKitItemLineItemFactoryInterface
+class PaymentKitItemLineItemFromProductKitItemLineItemFactory implements
+    PaymentKitItemLineItemFromProductKitItemLineItemFactoryInterface
 {
-    public function create(ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem): ShippingKitItemLineItem
+    public function create(ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem): PaymentKitItemLineItem
     {
-        return (new ShippingKitItemLineItem(
+        return (new PaymentKitItemLineItem(
             $productKitItemLineItem->getProductUnit(),
             $productKitItemLineItem->getQuantity(),
             $productKitItemLineItem
@@ -34,11 +34,11 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactory implements
      */
     public function createCollection(iterable $productKitItemLineItems): Collection
     {
-        $shippingKitItemLineItems = [];
+        $paymentKitItemLineItems = [];
         foreach ($productKitItemLineItems as $productKitItemLineItem) {
-            $shippingKitItemLineItems[] = $this->create($productKitItemLineItem);
+            $paymentKitItemLineItems[] = $this->create($productKitItemLineItem);
         }
 
-        return new ArrayCollection($shippingKitItemLineItems);
+        return new ArrayCollection($paymentKitItemLineItems);
     }
 }

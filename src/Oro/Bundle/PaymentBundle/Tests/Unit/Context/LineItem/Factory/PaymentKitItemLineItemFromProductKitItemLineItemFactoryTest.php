@@ -1,26 +1,26 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\LineItem\Factory;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\LineItem\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentKitItemLineItemFromProductKitItemLineItemFactory;
+use Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactory;
-use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use PHPUnit\Framework\TestCase;
 
-class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestCase
+class PaymentKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestCase
 {
-    private ShippingKitItemLineItemFromProductKitItemLineItemFactory $factory;
+    private PaymentKitItemLineItemFromProductKitItemLineItemFactory $factory;
 
     protected function setUp(): void
     {
-        $this->factory = new ShippingKitItemLineItemFromProductKitItemLineItemFactory();
+        $this->factory = new PaymentKitItemLineItemFromProductKitItemLineItemFactory();
     }
 
     public function testCreate(): void
@@ -32,7 +32,7 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
             (new ProductStub())->setId(1)
         );
 
-        $expectedShippingKitItemLineItem = $this->getShippingKitItemLineItem(
+        $expectedPaymentKitItemLineItem = $this->getPaymentKitItemLineItem(
             $productKitItemLineItem->getProductUnit(),
             $productKitItemLineItem->getQuantity(),
             $productKitItemLineItem->getPrice(),
@@ -43,7 +43,7 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
         );
 
         self::assertEquals(
-            $expectedShippingKitItemLineItem,
+            $expectedPaymentKitItemLineItem,
             $this->factory->create($productKitItemLineItem)
         );
     }
@@ -68,8 +68,8 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
             $productKitItemLineItem2,
         ]);
 
-        $expectedShippingKitItemLineItems = [
-            $this->getShippingKitItemLineItem(
+        $expectedPaymentKitItemLineItems = [
+            $this->getPaymentKitItemLineItem(
                 $productKitItemLineItem1->getProductUnit(),
                 $productKitItemLineItem1->getQuantity(),
                 $productKitItemLineItem1->getPrice(),
@@ -78,7 +78,7 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
                 $productKitItemLineItem1->getSortOrder(),
                 $productKitItemLineItem1->getKitItem()
             ),
-            $this->getShippingKitItemLineItem(
+            $this->getPaymentKitItemLineItem(
                 $productKitItemLineItem2->getProductUnit(),
                 $productKitItemLineItem2->getQuantity(),
                 $productKitItemLineItem2->getPrice(),
@@ -90,7 +90,7 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
         ];
 
         self::assertEquals(
-            new ArrayCollection($expectedShippingKitItemLineItems),
+            new ArrayCollection($expectedPaymentKitItemLineItems),
             $this->factory->createCollection($productKitItemLineItems)
         );
     }
@@ -110,7 +110,7 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
             ->setKitItem(new ProductKitItem());
     }
 
-    private function getShippingKitItemLineItem(
+    private function getPaymentKitItemLineItem(
         ?ProductUnit $productUnit,
         float $quantity,
         ?Price $price,
@@ -118,8 +118,8 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
         ?ProductHolderInterface $productHolder,
         int $sortOrder,
         ?ProductKitItem $kitItem
-    ): ShippingKitItemLineItem {
-        return (new ShippingKitItemLineItem(
+    ): PaymentKitItemLineItem {
+        return (new PaymentKitItemLineItem(
             $productUnit,
             $quantity,
             $productHolder
