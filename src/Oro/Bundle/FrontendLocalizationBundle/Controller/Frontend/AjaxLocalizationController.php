@@ -136,7 +136,10 @@ class AjaxLocalizationController extends AbstractController
             $baseUrl = $request->server->get('WEBSITE_PATH');
         }
 
-        $fromUrl = str_replace($baseUrl, '', $fromUrl);
+        if (str_starts_with($fromUrl, $baseUrl)) {
+            $fromUrl = preg_replace(sprintf('/^\%s/', $baseUrl), '', $fromUrl);
+        }
+
         $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
         $toUrl = $this->rebuildQueryString($toUrl, $request);
         $fromUrl = $baseUrl.$fromUrl;
