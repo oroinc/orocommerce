@@ -4,9 +4,11 @@ namespace Oro\Bundle\WebCatalogBundle\Menu;
 
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Provides {@see ResolvedContentNode} for the specified {@see ContentNode}.
@@ -17,12 +19,19 @@ class MenuContentNodesProvider implements MenuContentNodesProviderInterface
 
     private ResolvedContentNodesLoader $resolvedContentNodesLoader;
 
+    private ?AuthorizationCheckerInterface $authorizationChecker = null;
+
     public function __construct(
         ManagerRegistry $managerRegistry,
-        ResolvedContentNodesLoader $resolvedContentNodesLoader,
+        ResolvedContentNodesLoader $resolvedContentNodesLoader
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->resolvedContentNodesLoader = $resolvedContentNodesLoader;
+    }
+
+    public function setAuthorizationChecker(?AuthorizationCheckerInterface $authorizationChecker = null): void
+    {
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -36,6 +45,10 @@ class MenuContentNodesProvider implements MenuContentNodesProviderInterface
      */
     public function getResolvedContentNode(ContentNode $contentNode, array $context = []): ?ResolvedContentNode
     {
+        if ($this->authorizationChecker?->isGranted(BasicPermission::VIEW, $contentNode->getWebCatalog()) === false) {
+            return null;
+        }
+
         $contentNodeIds = $this->managerRegistry
             ->getRepository(ContentNode::class)
             ->getContentNodePlainTreeQueryBuilder($contentNode, $context['tree_depth'] ?? -1)

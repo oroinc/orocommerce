@@ -10,23 +10,36 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProvider;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Stub\ContentNodeStub;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class MenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
+class MenuContentNodesProviderTest extends TestCase
 {
-    private ResolvedContentNodesLoader|\PHPUnit\Framework\MockObject\MockObject $resolvedContentNodesLoader;
-
     private MenuContentNodesProvider $provider;
 
-    private ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject $repository;
+    private ResolvedContentNodesLoader|MockObject $resolvedContentNodesLoader;
+
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
+
+    private ContentNodeRepository|MockObject $repository;
 
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);
         $this->resolvedContentNodesLoader = $this->createMock(ResolvedContentNodesLoader::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->provider = new MenuContentNodesProvider($managerRegistry, $this->resolvedContentNodesLoader);
+        $this->provider = new MenuContentNodesProvider(
+            $managerRegistry,
+            $this->resolvedContentNodesLoader
+        );
+        $this->provider->setAuthorizationChecker(
+            $this->authorizationChecker
+        );
 
         $this->repository = $this->createMock(ContentNodeRepository::class);
         $managerRegistry
@@ -38,7 +51,15 @@ class MenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testWhenNoContentNodeIds(): void
     {
-        $contentNode = new ContentNodeStub(10);
+        $webCatalog = new WebCatalog();
+        $contentNode = new ContentNodeStub(10, $webCatalog);
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->with('VIEW', $webCatalog)
+            ->willReturn(true);
+
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->repository
             ->expects(self::once())
@@ -78,7 +99,15 @@ class MenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testWhenNoResolvedContentNode(): void
     {
-        $contentNode = new ContentNodeStub(10);
+        $webCatalog = new WebCatalog();
+        $contentNode = new ContentNodeStub(10, $webCatalog);
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->with('VIEW', $webCatalog)
+            ->willReturn(true);
+
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->repository
             ->expects(self::once())
@@ -124,7 +153,15 @@ class MenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testWhenHasResolvedContentNode(): void
     {
-        $contentNode = new ContentNodeStub(10);
+        $webCatalog = new WebCatalog();
+        $contentNode = new ContentNodeStub(10, $webCatalog);
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->with('VIEW', $webCatalog)
+            ->willReturn(true);
+
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->repository
             ->expects(self::once())
@@ -171,7 +208,15 @@ class MenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testWhenHasResolvedContentNodeAndTreeDepth(): void
     {
-        $contentNode = new ContentNodeStub(10);
+        $webCatalog = new WebCatalog();
+        $contentNode = new ContentNodeStub(10, $webCatalog);
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->with('VIEW', $webCatalog)
+            ->willReturn(true);
+
         $context = ['tree_depth' => 4];
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->repository
@@ -215,5 +260,29 @@ class MenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([10 => $resolvedContentNode]);
 
         self::assertSame($resolvedContentNode, $this->provider->getResolvedContentNode($contentNode, $context));
+    }
+
+    public function testWhenNoPermissionToWebCatalog(): void
+    {
+        $webCatalog = new WebCatalog();
+        $contentNode = new ContentNodeStub(10, $webCatalog);
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->with('VIEW', $webCatalog)
+            ->willReturn(false);
+
+        $this->authorizationChecker
+            ->expects(self::once())
+            ->method('isGranted')
+            ->willReturn(false);
+        $this->repository
+            ->expects(self::never())
+            ->method(self::anything());
+        $this->resolvedContentNodesLoader
+            ->expects(self::never())
+            ->method(self::anything());
+        self::assertNull($this->provider->getResolvedContentNode($contentNode));
     }
 }
