@@ -6,6 +6,9 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
 
+/**
+ * Handles product price lifecycle events
+ */
 class ProductPriceEntityListener extends BaseProductPriceEntityListener
 {
     /**
@@ -22,8 +25,7 @@ class ProductPriceEntityListener extends BaseProductPriceEntityListener
         $args = $event->getEventArgs();
         $price = $args->getEntity();
 
-        $idChanged = $args->hasChangedField('id');
-        if (!$idChanged || ($idChanged && $args->getOldValue('id'))) {
+        if ($args->getEntityChangeSet()) {
             $this->preUpdate($price, $args);
         } else {
             $this->postPersist($price);
