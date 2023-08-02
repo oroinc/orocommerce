@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\DataProvider\LineItem;
+namespace Oro\Bundle\CheckoutBundle\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -23,7 +23,7 @@ use Symfony\Contracts\Cache\CacheInterface;
  * Provides info to build collection of line items by given source entity.
  * Source entity should implement ProductLineItemsHolderInterface.
  */
-class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
+class CheckoutDataProvider extends AbstractCheckoutProvider
 {
     private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
     private AuthorizationCheckerInterface $authorizationChecker;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\LineItem;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider;
 
-use Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider;
+use Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
@@ -27,13 +27,13 @@ use Symfony\Contracts\Cache\CacheInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CheckoutLineItemsDataProviderTest extends TestCase
+class CheckoutDataProviderTest extends TestCase
 {
     private const VALIDATION_GROUPS = [['Default', 'checkout_line_items_data']];
 
     private ProductLineItemPriceProviderInterface|MockObject $productLineItemPriceProvider;
 
-    private CheckoutLineItemsDataProvider $provider;
+    private CheckoutDataProvider $provider;
 
     private AuthorizationCheckerInterface|MockObject $authorizationChecker;
 
@@ -54,7 +54,7 @@ class CheckoutLineItemsDataProviderTest extends TestCase
         $this->validationGroupsProvider = $this->createMock(CheckoutValidationGroupsBySourceEntityProvider::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
 
-        $this->provider = new CheckoutLineItemsDataProvider(
+        $this->provider = new CheckoutDataProvider(
             $this->productLineItemPriceProvider,
             $this->authorizationChecker,
             $productAvailabilityCache,

@@ -52,7 +52,7 @@ class IsUpcomingValidatorTest extends ConstraintValidatorTestCase
 
         $this->upcomingLabelCheckoutLineItemValidator
             ->expects(self::once())
-            ->method('getMessageIfLineItemUpcoming')
+            ->method('getMessageIfUpcoming')
             ->with($lineItem)
             ->willReturn(null);
 
@@ -71,7 +71,7 @@ class IsUpcomingValidatorTest extends ConstraintValidatorTestCase
 
         $this->upcomingLabelCheckoutLineItemValidator
             ->expects(self::once())
-            ->method('getMessageIfLineItemUpcoming')
+            ->method('getMessageIfUpcoming')
             ->with($lineItem)
             ->willReturn('default message');
 
@@ -97,7 +97,7 @@ class IsUpcomingValidatorTest extends ConstraintValidatorTestCase
         $message = 'default message';
         $this->upcomingLabelCheckoutLineItemValidator
             ->expects(self::once())
-            ->method('getMessageIfLineItemUpcoming')
+            ->method('getMessageIfUpcoming')
             ->with($lineItem)
             ->willReturn($message);
 

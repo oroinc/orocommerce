@@ -37,7 +37,7 @@ class UpcomingLabelCheckoutLineItemValidator
         $this->dateFormatter = $dateFormatter;
     }
 
-    public function getMessageIfLineItemUpcoming(ProductLineItemInterface $lineItem): ?string
+    public function getMessageIfUpcoming(ProductLineItemInterface $lineItem): ?string
     {
         $product = $lineItem->getProduct();
 

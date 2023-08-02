@@ -8,7 +8,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
+use Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -22,7 +22,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
     /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $objectManager;
 
-    /** @var CheckoutSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var SubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $subtotalProvider;
 
     /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
@@ -34,7 +34,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->objectManager = $this->createMock(EntityManagerInterface::class);
-        $this->subtotalProvider = $this->createMock(CheckoutSubtotalProvider::class);
+        $this->subtotalProvider = $this->createMock(SubtotalProvider::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);

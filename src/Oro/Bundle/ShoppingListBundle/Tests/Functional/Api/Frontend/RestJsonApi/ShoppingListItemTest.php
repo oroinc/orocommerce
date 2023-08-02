@@ -1090,11 +1090,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'request' => 'create_kit_line_item_without_kit_item_line_items_data.yml',
                 'expectedErrors' => [
                     [
-                        'title' => 'product kit line item contains required kit items constraint',
-                        'detail' => 'Product kit "KIT1" is missing the required kit item "Product Kit 1 Item 1"',
-                        'source' => ['pointer' => '/data/relationships/kitItems/data'],
-                    ],
-                    [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
                         'source' => ['pointer' => '/included/0/relationships/product/data'],
@@ -1124,11 +1119,6 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             'no kitItem' => [
                 'request' => 'create_kit_line_item_kit_item_line_item_without_kit_item.yml',
                 'expectedErrors' => [
-                    [
-                        'title' => 'product kit line item contains required kit items constraint',
-                        'detail' => 'Product kit "KIT1" is missing the required kit item "Product Kit 1 Item 1"',
-                        'source' => ['pointer' => '/data/relationships/kitItems/data'],
-                    ],
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',

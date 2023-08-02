@@ -215,9 +215,9 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                         # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
                         - add_product
         kitItemLineItems:
-            -   Oro\Bundle\PlatformBundle\Validator\Constraints\ValidEmbeddable:
-                    embeddedGroups: [ [ Default, add_product_kit_line_item ] ]
+            -   Valid:
                     groups:
+                        - Default
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
         checksum:

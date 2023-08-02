@@ -50,7 +50,7 @@ class IsLowInventoryLevelValidatorTest extends ConstraintValidatorTestCase
 
         $this->lowInventoryCheckoutLineItemValidator
             ->expects(self::once())
-            ->method('isLineItemRunningLow')
+            ->method('isRunningLow')
             ->with($lineItem)
             ->willReturn(false);
 
@@ -69,7 +69,7 @@ class IsLowInventoryLevelValidatorTest extends ConstraintValidatorTestCase
 
         $this->lowInventoryCheckoutLineItemValidator
             ->expects(self::once())
-            ->method('getMessageIfLineItemRunningLow')
+            ->method('getMessageIfRunningLow')
             ->with($lineItem)
             ->willReturn(null);
 
@@ -88,7 +88,7 @@ class IsLowInventoryLevelValidatorTest extends ConstraintValidatorTestCase
 
         $this->lowInventoryCheckoutLineItemValidator
             ->expects(self::once())
-            ->method('isLineItemRunningLow')
+            ->method('isRunningLow')
             ->with($lineItem)
             ->willReturn(true);
 
@@ -114,7 +114,7 @@ class IsLowInventoryLevelValidatorTest extends ConstraintValidatorTestCase
         $message = 'default message';
         $this->lowInventoryCheckoutLineItemValidator
             ->expects(self::once())
-            ->method('getMessageIfLineItemRunningLow')
+            ->method('getMessageIfRunningLow')
             ->with($lineItem)
             ->willReturn($message);
 

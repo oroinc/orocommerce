@@ -406,7 +406,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
-            - '@oro_checkout.provider.checkout_subtotal'
+            - '@oro_checkout.provider.subtotal'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@oro_checkout.shipping_origin_provider'
             - '@oro_shipping.context.builder_factory_basic'
@@ -415,7 +415,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
-            - '@oro_checkout.provider.checkout_subtotal'
+            - '@oro_checkout.provider.subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
             - '@oro_checkout.shipping_origin_provider'
@@ -641,8 +641,8 @@ services:
         tags:
             - { name: oro.checkout.line_item.converter, alias: order }
 
-    oro_checkout.data_provider.checkout_line_items:
-        class: 'Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider'
+    oro_checkout.data_provider.checkout:
+        class: 'Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider'
         arguments:
             - '@oro_pricing.provider.product_line_item_price'
             - '@security.authorization_checker'
@@ -653,8 +653,8 @@ services:
         tags:
             - { name: checkout.data_provider.line_item }
 
-    oro_checkout.provider.checkout_subtotal:
-        class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider'
+    oro_checkout.provider.subtotal:
+        class: 'Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider'
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
@@ -671,7 +671,7 @@ services:
         public: true
         arguments:
             - '@doctrine'
-            - '@oro_checkout.provider.checkout_subtotal'
+            - '@oro_checkout.provider.subtotal'
             - '@oro_pricing.user_currency_manager'
 
     oro_checkout.async.message_filter.recalculate_checkout_subtotals:

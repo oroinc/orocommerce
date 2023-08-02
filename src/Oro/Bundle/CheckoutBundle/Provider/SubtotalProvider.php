@@ -13,7 +13,6 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
@@ -23,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Subtotal provider for the Checkout entity.
  */
-class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
+class SubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalProviderInterface,
     FeatureToggleableInterface
 {
@@ -37,8 +36,6 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
     private RoundingServiceInterface $rounding;
 
     private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
-
-    private ProductPriceProviderInterface $productPriceProvider;
 
     private CombinedPriceListTreeHandler $priceListTreeHandler;
 

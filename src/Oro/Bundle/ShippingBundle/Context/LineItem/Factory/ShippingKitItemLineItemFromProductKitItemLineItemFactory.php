@@ -29,9 +29,6 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactory implements
             ->setSortOrder($productKitItemLineItem->getSortOrder());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function createCollection(iterable $productKitItemLineItems): Collection
     {
         $shippingKitItemLineItems = [];

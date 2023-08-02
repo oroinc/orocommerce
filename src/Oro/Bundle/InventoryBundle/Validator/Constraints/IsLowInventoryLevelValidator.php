@@ -44,9 +44,9 @@ class IsLowInventoryLevelValidator extends ConstraintValidator
 
         if ($constraint->message) {
             $message = $constraint->message;
-            $isRunningLow = $this->lowInventoryCheckoutLineItemValidator->isLineItemRunningLow($value);
+            $isRunningLow = $this->lowInventoryCheckoutLineItemValidator->isRunningLow($value);
         } else {
-            $message = $this->lowInventoryCheckoutLineItemValidator->getMessageIfLineItemRunningLow($value);
+            $message = $this->lowInventoryCheckoutLineItemValidator->getMessageIfRunningLow($value);
             $isRunningLow = $message !== null;
         }
 

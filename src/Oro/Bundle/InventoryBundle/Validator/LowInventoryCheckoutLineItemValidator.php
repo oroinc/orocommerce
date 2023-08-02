@@ -29,7 +29,7 @@ class LowInventoryCheckoutLineItemValidator
         $this->translator = $translator;
     }
 
-    public function isLineItemRunningLow(ProductLineItemInterface $lineItem): bool
+    public function isRunningLow(ProductLineItemInterface $lineItem): bool
     {
         $product = $lineItem->getProduct();
         $productUnit = $lineItem->getProductUnit();
@@ -37,9 +37,9 @@ class LowInventoryCheckoutLineItemValidator
         return $this->lowInventoryManager->isLowInventoryProduct($product, $productUnit);
     }
 
-    public function getMessageIfLineItemRunningLow(ProductLineItemInterface $lineItem): ?string
+    public function getMessageIfRunningLow(ProductLineItemInterface $lineItem): ?string
     {
-        $isValidCheckoutLineItem = $this->isLineItemRunningLow($lineItem);
+        $isValidCheckoutLineItem = $this->isRunningLow($lineItem);
         if ($isValidCheckoutLineItem) {
             return $this->translator->trans('oro.inventory.low_inventory.message');
         }

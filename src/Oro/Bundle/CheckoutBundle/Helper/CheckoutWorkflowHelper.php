@@ -121,7 +121,7 @@ class CheckoutWorkflowHelper
 
         $currentStep = $this->validateStep($workflowItem);
         if ($this->isValidationNeeded($checkout, $workflowItem, $request)) {
-            $this->validateOrderLineItems($checkout, $request);
+            $this->checkLineItemsCount($checkout, $request);
         }
 
         return $currentStep;
@@ -144,7 +144,7 @@ class CheckoutWorkflowHelper
         return reset($items);
     }
 
-    protected function validateOrderLineItems(Checkout $checkout, Request $request)
+    protected function checkLineItemsCount(Checkout $checkout, Request $request): void
     {
         $allOrderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
 
@@ -157,8 +157,9 @@ class CheckoutWorkflowHelper
                     ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
                     : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
                 $request->getSession()->getFlashBag()->add('warning', $message);
+
+                return;
             }
-            return;
         }
 
         if ($allOrderLineItemsCount !== $checkout->getLineItems()->count()) {

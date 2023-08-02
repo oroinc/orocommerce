@@ -37,7 +37,7 @@ class IsUpcomingValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, IsUpcoming::class);
         }
 
-        $message = $this->upcomingLabelCheckoutLineItemValidator->getMessageIfLineItemUpcoming($value);
+        $message = $this->upcomingLabelCheckoutLineItemValidator->getMessageIfUpcoming($value);
         if ($message !== null) {
             $this->context
                 ->buildViolation($constraint->message ?: $message)

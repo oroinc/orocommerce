@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
+use Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
+class SubtotalProviderTest extends AbstractSubtotalProviderTest
 {
     use EntityTrait;
 
@@ -44,7 +44,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
 
-    private CheckoutSubtotalProvider $provider;
+    private SubtotalProvider $provider;
 
     private FeatureChecker|MockObject $featureChecker;
 
@@ -60,7 +60,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $translator = $this->createMock(TranslatorInterface::class);
         $translator
             ->method('trans')
-            ->with(CheckoutSubtotalProvider::LABEL)
+            ->with(SubtotalProvider::LABEL)
             ->willReturn(self::SUBTOTAL_LABEL);
 
         $roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -68,7 +68,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->method('round')
             ->willReturnCallback(static fn ($value) => round($value, 2));
 
-        $this->provider = new CheckoutSubtotalProvider(
+        $this->provider = new SubtotalProvider(
             $translator,
             $roundingService,
             $this->productLineItemPriceProvider,
@@ -124,7 +124,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals($expectedCurrency, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -187,7 +187,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -239,7 +239,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -273,7 +273,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -320,7 +320,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -354,7 +354,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -382,7 +382,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -426,7 +426,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
@@ -483,7 +483,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $subtotal = $this->provider->getSubtotal($entity);
 
         self::assertInstanceOf(Subtotal::class, $subtotal);
-        self::assertEquals(CheckoutSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
         self::assertIsFloat($subtotal->getAmount());
