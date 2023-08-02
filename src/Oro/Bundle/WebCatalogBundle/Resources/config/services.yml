@@ -532,6 +532,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_web_catalog.resolved_content_nodes_loader'
+            - '@security.authorization_checker'
 
     oro_web_catalog.menu.content_nodes_provider.storefront:
         class: Oro\Bundle\WebCatalogBundle\Menu\StorefrontMenuContentNodesProvider
