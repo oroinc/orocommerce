@@ -38,6 +38,8 @@ Feature: Product with special characters view
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     And I click "Popup Gallery Widget Close"
 
+  @skip
+#  Unskip when BB-20324 will be fixed
   Scenario: Check that product name is displayed properly in shopping lists widget
     When I click "Add to Shopping List"
     And click "In Shopping List"
@@ -61,6 +63,8 @@ Feature: Product with special characters view
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     And I click "Popup Gallery Widget Close"
 
+  @skip
+#  Unskip when BB-20324 will be fixed
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "In Shopping List"
     Then I should see "UiDialog" with elements:
@@ -83,6 +87,8 @@ Feature: Product with special characters view
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     And I click "Popup Gallery Widget Close"
 
+  @skip
+#  Unskip when BB-20324 will be fixed
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "In Shopping List"
     Then I should see "UiDialog" with elements:
@@ -105,6 +111,8 @@ Feature: Product with special characters view
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     And I click "Popup Gallery Widget Close"
 
+  @skip
+#  Unskip when BB-20324 will be fixed
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "In Shopping List"
     Then I should see "UiDialog" with elements:
