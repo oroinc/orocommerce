@@ -184,13 +184,13 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Kit item quantity greater than max quantity                                                                        | In Stock     | 2      | pieces | $60.00 | $120.00  |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 4      | pieces | $10.00 |          |
-      |                                 | This value should be between 2 and 3.                                                                                            |              |        |        |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                            |              |        |        |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1      | piece  | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
       | product-kit-01                  | Product Kit 1 Kit item quantity is less than min quantity                                                                        | In Stock     | 2      | pieces | $30.00 | $60.00   |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 1      | piece  | $10.00 |          |
-      |                                 | This value should be between 2 and 3.                                                                                            |              |        |        |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                            |              |        |        |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1      | piece  | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
@@ -271,13 +271,13 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Kit item quantity greater than max quantity                                                                        | In Stock     | 2 pieces       | $60.00 | $120.00  |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 4 pieces       | $10.00 |          |
-      |                                 | This value should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Kit item quantity is less than min quantity                                                                        | In Stock     | 2 pieces       | $30.00 | $60.00   |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 1 piece        | $10.00 |          |
-      |                                 | This value should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
@@ -357,13 +357,13 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Kit item quantity greater than max quantity                                                                        | In Stock     | 2 pieces       | $60.00 | $120.00  |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 4 pieces       | $10.00 |          |
-      |                                 | This value should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Kit item quantity is less than min quantity                                                                        | In Stock     | 2 pieces       | $30.00 | $60.00   |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 1 piece        | $10.00 |          |
-      |                                 | This value should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 

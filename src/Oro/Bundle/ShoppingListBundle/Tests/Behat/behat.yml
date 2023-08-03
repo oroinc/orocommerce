@@ -340,6 +340,11 @@ oro_behat_extension:
         locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Delete")]'
         type: 'xpath'
 
+    Row 2 Delete Line Item:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="5"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Delete")]'
+        type: 'xpath'
+
     Row 4 Edit Line Item:
       selector:
         locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="5"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Edit")]'

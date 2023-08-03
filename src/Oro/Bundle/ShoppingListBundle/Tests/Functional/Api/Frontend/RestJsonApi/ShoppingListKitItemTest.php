@@ -482,7 +482,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'not blank constraint',
-                        'detail' => 'Quantity cannot be empty',
+                        'detail' => 'The quantity cannot be empty',
                         'source' => ['pointer' => '/data/attributes/quantity'],
                     ],
                 ],
@@ -496,7 +496,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'range constraint',
-                        'detail' => 'This value should be between 0 and 5.',
+                        'detail' => 'The quantity should be between 0 and 5.',
                         'source' => ['pointer' => '/data/attributes/quantity'],
                     ],
                 ],
@@ -524,12 +524,12 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'greater than constraint',
-                        'detail' => 'This value should be greater than 0.',
+                        'detail' => 'The quantity should be greater than 0.',
                         'source' => ['pointer' => '/data/attributes/quantity'],
                     ],
                     [
                         'title' => 'range constraint',
-                        'detail' => 'This value should be between 0 and 5.',
+                        'detail' => 'The quantity should be between 0 and 5.',
                         'source' => ['pointer' => '/data/attributes/quantity'],
                     ],
                 ],

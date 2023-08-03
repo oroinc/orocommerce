@@ -49,9 +49,9 @@ Feature: Product kits validation on product kit dialog
 
     Examples:
       | Form Name                         | Field Name                    | Field Value | Expected Error Message                          |
-      | Product Kit Line Item Form        | Kit Item Line Item 2 Quantity |             | Quantity cannot be empty                        |
-      | Product Kit Line Item Form        | Kit Item Line Item 2 Quantity | -1          | This value should be greater than 0.            |
-      | Product Kit Line Item Form        | Kit Item Line Item 2 Quantity | 11          | This value should be between 1 and 10.          |
+      | Product Kit Line Item Form        | Kit Item Line Item 2 Quantity |             | The quantity cannot be empty                    |
+      | Product Kit Line Item Form        | Kit Item Line Item 2 Quantity | -1          | The quantity should be greater than 0.          |
+      | Product Kit Line Item Form        | Kit Item Line Item 2 Quantity | 11          | The quantity should be between 1 and 10.        |
       | Product Kit Line Item Totals Form | Quantity                      |             | This value should not be blank.                 |
       | Product Kit Line Item Totals Form | Quantity                      | -1          | This value should be between 0 and 100,000,000. |
       | Product Kit Line Item Totals Form | Quantity                      | 100000001   | This value should be between 0 and 100,000,000. |

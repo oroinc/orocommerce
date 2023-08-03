@@ -1111,7 +1111,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'range constraint',
-                        'detail' => 'This value should be between 0 and 5.',
+                        'detail' => 'The quantity should be between 0 and 5.',
                         'source' => ['pointer' => '/included/1/attributes/quantity'],
                     ],
                 ],
