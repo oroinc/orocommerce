@@ -19,6 +19,7 @@ use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\MultipleChoice;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
@@ -99,6 +100,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         // package commerce-ee available
         if (EntityPropertyInfo::methodExists($inventoryLevel, 'setWarehouse')) {
+            /** @var OptionalListenerManager $listenerManager */
+            $listenerManager = $this->getAppContainer()->get('oro_platform.optional_listeners.manager');
+            $listenerManager->disableListener('oro_warehouse.event_listener.warehouse_create_inventory_levels');
+
             $warehouseEntityManager = $doctrineHelper->getEntityManagerForClass(Warehouse::class);
             $warehouseRepository = $warehouseEntityManager->getRepository(Warehouse::class);
 
@@ -123,6 +128,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
             $configManager->set('oro_inventory.manage_inventory', true);
             $configManager->flush();
+
+            $listenerManager->enableListener('oro_warehouse.event_listener.warehouse_create_inventory_levels');
         } else {
             $inventoryLevelEntityManager->persist($inventoryLevel);
             $inventoryLevelEntityManager->flush();
