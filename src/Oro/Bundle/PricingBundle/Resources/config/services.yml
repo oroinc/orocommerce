@@ -1259,6 +1259,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+        calls:
+            - setNotAllowedProductTypes:
+                  -
+                      - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_pricing.event_listener.website_search_index:
         class: 'Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener'
@@ -1270,6 +1274,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+        calls:
+            - setNotAllowedProductTypes:
+                  -
+                      - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_pricing.price_list_id.placeholder:
         class: 'Oro\Bundle\PricingBundle\Placeholder\PriceListIdPlaceholder'
@@ -1750,3 +1758,8 @@ services:
                 name: oro_pricing.product_price_criteria_builder
                 priority: -256 # Makes this builder the last one as the most general way of building a product price criteria.
             - { name: monolog.logger, channel: oro_pricing }
+
+    oro_pricing.twig.product_price_extension:
+        class: Oro\Bundle\PricingBundle\Twig\ProductPriceExtension
+        tags:
+            - { name: twig.extension }

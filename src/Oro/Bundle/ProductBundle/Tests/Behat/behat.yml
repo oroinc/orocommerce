@@ -778,6 +778,9 @@ oro_behat_extension:
     Search Autocomplete Product Picture:
       selector: '.search-autocomplete .search-autocomplete-product__image picture'
 
+    Search Autocomplete Product Price:
+      selector: '.search-autocomplete .search-autocomplete-product__price'
+
     Search Autocomplete Inventory Status:
       selector: '.search-autocomplete .search-autocomplete-product__status'
 

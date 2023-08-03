@@ -23,6 +23,8 @@ oro_behat_extension:
         - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
         - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
