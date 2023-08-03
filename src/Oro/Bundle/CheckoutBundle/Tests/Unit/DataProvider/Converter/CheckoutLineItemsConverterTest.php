@@ -7,9 +7,9 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
-use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use PHPUnit\Framework\TestCase;
 
 class CheckoutLineItemsConverterTest extends TestCase
@@ -39,7 +39,7 @@ class CheckoutLineItemsConverterTest extends TestCase
         $product1 = (new Product())->setSku('product1');
         $product2 = (new Product())->setSku('product2');
         $product3 = (new Product())->setSku('product3');
-        $kitItem = new ProductKitItem();
+        $kitItem = new ProductKitItemStub();
         $unitItem = (new ProductUnit())->setCode('item');
         $unitEach = (new ProductUnit())->setCode('each');
         $quantity = 10;

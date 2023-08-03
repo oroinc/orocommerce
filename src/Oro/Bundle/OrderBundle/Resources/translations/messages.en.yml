@@ -404,16 +404,31 @@ oro:
             kit_item:
                 label: Product Kit Item
                 description: The related product kit item
+            kit_item_label:
+                label: Product Kit Item Label
+                description: The default label of the ordered product kit item. Fallback field to keep original data
+            kit_item_optional:
+                label: Optional
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Fallback field to keep original data
             product:
                 label: Product
-                description: The kit item product to be purchased
+                description: The purchased kit item product
+            product_sku:
+                label: Product SKU
+                description: A unique human-readable product identifier. Fallback field to keep original data
+            product_name:
+                label: Product Name
+                description: The default name of the ordered product. Fallback field to keep original data
             quantity:
                 label: Quantity
-                description: The quantity of product kit item units to be purchased
+                description: The quantity of a purchased product kit item units
                 aria_label: Product Kit Item Quantity
             unit:
                 label: Unit of Quantity
-                description: The unit of quantity of the kit item product to be purchased in
+                description: The unit of quantity of the kit item product was purchased in
+            unit_code:
+                label: Product Unit Code
+                description: The code of the product unit of the kit item product was purchased in. Fallback field to keep original data
             sort_order:
                 label: Sort Order
                 description: Used to sort kit item line item products when displaying

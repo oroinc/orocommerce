@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use PHPUnit\Framework\TestCase;
 
@@ -107,7 +108,7 @@ class PaymentKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestCa
             ->setQuantity($quantity)
             ->setPrice($price)
             ->setSortOrder(1)
-            ->setKitItem(new ProductKitItem());
+            ->setKitItem(new ProductKitItemStub());
     }
 
     private function getPaymentKitItemLineItem(

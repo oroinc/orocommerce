@@ -62,7 +62,7 @@ class OrderProductKitItemLineItem implements
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductKitItem")
-     * @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -74,8 +74,18 @@ class OrderProductKitItemLineItem implements
     protected ?ProductKitItem $kitItem = null;
 
     /**
+     * @ORM\Column(name="product_kit_item_label", type="string", length=255, nullable=false)
+     */
+    protected ?string $kitItemLabel = null;
+
+    /**
+     * @ORM\Column(name="product_kit_item_optional", type="boolean", options={"default"=false})
+     */
+    protected bool $kitItemOptional = false;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -85,6 +95,16 @@ class OrderProductKitItemLineItem implements
      * )
      */
     protected ?Product $product = null;
+
+    /**
+     * @ORM\Column(name="product_sku", type="string", length=255, nullable=false)
+     */
+    protected ?string $productSku = null;
+
+    /**
+     * @ORM\Column(name="product_name", type="string", length=255, nullable=false)
+     */
+    protected ?string $productName = null;
 
     /**
      * @ORM\Column(name="quantity", type="float", nullable=false)
@@ -100,7 +120,7 @@ class OrderProductKitItemLineItem implements
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="SET NULL", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -110,6 +130,11 @@ class OrderProductKitItemLineItem implements
      * )
      */
     protected ?ProductUnit $unit = null;
+
+    /**
+     * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=false)
+     */
+    protected ?string $unitCode = null;
 
     /**
      * @ORM\Column(name="sort_order", type="integer", options={"default"=0}, nullable=false)
@@ -153,6 +178,7 @@ class OrderProductKitItemLineItem implements
     public function setKitItem(?ProductKitItem $kitItem): self
     {
         $this->kitItem = $kitItem;
+        $this->updateKitItemFallbackFields();
 
         return $this;
     }
@@ -162,9 +188,34 @@ class OrderProductKitItemLineItem implements
         return $this->kitItem;
     }
 
+    public function setKitItemLabel(?string $kitItemLabel): self
+    {
+        $this->kitItemLabel = $kitItemLabel;
+
+        return $this;
+    }
+
+    public function getKitItemLabel(): ?string
+    {
+        return $this->kitItemLabel;
+    }
+
+    public function setKitItemOptional(bool $kitItemOptional): self
+    {
+        $this->kitItemOptional = $kitItemOptional;
+
+        return $this;
+    }
+
+    public function isKitItemOptional(): bool
+    {
+        return $this->kitItemOptional;
+    }
+
     public function setProduct(?Product $product): self
     {
         $this->product = $product;
+        $this->updateProductFallbackFields();
 
         return $this;
     }
@@ -174,9 +225,28 @@ class OrderProductKitItemLineItem implements
         return $this->product;
     }
 
+    public function setProductSku(?string $productSku): self
+    {
+        $this->productSku = $productSku;
+
+        return $this;
+    }
+
     public function getProductSku(): ?string
     {
-        return $this->getProduct()?->getSku();
+        return $this->productSku;
+    }
+
+    public function setProductName(?string $productName): self
+    {
+        $this->productName = $productName;
+
+        return $this;
+    }
+
+    public function getProductName(): ?string
+    {
+        return $this->productName;
     }
 
     public function getParentProduct(): ?Product
@@ -204,6 +274,7 @@ class OrderProductKitItemLineItem implements
     public function setUnit(?ProductUnit $unit): self
     {
         $this->unit = $unit;
+        $this->updateProductUnitFallbackFields();
 
         return $this;
     }
@@ -218,9 +289,26 @@ class OrderProductKitItemLineItem implements
         return $this->getUnit();
     }
 
+    public function setUnitCode(?string $unitCode): self
+    {
+        $this->unitCode = $unitCode;
+
+        return $this;
+    }
+
+    public function getUnitCode(): ?string
+    {
+        return $this->unitCode;
+    }
+
+    public function setProductUnitCode(?string $unitCode): self
+    {
+        return $this->setUnitCode($unitCode);
+    }
+
     public function getProductUnitCode(): ?string
     {
-        return $this->getUnit()?->getCode();
+        return $this->getUnitCode();
     }
 
     public function getSortOrder(): int
@@ -267,6 +355,42 @@ class OrderProductKitItemLineItem implements
     {
         $this->value = $this->price?->getValue();
         $this->currency = $this->price?->getCurrency();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateFallbackFields(): void
+    {
+        $this->updateProductFallbackFields();
+        $this->updateProductUnitFallbackFields();
+        $this->updateKitItemFallbackFields();
+    }
+
+    protected function updateProductFallbackFields(): void
+    {
+        $product = $this->getProduct();
+        if ($product) {
+            $this->productSku = $product->getSku();
+            $this->productName = $product->getDenormalizedDefaultName();
+        }
+    }
+
+    protected function updateProductUnitFallbackFields(): void
+    {
+        if ($this->getProductUnit()) {
+            $this->unitCode = $this->getProductUnit()->getCode();
+        }
+    }
+
+    protected function updateKitItemFallbackFields(): void
+    {
+        $kitItem = $this->getKitItem();
+        if ($kitItem) {
+            $this->kitItemLabel = $kitItem->getDefaultLabel()?->getString();
+            $this->kitItemOptional = $kitItem->isOptional();
+        }
     }
 
     public function getCurrency(): ?string

@@ -26,9 +26,14 @@ class CreateOrderProductKitItemLineItemTable implements Migration
         $table = $schema->createTable('oro_order_product_kit_item_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('line_item_id', 'integer');
-        $table->addColumn('product_kit_item_id', 'integer');
-        $table->addColumn('product_id', 'integer');
-        $table->addColumn('unit_code', 'string', ['length' => 255]);
+        $table->addColumn('product_kit_item_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_kit_item_label', 'string', ['length' => 255]);
+        $table->addColumn('product_kit_item_optional', 'boolean', ['default' => false]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_sku', 'string', ['length' => 255]);
+        $table->addColumn('product_name', 'string', ['length' => 255]);
+        $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_unit_code', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float');
         $table->addColumn('sort_order', 'integer', ['default' => 0]);
         $table->addColumn(
@@ -53,19 +58,19 @@ class CreateOrderProductKitItemLineItemTable implements Migration
             $schema->getTable('oro_product_kit_item'),
             ['product_kit_item_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_unit'),
             ['unit_code'],
             ['code'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

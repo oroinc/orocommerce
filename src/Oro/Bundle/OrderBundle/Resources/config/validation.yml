@@ -92,13 +92,21 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
             - NotNull: ~
         kitItem:
             - NotNull: ~
+        kitItemLabel:
+            - NotNull: ~
         product:
+            - NotNull: ~
+        productSku:
+            - NotNull: ~
+        productName:
             - NotNull: ~
         quantity:
             - NotNull: ~
             - Type:
                   type: float
         unit:
+            - NotNull: ~
+        unitCode:
             - NotNull: ~
         sortOrder:
             - NotNull: ~
