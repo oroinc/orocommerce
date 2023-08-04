@@ -71,6 +71,7 @@ class ProductEntityListenerTest extends WebTestCase
     {
         $product = new Product();
         $product->setSku('TEST');
+        $product->setOrganization($this->getReference('organization'));
         $this->addDefaultName($product, LoadProductData::PRODUCT_1);
 
         $em = $this->getEntityManager();

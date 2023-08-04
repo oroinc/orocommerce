@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
@@ -32,30 +33,11 @@ class FormViewListener implements FeatureToggleableInterface
     const PRICING_BLOCK_PRIORITY = 1650;
     const PRICE_ATTRIBUTES_BLOCK_PRIORITY = 1600;
 
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var PriceAttributePricesProvider
-     */
-    protected $priceAttributePricesProvider;
-
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
+    private AuthorizationCheckerInterface $authorizationChecker;
+    protected TranslatorInterface $translator;
+    protected DoctrineHelper $doctrineHelper;
+    protected PriceAttributePricesProvider $priceAttributePricesProvider;
+    private AclHelper $aclHelper;
 
     public function __construct(
         TranslatorInterface $translator,
@@ -102,9 +84,12 @@ class FormViewListener implements FeatureToggleableInterface
     /**
      * @return PriceAttributePriceList[]
      */
-    protected function getProductAttributesPriceLists()
+    protected function getProductAttributesPriceLists(Product $product): array
     {
+        /** @var QueryBuilder $qb */
         $qb = $this->getPriceAttributePriceListRepository()->getPriceAttributesQueryBuilder();
+        $qb->where('price_attribute_price_list.organization = :organization')
+            ->setParameter('organization', $product->getOrganization());
         $options = [PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES => true];
 
         return $this->aclHelper->apply($qb, BasicPermission::VIEW, $options)->getResult();
@@ -128,7 +113,7 @@ class FormViewListener implements FeatureToggleableInterface
             self::PRICE_ATTRIBUTES_BLOCK_PRIORITY
         );
 
-        $priceLists = $this->getProductAttributesPriceLists();
+        $priceLists = $this->getProductAttributesPriceLists($product);
         if (empty($priceLists)) {
             $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
             $template = $event->getEnvironment()
