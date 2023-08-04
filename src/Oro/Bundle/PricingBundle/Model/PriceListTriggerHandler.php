@@ -34,14 +34,27 @@ class PriceListTriggerHandler
 
         if ($products) {
             $productIds = [];
+            $priceListOrganizationId = $priceList->getOrganization()->getId();
+
             foreach ($products as $product) {
                 if (null !== $product) {
+                    if (\is_object($product) && $priceListOrganizationId !== $product->getOrganization()->getId()) {
+                        continue;
+                    }
+
                     $productIds[] = $product instanceof Product ? $product->getId() : $product;
                 }
             }
-            $this->messageProducer->send($topic, ['product' => [$priceList->getId() => $productIds]]);
+            if ($this->isMessageShouldBeSend($products, $productIds)) {
+                $this->messageProducer->send($topic, ['product' => [$priceList->getId() => $productIds]]);
+            }
         } else {
             $this->messageProducer->send($topic, ['product' => [$priceList->getId() => []]]);
         }
+    }
+
+    private function isMessageShouldBeSend(array $products, array $productIds): bool
+    {
+        return $products === [null] || count($productIds) !== 0;
     }
 }
