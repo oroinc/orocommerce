@@ -16,11 +16,17 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class MenuCategoriesCachingProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private MenuCategoriesProviderInterface|\PHPUnit\Framework\MockObject\MockObject $menuCategoriesProvider;
+    /** @var MenuCategoriesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $menuCategoriesProvider;
 
-    private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    private ArrayAdapter $cache;
+    /** @var ArrayAdapter */
+    private $cache;
+
+    /** @var MenuCategoriesCachingProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -35,13 +41,11 @@ class MenuCategoriesCachingProviderTest extends \PHPUnit\Framework\TestCase
             $this->tokenAccessor
         );
 
-        $customerUserRelationsProvider
-            ->expects(self::any())
+        $customerUserRelationsProvider->expects(self::any())
             ->method('getCustomer')
             ->willReturnCallback(static fn ($customerUser) => $customerUser->getCustomer());
 
-        $customerUserRelationsProvider
-            ->expects(self::any())
+        $customerUserRelationsProvider->expects(self::any())
             ->method('getCustomerGroup')
             ->willReturnCallback(static fn ($customerUser) => $customerUser->getCustomer()?->getGroup());
     }
@@ -57,19 +61,16 @@ class MenuCategoriesCachingProviderTest extends \PHPUnit\Framework\TestCase
     ): void {
         $category = (new CategoryStub())->setId(50);
 
-        $this->tokenAccessor
-            ->expects(self::any())
+        $this->tokenAccessor->expects(self::any())
             ->method('getUser')
             ->willReturn($user);
 
-        $this->tokenAccessor
-            ->expects(self::any())
+        $this->tokenAccessor->expects(self::any())
             ->method('getOrganizationId')
             ->willReturn($organizationId);
 
         $categoriesData = [[42 => ['id' => 42, 'title' => 'sample', 'parentId' => 0, 'level' => 0]]];
-        $this->menuCategoriesProvider
-            ->expects(self::once())
+        $this->menuCategoriesProvider->expects(self::once())
             ->method('getCategories')
             ->with($category, $user, $context)
             ->willReturn($categoriesData);
@@ -139,8 +140,7 @@ class MenuCategoriesCachingProviderTest extends \PHPUnit\Framework\TestCase
         $category = (new CategoryStub())->setId(50);
 
         $categoriesData = [[42 => ['id' => 42, 'title' => 'sample', 'parentId' => 0, 'level' => 0]]];
-        $this->menuCategoriesProvider
-            ->expects(self::once())
+        $this->menuCategoriesProvider->expects(self::once())
             ->method('getCategories')
             ->with($category, null)
             ->willReturn($categoriesData);
@@ -160,8 +160,7 @@ class MenuCategoriesCachingProviderTest extends \PHPUnit\Framework\TestCase
         $category = (new CategoryStub())->setId(50);
 
         $categoriesData = [[42 => ['id' => 42, 'title' => 'sample', 'parentId' => 0, 'level' => 0]]];
-        $this->menuCategoriesProvider
-            ->expects(self::once())
+        $this->menuCategoriesProvider->expects(self::once())
             ->method('getCategories')
             ->with($category, null)
             ->willReturn($categoriesData);
@@ -181,8 +180,7 @@ class MenuCategoriesCachingProviderTest extends \PHPUnit\Framework\TestCase
         $category = (new CategoryStub())->setId(50);
 
         $categoriesData = [[42 => ['id' => 42, 'title' => 'sample', 'parentId' => 0, 'level' => 0]]];
-        $this->menuCategoriesProvider
-            ->expects(self::once())
+        $this->menuCategoriesProvider->expects(self::once())
             ->method('getCategories')
             ->with($category, null)
             ->willReturn($categoriesData);

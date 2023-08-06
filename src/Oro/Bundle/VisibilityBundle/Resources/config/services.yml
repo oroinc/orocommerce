@@ -106,6 +106,13 @@ services:
             - "@oro_config.manager"
             - "@oro_scope.scope_manager"
 
+    oro_visibility.visibility.frontend_category_visibility_checker:
+        class: Oro\Bundle\VisibilityBundle\Visibility\Checker\FrontendCategoryVisibilityChecker
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_visibility.visibility.resolver.category_visibility_resolver'
+            - '@oro_customer.provider.customer_user_relations_provider'
+
     oro_visibility.event_listener.category_tree_handler_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener'
         arguments:
@@ -501,11 +508,10 @@ services:
         class: Oro\Bundle\VisibilityBundle\EventListener\CategoryVisibleListener
         arguments:
             - '@doctrine'
-            - '@oro_visibility.visibility.resolver.category_visibility_resolver'
-            - '@oro_customer.provider.customer_user_relations_provider'
-            - '@security.token_storage'
+            - '@Psr\Container\ContainerInterface'
         tags:
             - { name: kernel.event_listener, event: kernel.controller }
+            - { name: container.service_subscriber, id: oro_visibility.visibility.frontend_category_visibility_checker, key: Oro\Bundle\VisibilityBundle\Visibility\Checker\FrontendCategoryVisibilityCheckerInterface }
 
     oro_visibility.async.message_filter.visibility.change_product_category:
         class: 'Oro\Bundle\VisibilityBundle\Async\Visibility\ProductMessageFilter'
