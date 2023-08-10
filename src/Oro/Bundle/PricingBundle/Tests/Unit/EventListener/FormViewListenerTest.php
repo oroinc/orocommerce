@@ -92,6 +92,15 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn([]);
         $queryBuilder = $this->createMock(QueryBuilder::class);
 
+        $queryBuilder->expects(self::once())
+            ->method('where')
+            ->with('price_attribute_price_list.organization = :organization')
+            ->willReturn($queryBuilder);
+
+        $queryBuilder->expects(self::once())
+            ->method('setParameter')
+            ->willReturn($queryBuilder);
+
         $priceAttributePriceListRepository->expects(self::once())
             ->method('getPriceAttributesQueryBuilder')
             ->willReturn($queryBuilder);
@@ -340,6 +349,15 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getResult')
             ->willReturn($priceLists);
         $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $queryBuilder->expects(self::once())
+            ->method('where')
+            ->with('price_attribute_price_list.organization = :organization')
+            ->willReturn($queryBuilder);
+
+        $queryBuilder->expects(self::once())
+            ->method('setParameter')
+            ->willReturn($queryBuilder);
 
         $priceAttributePriceListRepository->expects(self::once())
             ->method('getPriceAttributesQueryBuilder')

@@ -115,6 +115,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $this->restrictBySupportedQuantity($qb, $rule);
         $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
         $this->restrictByManualPrices($qb, $rule, $rootAlias);
+        $this->restrictByOrganization($qb, $rule, $rootAlias);
 
         return $qb;
     }
@@ -292,6 +293,12 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                     )
                 )
             );
+    }
+
+    protected function restrictByOrganization(QueryBuilder $qb, PriceRule $rule, $rootAlias): void
+    {
+        $qb->andWhere($rootAlias . '.organization = :organization')
+            ->setParameter('organization', $rule->getPriceList()->getOrganization());
     }
 
     /**

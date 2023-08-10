@@ -22,6 +22,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Component\PhpUtils\ArrayUtil;
 
 /**
@@ -48,7 +49,8 @@ class PriceListRuleCompilerTest extends WebTestCase
             [
                 LoadPriceAttributeProductPrices::class,
                 LoadCategoryProductData::class,
-                LoadProductPrices::class
+                LoadProductPrices::class,
+                LoadOrganization::class
             ]
         );
 
@@ -797,7 +799,8 @@ class PriceListRuleCompilerTest extends WebTestCase
         $priceList = new PriceList();
         $priceList->setActive(true)
             ->setCurrencies(['USD', 'EUR'])
-            ->setName('Test Assignment Rules Price List');
+            ->setName('Test Assignment Rules Price List')
+            ->setOrganization($this->getReference('organization'));
         $em = $this->registry->getManagerForClass(PriceList::class);
         $em->persist($priceList);
         $em->flush();

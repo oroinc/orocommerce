@@ -5,140 +5,52 @@ namespace Oro\Bundle\VisibilityBundle\EventListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
-use Oro\Bundle\UserBundle\Entity\UserInterface;
-use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Oro\Bundle\VisibilityBundle\Visibility\Checker\FrontendCategoryVisibilityCheckerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
  * Restricts access to the category based on its visibility settings.
  */
-class CategoryVisibleListener
+class CategoryVisibleListener implements ServiceSubscriberInterface
 {
-    // listener should run only on this route
-    const PRODUCT_INDEX_ROUTE = 'oro_product_frontend_product_index';
+    private ManagerRegistry $doctrine;
+    private ContainerInterface $container;
 
-    /**
-     * @var CategoryVisibilityResolverInterface
-     */
-    private $categoryVisibilityResolver;
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var CustomerUserRelationsProvider
-     */
-    private $customerUserRelationsProvider;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    public function __construct(
-        ManagerRegistry $registry,
-        CategoryVisibilityResolverInterface $categoryVisibilityResolver,
-        CustomerUserRelationsProvider $customerUserRelationsProvider,
-        TokenStorageInterface $tokenStorage
-    ) {
-        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-        $this->registry = $registry;
-        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(ManagerRegistry $doctrine, ContainerInterface $container)
+    {
+        $this->doctrine = $doctrine;
+        $this->container = $container;
     }
 
     /**
-     * @throws NotFoundHttpException
+     * {@inheritDoc}
      */
+    public static function getSubscribedServices(): array
+    {
+        return [FrontendCategoryVisibilityCheckerInterface::class];
+    }
+
     public function onKernelController(ControllerEvent $event): void
     {
-        $request = $event->getRequest();
-
-        if (!$this->isApplicable($request)) {
+        if ('oro_product_frontend_product_index' !== $event->getRequest()->attributes->get('_route')) {
+            return;
+        }
+        $categoryId = $event->getRequest()->get(RequestProductHandler::CATEGORY_ID_KEY);
+        if (null === $categoryId) {
             return;
         }
 
-        /** @var Category $category */
-        $category = $this->registry->getManagerForClass(Category::class)
-            ->getRepository(Category::class)
-            ->find((int)$request->get(RequestProductHandler::CATEGORY_ID_KEY));
-
-        if (!$category || !$this->isCategoryVisible($category)) {
-            $this->throwCategoryNotFound($request);
+        $category = $this->doctrine->getManagerForClass(Category::class)->find(Category::class, (int)$categoryId);
+        if (null === $category || !$this->getCategoryVisibilityChecker()->isCategoryVisible($category)) {
+            throw new NotFoundHttpException(sprintf('The category %s was not found.', $categoryId));
         }
     }
 
-    /**
-     * @param Request $request
-     * @return bool
-     */
-    private function isApplicable(Request $request)
+    private function getCategoryVisibilityChecker(): FrontendCategoryVisibilityCheckerInterface
     {
-        $route = $request->attributes->get('_route');
-
-        if ($route === null || $route !== static::PRODUCT_INDEX_ROUTE) {
-            return false;
-        }
-
-        return $request->get(RequestProductHandler::CATEGORY_ID_KEY) !== null;
-    }
-
-    /**
-     * @param Category $category
-     * @return bool
-     */
-    private function isCategoryVisible(Category $category)
-    {
-        $user = $this->getUser();
-        $customer = $this->customerUserRelationsProvider->getCustomer($user);
-        $customerGroup = $this->customerUserRelationsProvider->getCustomerGroup($user);
-
-        if ($customer) {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForCustomer($category, $customer);
-        } elseif ($customerGroup) {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForCustomerGroup(
-                $category,
-                $customerGroup
-            );
-        } else {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
-        }
-
-        return $isCategoryVisible;
-    }
-
-    /**
-     * @return UserInterface|null
-     */
-    private function getUser()
-    {
-        $token = $this->tokenStorage->getToken();
-        if (!$token) {
-            return null;
-        }
-
-        $user = $token->getUser();
-        if (!is_object($user)) {
-            return null;
-        }
-
-        return $user;
-    }
-
-    /**
-     * @throws NotFoundHttpException
-     */
-    private function throwCategoryNotFound($request)
-    {
-        throw new NotFoundHttpException(sprintf(
-            'Category %s has not been found',
-            $request->get(RequestProductHandler::CATEGORY_ID_KEY)
-        ));
+        return $this->container->get(FrontendCategoryVisibilityCheckerInterface::class);
     }
 }
