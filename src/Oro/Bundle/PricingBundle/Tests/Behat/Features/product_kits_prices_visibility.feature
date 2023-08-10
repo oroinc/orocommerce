@@ -1,3 +1,4 @@
+@regression
 @feature-BB-21125
 @ticket-BB-22598
 @fixture-OroPricingBundle:ProductKitPriceVisibilityFixture.yml
