@@ -20,6 +20,7 @@ services:
             - '@oro_maintenance.maintenance_state'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
+            - ['setMaintenanceRestrictionsChecker', ['@oro_maintenance.maintenance_restrictions_checker']]
         tags:
             - { name: container.hot_path }
 

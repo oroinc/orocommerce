@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Oro\Bundle\MaintenanceBundle\Maintenance\MaintenanceModeState;
+use Oro\Bundle\MaintenanceBundle\Maintenance\MaintenanceRestrictionsChecker;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Component\Routing\UrlUtil;
@@ -29,6 +30,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     private MatchedUrlDecisionMaker $matchedUrlDecisionMaker;
     private SlugEntityFinder $slugEntityFinder;
     private MaintenanceModeState $maintenanceModeState;
+    private ?MaintenanceRestrictionsChecker $maintenanceRestrictionsChecker = null;
 
     private RequestMatcherInterface|UrlMatcherInterface $baseMatcher;
     private array $matchSlugsFirst = [];
@@ -46,6 +48,12 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
         $this->slugEntityFinder = $slugEntityFinder;
         $this->maintenanceModeState = $maintenanceModeState;
+    }
+
+    public function setMaintenanceRestrictionsChecker(
+        MaintenanceRestrictionsChecker $maintenanceRestrictionsChecker
+    ): void {
+        $this->maintenanceRestrictionsChecker = $maintenanceRestrictionsChecker;
     }
 
     public function setBaseMatcher(RequestMatcherInterface|UrlMatcherInterface $baseMatcher): void
@@ -95,7 +103,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
                     return [];
                 }
             },
-            self::MATCH_MAINTENANCE => $this->getMaintenanceMatcher(),
+            self::MATCH_MAINTENANCE => $this->getMaintenanceMatcher($pathinfo),
             self::MATCH_SLUG => $this->getSlugMatcher($pathinfo)
         ];
 
@@ -115,20 +123,29 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
                     return [];
                 }
             },
-            self::MATCH_MAINTENANCE => $this->getMaintenanceMatcher(),
+            self::MATCH_MAINTENANCE => $this->getMaintenanceMatcher($pathinfo),
             self::MATCH_SLUG => $this->getSlugMatcher($pathinfo)
         ];
 
         return $this->resolveAttributes($matchers, $pathinfo);
     }
 
-    private function getMaintenanceMatcher(): callable
+    private function getMaintenanceMatcher($pathinfo): callable
     {
-        return function () {
-            // prevents http not found exception for slugged urls when maintenance mode is enabled
-            return $this->maintenanceModeState->isOn()
-                ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
-                : [];
+        $isAllowed = $this->maintenanceRestrictionsChecker->isAllowed();
+        return function () use ($isAllowed, $pathinfo) {
+            if ($isAllowed) {
+                try {
+                    return $this->baseMatcher->match($pathinfo);
+                } catch (ResourceNotFoundException $e) {
+                    return [];
+                }
+            } else {
+                // prevents http not found exception for slugged urls when maintenance mode is enabled
+                return $this->maintenanceModeState->isOn()
+                    ? ['_route' => 'oro_frontend_root', '_route_params' => [], '_controller' => 'Frontend::index']
+                    : [];
+            }
         };
     }
 
