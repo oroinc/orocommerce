@@ -600,3 +600,12 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+
+    oro_visibility.strategy_processor.product_visibility_audit_strategy:
+        class: 'Oro\Bundle\DataAuditBundle\Strategy\Processor\DefaultUnidirectionalFieldAuditStrategyProcessor'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_dataaudit.entity_strategy_processor, entityName: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+            - { name: oro_dataaudit.entity_strategy_processor, entityName: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+            - { name: oro_dataaudit.entity_strategy_processor, entityName: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
