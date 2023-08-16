@@ -317,7 +317,7 @@ services:
             - '@doctrine'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_config.global'
+            - '@oro_customer.security.customer_user_provider'
 
     oro_shopping_list.provider.shopping_list_url:
         class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider
@@ -831,3 +831,18 @@ services:
             - '@oro_pricing.provider.frontend_product_prices'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_shopping_list.event_listener.frontend_shopping_list_total:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\FrontendShoppingListTotalListener
+        arguments:
+            - '@oro_customer.security.customer_user_provider'
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller_arguments, method: onKernelController }
+
+    oro_shopping_list.model.product_price_scope_criteria_factory:
+        class: Oro\Bundle\ShoppingListBundle\Model\ProductPriceScopeCriteriaFactory
+        decorates: oro_pricing.model.product_price_scope_criteria_factory
+        arguments:
+            - '@oro_customer.security.customer_user_provider'
+            - '@.inner'
