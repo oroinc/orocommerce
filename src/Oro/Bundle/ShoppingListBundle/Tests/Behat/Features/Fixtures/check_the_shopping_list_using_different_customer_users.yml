@@ -1,0 +1,109 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precision_1:
+        unit: '@item'
+        precision: '1'
+    unit_precision_2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_name_1:
+        string: 'Simple product 1'
+    product_name_2:
+        string: 'Simple product 2'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_simple_1:
+        type: 'simple'
+        sku: 'product_simple_1'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true
+        __calls:
+            - addName: ['@product_name_1']
+            - addUnitPrecision: ['@unit_precision_1']
+            - setPrimaryUnitPrecision: ['@unit_precision_1']
+
+    product_simple_2:
+        type: 'simple'
+        sku: 'product_simple_2'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true
+        __calls:
+            - addName: ['@product_name_2']
+            - addUnitPrecision: ['@unit_precision_2']
+            - setPrimaryUnitPrecision: ['@unit_precision_2']
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer_head_office:
+        name: 'Headoffice'
+        organization: '@organization'
+        owner: '@admin'
+    customer_department:
+        name: 'Department'
+        organization: '@organization'
+        parent: '@customer_head_office'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer_head_office'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+    marlene:
+        email: 'MarleneSBradley@example.com'
+        username: 'MarleneSBradley@example.com'
+        password: 'MrXo6V++SF8Gy/oa/QDQ1klz12WLxzajuGjxFm6o+8NZ+CDRZjtP/QTvp23vl50GdKI60eknJ2dToR6oiSpskg=='
+        salt: 'lwoufelaumo8skw4s00o8k4cck4wckw'
+        firstName: 'Marlene'
+        lastName: 'Bradley'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer_department'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    price_list_head_office:
+        name: 'HeadofficePriceList'
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+        organization: '@organization'
+    price_list_department:
+        name: 'DepartmentPriceList'
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    price_list_to_customer_head_office:
+        customer: '@customer_head_office'
+        pricelist: '@price_list_head_office'
+        website: '@website1'
+        sortOrder: 10
+    price_list_to_customer_department:
+        customer: '@customer_department'
+        pricelist: '@price_list_department'
+        website: '@website1'
+        sortOrder: 20
