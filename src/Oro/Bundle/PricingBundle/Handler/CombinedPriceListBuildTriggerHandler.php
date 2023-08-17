@@ -46,6 +46,28 @@ class CombinedPriceListBuildTriggerHandler
         return false;
     }
 
+    public function handlePriceCreation(ProductPrice $productPrice): bool
+    {
+        $priceList = $productPrice->getPriceList();
+
+        /** @var CombinedPriceListToPriceListRepository $combinedPriceToPriceListRepository */
+        $combinedPriceToPriceListRepository = $this->managerRegistry
+            ->getRepository(CombinedPriceListToPriceList::class);
+        /** @var ProductPriceRepository $productPriceRepository */
+        $productPriceRepository = $this->managerRegistry->getRepository(ProductPrice::class);
+
+        if ($priceList->isActive()
+            && $combinedPriceToPriceListRepository->hasCombinedPriceListWithPriceList($priceList)
+            && $productPriceRepository->isFirstPriceAdded($this->shardManager, $productPrice)
+        ) {
+            $this->rebuildCombinedPrices($priceList);
+
+            return true;
+        }
+
+        return false;
+    }
+
     private function rebuildCombinedPrices(PriceList $priceList): void
     {
         $this->priceListRelationTriggerHandler->handlePriceListStatusChange($priceList);
