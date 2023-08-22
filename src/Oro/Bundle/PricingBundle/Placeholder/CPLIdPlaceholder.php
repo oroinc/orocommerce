@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Placeholder;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
@@ -18,20 +20,18 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
 
     const NAME = 'CPL_ID';
 
-    /**
-     * @var CombinedPriceListTreeHandler
-     */
-    private $priceListTreeHandler;
+    private CombinedPriceListTreeHandler $priceListTreeHandler;
+    private TokenStorageInterface $tokenStorage;
+    private CustomerUserRelationsProvider $customerUserRelationsProvider;
 
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    public function __construct(CombinedPriceListTreeHandler $priceListTreeHandler, TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        CombinedPriceListTreeHandler $priceListTreeHandler,
+        TokenStorageInterface $tokenStorage,
+        CustomerUserRelationsProvider $customerUserRelationsProvider
+    ) {
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->tokenStorage = $tokenStorage;
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
     /**
@@ -56,6 +56,8 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
 
         if ($token && $token->getUser() instanceof CustomerUser) {
             $customer = $token->getUser()->getCustomer();
+        } elseif ($token instanceof AnonymousCustomerUserToken) {
+            $customer = $this->customerUserRelationsProvider->getCustomerIncludingEmpty();
         }
 
         $cpl = $this->priceListTreeHandler->getPriceList($customer);
