@@ -1,10 +1,10 @@
 /* @theme: custom; */
 
-$sidebar-menu-background: get-color('additional', 'base') !default;
+$sidebar-menu-background: get-color('additional-old', 'base') !default;
 
-$sidebar-menu-link-color: get-color('additional', 'dark') !default;
+$sidebar-menu-link-color: get-color('additional-old', 'dark') !default;
 
-$sidebar-menu-collapsible-background-color: get-color('additional', 'base');
+$sidebar-menu-collapsible-background-color: get-color('additional-old', 'base');
 
 $main-menu-actions-display: inline-grid;
 
@@ -40,4 +40,4 @@ $main-menu-outer-container-desktop-justify-content: null;
 $main-menu-outer-desktop-display: null;
 // Tablet
 
-$main-menu-tablet-border: 1px solid get-color('additional', 'light') !default;
+$main-menu-tablet-border: 1px solid get-color('additional-old', 'light') !default;

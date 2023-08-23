@@ -20,7 +20,7 @@ $product-sticker-icon-bottom-left-gallery-pos-bottom: $product-view-media-galler
     $product-view-media-gallery-nav-max-height + $product-sticker-icon-bottom-left-pos-bottom !default;
 
 $product-sticker-text-font-weight: font-weight('bold') !default;
-$product-sticker-text-new-arrival-color: get-color('primary', 'dark') !default;
+$product-sticker-text-new-arrival-color: get-color('primary-old', 'dark') !default;
 
 $product-sticker-icon-new-arrival-background: url('#{$global-url}/oroproduct/default/images/sticker-new.svg') 0 0 no-repeat !default;
 $product-sticker-icon-new-arrival-background-size: 100% 100% !default;

@@ -27,12 +27,12 @@ $checkout-view-title-font-size: $headline2-font-size !default;
 $checkout-view-title-line-height: $headline2-line-height !default;
 $checkout-view-title-font-weight: $headline2-font-weight !default;
 
-$checkout-view-notification-container-background: get-color('additional', 'ultra') !default;
+$checkout-view-notification-container-background: get-color('additional-old', 'ultra') !default;
 
 $checkout-view-sticky-column-offset: spacing('sm') $checkout-view-column-gap !default;
 
-$checkout-view-sticky-titles-background: get-color('additional', 'ultra') !default;
-$checkout-view-sticky-titles-border-bottom: 1px solid get-color('additional', 'light') !default;
+$checkout-view-sticky-titles-background: get-color('additional-old', 'ultra') !default;
+$checkout-view-sticky-titles-border-bottom: 1px solid get-color('additional-old', 'light') !default;
 
 $checkout-view-sticky-titles-inner-display: flex !default;
 $checkout-view-sticky-titles-inner-max-width: $site-width !default;
@@ -55,7 +55,7 @@ $checkout-view-badge-font-size: $base-font-size !default;
 $checkout-view-badge-margin: 0 spacing('xs') 0 0 !default;
 
 $checkout-view-column-pseudo-width: 1px !default;
-$checkout-view-column-pseudo-background: get-color('additional', 'light') !default;
+$checkout-view-column-pseudo-background: get-color('additional-old', 'light') !default;
 
 $checkout-view-shipping-methods-margin: spacing('base') 0 0 !default;
 $checkout-view-shipping-methods-datepicker-box-max-width: none !default;

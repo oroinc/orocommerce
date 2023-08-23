@@ -22,9 +22,9 @@ $promo-slider-use-dots: true !default;
 $promo-slider-dots-bottom-pos: spacing('sm') !default;
 $promo-slider-dots-item-offset: 0 4px !default;
 $promo-slider-dots-button-bg: transparent !default;
-$promo-slider-dots-button-border: 1px solid get-color('additional', 'ultra') !default;
-$promo-slider-dots-button-active-border: 1px solid get-color('additional', 'ultra') !default;
-$promo-slider-dots-button-active-bg: get-color('additional', 'ultra') !default;
+$promo-slider-dots-button-border: 1px solid get-color('additional-old', 'ultra') !default;
+$promo-slider-dots-button-active-border: 1px solid get-color('additional-old', 'ultra') !default;
+$promo-slider-dots-button-active-bg: get-color('additional-old', 'ultra') !default;
 $promo-slider-dots-button-active-box-shadow: null !default;
 
 // Mobile

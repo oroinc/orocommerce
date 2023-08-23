@@ -15,7 +15,7 @@ $product-totals-btn-offset-inner: 3px 15px 2px 15px !default;
 $product-totals-nested-offset-inner: 0 16px !default;
 
 $product-totals-wrapper-display: inline-flex !default;
-$product-totals-wrapper-background: get-color('additional', 'base') !default;
+$product-totals-wrapper-background: get-color('additional-old', 'base') !default;
 $product-totals-wrapper-offset-inner: 14px !default;
 $product-totals-wrapper-border-radius: 6px !default;
 
@@ -26,7 +26,7 @@ $product-totals-wrapper-narrow-offset-inner: 11px 14px !default;
 $product-totals-total-items-display: flex !default;
 $product-totals-total-items-justify-content: space-between !default;
 
-$product-totals-total-separator-color: get-color('additional', 'middle') !default;
+$product-totals-total-separator-color: get-color('additional-old', 'middle') !default;
 $product-totals-total-separator-offset: 0 10px !default;
 
 $product-totals-label-display: inline-flex !default;

@@ -1,5 +1,5 @@
 /* @theme: default; */
 
-$inventory-in-stock-color: get-color('secondary', 'lighten') !default;
-$inventory-out-of-stock-color: get-color('primary', 'dark') !default;
-$inventory-discontinued-color: get-color('primary', 'base') !default;
+$inventory-in-stock-color: get-color('secondary-old', 'lighten') !default;
+$inventory-out-of-stock-color: get-color('primary-old', 'dark') !default;
+$inventory-discontinued-color: get-color('primary-old', 'base') !default;

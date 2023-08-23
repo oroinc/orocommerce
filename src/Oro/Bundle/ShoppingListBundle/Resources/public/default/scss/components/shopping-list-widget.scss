@@ -100,12 +100,6 @@
 
 .order-builder-clear-btn {
     float: left;
-
-    [class^='fa-'] {
-        &::before {
-            font-size: $base-font-icon-button;
-        }
-    }
 }
 
 .cart-widget-counter {
