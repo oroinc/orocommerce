@@ -1,7 +1,7 @@
 /* @theme: default; */
 
 .product-low-inventory {
-    margin-bottom: $offset-y-m;
+    margin-bottom: spacing('sm');
 
     color: $product-low-inventory-color;
 }

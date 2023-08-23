@@ -29,7 +29,7 @@
     }
 
     &__content {
-        margin-bottom: $offset-y-m;
+        margin-bottom: spacing('sm');
     }
 
     &__btn {

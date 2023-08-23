@@ -91,7 +91,7 @@
         @include clearfix();
 
         &:first-child {
-            padding-bottom: $offset-y;
+            padding-bottom: spacing('base');
 
             border-bottom: $quick-order-add-buttons-first-child-border-bottom;
         }
@@ -111,7 +111,7 @@
 
         .btn-group {
             // override platform styles
-            margin-left: $offset-x-m;
+            margin-left: spacing('sm');
 
             .btn-group {
                 margin: 0;

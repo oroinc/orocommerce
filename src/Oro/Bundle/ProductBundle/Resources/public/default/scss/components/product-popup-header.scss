@@ -20,7 +20,7 @@
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        column-gap: $offset-x-m;
+        column-gap: spacing('sm');
     }
 }
 

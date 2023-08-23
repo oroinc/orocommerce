@@ -48,8 +48,8 @@ $matrix-order-widget-dialog-grid-body-overflow: auto;
 $matrix-order-widget-grid-overflow: hidden !default;
 $matrix-order-widget-grid-position: relative !default;
 $matrix-order-widget-grid-width: 100% !default;
-$matrix-order-widget-grid-offset-bottom: $offset-x !default;
-$matrix-order-widget-grid-offset-inner-top: $offset-x !default;
+$matrix-order-widget-grid-offset-bottom: spacing('base') !default;
+$matrix-order-widget-grid-offset-inner-top: spacing('base') !default;
 $matrix-order-widget-grid-font-family: $font-family-base !default;
 
 $matrix-order-widget-one-line-flex-shrink: 0 !default;
@@ -269,7 +269,7 @@ $matrix-order-widget-item-content-wrapper-width: 100% !default;
 
 $matrix-order-widget-fields-row-error-background: get-color('additional', 'ultra') !default;
 $matrix-order-widget-fields-row-error-max-width: 100% !default;
-$matrix-order-widget-fields-row-error-offset-inner: $offset-y-m 0 !default;
+$matrix-order-widget-fields-row-error-offset-inner: spacing('sm') 0 !default;
 $matrix-order-widget-fields-row-error-display: inline-block !default;
 $matrix-order-widget-fields-row-error-position: relative !default;
 $matrix-order-widget-fields-row-error-z-index: z('base') !default;
@@ -278,8 +278,8 @@ $matrix-order-widget-fields-row-error-z-index: z('base') !default;
 $matrix-order-widget-pinned-dropdown-max-width: 210px !default;
 $matrix-order-widget-pinned-dropdown-mobile-landscape-max-width: 100% !default;
 
-$matrix-order-widget-actions-container-offset: $offset-y-m 0;
-$matrix-order-widget-actions-container-inner-offset: 0 $offset-y-m;
+$matrix-order-widget-actions-container-offset: spacing('sm') 0;
+$matrix-order-widget-actions-container-inner-offset: 0 spacing('sm');
 
 // Strict-tablet variables
 $matrix-order-widget-dialog-item-content-strict-tablet-flex-basis: 20% !default;
@@ -288,7 +288,7 @@ $matrix-order-widget-dialog-item-content-strict-tablet-offset-inner: 10px 45px 1
 // Tablet-small variables
 $matrix-order-widget-dialog-item-content-tablet-small-flex-basis: 25% !default;
 
-$matrix-order-widget-validation-failed-tablet-small-offset: 0 $offset-y-m !default;
+$matrix-order-widget-validation-failed-tablet-small-offset: 0 spacing('sm') !default;
 
 // Mobile-landscape variables
 $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis: 33% !default;

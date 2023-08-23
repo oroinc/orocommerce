@@ -155,7 +155,7 @@
 
         .notification-flash-container {
             margin: 0 auto;
-            padding: $offset-y-m;
+            padding: spacing('sm');
         }
     }
 
@@ -165,8 +165,8 @@
 
     .checkout-form__payment-methods {
         max-width: 300px;
-        padding: 0 0 0 ($offset-x-m + 2);
-        margin: 0 0 0 $offset-x;
+        padding: 0 0 0 (spacing('sm') + 2);
+        margin: 0 0 0 spacing('base');
     }
 
     .checkout-form__img {

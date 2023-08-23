@@ -1,5 +1,5 @@
 /* @theme: default; */
 
-$coupons-list-offset: 0 0 $offset-y-s !default;
+$coupons-list-offset: 0 0 spacing('xs') !default;
 
-$coupons-list-item-offset: $offset-y-s !default;
+$coupons-list-item-offset: spacing('xs') !default;

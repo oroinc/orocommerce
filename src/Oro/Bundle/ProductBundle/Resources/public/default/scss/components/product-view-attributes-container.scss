@@ -2,7 +2,7 @@
 
 .product-view {
     &__attributes-container {
-        margin-bottom: $offset-y;
+        margin-bottom: spacing('base');
 
         border: 1px solid $product-view-attributes-containers-border-color;
 

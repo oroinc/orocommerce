@@ -243,11 +243,11 @@
 
     .offset {
         &-inner {
-            padding: $offset-y;
+            padding: spacing('base');
         }
 
         &-bottom {
-            margin-bottom: $offset-y;
+            margin-bottom: spacing('base');
         }
     }
 

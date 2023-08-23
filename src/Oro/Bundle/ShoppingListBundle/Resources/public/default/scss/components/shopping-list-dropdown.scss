@@ -25,7 +25,7 @@
     &__link {
         display: block;
         width: calc(100% - #{$shopping-list-dropdown-radio-width});
-        padding-left: $offset-x-s;
+        padding-left: spacing('xs');
     }
 
     &__link,
@@ -39,13 +39,13 @@
         display: flex;
         justify-content: space-between;
         align-items: baseline;
-        margin-bottom: $offset-x-s;
+        margin-bottom: spacing('xs');
     }
 
     &__name {
         display: inline-block;
         vertical-align: middle;
-        padding-right: $offset-x-m;
+        padding-right: spacing('sm');
 
         text-transform: uppercase;
     }
@@ -67,7 +67,7 @@
 
     &__details {
         text-align: right;
-        padding-left: $offset-x-s;
+        padding-left: spacing('xs');
     }
 
     &__details-count {

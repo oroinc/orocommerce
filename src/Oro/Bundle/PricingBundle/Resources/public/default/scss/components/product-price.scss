@@ -31,7 +31,7 @@
 
     &__label,
     &__listed-label {
-        padding-right: $offset-y-m;
+        padding-right: spacing('sm');
     }
 
     &__value,
@@ -40,7 +40,7 @@
     }
 
     &__listed {
-        padding-top: $offset-y-s;
+        padding-top: spacing('xs');
     }
 
     // Modifier for simple view(only main price)

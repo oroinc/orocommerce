@@ -12,8 +12,8 @@
     &__cell {
         vertical-align: top;
 
-        padding-left: $offset-y-s;
-        padding-right: $offset-y-s;
+        padding-left: spacing('xs');
+        padding-right: spacing('xs');
 
         &:first-child {
             padding-left: 0;
@@ -27,15 +27,15 @@
     &__row {
         &-product {
             .product-kit-items-table__cell {
-                padding-top: $offset-y-s;
-                padding-bottom: $offset-y-s;
+                padding-top: spacing('xs');
+                padding-bottom: spacing('xs');
             }
         }
 
         &-entry:not(:first-child) {
             .product-kit-items-table__cell {
-                padding-top: $offset-x;
-                padding-bottom: $offset-x;
+                padding-top: spacing('base');
+                padding-bottom: spacing('base');
             }
         }
 
@@ -43,7 +43,7 @@
             border-bottom: $product-kit-items-table-border;
 
             .product-kit-items-table__cell {
-                padding-bottom: $offset-x;
+                padding-bottom: spacing('base');
             }
         }
     }
@@ -67,7 +67,7 @@
     .radio-cell,
     .sku-cell {
         &:not(.no-product-cell) {
-            padding-top: $offset-x;
+            padding-top: spacing('base');
         }
     }
 
@@ -79,7 +79,7 @@
 
 .fullscreen-popup {
     .product-kit-items-table {
-        margin-top: $offset-x;
+        margin-top: spacing('base');
     }
 }
 

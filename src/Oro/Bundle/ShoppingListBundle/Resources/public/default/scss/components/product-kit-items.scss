@@ -1,7 +1,7 @@
 /* @theme: default; */
 
 .product-kit-items {
-    margin-bottom: $offset-x;
+    margin-bottom: spacing('base');
 
     &__label {
         width: auto;

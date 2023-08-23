@@ -58,7 +58,7 @@ $cms-typography-figcaption-display: flex !default;
 $cms-typography-figcaption-offset: auto !default;
 $cms-typography-figcaption-offset-left: 20px !default;
 $cms-typography-figcaption-offset-right: 18px !default;
-$cms-typography-figcaption-padding: $offset-y $offset-x !default;
+$cms-typography-figcaption-padding: spacing('base') spacing('base') !default;
 
 // Heading
 $cms-typography-heading-offset: $headline-bottom-offset !default;

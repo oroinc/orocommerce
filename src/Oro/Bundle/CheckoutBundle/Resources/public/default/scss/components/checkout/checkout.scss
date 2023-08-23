@@ -33,14 +33,14 @@
             vertical-align: middle;
 
             + * {
-                margin: 0 0 0 $offset-x-m;
+                margin: 0 0 0 spacing('sm');
             }
         }
     }
 
     &-form {
         &-errors {
-            margin: $offset-y-m 0;
+            margin: spacing('sm') 0;
         }
     }
 
@@ -55,11 +55,11 @@
         &-col {
             &:first-child {
                 flex-grow: 1;
-                padding-right: $offset-x-m;
+                padding-right: spacing('sm');
             }
 
             &:last-child {
-                padding-left: $offset-x-m;
+                padding-left: spacing('sm');
                 margin-left: auto;
             }
 
@@ -70,7 +70,7 @@
     }
 
     &__botton-container {
-        margin-top: $offset-y;
+        margin-top: spacing('base');
         display: flex;
         align-items: center;
         flex-wrap: wrap;
@@ -101,7 +101,7 @@
 
             &-col {
                 &:first-child {
-                    margin-bottom: $offset-x;
+                    margin-bottom: spacing('base');
                     flex-grow: 0;
                     padding-right: 0;
                 }

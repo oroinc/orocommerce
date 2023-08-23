@@ -61,11 +61,11 @@
 
     &__specification {
         &--list-view {
-            margin: 0 0 ($offset-y-m * 2);
+            margin: 0 0 (spacing('sm') * 2);
         }
 
         &--no-image-view {
-            margin: 0 0 $offset-y-m;
+            margin: 0 0 spacing('sm');
 
             &.product__specification--delivery {
                 display: none;

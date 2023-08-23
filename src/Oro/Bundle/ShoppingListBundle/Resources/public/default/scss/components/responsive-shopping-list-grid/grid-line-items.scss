@@ -72,7 +72,7 @@
     &__edit-notes {
         display: inline-flex;
         justify-content: center;
-        margin-left: $offset-x-s;
+        margin-left: spacing('xs');
         color: $launcher-item-icon-color;
     }
 

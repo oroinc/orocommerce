@@ -3,7 +3,7 @@
 $product-view-attributes-box-inner-offset: 15px 15px 15px 0 !default;
 $product-view-attributes-box-inner-offset-start: 15px !default;
 $product-view-attributes-box-offset-right: -15px !default;
-$product-view-attributes-box-title-offset-bottom: $offset-y !default;
+$product-view-attributes-box-title-offset-bottom: spacing('base') !default;
 $product-view-attributes-box-title-text-transform: uppercase !default;
 
 $product-view-attributes-box-related-items-display: grid !default;

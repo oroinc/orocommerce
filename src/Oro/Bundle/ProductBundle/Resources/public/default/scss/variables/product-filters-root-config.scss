@@ -12,4 +12,4 @@ $product-filters-sidebar-border-image: linear-gradient(
     to bottom, transparent 10px, get-color('additional', 'light') 10px
 ) 1 !default;
 $product-filters-sidebar-offset-top: 2px !default;
-$product-filters-sidebar-not-first-child-offset-top: $offset-y !default;
+$product-filters-sidebar-not-first-child-offset-top: spacing('base') !default;

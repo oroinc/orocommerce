@@ -1,6 +1,6 @@
 $product-popup-header-height: 100% !default;
 $product-popup-header-display: inline-flex !default;
 $product-popup-header-align-items: center !default;
-$fullscreen-product-popup-header-offset: $offset-x-s 0 !default;
+$fullscreen-product-popup-header-offset: spacing('xs') 0 !default;
 
-$product-popup-header-img-offset: 0 $offset-y 0 0 !default;
+$product-popup-header-img-offset: 0 spacing('base') 0 0 !default;

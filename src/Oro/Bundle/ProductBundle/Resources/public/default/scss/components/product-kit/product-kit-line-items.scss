@@ -3,10 +3,10 @@
 .product-kit-line-items {
     display: flex;
     flex-direction: column;
-    row-gap: $offset-x-s;
+    row-gap: spacing('xs');
 
     &__item-name {
-        padding-right: $offset-x-m;
+        padding-right: spacing('sm');
     }
 
     &__item-quantity {

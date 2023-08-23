@@ -1,6 +1,6 @@
 /* @theme: default; */
 
-$product-item-gallery-view-offset-x: $offset-x-m !default;
+$product-item-gallery-view-offset-x: spacing('sm') !default;
 $product-item-gallery-view-width: calc(20% - (#{$product-item-gallery-view-offset-x} * 2)) !default;
 $product-item-gallery-view-offset-bottom: 30px !default;
 $product-item-gallery-view-border: 1px solid get-color('additional', 'light') !default;
@@ -49,7 +49,7 @@ $product-item-gallery-view-width-strict-tablet-small: calc(
 ) !default;
 
 // mobile-landscape
-$product-item-gallery-view-offset-x-mobile-landscape: $offset-x-s !default;
+$product-item-gallery-view-offset-x-mobile-landscape: spacing('xs') !default;
 
 // strict-mobile-landscape
 $product-item-gallery-view-width-strict-mobile-landscape: calc(

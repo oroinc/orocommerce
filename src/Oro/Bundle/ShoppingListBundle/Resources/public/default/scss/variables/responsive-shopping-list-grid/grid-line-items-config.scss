@@ -1,6 +1,6 @@
 /* @theme: default; */
 
-$grid-line-items-row-offset-x: $offset-x !default;
+$grid-line-items-row-offset-x: spacing('base') !default;
 $grid-line-items-line-height: 1.15 !default;
 $grid-line-items-word-break: break-word !default;
 $grid-line-items-title-font-size: $base-font-size !default;
@@ -12,7 +12,7 @@ $grid-line-items-warnings-color: get-color('ui', 'warning-dark') !default;
 
 $grid-line-line-height: 1.45 !default;
 
-$grid-line-clip-none-offset: $offset-x-m !default;
+$grid-line-clip-none-offset: spacing('sm') !default;
 
 $grid-line-separator-height: 16px !default;
 $grid-line-separator-offset: 0 8px !default;
@@ -24,7 +24,7 @@ $grid-line-row-entry-offset-y-tablet: 2px !default;
 
 // Mobile
 
-$grid-line-items-container-offset-x-mobile: $offset-x-m !default;
+$grid-line-items-container-offset-x-mobile: spacing('sm') !default;
 $grid-line-items-row-offset-x-mobile: 10px !default;
 $grid-line-items-field-val-offset-mobile: 4px !default;
 $grid-line-row-entry-offset-y-mobile: 0 !default;

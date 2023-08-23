@@ -2,7 +2,7 @@
 
 .product-action-area {
     display: flex;
-    gap: $offset-x-m;
+    gap: spacing('sm');
 
     &:empty {
         display: none;

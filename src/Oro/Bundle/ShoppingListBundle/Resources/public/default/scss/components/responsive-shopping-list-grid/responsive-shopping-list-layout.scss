@@ -8,7 +8,7 @@
 
 .responsive-shopping-list-layout {
     .order-checkout-widget__container-wrapper {
-        padding: $offset-x;
+        padding: spacing('base');
 
         border-radius: $base-ui-element-border-radius;
         background: $responsive-shopping-list-layout-background;

@@ -5,7 +5,7 @@ $shopping-lists-content-position: relative !default;
 $shopping-lists-content-display: inline-flex !default;
 $shopping-lists-content-justify-content: center !default;
 $shopping-lists-content-align-items: center !default;
-$shopping-lists-content-inner-offset: $offset-y-s 0 !default;
+$shopping-lists-content-inner-offset: spacing('xs') 0 !default;
 $shopping-lists-content-width: 100% !default;
 $shopping-lists-content-height: auto !default;
 $shopping-lists-content-min-height: 30px !default;
@@ -25,9 +25,9 @@ $shopping-lists-notes-line-height: 1.35 !default;
 $shopping-lists-notes-expanded-height: 200px !default;
 
 $shopping-lists-notes-title-font-w: font-weight('bold') !default;
-$shopping-lists-notes-title-offset: $offset-y-m !default;
+$shopping-lists-notes-title-offset: spacing('sm') !default;
 
-$shopping-lists-cart-offset: $offset-x-m !default;
+$shopping-lists-cart-offset: spacing('sm') !default;
 
 $shopping-lists-cart-font-size: $base-font-size--s !default;
 $shopping-lists-cart-icon: $fa-var-cart-arrow-down !default;

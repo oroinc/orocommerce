@@ -3,8 +3,8 @@
 .sidebar__menu {
     max-height: none;
     margin-top: 3px;
-    padding-block: $offset-y;
-    padding-inline: 30px $offset-x;
+    padding-block: spacing('base');
+    padding-inline: 30px spacing('base');
 
     border: 0;
     background-color: $sidebar-menu-background;

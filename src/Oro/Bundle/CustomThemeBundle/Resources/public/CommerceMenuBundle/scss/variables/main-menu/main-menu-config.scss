@@ -8,7 +8,7 @@ $sidebar-menu-collapsible-background-color: get-color('additional', 'base');
 
 $main-menu-actions-display: inline-grid;
 
-$main-menu-link-inner-offset: $offset-y-m 0;
+$main-menu-link-inner-offset: spacing('sm') 0;
 $main-menu-link-text-align: null;
 
 $main-menu-sublist-floated-position: null;

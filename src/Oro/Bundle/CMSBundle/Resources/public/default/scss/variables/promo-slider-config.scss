@@ -1,6 +1,6 @@
 /* @theme: default; */
 
-$promo-slider-has-arrows-offset: $embedded-list-slider-btn-arrow-width + $offset-y-m !default;
+$promo-slider-has-arrows-offset: $embedded-list-slider-btn-arrow-width + spacing('sm') !default;
 
 $promo-slider-min-height: 100px !default;
 
@@ -19,7 +19,7 @@ $promo-slider-position-y: 50% !default;
 $promo-slider-position-x: -$promo-slider-has-arrows-offset !default;
 
 $promo-slider-use-dots: true !default;
-$promo-slider-dots-bottom-pos: $offset-y-m !default;
+$promo-slider-dots-bottom-pos: spacing('sm') !default;
 $promo-slider-dots-item-offset: 0 4px !default;
 $promo-slider-dots-button-bg: transparent !default;
 $promo-slider-dots-button-border: 1px solid get-color('additional', 'ultra') !default;

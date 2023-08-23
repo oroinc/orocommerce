@@ -15,11 +15,11 @@
 
     &__number {
         display: inline-block;
-        min-width: $offset-x-m;
+        min-width: spacing('sm');
     }
 
     &__static {
-        padding-right: $offset-x-m;
+        padding-right: spacing('sm');
     }
 
     &__separate {

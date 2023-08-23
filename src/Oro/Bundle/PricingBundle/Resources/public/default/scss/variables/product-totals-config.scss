@@ -30,7 +30,7 @@ $product-totals-total-separator-color: get-color('additional', 'middle') !defaul
 $product-totals-total-separator-offset: 0 10px !default;
 
 $product-totals-label-display: inline-flex !default;
-$product-totals-label-offset-inner: 0 $offset-x-m 0 0 !default;
+$product-totals-label-offset-inner: 0 spacing('sm') 0 0 !default;
 
 //Line item
 $product-totals-line-item-font-size: $base-font-size--s !default;

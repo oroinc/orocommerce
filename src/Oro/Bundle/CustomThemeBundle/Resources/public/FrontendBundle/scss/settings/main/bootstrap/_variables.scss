@@ -41,8 +41,8 @@ $dt-font-weight: $font-weight-normal;
 // Buttons + Forms
 // Shared variables that are reassigned to `$input-` and `$btn-` specific variables.
 
-$input-btn-padding-y-sm: $offset-y-s;
-$input-btn-padding-y-lg: $offset-y-m;
+$input-btn-padding-y-sm: spacing('xs');
+$input-btn-padding-y-lg: spacing('sm');
 
 // Buttons
 // For each of Bootstrap's buttons, define text, background, and border color.
@@ -74,8 +74,8 @@ $nav-tabs-link-active-color-focus-visible: $base-ui-bth-focus-style;
 // Dropdown menu container and contents.
 
 $dropdown-border-radius: $border-radius;
-$dropdown-item-padding-y: $offset-y-m;
-$dropdown-item-padding-x: $offset-x;
+$dropdown-item-padding-y: spacing('sm');
+$dropdown-item-padding-x: spacing('base');
 
 // Pagination
 
@@ -86,8 +86,8 @@ $dropdown-item-padding-x: $offset-x;
 // Tooltips
 
 $tooltip-border-radius: $border-radius-xs;
-$tooltip-padding-y: $offset-y-s;
-$tooltip-padding-x: $offset-x-m;
+$tooltip-padding-y: spacing('xs');
+$tooltip-padding-x: spacing('sm');
 
 // Form tooltips must come after regular tooltips
 

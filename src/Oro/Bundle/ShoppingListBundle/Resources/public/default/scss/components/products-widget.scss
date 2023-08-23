@@ -9,13 +9,13 @@
     }
 
     .add-product-from-view-component {
-        margin-top: $offset-y;
+        margin-top: spacing('base');
 
         @include clearfix();
     }
 
     .product-item-shopping-lists {
-        padding: 0 0 $offset-y;
+        padding: 0 0 spacing('base');
     }
 
     .add-to-shopping-list-button {

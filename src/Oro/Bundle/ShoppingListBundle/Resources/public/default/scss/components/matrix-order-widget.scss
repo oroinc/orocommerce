@@ -63,7 +63,7 @@
             }
 
             .matrix-order-widget__one-line {
-                padding: $offset-y-s $offset-x $offset-y-s 0;
+                padding: spacing('xs') spacing('base') spacing('xs') 0;
             }
 
             .matrix-order-widget__form__row {
@@ -85,7 +85,7 @@
                 display: inline-block;
                 min-width: $matrix-order-widget-state-multiline-label-wrap-width;
                 max-width: $matrix-order-widget-state-multiline-label-wrap-width;
-                padding-right: $offset-x;
+                padding-right: spacing('base');
 
                 word-break: break-word;
             }
@@ -112,7 +112,7 @@
             }
 
             .matrix-order-widget__label-wrap {
-                margin-bottom: $offset-x-m;
+                margin-bottom: spacing('sm');
             }
 
             @include matrix-design-for-not-available();
