@@ -20,7 +20,8 @@ Feature: Guest adds products on frontstore homepage
 
   Scenario: As Guest check shopping lists are not duplicated in dropdowns of other products
     Given I am on the homepage
-    And I click "Add to Shopping List"
+    When I should see "1GB81" and continue checking the condition is met for maximum 10 seconds
+    And I click "Add to Shopping List" for "1GB81" product
     And I click "Shopping List Dropdown"
     And I click "Remove From Shopping List"
-    And I should not see an "Shopping List Dropdown" element
+    Then I should not see an "Shopping List Dropdown" element
