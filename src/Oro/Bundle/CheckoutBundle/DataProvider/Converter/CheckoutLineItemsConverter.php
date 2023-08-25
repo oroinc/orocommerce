@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\EntityExtendBundle\EntityReflectionClass;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 
@@ -12,7 +13,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
  */
 class CheckoutLineItemsConverter
 {
-    /** @var array<\ReflectionClass> */
+    /** @var array<EntityReflectionClass> */
     private array $reflectionClass;
 
     /**
@@ -59,9 +60,12 @@ class CheckoutLineItemsConverter
         $object = new $className();
 
         foreach ($data as $property => $value) {
-            if (null !== $value && $this->getReflectionClass($className)->hasProperty($property)) {
+            $reflectionClass = $this->getReflectionClass($className);
+            if (null !== $value && $reflectionClass->hasProperty($property)) {
                 $methodName = $this->getSetterName($property);
-                $object->{$methodName}($value);
+                $reflectionClass
+                    ->getMethod($methodName)
+                    ->invoke($object, $value);
             }
         }
 
@@ -71,10 +75,10 @@ class CheckoutLineItemsConverter
     /**
      * @throws \ReflectionException
      */
-    private function getReflectionClass(string $className): \ReflectionClass
+    private function getReflectionClass(string $className): EntityReflectionClass
     {
         if (!isset($this->reflectionClass[$className])) {
-            $this->reflectionClass[$className] = new \ReflectionClass($className);
+            $this->reflectionClass[$className] = new EntityReflectionClass($className);
         }
 
         return $this->reflectionClass[$className];
