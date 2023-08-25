@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\EntityExtendBundle\EntityReflectionClass;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 /**
@@ -11,7 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 class CheckoutLineItemsConverter
 {
     /**
-     * @var \ReflectionClass
+     * @var EntityReflectionClass
      */
     private $reflectionClass;
 
@@ -28,7 +29,10 @@ class CheckoutLineItemsConverter
             foreach ($item as $property => $value) {
                 if (null !== $value && $this->getReflectionClass()->hasProperty($property)) {
                     $methodName = $this->getSetterName($property);
-                    $orderLineItem->{$methodName}($value);
+                    $this
+                        ->getReflectionClass()
+                        ->getMethod($methodName)
+                        ->invoke($orderLineItem, $value);
                 }
             }
 
@@ -39,13 +43,13 @@ class CheckoutLineItemsConverter
     }
 
     /**
-     * @return \ReflectionClass
+     * @return EntityReflectionClass
      * @throws \ReflectionException
      */
     private function getReflectionClass()
     {
         if (!$this->reflectionClass) {
-            $this->reflectionClass = new \ReflectionClass(OrderLineItem::class);
+            $this->reflectionClass = new EntityReflectionClass(OrderLineItem::class);
         }
 
         return $this->reflectionClass;
