@@ -717,6 +717,15 @@ class ProductPriceRepositoryTest extends WebTestCase
         return $a['price_list_id'] > $b['price_list_id'] ? 1 : 0;
     }
 
+    public function testIsFirstPriceAdded()
+    {
+        $productPrice17 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_17);
+        $productPrice1 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_1);
+
+        self::assertTrue($this->repository->isFirstPriceAdded($this->shardManager, $productPrice17));
+        self::assertFalse($this->repository->isFirstPriceAdded($this->shardManager, $productPrice1));
+    }
+
     /**
      * @param ProductPrice[] $prices
      * @return array

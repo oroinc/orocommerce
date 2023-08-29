@@ -54,7 +54,7 @@ oro_behat_extension:
     Product Price Listed:
       selector: '.product-price__listed'
     Product Price Hint:
-      selector: '.product-price__hint'
+      selector: '.product-price-hint-btn'
     Product Price Popover:
       selector: '.prices-hint-content.popover'
     Product Assignment Rule:

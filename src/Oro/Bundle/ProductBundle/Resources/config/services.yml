@@ -2200,3 +2200,17 @@ services:
                 event: oro_product.product.duplicate.after
                 method: onDuplicateAfter
                 priority: -128
+
+    oro_product_pro.event_listener.frontend.brand_datagrid:
+        class: Oro\Bundle\ProductBundle\EventListener\FrontendBrandDatagridListener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid, method: onBuildBefore }
+
+    oro_product.entity_filter.frontend_brand:
+        class: Oro\Bundle\ProductBundle\Filter\FrontendBrandFilter
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@doctrine'
+        tags:
+            - { name: oro_search.extension.search_filter.filter, type: frontend_brand }

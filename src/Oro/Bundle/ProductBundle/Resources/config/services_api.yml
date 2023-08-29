@@ -492,3 +492,12 @@ services:
         class: Oro\Bundle\ProductBundle\Api\Processor\BuildProductQuery
         tags:
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\Product, priority: -255 }
+
+    oro_product.api.product_localized_fallback_value_changed:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ReindexProductFallbackValueChanged
+        arguments:
+            - '@oro_website.indexation_entities_container'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, class: Oro\Bundle\ProductBundle\Entity\ProductName }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, class: Oro\Bundle\ProductBundle\Entity\ProductDescription }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, class: Oro\Bundle\ProductBundle\Entity\ProductShortDescription }

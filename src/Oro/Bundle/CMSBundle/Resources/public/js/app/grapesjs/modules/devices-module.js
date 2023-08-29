@@ -57,6 +57,8 @@ define(function(require) {
                 this.allowBreakpoints = options.allowBreakpoints;
             }
 
+            this._deferredInit();
+
             const {Commands, Canvas} = this.builder;
 
             this.patchDeviceModel();
@@ -93,6 +95,45 @@ define(function(require) {
                     editor.Canvas.deviceDecorator.classList.remove(sender.id);
                 }
             });
+        },
+
+        /**
+         * Set deferred initialize
+         *
+         * @private
+         */
+        _deferredInit() {
+            this.deferredInitPromise = new Promise((resolve, reject) => {
+                this._deferredInitResolver = resolve;
+                this._deferredInitRejecter = reject;
+            });
+        },
+
+        /**
+         * Resolve deferred initialize promise
+         *
+         * @private
+         */
+        _resolveDeferredInit() {
+            if (this._deferredInitResolver) {
+                this._deferredInitResolver(this);
+            }
+        },
+
+        /**
+         * Reject deferred initialize promise
+         *
+         * @param {object} error
+         * @private
+         */
+        _rejectDeferredInit(error) {
+            if (this._deferredInitRejecter) {
+                if (error) {
+                    this._deferredInitRejecter(error);
+                } else {
+                    this._deferredInitRejecter();
+                }
+            }
         },
 
         patchDeviceModel() {
@@ -136,7 +177,8 @@ define(function(require) {
 
         initButtons() {
             this.getBreakpoints()
-                .then(() => this.createButtons());
+                .then(() => this.createButtons())
+                .catch(error => this._rejectDeferredInit(error));
         },
 
         /**
@@ -159,7 +201,7 @@ define(function(require) {
 
             this.breakpoints = viewportManager._collectCSSBreakpoints(breakpoints)
                 .filter(({name}) => !allowBreakpoints.length || allowBreakpoints.includes(name))
-                .map(breakpoint => {
+                .map((breakpoint, index) => {
                     breakpoint = {...breakpoint};
 
                     const width = breakpoint.max ? breakpoint.max + 'px' : '';
@@ -172,6 +214,8 @@ define(function(require) {
                     } else {
                         breakpoint['height'] = this.calculateDeviceHeight(width);
                     }
+
+                    breakpoint.isActiveByDefault = index === 0;
 
                     return breakpoint;
                 });
@@ -210,11 +254,11 @@ define(function(require) {
         * Create buttons controls via breakpoints
         */
         createButtons() {
-            const {Panels, Devices} = this.builder;
+            const {Panels, Devices, Canvas} = this.builder;
             const buttons = [];
 
             this.breakpoints.forEach(breakpoint => {
-                Devices.add({
+                const device = Devices.add({
                     id: breakpoint.name,
                     width: breakpoint.widthDevice,
                     widthMedia: breakpoint.max ? breakpoint.max + 'px' : '',
@@ -226,11 +270,17 @@ define(function(require) {
                     command: 'setDevice',
                     togglable: false,
                     className: breakpoint.name,
+                    active: breakpoint.isActiveByDefault,
                     attributes: {
                         'data-toggle': 'tooltip',
                         'title': this.concatTitle(breakpoint)
                     }
                 });
+
+                if (breakpoint.isActiveByDefault) {
+                    Canvas.getElement().classList.add(device.id);
+                    Canvas.deviceDecorator.classList.add(device.id);
+                }
             });
 
             const panel = Panels.addPanel({
@@ -239,10 +289,9 @@ define(function(require) {
                 buttons
             });
 
-            const button = Panels.getButton('devices-c', 'desktop');
-            button.set('active', true);
-
             $(panel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
+
+            this._resolveDeferredInit();
         },
 
         /**

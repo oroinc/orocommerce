@@ -81,7 +81,9 @@ class ProductAutocompleteProvider
     protected function getProductData(array $productItems, Request $request): array
     {
         $defaultImage = $this->imagePlaceholderProvider->getPath('product_small');
-        $inventoryStatuses = array_flip($this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status'));
+        $inventoryStatuses = array_flip(
+            $this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status')
+        );
 
         $data = [];
         foreach ($productItems as $item) {

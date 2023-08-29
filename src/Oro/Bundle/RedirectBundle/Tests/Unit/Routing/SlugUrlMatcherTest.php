@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
+use Oro\Bundle\MaintenanceBundle\Maintenance\MaintenanceRestrictionsChecker;
 use Oro\Bundle\MaintenanceBundle\Maintenance\Mode as MaintenanceMode;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
@@ -38,12 +39,15 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var SlugUrlMatcher */
     private $matcher;
 
+    private MaintenanceRestrictionsChecker|MockObject $maintenanceRestrictionsChecker;
+
     protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
         $this->slugEntityFinder = $this->createMock(SlugEntityFinder::class);
         $this->maintenanceMode = $this->createMock(MaintenanceMode::class);
+        $this->maintenanceRestrictionsChecker = $this->createMock(MaintenanceRestrictionsChecker::class);
 
         $this->matcher = new SlugUrlMatcher(
             $this->router,
@@ -51,6 +55,8 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
             $this->slugEntityFinder,
             $this->maintenanceMode
         );
+
+        $this->matcher->setMaintenanceRestrictionsChecker($this->maintenanceRestrictionsChecker);
     }
 
     private function getSlug(string $routeName, array $routeParameters, string $url): Slug

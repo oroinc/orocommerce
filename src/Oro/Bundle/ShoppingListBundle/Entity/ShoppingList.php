@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -160,8 +161,7 @@ class ShoppingList extends ExtendShoppingList implements
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
      *      mappedBy="shoppingList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true,
-     *      indexBy="currency"
+     *      orphanRemoval=true
      * )
      **/
     protected $totals;
@@ -354,6 +354,29 @@ class ShoppingList extends ExtendShoppingList implements
     public function getTotals()
     {
         return $this->totals;
+    }
+
+    public function getTotalsForCustomerUser(array $currencies = [], ?CustomerUser $customerUser = null): Collection
+    {
+        $criteria = Criteria::create();
+        $criteria->where(
+            Criteria::expr()->andX(
+                Criteria::expr()->eq('customerUser', $customerUser),
+                Criteria::expr()->in('currency', $currencies)
+            )
+        );
+
+        return $this->totals->matching($criteria);
+    }
+
+    public function getTotalForCustomerUser(string $currency, ?CustomerUser $customerUser = null): ?ShoppingListTotal
+    {
+        $shoppingListTotal = $this->getTotalsForCustomerUser([$currency], $customerUser)->first();
+        if ($shoppingListTotal) {
+            return $shoppingListTotal;
+        }
+
+        return null;
     }
 
     /**

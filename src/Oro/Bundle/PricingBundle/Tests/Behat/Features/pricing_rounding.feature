@@ -5,7 +5,6 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPricingBundle:PricingRounding.yml
 @fixture-OroPricingBundle:PricingRoundingQuote.yml
-@skip
 
 Feature: Pricing rounding
   In order to check pricing rounding in shopping list/order/rfq/quote
@@ -93,7 +92,7 @@ Feature: Pricing rounding
     And click "NewCategory"
     When click "Add to New Front Shopping List" for "Light" product
     And I hover on "Shopping Cart"
-    And click "New Front Shopping List"
+    And I click "New Front Shopping List" on shopping list widget
     Then should see "Subtotal $4.54"
     And should see "Total $4.54"
 
@@ -107,7 +106,7 @@ Feature: Pricing rounding
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
-    Then should see following grid:
+    Then I should see following "ProductPricesGrid" grid:
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     When click "Edit"
@@ -140,7 +139,7 @@ Feature: Pricing rounding
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     When I hover on "Shopping Cart"
-    And click "New Front Shopping List"
+    And I click "New Front Shopping List" on shopping list widget
     Then should see "Subtotal $5"
     And should see "Total $5"
     When click "Create Order"
@@ -184,6 +183,7 @@ Feature: Pricing rounding
 
     And I proceed as the admin
     When go to Sales/ Orders
+    And I sort grid by "Order Number"
     Then should see following grid:
       | Order Number | Total  |
       | 1            | $10.00 |
@@ -208,7 +208,7 @@ Feature: Pricing rounding
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
-    Then should see following grid:
+    Then should see following "ProductPricesGrid" grid:
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     When click "Edit"
@@ -216,6 +216,7 @@ Feature: Pricing rounding
     Then Value field should has 7.4500 value
     And click "Cancel"
     When go to Sales/ Orders
+    And I sort grid by "Order Number"
     Then should see following grid:
       | Order Number | Total  |
       | 1            | $10.00 |
@@ -281,7 +282,7 @@ Feature: Pricing rounding
     And click "NewCategory"
     When click "Add to New Front Shopping List" for "Light" product
     And I hover on "Shopping Cart"
-    And click "New Front Shopping List"
+    And click "New Front Shopping List" on shopping list widget
     Then should see "Subtotal $4.5"
     And should see "Total $4.5"
     When click "Create Order"
@@ -314,6 +315,7 @@ Feature: Pricing rounding
 
     And I proceed as the admin
     When go to Sales/ Orders
+    And I sort grid by "Order Number"
     Then should see following grid:
       | Order Number | Total  |
       | 1            | $10.00 |
@@ -342,7 +344,7 @@ Feature: Pricing rounding
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
-    Then should see following grid:
+    Then should see following "ProductPricesGrid" grid:
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
@@ -386,7 +388,7 @@ Feature: Pricing rounding
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
-    Then should see following grid:
+    Then should see following "ProductPricesGrid" grid:
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
@@ -423,7 +425,7 @@ Feature: Pricing rounding
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
-    Then should see following grid:
+    Then should see following "ProductPricesGrid" grid:
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
@@ -460,7 +462,7 @@ Feature: Pricing rounding
     When go to Products/ Products
     And click view "SKU123" in grid
     And click "Product Prices"
-    Then should see following grid:
+    Then should see following "ProductPricesGrid" grid:
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
@@ -506,14 +508,12 @@ Feature: Pricing rounding
     And I click "Add to Shopping List" for "SKU789" product
     And I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
-    And I scroll to top
     And I wait line items are initialized
-    And I type "3" in "Shopping List Line Item 1 Quantity"
-    And I scroll to "Create Order"
-    Then I should see "Record has been successfully updated" flash message
-    When I scroll to top
+    And I click on "Shopping List Line Item 1 Quantity"
+    And I type "3" in "Shopping List Line Item 1 Quantity Input"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
     And I click "Create Order"
     Then Checkout "Order Summary Products Grid" should contain products:
-      | TV | 3 | items | $33.50 | $100.49 |
+      | TV | 3 | items | $33.495 | $100.485 |
     And I should see Checkout Totals with data:
       | Subtotal | $100.49 |

@@ -158,7 +158,15 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
             $url = UrlUtil::join($contextUrl, self::CONTEXT_DELIMITER, UrlUtil::getPathInfo($url, $baseUrl));
         }
 
-        return UrlUtil::getAbsolutePath($url, $baseUrl);
+        $url = UrlUtil::getAbsolutePath($url, $baseUrl);
+
+        $extension = pathinfo(UrlUtil::getPathInfo($url, $baseUrl), PATHINFO_EXTENSION);
+
+        if (!$extension && !str_starts_with($url, sprintf('%s/', $baseUrl))) {
+            $url = UrlUtil::join($baseUrl, $url);
+        }
+
+        return $url;
     }
 
     private function getLocalizationId(): ?int

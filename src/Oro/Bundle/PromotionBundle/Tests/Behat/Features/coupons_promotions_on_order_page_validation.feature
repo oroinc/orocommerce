@@ -1,6 +1,6 @@
 @regression
-@skip
 @fixture-OroPromotionBundle:coupons-promotions-on-order-page-validation.yml
+
 Feature: Coupons Promotions on Order page validation
   In order to find out why coupon not valid during applying it to the order
   As administrator
@@ -185,7 +185,7 @@ Feature: Coupons Promotions on Order page validation
       | test-3      | order Discount Promotion 2 |
       | test-4      | order Discount Promotion 2 |
       | test-5      | order Discount Promotion 3 |
-      | test-6      | N/A                        |
+      | test-6      |                            |
       | test-7      | order Discount Promotion 2 |
       | test-8      | order Discount Promotion 3 |
     Then I go to Sales / Orders

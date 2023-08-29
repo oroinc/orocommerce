@@ -11,11 +11,24 @@ Feature: Content Block
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
+    And I proceed as the Admin
+    And I login as administrator
+
+  Scenario: Create new content block with content variants and default restrictions
+    Given I go to Marketing/ Content Blocks
+    And click "Create Content Block"
+    When I fill "Content Block Form" with:
+      | Alias  | test_alias |
+      | Titles | Test Title |
+    # Default content variant
+    And click "Add Content"
+    # Content variant without restrictions
+    And click "Add Content"
+    And save and close form
+    Then I should see "Restriction rules must not be empty"
 
   Scenario: Create new content block without content variant
-    Given I proceed as the Admin
-    And I login as administrator
-    And go to Marketing/ Content Blocks
+    Given go to Marketing/ Content Blocks
     And click "Create Content Block"
     And fill "Content Block Form" with:
       | Owner          | Main                       |
@@ -66,7 +79,7 @@ Feature: Content Block
     And I click "edit" on row "home-page-slider" in grid
     And click "Add Content"
     And I fill "Content Variant 1 form" with:
-      | Customer | Company B  |
+      | Customer | Company B |
     And I fill in WYSIWYG "Content Variant 1 Content" with "Test block"
     When I save and close form
     Then I should see "Content block has been saved" flash message
@@ -92,7 +105,8 @@ Feature: Content Block
       | Content Variant | Test variant 1 |
     And click "Add Content"
     And fill "Content Block Form" with:
-      | Content Variant 1 | Test variant 2 |
+      | Content Variant 1         | Test variant 2 |
+      | Content Variant 1 Website | Default        |
     And I save and close form
     Then I should see "Content block has been saved" flash message
     And I should see "Test variant 1"

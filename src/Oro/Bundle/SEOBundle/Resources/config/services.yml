@@ -487,3 +487,11 @@ services:
             - 'metaDescriptions'
         tags:
             - { name: oro_product.description_provider, key: 'oro_product_seo_description' }
+
+    oro_seo.event_listener.restrict_sitemap_product_enabled_localization:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductSlugByLocaleListener'
+        arguments:
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_website.provider.website_localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }

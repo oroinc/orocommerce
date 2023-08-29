@@ -538,3 +538,10 @@ services:
             - '@oro_config.global'
         tags:
             - { name: kernel.event_listener, event: oro_migration.pre_up, method: onPreUp }
+
+    oro_cms.validator.text_content_variant_scope:
+        class: Oro\Bundle\CMSBundle\Validator\Constraints\TextContentVariantScopeValidator
+        arguments:
+            - '@oro_scope.scope_manager'
+        tags:
+            - { name: validator.constraint_validator, extended_type: Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType }
