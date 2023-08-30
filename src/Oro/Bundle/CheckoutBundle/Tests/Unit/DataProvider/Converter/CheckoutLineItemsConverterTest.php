@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Converter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityExtendBundle\EntityReflectionClass;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -29,6 +30,70 @@ class CheckoutLineItemsConverterTest extends TestCase
         $result = $this->checkoutLineItemsConverter->convert($data);
 
         self::assertEquals($expected, $result);
+    }
+
+    public function testReflectionClassInConvertCalled(): void
+    {
+        $reflectionClassMock = $this->createMock(EntityReflectionClass::class);
+        $reflectionMethodMock = $this->createMock(\ReflectionMethod::class);
+
+        $reflectionMethodMock
+            ->expects(self::once())
+            ->method('invoke');
+
+        $reflectionClassMock
+            ->expects(self::once())
+            ->method('hasProperty')
+            ->with('product')
+            ->willReturn(true);
+
+        $reflectionClassMock
+            ->expects(self::once())
+            ->method('getMethod')
+            ->with('setProduct')
+            ->willReturn($reflectionMethodMock);
+
+        (new \ReflectionObject($this->checkoutLineItemsConverter))
+            ->getProperty('reflectionClass')
+            ->setValue($this->checkoutLineItemsConverter, [OrderLineItem::class => $reflectionClassMock]);
+
+        $data = [
+            ['product' => (new Product())->setSku('product1')]
+        ];
+
+        $this->checkoutLineItemsConverter->convert($data);
+    }
+
+    public function testReflectionClassInConvertNotCalled(): void
+    {
+        $reflectionClassMock = $this->createMock(EntityReflectionClass::class);
+        $reflectionMethodMock = $this->createMock(\ReflectionMethod::class);
+
+        $reflectionMethodMock
+            ->expects(self::never())
+            ->method('invoke');
+
+        $reflectionClassMock
+            ->expects(self::never())
+            ->method('hasProperty')
+            ->with('product')
+            ->willReturn(true);
+
+        $reflectionClassMock
+            ->expects(self::never())
+            ->method('getMethod')
+            ->with('setProduct')
+            ->willReturn($reflectionMethodMock);
+
+        (new \ReflectionObject($this->checkoutLineItemsConverter))
+            ->getProperty('reflectionClass')
+            ->setValue($this->checkoutLineItemsConverter, [OrderLineItem::class => $reflectionClassMock]);
+
+        $data = [
+            ['product' => null]
+        ];
+
+        $this->checkoutLineItemsConverter->convert($data);
     }
 
     /**
@@ -60,7 +125,25 @@ class CheckoutLineItemsConverterTest extends TestCase
                     (new OrderLineItem()),
                 ]),
             ],
-            'regular line item data' => [
+            'data with not exists field' => [
+                'data' => [
+                    [
+                        'product' => $product1,
+                        'notExistsField' => 'Test'
+                    ]
+                ],
+                'expected' => new ArrayCollection([(new OrderLineItem())->setProduct($product1)])
+            ],
+            'data with null field' => [
+                'data' => [
+                    [
+                        'product' => $product1,
+                        'price' => null
+                    ]
+                ],
+                'expected' => new ArrayCollection([(new OrderLineItem())->setProduct($product1)])
+            ],
+            'normal data' => [
                 'data' => [
                     [
                         'product' => $product1,

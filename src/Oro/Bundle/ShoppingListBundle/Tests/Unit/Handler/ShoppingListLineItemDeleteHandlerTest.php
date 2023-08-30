@@ -64,7 +64,7 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('flush');
 
         $this->totalManager->expects($this->once())
-            ->method('recalculateTotals')
+            ->method('invalidateAndRecalculateTotals')
             ->with($this->identicalTo($shoppingList), $this->isFalse());
 
         $this->assertNull(
@@ -87,7 +87,7 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('flush');
 
         $this->totalManager->expects($this->never())
-            ->method('recalculateTotals');
+            ->method('invalidateAndRecalculateTotals');
 
         $this->assertEquals(
             ['entity' => $lineItem],
@@ -107,7 +107,7 @@ class ShoppingListLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('flush');
 
         $this->totalManager->expects($this->once())
-            ->method('recalculateTotals')
+            ->method('invalidateAndRecalculateTotals')
             ->with($this->identicalTo($shoppingList), $this->isFalse());
 
         $this->handler->flush(['entity' => $lineItem]);

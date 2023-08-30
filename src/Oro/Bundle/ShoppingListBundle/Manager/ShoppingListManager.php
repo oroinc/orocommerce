@@ -124,7 +124,7 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
-        $this->totalManager->recalculateTotals($shoppingList, false);
+        $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
 
         if ($flush) {
             $entityManager = $this->getEntityManager();
@@ -147,7 +147,7 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
-        $this->totalManager->recalculateTotals($shoppingList, false);
+        $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
         if ($flush) {
             $this->getEntityManager()->flush();
         }

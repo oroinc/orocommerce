@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder as NativeQueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Query;
@@ -551,6 +552,28 @@ class ProductPriceRepository extends BaseProductPriceRepository
 
     public function hasPrices(ShardManager $shardManager, PriceList $priceList): bool
     {
+        $qb = $this->getPricesCheckQueryBuilder($shardManager, $priceList);
+
+        return (bool)$qb->execute()->fetchOne();
+    }
+
+    public function isFirstPriceAdded(
+        ShardManager $shardManager,
+        ProductPrice $productPrice
+    ): bool {
+        $priceList = $productPrice->getPriceList();
+
+        $qb = $this->getPricesCheckQueryBuilder($shardManager, $priceList);
+        $qb->andWhere($qb->expr()->neq('pp.id', ':priceId'))
+            ->setParameter('priceId', $productPrice->getId());
+
+        $foundPrice = (bool)$qb->execute()->fetchOne();
+
+        return !$foundPrice;
+    }
+
+    private function getPricesCheckQueryBuilder(ShardManager $shardManager, PriceList $priceList): NativeQueryBuilder
+    {
         $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $priceList]);
         $connection = $this->_em->getConnection();
         $qb = $connection->createQueryBuilder();
@@ -561,6 +584,6 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->setMaxResults(1)
             ->setParameter('priceListId', $priceList->getId());
 
-        return (bool)$qb->execute()->fetchOne();
+        return $qb;
     }
 }

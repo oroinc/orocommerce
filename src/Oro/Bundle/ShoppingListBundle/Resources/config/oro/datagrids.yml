@@ -199,7 +199,8 @@ datagrids:
                             join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal'
                             alias: cachedTotal
                             conditionType: WITH
-                            condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = :current_currency"
+                            # For a datagrid, always display the subtotal of the shopping list owner.
+                            condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = :current_currency AND cachedTotal.customerUser = shopping_list.customerUser"
             bind_parameters:
                 -
                     name: current_currency

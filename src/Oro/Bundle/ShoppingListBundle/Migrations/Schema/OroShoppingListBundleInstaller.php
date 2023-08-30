@@ -30,7 +30,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     /**
@@ -69,7 +69,11 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('is_valid', 'boolean');
-        $table->addUniqueIndex(['shopping_list_id', 'currency'], 'unique_shopping_list_currency');
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(
+            ['shopping_list_id', 'currency', 'customer_user_id'],
+            'unique_shopping_list_currency_customer_user'
+        );
         $table->setPrimaryKey(['id']);
     }
 
@@ -126,6 +130,12 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_shopping_list'),
             ['shopping_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE']
         );
