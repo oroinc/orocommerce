@@ -2306,3 +2306,11 @@ services:
             - '@doctrine'
         tags:
             - { name: oro_search.extension.search_filter.filter, type: frontend_brand }
+
+    oro_product.event_listener.product_import_wysiwyg_field_config_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductImportWysiwygFieldConfigListener
+        arguments:
+            - '@oro_entity_config.config_manager'
+            - '@oro_entity_config.config.config_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_entity_config.after_write_field_config, method: onAfterWriteFieldConfig, priority: -255 }
