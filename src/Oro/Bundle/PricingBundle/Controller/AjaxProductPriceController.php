@@ -68,6 +68,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         $productPrice = $prices[0];
 
+        $this->denyAccessUnlessGranted('EDIT', $productPrice);
+
         $handler = $this->get(UpdateHandlerFacade::class);
         $priceHandler = $this->get(ProductPriceHandler::class);
         return $handler->update(
