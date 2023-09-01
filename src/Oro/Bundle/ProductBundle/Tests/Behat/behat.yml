@@ -398,6 +398,10 @@ oro_behat_extension:
           MultiImageField 1:
             locator: '//input[starts-with(@name, "oro_product[MultiImageField") and contains(@name, "[file][file]")]'
             type: xpath
+          Product WYSIWYG Attribute Field:
+            type: 'css'
+            locator: 'textarea[id^="oro_product_field_wysiwyg"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
 
     NameEnglishUnitedStatesValue:
       selector:
