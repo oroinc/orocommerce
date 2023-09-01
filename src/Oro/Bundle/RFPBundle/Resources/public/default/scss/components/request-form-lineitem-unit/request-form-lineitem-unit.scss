@@ -20,7 +20,7 @@
 
         &:hover,
         &:focus,
-        &.focus-visible {
+        &:focus-visible {
             z-index: z('base');
         }
     }

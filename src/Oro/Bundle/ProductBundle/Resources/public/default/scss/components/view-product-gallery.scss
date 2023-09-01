@@ -29,7 +29,7 @@
         cursor: $view-product-gallery-cursor;
     }
 
-    &.focus-visible,
+    &:focus-visible,
     &:hover {
         opacity: $view-product-gallery-hover-opacity;
     }
