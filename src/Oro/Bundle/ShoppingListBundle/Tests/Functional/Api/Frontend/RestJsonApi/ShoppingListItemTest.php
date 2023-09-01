@@ -899,7 +899,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'conflict constraint',
-                'detail' => 'The entity already exists',
+                'detail' => 'The entity already exists.',
             ],
             $response,
             Response::HTTP_CONFLICT
