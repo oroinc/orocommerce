@@ -230,7 +230,7 @@ define(function(require, exports, module) {
                 const $dropdownToggle = $('<button></button>', {
                     'id': togglerId,
                     'type': 'button',
-                    'class': 'btn btn--info dropdown-toggle',
+                    'class': 'btn btn--outlined dropdown-toggle',
                     'aria-label': __('oro.product.frontend.choose_action'),
                     'data-toggle': 'dropdown',
                     'data-placement': 'top-end'
@@ -244,7 +244,7 @@ define(function(require, exports, module) {
                 $dropdownToggle.prependTo(panel.$el);
 
                 $mainLuncher
-                    .addClass('btn btn--full btn--info btn--clip-text')
+                    .addClass('btn btn--full btn--outlined')
                     .removeClass('disabled')
                     .prependTo(panel.$el);
             } else {
@@ -252,7 +252,7 @@ define(function(require, exports, module) {
                     panel.renderMainLauncher().$el
                 );
                 panel.launchers.forEach(launcher => {
-                    launcher.$el.addClass('btn btn--full btn--info btn--clip-text');
+                    launcher.$el.addClass('btn btn--full btn--outlined');
                 });
 
                 panel.$el.addClass(extraClasses);
@@ -281,13 +281,13 @@ define(function(require, exports, module) {
                 panel.renderMainLauncher().$el
             );
             panel.launchers.forEach(launcher => {
-                launcher.$el.addClass('btn btn--full btn--info btn--size-s btn--clip-text');
+                launcher.$el.addClass('btn btn--full btn--outlined btn--size-small');
             });
             panel.$el.addClass(extraClasses);
             if (panel.actions.length > 1) {
                 panel.$el.append($('<button></button>', {
                     'type': 'button',
-                    'class': 'btn btn--info btn--size-s dropdown-toggle',
+                    'class': 'btn btn--outlined btn--size-small dropdown-toggle',
                     'data-fullscreen-trigger': '',
                     'aria-label': __('oro.product.frontend.choose_action')
                 }));

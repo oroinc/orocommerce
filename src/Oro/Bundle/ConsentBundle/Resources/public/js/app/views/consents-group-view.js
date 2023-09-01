@@ -44,7 +44,7 @@ define(function(require) {
         /**
          * @property {String}
          */
-        confirmModalOkButtonClass: 'btn ok btn--info',
+        confirmModalOkButtonClass: 'btn ok btn--outlined',
 
         /**
          * @property {String}

@@ -384,12 +384,12 @@
         {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
         <div class="order-checkout-widget">
             {% if transitionData.isAllowed %}
-                <button type="submit" class="btn btn--size-m btn--info btn--block checkout__submit-btn">
+                <button type="submit" class="btn btn--size-small btn--outlined btn--block checkout__submit-btn">
                     {{- transitionData.transition.label|trans({},'workflows') -}}
                 </button>
             {% else %}
                 <div {{- _layout.conditionMessages(transitionData) -}}>
-                    <button class="btn btn--size-m btn--info btn--block btn--disabled checkout__submit-btn" disabled="disabled">
+                    <button class="btn btn--size-small btn--outlined btn--block btn--disabled checkout__submit-btn" disabled="disabled">
                         {{- transitionData.transition.label|trans({},'workflows') -}}
                     </button>
                 </div>

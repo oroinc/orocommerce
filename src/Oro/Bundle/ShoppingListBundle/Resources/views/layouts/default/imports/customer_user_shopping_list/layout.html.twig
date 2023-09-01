@@ -172,9 +172,9 @@
         'data-name': 'empty-items__hide'
     }) %}
 
-    {% set actionButtonClass = actionButtonClass|default('btn btn--info btn--full direct-link') %}
-    {% set dropdownActionClass = dropdownActionClass|default('btn btn--block btn--info direct-link') %}
-    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--info  dropdown-toggle') %}
+    {% set actionButtonClass = actionButtonClass|default('btn btn--outlined btn--full direct-link') %}
+    {% set dropdownActionClass = dropdownActionClass|default('btn btn--block btn--outlined direct-link') %}
+    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--outlined dropdown-toggle') %}
 
     {{ block('combined_buttons_widget') }}
 {% endblock %}

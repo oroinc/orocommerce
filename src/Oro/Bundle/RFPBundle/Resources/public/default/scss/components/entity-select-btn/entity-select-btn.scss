@@ -1,9 +1,0 @@
-/* @theme: default; */
-
-@use 'sass:map';
-
-.entity-select-btn {
-    $btn-styles: map.get($btn-theme-keys, 'default');
-
-    @include button-custom-variant($btn-styles...);
-}

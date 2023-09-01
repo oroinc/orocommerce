@@ -26,7 +26,7 @@
     transition: $view-product-gallery-transition;
 
     &:not(:disabled) {
-        cursor: $btn-cursor;
+        cursor: $view-product-gallery-cursor;
     }
 
     &.focus-visible,

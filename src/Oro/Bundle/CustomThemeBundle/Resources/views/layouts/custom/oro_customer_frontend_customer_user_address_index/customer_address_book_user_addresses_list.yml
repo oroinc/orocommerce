@@ -26,7 +26,7 @@ layout:
                 text: 'oro.customer.address.add'
                 icon: plus fa--small
                 attr:
-                    class: 'btn btn--size-s btn--info'
+                    class: 'btn btn--size-small btn--outlined'
 
         - '@setOption':
             id: customer_address_book_user_addresses_list

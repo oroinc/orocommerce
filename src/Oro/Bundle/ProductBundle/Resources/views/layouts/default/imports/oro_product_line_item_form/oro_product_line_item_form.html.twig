@@ -145,7 +145,7 @@
         '~options': {
             'truncateLength': 25,
             'appendToBody': true,
-            'decoreClass': 'btn--info'
+            'decoreClass': ''
         }
     }) %}
     {{ block_widget(block, {attr: attr}) }}
@@ -163,7 +163,7 @@
     {% if isRenderable %}
         {% set path = product.view_link|default(path('oro_product_frontend_product_view', {id: product.id})) %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " btn btn--info btn--block"
+            '~class': " btn btn--block"
         }) %}
 
         {{ parent_block_widget(block) }}

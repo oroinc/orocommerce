@@ -16,7 +16,7 @@ const LinkButtonType = BaseType.extend({
     modelProps: {
         defaults: {
             tagName: 'a',
-            classes: ['btn', 'btn--info'],
+            classes: ['btn', 'btn--outlined'],
             style: {},
             components: [{
                 type: 'textnode',

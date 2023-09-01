@@ -27,7 +27,7 @@ layout:
                 text: 'oro.customer.frontend.customer_user_address_book.create.label'
                 icon: plus fa--small
                 attr:
-                    class: 'btn btn--size-s btn--info'
+                    class: 'btn btn--size-small btn--outlined'
 
         - '@setOption':
             id: customer_address_book_addresses_list

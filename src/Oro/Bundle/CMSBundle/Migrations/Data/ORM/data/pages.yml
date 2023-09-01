@@ -134,5 +134,5 @@ about:
         </div>
         
         <div class="cms-panel-end">
-            <a href="#" class="btn btn--info" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+            <a href="#" class="btn btn--outlined" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
         </div>

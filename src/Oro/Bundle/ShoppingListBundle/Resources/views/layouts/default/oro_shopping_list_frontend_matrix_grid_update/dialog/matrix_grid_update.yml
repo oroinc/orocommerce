@@ -28,7 +28,7 @@ layout:
                     blockType: button
                     options:
                         icon: times
-                        style: 'btn--link clear-button'
+                        style: 'clear-button'
                         attr:
                             title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
                             data-role: 'clear'

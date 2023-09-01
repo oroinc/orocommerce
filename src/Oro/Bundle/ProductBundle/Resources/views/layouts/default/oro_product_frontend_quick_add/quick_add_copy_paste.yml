@@ -33,7 +33,7 @@ layout:
                         action: submit
                         text: oro.product.frontend.quick_add.continue.label
                         attr:
-                            class: 'btn btn--info'
+                            class: 'btn btn--outlined'
                             disabled: 'disabled'
                             aria-label: 'oro.product.frontend.quick_add.continue.aria_label'
                 quick_add_copy_paste_title:

@@ -35,7 +35,7 @@ define(function(require) {
             const options = {
                 datagrid: this.main,
                 launcherOptions: {
-                    className: 'toggle-filters-action btn btn--default btn--size-s',
+                    className: 'toggle-filters-action btn btn--size-small',
                     launcherMode: 'icon-only',
                     icon: 'filter',
                     label: __('oro.filter.datagrid-toolbar.filters'),

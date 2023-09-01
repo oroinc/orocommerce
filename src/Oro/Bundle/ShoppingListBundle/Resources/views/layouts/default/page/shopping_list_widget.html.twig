@@ -207,7 +207,7 @@
                     <div class="shopping-list-dropdown__order-container">
                         {% set buttons = get_shopping_list_widget_buttons(shoppingList) %}
                         {% for button in buttons %}
-                            {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'btn btn--block btn--info', noIconText: true}) %}
+                            {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'btn btn--block btn--outlined', noIconText: true}) %}
                         {% endfor %}
                     </div>
                 {% endif %}

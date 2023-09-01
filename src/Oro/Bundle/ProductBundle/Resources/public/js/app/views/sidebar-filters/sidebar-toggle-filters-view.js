@@ -11,7 +11,7 @@ const EXPANDED = 'expanded';
 
 const config = {
     animationDuration: 150,
-    className: 'toggle-sidebar-btn btn btn--default btn--size-s',
+    className: 'toggle-sidebar-btn btn btn--size-small',
     [`${EXPANDED}Title`]: 'oro.product.sidebar_filters.button.title.collapse',
     [`${EXPANDED}Icon`]: 'fa-chevron-left fa--no-offset',
     [`${COLLAPSED}Title`]: 'oro.product.sidebar_filters.button.title.expand',

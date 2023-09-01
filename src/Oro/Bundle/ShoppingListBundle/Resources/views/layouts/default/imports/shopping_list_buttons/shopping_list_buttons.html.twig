@@ -12,7 +12,7 @@
         {% set buttonOptions = {
             dataUrl: 'oro_shopping_list_frontend_add_product',
             dataAttributes: {},
-            btnCss: 'btn--info ',
+            btnCss: '',
             iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
             labelInIcon: false
         } %}
@@ -52,7 +52,7 @@
                     shopping_lists: productShoppingLists
                 }
             },
-            '~singleButtonACss': 'btn--info'
+            '~singleButtonACss': ''
         } ) %}
         {{ buttons.getButtonsHtml(options) }}
     {% endif %}

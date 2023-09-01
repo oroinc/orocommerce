@@ -173,7 +173,7 @@
     {% if notes is not null %}
 
         <div {{ block('block_attributes') }}>{{- notes -}}</div>
-        <button class="btn btn--link btn--no-x-offset btn--no-y-offset collapse-toggle"
+        <button class="btn btn--no-padding collapse-toggle"
                 data-toggle="collapse"
                 data-target="{{ '#' ~ collapseId }}"
                 aria-controls="{{ collapseId }}"
