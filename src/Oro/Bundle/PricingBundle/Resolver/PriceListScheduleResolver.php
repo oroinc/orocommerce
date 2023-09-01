@@ -5,14 +5,22 @@ namespace Oro\Bundle\PricingBundle\Resolver;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 
+/**
+ * Resolves price list schedule into cpl activation rules
+ */
 class PriceListScheduleResolver
 {
-    const ON = 'on';
-    const OFF = 'off';
-    const PRICE_LISTS_KEY = 'priceLists';
-    const ACTIVATE_AT_KEY = 'activateAt';
-    const EXPIRE_AT_KEY = 'expireAt';
-    const TIME_KEY = 'time';
+    public const ON = 'on';
+    public const OFF = 'off';
+    public const PRICE_LISTS_KEY = 'priceLists';
+    public const ACTIVATE_AT_KEY = 'activateAt';
+    public const EXPIRE_AT_KEY = 'expireAt';
+    public const TIME_KEY = 'time';
+
+    private array $priceListSchedules = [];
+    private array $priceListsWithoutSchedule = [];
+    private array $rules = [];
+    private array $activationDates = [];
 
     /**
      * @param PriceListSchedule[] $priceListSchedules
@@ -21,85 +29,145 @@ class PriceListScheduleResolver
      */
     public function mergeSchedule(array $priceListSchedules, array $priceListRelations)
     {
-        if (empty($priceListSchedules)) {
+        if (!$priceListSchedules) {
             return [];
         }
-        $baseSetOfPriceLists = [];
-        foreach ($priceListRelations as $relation) {
-            $baseSetOfPriceLists[$relation->getPriceList()->getId()] = true;
-        }
-        $schedule = [];
-        $turnedOffPriceLists = [];
-        foreach ($priceListSchedules as $scheduleItem) {
-            if ($scheduleItem->getActiveAt()) {
-                //if start time exist, it might be turned off before this time
-                $turnedOffPriceLists[$scheduleItem->getPriceList()->getId()] = true;
-                $time = $scheduleItem->getActiveAt()->getTimestamp();
-                $schedule[$time][self::TIME_KEY] = $scheduleItem->getActiveAt();
-                $schedule[$time][self::PRICE_LISTS_KEY][$scheduleItem->getPriceList()->getId()] = self::ON;
-            } else {
-                $schedule[0][self::TIME_KEY]= null;
-                $schedule[0][self::PRICE_LISTS_KEY][$scheduleItem->getPriceList()->getId()] = self::ON;
-            }
-            if ($scheduleItem->getDeactivateAt()) {
-                $time = $scheduleItem->getDeactivateAt()->getTimestamp();
-                $schedule[$time][self::TIME_KEY] = $scheduleItem->getDeactivateAt();
-                $schedule[$time][self::PRICE_LISTS_KEY][$scheduleItem->getPriceList()->getId()] = self::OFF;
-            }
-        }
-        $lines = $this->processSchedule($schedule, $baseSetOfPriceLists, $turnedOffPriceLists);
 
-        return $lines;
+        $this->buildActivationDates($priceListSchedules);
+        $this->buildPriceListsWithoutSchedule($priceListRelations);
+
+        try {
+            return $this->getRules();
+        } finally {
+            $this->clear();
+        }
+    }
+
+    public function getRules(): array
+    {
+        //Activate price lists without schedule or schedule without activateAt value
+        $this->addInitialRules();
+
+        //Activate price lists without schedule or schedule is active in date period
+        foreach ($this->activationDates as $i => $date) {
+            $this->addDateRules($date, $this->activationDates[$i + 1] ?? null);
+        }
+
+        return $this->rules;
     }
 
     /**
-     * @param array $schedule
-     * @param array $baseName
-     * @param array $turnedOffPriceLists
-     * @return array
+     * Builds sorted list of unique schedule activation dates
      */
+    private function buildActivationDates(array $priceListSchedules): void
+    {
+        $this->priceListSchedules = array_values($priceListSchedules);
+
+        $dates = [];
+
+        foreach ($this->priceListSchedules as $scheduleItem) {
+            if ($activateAt = $scheduleItem->getActiveAt()) {
+                $dates[$activateAt->getTimestamp()] = $activateAt;
+            }
+
+            if ($deactivateAt = $scheduleItem->getDeactivateAt()) {
+                $dates[$deactivateAt->getTimestamp()] = $deactivateAt;
+            }
+        }
+
+        ksort($dates);
+        $this->activationDates = array_values($dates);
+    }
+
+    private function buildPriceListsWithoutSchedule(array $relations): void
+    {
+        $baseSetOfPriceLists = [];
+
+        /** @var CombinedPriceListToPriceList $relation */
+        foreach ($relations as $relation) {
+            $baseSetOfPriceLists[$relation->getPriceList()->getId()] = true;
+        }
+
+        foreach ($this->priceListSchedules as $scheduleItem) {
+            $plId = $scheduleItem->getPriceList()->getId();
+            unset($baseSetOfPriceLists[$plId]);
+        }
+
+        $this->priceListsWithoutSchedule = array_keys($baseSetOfPriceLists);
+    }
+
+    /**
+     * Activates price lists without schedule or schedule without activateAt value
+     */
+    private function addInitialRules(): void
+    {
+        $priceLists = $this->priceListsWithoutSchedule;
+
+        foreach ($this->priceListSchedules as $schedule) {
+            if (!$schedule->getActiveAt()) {
+                $priceLists[] = $schedule->getPriceList()->getId();
+            }
+        }
+
+        $this->addRule($priceLists, null, reset($this->activationDates));
+    }
+
+    /**
+     * Activate price lists without schedule
+     * or schedule is active in period between $activationDate and $nextActivationDate
+     */
+    private function addDateRules(\DateTime $activationDate, ?\DateTime $nextActivationDate): void
+    {
+        $priceLists = $this->priceListsWithoutSchedule;
+
+        foreach ($this->priceListSchedules as $schedule) {
+            if ($this->isScheduleActive($schedule, $activationDate)) {
+                $priceLists[] = $schedule->getPriceList()->getId();
+            }
+        }
+
+        $this->addRule($priceLists, $activationDate, $nextActivationDate);
+    }
+
+    private function addRule(array $priceLists, ?\DateTime $activateAt, ?\DateTime $expireAt): void
+    {
+        $this->rules[] = [
+            self::PRICE_LISTS_KEY => array_values(array_unique($priceLists)),
+            self::ACTIVATE_AT_KEY => $activateAt,
+            self::EXPIRE_AT_KEY => $expireAt,
+        ];
+    }
+
+    /**
+     * Checks if $schedule is active on $date
+     */
+    private function isScheduleActive(PriceListSchedule $schedule, \DateTime $date): bool
+    {
+        $time = $date->getTimestamp();
+        $activateAt = $schedule->getActiveAt()?->getTimestamp();
+        $deactivateAt = $schedule->getDeactivateAt()?->getTimestamp();
+
+
+        if ($activateAt && $deactivateAt) {
+            return $activateAt <= $time && $deactivateAt > $time;
+        }
+
+        if ($activateAt) {
+            return $activateAt <= $time;
+        }
+
+        return $deactivateAt > $time;
+    }
+
+    private function clear(): void
+    {
+        $this->priceListSchedules = [];
+        $this->priceListsWithoutSchedule = [];
+        $this->rules = [];
+        $this->activationDates = [];
+    }
+
     protected function processSchedule(array $schedule, array $baseName, array $turnedOffPriceLists)
     {
-        $lines = [];
-        $lastTime = null;
-        if (!empty($turnedOffPriceLists)) {
-            $currentName = $baseName;
-            foreach ($turnedOffPriceLists as $priceListDisabled => $val) {
-                unset($currentName[$priceListDisabled]);
-            }
-            $lines[0] = [
-                self::PRICE_LISTS_KEY => array_keys($currentName),
-                self::ACTIVATE_AT_KEY => null,
-                self::EXPIRE_AT_KEY => null
-            ];
-            $lastTime = 0;
-        }
-        ksort($schedule);
-        foreach ($schedule as $time => $changesAtTimeMoment) {
-            $currentDateTime = $changesAtTimeMoment[self::TIME_KEY];
-            foreach ($changesAtTimeMoment[self::PRICE_LISTS_KEY] as $priceListId => $action) {
-                $currentName = $baseName;
-                if ($action === self::ON) {
-                    unset($turnedOffPriceLists[$priceListId]);
-                } else {
-                    $turnedOffPriceLists[$priceListId] = true;
-                }
-
-                foreach ($turnedOffPriceLists as $priceListDisabled => $val) {
-                    unset($currentName[$priceListDisabled]);
-                }
-                $lines[$time] = [
-                    self::PRICE_LISTS_KEY => array_keys($currentName),
-                    self::ACTIVATE_AT_KEY => $currentDateTime,
-                    self::EXPIRE_AT_KEY => null
-                ];
-                if ($lastTime !== null) {
-                    $lines[$lastTime][self::EXPIRE_AT_KEY] = $currentDateTime;
-                }
-                $lastTime = $time;
-            }
-        }
-
-        return $lines;
     }
 }
