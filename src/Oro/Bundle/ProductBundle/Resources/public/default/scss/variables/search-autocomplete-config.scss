@@ -2,7 +2,7 @@
 
 $search-autocomplete-position: absolute !default;
 $search-autocomplete-z-index: z('dropdown') + 1 !default;
-$search-autocomplete-selected-box-shadow: $base-ui-element-focus-style !default;
+$search-autocomplete-selected-box-shadow: $base-ui-element-focus-visible-style !default;
 
 $search-autocomplete-content-min-width: 385px !default;
 $search-autocomplete-content-display: block !default;

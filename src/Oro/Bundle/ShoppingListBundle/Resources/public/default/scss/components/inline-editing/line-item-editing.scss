@@ -86,7 +86,6 @@
         }
 
         .highlight-error & {
-            box-shadow: $input-box-shadow-error-state;
             border-color: $input-border-color-error-state;
 
             z-index: z('base') + 1;
