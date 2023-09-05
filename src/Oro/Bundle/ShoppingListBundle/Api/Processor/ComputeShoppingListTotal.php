@@ -40,10 +40,10 @@ class ComputeShoppingListTotal implements ProcessorInterface
 
         $totalFieldName = 'total';
         $subTotalFieldName = 'subTotal';
+        // have got `currency` field directly from shopping list entity
         $currencyFieldName = 'currency';
         if (\array_key_exists($totalFieldName, $data)
             || \array_key_exists($subTotalFieldName, $data)
-            || \array_key_exists($currencyFieldName, $data)
         ) {
             // the computing values are already set
             return;
