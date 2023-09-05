@@ -29,6 +29,8 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
+        LoadShoppingLists::setCurrency('EUR');
+
         $this->loadFixtures([
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
@@ -71,7 +73,6 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $this->assertArrayHasKey('total', $data);
         $this->assertEquals(282.43, $data['total']['amount']);
         $this->assertEquals('EUR', $data['total']['currency']);
-
         $this->assertArrayHasKey('subtotals', $data);
         $this->assertEquals(282.43, $data['subtotals'][0]['amount']);
         $this->assertEquals('EUR', $data['subtotals'][0]['currency']);
