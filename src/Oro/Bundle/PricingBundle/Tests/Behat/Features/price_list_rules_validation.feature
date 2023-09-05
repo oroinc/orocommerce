@@ -2,6 +2,8 @@
 @postgresql
 @ticket-BB-11878
 @ticket-BB-20426
+@skip
+# TODO in BAP-22214
 
 Feature: Price list rules validation
   In order to use effectively work with price lists

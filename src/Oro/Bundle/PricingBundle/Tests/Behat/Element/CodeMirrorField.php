@@ -17,7 +17,7 @@ class CodeMirrorField extends Element
         $this->session->executeScript(
             sprintf(
                 '(function(){
-                    $("#%s").val("%s");
+                    $("#%s").val(`%s`).trigger("change");
                 })()',
                 $this->getAttribute('id'),
                 $value
