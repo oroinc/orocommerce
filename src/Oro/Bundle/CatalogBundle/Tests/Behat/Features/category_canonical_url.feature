@@ -24,6 +24,7 @@ Feature: Category canonical url
     When I click "Create Content Node"
     And I fill "Content Node" with:
       | Title      | Printers              |
+    And I fill "Content Node" with:
       | Slug       | web-catalog-printers  |
       | Meta Title | Best printers for you |
     And I click on "Show Variants Dropdown"
