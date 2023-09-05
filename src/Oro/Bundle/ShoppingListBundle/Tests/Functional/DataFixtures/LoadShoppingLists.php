@@ -23,6 +23,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_8 = 'shopping_list_8';
     const SHOPPING_LIST_9 = 'shopping_list_9';
 
+    protected static $currency = 'USD';
+
     /**
      * @var array
      */
@@ -77,6 +79,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setCustomer($customerUser->getCustomer());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
+        $shoppingList->setCurrency(static::$currency);
         $shoppingList->setCurrent($isCurrent);
         if (array_key_exists($name, $this->shoppingListWebsites)) {
             $shoppingList->setWebsite($this->getReference($this->shoppingListWebsites[$name]));
@@ -150,5 +153,10 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function getDefaultWebsite(ObjectManager $manager)
     {
         return $manager->getRepository(Website::class)->getDefaultWebsite();
+    }
+
+    public static function setCurrency(string $currency): void
+    {
+        static::$currency = $currency;
     }
 }
