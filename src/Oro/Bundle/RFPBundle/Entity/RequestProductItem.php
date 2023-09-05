@@ -5,6 +5,8 @@ namespace Oro\Bundle\RFPBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
@@ -28,8 +30,10 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInterface
+class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInterface, ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *
@@ -236,7 +240,7 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
     public function loadPrice()
     {
         if ($this->value && $this->currency) {
-            $this->price = Price::create($this->value, $this->currency);
+            $this->setPrice(Price::create($this->value, $this->currency));
         }
     }
 
@@ -246,28 +250,19 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
      */
     public function updatePrice()
     {
-        $this->value    = $this->price ? $this->price->getValue() : null;
-        $this->currency = $this->price ? $this->price->getCurrency() : null;
+        $this->value = $this->price?->getValue();
+        $this->currency = $this->price?->getCurrency();
     }
 
     /** {@inheritdoc} */
     public function getProduct()
     {
-        if ($this->requestProduct) {
-            return $this->requestProduct->getProduct();
-        }
-
-        return null;
+        return $this->requestProduct?->getProduct();
     }
 
     /** {@inheritdoc} */
     public function getProductSku()
     {
-        $product = $this->getProduct();
-        if ($product) {
-            return $product->getSku();
-        }
-
-        return null;
+        return $this->getProduct()?->getSku();
     }
 }

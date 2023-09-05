@@ -5,18 +5,33 @@ namespace Oro\Bundle\SaleBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
+ * Entity that represents quote product demand
+ *
  * @ORM\Table(name="oro_quote_product_demand")
  * @ORM\Entity
+ * @Config(
+ *       defaultValues={
+ *           "entity"={
+ *               "icon"="fa-list-alt"
+ *           }
+ *       }
+ *  )
  */
 class QuoteProductDemand implements
     PriceAwareInterface,
     PriceTypeAwareInterface,
-    ProductLineItemInterface
+    ProductLineItemInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *

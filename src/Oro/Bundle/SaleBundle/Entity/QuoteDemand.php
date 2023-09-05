@@ -10,6 +10,8 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -38,9 +40,11 @@ class QuoteDemand implements
     CustomerOwnerAwareInterface,
     CustomerVisitorOwnerAwareInterface,
     ProductLineItemsHolderInterface,
-    PreConfiguredShippingMethodConfigurationInterface
+    PreConfiguredShippingMethodConfigurationInterface,
+    ExtendEntityInterface
 {
     use AuditableFrontendCustomerUserAwareTrait;
+    use ExtendEntityTrait;
 
     /**
      * @var int
