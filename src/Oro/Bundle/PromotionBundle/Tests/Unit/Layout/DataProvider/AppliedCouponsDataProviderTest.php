@@ -3,64 +3,168 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
+use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\AppliedCouponsDataProvider;
+use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\AppliedCouponsAwareStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
-    /** @var AppliedCouponsDataProvider */
-    private $provider;
+    private MockObject|ManagerRegistry $registry;
+    private MockObject|PromotionProvider $promotionProvider;
+    private AppliedCouponsDataProvider $provider;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->promotionProvider = $this->createMock(PromotionProvider::class);
         $this->provider = new AppliedCouponsDataProvider($this->registry);
+        $this->provider->setPromotionProvider($this->promotionProvider);
     }
 
-    public function testGetAppliedCoupons()
+    public function testGetAppliedCouponsNoSubtotalDiscounts()
     {
-        $coupons = $this->createMock(Collection::class);
         $entity = $this->createMock(AppliedCouponsAwareStub::class);
-        $entity->expects($this->once())
+        $entity->expects(self::once())
             ->method('getAppliedCoupons')
-            ->willReturn($coupons);
-        $this->assertSame($coupons, $this->provider->getAppliedCoupons($entity));
+            ->willReturn(new ArrayCollection());
+
+        self::assertEmpty($this->provider->getAppliedCoupons($entity));
     }
 
     /**
-     * @dataProvider trueFalseDataProvider
+     * @dataProvider getAppliedCouponsDataProvider
      */
-    public function testHasAppliedCoupons(bool $isEmpty)
-    {
-        $coupons = $this->createMock(Collection::class);
-        $coupons->expects($this->once())
-            ->method('isEmpty')
-            ->willReturn($isEmpty);
+    public function testGetAppliedCoupons(
+        array $appliedCoupons,
+        array $activePromotionIds,
+        array $expectedCoupons
+    ) {
+        $appliedCouponsAmount = \count($appliedCoupons);
+        $coupons = new ArrayCollection($appliedCoupons);
         $entity = $this->createMock(AppliedCouponsAwareStub::class);
-        $entity->expects($this->once())
+        $entity->expects(self::once())
             ->method('getAppliedCoupons')
             ->willReturn($coupons);
 
-        $this->assertSame(!$isEmpty, $this->provider->hasAppliedCoupons($entity));
+        $em = $this->createMock(EntityManager::class);
+        $em->expects(self::exactly($appliedCouponsAmount))
+            ->method('find')
+            ->withAnyParameters()
+            ->willReturnCallback(function (string $class, int $id) {
+                return $this->getEntity($class, ['id' => $id]);
+            });
+
+        $this->promotionProvider->expects(self::exactly($appliedCouponsAmount))
+            ->method('isPromotionApplicable')
+            ->withAnyParameters()
+            ->willReturnCallback(function (object $entity, Promotion $promotion) use ($activePromotionIds) {
+                return \in_array($promotion->getId(), $activePromotionIds, true);
+            });
+
+        $this->registry->expects(self::exactly($appliedCouponsAmount))
+            ->method('getManager')
+            ->with(null)
+            ->willReturn($em);
+
+        $result = $this->provider->getAppliedCoupons($entity);
+
+        self::assertEquals($expectedCoupons, $result->toArray());
     }
 
-    public function trueFalseDataProvider(): array
+    public function getAppliedCouponsDataProvider(): array
     {
+        $coupon1 = $this->createAppliedCoupon(1);
+        $coupon2 = $this->createAppliedCoupon(2);
+
         return [
-            [true],
-            [false]
+            [[$coupon1], [], []],
+            [[$coupon1], [2], []],
+            [[$coupon1], [1], [$coupon1]],
+            [[$coupon1, $coupon2], [1], [$coupon1]],
+            [[$coupon1, $coupon2], [1, 2], [$coupon1, $coupon2]],
+        ];
+    }
+
+    private function createAppliedCoupon(int $id): MockObject|AppliedCoupon
+    {
+        $coupon = $this->createMock(AppliedCoupon::class);
+        $coupon->method('getId')->willReturn($id);
+        $coupon->method('getSourcePromotionId')->willReturn($id);
+
+        return $coupon;
+    }
+
+    private function createDiscount(int $promotionId): MockObject|DiscountInterface
+    {
+        $promotion = $this->getEntity(Promotion::class, ['id' => $promotionId]);
+
+        $discount = $this->createMock(DiscountInterface::class);
+        $discount->method('getPromotion')->willReturn($promotion);
+
+        return $discount;
+    }
+
+    /**
+     * @dataProvider hasAppliedCouponsDataProvider
+     */
+    public function testHasAppliedCoupons(
+        array $appliedCoupons,
+        array $activePromotionIds,
+        bool $expectedResult
+    ) {
+        $appliedCouponsAmount = \count($appliedCoupons);
+        $coupons = new ArrayCollection($appliedCoupons);
+        $entity = $this->createMock(AppliedCouponsAwareStub::class);
+        $entity->expects(self::once())
+            ->method('getAppliedCoupons')
+            ->willReturn($coupons);
+
+        $em = $this->createMock(EntityManager::class);
+        $em->expects(self::exactly($appliedCouponsAmount))
+            ->method('find')
+            ->withAnyParameters()
+            ->willReturnCallback(function (string $class, int $id) {
+                return $this->getEntity($class, ['id' => $id]);
+            });
+
+        $this->promotionProvider->expects(self::exactly($appliedCouponsAmount))
+            ->method('isPromotionApplicable')
+            ->withAnyParameters()
+            ->willReturnCallback(function (object $entity, Promotion $promotion) use ($activePromotionIds) {
+                return \in_array($promotion->getId(), $activePromotionIds, true);
+            });
+
+        $this->registry->expects(self::exactly($appliedCouponsAmount))
+            ->method('getManager')
+            ->with(null)
+            ->willReturn($em);
+
+        $result = $this->provider->hasAppliedCoupons($entity);
+        self::assertEquals($expectedResult, $result);
+    }
+
+    public function hasAppliedCouponsDataProvider(): array
+    {
+        $coupon1 = $this->createAppliedCoupon(1);
+        $coupon2 = $this->createAppliedCoupon(2);
+
+        return [
+            [[$coupon1], [], false],
+            [[$coupon1], [2], false],
+            [[$coupon1], [1], true],
+            [[$coupon1, $coupon2], [1], true],
+            [[$coupon1, $coupon2], [1, 2], true],
         ];
     }
 
@@ -73,27 +177,46 @@ class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
             ]
         );
         $entity = $this->createMock(AppliedCouponsAwareStub::class);
-        $entity->expects($this->once())
+        $entity->expects(self::once())
             ->method('getAppliedCoupons')
             ->willReturn($coupons);
 
         $promotions = [3 => $this->getEntity(Promotion::class, ['id' => 3])];
         $repo = $this->createMock(PromotionRepository::class);
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('getPromotionsWithLabelsByIds')
             ->with([3, 5])
             ->willReturn($promotions);
         $em = $this->createMock(EntityManager::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with(Promotion::class)
             ->willReturn($repo);
 
-        $this->registry->expects($this->once())
+        $this->registry->expects(self::once())
             ->method('getManagerForClass')
             ->with(Promotion::class)
             ->willReturn($em);
 
-        $this->assertEquals($promotions, $this->provider->getPromotionsForAppliedCoupons($entity));
+        self::assertEquals($promotions, $this->provider->getPromotionsForAppliedCoupons($entity));
+    }
+
+    private function getDiscountContext(object $entity, bool $addDiscounts = true): MockObject|DiscountContextInterface
+    {
+        $context = $this->createMock(DiscountContextInterface::class);
+        $this->promotionProvider->method('execute')
+            ->with($entity)
+            ->willReturn($context);
+
+        if ($addDiscounts) {
+            $context->expects(self::once())
+                ->method('getShippingDiscounts')
+                ->willReturn([]);
+            $context->expects(self::once())
+                ->method('getLineItemDiscounts')
+                ->willReturn([]);
+        }
+
+        return $context;
     }
 }
