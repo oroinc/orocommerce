@@ -327,6 +327,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Layout\DataProvider\AppliedCouponsDataProvider
         arguments:
             - '@doctrine'
+            - '@oro_promotion.promotion_provider'
         tags:
             - { name: layout.data_provider, alias: oro_promotion_applied_coupons }
 
