@@ -78,8 +78,8 @@ Feature: Product Visibility Attachment Audit Log Appending
     Then I should see "Product visibility has been saved" flash message
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
-      | Old Values         | New values                                                                                    |
-      | Visibility to All: | Visibility to All:  Visibility to All "hidden" added: Product: Product "1" Visibility: hidden |
+      | Old Values                 | New values                                                                                    |
+      | Product Visibility to All: | Product Visibility to All:  Product Visibility to All "hidden" added: Product: Product "1" Visibility: hidden |
     And I close ui dialog
 
   Scenario: Should see audit log once update visibility to customer for current product
@@ -92,7 +92,7 @@ Feature: Product Visibility Attachment Audit Log Appending
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
       | Old Values                                                                                       | New values                                                                                               |
-      | Visibility to Customers: Visibility to Customers "current_product" changed: Visibility: category | Visibility to Customers:  Visibility to Customers "current_product" changed: Visibility: current_product |
+      | Visibility to Customer Products: Visibility to Customer Products "current_product" changed: Visibility: category | Visibility to Customer Products:  Visibility to Customer Products "current_product" changed: Visibility: current_product |
     And I close ui dialog
 
   Scenario: Should see audit log once update visibility to customer group for current product
@@ -105,5 +105,5 @@ Feature: Product Visibility Attachment Audit Log Appending
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
       | Old Values                                                                                          | New values                                                                                         |
-      | Visibility to Customer Groups: Visibility to Customer Groups "hidden" changed: Visibility: category | Visibility to Customer Groups:  Visibility to Customer Groups "hidden" changed: Visibility: hidden |
+      | Visibility to Customer Group Products: Visibility to Customer Group Products "hidden" changed: Visibility: category | Visibility to Customer Group Products:  Visibility to Customer Group Products "hidden" changed: Visibility: hidden |
     And I close ui dialog
