@@ -92,8 +92,8 @@ services:
                 - setOptionsConfig
                 -
                     -
-                        mode: {default: 'icon'}
-                        position: {default: 'top-right'}
+                        mode: {default: 'badge'}
+                        position: {default: 'end-start'}
                         stickers: {default: []}
             - [setName, ['product_sticker']]
         tags:

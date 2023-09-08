@@ -890,7 +890,7 @@ oro:
             message: "Cannot remove field because it's used as a variant field in the following configurable products: %skuList%"
 
         sticker:
-            new_arrival: 'New Arrival'
+            new_arrival: 'New'
             top_selling: 'Top Selling'
 
         brand:
