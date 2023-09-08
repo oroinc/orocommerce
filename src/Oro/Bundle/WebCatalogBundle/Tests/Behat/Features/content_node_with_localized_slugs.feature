@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-20849
+@ticket-BB-22740
 @fixture-OroWebCatalogBundle:web_catalog.yml
 
 Feature: Content node with localized slugs
@@ -26,7 +27,8 @@ Feature: Content node with localized slugs
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Uncheck "Use default value" checkbox for English (United States) localization slug
-    Given I click "Content Node Form Url Slug Fallbacks"
+    Given I reload the page
+    And I click "Content Node Form Url Slug Fallbacks"
     Then "Content Node" must contains values:
       | URL Slugs English (United States) value | acme |
     When I fill "Content Node" with:

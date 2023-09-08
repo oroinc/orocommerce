@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\EntityListener;
 
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\EntityListener\ShoppingListEntityListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -12,17 +13,11 @@ use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
 class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DefaultUserProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $defaultUserProvider;
-
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListLimitManager;
-
-    /** @var ShoppingListEntityListener */
-    private $listener;
+    private DefaultUserProvider $defaultUserProvider;
+    private TokenAccessorInterface $tokenAccessor;
+    private ShoppingListLimitManager $shoppingListLimitManager;
+    private UserCurrencyManager $userCurrencyManager;
+    private ShoppingListEntityListener $listener;
 
     /**
      * {@inheritdoc}
@@ -32,12 +27,14 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
+        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
 
         $this->listener = new ShoppingListEntityListener(
             $this->defaultUserProvider,
             $this->tokenAccessor,
             $this->shoppingListLimitManager
         );
+        $this->listener->setUserCurrencyManager($this->userCurrencyManager);
     }
 
     /**
@@ -48,15 +45,14 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testPrePersistNotSetDefaultOwner($token, ShoppingList $shoppingList)
     {
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
         $this->listener->prePersist($shoppingList);
-        $this->assertNotSame($newUser, $shoppingList->getOwner());
+        self::assertNotSame($newUser, $shoppingList->getOwner());
     }
 
     /**
@@ -84,29 +80,30 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider persistSetDefaultOwnerDataProvider
-     *
-     * @param string $token
-     * @param ShoppingList $shoppingList
-     */
-    public function testPrePersistSetDefaultOwner($token, ShoppingList $shoppingList)
+    public function testPrePersistSetDefaultOwnerAndCurrency()
     {
-        $this->tokenAccessor
-            ->expects($this->once())
+        $token = new AnonymousCustomerUserToken('');
+        $shoppingList = new ShoppingList();
+
+        $currency = 'GBP';
+        $this->userCurrencyManager->expects(self::once())
+            ->method('getUserCurrency')
+            ->willReturn($currency);
+
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        $this->defaultUserProvider
-            ->expects($this->once())
+        $this->defaultUserProvider->expects(self::once())
             ->method('getDefaultUser')
             ->with('oro_shopping_list', 'default_guest_shopping_list_owner')
             ->willReturn($newUser);
 
         $this->listener->prePersist($shoppingList);
-        $this->assertSame($newUser, $shoppingList->getOwner());
+        self::assertSame($newUser, $shoppingList->getOwner());
+        self::assertEquals($currency, $shoppingList->getCurrency());
     }
 
     /**
@@ -124,7 +121,7 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostPersist()
     {
-        $this->shoppingListLimitManager->expects($this->once())
+        $this->shoppingListLimitManager->expects(self::once())
             ->method('resetState');
 
         $this->listener->postPersist();
@@ -132,7 +129,7 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostRemove()
     {
-        $this->shoppingListLimitManager->expects($this->once())
+        $this->shoppingListLimitManager->expects(self::once())
             ->method('resetState');
 
         $this->listener->postRemove();

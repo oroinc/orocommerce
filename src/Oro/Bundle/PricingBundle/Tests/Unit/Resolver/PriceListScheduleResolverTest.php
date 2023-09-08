@@ -25,7 +25,7 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
     public function testMergeSchedule(array $priceListSchedules, array $priceListRelations, array $expectedResult)
     {
         $result = $this->resolver->mergeSchedule($priceListSchedules, $priceListRelations);
-        $this->assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -47,6 +47,78 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'priceListSchedules' => [
+                    ['id' => 1, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => null],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160103, PriceListScheduleResolver::OFF => null],
+                ],
+                'priceListRelations' => [1, 2],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
+                    ],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
+                    ],
+                    2 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
+                ]
+            ],
+            [
+                'priceListSchedules' => [
+                    ['id' => 1, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => null],
+                    ['id' => 2, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160102],
+                ],
+                'priceListRelations' => [1, 2],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
+                    ],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null,
+                    ],
+                ]
+            ],
+            [
+                'priceListSchedules' => [
+                    ['id' => 1, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160108],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160103, PriceListScheduleResolver::OFF => null],
+                ],
+                'priceListRelations' => [1, 2],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
+                    ],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
+                    ],
+                    2 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160108),
+                    ],
+                    3 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160108),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null,
+                    ],
+                ]
+            ],
+            [
+                'priceListSchedules' => [
                     ['id' => 2, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160103],
                 ],
                 'priceListRelations' => [1, 2],
@@ -56,12 +128,12 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
                     ],
-                    20160102 => [
+                    1 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
                     ],
-                    20160103 => [
+                    2 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => null
@@ -79,8 +151,26 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
                     ],
-                    20160103 => [
+                    1 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
+                ]
+            ],
+            [
+                'priceListSchedules' => [
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160103, PriceListScheduleResolver::OFF => null],
+                ],
+                'priceListRelations' => [2],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
+                    ],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => null
                     ],
@@ -98,17 +188,17 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
                     ],
-                    20160103 => [
+                    1 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160104)
                     ],
-                    20160104 => [
+                    2 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160104),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160105)
                     ],
-                    20160105 => [
+                    3 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160105),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => null
@@ -128,27 +218,27 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
                     ],
-                    20160102 => [
+                    1 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
                     ],
-                    20160103 => [
+                    2 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 3],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160105)
                     ],
-                    20160105 => [
-                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2, 3],
+                    3 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 3, 2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160105),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160106)
                     ],
-                    20160106 => [
+                    4 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160106),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160108)
                     ],
-                    20160108 => [
+                    5 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160108),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => null
@@ -169,17 +259,17 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
                     ],
-                    20160102 => [
+                    1 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
                     ],
-                    20160103 => [
+                    2 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160105)
                     ],
-                    20160105 => [
+                    3 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160105),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => null
@@ -194,17 +284,17 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
                 'priceListRelations' => [1, 2, 3, 4],
                 'expectedResult' => [
                     0        => [
-                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 3, 4],
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 4, 3],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160101)
                     ],
-                    20160101 => [
-                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2, 3, 4],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 4, 2, 3],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160101),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
                     ],
-                    20160103 => [
-                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2, 4],
+                    2 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 4, 2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => null
                     ],
@@ -212,8 +302,8 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'priceListSchedules' => [
-                    ['id' => 2, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160102],
                     ['id' => 3, PriceListScheduleResolver::ON => 20160101, PriceListScheduleResolver::OFF => 20160103],
+                    ['id' => 2, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160102],
                 ],
                 'priceListRelations' => [2, 3],
                 'expectedResult' => [
@@ -222,19 +312,73 @@ class PriceListScheduleResolverTest extends \PHPUnit\Framework\TestCase
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160101)
                     ],
-                    20160101 => [
-                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2, 3],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [3, 2],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160101),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
                     ],
-                    20160102 => [
+                    2 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [3],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160103)
                     ],
-                    20160103 => [
+                    3 => [
                         PriceListScheduleResolver::PRICE_LISTS_KEY => [],
                         PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160103),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
+                ]
+            ],
+            [
+                'priceListSchedules' => [
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160101, PriceListScheduleResolver::OFF => null],
+                    ['id' => 3, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160101],
+                ],
+                'priceListRelations' => [2, 3],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160101)
+                    ],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [2],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160101),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => null
+                    ],
+                ]
+            ],
+            [
+                'priceListSchedules' => [
+                    ['id' => 1, PriceListScheduleResolver::ON => 20160101, PriceListScheduleResolver::OFF => null],
+                    ['id' => 2, PriceListScheduleResolver::ON => 20160102, PriceListScheduleResolver::OFF => 20160105],
+                    ['id' => 3, PriceListScheduleResolver::ON => null, PriceListScheduleResolver::OFF => 20160106],
+                ],
+                'priceListRelations' => [1, 2, 3],
+                'expectedResult' => [
+                    0        => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => null,
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160101)
+                    ],
+                    1 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160101),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160102)
+                    ],
+                    2 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 2, 3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160102),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160105)
+                    ],
+                    3 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1, 3],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160105),
+                        PriceListScheduleResolver::EXPIRE_AT_KEY => $this->getDateTimeWithTimestamp(20160106)
+                    ],
+                    4 => [
+                        PriceListScheduleResolver::PRICE_LISTS_KEY => [1],
+                        PriceListScheduleResolver::ACTIVATE_AT_KEY => $this->getDateTimeWithTimestamp(20160106),
                         PriceListScheduleResolver::EXPIRE_AT_KEY => null
                     ],
                 ]

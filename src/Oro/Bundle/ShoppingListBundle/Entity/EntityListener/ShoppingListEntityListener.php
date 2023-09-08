@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\EntityListener;
 
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\OroShoppingListExtension;
@@ -25,6 +26,9 @@ class ShoppingListEntityListener
     /** @var ShoppingListLimitManager */
     private $shoppingListLimitManager;
 
+    /** @var UserCurrencyManager */
+    private $userCurrencyManager;
+
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
         TokenAccessorInterface $tokenAccessor,
@@ -33,6 +37,11 @@ class ShoppingListEntityListener
         $this->defaultUserProvider = $defaultUserProvider;
         $this->tokenAccessor = $tokenAccessor;
         $this->shoppingListLimitManager = $shoppingListLimitManager;
+    }
+
+    public function setUserCurrencyManager(UserCurrencyManager $userCurrencyManager): void
+    {
+        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     public function prePersist(ShoppingList $shoppingList)
@@ -44,6 +53,10 @@ class ShoppingListEntityListener
                 OroShoppingListExtension::ALIAS,
                 Configuration::DEFAULT_GUEST_SHOPPING_LIST_OWNER
             ));
+        }
+
+        if (!$shoppingList->getCurrency()) {
+            $shoppingList->setCurrency($this->userCurrencyManager->getUserCurrency());
         }
     }
 

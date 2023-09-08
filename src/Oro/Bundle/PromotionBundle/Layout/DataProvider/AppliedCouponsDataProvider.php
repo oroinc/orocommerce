@@ -7,7 +7,12 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
+use Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService;
 
+/**
+ * Applied coupons data provider.
+ */
 class AppliedCouponsDataProvider
 {
     /**
@@ -15,9 +20,19 @@ class AppliedCouponsDataProvider
      */
     private $registry;
 
+    /**
+     * @var PromotionProvider
+     */
+    private $promotionProvider;
+
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    public function setPromotionProvider(PromotionProvider $promotionProvider): void
+    {
+        $this->promotionProvider = $promotionProvider;
     }
 
     /**
@@ -26,7 +41,15 @@ class AppliedCouponsDataProvider
      */
     public function getAppliedCoupons(AppliedCouponsAwareInterface $entity)
     {
-        return $entity->getAppliedCoupons();
+        return $entity->getAppliedCoupons()->filter(function (AppliedCoupon $appliedCoupon) use ($entity) {
+            $promotionId = $appliedCoupon->getSourcePromotionId();
+            $promotion = $this->registry->getManager()->find(Promotion::class, $promotionId);
+            return $this->promotionProvider->isPromotionApplicable(
+                $entity,
+                $promotion,
+                [ShippingFiltrationService::class => true]
+            );
+        });
     }
 
     /**
@@ -46,6 +69,6 @@ class AppliedCouponsDataProvider
 
     public function hasAppliedCoupons(AppliedCouponsAwareInterface $entity): bool
     {
-        return !$entity->getAppliedCoupons()->isEmpty();
+        return !$this->getAppliedCoupons($entity)->isEmpty();
     }
 }

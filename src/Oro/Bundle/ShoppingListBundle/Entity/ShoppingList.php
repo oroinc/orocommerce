@@ -209,6 +209,20 @@ class ShoppingList extends ExtendShoppingList implements
     protected $subtotal;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $currency;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -508,5 +522,16 @@ class ShoppingList extends ExtendShoppingList implements
             $this->lineItems = clone $this->lineItems;
             $this->totals = clone $this->totals;
         }
+    }
+
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+        return $this;
     }
 }
