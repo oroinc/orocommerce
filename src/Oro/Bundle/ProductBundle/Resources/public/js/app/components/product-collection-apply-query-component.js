@@ -137,8 +137,14 @@ define(function(require) {
             this.options._sourceElement
                 .on(`click${eventNS}`, elems.apply, this.onApplyQuery.bind(this))
                 .on(`click${eventNS}`, elems.reset, this.onReset.bind(this))
-                .on(`patchInitialState${eventNS}`, elems.included, () => this.initialIncluded = this.$included.val())
-                .on(`patchInitialState${eventNS}`, elems.excluded, () => this.initialExcluded = this.$excluded.val())
+                .on(`patchInitialState${eventNS}`, elems.included, () => {
+                    this.initialIncluded = this.$included.val();
+                    this.applyQuery();
+                })
+                .on(`patchInitialState${eventNS}`, elems.excluded, () => {
+                    this.initialExcluded = this.$excluded.val();
+                    this.applyQuery();
+                })
                 .on(`query-designer:validate:not-empty-filters${eventNS}`, this.onFiltersValidate.bind(this));
 
             this.initialDefinitionState = this._getSegmentDefinition();
