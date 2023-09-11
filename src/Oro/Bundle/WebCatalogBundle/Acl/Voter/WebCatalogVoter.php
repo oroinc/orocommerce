@@ -41,7 +41,7 @@ class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberIn
     /**
      * {@inheritDoc}
      */
-    public function vote(TokenInterface $token, $object, array $attributes)
+    public function vote(TokenInterface $token, $object, array $attributes): int
     {
         $this->object = $object;
         try {

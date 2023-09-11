@@ -50,7 +50,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

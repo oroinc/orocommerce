@@ -27,7 +27,7 @@ class ProductPriceAllowedUnits extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_pricing_product_price_allowed_units_validator';
     }
@@ -35,7 +35,7 @@ class ProductPriceAllowedUnits extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

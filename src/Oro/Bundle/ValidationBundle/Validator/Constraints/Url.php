@@ -11,7 +11,7 @@ class Url extends BaseUrl implements AliasAwareConstraintInterface
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'Symfony\Component\Validator\Constraints\UrlValidator';
     }

@@ -59,7 +59,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var Connection $connection */
         $connection = $this->doctrine->getManager()->getConnection();
@@ -96,7 +96,7 @@ HELP
 
         $output->writeln('<info>Clear expired customer visitors completed</info>');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     protected function getExpiredLastVisitDate(): \DateTime

@@ -17,7 +17,7 @@ class UniqueProductPrices extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_pricing_unique_product_prices_validator';
     }

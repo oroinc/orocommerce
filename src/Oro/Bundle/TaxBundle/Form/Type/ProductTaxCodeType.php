@@ -17,7 +17,7 @@ class ProductTaxCodeType extends AbstractTaxCodeType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

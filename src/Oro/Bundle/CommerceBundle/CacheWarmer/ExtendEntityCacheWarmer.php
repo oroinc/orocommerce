@@ -58,22 +58,22 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
         ];
     }
 
-    public function isOptional()
+    public function isOptional(): bool
     {
         return false;
     }
 
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): array
     {
         if (!$this->applicationState->isInstalled()) {
-            return;
+            return [];
         }
 
         /** @var Connection $configConnection */
         $configConnection = $this->managerRegistry->getConnection('config');
 
         if (!SafeDatabaseChecker::tablesExist($configConnection, 'oro_entity_config')) {
-            return;
+            return [];
         }
 
         foreach ($this->getClassNamesOfDeletedEntities() as $className) {
@@ -87,5 +87,6 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
                 $query->execute($this->logger);
             }
         }
+        return [];
     }
 }

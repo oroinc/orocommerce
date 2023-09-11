@@ -12,7 +12,7 @@ class NotEmptyConfigurableAttributes extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }
@@ -20,7 +20,7 @@ class NotEmptyConfigurableAttributes extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return NotEmptyConfigurableAttributesValidator::ALIAS;
     }

@@ -34,7 +34,7 @@ class PriceRuleEditorTextType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return static::NAME;
     }
@@ -58,7 +58,7 @@ class PriceRuleEditorTextType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return RuleEditorTextType::class;
     }

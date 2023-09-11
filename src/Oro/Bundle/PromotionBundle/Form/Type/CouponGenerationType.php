@@ -115,7 +115,7 @@ class CouponGenerationType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return BaseCouponType::class;
     }
@@ -144,7 +144,7 @@ class CouponGenerationType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return $this->getName();
     }

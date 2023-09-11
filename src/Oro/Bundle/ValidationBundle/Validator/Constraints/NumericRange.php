@@ -39,7 +39,7 @@ class NumericRange extends Range
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return NumericRangeValidator::class;
     }

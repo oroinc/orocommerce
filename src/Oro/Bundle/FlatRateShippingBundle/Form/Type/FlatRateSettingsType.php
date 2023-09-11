@@ -48,7 +48,7 @@ class FlatRateSettingsType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;
     }

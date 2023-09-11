@@ -14,7 +14,7 @@ class ProductImageCollection extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return ProductImageCollectionValidator::ALIAS;
     }

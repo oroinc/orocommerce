@@ -77,7 +77,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return OroChoiceType::class;
     }
@@ -93,7 +93,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

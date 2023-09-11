@@ -19,7 +19,7 @@ class CustomerOrUserAddressGranted extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_order_customer_or_user_address_granted';
     }
@@ -27,7 +27,7 @@ class CustomerOrUserAddressGranted extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

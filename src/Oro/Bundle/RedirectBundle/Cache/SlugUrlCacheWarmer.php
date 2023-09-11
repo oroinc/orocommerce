@@ -27,12 +27,12 @@ class SlugUrlCacheWarmer implements CacheWarmerInterface
         $this->messageFactory = $messageFactory;
     }
 
-    public function isOptional()
+    public function isOptional(): bool
     {
         return true;
     }
 
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): array
     {
         foreach ($this->routingInformationProvider->getEntityClasses() as $entityClass) {
             $this->messageProducer->send(
@@ -40,5 +40,6 @@ class SlugUrlCacheWarmer implements CacheWarmerInterface
                 $this->messageFactory->createMassMessage($entityClass, [], false)
             );
         }
+        return [];
     }
 }

@@ -27,7 +27,7 @@ class SaveAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return $this->isCreateAllowed(CustomerUserAddress::class) && $this->isCreateAllowed(CustomerAddress::class)
             ? CheckboxType::class
@@ -57,7 +57,7 @@ class SaveAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_save_address';
     }

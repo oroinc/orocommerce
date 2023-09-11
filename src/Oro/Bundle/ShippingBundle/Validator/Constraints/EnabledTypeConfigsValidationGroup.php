@@ -19,7 +19,7 @@ class EnabledTypeConfigsValidationGroup extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_shipping_enabled_type_config_validation_group_validator';
     }
