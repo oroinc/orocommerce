@@ -333,7 +333,7 @@ define(function(require, exports, module) {
         showFullScreen() {
             const fullscreen = new FullscreenPopupView({
                 contentElement: document.createElement('div'),
-                popupIcon: 'fa-chevron-left',
+                popupIcon: _.isRTL() ? 'chevron-right' : 'chevron-left',
                 popupLabel: __('oro.product.frontend.choose_action')
             });
 

@@ -67,14 +67,9 @@
 
     &__remove-row {
         position: absolute;
-        bottom: 11px;
         right: -28px;
 
-        @include fa-icon($fa-var-close, before, true) {
-            font-size: $base-font-size--m;
-
-            cursor: pointer;
-        }
+        @include fa-icon($fa-var-close, before, true);
     }
 
     &__fields {
@@ -196,12 +191,6 @@
             .quick-order-add__col::before {
                 display: block;
             }
-        }
-
-        &__remove-row {
-            bottom: auto;
-            top: -2px;
-            right: 0;
         }
 
         &__error,
