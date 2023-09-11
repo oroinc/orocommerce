@@ -360,7 +360,7 @@ oro:
                 description:          The product name as provided when the free-form entry used to add a product to the order line items.
             from_external_source:
                 label:                Created from External Source
-                description:          A flag that indicates that a product information was recieved from the external source.
+                description:          A flag that indicates that a product information was received from the external source.
             price_type:
                 label:                'Price Type'
                 description:          The identifier of the price type.

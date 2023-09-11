@@ -43,6 +43,7 @@ Feature: Content Node slug validation
     And I click "Create Content Node"
     And I fill "Content Node" with:
       | Title | Products duplicate |
+    And I fill "Content Node" with:
       | Slug  | products-node      |
     And I click on "Show Variants Dropdown"
     And I click "Add System Page"
@@ -60,6 +61,7 @@ Feature: Content Node slug validation
     And I click "Create Content Node"
     And I fill "Content Node" with:
       | Title | Products duplicate |
+    And I fill "Content Node" with:
       | Slug  | products-NODE      |
     And I click on "Show Variants Dropdown"
     And I click "Add System Page"

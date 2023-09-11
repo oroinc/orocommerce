@@ -221,6 +221,10 @@ oro_behat_extension:
     Drop Zone Exclude from Category:
       selector: '.drop-zones-menu [data-zone="excludeFromCategory"]'
 
+    CategoryProducts Grid:
+      selector: 'div[data-page-component-name="category-products-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     Category Update:
       class: Oro\Bundle\CatalogBundle\Tests\Behat\Page\CategoryUpdate

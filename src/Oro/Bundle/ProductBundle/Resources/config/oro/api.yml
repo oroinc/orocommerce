@@ -145,6 +145,7 @@ api:
             actions:
                 create:
                     status_codes:
+                        200: false
                         201: false
                         400: false
                         403: Returned always
@@ -176,6 +177,7 @@ api:
             actions:
                 create:
                     status_codes:
+                        200: false
                         201: false
                         400: false
                         403: Returned always
