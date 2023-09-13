@@ -31,7 +31,7 @@ class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberIn
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_web_catalog.provider.web_catalog_usage_provider' => WebCatalogUsageProviderInterface::class

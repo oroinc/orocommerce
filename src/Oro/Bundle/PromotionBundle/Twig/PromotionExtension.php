@@ -146,7 +146,7 @@ class PromotionExtension extends AbstractExtension implements ServiceSubscriberI
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_promotion.layout.discount_information_data_provider' => DiscountsInformationDataProvider::class,

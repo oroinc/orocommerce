@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for adding coupons to promotion.
+ */
 class CouponAddType extends AbstractType implements DataMapperInterface
 {
     const NAME = 'oro_promotion_coupon_add';
@@ -91,7 +94,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
     /**
      * {@inheritdoc}
      */
-    public function mapDataToForms($data, $forms)
+    public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         if (null === $data) {
             return;
@@ -104,7 +107,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
     /**
      * {@inheritdoc}
      */
-    public function mapFormsToData($forms, &$data)
+    public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         if (null === $data) {
             return;

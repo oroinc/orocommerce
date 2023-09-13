@@ -32,7 +32,7 @@ class SlugUrlCacheWarmer implements CacheWarmerInterface
         return true;
     }
 
-    public function warmUp($cacheDir): array
+    public function warmUp(string $cacheDir): array
     {
         foreach ($this->routingInformationProvider->getEntityClasses() as $entityClass) {
             $this->messageProducer->send(

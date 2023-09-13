@@ -61,7 +61,7 @@ class TwigInVariablesExtension extends AbstractExtension implements ServiceSubsc
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_cms.twig.renderer' => Environment::class,

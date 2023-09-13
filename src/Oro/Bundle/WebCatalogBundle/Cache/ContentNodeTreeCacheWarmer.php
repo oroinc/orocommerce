@@ -50,7 +50,7 @@ class ContentNodeTreeCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir): array
+    public function warmUp(string $cacheDir): array
     {
         $repository = $this->doctrineHelper->getEntityRepository(Website::class);
         $websites = $repository->findAll();

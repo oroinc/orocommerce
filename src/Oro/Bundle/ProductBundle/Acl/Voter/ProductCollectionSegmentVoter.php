@@ -31,7 +31,7 @@ class ProductCollectionSegmentVoter extends AbstractEntityVoter implements Servi
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_product.provider.content_variant_segment_provider' => ContentVariantSegmentProvider::class

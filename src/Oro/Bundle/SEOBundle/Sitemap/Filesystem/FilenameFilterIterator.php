@@ -21,7 +21,7 @@ class FilenameFilterIterator extends MultiplePcreFilterIterator
     /**
      * {@inheritDoc}
      */
-    protected function toRegex($str)
+    protected function toRegex(string $str)
     {
         return $this->isRegex($str) ? $str : Glob::toRegex($str);
     }

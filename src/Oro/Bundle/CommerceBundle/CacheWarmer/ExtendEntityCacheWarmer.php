@@ -63,7 +63,7 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
         return false;
     }
 
-    public function warmUp($cacheDir): array
+    public function warmUp(string $cacheDir): array
     {
         if (!$this->applicationState->isInstalled()) {
             return [];

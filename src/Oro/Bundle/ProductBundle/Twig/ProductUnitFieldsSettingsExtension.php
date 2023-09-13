@@ -87,7 +87,7 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension implements Se
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_product.visibility.product_unit_fields_settings' => ProductUnitFieldsSettingsInterface::class,
