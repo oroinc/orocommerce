@@ -132,7 +132,7 @@ layout:
         - '@setOption':
             id: product_sticker_new
             optionName: mode
-            optionValue: icon
+            optionValue: badge
 
         - '@setOption':
             id: product_sticker_new

@@ -931,10 +931,10 @@ oro_behat_extension:
         locator: '//a[contains (@data-catalog-view-trigger,"list-view")]'
 
     NewArrivalSticker:
-      selector: '.product-sticker--icon-new_arrival'
+      selector: '.product-sticker--new_arrival'
 
     NewArrivalText:
-      selector: '.product-sticker--text-new_arrival'
+      selector: '.status-label--new_arrival'
 
     ViewDetails:
       selector: 'a.view-product'
