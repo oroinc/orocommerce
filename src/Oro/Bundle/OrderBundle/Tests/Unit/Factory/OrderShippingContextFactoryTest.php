@@ -17,6 +17,8 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -37,16 +39,20 @@ class OrderShippingContextFactoryTest extends TestCase
 
     private OrderShippingContextFactory $factory;
 
+    private SystemShippingOriginProvider $systemShippingOriginProvider;
+
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
         $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);
+        $this->systemShippingOriginProvider = $this->createMock(SystemShippingOriginProvider::class);
 
         $this->factory = new OrderShippingContextFactory(
             $this->doctrine,
             $this->shippingLineItemConverter,
-            $this->shippingContextBuilderFactory
+            $this->shippingContextBuilderFactory,
+            $this->systemShippingOriginProvider
         );
     }
 
@@ -56,7 +62,8 @@ class OrderShippingContextFactoryTest extends TestCase
         string $currency,
         Website $website,
         Customer $customer,
-        CustomerUser $customerUser
+        CustomerUser $customerUser,
+        ShippingOrigin $shippingOrigin,
     ): ShippingContextBuilderInterface|MockObject {
         $contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
         $contextBuilder->expects(self::any())
@@ -86,6 +93,10 @@ class OrderShippingContextFactoryTest extends TestCase
         $contextBuilder->expects(self::any())
             ->method('setWebsite')
             ->with($website)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::once())
+            ->method('setShippingOrigin')
+            ->with($shippingOrigin)
             ->willReturnSelf();
         $contextBuilder->expects(self::once())
             ->method('getResult');
@@ -145,6 +156,10 @@ class OrderShippingContextFactoryTest extends TestCase
      */
     public function testCreate(): void
     {
+        $shippingOrigin = $this->createMock(ShippingOrigin::class);
+        $this->systemShippingOriginProvider->expects(self::once())
+            ->method('getSystemShippingOrigin')
+            ->willReturn($shippingOrigin);
         $order = $this->getOrder();
 
         $shippingLineItems = [
@@ -157,7 +172,7 @@ class OrderShippingContextFactoryTest extends TestCase
 
         $shippingLineItemCollection = new ArrayCollection($shippingLineItems);
 
-        $this->shippingLineItemConverter->expects($this->once())
+        $this->shippingLineItemConverter->expects(self::once())
             ->method('convertLineItems')
             ->with($order->getLineItems())
             ->willReturn($shippingLineItemCollection);
@@ -168,16 +183,17 @@ class OrderShippingContextFactoryTest extends TestCase
             $order->getCurrency(),
             $order->getWebsite(),
             $order->getCustomer(),
-            $order->getCustomerUser()
+            $order->getCustomerUser(),
+            $shippingOrigin,
         );
-        $contextBuilder->expects($this->once())
+        $contextBuilder->expects(self::once())
             ->method('setPaymentMethod')
             ->with(self::TEST_PAYMENT_METHOD);
         $contextBuilder->expects($this->once())
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
 
-        $this->shippingContextBuilderFactory->expects($this->once())
+        $this->shippingContextBuilderFactory->expects(self::once())
             ->method('createShippingContextBuilder')
             ->with($order, (string)$order->getId())
             ->willReturn($contextBuilder);
