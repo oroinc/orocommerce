@@ -10,6 +10,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 
 /**
  * Creates a shipping context based on an order entity.
@@ -19,6 +20,7 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
     private ManagerRegistry $doctrine;
     private OrderShippingLineItemConverterInterface $shippingLineItemConverter;
     private ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory;
+    private SystemShippingOriginProvider $systemShippingOriginProvider;
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -28,6 +30,11 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
         $this->doctrine = $doctrine;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
         $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
+    }
+
+    public function setSystemShippingOriginProvider(SystemShippingOriginProvider $systemShippingOriginProvider): void
+    {
+        $this->systemShippingOriginProvider = $systemShippingOriginProvider;
     }
 
     /**
@@ -77,6 +84,10 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
 
         $shippingContextBuilder->setLineItems(
             $this->shippingLineItemConverter->convertLineItems($entity->getLineItems())
+        );
+
+        $shippingContextBuilder->setShippingOrigin(
+            $this->systemShippingOriginProvider->getSystemShippingOrigin()
         );
 
         return $shippingContextBuilder->getResult();

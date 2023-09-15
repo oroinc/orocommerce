@@ -353,6 +353,8 @@ services:
             - '@doctrine'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@oro_shipping.context.builder_factory_basic'
+        calls:
+            - ['setSystemShippingOriginProvider', ['@oro_shipping.system_shipping_origin_provider']]
 
     oro_order.factory.payment_context:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory'
