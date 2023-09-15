@@ -55,7 +55,7 @@ class QuoteProductDemandCollectionType extends CollectionType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

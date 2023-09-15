@@ -24,7 +24,7 @@ class CustomerImportExportSubscriber implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::AFTER_LOAD_TEMPLATE_FIXTURES => 'addPaymentTermToCustomers',

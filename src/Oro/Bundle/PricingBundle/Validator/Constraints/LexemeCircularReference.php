@@ -24,7 +24,7 @@ class LexemeCircularReference extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_pricing.validator_constraints.lexeme_circular_reference_validator';
     }
@@ -32,7 +32,7 @@ class LexemeCircularReference extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

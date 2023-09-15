@@ -11,7 +11,7 @@ class Email extends BaseEmail implements AliasAwareConstraintInterface
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'Symfony\Component\Validator\Constraints\EmailValidator';
     }

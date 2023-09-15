@@ -39,7 +39,7 @@ class ContentBlockExtension extends AbstractExtension implements ServiceSubscrib
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_cms.content_block.renderer' => ContentBlockRenderer::class,

@@ -60,7 +60,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var Connection $connection */
         $connection = $this->doctrine->getManagerForClass(ShoppingList::class)->getConnection();
@@ -93,7 +93,7 @@ HELP
 
         $output->writeln('<info>Clear expired guest shopping lists completed</info>');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     protected function getExpiredLastVisitDate(): \DateTime

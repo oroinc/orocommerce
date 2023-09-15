@@ -135,7 +135,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_product.formatter.product_unit_value' => UnitValueFormatterInterface::class,

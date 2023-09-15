@@ -133,7 +133,7 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_order.formatter.source_document' => SourceDocumentFormatter::class,

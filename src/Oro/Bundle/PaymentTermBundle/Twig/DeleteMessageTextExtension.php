@@ -64,7 +64,7 @@ class DeleteMessageTextExtension extends AbstractExtension implements ServiceSub
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_payment_term.payment_term.delete_message_generator' => DeleteMessageTextGenerator::class,

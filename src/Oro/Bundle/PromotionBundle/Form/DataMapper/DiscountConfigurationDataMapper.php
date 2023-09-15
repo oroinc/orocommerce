@@ -10,12 +10,15 @@ use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Maps discount configuration data to/from discount options form.
+ */
 class DiscountConfigurationDataMapper implements DataMapperInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function mapDataToForms($data, $forms)
+    public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         if (null === $data) {
             return;
@@ -33,7 +36,7 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
     /**
      * {@inheritdoc}
      */
-    public function mapFormsToData($forms, &$data)
+    public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         if (null === $data) {
             return;

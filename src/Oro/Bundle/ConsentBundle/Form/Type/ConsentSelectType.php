@@ -33,7 +33,7 @@ class ConsentSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return OroEntitySelectOrCreateInlineType::class;
     }
@@ -41,7 +41,7 @@ class ConsentSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_consent_select';
     }

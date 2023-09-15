@@ -45,7 +45,7 @@ class PaymentTermExtension extends AbstractExtension implements ServiceSubscribe
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_payment_term.provider.payment_term' => PaymentTermProviderInterface::class,

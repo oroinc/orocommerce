@@ -256,7 +256,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_shipping.formatter.shipping_method_label' => ShippingMethodLabelFormatter::class,

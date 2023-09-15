@@ -74,7 +74,7 @@ HELP
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $iterator = $this->getProductImagesIterator();
         $entitiesProcessed = 0;
@@ -90,7 +90,7 @@ HELP
 
         $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     protected function getEventDispatcher(): EventDispatcherInterface

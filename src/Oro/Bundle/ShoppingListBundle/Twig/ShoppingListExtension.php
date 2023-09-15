@@ -79,7 +79,7 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_shopping_list.manager.shopping_list_limit' => ShoppingListLimitManager::class,

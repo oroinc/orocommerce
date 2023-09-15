@@ -25,7 +25,7 @@ class ProductUnitExists extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return ProductUnitExistsValidator::ALIAS;
     }
@@ -33,7 +33,7 @@ class ProductUnitExists extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

@@ -24,7 +24,7 @@ class Client extends BaseClient
         array  $server = [],
         string $content = null,
         bool   $changeHistory = true
-    ) {
+    ): Crawler {
         $crawler = parent::request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
 
         $this->checkForBackendUrls($uri, $crawler);

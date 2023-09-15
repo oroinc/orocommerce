@@ -49,7 +49,7 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
     /**
      * @return string
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }
@@ -57,7 +57,7 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;
     }

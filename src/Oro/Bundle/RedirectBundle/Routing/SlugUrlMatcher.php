@@ -109,7 +109,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     /**
      * {@inheritDoc}
      */
-    public function match($pathinfo)
+    public function match(string $pathinfo)
     {
         $matchers = [
             self::MATCH_SYSTEM => function () use ($pathinfo) {
