@@ -61,7 +61,11 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         $subtotalAmount = 0.0;
         if ($entity->getShippingCost() !== null) {
             $subtotalAmount = $entity->getShippingCost()->getValue();
+            if ($entity->getShippingCost()->getCurrency()) {
+                $subtotal->setCurrency($entity->getShippingCost()->getCurrency());
+            }
         }
+
         $subtotal->setAmount($this->rounding->round($subtotalAmount));
 
         return $subtotal;

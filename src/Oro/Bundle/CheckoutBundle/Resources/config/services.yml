@@ -890,3 +890,9 @@ services:
         arguments:
             - '@oro_checkout.provider.multi_shipping_config'
             - '@oro_checkout.provider.grouped_line_items'
+
+    oro_checkout.provider.prepare_checkout_settings_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\PrepareCheckoutSettingsProvider
+        arguments:
+            - '@event_dispatcher'
+        public: true
