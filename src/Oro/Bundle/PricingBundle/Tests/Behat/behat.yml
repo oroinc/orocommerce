@@ -82,7 +82,7 @@ oro_behat_extension:
     Price List Select Clear Button:
       selector: '.active.expression-editor-data-source .select2-search-choice-close'
     Product Price Attributes Table:
-      selector: 'table.grid.product-price-attributes'
+      selector: '.price-attribute-item .product-price-attributes-grid'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
     Product Price Attributes Grid 1:
       selector: 'div[data-page-component-name="product-price-attributes-grid:1"]'
