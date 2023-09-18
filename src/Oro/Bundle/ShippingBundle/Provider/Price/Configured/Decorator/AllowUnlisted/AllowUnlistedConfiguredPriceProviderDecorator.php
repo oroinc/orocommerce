@@ -8,6 +8,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AbstractShippingConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
+/**
+ * Decorator to help quote with allowed unlisted shipping method to return a correct one.
+ */
 class AllowUnlistedConfiguredPriceProviderDecorator extends AbstractShippingConfiguredPriceProviderDecorator
 {
     /**
@@ -70,14 +73,18 @@ class AllowUnlistedConfiguredPriceProviderDecorator extends AbstractShippingConf
         ComposedShippingMethodConfigurationInterface $configuration,
         ShippingContextInterface $context
     ) {
-        if (false === $configuration->isAllowUnlistedShippingMethod()) {
-            return parent::getPrice($methodId, $methodTypeId, $configuration, $context);
-        }
+        if ($methodId && $methodTypeId) {
+            if (false === $configuration->isAllowUnlistedShippingMethod()) {
+                return parent::getPrice($methodId, $methodTypeId, $configuration, $context);
+            }
 
-        $shippingMethodViews = parent::getApplicableMethodsViews($configuration, $context);
+            $shippingMethodViews = parent::getApplicableMethodsViews($configuration, $context);
 
-        if ($shippingMethodViews->hasMethodTypeView($methodId, $methodTypeId)) {
-            return parent::getPrice($methodId, $methodTypeId, $configuration, $context);
+            if ($shippingMethodViews->hasMethodTypeView($methodId, $methodTypeId)) {
+                return parent::getPrice($methodId, $methodTypeId, $configuration, $context);
+            }
+
+            return $configuration->getShippingCost();
         }
 
         return $configuration->getShippingCost();
