@@ -1,0 +1,6 @@
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist{1..3}:
+        name: 'PL<current()>'
+        organization: '@organization'
+        __calls:
+            - setCurrencies: [['USD', 'EUR']]
