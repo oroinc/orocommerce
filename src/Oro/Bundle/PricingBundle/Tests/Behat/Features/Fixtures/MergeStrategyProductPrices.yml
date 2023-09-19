@@ -1,0 +1,45 @@
+include:
+    - '@OroProductBundle:single_product.yml'
+    - '@OroPricingBundle:ThreePriceLists.yml'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..3}:
+        product: '@product1'
+        priceList: '@pricelist<current()>'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    pl1_price1:
+        product: '@product1'
+        priceList: '@pricelist1'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 10
+    pl2_price1:
+        product: '@product1'
+        priceList: '@pricelist2'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 9
+    pl2_price10:
+        product: '@product1'
+        priceList: '@pricelist2'
+        currency: 'USD'
+        quantity: 10
+        unit: '@each'
+        value: 9
+    pl3_price1:
+        product: '@product1'
+        priceList: '@pricelist3'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 8
+    pl3_price100:
+        product: '@product1'
+        priceList: '@pricelist3'
+        currency: 'USD'
+        quantity: 100
+        unit: '@each'
+        value: 8
