@@ -70,7 +70,7 @@ Feature: Product attributes order
     Given I go to Products/ Product Families
     When I click "Edit" on row "default_family" in grid
     And I fill "Product Family Form" with:
-      | Attributes | [Document, Drawing, MultipleFiles, MultipleImages] |
+      | General Attributes | [Document, Drawing, MultipleFiles, MultipleImages] |
     And I save and close form
     Then I should see "Successfully updated" flash message
 
@@ -103,7 +103,7 @@ Feature: Product attributes order
     And I go to Products/ Product Families
     When I click "Edit" on row "default_family" in grid
     And I fill "Product Family Form" with:
-      | Attributes | [Drawing, Document, MultipleImages, MultipleFiles] |
+      | General Attributes | [Drawing, Document, MultipleImages, MultipleFiles] |
     And I save and close form
     Then I should see "Successfully updated" flash message
 
