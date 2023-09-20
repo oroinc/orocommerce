@@ -18,7 +18,8 @@ class CategoryHighlightLowInventoryFormViewListenerTest extends AbstractFallback
         $this->listener = new CategoryHighlightLowInventoryFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

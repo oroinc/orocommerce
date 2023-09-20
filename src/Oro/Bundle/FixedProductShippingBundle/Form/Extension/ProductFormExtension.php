@@ -4,14 +4,15 @@ namespace Oro\Bundle\FixedProductShippingBundle\Form\Extension;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FixedProductShippingBundle\Form\Type\FixedProductShippingOptionsCollectionType;
 use Oro\Bundle\FixedProductShippingBundle\Migrations\Data\ORM\LoadPriceAttributePriceListData;
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -21,11 +22,8 @@ use Symfony\Component\Form\FormEvents;
  */
 class ProductFormExtension extends AbstractTypeExtension
 {
-    private ManagerRegistry $registry;
-
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(private ManagerRegistry $registry, private FieldAclHelper $fieldAclHelper)
     {
-        $this->registry = $registry;
     }
 
     /**
@@ -45,16 +43,35 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $builder->add(LoadPriceAttributePriceListData::SHIPPING_COST_FIELD, CollectionType::class, [
-            'mapped' => false,
-            'entry_type' => ProductAttributePriceCollectionType::class,
-            'label' => false,
-            'required' => false,
-            'attr' => ['class' => 'fixed-product-shipping-cost']
-        ]);
+        $builder->add(
+            LoadPriceAttributePriceListData::SHIPPING_COST_FIELD,
+            FixedProductShippingOptionsCollectionType::class,
+            ['mapped' => false, 'label' => false, 'required' => false]
+        );
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
+    }
+
+    public function onPreSetData(FormEvent $event): void
+    {
+        if (!$this->fieldAclHelper->isFieldAclEnabled(Product::class)) {
+            return;
+        }
+
+        # Block any changes for the 'shipping cost' field if access to 'unit precisions' is blocked.
+        $isUnitGranted = $this->fieldAclHelper->isFieldModificationGranted($event->getData(), 'unitPrecisions');
+        FormUtils::replaceFieldOptionsRecursive(
+            $event->getForm(),
+            LoadPriceAttributePriceListData::SHIPPING_COST_FIELD,
+            [
+                'allow_add' => $isUnitGranted,
+                'allow_delete' => $isUnitGranted,
+                'check_field_name' => 'unitPrecisions',
+                'prototype' => null
+            ]
+        );
     }
 
     public function onPostSetData(FormEvent $event): void
@@ -70,7 +87,11 @@ class ProductFormExtension extends AbstractTypeExtension
 
     public function onPostSubmit(FormEvent $event): void
     {
-        $data = $event->getForm()->get(LoadPriceAttributePriceListData::SHIPPING_COST_FIELD)->getData();
+        $form = $event->getForm();
+        if (!$form->has(LoadPriceAttributePriceListData::SHIPPING_COST_FIELD)) {
+            return;
+        }
+        $data = $form->get(LoadPriceAttributePriceListData::SHIPPING_COST_FIELD)->getData();
         $entityManager = $this->registry->getManagerForClass(PriceAttributeProductPrice::class);
 
         foreach ($data as $attributePrices) {

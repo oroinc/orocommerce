@@ -25,6 +25,11 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('taxCode')
             ->willReturn($taxCodeForm);
 
+        $mainForm->expects($this->any())
+            ->method('has')
+            ->with('taxCode')
+            ->willReturn(true);
+
         return new FormEvent($mainForm, $data);
     }
 

@@ -18,7 +18,8 @@ class CategoryInventoryBackorderFormViewListenerTest extends AbstractFallbackFie
         $this->listener = new CategoryInventoryBackorderFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

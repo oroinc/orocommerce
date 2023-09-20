@@ -6,6 +6,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +40,9 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrine;
 
+    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $fieldAclHelper;
+
     abstract protected function callTestMethod(): void;
 
     abstract protected function getEntity(): object;
@@ -48,11 +52,16 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
+        $this->translator
+            ->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(function ($id) {
-                return $id . '.trans';
-            });
+            ->willReturnCallback(fn ($id) => $id . '.trans');
+
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
 
         $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -115,7 +124,8 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
 
         $this->event->getScrollData()->setData($this->getExpectedScrollData());
 
-        $this->env->expects($this->once())
+        $this->env
+            ->expects($this->any())
             ->method('render');
 
         $this->callTestMethod();

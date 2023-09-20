@@ -18,7 +18,8 @@ class CategoryUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormVie
         $this->fallbackFieldsFormView = new CategoryUpcomingFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

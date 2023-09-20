@@ -386,9 +386,10 @@ services:
     oro_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@oro_product.provider.custom_field_provider"
-            - "@oro_product.provider.variant_field_provider"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_product.provider.custom_field_provider'
+            - '@oro_product.provider.variant_field_provider'
+            - '@oro_security.form.field_acl_helper'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink'
         tags:

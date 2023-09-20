@@ -5,9 +5,11 @@ namespace Oro\Bundle\ShippingBundle\Form\Extension;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
@@ -16,16 +18,15 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Adds product_shipping_options field for product form.
+ */
 class ProductFormExtension extends AbstractTypeExtension
 {
-    const FORM_ELEMENT_NAME = 'product_shipping_options';
+    public const FORM_ELEMENT_NAME = 'product_shipping_options';
 
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(private ManagerRegistry $registry, private FieldAclHelper $fieldAclHelper)
     {
-        $this->registry = $registry;
     }
 
     /**
@@ -46,13 +47,28 @@ class ProductFormExtension extends AbstractTypeExtension
                 'constraints' => [new UniqueProductUnitShippingOptions()],
                 'entry_options' => [
                     'product' => $product,
-                ],
+                ]
             ]
         );
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit'], -20);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
+    }
+
+    public function onPreSetData(FormEvent $event): void
+    {
+        if (!$this->fieldAclHelper->isFieldAclEnabled(Product::class)) {
+            return;
+        }
+
+        $isUnitGranted = $this->fieldAclHelper->isFieldModificationGranted($event->getData(), 'unitPrecisions');
+        FormUtils::replaceFieldOptionsRecursive(
+            $event->getForm(),
+            self::FORM_ELEMENT_NAME,
+            ['allow_add' => $isUnitGranted, 'allow_delete' => $isUnitGranted, 'check_field_name' => 'unitPrecisions']
+        );
     }
 
     /**
@@ -60,16 +76,21 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function onPostSetData(FormEvent $event)
     {
+        $form = $event->getForm();
         /** @var Product|null $product */
         $product = $event->getData();
         if (!$product || !$product->getId()) {
             return;
         }
 
+        if (!$form->has(self::FORM_ELEMENT_NAME)) {
+            return;
+        }
+
         $shippingOptions = $this->getProductShippingOptionsRepository()
             ->findBy(['product' => $product], ['productUnit' => 'ASC']);
 
-        $event->getForm()->get(self::FORM_ELEMENT_NAME)->setData($shippingOptions);
+        $form->get(self::FORM_ELEMENT_NAME)->setData($shippingOptions);
     }
 
     /**
@@ -81,6 +102,10 @@ class ProductFormExtension extends AbstractTypeExtension
 
         $product = $form->getData();
         if (!$product || !$product->getId()) {
+            return;
+        }
+
+        if (!$form->has(self::FORM_ELEMENT_NAME)) {
             return;
         }
 
@@ -123,6 +148,9 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         $form = $event->getForm();
+        if (!$form->has(self::FORM_ELEMENT_NAME)) {
+            return;
+        }
 
         /** @var ProductShippingOptions[] $options */
         $options = (array)$form->get(self::FORM_ELEMENT_NAME)->getData();
@@ -134,6 +162,11 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
+        $this->processShippingOptions($options, $product);
+    }
+
+    private function processShippingOptions(array $options, Product $product): void
+    {
         $entityManager = $this->getProductShippingOptionsObjectManager();
 
         $persistedOptionIds = [];
@@ -161,6 +194,7 @@ class ProductFormExtension extends AbstractTypeExtension
             }
         }
     }
+
 
     /**
      * @return ObjectManager

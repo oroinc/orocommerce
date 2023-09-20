@@ -18,7 +18,8 @@ class ProductDecrementQuantityFormViewListenerTest extends AbstractFallbackField
         $this->listener = new ProductDecrementQuantityFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

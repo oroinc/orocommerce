@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener;
 use Oro\Bundle\TaxBundle\Tests\Unit\Entity\ProductStub;
@@ -29,6 +30,9 @@ class ProductFormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $env;
 
+    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldAclHelper;
+
     /** @var ProductFormViewListener */
     private $listener;
 
@@ -38,11 +42,21 @@ class ProductFormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->env = $this->createMock(Environment::class);
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldViewGranted')
+            ->willReturn(true);
 
         $this->listener = new ProductFormViewListener(
             $this->requestStack,
             $this->doctrineHelper,
-            $this->featureChecker
+            $this->featureChecker,
+            $this->fieldAclHelper
         );
     }
 

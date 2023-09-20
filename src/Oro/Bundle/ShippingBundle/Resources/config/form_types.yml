@@ -130,7 +130,8 @@ services:
     oro_shipping.form.extension.product_type:
         class: Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension
         arguments:
-            - "@doctrine"
+            - '@doctrine'
+            - '@oro_security.form.field_acl_helper'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 

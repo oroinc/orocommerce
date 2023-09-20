@@ -56,7 +56,8 @@ class ProductPriceCollectionType extends AbstractType
                 'entry_type' => ProductPriceType::class,
                 'show_form_when_empty' => false,
                 'entry_options' => ['data_class' => $this->dataClass],
-                'validation_groups' => [self::VALIDATION_GROUP]
+                'validation_groups' => [self::VALIDATION_GROUP],
+                'check_field_name' => null
             ]
         );
     }

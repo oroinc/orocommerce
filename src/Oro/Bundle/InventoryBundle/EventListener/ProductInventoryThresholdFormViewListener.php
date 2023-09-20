@@ -11,10 +11,14 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
  */
 class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFormView
 {
-    public function onProductView(BeforeListRenderEvent $event)
+    public function onProductView(BeforeListRenderEvent $event): void
     {
         $product = $this->getEntityFromRequest(Product::class);
         if (!$product) {
+            return;
+        }
+
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'inventoryThreshold')) {
             return;
         }
 
@@ -26,8 +30,13 @@ class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFo
         );
     }
 
-    public function onProductEdit(BeforeListRenderEvent $event)
+    public function onProductEdit(BeforeListRenderEvent $event): void
     {
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'inventoryThreshold')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/inventoryThresholdFormWidget.html.twig',
