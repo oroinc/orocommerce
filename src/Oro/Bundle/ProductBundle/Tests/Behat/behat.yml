@@ -221,7 +221,7 @@ oro_behat_extension:
           Name: 'oro_product[names][values][default]'
           Name German:
             type: 'xpath'
-            locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(text(), "German_Loc")]/following-sibling::div//input[@class="fallback-item-value-input"]'
+            locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(concat(" ",normalize-space(@class)," ")," fallback-item ") and .//div[contains(@class, "fallback-item-label") and contains(text(), "German_Loc")]]//input[contains(@class, "fallback-item-value-input")]'
           Name German Use Default:
             type: 'xpath'
             locator: '//div[contains(@class, "control-group-oro_redirect_localized_slug_with_redirect")]//div[contains(text(), "German_Loc")]/following-sibling::div//input[@type="checkbox"]'
@@ -229,7 +229,7 @@ oro_behat_extension:
           Description:
             type: 'css'
             locator: '[name="oro_product[descriptions][values][default][wysiwyg]"]'
-            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+            element: WysiwygField
           Short Description: 'oro_product[shortDescriptions][values][default]'
           Name English (United States) value:
             type: 'xpath'
@@ -299,11 +299,11 @@ oro_behat_extension:
           Product WYSIWYG_video Attribute Content:
             type: 'css'
             locator: 'textarea[id^="oro_product_WYSIWYG_video"]'
-            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+            element: WysiwygField
           Product WYSIWYG_embed Field Content:
             type: 'css'
             locator: 'textarea[id^="oro_product_WYSIWYG_embed"]'
-            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+            element: WysiwygField
           Configurable Attributes:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
@@ -401,7 +401,7 @@ oro_behat_extension:
           Product WYSIWYG Attribute Field:
             type: 'css'
             locator: 'textarea[id^="oro_product_field_wysiwyg"]'
-            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+            element: WysiwygField
 
     NameEnglishUnitedStatesValue:
       selector:
@@ -488,7 +488,12 @@ oro_behat_extension:
           Attribute Groups Attributes SEO:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_seo_attributeRelations-uid")]]//input'
+            element: Select2EntitiesOrdered
           Attribute Groups Visible SEO: 'oro_attribute_family[attributeGroups][seo][isVisible]'
+          General Attributes:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_general_attributeRelations-uid")]]//input'
+            element: Select2EntitiesOrdered
 
     Quick Order Form:
       selector: "form[name='oro_product_quick_add']"

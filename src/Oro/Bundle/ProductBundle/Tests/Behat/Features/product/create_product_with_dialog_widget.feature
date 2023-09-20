@@ -32,9 +32,9 @@ Feature: Create product with dialog widget
     Then I should see "Attribute was successfully saved" flash message
 
   Scenario: Prepare second product attribute
-    Given I go to Products/Product Attributes
+    When I go to Products/Product Attributes
     And I click "Create Attribute"
-    When I fill form with:
+    And I fill form with:
       | Field Name | Refurbished |
       | Type       | Boolean     |
     And I click "Continue"
@@ -47,10 +47,9 @@ Feature: Create product with dialog widget
     Then I should see "Schema updated" flash message
 
   Scenario: Update product family
-    Given I proceed as the Admin
-    And I go to Products/ Product Families
+    When I go to Products/ Product Families
     And I click "Edit" on row "default_family" in grid
-    When I fill "Product Family Form" with:
+    And I fill "Product Family Form" with:
       | Attributes | [Refurbished] |
     And I save and close form
     Then I should see "Successfully updated" flash message
@@ -65,8 +64,7 @@ Feature: Create product with dialog widget
     Then I should see "Configuration saved" flash message
 
   Scenario: Prepare first simple product
-    Given I proceed as the Admin
-    And I go to Products/Products
+    When I go to Products/Products
     And I filter SKU as is equal to "1GB81"
     And I click Edit 1GB81 in grid
     And I fill in product attribute "Refurbished" with "Yes"
@@ -74,8 +72,7 @@ Feature: Create product with dialog widget
     Then I should see "Product has been saved" flash message
 
   Scenario: Prepare second simple product
-    Given I proceed as the Admin
-    And I go to Products/Products
+    When I go to Products/Products
     And I filter SKU as is equal to "1GB82"
     And I click Edit 1GB82 in grid
     And I fill in product attribute "Refurbished" with "No"
@@ -83,19 +80,17 @@ Feature: Create product with dialog widget
     Then I should see "Product has been saved" flash message
 
   Scenario: Prepare configurable product
-    Given I proceed as the Admin
-    And I go to Products/Products
+    When I go to Products/Products
     And I filter SKU as is equal to "1GB83"
     And I click Edit 1GB83 in grid
-    When I fill "ProductForm" with:
+    And I fill "ProductForm" with:
       | Configurable Attributes | [Refurbished] |
     And I check 1GB81 and 1GB82 in grid
     And I save form
     Then I should see "Product has been saved" flash message
 
   Scenario: Create new product from web catalog product variant creation page
-    Given I proceed as the Admin
-    And I go to Marketing/Web Catalogs
+    When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I save form
     And click "Create Content Node"
@@ -117,7 +112,6 @@ Feature: Create product with dialog widget
     Then I close ui dialog
 
   Scenario: Select simple product from product selection grid
-    Given I proceed as the Admin
     When I open select entity popup for field "Product" in form "Content Node Form"
     Then I should see following grid:
       | SKU   |
@@ -128,7 +122,6 @@ Feature: Create product with dialog widget
     Then I should see "1GB81 - Black Slip-On Clog L"
 
   Scenario: Select configurable product from product selection grid
-    Given I proceed as the Admin
     When I open select entity popup for field "Product" in form "Content Node Form"
     Then I should see following grid:
       | SKU   |
@@ -139,7 +132,6 @@ Feature: Create product with dialog widget
     Then I should see "1GB83 - Slip-On Clog"
 
   Scenario: Select simple product using select autocomplete
-    Given I proceed as the Admin
     When I fill "Content Variant" with:
       | Product | 1GB81 |
     Then I should see "1GB81 - Black Slip-On Clog L"

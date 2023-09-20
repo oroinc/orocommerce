@@ -54,6 +54,8 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
     {
         /** @var LocalizationSwitcherElement $switcher */
         $switcher = $this->createElement('LocalizationSwitcher');
-        $switcher->findLocalizationLink(trim($localizationName))->click();
+        $localizationLink = $switcher->findLocalizationLink(trim($localizationName));
+        self::assertNotNull($localizationLink, 'Localization link not found');
+        $localizationLink->click();
     }
 }
