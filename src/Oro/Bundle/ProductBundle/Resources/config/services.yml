@@ -409,6 +409,8 @@ services:
             - "@oro_product.provider.variant_field_provider"
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink'
+        calls:
+            - [setFieldAclHelper, ['@oro_security.form.field_acl_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfterEditGrid }

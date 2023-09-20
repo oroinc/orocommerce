@@ -91,6 +91,10 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
+        if (!$form->has('category')) {
+            return;
+        }
+
         /** @var Category $category */
         $category = $form->get('category')->getData();
 

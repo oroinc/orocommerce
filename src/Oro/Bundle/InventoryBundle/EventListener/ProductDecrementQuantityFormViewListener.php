@@ -18,6 +18,10 @@ class ProductDecrementQuantityFormViewListener extends AbstractFallbackFieldsFor
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'decrementQuantity')) {
+            return;
+        }
+
         $this->addBlockToEntityView(
             $event,
             '@OroInventory/Product/decrementQuantity.html.twig',
@@ -28,6 +32,11 @@ class ProductDecrementQuantityFormViewListener extends AbstractFallbackFieldsFor
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'decrementQuantity')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/decrementQuantityFormWidget.html.twig',

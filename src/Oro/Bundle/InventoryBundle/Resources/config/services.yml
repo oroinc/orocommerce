@@ -5,6 +5,8 @@ services:
             - '@request_stack'
             - '@doctrine'
             - '@translator'
+        calls:
+            - [setFieldAclHelper, ['@oro_security.form.field_acl_helper']]
 
     oro_inventory.listener.update_entity_config_relations:
         class: Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer

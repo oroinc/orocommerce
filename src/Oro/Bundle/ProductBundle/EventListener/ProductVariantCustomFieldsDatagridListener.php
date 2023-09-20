@@ -13,7 +13,11 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 
+/**
+ * Configures datagrid of product variants.
+ */
 class ProductVariantCustomFieldsDatagridListener
 {
     const FORM_SELECTED_VARIANTS = 'selectedVariantFields';
@@ -46,6 +50,8 @@ class ProductVariantCustomFieldsDatagridListener
      */
     private $variantFieldProvider;
 
+    private ?FieldAclHelper $fieldAclHelper = null;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param CustomFieldProvider $customFieldProvider
@@ -65,6 +71,11 @@ class ProductVariantCustomFieldsDatagridListener
         $this->productClass = (string)$productClass;
         $this->productVariantLinkClass = (string)$productVariantLinkClass;
         $this->variantFieldProvider = $variantFieldProvider;
+    }
+
+    public function setFieldAclHelper(FieldAclHelper $fieldAclHelper): void
+    {
+        $this->fieldAclHelper = $fieldAclHelper;
     }
 
     /**
@@ -142,17 +153,34 @@ class ProductVariantCustomFieldsDatagridListener
         }
     }
 
+    private function disableIsVariantColumn(DatagridConfiguration $config, Product $product, string $className): void
+    {
+        $path = '[columns][isVariant]';
+        if ($this->fieldAclHelper->isFieldAclEnabled($className) && $config->offsetExistByPath($path)) {
+            $fieldConfig = $config->offsetGetByPath($path);
+            $fieldConfig['editable'] = $this->fieldAclHelper->isFieldModificationGranted($product, 'variantLinks');
+            $config->offsetSetByPath($path, $fieldConfig);
+        }
+    }
+
     public function onBuildAfterEditGrid(BuildAfter $event)
     {
+        $productRepository = $this->getProductRepository();
         $parameters = $event->getDatagrid()->getParameters();
+        $config = $event->getDatagrid()->getConfig();
         $familyId = $parameters->get(self::ATTRIBUTE_FAMILY);
+        $className = $config->getExtendedEntityClassName();
         /** @var AttributeFamily $attributeFamily */
         $attributeFamily = $this->doctrineHelper->getEntityRepository(AttributeFamily::class)->find($familyId);
+        $product = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
 
         if ($attributeFamily) {
             $variantFields = $this->variantFieldProvider->getVariantFields($attributeFamily);
             $variantFields = array_keys($variantFields);
             $this->removeExtendFields($event, $variantFields);
+            if ($product) {
+                $this->disableIsVariantColumn($config, $product, $className);
+            }
         }
     }
 

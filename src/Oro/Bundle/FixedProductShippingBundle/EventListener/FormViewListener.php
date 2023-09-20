@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FixedProductShippingBundle\Migrations\Data\ORM\LoadPriceAttributePriceListData;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\ShippingBundle\EventListener\FormViewListener as ShippingFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
@@ -19,6 +20,7 @@ class FormViewListener
     private TranslatorInterface $translator;
     private ManagerRegistry $registry;
     private PriceAttributePricesProvider $priceAttributePricesProvider;
+    private ?FieldAclHelper $fieldAclHelper = null;
 
     public function __construct(
         TranslatorInterface $translator,
@@ -28,6 +30,11 @@ class FormViewListener
         $this->translator = $translator;
         $this->registry = $registry;
         $this->priceAttributePricesProvider = $priceAttributePricesProvider;
+    }
+
+    public function setFieldAclHelper(FieldAclHelper $fieldAclHelper): void
+    {
+        $this->fieldAclHelper = $fieldAclHelper;
     }
 
     /**
@@ -40,6 +47,10 @@ class FormViewListener
         $product = $event->getEntity();
         $priceList = $this->getPriceListShippingCostAttribute();
         if (!$priceList) {
+            return;
+        }
+
+        if (!$this->fieldAclHelper->isFieldViewGranted($event->getEntity(), 'unitPrecisions')) {
             return;
         }
 
@@ -64,6 +75,10 @@ class FormViewListener
      */
     public function onProductEdit(BeforeListRenderEvent $event): void
     {
+        if (!$this->fieldAclHelper->isFieldAvailable($event->getEntity(), 'unitPrecisions')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             '@OroFixedProductShipping/Product/shipping_cost_update.html.twig',
             ['form' => $event->getFormView()]

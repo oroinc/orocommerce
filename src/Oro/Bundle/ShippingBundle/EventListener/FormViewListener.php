@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -27,6 +28,8 @@ class FormViewListener
     /** @var RequestStack */
     protected $requestStack;
 
+    private ?FieldAclHelper $fieldAclHelper = null;
+
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
@@ -35,6 +38,11 @@ class FormViewListener
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->requestStack = $requestStack;
+    }
+
+    public function setFieldAclHelper(FieldAclHelper $fieldAclHelper): void
+    {
+        $this->fieldAclHelper = $fieldAclHelper;
     }
 
     public function onProductView(BeforeListRenderEvent $event)
@@ -63,6 +71,10 @@ class FormViewListener
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'unitPrecisions')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             '@OroShipping/Product/shipping_options_view.html.twig',
             [
@@ -70,15 +82,21 @@ class FormViewListener
                 'shippingOptions' => $shippingOptions
             ]
         );
+
         $this->addBlock($event->getScrollData(), $template, self::SHIPPING_BLOCK_LABEL, self::SHIPPING_BLOCK_PRIORITY);
     }
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->fieldAclHelper->isFieldAvailable($event->getEntity(), 'unitPrecisions')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             '@OroShipping/Product/shipping_options_update.html.twig',
             ['form' => $event->getFormView()]
         );
+
         $this->addBlock($event->getScrollData(), $template, self::SHIPPING_BLOCK_LABEL, self::SHIPPING_BLOCK_PRIORITY);
     }
 

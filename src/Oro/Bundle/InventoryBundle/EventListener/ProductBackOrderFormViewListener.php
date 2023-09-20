@@ -18,6 +18,10 @@ class ProductBackOrderFormViewListener extends AbstractFallbackFieldsFormView
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'backOrder')) {
+            return;
+        }
+
         $this->addBlockToEntityView(
             $event,
             '@OroInventory/Product/backOrder.html.twig',
@@ -28,6 +32,11 @@ class ProductBackOrderFormViewListener extends AbstractFallbackFieldsFormView
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'backOrder')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/backOrderFormWidget.html.twig',

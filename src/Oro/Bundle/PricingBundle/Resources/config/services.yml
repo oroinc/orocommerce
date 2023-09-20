@@ -249,6 +249,8 @@ services:
             - '@oro_pricing.providers.price_attribute_prices'
             - '@security.authorization_checker'
             - '@oro_security.acl_helper'
+        calls:
+            - [setFieldAclHelper, ['@oro_security.form.field_acl_helper']]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }

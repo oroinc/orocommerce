@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\FormViewListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Exception\UnexpectedTypeException;
@@ -21,27 +22,38 @@ class FormViewListenerTest extends TestCase
 {
     private DoctrineHelper|MockObject $doctrineHelper;
     private AuthorizationCheckerInterface|MockObject $authorizationChecker;
+    private FieldAclHelper|MockObject $fieldAclHelper;
     private Environment|MockObject $env;
     private FormViewListener $listener;
 
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->any())
+        $translator
+            ->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(function ($id) {
-                return $id . '.trans';
-            });
+            ->willReturnCallback(fn ($id) => $id . '.trans');
 
         $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
+
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldViewGranted')
+            ->willReturn(true);
 
         $this->listener = new FormViewListener(
             $translator,
             $this->doctrineHelper,
             $this->authorizationChecker
         );
+        $this->listener->setFieldAclHelper($this->fieldAclHelper);
     }
 
     public function testOnProductEdit()
@@ -183,7 +195,7 @@ class FormViewListenerTest extends TestCase
 
     private function getPreparedScrollData(): ScrollData
     {
-        $data[ScrollData::DATA_BLOCKS][FormViewListener::GENERAL_BLOCK][ScrollData::SUB_BLOCKS][0][ScrollData::DATA] = [
+        $data[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA] = [
             'productName' => [],
         ];
 
@@ -193,13 +205,13 @@ class FormViewListenerTest extends TestCase
     private function assertScrollData(ScrollData $scrollData)
     {
         $data = $scrollData->getData();
-        $generalBlockData = $data[ScrollData::DATA_BLOCKS][FormViewListener::GENERAL_BLOCK][ScrollData::SUB_BLOCKS]
+        $generalBlockData = $data[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS]
             [0][ScrollData::DATA];
 
         $this->assertArrayHasKey('productName', $generalBlockData);
-        $this->assertArrayHasKey(FormViewListener::CATEGORY_FIELD, $generalBlockData);
+        $this->assertArrayHasKey('category', $generalBlockData);
 
         reset($generalBlockData);
-        $this->assertEquals(FormViewListener::CATEGORY_FIELD, key($generalBlockData), 'Category not a first element');
+        $this->assertEquals('category', key($generalBlockData), 'Category not a first element');
     }
 }

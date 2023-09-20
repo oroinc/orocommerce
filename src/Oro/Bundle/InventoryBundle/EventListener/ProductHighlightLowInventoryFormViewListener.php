@@ -18,6 +18,10 @@ class ProductHighlightLowInventoryFormViewListener extends AbstractFallbackField
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'highlightLowInventory')) {
+            return;
+        }
+
         $this->addBlockToEntityView(
             $event,
             '@OroInventory/Product/highlightLowInventory.html.twig',
@@ -28,6 +32,11 @@ class ProductHighlightLowInventoryFormViewListener extends AbstractFallbackField
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'highlightLowInventory')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/highlightLowInventoryFormWidget.html.twig',

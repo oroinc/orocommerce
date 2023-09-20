@@ -22,6 +22,7 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
             $this->doctrine,
             $this->translator
         );
+        $this->fallbackFieldsFormView->setFieldAclHelper($this->fieldAclHelper);
     }
 
     public function testOnProductView()
@@ -76,6 +77,9 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
         $this->event->expects($this->once())
             ->method('getScrollData')
             ->willReturn($this->scrollData);
+        $this->event->expects($this->once())
+            ->method('getEntity')
+            ->willReturn(new Product());
 
         $this->fallbackFieldsFormView->onProductEdit($this->event);
     }

@@ -10,5 +10,7 @@ services:
         class: 'Oro\Bundle\FixedProductShippingBundle\Form\Extension\ProductFormExtension'
         arguments:
             - '@doctrine'
+        calls:
+            - [setFieldAclHelper, ['@oro_security.form.field_acl_helper']]
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }

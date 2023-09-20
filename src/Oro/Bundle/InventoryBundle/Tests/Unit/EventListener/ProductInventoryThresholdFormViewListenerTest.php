@@ -20,6 +20,7 @@ class ProductInventoryThresholdFormViewListenerTest extends AbstractFallbackFiel
             $this->doctrine,
             $this->translator
         );
+        $this->listener->setFieldAclHelper($this->fieldAclHelper);
     }
 
     /**

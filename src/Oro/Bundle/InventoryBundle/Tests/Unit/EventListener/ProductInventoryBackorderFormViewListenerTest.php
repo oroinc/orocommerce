@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\InventoryBundle\EventListener\ProductBackOrderFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,6 +46,10 @@ class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\T
      */
     protected $productBackOrderFormViewListener;
 
+
+    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $fieldAclHelper;
+
     /**
      * @var BeforeListRenderEvent
      */
@@ -58,13 +63,15 @@ class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\T
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
+        $this->translator
+            ->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
+            ->willReturnCallback(fn ($id) => $id . '.trans');
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
 
         $this->env = $this->createMock(Environment::class);
         $this->em = $this->createMock(EntityManager::class);
@@ -79,8 +86,9 @@ class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\T
         $this->productBackOrderFormViewListener = new ProductBackOrderFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
         );
+        $this->productBackOrderFormViewListener->setFieldAclHelper($this->fieldAclHelper);
 
         $this->event = new BeforeListRenderEvent(
             $this->env,

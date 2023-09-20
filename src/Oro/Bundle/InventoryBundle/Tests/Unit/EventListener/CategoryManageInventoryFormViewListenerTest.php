@@ -18,7 +18,8 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
         $this->listener = new CategoryManageInventoryFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

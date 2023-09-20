@@ -63,20 +63,23 @@
 
 {% block stats %}
     {{ parent() }}
-
-    <li>
-        {{- form.type.vars.label|trans -}}:&nbsp;{{- ('oro.product.type.' ~ form.type.vars.data)|trans|title -}}
-    </li>
-    <li>
-        {{- form.attributeFamily.vars.label|trans -}}:&nbsp;{{- form.attributeFamily.vars.data.defaultLabel|title -}}
-    </li>
+    {% if form.type is defined %}
+        <li>
+            {{- form.type.vars.label|trans -}}:&nbsp;{{- ('oro.product.type.' ~ form.type.vars.data)|trans|title -}}
+        </li>
+    {% endif %}
+    {% if form.attributeFamily is defined %}
+        <li>
+            {{- form.attributeFamily.vars.label|trans -}}:&nbsp;{{- form.attributeFamily.vars.data.defaultLabel|title -}}
+        </li>
+    {% endif %}
     {% placeholder oro_product_step_two_info with {'form' : form} %}
 {% endblock stats %}
 
 {% block content_data %}
     {% set id = 'product-create-step-two' %}
 
-    {%  set generalData = {
+    {% set generalData = {
         'sku': form_row(form.sku),
         'names': form_row(form.names)
     } %}
@@ -92,21 +95,28 @@
         ]) %}
     {% endif %}
 
-    {% set generalData = generalData|merge([form_row(form.slugPrototypesWithRedirect)]) %}
+    {% if form.slugPrototypesWithRedirect is defined %}
+        {% set generalData = generalData|merge([form_row(form.slugPrototypesWithRedirect)]) %}
+    {% endif %}
     {% if form.status is defined %}
         {% set generalData = generalData|merge([form_row(form.status)]) %}
     {% endif %}
-    {% set generalData = generalData|merge([
-        form_row(form.featured),
-        form_row(form.newArrival)
-    ]) %}
+    {% if form.featured is defined %}
+        {% set generalData = generalData|merge([form_row(form.featured)]) %}
+    {% endif %}
+    {% if form.newArrival is defined %}
+        {% set generalData = generalData|merge([form_row(form.newArrival)]) %}
+    {% endif %}
 
-    {% set additionalGeneralData = [
-        form_row(form.brand),
-        form_row(form.primaryUnitPrecision)
-    ] %}
+    {% set additionalGeneralData = [] %}
+    {% if form.brand is defined %}
+        {% set additionalGeneralData = additionalGeneralData|merge([form_row(form.brand)]) %}
+    {% endif %}
+    {% if form.primaryUnitPrecision is defined %}
+        {% set additionalGeneralData = additionalGeneralData|merge([form_row(form.primaryUnitPrecision)]) %}
+    {% endif %}
 
-    {% if oro_is_product_primary_unit_visible() %}
+    {% if oro_is_product_primary_unit_visible() and form.additionalUnitPrecisions is defined %}
         {% set additionalGeneralData = additionalGeneralData|merge([
             form_row(form.additionalUnitPrecisions)
         ]) %}
@@ -126,51 +136,63 @@
         }
     ]} %}
 
-    {% set dataBlocks = {
-        'general': generalBlock,
-        'short_description': {
-            'title': 'oro.product.short_descriptions.label'|trans,
-            'subblocks': [{
-                'title': '',
-                'data': [form_widget(form.shortDescriptions)],
-            }]
-        },
-        'description': {
-            'title': 'oro.product.descriptions.label'|trans,
-            'subblocks': [{
-                'title': '',
-                'data': [form_widget(form.descriptions)],
-            }]
-        }
-    } %}
+    {% set dataBlocks = {'general': generalBlock} %}
+
+    {% if form.shortDescriptions is defined %}
+        {% set dataBlocks = dataBlocks|merge({
+            'short_description': {
+                'title': 'oro.product.short_descriptions.label'|trans,
+                'subblocks': [{
+                    'title': '',
+                    'data': [form_widget(form.shortDescriptions)],
+                }]
+            }
+        }) %}
+    {% endif %}
+
+    {% if form.descriptions is defined %}
+        {% set dataBlocks = dataBlocks|merge({
+            'description': {
+                'title': 'oro.product.descriptions.label'|trans,
+                'subblocks': [{
+                    'title': '',
+                    'data': [form_widget(form.descriptions)],
+                }]
+            }
+        }) %}
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.product.sections.additional'|trans)) %}
 
-    {% set dataBlocks = dataBlocks|merge({
-        'inventory': {
-            'title': 'oro.product.sections.inventory'|trans,
-            'priority': 5,
-            'subblocks': [{
-                'title': '',
-                'data': {
-                    'inventory_status': form_row(form.inventory_status)
-                }
-            }]
-        }
-    }) %}
+    {% if form.inventory_status is defined %}
+        {% set dataBlocks = dataBlocks|merge({
+            'inventory': {
+                'title': 'oro.product.sections.inventory'|trans,
+                'priority': 5,
+                'subblocks': [{
+                    'title': '',
+                    'data': {
+                        'inventory_status': form_row(form.inventory_status)
+                    }
+                }]
+            }
+        }) %}
+    {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge({
-        'images': {
-            'title': 'oro.product.sections.images'|trans,
-            'priority': 0,
-            'subblocks': [{
-                'title': '',
-                'data': {
-                    'images': form_row(form.images)
-                }
-            }]
-        }
-    }) %}
+    {% if form.images is defined %}
+        {% set dataBlocks = dataBlocks|merge({
+            'images': {
+                'title': 'oro.product.sections.images'|trans,
+                'priority': 0,
+                'subblocks': [{
+                    'title': '',
+                    'data': {
+                        'images': form_row(form.images)
+                    }
+                }]
+            }
+        }) %}
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge({
         'design': {

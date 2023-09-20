@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -24,6 +25,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Adds field 'prices' on product edit form and process changes of product prices
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
@@ -41,6 +43,8 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
     /** @var ManagerRegistry */
     protected $registry;
 
+    private ?FieldAclHelper $fieldAclHelper = null;
+
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager,
@@ -51,6 +55,11 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
         $this->shardManager = $shardManager;
         $this->priceManager = $priceManager;
         $this->authorizationChecker = $authorizationChecker;
+    }
+
+    public function setFieldAclHelper(FieldAclHelper $fieldAclHelper): void
+    {
+        $this->fieldAclHelper = $fieldAclHelper;
     }
 
     /**
@@ -94,8 +103,6 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
                 $isAllowToCreate,
                 $this->isPermissionsGranted(['DELETE'])
             );
-
-            return;
         }
     }
 
@@ -107,6 +114,7 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
      */
     protected function addForm(FormInterface $form, Product $product = null, $allowAdd = true, $allowDelete = true)
     {
+        $isModifyGranted = $this->fieldAclHelper->isFieldModificationGranted($product, 'productPriceAttributesPrices');
         $form->add(
             'prices',
             ProductPriceCollectionType::class,
@@ -122,8 +130,10 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
                 'entry_options' => [
                     'product' => $product,
                 ],
-                'allow_add' => $allowAdd,
-                'allow_delete' => $allowDelete,
+                'prototype' => $isModifyGranted,
+                'allow_add' => $allowAdd && $isModifyGranted,
+                'allow_delete' => $allowDelete && $isModifyGranted,
+                'check_field_name' => 'productPriceAttributesPrices'
             ]
         );
     }

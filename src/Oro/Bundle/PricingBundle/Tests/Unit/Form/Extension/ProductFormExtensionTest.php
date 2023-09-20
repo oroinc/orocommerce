@@ -19,6 +19,7 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -51,6 +52,9 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $priceRepository;
 
+    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldAclHelper;
+
     /** @var ProductFormExtension */
     private $extension;
 
@@ -77,12 +81,19 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('OroPricingBundle:ProductPrice')
             ->willReturn($this->em);
 
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldModificationGranted')
+            ->willReturn(true);
+
         $this->extension = new ProductFormExtension(
             $registry,
             $this->shardManager,
             $this->priceManager,
-            $this->authorizationChecker
+            $this->authorizationChecker,
         );
+        $this->extension->setFieldAclHelper($this->fieldAclHelper);
     }
 
     public function testBuildFormFeatureDisabled()
@@ -360,7 +371,9 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                         'product' => $product,
                     ],
                     'allow_add' => true,
-                    'allow_delete' => true
+                    'allow_delete' => true,
+                    'prototype' => true,
+                    'check_field_name' => 'productPriceAttributesPrices'
                 ]
             );
         $form->expects($this->once())
@@ -446,7 +459,9 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                         'product' => $product,
                     ],
                     'allow_add' => $allowAdd,
-                    'allow_delete' => $allowDelete
+                    'allow_delete' => $allowDelete,
+                    'prototype' => true,
+                    'check_field_name' => 'productPriceAttributesPrices'
                 ]
             );
         $form->expects($this->once())

@@ -262,8 +262,17 @@ Feature: Editing related products
       | PSKU4 | Product 4 |
       | PSKU3 | Product 3 |
 
-  Scenario: Related items should not be editable on view if user has no permission
-    Given user has following permissions
+  Scenario: Related items should not be editable on view if user has permission
+    Given I proceed as the Manager
+    And I am on dashboard
+    And go to Products/ Products
+    And click View "PSKU1" in grid
+    Then I should see "Related Items"
+    And should see an "ProductViewRelatedItemQuickEdit" element
+
+  Scenario: Change permissions
+    Given I proceed as the Admin
+    And user has following permissions
       | Assign | Product | None   |
       | Create | Product | None   |
       | Delete | Product | None   |
@@ -271,9 +280,9 @@ Feature: Editing related products
       | View   | Product | Global |
     And user has following entity permissions enabled
       | [Related Products] Edit Related Products |
-    Then I proceed as the Manager
-    And I am on dashboard
-    And go to Products/ Products
-    And I click View "PSKU1" in grid
+
+  Scenario: Related items should not be editable on view if user has no permission
+    When I proceed as the Manager
+    And I reload the page
     Then I should see "Related Items"
     And I should not see an "ProductViewRelatedItemQuickEdit" element

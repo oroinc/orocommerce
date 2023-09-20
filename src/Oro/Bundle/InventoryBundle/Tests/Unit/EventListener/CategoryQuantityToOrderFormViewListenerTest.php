@@ -18,7 +18,8 @@ class CategoryQuantityToOrderFormViewListenerTest extends AbstractFallbackFields
         $this->listener = new CategoryQuantityToOrderFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

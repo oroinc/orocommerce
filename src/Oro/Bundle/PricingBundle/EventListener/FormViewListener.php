@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Exception\UnexpectedTypeException;
@@ -38,6 +39,7 @@ class FormViewListener implements FeatureToggleableInterface
     protected DoctrineHelper $doctrineHelper;
     protected PriceAttributePricesProvider $priceAttributePricesProvider;
     private AclHelper $aclHelper;
+    protected FieldAclHelper $fieldAclHelper;
 
     public function __construct(
         TranslatorInterface $translator,
@@ -53,11 +55,20 @@ class FormViewListener implements FeatureToggleableInterface
         $this->aclHelper = $aclHelper;
     }
 
+    public function setFieldAclHelper(FieldAclHelper $fieldAclHelper): void
+    {
+        $this->fieldAclHelper = $fieldAclHelper;
+    }
+
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $event->getEntity();
         if (!$product instanceof Product) {
             throw new UnexpectedTypeException($product, Product::class);
+        }
+
+        if (!$this->fieldAclHelper->isFieldViewGranted($event->getEntity(), 'productPriceAttributesPrices')) {
+            return;
         }
 
         $this->addPriceAttributesViewBlock($event, $product);
@@ -67,6 +78,11 @@ class FormViewListener implements FeatureToggleableInterface
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'productPriceAttributesPrices')) {
             return;
         }
 

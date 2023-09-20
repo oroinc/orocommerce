@@ -18,6 +18,10 @@ class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFo
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'inventoryThreshold')) {
+            return;
+        }
+
         $this->addBlockToEntityView(
             $event,
             '@OroInventory/Product/inventoryThreshold.html.twig',
@@ -28,6 +32,11 @@ class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFo
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'inventoryThreshold')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/inventoryThresholdFormWidget.html.twig',

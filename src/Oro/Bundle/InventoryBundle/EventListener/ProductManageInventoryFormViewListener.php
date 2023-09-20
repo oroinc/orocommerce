@@ -18,6 +18,10 @@ class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormV
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'manageInventory')) {
+            return;
+        }
+
         $this->addBlockToEntityView(
             $event,
             '@OroInventory/Product/manageInventory.html.twig',
@@ -28,6 +32,11 @@ class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormV
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'manageInventory')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/manageInventoryFormWidget.html.twig',

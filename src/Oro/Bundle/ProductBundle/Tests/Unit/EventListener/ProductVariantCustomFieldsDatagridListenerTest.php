@@ -17,6 +17,7 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Component\Testing\Unit\PropertyAccess\PropertyAccessTrait;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
@@ -62,6 +63,9 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
     /** @var \PHPUnit\Framework\MockObject\MockObject|VariantFieldProvider */
     private $variantFieldProvider;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FieldAclHelper */
+    private $fieldAclHelper;
+
     /** @var array|string[] */
     private $variantFields = [self::FIELD_SIZE];
 
@@ -85,7 +89,11 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->productRepository = $this->createMock(ProductRepository::class);
         $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
-
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAclEnabled')
+            ->willReturn(false);
         $this->customFieldProvider->expects($this->any())
             ->method('getEntityCustomFields')
             ->with(self::PRODUCT_CLASS)
@@ -105,6 +113,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
             self::PRODUCT_CLASS,
             self::PRODUCT_VARIANT_LINK_CLASS
         );
+        $this->listener->setFieldAclHelper($this->fieldAclHelper);
     }
 
     /**
@@ -404,21 +413,31 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
 
     public function testOnBuildAfterEditGrid()
     {
-        $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(AttributeFamily::class)
-            ->willReturn($attributeFamilyRepository);
-
         $attributeFamily = new AttributeFamily();
-
-        $attributeFamilyRepository->expects($this->once())
+        $product = new Product();
+        $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
+        $attributeFamilyRepository
+            ->expects($this->once())
             ->method('find')
             ->with(1)
             ->willReturn($attributeFamily);
 
-        $config = [];
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn($product);
+
+        $this->doctrineHelper
+            ->expects($this->any())
+            ->method('getEntityRepository')
+            ->willReturnMap([
+                [AttributeFamily::class, $attributeFamilyRepository],
+                ['productClass', $productRepository]
+            ]);
+
+
+        $config = [DatagridConfiguration::EXTENDED_ENTITY_NAME => Product::class];
         $this->prepareConfig($config, 'size');
         $this->prepareConfig($config, 'color');
         // Expected color and size both
@@ -442,16 +461,25 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
     public function testOnBuildAfterEditGridWithNoFamily()
     {
         $attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(AttributeFamily::class)
-            ->willReturn($attributeFamilyRepository);
-
         $attributeFamilyRepository->expects($this->once())
             ->method('find')
             ->with(1)
             ->willReturn(null);
+
+        $product = new Product();
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn($product);
+
+        $this->doctrineHelper
+            ->expects($this->any())
+            ->method('getEntityRepository')
+            ->willReturnMap([
+                [AttributeFamily::class, $attributeFamilyRepository],
+                ['productClass', $productRepository]
+            ]);
 
         $config = [];
         $datagridConfig = DatagridConfiguration::create($config);

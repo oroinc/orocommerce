@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Exception\UnexpectedTypeException;
@@ -22,6 +23,7 @@ class FormViewListener
     protected TranslatorInterface $translator;
     protected DoctrineHelper $doctrineHelper;
     protected AuthorizationCheckerInterface $authorizationChecker;
+    protected ?FieldAclHelper $fieldAclHelper = null;
 
     public function __construct(
         TranslatorInterface $translator,
@@ -31,6 +33,11 @@ class FormViewListener
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->authorizationChecker = $authorizationChecker;
+    }
+
+    public function setFieldAclHelper(FieldAclHelper $fieldAclHelper): void
+    {
+        $this->fieldAclHelper = $fieldAclHelper;
     }
 
     public function onProductView(BeforeListRenderEvent $event): void
@@ -53,6 +60,10 @@ class FormViewListener
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'category')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             '@OroCatalog/Product/category_view.html.twig',
             ['entity' => $category]
@@ -64,6 +75,11 @@ class FormViewListener
     public function onProductEdit(BeforeListRenderEvent $event): void
     {
         if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
+        $product = $event->getEntity();
+        if ($product && !$this->fieldAclHelper->isFieldAvailable($product, 'category')) {
             return;
         }
 

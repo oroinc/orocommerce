@@ -20,6 +20,7 @@ class ProductManageInventoryFormViewListenerTest extends AbstractFallbackFieldsF
             $this->doctrine,
             $this->translator
         );
+        $this->listener->setFieldAclHelper($this->fieldAclHelper);
     }
 
     /**

@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository
 use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
@@ -36,6 +37,8 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
     private AclHelper|\PHPUnit\Framework\MockObject\MockObject $aclHelper;
 
+    private FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject $fieldAclHelper;
+
     private Environment|\PHPUnit\Framework\MockObject\MockObject $env;
 
     private FormViewListener $listener;
@@ -47,22 +50,31 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+
         $this->env = $this->createMock(Environment::class);
 
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(self::any())
             ->method('trans')
-            ->willReturnCallback(function ($id) {
-                return $id . '.trans';
-            });
+            ->willReturnCallback(fn ($id) => $id . '.trans');
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldViewGranted')
+            ->willReturn(true);
 
         $this->listener = new FormViewListener(
             $translator,
             $this->doctrineHelper,
             $this->priceAttributePricesProvider,
             $this->authorizationChecker,
-            $this->aclHelper
+            $this->aclHelper,
         );
+        $this->listener->setFieldAclHelper($this->fieldAclHelper);
     }
 
     public function testOnProductEditFeatureDisabled(): void
@@ -193,7 +205,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                             ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                            ScrollData::PRIORITY => FormViewListener::PRICING_BLOCK_PRIORITY,
+                            ScrollData::PRIORITY => 1650,
                         ],
                         'price_attributes' => [
                             ScrollData::TITLE => 'oro.pricing.priceattributepricelist.entity_plural_label.trans',
@@ -205,7 +217,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                             ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                            ScrollData::PRIORITY => FormViewListener::PRICE_ATTRIBUTES_BLOCK_PRIORITY,
+                            ScrollData::PRIORITY => 1600,
                         ],
                         [
                             ScrollData::SUB_BLOCKS => [
@@ -233,7 +245,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                             ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                            ScrollData::PRIORITY => FormViewListener::PRICING_BLOCK_PRIORITY,
+                            ScrollData::PRIORITY => 1650,
                         ],
                         'price_attributes' => [
                             ScrollData::TITLE => 'oro.pricing.priceattributepricelist.entity_plural_label.trans',
@@ -251,7 +263,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                             ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                            ScrollData::PRIORITY => FormViewListener::PRICE_ATTRIBUTES_BLOCK_PRIORITY,
+                            ScrollData::PRIORITY => 1600,
                         ],
                         [
                             ScrollData::SUB_BLOCKS => [

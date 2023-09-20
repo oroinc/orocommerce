@@ -96,7 +96,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_30';
+        return 'v1_31';
     }
 
     /**
@@ -375,7 +375,8 @@ class OroProductBundleInstaller implements
                 'importexport' => ['order' => '25'],
                 'dataaudit' => ['auditable' => true],
                 'frontend' => ['use_in_export' => true],
-            ]
+                'security' => ['permissions' => 'VIEW;EDIT']
+            ],
         );
     }
 
@@ -600,7 +601,8 @@ class OroProductBundleInstaller implements
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_frontend.page_templates',
                 ],
-            ]
+            ],
+            ['security' => ['permissions' => 'VIEW;EDIT']]
         );
     }
 

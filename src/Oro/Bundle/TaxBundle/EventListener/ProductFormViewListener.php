@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -17,6 +18,7 @@ class ProductFormViewListener
     private RequestStack $requestStack;
     private DoctrineHelper $doctrineHelper;
     private FeatureChecker $featureChecker;
+    private ?FieldAclHelper $fieldAclHelper = null;
 
     public function __construct(
         RequestStack $requestStack,
@@ -26,6 +28,11 @@ class ProductFormViewListener
         $this->requestStack = $requestStack;
         $this->doctrineHelper = $doctrineHelper;
         $this->featureChecker = $featureChecker;
+    }
+
+    public function setFieldAclHelper(FieldAclHelper $fieldAclHelper): void
+    {
+        $this->fieldAclHelper = $fieldAclHelper;
     }
 
     public function onView(BeforeListRenderEvent $event): void
@@ -45,10 +52,15 @@ class ProductFormViewListener
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'taxCode')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             '@OroTax/Product/tax_code_view.html.twig',
             ['entity' => $product->getTaxCode()]
         );
+
         $event->getScrollData()->addSubBlockData('general', 1, $template);
     }
 
@@ -58,10 +70,16 @@ class ProductFormViewListener
             return;
         }
 
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'taxCode')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             '@OroTax/Product/tax_code_update.html.twig',
             ['form' => $event->getFormView()]
         );
+
         $event->getScrollData()->addSubBlockData('general', 1, $template);
     }
 }

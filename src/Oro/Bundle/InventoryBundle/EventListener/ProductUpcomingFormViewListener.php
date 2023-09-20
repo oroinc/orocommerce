@@ -18,6 +18,10 @@ class ProductUpcomingFormViewListener extends AbstractFallbackFieldsFormView
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'isUpcoming')) {
+            return;
+        }
+
         $this->addBlockToEntityView(
             $event,
             '@OroInventory/Product/upcoming_view.html.twig',
@@ -28,6 +32,10 @@ class ProductUpcomingFormViewListener extends AbstractFallbackFieldsFormView
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->fieldAclHelper->isFieldAvailable($event->getEntity(), 'isUpcoming')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/upcoming_edit.html.twig',

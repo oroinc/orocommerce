@@ -1262,6 +1262,9 @@ oro_behat_extension:
     Zoom Container:
       selector: '.zoomWindowContainer'
 
+    Navbar:
+      selector: '.navbar'
+
     Product navbar:
       selector: '#product-edit.navbar'
 

@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Adds primary unit precision fields.
+ */
 class ProductPrimaryUnitPrecisionType extends AbstractType
 {
     const NAME = 'oro_product_primary_unit_precision';
@@ -83,7 +86,8 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'compact' => false
+            'compact' => false,
+            'check_field_name' => null
         ]);
     }
 
