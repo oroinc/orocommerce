@@ -230,3 +230,16 @@ oro_behat_extension:
 
     ConfirmButton:
       selector: '.modal-footer .btn-primary'
+
+    Merge Allowed In Row 1:
+      selector:
+        locator: '//input[@type="checkbox" and contains(@name, "[0][mergeAllowed]")]'
+        type: 'xpath'
+    Merge Allowed In Row 2:
+      selector:
+        locator: '//input[@type="checkbox" and contains(@name, "[1][mergeAllowed]")]'
+        type: 'xpath'
+    Merge Allowed In Row 3:
+      selector:
+        locator: '//input[@type="checkbox" and contains(@name, "[2][mergeAllowed]")]'
+        type: 'xpath'

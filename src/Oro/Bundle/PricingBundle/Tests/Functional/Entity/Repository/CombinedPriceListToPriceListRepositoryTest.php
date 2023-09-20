@@ -149,8 +149,8 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
 
     public function fallbackCplDataProvider(): \Generator
     {
-        yield 'longest calculated not blocked fallback used' => ['1t_2t_3t_4t_5t_6t', '1t_3t_4t'];
-        yield 'longest calculated not blocked fallback consist of 1 PL and shouldn\'t be used' => ['1t_3t_4t', null];
+        yield 'longest calculated not blocked fallback used' => ['1t_2t_3t_4t_5t_6t', '4t_5f_6t'];
+        yield 'longest calculated not blocked fallback consist of 1 PL and shouldn\'t be used' => ['1t_3t', null];
     }
 
     /**
@@ -169,8 +169,8 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
 
     public function fallbackCplWithMergeFlagDataProvider(): \Generator
     {
-        yield 'longest calculated not blocked fallback used' => ['1t_2t_3t_4t_5t_6t', '1t_2t'];
-        //yield 'longest calculated not blocked fallback consist of 1 PL and shouldn\'t be used' => ['1t_3t_4t', null];
+        yield 'longest calculated not blocked fallback used' => ['1t_2t_3t_4t_5t_6t', '5t_6t'];
+        yield 'longest calculated not blocked fallback consist of 1 PL and shouldn\'t be used' => ['1t_3t', null];
     }
 
     private function getRepository(): CombinedPriceListToPriceListRepository
