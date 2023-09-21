@@ -15,7 +15,7 @@ Feature: Consent are stored correctly even if consent content node is not a part
       | Admin | first_session  |
       | User  | second_session |
     And I enable configuration options:
-      | oro_consent.consent_feature_enabled       |
+      | oro_consent.consent_feature_enabled |
 
   Scenario: Admin creates Landing Page and Content Node in Web Catalog
     Given I proceed as the Admin
@@ -36,8 +36,8 @@ Feature: Consent are stored correctly even if consent content node is not a part
     And I click on "Show Variants Dropdown"
     And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles       | Foo Node     |
-      | Url Slug     | foo-node     |
+      | Titles       | Foo Node      |
+      | Url Slug     | foo-node      |
       | Landing Page | Test CMS Page |
     When I save form
     Then I should see "Content Node has been saved" flash message
@@ -46,9 +46,9 @@ Feature: Consent are stored correctly even if consent content node is not a part
     And I click on "Show Variants Dropdown"
     And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles       | Bar Node |
-      | Url Slug     | bar-node |
-      | Landing Page | Consent Landing        |
+      | Titles       | Bar Node        |
+      | Url Slug     | bar-node        |
+      | Landing Page | Consent Landing |
     When I save form
     Then I should see "Content Node has been saved" flash message
     And I set "Store and Process" as default web catalog
@@ -64,7 +64,7 @@ Feature: Consent are stored correctly even if consent content node is not a part
     Then save and close form
 
   Scenario: Admin selects consents to be enabled on Frontstore
-    Given go to System/ Configuration
+    When I go to System/ Configuration
     And follow "Commerce/Customer/Consents" on configuration sidebar
     And fill "Consent Settings Form" with:
       | Enabled User Consents Use Default | false|
@@ -82,9 +82,9 @@ Feature: Consent are stored correctly even if consent content node is not a part
     Then I should see "Configuration saved" flash message
 
   Scenario: Logged User creates shopping list and go to rfq and check consent page
-    Given I signed in as AmandaRCole@example.org on the store frontend
-    And I open page with shopping list ShoppingList1
-    And I scroll to top
+    Given I proceed as the User
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I open page with shopping list ShoppingList1
     And I wait line items are initialized
     And I click "More Actions"
     And I click "Request Quote"
@@ -96,20 +96,17 @@ Feature: Consent are stored correctly even if consent content node is not a part
 
   Scenario: Admin check signed consent for the customer user
     Given I proceed as the Admin
-    And I login as administrator
-    And I go to Customers / Customer Users
+    When I go to Customers / Customer Users
     Then I click on AmandaRCole@example.org in grid
     And I click on "Customer user View page Consent Link"
     And I should see "Test landing page description"
     And I should not see "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
   Scenario:  Admin change actual consent page to a different one
-    Given I proceed as the Admin
-    And I login as administrator
-    And go to Marketing/ Web Catalogs
+    When go to Marketing/ Web Catalogs
     Then I click on Store and Process in grid
     And I click "Edit Content Tree"
-    Then I click "Foo Node"
+    Then I click on "Foo Node"
     And I click on "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Landing Page | Consent Landing |
@@ -117,9 +114,9 @@ Feature: Consent are stored correctly even if consent content node is not a part
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Logged User creates shopping list and go to rfq and sign changed consent page
-    Given I signed in as MarleneSBradley@example.com on the store frontend
-    And I open page with shopping list ShoppingList2
-    And I scroll to top
+    Given I proceed as the User
+    And I signed in as MarleneSBradley@example.com on the store frontend
+    When I open page with shopping list ShoppingList2
     And I wait line items are initialized
     And I click "More Actions"
     And I click "Request Quote"
@@ -132,8 +129,7 @@ Feature: Consent are stored correctly even if consent content node is not a part
 
   Scenario: Admin check signed consent for the customer user
     Given I proceed as the Admin
-    And I login as administrator
-    And I go to Customers / Customer Users
+    When I go to Customers / Customer Users
     Then I click on MarleneSBradley@example.com in grid
     And I click on "Customer user View page Consent Link"
     And I should not see "Test landing page description"

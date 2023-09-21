@@ -71,7 +71,7 @@ class FeatureContext extends OroFeatureContext implements
         $grid->clickActionLink($poNumber, 'View');
         $this->waitForAjax();
 
-        $this->getPage()->clickLink('Create Quote');
+        $this->getPage()->clickOrPress('Create Quote');
         $this->waitForAjax();
 
         $unitPrice = $this->getPage()->findField(

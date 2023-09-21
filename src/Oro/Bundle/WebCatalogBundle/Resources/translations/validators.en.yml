@@ -11,5 +11,7 @@ oro:
                 empty.message: 'Content node must have at least one restriction'
             content_variants:
                 blank: 'Please add one or more content variants.'
+            denied_deletion_due_to_child: 'This node cannot be deleted because it’s child node “%nodeName%” is referenced in ”%key%” %subject%'
+            denied_deletion_itself: 'This node cannot be deleted because it is referenced in ”%key%” %subject%'
         contentvariant:
             same_organization.message: 'The content variant and web-catalog must belong to the same organization.'
