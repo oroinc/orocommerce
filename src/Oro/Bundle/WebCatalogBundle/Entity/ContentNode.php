@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate;
+use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -64,6 +66,7 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
  * )
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultTitle()
  * @method LocalizedFallbackValue getSlugPrototype(Localization $localization = null)
@@ -243,6 +246,19 @@ class ContentNode implements
     public $sibling;
 
     /**
+     * @var Collection|MenuUpdate[]
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate", mappedBy="contentNode")
+     */
+    private $referencedMenuItems;
+
+    /**
+     * @var
+     * @var Collection|Consent[]
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\ConsentBundle\Entity\Consent", mappedBy="contentNode")
+     */
+    private $referencedConsents;
+
+    /**
      * ContentNode Constructor
      */
     public function __construct()
@@ -254,6 +270,9 @@ class ContentNode implements
         $this->contentVariants = new ArrayCollection();
         $this->localizedUrls = new ArrayCollection();
         $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
+
+        $this->referencedMenuItems = new ArrayCollection();
+        $this->referencedConsents = new ArrayCollection();
     }
 
     /**
@@ -600,6 +619,22 @@ class ContentNode implements
     public function hasLocalizedUrl(LocalizedFallbackValue $url)
     {
         return $this->localizedUrls->contains($url);
+    }
+
+    /**
+     * @return Collection|MenuUpdate[]
+     */
+    public function getReferencesInMenu(): Collection
+    {
+        return $this->referencedMenuItems;
+    }
+
+    /**
+     * @return Collection|Consent[]
+     */
+    public function getReferencesInConsents(): Collection
+    {
+        return $this->referencedConsents;
     }
 
     public function __clone()

@@ -1,4 +1,9 @@
 services:
+    _instanceof:
+        Oro\Bundle\WebCatalogBundle\ContentNodeDeletionChecker\ContentNodeDeletionCheckerInterface:
+            tags:
+                - { name: 'content_node.deletion_checker' }
+                
     oro_web_catalog.provider.web_catalog_usage_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider
         public: false
@@ -549,3 +554,20 @@ services:
             - '@property_accessor'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_web_catalog_content_node, method: onFormAfterFlush }
+
+    oro_web_catalog.content_node.deletion_resolver:
+        class: Oro\Bundle\WebCatalogBundle\Resolver\ContentNodeDeletionResolver
+        arguments:
+            - '@translator'
+            - !tagged_iterator content_node.deletion_checker
+        public: true
+
+    Oro\Bundle\WebCatalogBundle\ContentNodeDeletionChecker\ContentNodeEntityReferencesChecker:
+        arguments:
+            - '@translator'
+
+    Oro\Bundle\WebCatalogBundle\ContentNodeDeletionChecker\ContentNodeInConfigReferencesChecker:
+        arguments:
+            - '@translator'
+            - '@oro_config.manager'
+            - '@oro_website.website.provider'
