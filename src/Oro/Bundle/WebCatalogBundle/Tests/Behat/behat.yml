@@ -205,6 +205,8 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//label[contains(., "Sub-Categories")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+        Delete Current Content Node Button:
+            selector: '.navigation button[data-action-name="oro_web_catalog_delete_content_node"]'
 
     pages:
         Content Node Update:
@@ -225,5 +227,6 @@ oro_behat_extension:
                 - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
                 - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
             paths:
                 - '@OroWebCatalogBundle/Tests/Behat/Features'

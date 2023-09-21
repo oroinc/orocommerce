@@ -125,6 +125,12 @@ Feature: Set web catalog node as a root node
 
   Scenario: Remove current navigation root
     Given I proceed as the Admin
+    And follow "System Configuration/Websites/Routing" on configuration sidebar
+    And uncheck "Use default" for "Navigation Root" field
+    Given I click on "Default Web Catalog"
+    When I click "Save settings"
+    Then I should see "Configuration saved" flash message
+
     And I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click on "Clearance"

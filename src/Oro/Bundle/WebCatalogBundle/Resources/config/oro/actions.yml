@@ -20,6 +20,30 @@ operations:
             - for_all_datagrids
             - for_all_entities
             - preconditions
+        preactions:
+            -   '@assign_value':  [$.buttonTooltip, null]
+            -   '@assign_value':  [$.visible, true]
+            -   '@call_service_method':
+                    conditions:
+                        '@not_blank': $.data
+                    parameters:
+                        service: oro_web_catalog.content_node.deletion_resolver
+                        method: checkOnNotDeletableContentNodeUsingTree
+                        method_parameters: [$.data]
+                        attribute: $.notDeletableContentNodeContext
+            -   '@assign_value':
+                    conditions:
+                        '@not_blank': $.notDeletableContentNodeContext
+                    parameters:
+                        '@assign_value':  [$.visible, false]
+            -   '@call_service_method':
+                    conditions:
+                        '@not_blank': $.notDeletableContentNodeContext
+                    parameters:
+                        service: oro_web_catalog.content_node.deletion_resolver
+                        method: getDeletionWarningMessage
+                        method_parameters: [ $.notDeletableContentNodeContext ]
+                        attribute: $.buttonTooltip
         preconditions:
             '@not_blank': $.data
         routes:
@@ -30,3 +54,9 @@ operations:
                 route: 'oro_content_node_update_root'
                 route_parameters:
                     id: $.data.webCatalog.id
+        frontend_options:
+            title: $.buttonTooltip
+        button_options:
+            template: '@OroWebCatalog/Action/deleteButton.html.twig'
+            data:
+                visible: $.visible
