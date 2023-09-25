@@ -302,3 +302,64 @@ export const getNodeSiblings = (node, {callback = () => true, direction = 'next'
 
     return direction === 'previous' ? siblings.reverse() : siblings;
 };
+
+/**
+ * Return flat array with child nodes of element
+ *
+ * @param {Element} rootNode
+ * @returns {(Element|Array)}
+ */
+export const flatNodeList = rootNode => {
+    if (rootNode.nodeType === Element.TEXT_NODE) {
+        return rootNode;
+    }
+
+    return [...rootNode.childNodes].map(node => {
+        if (node.childNodes) {
+            return flatNodeList(node);
+        }
+        return node;
+    }).flat(Infinity);
+};
+
+/**
+ * Apply range selection into contenteditable element
+ *
+ * @param {Element} container
+ * @param {Object} range
+ * @param {number} range.startOffset
+ * @param {number} range.endOffset
+ * @param {Node} range.startContainer
+ * @param {Node} range.endContainer
+ * @param {Node|Element} range.commonAncestorContainer
+ * @param {document} doc
+ */
+export const applyRange = (container, range, doc = document) => {
+    const selection = doc.getSelection();
+
+    if (range) {
+        const newRange = doc.createRange();
+
+        flatNodeList(container).forEach(node => {
+            if (node.isEqualNode(range.commonAncestorContainer)) {
+                newRange.setStart(node, range.startOffset);
+                newRange.setEnd(node, range.endOffset);
+
+                return;
+            }
+
+            if (node.isEqualNode(range.startContainer)) {
+                newRange.setStart(node, range.startOffset);
+            }
+            if (node.isEqualNode(range.endContainer)) {
+                newRange.setEnd(node, range.endOffset);
+            }
+        });
+
+        selection.removeAllRanges();
+        selection.addRange(newRange);
+    } else {
+        selection.selectAllChildren(container);
+        selection.collapseToEnd();
+    }
+};

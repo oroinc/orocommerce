@@ -11,7 +11,7 @@ export default (BaseTypeModel, {editor}) => {
         init() {
             const components = this.get('components');
 
-            if (!components.length && !this.get('wrapping')) {
+            if (!components.length && !this.get('wrapping') && this.get('tagName') === 'div') {
                 components.add([{
                     type: 'textnode',
                     content: __('oro.cms.wysiwyg.component.text.content')
@@ -24,6 +24,11 @@ export default (BaseTypeModel, {editor}) => {
         replaceWith(el, updateStyle = true) {
             const styles = this.getStyle();
             const classes = this.getClasses();
+
+            if (typeof el === 'string' && !el.startsWith('<')) {
+                el = `<div>${el}</div>`;
+            }
+
             const newModels = TextTypeModel.__super__.replaceWith.call(this, el);
 
             if (updateStyle) {
