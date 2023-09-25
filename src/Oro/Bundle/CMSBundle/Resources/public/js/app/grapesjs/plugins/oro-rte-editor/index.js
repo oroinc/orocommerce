@@ -154,6 +154,135 @@ const GrapesjsRteEditor = BaseClass.extend({
 });
 
 export default editor => {
+    const {UndoManager} = editor;
+
+    const setContent = (component, content, {
+        useOuterHTML = false,
+        selected = false,
+        sync = true,
+        ...options
+    } = {}) => {
+        const {editor} = component;
+        if (useOuterHTML) {
+            const stateModel = component.get('stateModel');
+
+            const [model] = component.replaceWith(content, {
+                updateStyle: false
+            });
+
+            model.set('stateModel', stateModel);
+            if (selected) {
+                editor.select([model]);
+            }
+
+            return;
+        } else {
+            component.components(content, options);
+        }
+
+        if (selected) {
+            editor.select([component]);
+        }
+
+        if (sync && typeof component.syncContent() === 'function') {
+            component.syncContent();
+        }
+    };
+
+    // Extend Undo/Redo flow in editor UndoManager
+    const originalUndo = UndoManager.undo;
+    const originalRedo = UndoManager.redo;
+
+    editor.on('component:selected', (component, opts) => {
+        if (opts.wrapping && component.get('stateModel')) {
+            component.get('stateModel').set('useOuterHTML', true);
+        }
+
+        if (opts.fromLayers && opts.useValid) {
+            component.unset('stateModel');
+        }
+    });
+
+    editor.on('component:mount', component => {
+        const parent = component.parent();
+
+        const [origin, ...duplicates] = parent
+            .components()
+            .filter(({ccid}) => ccid === component.ccid || component.ccid.startsWith(ccid))
+            .reverse();
+
+        if (duplicates.length) {
+            UndoManager.skip(() => {
+                const originId = duplicates[0].getId();
+                duplicates.forEach(d => d.remove());
+                origin.setId(originId);
+            });
+        }
+
+        if (parent.get('wrapping')) {
+            const index = parent.index();
+            const prev = parent.collection.at(index - 1);
+
+            if (component.ccid.startsWith(prev.ccid)) {
+                UndoManager.skip(() => {
+                    parent.remove();
+                    editor.select(prev);
+                });
+            }
+        }
+    });
+
+    editor.once('destroy', () => {
+        editor.off('component:selected');
+        editor.off('component:mount');
+    });
+
+    UndoManager.undo = function(...args) {
+        const selected = editor.getSelected();
+
+        if (selected && selected.get('stateModel')) {
+            const stateModel = selected.get('stateModel');
+
+            if (stateModel.undo()) {
+                return UndoManager.skip(() => setContent(
+                    selected,
+                    stateModel.getState().content,
+                    {
+                        useOuterHTML: stateModel.get('useOuterHTML'),
+                        selected: true
+                    })
+                );
+            } else {
+                UndoManager.skip(() => editor.selectRemove(selected));
+                return originalUndo.apply(this, args);
+            }
+        }
+
+        return originalUndo.apply(this, args);
+    };
+
+    UndoManager.redo = function(...args) {
+        const selected = editor.getSelected();
+
+        if (selected && selected.get('stateModel')) {
+            const stateModel = selected.get('stateModel');
+
+            if (stateModel.redo()) {
+                return UndoManager.skip(() => setContent(
+                    selected,
+                    stateModel.getState().content,
+                    {
+                        useOuterHTML: stateModel.get('useOuterHTML'),
+                        selected: true
+                    })
+                );
+            } else {
+                UndoManager.skip(() => editor.selectRemove(selected));
+                return originalRedo.apply(this, args);
+            }
+        }
+        return originalRedo.apply(this, args);
+    };
+
     editor.RteEditor = new GrapesjsRteEditor({editor});
 };
-

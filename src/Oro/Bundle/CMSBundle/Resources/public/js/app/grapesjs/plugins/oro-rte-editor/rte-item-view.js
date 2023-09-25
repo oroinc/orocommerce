@@ -1,3 +1,4 @@
+import {debounce} from 'underscore';
 import BaseView from 'oroui/js/app/views/base/view';
 
 const btnState = {
@@ -22,6 +23,7 @@ const RteItemView = BaseView.extend({
     },
 
     constructor: function RteItemView(options) {
+        this.selectComponentsDebounced = debounce(this.selectComponents.bind(this));
         RteItemView.__super__.constructor.call(this, options);
     },
 
@@ -48,6 +50,7 @@ const RteItemView = BaseView.extend({
         }
 
         this.$el.tooltip('dispose');
+        this.selectComponentsDebounced.cancel();
 
         RteItemView.__super__.dispose.call(this);
     },
@@ -61,7 +64,10 @@ const RteItemView = BaseView.extend({
 
         if (handlers) {
             for (const [name, callback] of Object.entries(handlers)) {
-                this.listenTo(this.collection, name, callback.bind(this, this.getRteParams()));
+                this.listenTo(this.collection, name, () => {
+                    callback.call(this, this.getRteParams());
+                    this.emitEditableValueChange();
+                });
             }
         }
     },
@@ -104,7 +110,7 @@ const RteItemView = BaseView.extend({
     /**
      * Set custom HTML to the selection, useful as the default 'insertHTML' command
      * doesn't work in the same way on all browsers
-     * @param  {string} value HTML string
+     * @param {string} value HTML string
      */
     insertHTML(value, {select} = {}) {
         const doc = this.getDoc();
@@ -134,12 +140,21 @@ const RteItemView = BaseView.extend({
                             add.set('selectable', true);
                             add.removeAttributes('data-temp');
                         });
-                        this.editor.select(added);
+
+                        this.selectComponentsDebounced(added);
                     }
                 });
                 model.trigger('disable');
             }
         }
+    },
+
+    /**
+     * Select components in editor canvas
+     * @param {array} components
+     */
+    selectComponents(components = []) {
+        this.editor.select(components);
     },
 
     /**
@@ -153,6 +168,8 @@ const RteItemView = BaseView.extend({
                     ...this.model.attributes,
                     btn: this.el
                 });
+
+                this.emitEditableValueChange();
             } else if (this.model.get('command')) {
                 doc.execCommand(this.model.get('command'), false, null);
             }
@@ -166,7 +183,17 @@ const RteItemView = BaseView.extend({
     onKeyDown(event) {
         if (this.model.get('onKeyDown')) {
             this.model.get('onKeyDown').call(this, this.getRteParams(), event);
+
+            this.emitEditableValueChange();
         }
+    },
+
+    emitEditableValueChange() {
+        this.editableEl.dispatchEvent(new InputEvent('input', {
+            isComposing: true
+        }));
+
+        this.editableEl.focus();
     },
 
     /**

@@ -273,6 +273,12 @@ oro_behat_extension:
         Import Button:
             selector: 'span[data-original-title="Source Code"]'
 
+        Undo Editor:
+            selector: 'span[data-original-title="Undo"]'
+
+        Redo Editor:
+            selector: 'span[data-original-title="Redo"]'
+
         Example1 svg wysiwyg image:
             selector:
                 type: 'xpath'

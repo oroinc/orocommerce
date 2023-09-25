@@ -878,6 +878,8 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _onLoadBuilder() {
+        const {UndoManager} = this.builder;
+
         this._panelManagerModule = new PanelManagerModule({
             builder: this.builder,
             themes: this.themes
@@ -900,6 +902,8 @@ const GrapesjsEditorView = BaseView.extend({
         this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
 
         if (this.$el.valid()) {
+            // Disable UndoManager tracking changes while parse and add initial components
+            UndoManager.stop();
             this.builder.setComponents(escapeWrapper(this.$el.val()));
             this.builder.setStyle(this.builder.getPureStyleString(this.$stylesInputElement.val()));
         }
@@ -915,6 +919,8 @@ const GrapesjsEditorView = BaseView.extend({
             this.builder.trigger('editor:rendered');
             this.subview('loadingMask').hide();
             this._resolveDeferredRender();
+            // Start tracking history after editor initialize have been done
+            UndoManager.start();
         }).catch(error => console.error(error));
     },
 

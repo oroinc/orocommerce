@@ -3,6 +3,7 @@ import BaseCollectionView from 'oroui/js/app/views/base/collection-view';
 import template from 'tpl-loader!orocms/templates/plugins/rte-collection-view-template.html';
 import RteItemView from './rte-item-view';
 import {isBlockFormatted} from '../components/rte/utils/utils';
+import RteStateView from './state/rte-state-view';
 
 const RteCollectionView = BaseCollectionView.extend({
     optionNames: BaseCollectionView.prototype.optionNames.concat([
@@ -37,6 +38,12 @@ const RteCollectionView = BaseCollectionView.extend({
         RteCollectionView.__super__.initialize.call(this, options);
         this.spansToSave = this.$editableEl[0].querySelectorAll('span');
         this.doc = this.editableEl.ownerDocument;
+
+        this.subview('rteState', new RteStateView({
+            el: this.$editableEl[0],
+            doc: this.doc,
+            editor: this.editor
+        }));
     },
 
     /**
@@ -168,6 +175,7 @@ const RteCollectionView = BaseCollectionView.extend({
         this.spansToSave = [];
         this.spansToRemove = [];
         this.editableEl.normalize();
+
         RteCollectionView.__super__.dispose.call(this);
 
         this.editor.trigger('rte:disable');
