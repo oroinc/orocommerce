@@ -167,7 +167,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->client->followRedirects();
 
         $crawler = $this->client->getCrawler();
-        $button = $crawler->selectLink('Duplicate');
+        $button = $crawler->selectButton('Duplicate');
         $this->assertCount(1, $button);
         $buttonOptions = json_decode((string) $button->attr('data-options'), true, 512, JSON_THROW_ON_ERROR);
 
@@ -574,7 +574,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testDelete(int $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
-        $button = $crawler->selectLink('Delete');
+        $button = $crawler->selectButton('Delete');
         $this->assertNotEmpty($button);
         $buttonOptions = json_decode((string) $button->attr('data-options'), true, 512, JSON_THROW_ON_ERROR);
 

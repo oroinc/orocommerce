@@ -381,6 +381,11 @@ action_groups:
                             source: $.checkout.sourceEntity
                         results:
                             preparedSettings: $.settings
+                    - '@call_service_method':
+                          service: oro_checkout.provider.prepare_checkout_settings_provider
+                          method: prepareSettings
+                          method_parameters: [$.checkout, $.preparedSettings]
+                          attribute: $.preparedSettings
 
                     - '@copy_values': [$.settings, $.preparedSettings]
 

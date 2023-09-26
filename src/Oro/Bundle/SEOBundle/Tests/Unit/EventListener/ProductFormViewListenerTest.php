@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
@@ -14,11 +15,24 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var ProductFormViewListener */
     private $listener;
 
+    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldAclHelper;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->listener = new ProductFormViewListener($this->translator);
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldViewGranted')
+            ->willReturn(true);
+
+        $this->listener = new ProductFormViewListener($this->translator, $this->fieldAclHelper);
     }
 
     public function testOnProductView()

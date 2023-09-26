@@ -1,0 +1,36 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName:
+        string: 'Product'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        type: 'simple'
+        sku: '1GB81'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+        __calls:
+            - addName: ['@productName']
+            - addUnitPrecision: ['@productUnitPrecision']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productItemPrice:
+        product: '@product'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 100
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product'
+        priceList: '@defaultPriceList'

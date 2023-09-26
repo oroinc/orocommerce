@@ -81,7 +81,9 @@ Feature: Product with fractional prices view
     And click edit "PSKU1" in grid
     And I add price 10,88 to Price Attribute MSRP
     When I save and close form
-    Then I should see "Each 10,88 $" in the "Product Price Attributes Table" element
+    Then I should see following "MSRP Product Price Attributes Grid" grid:
+      | Unit | USD   |
+      | each | 10,88 |
 
   Scenario: Grid view of price attributes on product view page in backoffice is formatted according to locale settings
     And go to System/ Configuration

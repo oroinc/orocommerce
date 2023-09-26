@@ -106,7 +106,7 @@ class Consent implements
     /**
      * @var ContentNode
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentNode")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentNode", inversedBy="referencedConsents")
      * @ORM\JoinColumn(name="content_node_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={

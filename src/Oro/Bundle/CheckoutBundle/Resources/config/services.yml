@@ -931,3 +931,9 @@ services:
         class: Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider
         arguments:
             - '@oro_entity.entity_alias_resolver'
+
+    oro_checkout.provider.prepare_checkout_settings_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\PrepareCheckoutSettingsProvider
+        arguments:
+            - '@event_dispatcher'
+        public: true

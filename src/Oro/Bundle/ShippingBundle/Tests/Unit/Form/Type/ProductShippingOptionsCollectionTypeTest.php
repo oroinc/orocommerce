@@ -32,7 +32,8 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
                 'show_form_when_empty' => false,
                 'entry_options' => [
                     'data_class' => self::DATA_CLASS
-                ]
+                ],
+                'check_field_name' => null
             ]);
 
         $this->formType->configureOptions($resolver);

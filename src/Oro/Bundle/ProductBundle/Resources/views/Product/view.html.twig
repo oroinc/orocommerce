@@ -21,15 +21,17 @@
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
-    <span class="page-title__status">
-        {% if not entity.status %}
-            {# status not defined #}
-        {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
-            {{ UI.badge('oro.product.status.enabled'|trans, 'enabled') }}
-        {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
-            {{ UI.badge('oro.product.status.disabled'|trans, 'disabled') }}
-        {% endif %}
-    </span>
+    {% if is_granted('VIEW', entity, 'status') %}
+        <span class="page-title__status">
+            {% if not entity.status %}
+                {# status not defined #}
+            {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
+                {{ UI.badge('oro.product.status.enabled'|trans, 'enabled') }}
+            {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
+                {{ UI.badge('oro.product.status.disabled'|trans, 'disabled') }}
+            {% endif %}
+        </span>
+    {% endif %}
 {% endblock breadcrumbs %}
 
 {% block content_data %}
@@ -49,11 +51,14 @@
         {% endembed %}
     {% endset %}
 
-    {% set additionalGeneralData = {
-        'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand),
-    } %}
+    {% set additionalGeneralData = {} %}
+    {% if is_granted('VIEW', entity, 'brand') %}
+        {% set additionalGeneralData = additionalGeneralData|merge({
+            'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand),
+        }) %}
+    {% endif %}
 
-    {% if oro_is_product_primary_unit_visible(entity) %}
+    {% if oro_is_product_primary_unit_visible(entity) and is_granted('VIEW', entity, 'unitPrecisions') %}
         {% set primaryUnitPrecisionElement %}
             {{ oro_format_product_unit_precision_label(entity.primaryUnitPrecision.unit.code, entity.primaryUnitPrecision.precision) }}
         {% endset %}
@@ -80,58 +85,73 @@
             ] %}
             {% set rows = rows|merge([row]) %}
         {% endfor %}
-
-        {% set additionalGeneralData = additionalGeneralData|merge({
-            'additionalUnitPrecisions' : UI.renderHtmlProperty(
-                'oro.product.additional_unit_precisions.label'|trans,
-                UI.renderTable(titles,rows,"grid grid-main-container table unit-table"),
-                null,
-                null,
-                {
-                    rootClass: 'attribute-item--mobile-full'
-                }
-            )
-        }) %}
+        {% if is_granted('VIEW', entity, 'unitPrecisions') %}
+            {% set additionalGeneralData = additionalGeneralData|merge({
+                'additionalUnitPrecisions' : UI.renderHtmlProperty(
+                    'oro.product.additional_unit_precisions.label'|trans,
+                    UI.renderTable(titles,rows,"grid grid-main-container table unit-table"),
+                    null,
+                    null,
+                    {
+                        rootClass: 'attribute-item--mobile-full'
+                    }
+                )
+            }) %}
+        {% endif %}
     {% endif %}
 
-    {% set dataBlocks = {
-        'general': {
-            'title': 'oro.product.sections.general'|trans,
-            'subblocks': [
-                {
-                    'data' : {
-                        'sku': UI.renderProperty('oro.product.sku.label'|trans, entity.sku, null, null, {'dir': 'ltr'}),
-                        'names': UI.renderProperty('oro.product.names.label'|trans, entity.defaultName),
-                        'info': productInfo,
-                        'attributeFamily': UI.renderProperty('oro.product.attribute_family.label'|trans, entity.attributeFamily),
-                        'featured': UI.renderProperty('oro.product.featured.label'|trans, entity.featured ? 'oro.product.featured.yes'|trans : 'oro.product.featured.no'|trans),
-                        'newArrival': UI.renderProperty('oro.product.new_arrival.label'|trans, entity.newArrival ? 'oro.product.new_arrival.yes'|trans : 'oro.product.new_arrival.no'|trans),
-                    }
-                },
-                {'data' : additionalGeneralData}
-            ]
-        },
-        'short_description': {
-            'title': 'oro.product.short_descriptions.label'|trans,
-            'subblocks': [
-                {
-                    'data' : {
+    {% set generalDataBlock = {
+        'sku': UI.renderProperty('oro.product.sku.label'|trans, entity.sku, null, null, {'dir': 'ltr'}),
+        'names': UI.renderProperty('oro.product.names.label'|trans, entity.defaultName),
+        'info': productInfo
+    } %}
+    {% if is_granted('VIEW', entity, 'attributeFamily') %}
+        {% set generalDataBlock = generalDataBlock|merge({'attributeFamily': UI.renderProperty('oro.product.attribute_family.label'|trans, entity.attributeFamily)}) %}
+    {% endif %}
+    {% if is_granted('VIEW', entity, 'featured') %}
+        {% set generalDataBlock = generalDataBlock|merge({'featured': UI.renderProperty('oro.product.featured.label'|trans, entity.featured ? 'oro.product.featured.yes'|trans : 'oro.product.featured.no'|trans)}) %}
+    {% endif %}
+    {% if is_granted('VIEW', entity, 'newArrival') %}
+        {% set generalDataBlock = generalDataBlock|merge({'newArrival': UI.renderProperty('oro.product.new_arrival.label'|trans, entity.newArrival ? 'oro.product.new_arrival.yes'|trans : 'oro.product.new_arrival.no'|trans)}) %}
+    {% endif %}
+
+    {% set dataBlocks = {} %}
+    {% if (generalDataBlock or additionalGeneralData) %}
+        {% set subblocks = [] %}
+        {% set subblocks = subblocks|merge([{'data': generalDataBlock}]) %}
+        {% set subblocks = subblocks|merge([{'data': additionalGeneralData}]) %}
+        {% set dataBlocks = {'general': {'title': 'oro.product.sections.general'|trans,'subblocks': subblocks}} %}
+    {% endif %}
+
+
+    {% if is_granted('VIEW', entity, 'shortDescriptions') %}
+        {% set dataBlocks = dataBlocks|merge({
+            'short_description': {
+                'title': 'oro.product.short_descriptions.label'|trans,
+                'subblocks': [
+                    {
+                        'data' : {
                         'shortDescriptions': UI.renderCollapsibleWysiwygContentPreview(entity.defaultShortDescription, entity, 'defaultShortDescription', 'oro.product.simplified_preview.message'),
                     }
-                }
-            ]
-        },
-        'description': {
-            'title': 'oro.product.descriptions.label'|trans,
-            'subblocks': [
-                {
-                    'data' : {
+                    }
+                ]
+            }
+        }) %}
+    {% endif %}
+    {% if is_granted('VIEW', entity, 'descriptions') %}
+        {% set dataBlocks = dataBlocks|merge({
+            'description': {
+                'title': 'oro.product.descriptions.label'|trans,
+                'subblocks': [
+                    {
+                        'data' : {
                         'descriptions': UI.renderCollapsibleWysiwygContentPreview(entity.defaultDescription, entity, 'defaultDescription', 'oro.product.simplified_preview.message'),
                     }
-                }
-            ]
-        }
-    } %}
+                    }
+                ]
+            }
+        }) %}
+    {% endif %}
 
     {% if entity.isConfigurable %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -150,9 +170,10 @@
         }] ) %}
     {% endif %}
 
-    {% set imagesData = '' %}
-    {% if entity.images.count %}
-        {% set imagesData = UI.renderHtmlProperty(
+    {% if is_granted('VIEW', entity, 'images') %}
+        {% set imagesData = '' %}
+        {% if entity.images.count %}
+            {% set imagesData = UI.renderHtmlProperty(
                 'oro.product.images.label'|trans,
                 Image.renderProductImages(sort_product_images(entity.images), imageTypes),
                 null,
@@ -160,25 +181,40 @@
                 {
                     rootClass: 'attribute-item--mobile-full'
                 }
-            )
-        %}
-    {% else %}
-        {% set imagesData %}
-            <div class="no-data">
-                {{ 'oro.product.form.no_images'|trans }}
-            </div>
-        {% endset %}
+            ) %}
+        {% else %}
+            {% set imagesData %}
+                <div class="no-data">
+                    {{ 'oro.product.form.no_images'|trans }}
+                </div>
+            {% endset %}
+        {% endif %}
+
+        {% set dataBlocks = dataBlocks|merge({
+            'images': {
+                'title': 'oro.product.sections.images'|trans,
+                'priority': 100,
+                'subblocks': [{
+                    'data': {'images': imagesData}
+                }]
+            }
+        }) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge({
-        'images': {
-            'title': 'oro.product.sections.images'|trans,
-            'priority': 100,
-            'subblocks': [{
-                'data': {'images': imagesData}
-            }]
-        }
-    }) %}
+    {% if is_granted('VIEW', entity, 'inventory_status') %}
+        {% set dataBlocks = dataBlocks|merge({
+            'inventory': {
+                'title': 'oro.product.sections.inventory'|trans,
+                'priority': 1400,
+                'subblocks': [{
+                    'title': '',
+                    'data': {
+                        'inventory_status': UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, '<span class="product-inventory-status-' ~ entity.inventoryStatus.id ~'">' ~ entity.inventoryStatus|e ~ '</span>')
+                    }
+                }]
+            }
+        }) %}
+    {% endif %}
 
     {% if entity.isKit %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -198,19 +234,6 @@
             }]
         }] ) %}
     {% endif %}
-
-    {% set dataBlocks = dataBlocks|merge({
-        'inventory': {
-            'title': 'oro.product.sections.inventory'|trans,
-            'priority': 1400,
-            'subblocks': [{
-                'title': '',
-                'data': {
-                    'inventory_status': UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, '<span class="product-inventory-status-' ~ entity.inventoryStatus.id ~'">' ~ entity.inventoryStatus|e ~ '</span>')
-                }
-            }]
-        }
-    }) %}
 
     {% set relatedItemsTabsItems = [] %}
     {% set relatedItemsSubblocks = [] %}
@@ -322,15 +345,17 @@
         ) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge({
-        'design': {
-            'title': 'oro.product.sections.design'|trans,
-            'priority': 200,
-            'subblocks': [{
-                'data': {'pageTemplate': pageTemplatesData }
-            }]
-        }
-    }) %}
+    {% if is_granted('VIEW', entity, 'pageTemplate') %}
+        {% set dataBlocks = dataBlocks|merge({
+            'design': {
+                'title': 'oro.product.sections.design'|trans,
+                'priority': 200,
+                'subblocks': [{
+                    'data': {'pageTemplate': pageTemplatesData }
+                }]
+            }
+        }) %}
+    {% endif %}
 
     {% set id = 'product-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

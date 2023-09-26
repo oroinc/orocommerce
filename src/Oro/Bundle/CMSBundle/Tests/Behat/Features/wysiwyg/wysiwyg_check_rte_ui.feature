@@ -541,3 +541,87 @@ Feature: WYSIWYG check RTE UI
       | 10 | </ol>                  |
     And I clear canvas in WYSIWYG
     And I save form
+
+  Scenario: Check RTE Undo and Redo action
+    When I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I apply "formatBlock" action with "Heading 1" in RTE
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+      | 2 | </div>                                                       |
+    And I clear canvas in WYSIWYG
+    Then I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I apply "formatBlock" action with "Heading 1" in RTE
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Y" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Y" key on "SelectedComponent" element in canvas
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div>Lorem ipsum dolor sit amet, |
+      | 2 | <b>                              |
+      | 3 | <i>consectetur adipiscing elit   |
+      | 4 | </i>                             |
+      | 5 | </b>                             |
+      | 6 | </div>                           |
+    And I clear canvas in WYSIWYG
+
+  Scenario: Check RTE Undo and Redo action into global history manager
+    When I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I click "GrapesJs Wysiwyg"
+    When I add new component "Text" from panel to editor area
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+      | 2 | </div>                                                       |
+    And I clear canvas in WYSIWYG
+    Then I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I click "GrapesJs Wysiwyg"
+    Then I add new component "Text" from panel to editor area
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div>Lorem ipsum dolor sit amet, |
+      | 2 | <b>                              |
+      | 3 | <i>consectetur adipiscing elit   |
+      | 4 | </i>                             |
+      | 5 | </b>                             |
+      | 6 | </div>                           |

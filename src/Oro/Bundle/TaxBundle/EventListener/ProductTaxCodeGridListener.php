@@ -3,12 +3,23 @@
 namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 /**
  * Adds taxCode field to the products grid.
  */
 class ProductTaxCodeGridListener extends TaxCodeGridListener
 {
+    public function onBuildBefore(BuildBefore $event): void
+    {
+        parent::onBuildBefore($event);
+        if (!$this->isSupported()) {
+            return;
+        }
+
+        $this->addFieldsAcl($event->getConfig());
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -49,5 +60,13 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
         parent::addFilter($config);
 
         $config->offsetSetByPath(sprintf('[filters][columns][%s][renderable]', $this->getDataName()), false);
+    }
+
+    protected function addFieldsAcl(DatagridConfiguration $config): void
+    {
+        $config->offsetSetByPath(
+            sprintf('[fields_acl][columns][%s]', $this->getDataName()),
+            ['data_name' => 'product.taxCode', 'column_name' => 'taxCode']
+        );
     }
 }

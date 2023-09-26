@@ -129,7 +129,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="",
- *              "category"="catalog"
+ *              "category"="catalog",
+ *              "field_acl_supported"=true,
+ *              "field_acl_enabled"=false
  *          },
  *          "form"={
  *              "form_type"="Oro\Bundle\ProductBundle\Form\Type\ProductSelectType",
@@ -224,7 +226,10 @@ class Product implements
      *          },
      *          "frontend"={
      *              "use_in_export"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="EDIT"
+     *          },
      *      }
      * )
      */
@@ -256,7 +261,10 @@ class Product implements
      *          },
      *          "importexport"={
      *              "order"=20
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -374,7 +382,10 @@ class Product implements
      *          "importexport"={
      *              "order"=30,
      *              "full"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      * )
      */
@@ -393,7 +404,10 @@ class Product implements
      *          "importexport"={
      *              "order"=25,
      *              "full"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      * )
      */
@@ -418,7 +432,10 @@ class Product implements
      *          },
      *          "frontend"={
      *              "use_in_export"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="EDIT"
+     *          },
      *      }
      * )
      */
@@ -561,7 +578,10 @@ class Product implements
      *          },
      *          "importexport"={
      *              "order"=20
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -579,7 +599,10 @@ class Product implements
      *          },
      *          "importexport"={
      *              "order"=10
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -594,7 +617,10 @@ class Product implements
      *          "attribute"={
      *              "is_attribute"=true,
      *              "visible"=false
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -609,7 +635,10 @@ class Product implements
      *          "attribute"={
      *              "is_attribute"=true,
      *              "visible"=false
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */

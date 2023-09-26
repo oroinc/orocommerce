@@ -10,8 +10,13 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Product variant fields collection type.
+ */
 class ProductCustomVariantFieldsCollectionType extends AbstractType
 {
     const NAME = 'oro_product_custom_variant_fields_collection';
@@ -44,6 +49,17 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
         $builder->addModelTransformer(new ProductVariantFieldsTransformer());
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options): void
+    {
+        $variantFields = [];
+        foreach ($view->children as $fieldName => $fieldData) {
+            $variantFields[$fieldName] = $fieldData->vars['value']['is_selected'];
+        }
+        // If do not have access to variant fields, the datagrid for selecting product variants remains active
+        // and works with the fields that have already been set for the product.
+        $view->parent->vars['variantFields'] = $variantFields;
     }
 
     public function onPreSetData(FormEvent $event)

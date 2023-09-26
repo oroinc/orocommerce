@@ -197,7 +197,8 @@ class ProductController extends AbstractController
 
     private function createStepOne(Request $request): array|Response
     {
-        $form = $this->createForm(ProductStepOneType::class, new Product());
+        $product = new Product();
+        $form = $this->createForm(ProductStepOneType::class, $product);
         $handler = new ProductCreateStepOneHandler($form, $request);
         $queryParams = $request->query->all();
 
@@ -211,6 +212,7 @@ class ProductController extends AbstractController
 
         return [
             'form' => $form->createView(),
+            'entity' => $product,
             'isWidgetContext' => (bool)$request->get('_wid', false)
         ];
     }

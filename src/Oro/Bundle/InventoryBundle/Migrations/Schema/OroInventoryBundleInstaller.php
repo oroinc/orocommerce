@@ -357,7 +357,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_inventory'],
             ],
-            ['importexport' => ['full' => true]]
+            [
+                'importexport' => ['full' => true],
+                'security' => ['permissions' => 'VIEW;EDIT']
+            ]
         );
     }
 
@@ -379,7 +382,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.highlight_low_inventory'],
             ],
-            ['importexport' => ['full' => true]]
+            [
+                'importexport' => ['full' => true],
+                'security' => ['permissions' => 'VIEW;EDIT']
+            ]
         );
     }
 
@@ -633,7 +639,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'backOrder'],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.backorders'],
             ],
-            ['importexport' => ['full' => true]]
+            [
+                'importexport' => ['full' => true],
+                'security' => ['permissions' => 'VIEW;EDIT']
+            ]
         );
     }
 
@@ -669,7 +678,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             ],
             [
                 'importexport' => ['full' => true],
-                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN]
+                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN],
+                'security' => ['permissions' => 'VIEW;EDIT']
             ]
         );
     }
@@ -748,6 +758,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 }

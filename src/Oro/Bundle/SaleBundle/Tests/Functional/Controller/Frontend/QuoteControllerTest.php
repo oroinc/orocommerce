@@ -283,7 +283,7 @@ class QuoteControllerTest extends WebTestCase
         }
 
         $createOrderButton = (bool)$crawler
-            ->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
+            ->filterXPath('//button[contains(., \'Accept and Submit to Order\')]')->count();
 
         self::assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
@@ -630,7 +630,7 @@ class QuoteControllerTest extends WebTestCase
         self::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "primary-menu-container")]')->count());
         self::assertEquals(
             $expectedButton,
-            (bool)$crawler->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count()
+            (bool)$crawler->filterXPath('//button[contains(., \'Accept and Submit to Order\')]')->count()
         );
     }
 

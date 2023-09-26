@@ -163,6 +163,7 @@ services:
             - '@oro_pricing.shard_manager'
             - '@oro_pricing.manager.price_manager'
             - '@security.authorization_checker'
+            - '@oro_security.form.field_acl_helper'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }

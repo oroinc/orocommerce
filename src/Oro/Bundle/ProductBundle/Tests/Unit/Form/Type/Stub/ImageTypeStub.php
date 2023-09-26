@@ -24,7 +24,8 @@ class ImageTypeStub extends AbstractType
         $resolver->setDefaults(
             [
                 'checkEmptyFile' => false,
-                'allowDelete' => true
+                'allowDelete' => true,
+                'allowUpdate' => true
             ]
         );
     }

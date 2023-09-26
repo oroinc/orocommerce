@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\EventListener\AttributeFormViewListener as Bas
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
@@ -21,27 +22,8 @@ use Twig\Environment;
  */
 class AttributeFormViewListener extends BaseAttributeFormViewListener
 {
-    /** @var int */
     private const DEFAULT_PRIORITY = 500;
-
-    /**
-     * @internal
-     */
-    const EVENT_TYPE_VIEW = 'view';
-
-    /**
-     * @var ConfigProvider
-     */
-    private $entityConfigProvider;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var array
-     */
+    private const EVENT_TYPE_VIEW = 'view';
     private $fieldsRestrictedToMove = [
         'inventory_status',
         'images',
@@ -59,14 +41,12 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
     private $eventType;
 
     public function __construct(
-        AttributeManager $attributeManager,
-        ConfigProvider $entityConfigProvider,
-        TranslatorInterface $translator
+        private AttributeManager $attributeManager,
+        private FieldAclHelper $fieldAclHelper,
+        private ConfigProvider $entityConfigProvider,
+        private TranslatorInterface $translator,
     ) {
-        parent::__construct($attributeManager);
-
-        $this->entityConfigProvider = $entityConfigProvider;
-        $this->translator = $translator;
+        parent::__construct($attributeManager, $fieldAclHelper);
     }
 
     /**
