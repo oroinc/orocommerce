@@ -148,17 +148,6 @@
         }
     }
 
-    &__notification-container {
-        &:not(:empty) {
-            background: $checkout-view-notification-container-background;
-        }
-
-        .notification-flash-container {
-            margin: 0 auto;
-            padding: spacing('sm');
-        }
-    }
-
     .checkout {
         padding: $checkout-padding-narrow;
     }

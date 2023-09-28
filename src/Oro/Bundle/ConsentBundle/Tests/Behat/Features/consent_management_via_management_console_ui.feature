@@ -572,7 +572,7 @@ Feature: Consent management via Management Console UI
       | Email Newsletters                    | false |
     And I save form
     When click "Yes, Decline"
-    Then should see "Customer User profile updated" flash message
+    Then should see "Customer User profile updated" flash message and I close it
     And click "Quick Order Form"
     And fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
@@ -689,7 +689,7 @@ Feature: Consent management via Management Console UI
       | okButton     | Yes, Decline                                                    |
       | cancelButton | No, Cancel                                                      |
     And I click "Yes, Decline"
-    And I should see "Customer User profile updated" flash message
+    And I should see "Customer User profile updated" flash message and I close it
     When I click "Quick Order Form"
     And I fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
@@ -705,7 +705,7 @@ Feature: Consent management via Management Console UI
     Then I fill form with:
       | Test Consent 3 | true |
     When I save form
-    Then I should see "Customer User profile updated" flash message
+    Then I should see "Customer User profile updated" flash message and I close it
     When I open shopping list widget
     And I click "View Details"
     And I click "Create Order"

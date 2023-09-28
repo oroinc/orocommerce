@@ -59,7 +59,7 @@ Feature: My Shopping List Actions
     Then I should see "Set as Default"
     When I click "Set as Default"
     And I click "Yes, set as default"
-    Then I should see "Shopping list has been successfully set as default" flash message
+    Then I should see "Shopping list has been successfully set as default" flash message and I close it
     When I click "Shopping List Actions"
     Then I should not see "Set as Default"
     When I open shopping list widget
@@ -104,7 +104,7 @@ Feature: My Shopping List Actions
     And I filter Name as is equal to "Shopping List 1" in "Shopping List Action Move Grid"
     And I click "Shopping List Action Move Radio"
     And I click "Shopping List Action Submit"
-    Then I should see "One entity has been moved successfully" flash message
+    Then I should see "One entity has been moved successfully" flash message and I close it
     And I follow "Account"
     And I click on "Shopping Lists Navigation Link"
     And Page title equals to "Shopping Lists - My Account"
@@ -126,7 +126,7 @@ Feature: My Shopping List Actions
     When I check first 4 records in "Frontend Shopping List Edit Grid"
     And I click "Delete" link from mass action dropdown
     And confirm deletion
-    Then I should see "4 item(s) have been deleted successfully" flash message
+    Then I should see "4 item(s) have been deleted successfully" flash message and I close it
     And I follow "Account"
     And I click on "Shopping Lists Navigation Link"
     And Page title equals to "Shopping Lists - My Account"
@@ -151,6 +151,7 @@ Feature: My Shopping List Actions
     When click "Users"
     And click "Roles"
     And click edit "Administrator" in grid
+    And I should see 'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click "Save".' flash message and I close it
     And click "Shopping"
     And select following permissions:
       | Shopping List | Edit:None           |
@@ -161,7 +162,7 @@ Feature: My Shopping List Actions
       | Shopping List | Set as Default:None |
     And I scroll to top
     And click "Save"
-    Then should see "Customer User Role has been saved" flash message
+    Then should see "Customer User Role has been saved" flash message and I close it
     When click "Sign Out"
     And I login as AmandaRCole@example.org buyer
     And I follow "Account"

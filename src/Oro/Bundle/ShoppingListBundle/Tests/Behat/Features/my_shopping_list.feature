@@ -728,6 +728,7 @@ Feature: My Shopping List
     And click "Users"
     And click "Roles"
     And click edit "Administrator" in grid
+    And I should see 'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click "Save".' flash message and I close it
     And click "Shopping"
     When select following permissions:
       | Shopping List | View:None |

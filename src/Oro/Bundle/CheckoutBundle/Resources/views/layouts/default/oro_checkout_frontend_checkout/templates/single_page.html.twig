@@ -32,13 +32,6 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block _sticky_element_notification_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' single-page-checkout-view__notification-container'
-    }) %}
-    {{ parent_block_widget(block) }}
-{% endblock %}
-
 {% block _single_page_checkout_sticky_panel_widget %}
     {% set attr = layout_attr_defaults(attr, {
         id: 'single-page-checkout-sticky',
