@@ -46,7 +46,7 @@ class CategoryUnitPrecisionTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertNull($this->entity->getProductUnitCode());
 
-        $this->entity->setUnit((new ProductUnit)->setCode('code'));
+        $this->entity->setUnit((new ProductUnit())->setCode('code'));
 
         $this->assertSame('code', $this->entity->getProductUnitCode());
     }
@@ -63,7 +63,7 @@ class CategoryUnitPrecisionTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $unit = (new ProductUnit)->setCode('code');
+        $unit = (new ProductUnit())->setCode('code');
         $precision = 5;
 
         $newEntity = $this->entity->create($precision, $unit);

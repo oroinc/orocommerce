@@ -146,7 +146,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             foreach (self::$itemsData as $reference => $itemData) {
                 $entity = $this->getReference($itemData['recordId']);
 
-                $item = new Item;
+                $item = new Item();
                 $item
                     ->setAlias($itemData['alias'] . $websiteId)
                     ->setEntity($itemData['entity'])
@@ -158,7 +158,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                     $this->populateFields(
                         $item,
                         $item->getIntegerFields(),
-                        new IndexInteger,
+                        new IndexInteger(),
                         $itemData['integerFields']
                     );
                 }
@@ -167,18 +167,18 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                     $this->populateFields(
                         $item,
                         $item->getDecimalFields(),
-                        new IndexDecimal,
+                        new IndexDecimal(),
                         $itemData['decimalFields']
                     );
                 }
 
                 if (isset($itemData['datetimeFields'])) {
                     $datetimeFieldsData = $itemData['datetimeFields'];
-                    $this->populateFields($item, $item->getDatetimeFields(), new IndexDatetime, $datetimeFieldsData);
+                    $this->populateFields($item, $item->getDatetimeFields(), new IndexDatetime(), $datetimeFieldsData);
                 }
 
                 if (isset($itemData['textFields'])) {
-                    $this->populateFields($item, $item->getTextFields(), new IndexText, $itemData['textFields']);
+                    $this->populateFields($item, $item->getTextFields(), new IndexText(), $itemData['textFields']);
                 }
 
                 self::getSearchReferenceRepository()->addReference(

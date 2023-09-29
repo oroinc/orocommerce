@@ -17,8 +17,8 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 class ProductRepository extends WebsiteSearchRepository
 {
     /**
-     * @param Category|null $category
-     * @param SearchQueryInterface $searchQuery
+     * @param Category $category
+     * @param SearchQueryInterface|null $searchQuery
      *
      * @return array ['<categoryId>' => <numberOfProducts>, ...]
      */
@@ -65,7 +65,7 @@ class ProductRepository extends WebsiteSearchRepository
     }
 
     /**
-     * @param SearchQueryInterface $query
+     * @param SearchQueryInterface|null $query
      *
      * @return array ['<materializedPath>' => <numberOfProducts>, ...]
      */

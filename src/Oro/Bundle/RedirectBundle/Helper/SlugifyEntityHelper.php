@@ -87,11 +87,6 @@ class SlugifyEntityHelper
         return $config->get('source');
     }
 
-    /**
-     * @param SluggableInterface $sluggableEntity
-     *
-     * @return Collection
-     */
     private function getSourceField(SluggableInterface $sluggableEntity): ?Collection
     {
         $className = ClassUtils::getClass($sluggableEntity);

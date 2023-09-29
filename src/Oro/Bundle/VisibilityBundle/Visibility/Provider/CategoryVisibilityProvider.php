@@ -11,11 +11,8 @@ use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverIn
  */
 class CategoryVisibilityProvider
 {
-    /** @var CategoryVisibilityResolverInterface */
-    private $categoryVisibilityResolver;
-
-    /** @var CustomerUserRelationsProvider */
-    private $customerUserRelationsProvider;
+    private CategoryVisibilityResolverInterface $categoryVisibilityResolver;
+    private CustomerUserRelationsProvider $customerUserRelationsProvider;
 
     public function __construct(
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
@@ -33,12 +30,12 @@ class CategoryVisibilityProvider
     public function getHiddenCategoryIds(?CustomerUserInterface $customerUser): array
     {
         $customer = $this->customerUserRelationsProvider->getCustomer($customerUser);
-        if ($customer) {
+        if (null !== $customer) {
             return $this->categoryVisibilityResolver->getHiddenCategoryIdsForCustomer($customer);
         }
 
         $customerGroup = $this->customerUserRelationsProvider->getCustomerGroup($customerUser);
-        if ($customerGroup) {
+        if (null !== $customerGroup) {
             return $this->categoryVisibilityResolver->getHiddenCategoryIdsForCustomerGroup($customerGroup);
         }
 

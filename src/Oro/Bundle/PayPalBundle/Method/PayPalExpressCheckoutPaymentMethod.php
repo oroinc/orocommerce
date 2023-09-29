@@ -2,24 +2,16 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
-use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Executes payment for PayPal Express Checkout.
@@ -36,43 +28,21 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 
     const AMOUNT_PRECISION = 2;
 
-    /** @var Gateway */
-    protected $gateway;
-
-    /** @var RouterInterface */
-    protected $router;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
-
-    /** @var PayPalExpressCheckoutConfigInterface */
-    protected $config;
-
-    /** @var OptionsProviderInterface */
-    protected $optionsProvider;
-
-    /** @var SurchargeProvider */
-    protected $surchargeProvider;
+    protected Gateway $gateway;
+    protected PropertyAccessor $propertyAccessor;
+    protected PayPalExpressCheckoutConfigInterface $config;
+    protected TransactionOptionProvider $transactionOptionProvider;
 
     public function __construct(
         Gateway $gateway,
         PayPalExpressCheckoutConfigInterface $config,
-        RouterInterface $router,
-        DoctrineHelper $doctrineHelper,
-        OptionsProviderInterface $optionsProvider,
-        SurchargeProvider $surchargeProvider,
-        PropertyAccessorInterface $propertyAccessor
+        PropertyAccessor $propertyAccessor,
+        TransactionOptionProvider $transactionOptionProvider
     ) {
         $this->gateway = $gateway;
         $this->config = $config;
-        $this->router = $router;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->optionsProvider = $optionsProvider;
-        $this->surchargeProvider = $surchargeProvider;
         $this->propertyAccessor = $propertyAccessor;
+        $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
     /**
@@ -124,9 +94,13 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     protected function purchase(PaymentTransaction $paymentTransaction): array
     {
         $options = array_merge(
-            $this->getCredentials(),
-            $this->getSetExpressCheckoutOptions($paymentTransaction),
-            $this->getShippingAddressOptions($paymentTransaction)
+            $this->transactionOptionProvider->getCredentials(),
+            $this->transactionOptionProvider->getSetExpressCheckoutOptions($paymentTransaction),
+            $this->transactionOptionProvider->getShippingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getBillingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getCustomerUserOptions($paymentTransaction),
+            $this->transactionOptionProvider->getOrderOptions($paymentTransaction),
+            $this->transactionOptionProvider->getIPOptions($paymentTransaction),
         );
 
         $paymentTransaction->setRequest($options);
@@ -146,9 +120,14 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     protected function complete(PaymentTransaction $paymentTransaction): void
     {
         $options = array_merge(
-            $this->getCredentials(),
+            $this->transactionOptionProvider->getCredentials(),
             $this->getAdditionalOptions(),
-            $this->getDoExpressCheckoutOptions($paymentTransaction)
+            $this->transactionOptionProvider->getDoExpressCheckoutOptions($paymentTransaction),
+            $this->transactionOptionProvider->getShippingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getBillingAddressOptions($paymentTransaction),
+            $this->transactionOptionProvider->getCustomerUserOptions($paymentTransaction),
+            $this->transactionOptionProvider->getOrderOptions($paymentTransaction),
+            $this->transactionOptionProvider->getIPOptions($paymentTransaction),
         );
 
         $paymentTransaction->setRequest($options);
@@ -212,9 +191,9 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         }
 
         $options = array_merge(
-            $this->getCredentials(),
+            $this->transactionOptionProvider->getCredentials(),
             $this->getAdditionalOptions(),
-            $this->getDelayedCaptureOptions($paymentTransaction)
+            $this->transactionOptionProvider->getDelayedCaptureOptions($paymentTransaction)
         );
 
         $response = $this->gateway->request(Option\Transaction::DELAYED_CAPTURE, $options);
@@ -267,179 +246,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 
     /**
      * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    protected function getSetExpressCheckoutOptions(PaymentTransaction $paymentTransaction)
-    {
-        return array_merge(
-            $this->getLineItemOptions($paymentTransaction),
-            $this->getSurcharges($paymentTransaction),
-            [
-                ECOption\PaymentType::PAYMENTTYPE => ECOption\PaymentType::INSTANTONLY,
-                ECOption\ShippingAddressOverride::ADDROVERRIDE => ECOption\ShippingAddressOverride::TRUE,
-                Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
-                Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
-                Option\ReturnUrl::RETURNURL => $this->router->generate(
-                    'oro_payment_callback_return',
-                    [
-                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                    ],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                ),
-                Option\CancelUrl::CANCELURL => $this->router->generate(
-                    'oro_payment_callback_error',
-                    [
-                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
-                    ],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                ),
-            ]
-        );
-    }
-
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    protected function getDoExpressCheckoutOptions(PaymentTransaction $paymentTransaction)
-    {
-        $options = array_merge(
-            $this->getLineItemOptions($paymentTransaction),
-            $this->getSurcharges($paymentTransaction),
-            [
-                Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
-                Option\Transaction::TRXTYPE => $this->getTransactionType($paymentTransaction),
-                ECOption\Token::TOKEN => $paymentTransaction->getReference(),
-            ]
-        );
-
-        $response = $paymentTransaction->getResponse();
-
-        if (isset($response['PayerID'])) {
-            $options[ECOption\Payer::PAYERID] = $response['PayerID'];
-        }
-
-        return $options;
-    }
-
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    protected function getDelayedCaptureOptions(PaymentTransaction $paymentTransaction)
-    {
-        $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
-
-        return [
-            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
-            Option\OriginalTransaction::ORIGID => $sourceTransaction->getReference(),
-        ];
-    }
-
-    /**
-     * @param $paymentTransaction
-     * @return array
-     */
-    protected function getShippingAddressOptions(PaymentTransaction $paymentTransaction)
-    {
-        $entity = $this->doctrineHelper->getEntityReference(
-            $paymentTransaction->getEntityClass(),
-            $paymentTransaction->getEntityIdentifier()
-        );
-
-        if (!$entity) {
-            return [];
-        }
-
-        $propertyAccessor = $this->getPropertyAccessor();
-
-        try {
-            $shippingAddress = $propertyAccessor->getValue($entity, 'shippingAddress');
-        } catch (NoSuchPropertyException $e) {
-            return [];
-        }
-
-        if (!$shippingAddress instanceof AbstractAddress) {
-            return [];
-        }
-
-        $addressOption = $this->optionsProvider->getShippingAddressOptions($shippingAddress);
-
-        return [
-            Option\ShippingAddress::SHIPTOFIRSTNAME => $addressOption->getFirstName(),
-            Option\ShippingAddress::SHIPTOLASTNAME => $addressOption->getLastName(),
-            Option\ShippingAddress::SHIPTOSTREET => $addressOption->getStreet(),
-            Option\ShippingAddress::SHIPTOSTREET2 => $addressOption->getStreet2(),
-            Option\ShippingAddress::SHIPTOCITY => $addressOption->getCity(),
-            Option\ShippingAddress::SHIPTOSTATE => $addressOption->getRegionCode(),
-            Option\ShippingAddress::SHIPTOZIP => $addressOption->getPostalCode(),
-            Option\ShippingAddress::SHIPTOCOUNTRY => $addressOption->getCountryIso2()
-        ];
-    }
-
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    protected function getLineItemOptions(PaymentTransaction $paymentTransaction)
-    {
-        $entity = $this->doctrineHelper->getEntityReference(
-            $paymentTransaction->getEntityClass(),
-            $paymentTransaction->getEntityIdentifier()
-        );
-
-        if (!$entity) {
-            return [];
-        }
-
-        if (!$entity instanceof LineItemsAwareInterface) {
-            return [];
-        }
-
-        $options = [];
-        $lineItemOptions = $this->optionsProvider->getLineItemOptions($entity);
-
-        foreach ($lineItemOptions as $lineItemOption) {
-            $options[] = [
-                Option\LineItems::NAME => $lineItemOption->getName(),
-                Option\LineItems::DESC => $lineItemOption->getDescription(),
-                Option\LineItems::COST => $lineItemOption->getCost(),
-                // PayPal accepts only integer qty.
-                // Float qty could be correctly converted to int in getLineItemOptions
-                Option\LineItems::QTY => (int)$lineItemOption->getQty(),
-            ];
-        }
-
-        return Option\LineItems::prepareOptions($options);
-    }
-
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    protected function getSurcharges(PaymentTransaction $paymentTransaction)
-    {
-        $entity = $this->doctrineHelper->getEntityReference(
-            $paymentTransaction->getEntityClass(),
-            $paymentTransaction->getEntityIdentifier()
-        );
-
-        if (!$entity) {
-            return [];
-        }
-
-        $surcharge = $this->surchargeProvider->getSurcharges($entity);
-
-        return [
-            Option\Amount::FREIGHTAMT => $surcharge->getShippingAmount(),
-            Option\Amount::HANDLINGAMT => $surcharge->getHandlingAmount(),
-            Option\Amount::DISCOUNT => -1.0 * $surcharge->getDiscountAmount(),
-            Option\Amount::INSURANCEAMT => $surcharge->getInsuranceAmount(),
-        ];
-    }
-
-    /**
-     * @param PaymentTransaction $paymentTransaction
      * @param string $requestAction
      * @return ResponseInterface
      */
@@ -454,19 +260,10 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         return $this->gateway->request($transactionType, $options);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return null|string
-     */
-    protected function getTransactionType(PaymentTransaction $paymentTransaction)
+    protected function getTransactionType(PaymentTransaction $paymentTransaction): ?string
     {
         $request = $paymentTransaction->getRequest();
-
-        if (isset($request[Option\Transaction::TRXTYPE])) {
-            return $request[Option\Transaction::TRXTYPE];
-        }
-
-        return null;
+        return $request[Option\Transaction::TRXTYPE] ?? null;
     }
 
     /**
@@ -475,19 +272,6 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     protected function getPropertyAccessor()
     {
         return $this->propertyAccessor;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getCredentials()
-    {
-        return array_merge(
-            $this->config->getCredentials(),
-            [
-                Option\Tender::TENDER => Option\Tender::PAYPAL,
-            ]
-        );
     }
 
     /**

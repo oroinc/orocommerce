@@ -1,0 +1,18 @@
+/* @theme: default; */
+
+.product-kit-items {
+    margin-bottom: $offset-x;
+
+    &__label {
+        width: auto;
+        display: flex;
+        align-items: center;
+        // rest base styles for `.label`
+        margin-bottom: 0;
+    }
+}
+
+.product-kit-line-item-widget {
+    display: flex;
+    flex-direction: column;
+}

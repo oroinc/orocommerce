@@ -407,7 +407,6 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
         $cmsPageData = new CmsPageData();
         $cmsPageData->setId($cmsPageId);
 
-
         $consentData = new ConsentData($consent);
         $consentData->setCmsPageData($cmsPageData);
         $consentData->setAccepted($isAccepted);

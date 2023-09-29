@@ -29,7 +29,7 @@ class ProductTaxCodeGridListenerTest extends \PHPUnit\Framework\TestCase
         $gridConfig = DatagridConfiguration::create(['name' => 'products-grid']);
         $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'product']]);
 
-        $this->featureChecker->expects(self::once())
+        $this->featureChecker->expects(self::any())
             ->method('isResourceEnabled')
             ->with(AbstractTaxCode::class, 'entities')
             ->willReturn(true);
@@ -95,7 +95,15 @@ class ProductTaxCodeGridListenerTest extends \PHPUnit\Framework\TestCase
                         ]
                     ]
                 ],
-                'name' => 'products-grid'
+                'name' => 'products-grid',
+                'fields_acl' => [
+                    'columns' => [
+                        'taxCode' => [
+                            'data_name' => 'product.taxCode',
+                            'column_name' => 'taxCode'
+                        ],
+                    ]
+                ]
             ],
             $gridConfig->toArray()
         );
@@ -106,7 +114,7 @@ class ProductTaxCodeGridListenerTest extends \PHPUnit\Framework\TestCase
         $gridConfig = DatagridConfiguration::create(['name' => 'products-grid']);
         $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'product']]);
 
-        $this->featureChecker->expects(self::once())
+        $this->featureChecker->expects(self::any())
             ->method('isResourceEnabled')
             ->with(AbstractTaxCode::class, 'entities')
             ->willReturn(false);

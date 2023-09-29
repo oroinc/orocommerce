@@ -10,12 +10,9 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsFixture
 {
-    use UserUtilityTrait;
-
     public const LINE_ITEM_1 = 'shopping_list_product_kit_line_item.1';
     public const LINE_ITEM_1_KIT_ITEM_1 = 'shopping_list_product_kit_item_line_item.1';
 

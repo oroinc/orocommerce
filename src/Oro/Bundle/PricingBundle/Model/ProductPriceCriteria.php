@@ -6,41 +6,51 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * A model for storing product price data.
+ * A model for storing product price criteria data.
  */
 class ProductPriceCriteria
 {
-    protected Product $product;
+    protected ?Product $product;
 
-    protected ProductUnit $productUnit;
+    protected ?ProductUnit $productUnit;
 
-    protected float $quantity;
+    protected ?float $quantity;
 
-    protected string $currency;
+    protected ?string $currency;
 
-    private string $identifier;
+    private ?string $identifier = null;
 
-    public function __construct(Product $product, ProductUnit $productUnit, float $quantity, string $currency)
+    public function __construct(
+        ?Product $product = null,
+        ?ProductUnit $productUnit = null,
+        ?float $quantity = null,
+        ?string $currency = null
+    ) {
+        $this->product = $product;
+        $this->productUnit = $productUnit;
+        $this->quantity = $quantity;
+        $this->currency = $currency;
+
+        $this->assertIsValid();
+    }
+
+    protected function assertIsValid(): void
     {
-        if (!$product->getId()) {
+        if (!$this->product?->getId()) {
             throw new \InvalidArgumentException('Product must have id.');
         }
-        $this->product = $product;
 
-        if (!$productUnit->getCode()) {
+        if (!$this->productUnit?->getCode()) {
             throw new \InvalidArgumentException('ProductUnit must have code.');
         }
-        $this->productUnit = $productUnit;
 
-        if ($quantity < 0) {
+        if ($this->quantity === null || $this->quantity < 0) {
             throw new \InvalidArgumentException('Quantity must be numeric and more than or equal zero.');
         }
-        $this->quantity = $quantity;
 
-        if (!$currency) {
+        if (!$this->currency) {
             throw new \InvalidArgumentException('Currency must be non-empty string.');
         }
-        $this->currency = $currency;
     }
 
     public function getProduct(): Product

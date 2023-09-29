@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCMSBundle_Entity_Page;
 use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
 use Oro\Bundle\DraftBundle\Entity\DraftableTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
@@ -96,6 +97,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @method setDefaultTitle($title)
  * @method setDefaultSlug($slug)
  * @method $this cloneLocalizedFallbackValueAssociations()
+ * @mixin OroCMSBundle_Entity_Page
  */
 class Page implements
     DatesAwareInterface,

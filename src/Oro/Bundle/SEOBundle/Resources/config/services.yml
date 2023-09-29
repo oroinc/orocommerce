@@ -6,6 +6,7 @@ services:
         class: 'Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener'
         arguments:
             - '@translator'
+            - '@oro_security.form.field_acl_helper'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -471,3 +472,11 @@ services:
             - 'metaDescriptions'
         tags:
             - { name: oro_product.description_provider, key: 'oro_product_seo_description' }
+
+    oro_seo.event_listener.restrict_sitemap_product_enabled_localization:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductSlugByLocaleListener'
+        arguments:
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_website.provider.website_localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }

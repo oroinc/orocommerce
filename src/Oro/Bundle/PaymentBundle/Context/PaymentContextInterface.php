@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PaymentBundle\Context;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 interface PaymentContextInterface extends CustomerOwnerAwareInterface
 {
     /**
-     * @return PaymentLineItemCollectionInterface
+     * @return Collection<PaymentLineItem>
      */
     public function getLineItems();
 

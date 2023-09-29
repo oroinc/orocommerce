@@ -40,11 +40,7 @@ class QuoteRepositoryTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                LoadQuoteData::class,
-            ]
-        );
+        $this->loadFixtures([LoadQuoteData::class]);
 
         $this->em = $this->getContainer()
             ->get('doctrine')
@@ -118,13 +114,13 @@ class QuoteRepositoryTest extends WebTestCase
 
         $quoteProductMetadata = $this->em->getClassMetadata(QuoteProduct::class);
         static::assertStringContainsString(
-            \sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()),
+            sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()),
             $query
         );
 
         $quoteProductOfferMetadata = $this->em->getClassMetadata(QuoteProductOffer::class);
         static::assertStringContainsString(
-            \sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()),
+            sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()),
             $query
         );
     }

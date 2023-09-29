@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroProductBundle_Entity_Brand;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
@@ -116,6 +117,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
  * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
  * @method $this cloneLocalizedFallbackValueAssociations()
+ * @mixin OroProductBundle_Entity_Brand
  */
 class Brand implements
     OrganizationAwareInterface,
@@ -399,7 +401,7 @@ class Brand implements
         return $this;
     }
     /**
-     * @param OrganizationInterface $organization
+     * @param OrganizationInterface|null $organization
      * @return Brand
      */
     public function setOrganization(OrganizationInterface $organization = null)

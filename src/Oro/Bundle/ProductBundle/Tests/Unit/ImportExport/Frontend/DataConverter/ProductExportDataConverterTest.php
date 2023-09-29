@@ -10,12 +10,14 @@ use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Frontend\DataConverter\ProductExportDataConverter;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ProductExportDataConverterTest extends \PHPUnit\Framework\TestCase
+class ProductExportDataConverterTest extends TestCase
 {
-    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
+    private FieldHelper|MockObject $fieldHelper;
 
-    private ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider;
+    private ConfigProvider|MockObject $configProvider;
 
     private ProductExportDataConverter $dataConverter;
 
@@ -34,9 +36,9 @@ class ProductExportDataConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertToExportFormat(): void
     {
-        $skuField = ['name' => 'sku', 'type' => 'string', 'label' => 'Sku'];
+        $skuField = ['name' => 'sku', 'type' => 'string', 'label' => 'SKU'];
         $typeField = ['name' => 'type', 'type' => 'string', 'label' => 'Type'];
-        $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Names'];
+        $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Name'];
         $this->fieldHelper->expects(self::exactly(2))
             ->method('getEntityFields')
             ->willReturn([$skuField, $typeField, $nameField]);
@@ -55,18 +57,28 @@ class ProductExportDataConverterTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
+        $this->fieldHelper->expects(self::any())
+            ->method('getConfigValue')
+            ->willReturnMap(
+                [
+                    [Product::class, 'sku', 'header', 'SKU', 'SKU'],
+                    [Product::class, 'type', 'header', 'Type', 'Type'],
+                    [Product::class, 'names', 'header', 'Name', 'Name'],
+                ]
+            );
+
         $result = $this->dataConverter->convertToExportFormat(['sku' => '1234', 'names' => 'Test product']);
-        self::assertArrayHasKey('sku', $result);
-        self::assertArrayHasKey('name', $result);
-        self::assertArrayNotHasKey('type', $result);
-        self::assertEquals('1234', $result['sku']);
-        self::assertEquals('Test product', $result['name']);
+        self::assertArrayHasKey('SKU', $result);
+        self::assertArrayHasKey('Name', $result);
+        self::assertArrayNotHasKey('Type', $result);
+        self::assertEquals('1234', $result['SKU']);
+        self::assertEquals('Test product', $result['Name']);
     }
 
     public function testConvertToExportFormatWithoutEnabledAttributes(): void
     {
-        $skuField = ['name' => 'sku', 'type' => 'string', 'label' => 'Sku'];
-        $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Names'];
+        $skuField = ['name' => 'sku', 'type' => 'string', 'label' => 'SKU'];
+        $nameField = ['name' => 'names', 'type' => 'ref-many', 'label' => 'Name'];
         $this->fieldHelper->expects(self::exactly(2))
             ->method('getEntityFields')
             ->willReturn([$skuField, $nameField]);
@@ -83,11 +95,20 @@ class ProductExportDataConverterTest extends \PHPUnit\Framework\TestCase
                     [Product::class, 'names', $this->getConfig(Product::class, [])],
                 ]
             );
+        $this->fieldHelper->expects(self::any())
+            ->method('getConfigValue')
+            ->willReturnMap(
+                [
+                    [Product::class, 'sku', 'header', 'SKU', 'SKU'],
+                    [Product::class, 'type', 'header', 'Type', 'Type'],
+                    [Product::class, 'names', 'header', 'Name', 'Name'],
+                ]
+            );
 
         $result = $this->dataConverter->convertToExportFormat(['names' => 'Test product']);
-        self::assertArrayNotHasKey('sku', $result);
-        self::assertArrayHasKey('name', $result);
-        self::assertEquals('Test product', $result['name']);
+        self::assertArrayNotHasKey('SKU', $result);
+        self::assertArrayHasKey('Name', $result);
+        self::assertEquals('Test product', $result['Name']);
     }
 
     private function getConfig(string $className, array $values): Config

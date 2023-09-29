@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\MassAction;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\DeleteMassActionHandler as ParentHandler;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
@@ -12,39 +12,32 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
  */
 class DeleteMassActionHandler extends ParentHandler
 {
-    /**
-     * @var ShoppingListTotalManager
-     */
-    private $shoppingListTotalManager;
-
+    private ShoppingListTotalManager $shoppingListTotalManager;
     /** @var ShoppingList[] */
-    private $shoppingLists = [];
+    private array $shoppingLists = [];
 
-    /**
-     * @param ShoppingListTotalManager $shoppingListTotalManager
-     */
-    public function setShoppingListTotalManager($shoppingListTotalManager): void
+    public function setShoppingListTotalManager(ShoppingListTotalManager $shoppingListTotalManager): void
     {
         $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function processDelete($entity, EntityManager $manager): self
+    protected function processDelete(object $entity, EntityManagerInterface $manager): void
     {
         $shoppingList = $entity->getShoppingList();
         if ($shoppingList && $shoppingList->getId()) {
             $this->shoppingLists[$shoppingList->getId()] = $shoppingList;
         }
 
-        return parent::processDelete($entity, $manager);
+        parent::processDelete($entity, $manager);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function finishBatch(EntityManager $manager): void
+    protected function finishBatch(EntityManagerInterface $manager): void
     {
         $manager->flush();
 

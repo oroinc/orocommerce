@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -28,10 +29,14 @@ interface ProductPriceProviderInterface
     ): array;
 
     /**
-     * @param ProductPriceCriteria[]             $productPriceCriteria
+     * @param ProductPriceCriteria[] $productPriceCriteria
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      *
-     * @return array [product id => Oro\Bundle\CurrencyBundle\Entity\Price|null, ...]
+     * @return array<string,Price>
+     *  [
+     *      'product-price-criteria-identifier' => Oro\Bundle\CurrencyBundle\Entity\Price|null,
+     *      // ...
+     *  ]
      */
     public function getMatchedPrices(
         array $productPriceCriteria,

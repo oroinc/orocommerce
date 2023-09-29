@@ -32,6 +32,7 @@ class OroProductExtension extends Extension
         $loader->load('controllers.yml');
         $loader->load('controllers_api.yml');
         $loader->load('mq_topics.yml');
+        $loader->load('product_kit.yml');
 
         $container->getDefinition('oro_product.provider.product_type_provider')
             ->setArgument('$availableProductTypes', $config[Configuration::PRODUCT_TYPES]);

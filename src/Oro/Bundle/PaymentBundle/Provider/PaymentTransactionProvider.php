@@ -61,8 +61,8 @@ class PaymentTransactionProvider
      * @param object $object
      * @param array $criteria
      * @param array $orderBy
-     * @param int $limit
-     * @param int $offset
+     * @param int|null $limit
+     * @param int|null $offset
      * @return PaymentTransaction[]
      */
     public function getPaymentTransactions(

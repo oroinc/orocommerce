@@ -46,9 +46,11 @@ abstract class AbstractTaxExtension extends AbstractTypeExtension
             return;
         }
 
-        $taxCodeNew = $form->get('taxCode')->getData();
-        $taxCode = $this->getTaxCode($entity);
-        $this->handleTaxCode($entity, $taxCode, $taxCodeNew);
+        if ($form->has('taxCode')) {
+            $taxCodeNew = $form->get('taxCode')->getData();
+            $taxCode = $this->getTaxCode($entity);
+            $this->handleTaxCode($entity, $taxCode, $taxCodeNew);
+        }
     }
 
     abstract protected function addTaxCodeField(FormBuilderInterface $builder): void;

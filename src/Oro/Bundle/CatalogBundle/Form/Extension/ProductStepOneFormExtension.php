@@ -66,6 +66,10 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
             return;
         }
 
+        if (!$form->has('category')) {
+            return;
+        }
+
         $category = $form->get('category')->getData();
 
         if ($category instanceof Category) {

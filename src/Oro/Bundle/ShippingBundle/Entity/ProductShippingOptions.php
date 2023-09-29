@@ -132,7 +132,7 @@ class ProductShippingOptions implements
     }
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      *
      * @return $this
      */
@@ -152,7 +152,7 @@ class ProductShippingOptions implements
     }
 
     /**
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      *
      * @return $this
      */
@@ -172,7 +172,7 @@ class ProductShippingOptions implements
     }
 
     /**
-     * @param Weight $weight
+     * @param Weight|null $weight
      *
      * @return $this
      */
@@ -193,7 +193,7 @@ class ProductShippingOptions implements
     }
 
     /**
-     * @param Dimensions $dimensions
+     * @param Dimensions|null $dimensions
      *
      * @return $this
      */
@@ -214,7 +214,7 @@ class ProductShippingOptions implements
     }
 
     /**
-     * @param FreightClass $freightClass
+     * @param FreightClass|null $freightClass
      * @return $this
      */
     public function setFreightClass(FreightClass $freightClass = null)

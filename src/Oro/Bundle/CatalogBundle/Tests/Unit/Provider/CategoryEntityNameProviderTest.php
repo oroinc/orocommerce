@@ -8,93 +8,100 @@ use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TranslationBundle\Entity\Language;
+use Oro\Component\Testing\ReflectionUtil;
 
 class CategoryEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CategoryEntityNameProvider */
-    protected $provider;
+    private CategoryEntityNameProvider $provider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->provider = new CategoryEntityNameProvider();
     }
 
-    public function testGetNameForShortFormat()
+    private function getCategoryTitle(string $string, Localization $localization = null): CategoryTitle
     {
-        $this->assertFalse(
-            $this->provider->getName(EntityNameProviderInterface::SHORT, 'en', new Category())
-        );
+        $value = new CategoryTitle();
+        $value->setString($string);
+        $value->setLocalization($localization);
+
+        return $value;
     }
 
-    public function testGetNameForUnsupportedEntity()
+    private function getLocalization(string $code): Localization
+    {
+        $language = new Language();
+        $language->setCode($code);
+
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, 123);
+        $localization->setLanguage($language);
+
+        return $localization;
+    }
+
+    public function testGetNameForUnsupportedEntity(): void
     {
         $this->assertFalse(
             $this->provider->getName(EntityNameProviderInterface::FULL, 'en', new \stdClass())
         );
     }
 
-    public function testGetNameForLocale()
+    public function testGetName(): void
     {
         $category = new Category();
-        $category->addTitle($this->getFallbackValue('default title'))
-            ->addTitle($this->getFallbackValue('localized title', $this->getLocalization('en')));
+        $category->addTitle($this->getCategoryTitle('default title'));
+        $category->addTitle($this->getCategoryTitle('localized title', $this->getLocalization('en')));
 
         $this->assertEquals(
             'default title',
-            $this->provider->getName(EntityNameProviderInterface::FULL, 'en', $category)
+            $this->provider->getName(EntityNameProviderInterface::FULL, null, $category)
         );
     }
 
-    public function testGetNameForLocalization()
+    public function testGetNameForLocalization(): void
     {
-        $localization = $this->getLocalization('en');
-
         $category = new Category();
-        $category->addTitle($this->getFallbackValue('default title'))
-            ->addTitle($this->getFallbackValue('localized title', $localization));
+        $category->addTitle($this->getCategoryTitle('default title'));
+        $category->addTitle($this->getCategoryTitle('localized title', $this->getLocalization('en')));
 
         $this->assertEquals(
             'localized title',
-            $this->provider->getName(EntityNameProviderInterface::FULL, $localization, $category)
+            $this->provider->getName(EntityNameProviderInterface::FULL, $this->getLocalization('en'), $category)
         );
     }
 
-    public function testGetNameDQL()
+    public function testGetNameDQLForUnsupportedEntity(): void
     {
-        $this->assertFalse(
-            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', Category::class, 'category')
+        self::assertFalse(
+            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, 'en', \stdClass::class, 'entity')
         );
     }
 
-    /**
-     * @param string $string
-     * @param Localization|null $localization
-     * @return CategoryTitle
-     */
-    protected function getFallbackValue($string, Localization $localization = null)
+    public function testGetNameDQL(): void
     {
-        $value = new CategoryTitle();
-        $value->setString($string)
-            ->setLocalization($localization);
-
-        return $value;
+        self::assertEquals(
+            'CAST((SELECT category_t.string'
+            . ' FROM Oro\Bundle\CatalogBundle\Entity\CategoryTitle category_t'
+            . ' WHERE category_t MEMBER OF category.titles AND category_t.localization IS NULL) AS string)',
+            $this->provider->getNameDQL(EntityNameProviderInterface::FULL, null, Category::class, 'category')
+        );
     }
 
-    /**
-     * @param string $code
-     * @return Localization
-     */
-    protected function getLocalization($code)
+    public function testGetNameDQLForLocalization(): void
     {
-        $language = new Language();
-        $language->setCode($code);
-
-        $localization = new Localization();
-        $localization->setLanguage($language);
-
-        return $localization;
+        self::assertEquals(
+            'CAST((SELECT COALESCE(category_t.string, category_dt.string)'
+            . ' FROM Oro\Bundle\CatalogBundle\Entity\CategoryTitle category_dt'
+            . ' LEFT JOIN Oro\Bundle\CatalogBundle\Entity\CategoryTitle category_t'
+            . ' WITH category_t MEMBER OF category.titles AND category_t.localization = 123'
+            . ' WHERE category_dt MEMBER OF category.titles AND category_dt.localization IS NULL) AS string)',
+            $this->provider->getNameDQL(
+                EntityNameProviderInterface::FULL,
+                $this->getLocalization('en'),
+                Category::class,
+                'category'
+            )
+        );
     }
 }

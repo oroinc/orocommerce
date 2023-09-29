@@ -4,6 +4,7 @@ Feature: Check shopping list quick search
 
   Scenario: Quick search doesn't display
     Given I signed in as AmandaRCole@example.org on the store frontend
+    And I wait 7 seconds
     And type "AA1" in "search"
     And I click "Search Button"
     And I should see "Product1"

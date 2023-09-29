@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+.product-kit-dialog {
+    .fullscreen-popup__actions-wrapper,
+    .widget-actions-section {
+        display: flex;
+        justify-content: flex-end;
+        gap: $product-totals-gap;
+        align-items: flex-end;
+    }
+}

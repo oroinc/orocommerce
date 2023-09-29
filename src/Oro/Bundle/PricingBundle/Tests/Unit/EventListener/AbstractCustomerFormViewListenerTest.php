@@ -174,7 +174,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
 
     /**
      * @param Environment $environment
-     * @param FormView $formView
+     * @param FormView|null $formView
      * @return BeforeListRenderEvent
      */
     protected function createEvent(Environment $environment, FormView $formView = null)

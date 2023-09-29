@@ -10,11 +10,12 @@ Feature: Change counting the number of products in featured categories widget
     And click "NewCategory"
     And click "Create Subcategory"
     And fill "Category Form" with:
-      | Title | SubNew |
-      | Inventory Threshold Use |false              |
+      | Title                   | SubNew            |
+      | Inventory Threshold Use | false             |
       | Inventory Threshold     | 0                 |
       | Short Description       | Short description |
       | Long Description        | Long description  |
+    And I click "Products"
     And click on PSKU2 in grid
     And click "Save"
     And I am on the homepage

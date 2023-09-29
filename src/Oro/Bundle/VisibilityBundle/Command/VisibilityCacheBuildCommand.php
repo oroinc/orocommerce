@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Oro\Bundle\VisibilityBundle\Command;
@@ -35,12 +36,12 @@ class VisibilityCacheBuildCommand extends Command
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<info>Start the process of building the cache</info>');
         $this->cacheBuilder->buildCache();
         $output->writeln('<info>The cache is updated successfully</info>');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

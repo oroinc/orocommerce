@@ -3,8 +3,12 @@ define(function(require) {
 
     const BaseSlugifyComponent = require('ororedirect/js/app/components/base-slugify-component');
     const $ = require('jquery');
+    const _ = require('underscore');
 
     const LocalizedFieldSlugifyComponent = BaseSlugifyComponent.extend({
+
+        wait: 500,
+
         /**
          * @inheritdoc
          */
@@ -19,6 +23,7 @@ define(function(require) {
         initialize: function(options) {
             LocalizedFieldSlugifyComponent.__super__.initialize.apply(this, [options]);
             this.$targets.on('change', this.syncTargetAfterFallbackValueChanged.bind(this));
+            this.$sources.on('keyup', _.debounce(this.syncField.bind(this), this.wait));
         },
 
         /**

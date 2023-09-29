@@ -18,7 +18,8 @@ class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsF
         $this->listener = new ProductQuantityToOrderFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

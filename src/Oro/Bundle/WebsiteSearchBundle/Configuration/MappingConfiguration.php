@@ -26,7 +26,7 @@ class MappingConfiguration implements ConfigurationInterface
      *
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('mappings');
         $rootNode = $treeBuilder->getRootNode();

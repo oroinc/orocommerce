@@ -18,22 +18,14 @@ class ProductIndexFieldsProvider implements ProductIndexAttributeProviderInterfa
         $this->fields = new ArrayCollection();
     }
 
-    /**
-     * @param string $field
-     */
-    public function addForceIndexed(string $field) : void
+    public function addForceIndexed(string $field): void
     {
         if (!$this->fields->contains($field)) {
             $this->fields->add($field);
         }
     }
 
-    /**
-     * @param string $field
-     *
-     * @return bool
-     */
-    public function isForceIndexed(string $field) : bool
+    public function isForceIndexed(string $field): bool
     {
         return $this->fields->contains($field);
     }

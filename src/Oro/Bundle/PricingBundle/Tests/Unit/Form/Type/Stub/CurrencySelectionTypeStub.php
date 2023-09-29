@@ -28,7 +28,7 @@ class CurrencySelectionTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return CurrencySelectionType::NAME;
     }
@@ -36,7 +36,7 @@ class CurrencySelectionTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CurrencyType::class;
     }

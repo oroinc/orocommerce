@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Oro\Bundle\CommerceBundle\Migrations\Schema\v4_1_0_0;

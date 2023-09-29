@@ -51,14 +51,12 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
      */
     protected $fullChainPriceList;
 
-
     /**
      * @var int
      *
      * @ORM\Column(name="version", type="integer", nullable=true)
      */
     protected $version;
-
 
     /**
      * @return CombinedPriceList
@@ -127,7 +125,7 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
     public function setVersion(?int $version): self
     {
         $this->version = $version;
-        
+
         return $this;
     }
 

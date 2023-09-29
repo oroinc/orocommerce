@@ -1,12 +1,5 @@
 {% block __oro_product_price__product_price_component_widget %}
-    {% set isRenderable = (
-        (
-            not is_configurable_product_type(product.type) and
-            not is_kit_product_type(product.type)
-        ) or
-        matrixFormType == 'none'
-    ) %}
-    {% if isRenderable %}
+    {% if not is_price_hidden(product, matrixFormType == 'none') %}
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/view-component',
             '~data-page-component-options': {
@@ -19,6 +12,7 @@
             }
         }) %}
     {% endif %}
+
     {% if productPrices is not empty or forceComponentRender %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' product-price product-price__main'

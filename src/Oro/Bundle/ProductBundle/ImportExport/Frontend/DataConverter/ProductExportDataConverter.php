@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\ImportExport\Frontend\Event\ProductExportDataConver
 class ProductExportDataConverter extends PropertyPathTitleDataConverter
 {
     public const PRODUCT_NAME_FIELD = 'names';
-    public const PRODUCT_NAME_COLUMN = 'name';
 
     protected ConfigProvider $configProvider;
 
@@ -68,9 +67,10 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
     ) {
         if ($field['name'] === self::PRODUCT_NAME_FIELD && is_a($entityName, Product::class, true)) {
             // Adds the rule and header for the "name" column.
+
             return [
-                [self::PRODUCT_NAME_COLUMN => ['value' => $fieldHeader, 'order' => $fieldOrder]],
-                [['value' => $fieldHeader, 'order' => $fieldOrder]],
+                [$fieldHeader => ['value' => self::PRODUCT_NAME_FIELD, 'order' => $fieldOrder]],
+                [['value' => self::PRODUCT_NAME_FIELD, 'order' => $fieldOrder]],
             ];
         }
 
@@ -97,7 +97,7 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
     ) {
         if ($field['name'] === self::PRODUCT_NAME_FIELD && is_a($entityName, Product::class, true)) {
             // Adds the rule for the "name" column.
-            return [self::PRODUCT_NAME_COLUMN => ['value' => $fieldHeader, 'order' => $fieldOrder]];
+            return [$fieldHeader => ['value' => self::PRODUCT_NAME_FIELD, 'order' => $fieldOrder]];
         }
 
         return parent::getRelatedEntityRules(
@@ -131,5 +131,14 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         }
 
         return [$rules, $backendHeaders];
+    }
+
+    protected function getFieldHeader($entityName, $field): string
+    {
+        if (!is_array($field) || !array_key_exists('name', $field)) {
+            throw new \InvalidArgumentException('Property is not array or key "name" is not exist.');
+        }
+
+        return $this->fieldHelper->getConfigValue($entityName, $field['name'], 'header', $field['label']);
     }
 }

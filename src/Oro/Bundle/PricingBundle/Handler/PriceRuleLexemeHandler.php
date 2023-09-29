@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Handler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -121,7 +122,7 @@ class PriceRuleLexemeHandler
 
             $realClassName = $this->priceRuleProvider->getRealClassName($class);
             if ($realClassName === PriceAttributeProductPrice::class) {
-                $containerId = $this->getPriceAttributeRelationByClass($class)->getId();
+                $containerId = $this->getPriceAttributeRelationByClass($class, $priceList->getOrganization())->getId();
             }
             foreach ($fieldNames as $fieldName) {
                 $lexeme = new PriceRuleLexeme();
@@ -129,7 +130,7 @@ class PriceRuleLexemeHandler
                 $lexeme->setClassName($realClassName);
                 $lexeme->setRelationId($containerId);
                 $lexeme->setFieldName(
-                    $fieldName ? : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
+                    $fieldName ?: $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
                 );
                 $lexeme->setPriceList($priceList);
 
@@ -140,17 +141,15 @@ class PriceRuleLexemeHandler
         return $lexemeEntities;
     }
 
-    /**
-     * @param $class
-     * @return PriceAttributePriceList PriceAttributePriceList
-     */
-    protected function getPriceAttributeRelationByClass($class)
-    {
+    protected function getPriceAttributeRelationByClass(
+        string $class,
+        Organization $organization
+    ): PriceAttributePriceList {
         $classPath = explode('::', $class);
         $fieldName = end($classPath);
 
         return $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class)
-            ->findOneBy(['fieldName' => $fieldName]);
+            ->findOneBy(['fieldName' => $fieldName, 'organization' => $organization]);
     }
 
     /**

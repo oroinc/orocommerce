@@ -12,49 +12,25 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestBuild
 
 class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const UPS_API_USERNAME = 'user';
+    private const UPS_API_USERNAME = 'user';
+    private const UPS_API_PASSWORD = 'pass';
+    private const UPS_API_KEY = 'key';
 
-    /**
-     * @internal
-     */
-    const UPS_API_PASSWORD = 'pass';
-
-    /**
-     * @internal
-     */
-    const UPS_API_KEY = 'key';
-
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $crypter;
 
-    /**
-     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
     private $upsTransport;
 
-    /**
-     * @var TimeInTransitRequestBuilderFactoryInterface
-     */
-    private $timeInTransitRequestBuilderFactory;
-
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime */
     private $pickupDate;
 
-    /**
-     * @var AddressInterface
-     */
+    /** @var AddressInterface */
     private $address;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var TimeInTransitRequestBuilderFactoryInterface */
+    private $timeInTransitRequestBuilderFactory;
+
     protected function setUp(): void
     {
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
@@ -62,29 +38,22 @@ class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
         $this->address = new AddressStub();
         $this->pickupDate = new \DateTime();
 
-        $this->timeInTransitRequestBuilderFactory
-            = new TimeInTransitRequestBuilderFactory($this->crypter);
+        $this->timeInTransitRequestBuilderFactory = new TimeInTransitRequestBuilderFactory($this->crypter);
     }
 
     public function testCreateTimeInTransitRequestBuilder()
     {
-        $this->crypter
-            ->expects(static::once())
+        $this->crypter->expects(self::once())
             ->method('decryptData')
             ->willReturn(self::UPS_API_PASSWORD);
 
-        $this->upsTransport
-            ->expects(static::once())
+        $this->upsTransport->expects(self::once())
             ->method('getUpsApiUser')
             ->willReturn(self::UPS_API_USERNAME);
-
-        $this->upsTransport
-            ->expects(static::once())
+        $this->upsTransport->expects(self::once())
             ->method('getUpsApiPassword')
             ->willReturn(self::UPS_API_PASSWORD);
-
-        $this->upsTransport
-            ->expects(static::once())
+        $this->upsTransport->expects(self::once())
             ->method('getUpsApiKey')
             ->willReturn(self::UPS_API_KEY);
 
@@ -97,10 +66,13 @@ class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
             $this->pickupDate
         );
 
-        $builder = $this
-            ->timeInTransitRequestBuilderFactory
-            ->createTimeInTransitRequestBuilder($this->upsTransport, $this->address, $this->address, $this->pickupDate);
+        $builder = $this->timeInTransitRequestBuilderFactory->createTimeInTransitRequestBuilder(
+            $this->upsTransport,
+            $this->address,
+            $this->address,
+            $this->pickupDate
+        );
 
-        static::assertEquals($expectedBuilder, $builder);
+        self::assertEquals($expectedBuilder, $builder);
     }
 }

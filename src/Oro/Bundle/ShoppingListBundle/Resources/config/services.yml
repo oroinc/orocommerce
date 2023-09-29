@@ -6,13 +6,6 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_validator }
 
-    oro_shopping_list.validator.line_item_collection:
-        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator'
-        arguments:
-            - '@event_dispatcher'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_collection_validator }
-
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         public: true
@@ -215,6 +208,7 @@ services:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@oro_shopping_list.data_provider.shopping_list_line_items'
             - '@oro_pricing.formatter.product_price_formatter'
+            - '@oro_pricing.provider.product_line_item_price'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_products }
 
@@ -323,7 +317,7 @@ services:
             - '@doctrine'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_config.global'
+            - '@oro_customer.security.customer_user_provider'
 
     oro_shopping_list.provider.shopping_list_url:
         class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider
@@ -350,7 +344,7 @@ services:
     oro_shopping_list.condition.rfp_allowed:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
         arguments:
-            - '@oro_rfp.provider.product_availability'
+            - '@oro_rfp.provider.product_rfp_availability'
         tags:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
 
@@ -364,13 +358,6 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage'
         arguments:
             - '@oro_shopping_list.shopping_list_provider.cache'
-
-    oro_shopping_list.validator_service.line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider'
-        arguments:
-            - '@validator'
-        tags:
-            - { name: layout.data_provider, alias: oro_line_item_violations }
 
     oro_shopping_list.validator.matrix_collection:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'
@@ -401,6 +388,7 @@ services:
             - '@oro_user.provider.default_user'
             - '@oro_security.token_accessor'
             - '@oro_shopping_list.manager.shopping_list_limit'
+            - '@oro_pricing.user_currency_manager'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', event: postPersist }
@@ -610,6 +598,11 @@ services:
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }
 
+    oro_shopping_list.access_rule.frontend_product_kit_item_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ProductKitItemLineItemAccessRule
+        tags:
+            - {name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, frontend: true}
+
     oro_shopping_list.layout.extension.shopping_list_limit_context:
         class: Oro\Bundle\ShoppingListBundle\Layout\Extension\ShoppingListLimitContextConfigurator
         arguments:
@@ -638,6 +631,7 @@ services:
         arguments:
             - '@oro_attachment.manager'
             - '@oro_locale.formatter.number'
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-user-shopping-list-grid, method: onResultAfter, priority: 512 }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkout-line-items-grid, method: onResultAfter, priority: 512 }
@@ -754,7 +748,7 @@ services:
     oro_shopping_list.validator.product_kit_item_collection_is_available_for_purchase:
         class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchaseValidator
         arguments:
-            - '@oro_locale.helper.localization'
+            - '@oro_translation.translation_message_sanitizer'
         tags:
             - { name: validator.constraint_validator }
 
@@ -762,6 +756,7 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator
         arguments:
             - '@oro_locale.helper.localization'
+            - '@oro_translation.translation_message_sanitizer'
         tags:
             - { name: validator.constraint_validator }
 
@@ -816,3 +811,47 @@ services:
         class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator
         arguments:
             - '@.inner'
+
+    oro_shopping_list.delete_handler.product_kit_item_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Handler\ProductKitItemLineItemDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem }
+
+    oro_shopping_list.extension.action.type.update_product_kit_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Extension\Action\Actions\UpdateProductKitLineItemAction
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: update-product-kit-line-item }
+
+    oro_shopping_list.validator.product_kit_item_product_has_price:
+        class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPriceValidator
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_shopping_list.event_listener.frontend_shopping_list_total:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\FrontendShoppingListTotalListener
+        arguments:
+            - '@oro_customer.security.customer_user_provider'
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller_arguments, method: onKernelController }
+
+    oro_shopping_list.model.product_price_scope_criteria_factory:
+        class: Oro\Bundle\ShoppingListBundle\Model\ProductPriceScopeCriteriaFactory
+        decorates: oro_pricing.model.product_price_scope_criteria_factory
+        arguments:
+            - '@oro_customer.security.customer_user_provider'
+            - '@.inner'
+
+    oro_shopping_list.provider.shopping_list_current_currency:
+        class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListCurrentCurrencyProvider
+        public: false
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: oro_pricing.current_currency_provider }

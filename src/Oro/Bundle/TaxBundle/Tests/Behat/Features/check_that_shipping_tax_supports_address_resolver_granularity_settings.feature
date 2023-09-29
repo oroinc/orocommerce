@@ -31,7 +31,7 @@ Feature: Check that shipping tax supports address resolver granularity settings
     And follow "Commerce/Taxation/Shipping" on configuration sidebar
     And uncheck "Use default" for "Tax Code" field
     When I fill "Tax Shipping Form" with:
-      | Tax Code | Product tax code |
+      | Tax Code | product_tax_code |
     And save form
     Then I should see "Configuration saved" flash message
 

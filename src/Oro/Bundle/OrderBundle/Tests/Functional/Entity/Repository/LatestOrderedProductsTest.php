@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Entity\Repository;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
@@ -21,7 +21,8 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\WebsiteTrait;
  */
 class LatestOrderedProductsTest extends WebTestCase implements ResettableCustomerUserRepositoryInterface
 {
-    use ResetCustomerUserTrait, WebsiteTrait;
+    use ResetCustomerUserTrait;
+    use WebsiteTrait;
 
     private OrderRepository $repository;
 
@@ -131,9 +132,6 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
         self::assertEmpty($result);
     }
 
-    /**
-     * @return OrderRepository
-     */
     private function getRepository(): OrderRepository
     {
         return self::getContainer()
@@ -166,8 +164,8 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
                 return;
             }
         }
-        static::fail(\sprintf(
-            "Failed asserting that there is a record with product %s (product_id=%s)"
+        static::fail(sprintf(
+            'Failed asserting that there is a record with product %s (product_id=%s)'
             . " and customer user %s (customer_user_id=%s):\n%s",
             $productReference,
             $productId,

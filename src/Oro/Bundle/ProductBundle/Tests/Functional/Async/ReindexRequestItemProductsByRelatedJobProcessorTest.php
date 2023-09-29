@@ -64,8 +64,6 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
 
     /**
      * @dataProvider testProcessProvider
-     *
-     * @return void
      */
     public function testProcess(int $relatedJobId, array $fieldGroups = null): void
     {

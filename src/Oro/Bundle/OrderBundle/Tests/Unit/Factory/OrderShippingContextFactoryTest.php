@@ -17,37 +17,42 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
+class OrderShippingContextFactoryTest extends TestCase
 {
+    use ShippingLineItemTrait;
+
     private const TEST_PAYMENT_METHOD = 'SomePaymentMethod';
     private const TEST_SHIPPING_METHOD = 'SomeShippingMethod';
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|MockObject $doctrine;
 
-    /** @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingLineItemConverter;
+    private OrderShippingLineItemConverterInterface|MockObject $shippingLineItemConverter;
 
-    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingContextBuilderFactory;
+    private ShippingContextBuilderFactoryInterface|MockObject $shippingContextBuilderFactory;
 
-    /** @var OrderShippingContextFactory */
-    private $factory;
+    private OrderShippingContextFactory $factory;
+
+    private SystemShippingOriginProvider $systemShippingOriginProvider;
 
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
         $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);
+        $this->systemShippingOriginProvider = $this->createMock(SystemShippingOriginProvider::class);
 
         $this->factory = new OrderShippingContextFactory(
             $this->doctrine,
             $this->shippingLineItemConverter,
-            $this->shippingContextBuilderFactory
+            $this->shippingContextBuilderFactory,
+            $this->systemShippingOriginProvider
         );
     }
 
@@ -57,8 +62,9 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         string $currency,
         Website $website,
         Customer $customer,
-        CustomerUser $customerUser
-    ): ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject {
+        CustomerUser $customerUser,
+        ShippingOrigin $shippingOrigin,
+    ): ShippingContextBuilderInterface|MockObject {
         $contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
         $contextBuilder->expects(self::any())
             ->method('setShippingAddress')
@@ -87,6 +93,10 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $contextBuilder->expects(self::any())
             ->method('setWebsite')
             ->with($website)
+            ->willReturnSelf();
+        $contextBuilder->expects(self::once())
+            ->method('setShippingOrigin')
+            ->with($shippingOrigin)
             ->willReturnSelf();
         $contextBuilder->expects(self::once())
             ->method('getResult');
@@ -144,25 +154,25 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testCreate()
+    public function testCreate(): void
     {
+        $shippingOrigin = $this->createMock(ShippingOrigin::class);
+        $this->systemShippingOriginProvider->expects(self::once())
+            ->method('getSystemShippingOrigin')
+            ->willReturn($shippingOrigin);
         $order = $this->getOrder();
 
         $shippingLineItems = [
-            new ShippingLineItem(
-                [
-                    ShippingLineItem::FIELD_QUANTITY => 10,
-                    ShippingLineItem::FIELD_PRICE => Price::create($order->getSubtotal(), $order->getCurrency()),
-                ]
-            ),
+            $this->getShippingLineItem(quantity: 10)
+                ->setPrice(Price::create($order->getSubtotal(), $order->getCurrency())),
             (new OrderLineItem())
                 ->setQuantity(20)
                 ->setPrice(Price::create($order->getSubtotal(), $order->getCurrency())),
         ];
 
-        $shippingLineItemCollection = new DoctrineShippingLineItemCollection($shippingLineItems);
+        $shippingLineItemCollection = new ArrayCollection($shippingLineItems);
 
-        $this->shippingLineItemConverter->expects($this->once())
+        $this->shippingLineItemConverter->expects(self::once())
             ->method('convertLineItems')
             ->with($order->getLineItems())
             ->willReturn($shippingLineItemCollection);
@@ -173,16 +183,17 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
             $order->getCurrency(),
             $order->getWebsite(),
             $order->getCustomer(),
-            $order->getCustomerUser()
+            $order->getCustomerUser(),
+            $shippingOrigin,
         );
-        $contextBuilder->expects($this->once())
+        $contextBuilder->expects(self::once())
             ->method('setPaymentMethod')
             ->with(self::TEST_PAYMENT_METHOD);
         $contextBuilder->expects($this->once())
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
 
-        $this->shippingContextBuilderFactory->expects($this->once())
+        $this->shippingContextBuilderFactory->expects(self::once())
             ->method('createShippingContextBuilder')
             ->with($order, (string)$order->getId())
             ->willReturn($contextBuilder);
@@ -190,7 +201,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory->create($order);
     }
 
-    public function testUnsupportedEntity()
+    public function testUnsupportedEntity(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->factory->create(new \stdClass());

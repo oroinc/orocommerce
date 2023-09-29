@@ -4,6 +4,9 @@ namespace Oro\Bundle\SaleBundle\Model;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
+/**
+ * Contact information model
+ */
 class ContactInfo extends ParameterBag
 {
     /**
@@ -117,7 +120,7 @@ class ContactInfo extends ParameterBag
     /**
      * {@inheritDoc}
      */
-    public function get($name)
+    public function get(string $name)
     {
         return $this->has($name) ? parent::get($name) : '';
     }

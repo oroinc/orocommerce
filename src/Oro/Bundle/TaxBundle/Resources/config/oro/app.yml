@@ -1,3 +1,18 @@
 oro_api:
     form_types:
         - Oro\Bundle\TaxBundle\Api\Form\Type\ZipCodeType
+
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\TaxBundle\Entity\Tax:
+            full: [ code ]
+            short: [ code ]
+        Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+            full: [ code ]
+            short: [ code ]
+        Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+            full: [ code ]
+            short: [ code ]
+        Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+            full: [ code ]
+            short: [ code ]

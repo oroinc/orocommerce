@@ -23,6 +23,8 @@ oro_behat_extension:
         - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
         - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -54,7 +56,7 @@ oro_behat_extension:
     Product Price Listed:
       selector: '.product-price__listed'
     Product Price Hint:
-      selector: '.product-price__hint'
+      selector: '.product-price-hint-btn'
     Product Price Popover:
       selector: '.prices-hint-content.popover'
     Product Assignment Rule:
@@ -96,7 +98,7 @@ oro_behat_extension:
     Price List Select Clear Button:
       selector: '.active.expression-editor-data-source .select2-search-choice-close'
     Product Price Attributes Table:
-      selector: 'table.grid.product-price-attributes'
+      selector: '.price-attribute-item .product-price-attributes-grid'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
     Product Price Attributes Grid 1:
       selector: 'div[data-page-component-name="product-price-attributes-grid:1"]'
@@ -247,3 +249,16 @@ oro_behat_extension:
 
     CodeMirrorField:
       class: Oro\Bundle\PricingBundle\Tests\Behat\Element\CodeMirrorField
+
+    Merge Allowed In Row 1:
+      selector:
+        locator: '//input[@type="checkbox" and contains(@name, "[0][mergeAllowed]")]'
+        type: 'xpath'
+    Merge Allowed In Row 2:
+      selector:
+        locator: '//input[@type="checkbox" and contains(@name, "[1][mergeAllowed]")]'
+        type: 'xpath'
+    Merge Allowed In Row 3:
+      selector:
+        locator: '//input[@type="checkbox" and contains(@name, "[2][mergeAllowed]")]'
+        type: 'xpath'

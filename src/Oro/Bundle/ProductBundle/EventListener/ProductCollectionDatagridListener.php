@@ -111,10 +111,6 @@ class ProductCollectionDatagridListener
         $this->segmentManager->filterBySegment($dataGridQueryBuilder, $productSegment);
     }
 
-    /**
-     * @param array $segmentData
-     * @return string
-     */
     private function getSegmentDefinition(array $segmentData): string
     {
         return $this->definitionConverter->putConditionsInDefinition(
@@ -124,10 +120,6 @@ class ProductCollectionDatagridListener
         );
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array
-     */
     private function getSegmentData(DatagridInterface $dataGrid): array
     {
         $parameters = $this->getSegmentDataFromGridParameters($dataGrid);
@@ -138,10 +130,6 @@ class ProductCollectionDatagridListener
         return $parameters;
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array|null
-     */
     private function getSegmentDataFromGridParameters(DatagridInterface $dataGrid): ?array
     {
         $parameters = $dataGrid->getParameters();
@@ -158,10 +146,6 @@ class ProductCollectionDatagridListener
         return null;
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array
-     */
     private function getSegmentDataFromRequest(DatagridInterface $dataGrid): array
     {
         $request = $this->requestStack->getCurrentRequest();

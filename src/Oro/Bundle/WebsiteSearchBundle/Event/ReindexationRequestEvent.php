@@ -35,13 +35,6 @@ final class ReindexationRequestEvent extends Event
      */
     private $fieldGroups;
 
-    /**
-     * @param array $classesNames
-     * @param array $websitesIds
-     * @param array $ids
-     * @param bool  $scheduled
-     * @param null|array $fieldGroups
-     */
     public function __construct(
         array $classesNames = [],
         array $websitesIds = [],
@@ -56,25 +49,16 @@ final class ReindexationRequestEvent extends Event
         $this->fieldGroups  = $fieldGroups;
     }
 
-    /**
-     * @return array
-     */
     public function getClassesNames(): array
     {
         return $this->classesNames;
     }
 
-    /**
-     * @return array
-     */
     public function getWebsitesIds(): array
     {
         return $this->websitesIds;
     }
 
-    /**
-     * @return array
-     */
     public function getIds(): array
     {
         return $this->ids;
@@ -88,9 +72,6 @@ final class ReindexationRequestEvent extends Event
         return $this->scheduled;
     }
 
-    /**
-     * @return array|null
-     */
     public function getFieldGroups(): ?array
     {
         return $this->fieldGroups;

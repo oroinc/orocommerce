@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroSaleBundle_Entity_Quote;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -78,6 +79,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @method AbstractEnumValue getInternalStatus()
  * @method AbstractEnumValue getCustomerStatus()
+ * @mixin OroSaleBundle_Entity_Quote
  */
 class Quote implements
     CustomerOwnerAwareInterface,
@@ -436,10 +438,6 @@ class Quote implements
         return $this->qid;
     }
 
-    /**
-     * @param string $guestAccessId
-     * @return Quote
-     */
     public function setGuestAccessId(?string $guestAccessId): Quote
     {
         $this->guestAccessId = $guestAccessId;
@@ -447,9 +445,6 @@ class Quote implements
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getGuestAccessId(): ?string
     {
         return $this->guestAccessId;
@@ -458,7 +453,7 @@ class Quote implements
     /**
      * Set validUntil
      *
-     * @param \DateTime $validUntil
+     * @param \DateTime|null $validUntil
      * @return Quote
      */
     public function setValidUntil(\DateTime $validUntil = null)
@@ -524,7 +519,7 @@ class Quote implements
     /**
      * Set request
      *
-     * @param Request $request
+     * @param Request|null $request
      *
      * @return Quote
      */
@@ -643,7 +638,7 @@ class Quote implements
     /**
      * Set shipUntil
      *
-     * @param \DateTime $shipUntil
+     * @param \DateTime|null $shipUntil
      *
      * @return Quote
      */
@@ -673,7 +668,7 @@ class Quote implements
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
     public function setWebsite(Website $website = null)

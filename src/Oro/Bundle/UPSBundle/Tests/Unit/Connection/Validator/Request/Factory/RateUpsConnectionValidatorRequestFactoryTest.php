@@ -10,16 +10,16 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
 class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    const USERNAME = 'user';
-    const PASS = 'pass';
-    const KEY = 'key';
-    const COUNTRY_CODE = 'country';
-    const WEIGHT_UNIT = 'kg';
+    private const USERNAME = 'user';
+    private const PASS = 'pass';
+    private const KEY = 'key';
+    private const COUNTRY_CODE = 'country';
+    private const WEIGHT_UNIT = 'kg';
 
     public function testCreateByTransport()
     {
         $crypter = $this->createMock(SymmetricCrypterInterface::class);
-        $crypter->expects(static::once())
+        $crypter->expects(self::once())
             ->method('decryptData')
             ->willReturn(self::PASS);
 
@@ -28,8 +28,7 @@ class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit\Framework\Te
             ->setUpsApiUser(self::USERNAME)
             ->setUpsApiPassword(self::PASS)
             ->setUpsCountry(new Country(self::COUNTRY_CODE))
-            ->setUpsUnitOfWeight(self::WEIGHT_UNIT)
-        ;
+            ->setUpsUnitOfWeight(self::WEIGHT_UNIT);
 
         $expected = new UpsClientRequest([
             UpsClientRequest::FIELD_URL => 'Rate',
@@ -38,13 +37,10 @@ class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit\Framework\Te
 
         $factory = new RateUpsConnectionValidatorRequestFactory($crypter);
 
-        static::assertEquals($expected, $factory->createByTransport($transport));
+        self::assertEquals($expected, $factory->createByTransport($transport));
     }
 
-    /**
-     * @return array
-     */
-    private function getRequestData()
+    private function getRequestData(): array
     {
         return [
             'UPSSecurity' => [

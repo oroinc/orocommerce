@@ -269,6 +269,77 @@ datagrids:
                     type:      datetime
                     data_name: request.updatedAt
 
+    rfp-requests-for-context-grid:
+        acl_resource: oro_rfp_request_view
+        source:
+            type: orm
+            query:
+                select:
+                    - request.id
+                    - request.poNumber
+                    - request.firstName
+                    - request.lastName
+                    - requestCustomer.name as customerName
+                    - CONCAT(requestCustomerUser.firstName, ' ', requestCustomerUser.lastName) as customerUserName
+                from:
+                    - { table: 'Oro\Bundle\RFPBundle\Entity\Request', alias: request }
+                join:
+                    left:
+                        - { join: request.customer, alias: requestCustomer }
+                        - { join: request.customerUser, alias: requestCustomerUser }
+        columns:
+            id:
+                label: oro.rfp.request.id.label
+            customerUserName:
+                label: oro.rfp.request.customer_user.label
+            customerName:
+                label: oro.rfp.request.customer.label
+            poNumber:
+                label: oro.rfp.request.po_number.label
+                cellClassName: 'direction-ltr'
+            firstName:
+                label: oro.rfp.request.first_name.label
+            lastName:
+                label: oro.rfp.request.last_name.label
+        sorters:
+            columns:
+                id:
+                    data_name: request.id
+                customerUserName:
+                    data_name: customerUserName
+                customerName:
+                    data_name: customerName
+                poNumber:
+                    data_name: request.poNumber
+                firstName:
+                    data_name: request.firstName
+                lastName:
+                    data_name: request.lastName
+        filters:
+            columns:
+                customerUserName:
+                    type: string
+                    data_name: customerUserName
+                customerName:
+                    type: string
+                    data_name: customerName
+                poNumber:
+                    type: string
+                    data_name: request.poNumber
+                firstName:
+                    type: string
+                    data_name: request.firstName
+                lastName:
+                    type: string
+                    data_name: request.lastName
+        options:
+            entityHint: oro.rfp.request.entity_plural_label
+            entity_pagination: true
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+            routerEnabled: false
+
     frontend-requests-grid:
         acl_resource: oro_rfp_frontend_request_view
         extended_entity_name: 'Oro\Bundle\RFPBundle\Entity\Request'

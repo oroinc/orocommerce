@@ -7,5 +7,5 @@ namespace Oro\Bundle\RedirectBundle\Cache;
  */
 interface FlushableCacheInterface
 {
-    public function flushAll() : void;
+    public function flushAll(): void;
 }

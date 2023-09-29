@@ -108,9 +108,6 @@ class CategoryImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCategoryFilteredPictureSourcesReturnsPlaceholderSourcesWhenFileIsNullDataProvider
-     *
-     * @param bool $isWebpEnabledIfSupported
-     * @param array $expected
      */
     public function testGetCategoryFilteredPictureSourcesReturnsPlaceholderSourcesWhenFileIsNull(
         bool $isWebpEnabledIfSupported,

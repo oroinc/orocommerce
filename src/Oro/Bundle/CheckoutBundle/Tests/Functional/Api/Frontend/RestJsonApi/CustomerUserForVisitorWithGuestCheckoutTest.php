@@ -103,7 +103,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
     private function assertGuestCustomer(CustomerUser $customerUser): void
     {
         $customerGroup = $this->getGuestCustomerGroup();
-        $customerGroupId = null !== $customerGroup ? $customerGroup->getId() : null;
+        $customerGroupId = $customerGroup?->getId();
 
         $customer = $customerUser->getCustomer();
         self::assertSame(' ', $customer->getName());
@@ -177,7 +177,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $organizationId = $website->getOrganization()->getId();
         $roleId = $website->getDefaultRole()->getId();
         $owner = $this->getDefaultUser();
-        $ownerId = null !== $owner ? $owner->getId() : null;
+        $ownerId = $owner?->getId();
 
         $data = $this->getRequestData('create_customer_user_guest_checkout_min.yml');
         $response = $this->post(['entity' => 'customerusers'], $data);
@@ -237,7 +237,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $organizationId = $website->getOrganization()->getId();
         $roleId = $website->getDefaultRole()->getId();
         $owner = $this->getDefaultUser();
-        $ownerId = null !== $owner ? $owner->getId() : null;
+        $ownerId = $owner?->getId();
 
         $data = $this->getRequestData('create_customer_user_guest_checkout.yml');
         $response = $this->post(['entity' => 'customerusers'], $data);

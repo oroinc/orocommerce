@@ -1,0 +1,7 @@
+include:
+    - '@OroCheckoutBundle:Payment.yml'
+    - '@OroCheckoutBundle:Shipping.yml'
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+    - '@OroCheckoutBundle:CheckoutProductCEFixture.yml'
+    - '@OroCheckoutBundle:CheckoutShoppingListFixture.yml'
+    - '@OroCheckoutBundle:CheckoutQuoteFixture.yml'

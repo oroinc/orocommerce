@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Builder;
 
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactoryInterface;
@@ -13,7 +13,7 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 /**
- * Build shipping packages based on Line Items
+ * Build shipping packages based on Shipping Line Items
  */
 class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBuilderInterface
 {
@@ -50,9 +50,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         $this->expressionLanguage = $expressionLanguage;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function init(FedexPackageSettingsInterface $settings)
     {
         $this->settings = $settings;
@@ -61,10 +58,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         $this->resetCurrentPackage();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function addLineItem(ShippingLineItemInterface $lineItem): bool
+    public function addLineItem(ShippingLineItem $lineItem): bool
     {
         $itemOptions = $this->packageOptionsFactory->create($lineItem->getDimensions(), $lineItem->getWeight());
         if (!$this->itemCanFit($itemOptions)) {
@@ -148,8 +142,6 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         float $weight,
         Dimensions $dimensions
     ): ShippingPackageOptionsInterface {
-        $unit = null;
-
         return $this->packageOptionsFactory->create(
             $dimensions,
             Weight::create(

@@ -33,10 +33,6 @@ class GroupLineItemsDataProvider
 
     /**
      * Build grouped line items ids into array.
-     *
-     * @param WorkflowItem $workflowItem
-     * @param Checkout $checkout
-     * @return array
      */
     public function getGroupedLineItems(WorkflowItem $workflowItem, Checkout $checkout): array
     {
@@ -55,10 +51,6 @@ class GroupLineItemsDataProvider
 
     /**
      * Define title for each group of line items.
-     *
-     * @param WorkflowItem $workflowItem
-     * @param Checkout $checkout
-     * @return array
      */
     public function getGroupedLineItemsTitles(WorkflowItem $workflowItem, Checkout $checkout): array
     {

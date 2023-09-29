@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -27,7 +28,10 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadFrontendProductData::class]);
+        $this->loadFixtures([
+            LoadProductKitData::class,
+            LoadFrontendProductData::class
+        ]);
     }
 
     public function testFrontendVisibilityWithZeroValue(): void
@@ -44,7 +48,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $this->client->request('GET', $url);
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
     }
 
     /**
@@ -68,13 +72,13 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $this->client->request('GET', $url);
 
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
         $data = self::jsonToArray($result->getContent());
 
         $this->assertResultForProducts($expectedProducts, $data['results']);
 
-        $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
-        $this->assertInstanceOf(ProductSearchQueryRestrictionEvent::class, $this->firedEvent);
+        self::assertNotNull($this->firedEvent, 'Restriction event has not been fired');
+        self::assertInstanceOf(ProductSearchQueryRestrictionEvent::class, $this->firedEvent);
 
         $dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, [$this, 'eventCatcher']);
     }
@@ -86,21 +90,24 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                 'query' => 'pro',
                 'searchHandlerName' => 'oro_product_visibility_limited',
                 'expectedProductsResult' => [
-                    'PRODUCT_6',
-                    'PRODUCT_3',
-                    'PRODUCT_2',
-                    'PRODUCT_1',
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_1,
                 ]
             ],
-            'handler for simple and configurable products' => [
+            'handler for simple, configurable and kit products' => [
                 'query' => 'pro  ',
                 'searchHandlerName' => 'oro_all_product_visibility_limited',
                 'expectedProductsResult' => [
-                    'PRODUCT_8',
-                    'PRODUCT_6',
-                    'PRODUCT_3',
-                    'PRODUCT_2',
-                    'PRODUCT_1',
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_1,
+                    LoadProductKitData::PRODUCT_KIT_1,
+                    LoadProductKitData::PRODUCT_KIT_2,
+                    LoadProductKitData::PRODUCT_KIT_3,
                 ]
             ],
         ];
@@ -129,13 +136,13 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $this->client->request('GET', $url);
 
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
         $data = self::jsonToArray($result->getContent());
 
         $this->assertResultForProducts($expectedProducts, $data['results']);
 
-        $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
-        $this->assertInstanceOf(ProductDBQueryRestrictionEvent::class, $this->firedEvent);
+        self::assertNotNull($this->firedEvent, 'Restriction event has not been fired');
+        self::assertInstanceOf(ProductDBQueryRestrictionEvent::class, $this->firedEvent);
 
         $dispatcher->removeListener(ProductDBQueryRestrictionEvent::NAME, [$this, 'eventCatcher']);
     }
@@ -146,22 +153,25 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             'handler for simple products only' => [
                 'searchHandlerName' => 'oro_product_visibility_limited',
                 'expectedProductsResult' => [
-                    'PRODUCT_1',
-                    'PRODUCT_2',
-                    'PRODUCT_3',
-                    'PRODUCT_4',
-                    'PRODUCT_6',
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_6,
                 ]
             ],
-            'handler for simple and configurable products' => [
+            'handler for simple, configurable and kit products' => [
                 'searchHandlerName' => 'oro_all_product_visibility_limited',
                 'expectedProductsResult' => [
-                    'PRODUCT_1',
-                    'PRODUCT_2',
-                    'PRODUCT_3',
-                    'PRODUCT_4',
-                    'PRODUCT_6',
-                    'PRODUCT_8',
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductKitData::PRODUCT_KIT_1,
+                    LoadProductKitData::PRODUCT_KIT_2,
+                    LoadProductKitData::PRODUCT_KIT_3,
                 ]
             ],
         ];
@@ -177,7 +187,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $result = $this->getSearchHandler()->convertItem($product);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'id' => $product->getId(),
                 'sku' => $product->getSku(),
@@ -202,12 +212,17 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             ->getSearchQueryBySkuOrName(LoadProductData::PRODUCT_1, 0, 1)
             ->getResult()
             ->getElements();
-        $this->assertCount(1, $searchItems);
+        self::assertCount(1, $searchItems);
 
         $result = $this->getSearchHandler()->convertItem($searchItems[0]);
 
         $selectedData = $searchItems[0]->getSelectedData();
-        $this->assertEquals(
+
+        self::assertArrayHasKey('product_id', $selectedData);
+        self::assertArrayHasKey('sku', $selectedData);
+        self::assertArrayHasKey('name', $selectedData);
+
+        self::assertEquals(
             [
                 'id' => $selectedData['product_id'],
                 'sku' => $selectedData['sku'],
@@ -222,14 +237,21 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     public function testSearchByMultipleSkus(): void
     {
-        self::getContainer()->get('request_stack')
-            ->push(Request::create('', Request::METHOD_POST, [
-                'sku' => [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6]
-            ]));
+        $skuList = [LoadProductData::PRODUCT_2, LoadProductData::PRODUCT_6];
+        self::getContainer()
+            ->get('request_stack')
+            ->push(Request::create('', Request::METHOD_POST, ['sku' => $skuList]));
 
-        $data = $this->getSearchHandler()->search('', 1, 5);
+        $items = $this->getSearchHandler()->search('', 1, 5);
 
-        $this->assertResultForProducts(['PRODUCT_2', 'PRODUCT_6'], $data['results']);
+        self::assertCount(2, $items['results']);
+
+        $actualSkuList = array_map(function ($item) {
+            return $item['sku'];
+        }, $items['results']);
+        foreach ($actualSkuList as $sku) {
+            self::assertContains($sku, $skuList);
+        }
     }
 
     public function eventCatcher(Event $event): void
@@ -253,11 +275,10 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     private function assertResultForProducts(array $productConstants, array $results): void
     {
+        static::assertCount(\count($productConstants), $results);
         foreach ($productConstants as $productConstant) {
-            $reference = constant(sprintf('%s::%s', LoadProductData::class, $productConstant));
-
             /** @var Product $product */
-            $product = $this->getReference($reference);
+            $product = $this->getReference($productConstant);
             $found = false;
             foreach ($results as $result) {
                 // intentional non-strict comparison
@@ -273,7 +294,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                 self::fail(
                     sprintf(
                         "Result does not contain product '%s' (id: %s, sku: %s, defaultName.string: %s):\n",
-                        $reference,
+                        $productConstant,
                         $product->getId(),
                         $product->getSku(),
                         (string)$product->getDefaultName()

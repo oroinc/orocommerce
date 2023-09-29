@@ -42,7 +42,7 @@ class ContentNodeTreeCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return true;
     }
@@ -50,7 +50,7 @@ class ContentNodeTreeCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir)
+    public function warmUp(string $cacheDir): array
     {
         $repository = $this->doctrineHelper->getEntityRepository(Website::class);
         $websites = $repository->findAll();
@@ -64,5 +64,6 @@ class ContentNodeTreeCacheWarmer implements CacheWarmerInterface
                 );
             }
         }
+        return [];
     }
 }

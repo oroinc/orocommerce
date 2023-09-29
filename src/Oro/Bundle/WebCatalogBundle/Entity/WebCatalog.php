@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroWebCatalogBundle_Entity_WebCatalog;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -43,6 +44,7 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *          }
  *     }
  * )
+ * @mixin OroWebCatalogBundle_Entity_WebCatalog
  */
 class WebCatalog implements
     WebCatalogInterface,

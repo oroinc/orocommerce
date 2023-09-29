@@ -86,6 +86,8 @@ oro:
         overridden_shipping_cost_amount:
             label:                        'Overridden Shipping Cost Amount'
             description:                  Sales manager can enter the Overridden Shipping Cost Amount to manually override the shipping cost for the order.
+        number_of_items:
+            label:                        'Number of Items'
         total_currency.label:             'Total currency'
         total_value:
             label:                        'Total'
@@ -358,7 +360,7 @@ oro:
                 description:          The product name as provided when the free-form entry used to add a product to the order line items.
             from_external_source:
                 label:                Created from External Source
-                description:          A flag that indicates that a product information was recieved from the external source.
+                description:          A flag that indicates that a product information was received from the external source.
             price_type:
                 label:                'Price Type'
                 description:          The identifier of the price type.
@@ -382,6 +384,60 @@ oro:
             shipping_estimate_amount:
                 label:                Line item shipping cost
                 description:          Shipping const value calculated according to configured shipping rules and assigned line items shipping methods.
+            kit_item_line_items:
+                label: Kit Item Line Items
+                description: Stores the collection of kit item line items when the line item product is a kit.
+            checksum:
+                label: Checksum
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
+
+        orderproductkititemlineitem:
+            entity_label: Order Kit Item Line Item
+            entity_plural_label: Order Kit Item Line Items
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_frontend_grid_all_view_label: All %entity_plural_label%
+            entity_description: Represents the line item of a product kit item in an order
+            id.label: ID
+            line_item:
+                label: Order Line Item
+                description: The related order line item
+            kit_item:
+                label: Product Kit Item
+                description: The related product kit item
+            kit_item_label:
+                label: Product Kit Item Label
+                description: The default label of the ordered product kit item. Fallback field to keep original data
+            kit_item_optional:
+                label: Optional
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Fallback field to keep original data
+            product:
+                label: Product
+                description: The purchased kit item product
+            product_sku:
+                label: Product SKU
+                description: A unique human-readable product identifier. Fallback field to keep original data
+            product_name:
+                label: Product Name
+                description: The default name of the ordered product. Fallback field to keep original data
+            quantity:
+                label: Quantity
+                description: The quantity of a purchased product kit item units
+                aria_label: Product Kit Item Quantity
+            unit:
+                label: Unit of Quantity
+                description: The unit of quantity of the kit item product was purchased in
+            unit_code:
+                label: Product Unit Code
+                description: The code of the product unit of the kit item product was purchased in. Fallback field to keep original data
+            sort_order:
+                label: Sort Order
+                description: Used to sort kit item line item products when displaying
+            price:
+                label: Price
+            value:
+                label: Price Value
+            currency:
+                label: Price Currency
 
         order_discount:
             add_label: Add Special Discount

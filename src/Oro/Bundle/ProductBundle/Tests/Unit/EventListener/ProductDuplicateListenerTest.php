@@ -98,7 +98,6 @@ class ProductDuplicateListenerTest extends TestCase
                 $this->getFieldConfig('titleOneToMany', 'oneToMany'),
             ]);
 
-
         $this->configManager->expects(self::once())
             ->method('getProvider')
             ->with('extend')

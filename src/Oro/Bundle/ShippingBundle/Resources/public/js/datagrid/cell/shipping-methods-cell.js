@@ -23,6 +23,16 @@ const ShippingMethodsCell = StringCell.extend({
         };
     },
 
+    _attributes() {
+        if (!this.model.get(this.column.get('name'))) {
+            return {
+                'aria-label': null,
+                'data-blank-content': null,
+                'aria-colindex': null
+            };
+        }
+    },
+
     titleClassName: config.titleClassName,
 
     constructor: function ShippingMethodsCell(options) {

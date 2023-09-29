@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
@@ -46,7 +47,7 @@ class FrontendProductPricesDataProvider
 
     /**
      * @param ProductLineItemInterface[] $lineItems
-     * @return array
+     * @return array<int,array<string,Price>>
      */
     public function getProductsMatchedPrice(array $lineItems)
     {

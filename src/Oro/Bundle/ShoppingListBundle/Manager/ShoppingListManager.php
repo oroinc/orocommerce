@@ -124,7 +124,7 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
-        $this->totalManager->recalculateTotals($shoppingList, false);
+        $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
 
         if ($flush) {
             $entityManager = $this->getEntityManager();
@@ -133,7 +133,7 @@ class ShoppingListManager
         }
     }
 
-    public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList)
+    public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList, bool $flush = true)
     {
         $func = function (LineItem $duplicate) use ($lineItem) {
             if ($lineItem->getQuantity() > 0) {
@@ -147,8 +147,10 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
-        $this->totalManager->recalculateTotals($shoppingList, false);
-        $this->getEntityManager()->flush();
+        $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 
     public function getLineItem(int $lineItemId, ShoppingList $shoppingList): ?LineItem
@@ -314,8 +316,12 @@ class ShoppingListManager
      */
     private function updateLineItemQuantity(LineItem $lineItem, LineItem $duplicate)
     {
+        $quantity = $lineItem->getQuantity();
+        if ($lineItem->getProduct()?->isKit()) {
+            $quantity += $duplicate->getQuantity();
+        }
         $quantity = $this->rounding->roundQuantity(
-            $lineItem->getQuantity(),
+            $quantity,
             $duplicate->getUnit(),
             $duplicate->getProduct()
         );
@@ -359,6 +365,9 @@ class ShoppingListManager
         if ($duplicate) {
             $func($duplicate);
             $em->remove($lineItem);
+            // Ensures that ShoppingList::$lineItems collection is up-to-date. Required, for example for correct
+            // subtotal calculations.
+            $shoppingList->removeLineItem($lineItem);
         } elseif ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);

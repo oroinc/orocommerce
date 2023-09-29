@@ -4,6 +4,9 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Request;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * PayPal delayed capture request
+ */
 class DelayedCaptureRequest extends AbstractRequest
 {
     /** {@inheritdoc} */
@@ -21,7 +24,8 @@ class DelayedCaptureRequest extends AbstractRequest
             ->addOption(new Option\CaptureComplete())
             ->addOption(new Option\OriginalTransaction())
             ->addOption(new Option\Verbosity())
-            ->addOption(new Option\ButtonSource());
+            ->addOption(new Option\ButtonSource())
+            ->addOption(new Option\Order());
 
         return $this;
     }

@@ -302,3 +302,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
             - NotNull: ~
         product:
             - NotNull: ~
+
+Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO:
+    properties:
+        lineItems:
+            - Valid: ~

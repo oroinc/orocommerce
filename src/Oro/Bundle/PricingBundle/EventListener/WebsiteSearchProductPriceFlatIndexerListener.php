@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\PriceListIdPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -28,6 +29,8 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
 
     public const MP_ALIAS = 'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT';
     public const MP_MERGED_ALIAS = 'minimal_price.PRICE_LIST_ID_CURRENCY';
+
+    private array $notAllowedProductTypes = [];
 
     public function __construct(
         private WebsiteContextManager $websiteContextManager,
@@ -55,6 +58,15 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
             return;
         }
 
+        $entities = array_filter(
+            $event->getEntities(),
+            fn (Product $item) => !in_array($item->getType(), $this->notAllowedProductTypes, true)
+        );
+
+        if (!$entities) {
+            return;
+        }
+
         $repository = $this->getPriceRepository();
         /** @var PriceList $basePriceList */
         $basePriceList = $this->priceListTreeHandler->getPriceList(null, $website);
@@ -62,7 +74,7 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
 
         $prices = $repository->findMinByWebsiteForFilter(
             $website,
-            $event->getEntities(),
+            $entities,
             $basePriceList,
             $accuracy
         );
@@ -82,7 +94,7 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
 
         $prices = $repository->findMinByWebsiteForSort(
             $website,
-            $event->getEntities(),
+            $entities,
             $basePriceList,
             $accuracy
         );
@@ -97,6 +109,11 @@ class WebsiteSearchProductPriceFlatIndexerListener implements FeatureToggleableI
                 ]
             );
         }
+    }
+
+    public function setNotAllowedProductTypes(array $notAllowedProductTypes): void
+    {
+        $this->notAllowedProductTypes = $notAllowedProductTypes;
     }
 
     private function getPriceRepository(): ProductPriceRepository

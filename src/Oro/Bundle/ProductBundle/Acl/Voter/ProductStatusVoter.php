@@ -28,7 +28,7 @@ class ProductStatusVoter extends AbstractEntityVoter
     /**
      * {@inheritDoc}
      */
-    public function vote(TokenInterface $token, $object, array $attributes)
+    public function vote(TokenInterface $token, $object, array $attributes): int
     {
         if ($this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);

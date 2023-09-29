@@ -4,7 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -14,42 +16,28 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class FrontendShoppingListProductsProvider
 {
-    /**
-     * @var LineItemRepository
-     */
-    protected $lineItemRepository;
+    private LineItemRepository $lineItemRepository;
 
-    /**
-     * @var FrontendProductPricesDataProvider
-     */
-    protected $productPriceProvider;
+    private FrontendProductPricesDataProvider $productPriceProvider;
 
-    /**
-     * @var ShoppingListLineItemsDataProvider
-     */
-    protected $shoppingListLineItemsDataProvider;
+    private ShoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider;
 
-    /**
-     * @var ProductPriceFormatter
-     */
-    protected $productPriceFormatter;
+    private ProductPriceFormatter $productPriceFormatter;
 
-    /**
-     * @param LineItemRepository $lineItemRepository
-     * @param FrontendProductPricesDataProvider $productPriceProvider
-     * @param $shoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider
-     * @param ProductPriceFormatter $productPriceFormatter
-     */
+    private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
+
     public function __construct(
         LineItemRepository $lineItemRepository,
         FrontendProductPricesDataProvider $productPriceProvider,
         ShoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider,
-        ProductPriceFormatter $productPriceFormatter
+        ProductPriceFormatter $productPriceFormatter,
+        ProductLineItemPriceProviderInterface $productLineItemPriceProvider
     ) {
         $this->lineItemRepository = $lineItemRepository;
         $this->productPriceProvider = $productPriceProvider;
         $this->shoppingListLineItemsDataProvider = $shoppingListLineItemsDataProvider;
         $this->productPriceFormatter = $productPriceFormatter;
+        $this->productLineItemPriceProvider = $productLineItemPriceProvider;
     }
 
     /**
@@ -70,37 +58,29 @@ class FrontendShoppingListProductsProvider
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
+     * @param array<ShoppingList> $shoppingLists
      *
-     * @return array|null
+     * @return array<int,array<ProductLineItemPrice>>
      */
-    public function getMatchedPrice(ShoppingList $shoppingList = null)
-    {
-        if (!$shoppingList) {
-            return null;
-        }
-
-        $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
-
-        return $this->productPriceProvider->getProductsMatchedPrice($lineItems);
-    }
-
-    /**
-     * @param ShoppingList[] $shoppingLists
-     * @return array
-     */
-    public function getMatchedPrices(array $shoppingLists = [])
+    public function getProductLineItemPricesForShoppingLists(array $shoppingLists = []): array
     {
         if (!$shoppingLists) {
             return [];
         }
 
-        $prices = [];
+        $productLineItemPrices = [];
         foreach ($shoppingLists as $shoppingList) {
-            $prices[$shoppingList->getId()] = $this->getMatchedPrice($shoppingList);
+            $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+            if (!$lineItems) {
+                $productLineItemPrices[$shoppingList->getId()] = [];
+                continue;
+            }
+
+            $productLineItemPrices[$shoppingList->getId()] = $this->productLineItemPriceProvider
+                ->getProductLineItemsPrices($lineItems);
         }
 
-        return $prices;
+        return $productLineItemPrices;
     }
 
     /**
@@ -114,8 +94,8 @@ class FrontendShoppingListProductsProvider
      *   ]
      * ]
      *
-     * @param ShoppingList[]    $shoppingLists
-     * @param int               $productCount
+     * @param ShoppingList[] $shoppingLists
+     * @param int $productCount
      * @param Localization|null $localization
      *
      * @return array

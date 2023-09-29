@@ -216,7 +216,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $customer = $this->getEntity(Customer::class, ['id' => 10]);
         $customerGroup = $this->getEntity(CustomerGroup::class, ['id' => 100]);
 
-
         yield 'full rebuild' => [
             [
                 'assignments' => [['force' => true, 'website' => null, 'customer' => null, 'customerGroup' => null]]

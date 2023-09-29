@@ -23,7 +23,7 @@ class FreightClassesProvider extends MeasureUnitProvider
     }
 
     /**
-     * @param ProductShippingOptions $options
+     * @param ProductShippingOptions|null $options
      *
      * @return FreightClass[]
      */

@@ -120,4 +120,29 @@ class ProductKitItemRepositoryTest extends WebTestCase
 
         self::assertEquals(1, $this->repository->getKitItemsCount($productKit->getId()));
     }
+
+    public function testGetRequiredProductKitItemStatuses(): void
+    {
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
+        $data = $this->repository->getRequiredProductKitItemStatuses($productKit->getId());
+        self::assertArrayHasKey($productKit->getId(), $data);
+        self::assertCount(1, $data[$productKit->getId()]);
+        self::assertEquals([
+            'enabled',
+            'enabled',
+        ], $data[$productKit->getId()][0]['status']);
+    }
+
+    public function testGetRequiredProductKitItemInventoryStatuses(): void
+    {
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
+        $data = $this->repository->getRequiredProductKitItemInventoryStatuses($productKit->getId());
+
+        self::assertArrayHasKey($productKit->getId(), $data);
+        self::assertCount(1, $data[$productKit->getId()]);
+        self::assertEquals([
+            'in_stock',
+            'in_stock',
+        ], $data[$productKit->getId()][0]['status']);
+    }
 }

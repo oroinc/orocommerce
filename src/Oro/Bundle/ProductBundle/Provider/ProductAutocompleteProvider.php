@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
@@ -91,15 +92,15 @@ class ProductAutocompleteProvider
     }
 
     /**
-     * @param array|Item[]  $productItems
-     * @param Request $request
-     *
+     * @param array|Item[] $productItems
      * @return array
      */
     protected function getProductData(array $productItems): array
     {
         $defaultImage = $this->imagePlaceholderProvider->getPath('product_small');
-        $inventoryStatuses = array_flip($this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status'));
+        $inventoryStatuses = array_flip(
+            $this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status')
+        );
 
         $data = [];
         foreach ($productItems as $item) {

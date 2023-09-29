@@ -194,10 +194,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
         self::assertEquals([SyncSlugRedirectsTopic::getName()], SyncSlugRedirectsProcessor::getSubscribedTopics());
     }
 
-    /**
-     * @param int $slugId
-     * @param Slug|null $slug
-     */
     private function assertSlugRepositoryCalls(
         int $slugId,
         ?Slug $slug

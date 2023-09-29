@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\CategoryVisibilityProvider;
@@ -19,7 +18,7 @@ class CategoryTreeHandlerListener
         $this->categoryVisibilityProvider = $categoryVisibilityProvider;
     }
 
-    public function onCreateAfter(CategoryTreeCreateAfterEvent $event)
+    public function onCreateAfter(CategoryTreeCreateAfterEvent $event): void
     {
         $user = $event->getUser();
         if ($user instanceof User) {
@@ -27,29 +26,22 @@ class CategoryTreeHandlerListener
         }
 
         $hiddenCategoryIds = $this->categoryVisibilityProvider->getHiddenCategoryIds($user);
-        if ($hiddenCategoryIds) {
-            $event->setCategories(
-                $this->filterCategories($event->getCategories(), $hiddenCategoryIds)
-            );
+        if (!$hiddenCategoryIds) {
+            return;
         }
-    }
 
-    /**
-     * @param Category[] $categories
-     * @param int[]      $hiddenCategoryIds
-     *
-     * @return array
-     */
-    private function filterCategories(array $categories, array $hiddenCategoryIds)
-    {
-        // copy categories array to another variable to prevent loop break on removed elements
+        $hasChanges = false;
+        $categories = $event->getCategories();
         $filteredCategories = $categories;
+        $hiddenCategoryIds = array_fill_keys($hiddenCategoryIds, true);
         foreach ($categories as $key => $category) {
-            if (in_array($category->getId(), $hiddenCategoryIds, true)) {
+            if (isset($hiddenCategoryIds[$category->getId()])) {
                 unset($filteredCategories[$key]);
+                $hasChanges = true;
             }
         }
-
-        return $filteredCategories;
+        if ($hasChanges) {
+            $event->setCategories(array_values($filteredCategories));
+        }
     }
 }

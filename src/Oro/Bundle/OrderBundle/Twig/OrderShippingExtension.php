@@ -70,7 +70,7 @@ class OrderShippingExtension extends AbstractExtension implements ServiceSubscri
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_shipping.translator.shipping_method_label' => ShippingMethodLabelTranslator::class,

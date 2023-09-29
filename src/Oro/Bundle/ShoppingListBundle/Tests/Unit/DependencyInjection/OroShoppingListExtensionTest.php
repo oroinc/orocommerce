@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DependencyInjection;
@@ -11,6 +12,7 @@ class OroShoppingListExtensionTest extends \PHPUnit\Framework\TestCase
     public function testLoad(): void
     {
         $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'prod');
 
         $extension = new OroShoppingListExtension();
         $extension->load([], $container);

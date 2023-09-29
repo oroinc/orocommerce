@@ -7,5 +7,5 @@ namespace Oro\Bundle\RedirectBundle\Cache;
  */
 interface ClearableCacheInterface
 {
-    public function deleteAll() : void;
+    public function deleteAll(): void;
 }

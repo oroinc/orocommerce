@@ -327,7 +327,7 @@ class SearchResultHistory implements
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime|null $createdAt
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt = null)

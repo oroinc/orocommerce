@@ -2,45 +2,49 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
+use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PaymentContextTest extends \PHPUnit\Framework\TestCase
+class PaymentContextTest extends TestCase
 {
-    /** @var Customer|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Customer|MockObject */
     private $customer;
 
-    /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CustomerUser|MockObject */
     private $customerUser;
 
-    /** @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Collection<PaymentLineItem>|MockObject */
     private $lineItemsCollection;
 
-    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AddressInterface|MockObject */
     private $billingAddress;
 
-    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AddressInterface|MockObject */
     private $shippingAddress;
 
-    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Price|MockObject */
     private $subtotal;
 
-    /** @var object|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var object|MockObject */
     private $sourceEntity;
 
-    /** @var Website|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Website|MockObject */
     private $website;
 
     protected function setUp(): void
     {
         $this->customer = $this->createMock(Customer::class);
         $this->customerUser = $this->createMock(CustomerUser::class);
-        $this->lineItemsCollection = $this->createMock(PaymentLineItemCollectionInterface::class);
+        $this->lineItemsCollection = new ArrayCollection([]);
         $this->billingAddress = $this->createMock(AddressInterface::class);
         $this->shippingAddress = $this->createMock(AddressInterface::class);
         $this->subtotal = $this->createMock(Price::class);
@@ -48,7 +52,7 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
         $this->website = $this->createMock(Website::class);
     }
 
-    public function testConstructionAndGetters()
+    public function testConstructionAndGetters(): void
     {
         $shippingMethod = 'shippingMethod';
         $currency = 'usd';

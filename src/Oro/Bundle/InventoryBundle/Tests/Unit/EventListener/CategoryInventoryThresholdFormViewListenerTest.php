@@ -18,7 +18,8 @@ class CategoryInventoryThresholdFormViewListenerTest extends AbstractFallbackFie
         $this->listener = new CategoryInventoryThresholdFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

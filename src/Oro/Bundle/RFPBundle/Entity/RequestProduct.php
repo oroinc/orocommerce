@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
@@ -27,8 +29,10 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
  *      }
  * )
  */
-class RequestProduct implements ProductHolderInterface
+class RequestProduct implements ProductHolderInterface, ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *
@@ -112,7 +116,7 @@ class RequestProduct implements ProductHolderInterface
     /**
      * Set request
      *
-     * @param Request $request
+     * @param Request|null $request
      * @return RequestProduct
      */
     public function setRequest(Request $request = null)
@@ -135,7 +139,7 @@ class RequestProduct implements ProductHolderInterface
     /**
      * Set product
      *
-     * @param Product $product
+     * @param Product|null $product
      * @return RequestProduct
      */
     public function setProduct(Product $product = null)

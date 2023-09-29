@@ -12,6 +12,7 @@ Feature: Product search autocomplete with disabled pricing
 
   Scenario: Check search autocomplete without prices
     When I am on the homepage
+    And I wait 3 seconds
     And I type "PSKU1" in "search"
     Then I should not see "There was an error performing the requested operation." flash message
     And I should see "PSKU1" in the "Search Autocomplete Product" element

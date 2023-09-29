@@ -22,7 +22,8 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    use ContainerAwareTrait, OrderLineItemsDemoDataTrait;
+    use ContainerAwareTrait;
+    use OrderLineItemsDemoDataTrait;
 
     /**
      * {@inheritdoc}

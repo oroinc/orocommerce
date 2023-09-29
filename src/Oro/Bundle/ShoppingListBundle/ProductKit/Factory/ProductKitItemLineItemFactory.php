@@ -41,15 +41,9 @@ class ProductKitItemLineItemFactory
         $productUnit = $productUnit ?? $kitItem->getProductUnit();
         $kitItemLineItem->setUnit($productUnit);
 
-        $minimumQuantity = null;
-        if (!$kitItem->isOptional()) {
+        $minimumQuantity = $kitItemLineItem->getQuantity();
+        if ($kitItem->getMinimumQuantity() > 0) {
             $minimumQuantity = $kitItem->getMinimumQuantity();
-            if ($minimumQuantity === null && $product !== null && $productUnit !== null) {
-                $productUnitPrecision = $product->getUnitPrecision($productUnit->getCode());
-                if ($productUnitPrecision !== null) {
-                    $minimumQuantity = 1 / (10 ** $productUnitPrecision->getPrecision());
-                }
-            }
         }
 
         $kitItemLineItem->setQuantity($quantity ?? $minimumQuantity);

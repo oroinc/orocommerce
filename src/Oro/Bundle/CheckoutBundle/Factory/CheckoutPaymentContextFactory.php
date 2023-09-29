@@ -59,11 +59,9 @@ class CheckoutPaymentContextFactory
         $convertedLineItems = $this->paymentLineItemConverter->convertLineItems(
             $this->checkoutLineItemsManager->getData($checkout)
         );
-        if (!$convertedLineItems->isEmpty()) {
-            $paymentContextBuilder->setLineItems($convertedLineItems);
-        }
-
-        $paymentContextBuilder->setTotal($this->totalProcessor->getTotal($checkout)->getAmount());
+        $paymentContextBuilder
+            ->setLineItems($convertedLineItems)
+            ->setTotal($this->totalProcessor->getTotal($checkout)->getAmount());
 
         return $paymentContextBuilder->getResult();
     }

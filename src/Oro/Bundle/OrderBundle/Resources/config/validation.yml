@@ -86,6 +86,45 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         shippingEstimateAmount:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    properties:
+        lineItem:
+            - NotNull: ~
+        kitItem:
+            - NotNull: ~
+        kitItemLabel:
+            - NotNull: ~
+        product:
+            - NotNull: ~
+        productSku:
+            - NotNull: ~
+        productName:
+            - NotNull: ~
+        quantity:
+            - NotNull: ~
+            - Type:
+                  type: float
+        unit:
+            - NotNull: ~
+        unitCode:
+            - NotNull: ~
+        sortOrder:
+            - NotNull: ~
+            - Type:
+                  type: integer
+            - Range:
+                  # Minimum of 4-byte integer value.
+                  min: -2147483648
+                  # Maximum of 4-byte integer value.
+                  max: 2147483647
+        value:
+            - NotNull: ~
+            - Type:
+                  type: numeric
+        currency:
+            - NotNull: ~
+            - Currency: ~
+
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     constraints:
         - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~

@@ -68,7 +68,15 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
             }
             return;
         }
-        this.$('input[name="quantity"]').setCursorToEnd().focus();
+
+        const $input = this.$('input[name="quantity"]');
+
+        if (typeof this.options.cursorOffset === 'number' && !Number.isNaN(this.options.cursorOffset)) {
+            $input.setCursorPosition(this.options.cursorOffset);
+        } else {
+            $input.setCursorToEnd();
+        }
+        $input.focus();
     },
 
     isChanged() {
@@ -90,9 +98,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
             !select2.opened()
         ) {
             // original focusout event's call stack has preserved
-            _.defer(() => {
-                this.trigger('cancelAction');
-            });
+            setTimeout(() => this.trigger('cancelAction'));
         }
     },
 

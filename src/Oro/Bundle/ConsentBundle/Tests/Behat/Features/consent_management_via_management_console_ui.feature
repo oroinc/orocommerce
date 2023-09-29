@@ -339,7 +339,7 @@ Feature: Consent management via Management Console UI
     Then I should see "Customer User has been saved"
     And I proceed as the Admin
     And go to Customers/Customer Users
-    And click view "AmandaRCole@example.org" in grid
+    And click view "AmandaRCole1@example.org" in grid
     And I should see customer with:
       | Receive notifications                    | No         |
       | Collecting and storing personal data     | No         |

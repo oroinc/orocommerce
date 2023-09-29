@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Doctrine\Common\Collections\Collection;

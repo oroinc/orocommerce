@@ -6,6 +6,7 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -19,7 +20,7 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
-        $this->loadFixtures([LoadProductData::class]);
+        $this->loadFixtures([LoadProductKitData::class]);
 
         $this->quickAddRowCollectionBuilder = self::getContainer()
             ->get('oro_product.model.builder.quick_add_row_collection');
@@ -58,16 +59,18 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
             ['index' => 2, 'sku' => 'продукт-7', 'quantity' => '2', 'unit' => 'item'],
             ['index' => 3, 'quantity' => '1', 'unit' => 'item'],
             ['index' => 10, 'sku' => 'продукт-9', 'quantity' => '3', 'unit' => 'item'],
+            ['index' => 11, 'sku' => 'product-kit-1', 'quantity' => '3', 'unit' => 'milliliter'],
         ];
 
         $collection = $this->quickAddRowCollectionBuilder->buildFromArray($data);
 
-        self::assertCount(5, $collection);
+        self::assertCount(6, $collection);
         $this->assertQuickAddRow($collection->get(0), 0, 'product-1', 1.0, 'item', LoadProductData::PRODUCT_1);
         $this->assertQuickAddRow($collection->get(1), 1, 'SKIP1', 0.0, 'item', null);
         $this->assertQuickAddRow($collection->get(2), 2, 'продукт-7', 2.0, 'item', LoadProductData::PRODUCT_7);
         $this->assertQuickAddRow($collection->get(3), 3, '', 1.0, 'item', null);
         $this->assertQuickAddRow($collection->get(4), 10, 'продукт-9', 3.0, 'item', null);
+        $this->assertQuickAddRow($collection->get(5), 11, 'product-kit-1', 3.0, 'milliliter', null);
     }
 
     public function testBuildFromArrayForEmptyData(): void

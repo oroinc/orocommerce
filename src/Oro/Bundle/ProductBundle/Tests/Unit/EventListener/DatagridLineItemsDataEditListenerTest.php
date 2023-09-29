@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\ProductBundle\DataGrid\Property\ProductUnitsProperty;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -18,7 +19,7 @@ class DatagridLineItemsDataEditListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->listener = new DatagridLineItemsDataEditListener();
+        $this->listener = new DatagridLineItemsDataEditListener(new ProductUnitsProperty());
     }
 
     public function testOnLineItemDataWhenNoLineItems(): void

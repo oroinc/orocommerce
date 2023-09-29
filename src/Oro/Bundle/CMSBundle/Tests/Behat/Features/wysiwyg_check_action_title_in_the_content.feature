@@ -1,5 +1,4 @@
 @ticket-BB-20180
-@fixture-OroCMSBundle:copyright_content_widget_fixture.yml
 Feature: Wysiwyg check action title in the content
 
   Scenario: Create sessions

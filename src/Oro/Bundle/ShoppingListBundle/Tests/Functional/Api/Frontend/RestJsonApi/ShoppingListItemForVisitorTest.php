@@ -252,7 +252,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testTryToGetListWhenGusetShoppingListFeatureIsDisabled()
+    public function testTryToGetListWhenGuestShoppingListFeatureIsDisabled()
     {
         $this->setGuestShoppingListFeatureStatus(false);
         $this->setVisitorCookie($this->getReference('visitor1'));
@@ -267,7 +267,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testTryToGetWhenGusetShoppingListFeatureIsDisabled()
+    public function testTryToGetWhenGuestShoppingListFeatureIsDisabled()
     {
         $this->setGuestShoppingListFeatureStatus(false);
         $this->setVisitorCookie($this->getReference('visitor1'));
@@ -282,7 +282,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testTryToCreateLineItemWhenGusetShoppingListFeatureIsDisabled()
+    public function testTryToCreateLineItemWhenGuestShoppingListFeatureIsDisabled()
     {
         $this->setGuestShoppingListFeatureStatus(false);
         $this->setVisitorCookie($this->getReference('visitor1'));
@@ -297,7 +297,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testTryToUpdateLineItemWhenGusetShoppingListFeatureIsDisabled()
+    public function testTryToUpdateLineItemWhenGuestShoppingListFeatureIsDisabled()
     {
         $this->setGuestShoppingListFeatureStatus(false);
         $this->setVisitorCookie($this->getReference('visitor1'));
@@ -323,7 +323,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testTryToDeleteWhenGusetShoppingListFeatureIsDisabled()
+    public function testTryToDeleteWhenGuestShoppingListFeatureIsDisabled()
     {
         $this->setGuestShoppingListFeatureStatus(false);
         $this->setVisitorCookie($this->getReference('visitor1'));
@@ -340,7 +340,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testOptionsWhenGusetShoppingListFeatureIsDisabled()
+    public function testOptionsWhenGuestShoppingListFeatureIsDisabled()
     {
         $this->setGuestShoppingListFeatureStatus(false);
         $this->setVisitorCookie($this->getReference('visitor1'));

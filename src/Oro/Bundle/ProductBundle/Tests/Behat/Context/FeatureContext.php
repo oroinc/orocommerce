@@ -14,12 +14,12 @@ use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\MultipleChoice;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -28,8 +28,6 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
 use PHPUnit\Framework\AssertionFailedError;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -46,6 +44,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     private const PRODUCT_SKU = 'SKU123';
     private const PRODUCT_INVENTORY_QUANTITY = 100;
+    private const PRODUCT_LOW_INVENTORY_QUANTITY = 10;
     private const IMAGES_ORDER_REMEMBER_KEY = 'images_order';
 
     private ?OroMainContext $oroMainContext = null;
@@ -74,59 +73,67 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @Given There are products in the system available for order
+     * @Given /^There are products in the system (?P<level>available|low inventory) for order$/
      */
-    public function thereAreProductsAvailableForOrder()
+    public function thereAreProductsAvailableForOrder($level): void
     {
         /** @var DoctrineHelper $doctrineHelper */
         $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
-
-        /** @var Product $product */
-        $product = $doctrineHelper->getEntityRepositoryForClass(Product::class)
-            ->findOneBy(['sku' => self::PRODUCT_SKU]);
-
         $inventoryLevelEntityManager = $doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
         $inventoryLevelRepository = $inventoryLevelEntityManager->getRepository(InventoryLevel::class);
 
-        /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $inventoryLevelRepository->findOneBy(['product' => $product]);
-        if (!$inventoryLevel) {
-            /** @var InventoryManager $inventoryManager */
-            $inventoryManager = $this->getAppContainer()->get('oro_inventory.manager.inventory_manager');
-            $inventoryLevel = $inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
+        $iterator = $this->getProductUnitPrecisionsIteratorAll();
+        /** @var ProductUnitPrecision $productUnitPrecision */
+        foreach ($iterator as $productUnitPrecision) {
+            $product = $productUnitPrecision->getProduct();
+            /** @var InventoryLevel $inventoryLevel */
+            $inventoryLevel = $inventoryLevelRepository->findOneBy(
+                ['product' => $product, 'productUnitPrecision' => $productUnitPrecision]
+            );
+
+            if (!$inventoryLevel) {
+                /** @var InventoryManager $inventoryManager */
+                $inventoryManager = $this->getAppContainer()->get('oro_inventory.manager.inventory_manager');
+                $inventoryLevel = $inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
+            }
+            $qty = $level === 'available' ? self::PRODUCT_INVENTORY_QUANTITY : self::PRODUCT_LOW_INVENTORY_QUANTITY;
+            $inventoryLevel->setQuantity($qty);
+
+            $inventoryLevelEntityManager->persist($inventoryLevel);
         }
-        $inventoryLevel->setQuantity(self::PRODUCT_INVENTORY_QUANTITY);
 
-        // package commerce-ee available
-        if (EntityPropertyInfo::methodExists($inventoryLevel, 'setWarehouse')) {
-            $warehouseEntityManager = $doctrineHelper->getEntityManagerForClass(Warehouse::class);
-            $warehouseRepository = $warehouseEntityManager->getRepository(Warehouse::class);
+        $inventoryLevelEntityManager->flush();
+    }
 
-            $warehouse = $warehouseRepository->findOneBy([]);
+    /**
+     * @Given /^I set products inventory levels as following:$/
+     */
+    public function setProductsInventoryLevel(TableNode $table): void
+    {
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
+        $productEntityRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
+        $inventoryLevelEntityManager = $doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
+        $inventoryLevelRepository = $inventoryLevelEntityManager->getRepository(InventoryLevel::class);
 
-            if (!$warehouse) {
-                $warehouse = new Warehouse();
-                $warehouse
-                    ->setName('Test Warehouse 222')
-                    ->setOwner($product->getOwner())
-                    ->setOrganization($product->getOrganization());
-                $warehouseEntityManager->persist($warehouse);
-                $warehouseEntityManager->flush();
+        foreach ($table->getRows() as [$sku, $unitCode, $quantity]) {
+            /** @var Product $product */
+            $product = $productEntityRepository->findOneBy(['sku' => $sku]);
+            $precision = $product->getUnitPrecision($unitCode) ?? $product->getPrimaryUnitPrecision();
+            $inventoryLevel = $inventoryLevelRepository->findOneBy(
+                ['product' => $product, 'productUnitPrecision' => $precision]
+            );
+            if (!$inventoryLevel) {
+                /** @var InventoryManager $inventoryManager */
+                $inventoryManager = $this->getAppContainer()->get('oro_inventory.manager.inventory_manager');
+                $inventoryLevel = $inventoryManager->createInventoryLevel($precision);
             }
 
-            $inventoryLevel->setWarehouse($warehouse);
+            $inventoryLevel->setQuantity($quantity);
             $inventoryLevelEntityManager->persist($inventoryLevel);
-            $inventoryLevelEntityManager->flush();
-
-            $warehouseConfig = new WarehouseConfig($warehouse, 1);
-            $configManager = $this->getAppContainer()->get('oro_config.global');
-            $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
-            $configManager->set('oro_inventory.manage_inventory', true);
-            $configManager->flush();
-        } else {
-            $inventoryLevelEntityManager->persist($inventoryLevel);
-            $inventoryLevelEntityManager->flush();
         }
+
+        $inventoryLevelEntityManager->flush();
     }
 
     /**
@@ -1506,9 +1513,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * Example: When I click on dropdown element in grid row contains "Charlie"
      *
      * @Given /^(?:|I )click on "(?P<elementName>[\w\s]*)" element in grid row contains "(?P<content>(?:[^"]|\\")*)"$/
-     *
-     * @param string $elementName
-     * @param string $content
      */
     public function clickOnElementInCell(string $elementName, string $content)
     {
@@ -2006,5 +2010,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         }
 
         return $productItem;
+    }
+
+    private function getProductUnitPrecisionsIteratorAll(): iterable
+    {
+        $doctrineHelper = $this->getAppContainer()->get('oro_entity.doctrine_helper');
+        $pnpRepository = $doctrineHelper->getEntityRepositoryForClass(ProductUnitPrecision::class);
+        $queryBuilder = $pnpRepository->createQueryBuilder('pup');
+        $queryBuilder->select('pup', 'pu')
+            ->innerJoin('pup.product', 'p')
+            ->innerJoin('pup.unit', 'pu');
+
+        return $queryBuilder->getQuery()->toIterable();
     }
 }

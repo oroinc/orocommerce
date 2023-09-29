@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroProductBundle_Entity_CollectionSortOrder;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
@@ -29,6 +30,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
  *          }
  *      }
  * )
+ * @mixin OroProductBundle_Entity_CollectionSortOrder
  */
 class CollectionSortOrder implements ExtendEntityInterface
 {
@@ -59,8 +61,6 @@ class CollectionSortOrder implements ExtendEntityInterface
     protected $sortOrder;
 
     /**
-     * @var Product
-     *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
@@ -77,8 +77,6 @@ class CollectionSortOrder implements ExtendEntityInterface
     protected Product $product;
 
     /**
-     * @var Segment
-     *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment")
      * @ORM\JoinColumn(name="segment_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
@@ -102,9 +100,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this->id;
     }
 
-    /**
-     * @return Product
-     */
     public function getProduct(): Product
     {
         return $this->product;
@@ -120,9 +115,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this;
     }
 
-    /**
-     * @return Segment
-     */
     public function getSegment(): Segment
     {
         return $this->segment;
@@ -138,9 +130,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getSortOrder(): ?float
     {
         return $this->sortOrder;

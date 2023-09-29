@@ -28,7 +28,7 @@ class UrlItem implements UrlItemInterface
 
     /**
      * @param string $location
-     * @param \DateTime $lastModification
+     * @param \DateTime|null $lastModification
      * @param string $changeFrequency
      * @param float $priority
      */

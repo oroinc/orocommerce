@@ -45,9 +45,6 @@ class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
         $this->assertEquals($expectedValue, $this->service->roundQuantity($value, $productUnit, $product));
     }
 
-    /**
-     * @return array
-     */
     public function roundQuantityProvider(): array
     {
         $unit = (new ProductUnit())->setDefaultPrecision(2)->setCode('kg');

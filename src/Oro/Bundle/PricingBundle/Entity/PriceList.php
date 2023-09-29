@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPricingBundle_Entity_PriceList;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -46,6 +47,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  *          }
  *      }
  * )
+ * @mixin OroPricingBundle_Entity_PriceList
  */
 class PriceList extends BasePriceList implements
     ScheduleIntervalsAwareInterface,

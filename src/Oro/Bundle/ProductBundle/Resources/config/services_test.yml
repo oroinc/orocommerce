@@ -52,3 +52,9 @@ services:
         parent: oro_product.provider.product_kits_by_unit_precision
         decorates: oro_product.provider.product_kits_by_unit_precision
         public: true
+
+    oro_product.tests.entity_name_resolver.data_loader:
+        class: Oro\Bundle\ProductBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoader
+        decorates: oro_entity.tests.entity_name_resolver.data_loader
+        arguments:
+            - '@.inner'

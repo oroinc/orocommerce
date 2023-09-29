@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCatalogBundle_Entity_Category;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
@@ -116,6 +117,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @method ArrayCollection getProducts()
  * @method addProduct(Product $value)
  * @method $this cloneLocalizedFallbackValueAssociations()
+ * @mixin OroCatalogBundle_Entity_Category
  */
 class Category implements
     SluggableInterface,
@@ -707,7 +709,7 @@ class Category implements
     /**
      * Set unitPrecision
      *
-     * @param CategoryDefaultProductOptions $defaultProductOptions
+     * @param CategoryDefaultProductOptions|null $defaultProductOptions
      *
      * @return Category
      */

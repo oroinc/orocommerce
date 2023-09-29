@@ -70,7 +70,7 @@ services:
             - '@form.property_accessor'
             - '@doctrine'
             - '@logger'
-            - '@oro_rfp.provider.product_availability'
+            - '@oro_rfp.provider.product_rfp_availability'
             - '@translator'
             - '@twig'
         tags:

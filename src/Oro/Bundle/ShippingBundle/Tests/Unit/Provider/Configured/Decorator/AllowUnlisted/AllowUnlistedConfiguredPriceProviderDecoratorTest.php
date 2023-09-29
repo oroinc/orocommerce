@@ -10,25 +10,17 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AllowUnlisted\AllowUnlistedConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 // @codingStandardsIgnoreEnd
 
 class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $parentProviderMock;
+    private ShippingConfiguredPriceProviderInterface|MockObject $parentProviderMock;
 
-    /**
-     * @var ShippingMethodViewFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingMethodViewFactory;
+    private ShippingMethodViewFactory|MockObject $shippingMethodViewFactory;
 
-    /**
-     * @var AllowUnlistedConfiguredPriceProviderDecorator
-     */
-    private $testedProvider;
+    private AllowUnlistedConfiguredPriceProviderDecorator $testedProvider;
 
     protected function setUp(): void
     {
@@ -43,7 +35,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         );
     }
 
-    public function testGetApplicableMethodsViews()
+    public function testGetApplicableMethodsViews(): void
     {
         $methodId = 'flat_rate';
         $methodTypeId = 'primary';
@@ -116,7 +108,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
-    public function testGetApplicableMethodsViewsForNullConfigurationShippingMethod()
+    public function testGetApplicableMethodsViewsForNullConfigurationShippingMethod(): void
     {
         $configurationMock = $this->getConfigurationMock();
         $contextMock = $this->getShippingContextMock();
@@ -139,7 +131,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         );
     }
 
-    public function testGetApplicableMethodsViewsForNotAllowUnlistedShippingMethod()
+    public function testGetApplicableMethodsViewsForNotAllowUnlistedShippingMethod(): void
     {
         $configurationMock = $this->getConfigurationMock();
         $contextMock = $this->getShippingContextMock();
@@ -167,7 +159,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         );
     }
 
-    public function testGetApplicableMethodsViewsIfTheyHasMethodTypeView()
+    public function testGetApplicableMethodsViewsIfTheyHasMethodTypeView(): void
     {
         $configurationMock = $this->getConfigurationMock();
         $contextMock = $this->getShippingContextMock();
@@ -200,7 +192,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         );
     }
 
-    public function testGetPrice()
+    public function testGetPrice(): void
     {
         $methodId = 'flat_rate';
         $methodTypeId = 'primary';
@@ -231,7 +223,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         $this->assertSame($shippingCost, $actualPrice);
     }
 
-    public function testGetPriceIfNotAllowUnlistedShippingMethod()
+    public function testGetPriceIfNotAllowUnlistedShippingMethod(): void
     {
         $parentPrice = Price::create(50, 'EUR');
         $configurationMock = $this->getConfigurationMock();
@@ -253,7 +245,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         );
     }
 
-    public function testGetPriceIfShippingMethodViewsHasMethodTypeView()
+    public function testGetPriceIfShippingMethodViewsHasMethodTypeView(): void
     {
         $parentPrice = Price::create(50, 'EUR');
         $configurationMock = $this->getConfigurationMock();
@@ -287,26 +279,34 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
         );
     }
 
-    /**
-     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getShippingContextMock()
+    public function testGetPriceIfShippingMethodTypeNotExist(): void
+    {
+        $shippingCost = Price::create(50, 'EUR');
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+
+        $configurationMock
+            ->expects($this->once())
+            ->method('getShippingCost')
+            ->willReturn($shippingCost);
+
+        static::assertSame(
+            $shippingCost,
+            $this->testedProvider->getPrice('', '', $configurationMock, $contextMock)
+        );
+    }
+
+    private function getShippingContextMock(): ShippingContext|MockObject
     {
         return $this->createMock(ShippingContext::class);
     }
 
-    /**
-     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getConfigurationMock()
+    private function getConfigurationMock(): ComposedShippingMethodConfigurationInterface|MockObject
     {
         return $this->createMock(ComposedShippingMethodConfigurationInterface::class);
     }
 
-    /**
-     * @return ShippingMethodViewCollection
-     */
-    private function getParentMethodViews()
+    private function getParentMethodViews(): ShippingMethodViewCollection
     {
         $views = new ShippingMethodViewCollection();
         $views

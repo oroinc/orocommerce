@@ -2,6 +2,7 @@
 @postgresql
 @ticket-BB-11878
 @ticket-BB-20426
+@ticket-BB-22609
 @skip
 # TODO in BAP-22214
 
@@ -26,20 +27,21 @@ Feature: Price list rules validation
       | Rule | product.featured == true |
 
   Scenario: Check price list rule quantity expressions validation
-    When I click "Add Price Calculation Rules"
+    Given I click "Add Price Calculation Rules"
     And I click "Enter expression unit"
     And I click "Enter expression currency"
-    And I fill "Price Calculation Rules Form" with:
+    When I fill "Price Calculation Rules Form" with:
+      | Priority | 21474836479 |
+    Then I should see "Price Calculation Rules Form" validation errors:
+      | Priority | This value should be between -2,147,483,648 and 2,147,483,647. |
+    When I fill "Price Calculation Rules Form" with:
       | Price for quantity | product.test.unit            |
       | Price Unit         | pricelist[1].prices.unit     |
       | Price Currency     | pricelist[1].prices.currency |
       | Calculate As       | pricelist[1].prices.value    |
-      | Priority           | 21474836479                  |
+      | Priority           | 1                            |
     And I save and close form
-    Then I should see validation errors:
-      | Price Calculation Quantity | Field "test" is not allowed to be used as "Quantity"           |
-      | Rule                       | Invalid expression                                             |
-      | Priority                   | This value should be between -2,147,483,648 and 2,147,483,647. |
+    Then I should see "Field \"test\" is not allowed to be used as \"Quantity\""
 
   Scenario: Check price list rule calculate as expressions validation
     When I fill "Price Calculation Rules Form" with:
@@ -47,10 +49,9 @@ Feature: Price list rules validation
       | Calculate As                  | pricelist[1].prices.value * "a" |
       | Priority                      | 1                               |
     And I save and close form
-    Then I should see validation errors:
+    Then I should see "Price Calculation Rules Form" validation errors:
       | Calculate As | Invalid expression |
-    And I should not see validation errors:
-      | Price Calculation Quantity | Field "test" is not allowed to be used as "Quantity |
+    Then I should not see "Field \"test\" is not allowed to be used as \"Quantity\""
 
   Scenario: Check price list rule condition expressions validation
     When I fill "Price Calculation Rules Form" with:
@@ -68,6 +69,25 @@ Feature: Price list rules validation
     And I save and close form
     Then I should see "Price List has been saved" flash message
     And number of records in "Price list Product prices Grid" should be 0
+
+  Scenario: Create dependent price list
+    Given I go to Sales/ Price Lists
+    When I click "Create Price List"
+    And I fill form with:
+      | Name               | Dependent Price List            |
+      | Currencies         | US Dollar ($)                   |
+      | Active             | true                            |
+      | Rule               | product.id > 0                  |
+    And I click "Add Price Calculation Rules"
+    And I click "Enter expression unit"
+    And I click "Enter expression currency"
+    And I fill "Price Calculation Rules Form" with:
+      | Price for quantity | pricelist[1].prices.quantity      |
+      | Price Unit         | pricelist[1].prices.unit          |
+      | Price Currency     | pricelist[1].prices.currency      |
+      | Calculate As       | pricelist[1].prices.value * 0.5   |
+      | Priority           | 1                                 |
+    And I save and close form
 
   Scenario: Create featured product
     Given I go to Products/ Products
@@ -92,3 +112,66 @@ Feature: Price list rules validation
     Given I go to Sales/ Price Lists
     And click View Base Price List in grid
     Then number of records in "Price list Product prices Grid" should be 1
+
+  Scenario: Check prices in dependent price list
+    Given I go to Sales/ Price Lists
+    And click View Dependent Price List in grid
+    Then number of records in "Price list Product prices Grid" should be 1
+    And I should see following "Price list Product prices Grid" grid:
+       | Product SKU | Product Name | Quantity | Unit | Value | Currency | Type      |
+       | PSKU1       | PSKU1        | 1        | item | 50.00 | USD      | Generated |
+
+  Scenario: Create product price in default price list
+    Given I go to Sales/ Price Lists
+    And click View Default Price List in grid
+    When I click "Add Product Price"
+    And I fill "Add Product Price Form" with:
+      | Product  | PSKU1 |
+      | Quantity | 2     |
+      | Unit     | item  |
+      | Price    | 50    |
+    And I click "Save"
+    Then should see "Product Price has been added" flash message
+
+  Scenario: Check prices in dependent price list after product price creation
+    Given I go to Sales/ Price Lists
+    And click View Dependent Price List in grid
+    Then number of records in "Price list Product prices Grid" should be 2
+    And I should see following "Price list Product prices Grid" grid containing rows:
+      | Product SKU | Product Name | Quantity | Unit | Value | Currency | Type      |
+      | PSKU1       | PSKU1        | 1        | item | 50.00 | USD      | Generated |
+      | PSKU1       | PSKU1        | 2        | item | 25.00 | USD      | Generated |
+
+  Scenario: Edit product price in default price list
+    Given I go to Sales/ Price Lists
+    And click view Default Price List in grid
+    And click edit 50.00 in "Price list Product prices Grid"
+    And fill "Update Product Price Form" with:
+       | Quantity | 3  |
+       | Price    | 60 |
+    And I click "Save"
+    Then should see "Product Price has been added" flash message
+
+  Scenario: Check prices in dependent price list after product price update
+    Given I go to Sales/ Price Lists
+    And click view Dependent Price List in grid
+    Then number of records in "Price list Product prices Grid" should be 2
+    And I should see following "Price list Product prices Grid" grid containing rows:
+      | Product SKU | Product Name | Quantity | Unit | Value | Currency | Type      |
+      | PSKU1       | PSKU1        | 1        | item | 50.00 | USD      | Generated |
+      | PSKU1       | PSKU1        | 3        | item | 30.00 | USD      | Generated |
+
+  Scenario: Delete product price in default price list
+    Given I go to Sales/ Price Lists
+    And click view Default Price List in grid
+    And click delete 60.00 in "Price list Product prices Grid"
+    And I click "Yes" in confirmation dialogue
+    Then should see "Removed" flash message
+
+  Scenario: Check prices in dependent price list after product price deletion
+    Given I go to Sales/ Price Lists
+    And click view Dependent Price List in grid
+    Then number of records in "Price list Product prices Grid" should be 1
+    And I should see following "Price list Product prices Grid" grid containing rows:
+      | Product SKU | Product Name | Quantity | Unit | Value | Currency | Type      |
+      | PSKU1       | PSKU1        | 1        | item | 50.00 | USD      | Generated |

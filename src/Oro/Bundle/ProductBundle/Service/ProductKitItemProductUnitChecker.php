@@ -69,7 +69,7 @@ class ProductKitItemProductUnitChecker
         $conflictingProducts = [];
         foreach ($products as $product) {
             $productUnitPrecision = $product->getUnitPrecision($unitCode);
-            if (!$productUnitPrecision) {
+            if (!$productUnitPrecision || !$productUnitPrecision->isSell()) {
                 $conflictingProducts[] = $product;
             }
         }

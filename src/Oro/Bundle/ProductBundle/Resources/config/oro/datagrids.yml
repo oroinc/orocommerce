@@ -20,6 +20,26 @@ datagrids:
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
+        fields_acl:
+            columns:
+                sku:
+                    data_name: product.sku
+                names:
+                    data_name: product.names
+                    column_name: productName
+                status:
+                    data_name: product.status
+                newArrival:
+                    data_name: product.newArrival
+                createdAt:
+                    data_name: product.createdAt
+                updatedAt:
+                    data_name: product.updatedAt
+                inventory_status:
+                    data_name: product.inventory_status
+                    column_name: inventoryStatusId
+                type:
+                    data_name: product.type
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -433,6 +453,14 @@ datagrids:
         inline_editing:
             enable: true
             behaviour: enable_selected
+        fields_acl:
+            columns:
+                images:
+                    data_name: product.images
+                    column_name: productImage
+                attributeFamily:
+                    data_name: product.attributeFamily
+                    column_name: attribute_family_localized
         columns:
             productImage:
                 label:         oro.product.image.label
@@ -445,6 +473,8 @@ datagrids:
                     enable: true
                     editor:
                         component: oroproduct/js/app/components/product-name-popup-editor-component
+                        view_options:
+                            value_field_name: names
                     save_api_accessor:
                         route: oro_api_patch_product_inline_edit_name
                         query_parameter_names:
@@ -459,6 +489,9 @@ datagrids:
             inventoryStatusId:
                 inline_editing:
                     enable: true
+                    editor:
+                        view_options:
+                            value_field_name: inventory_status
                     save_api_accessor:
                         route: oro_api_patch_product_inline_edit_inventory_status
                         query_parameter_names:
@@ -683,6 +716,26 @@ datagrids:
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
+        fields_acl:
+            columns:
+                names:
+                    data_name: product.names
+                    column_name: productName
+                inventory_status:
+                    data_name: product.inventory_status
+                    column_name: inventoryStatusId
+                sku:
+                    data_name: product.sku
+                status:
+                    data_name: product.status
+                newArrival:
+                    data_name: product.newArrival
+                createdAt:
+                    data_name: product.createdAt
+                updatedAt:
+                    data_name: product.updatedAt
+                type:
+                    data_name: product.type
         columns:
             sku:
                 label:         oro.product.sku.label

@@ -110,7 +110,6 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
         self::assertEquals($expectedData, $form->getData());
     }
 
-
     public function testFailureSubmit(): void
     {
         $existingData = new ContentTemplateStub();

@@ -35,16 +35,6 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
      */
     public function load(ObjectManager $manager)
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'r');
-        $headers = fgetcsv($handler, 1000, ',');
-
         $priceLists = [
             'Default Price List' => [
                 'discount' => 0,
@@ -58,16 +48,14 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         ];
 
         $priceManager = $this->container->get('oro_pricing.manager.price_manager');
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
-
+        foreach ($this->getProducts() as $row) {
             $product = $this->getProductBySku($manager, $row['sku']);
             $productUnit = $this->getProductUnit($manager, $row['unit']);
             foreach ($priceLists as $listName => $listOptions) {
                 $priceList = $this->getPriceList($manager, $listName);
                 foreach ($priceList->getCurrencies() as $currency) {
                     $amount = round(
-                        (float)$row['price'] * (1 - (float)$listOptions['discount']),
+                        (float) $row['price'] * (1 - (float) $listOptions['discount']),
                         2
                     );
                     $price = Price::create($amount, $currency);
@@ -87,9 +75,26 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
             }
         }
 
-        fclose($handler);
-
         $manager->flush();
+    }
+
+    protected function getProducts(): \Iterator
+    {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            yield array_combine($headers, array_values($data));
+        }
+
+        fclose($handler);
     }
 
     protected function createPriceTiers(
@@ -98,9 +103,9 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         Price $unitPrice
     ) {
         $tiers = [
-            10  => 0.05,
-            20  => 0.10,
-            50  => 0.15,
+            10 => 0.05,
+            20 => 0.10,
+            50 => 0.15,
             100 => 0.20,
         ];
 

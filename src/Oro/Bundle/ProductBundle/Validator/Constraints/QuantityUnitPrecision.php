@@ -15,15 +15,13 @@ class QuantityUnitPrecision extends Constraint
 
     /**
      * The path to the quantity field.
-     *
-     * @var string
      */
     public string $path = '';
 
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return QuantityUnitPrecisionValidator::ALIAS;
     }
@@ -31,7 +29,7 @@ class QuantityUnitPrecision extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

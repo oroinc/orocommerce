@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -49,6 +50,9 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
      */
     private $propertyAccessor;
 
+    /** @var TransactionOptionProvider */
+    private $transactionOptionProvider;
+
     protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);
@@ -58,13 +62,18 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
         $this->surchargeProvider = $this->createMock(SurchargeProvider::class);
         $this->propertyAccessor = $this->createMock(PropertyAccessor::class);
 
-        $this->factory = new BasicPayPalExpressCheckoutPaymentMethodFactory(
-            $this->gateway,
-            $this->router,
+        $this->transactionOptionProvider = new TransactionOptionProvider(
+            $this->surchargeProvider,
             $this->doctrineHelper,
             $this->optionsProvider,
-            $this->surchargeProvider,
+            $this->router,
             $this->propertyAccessor
+        );
+
+        $this->factory = new BasicPayPalExpressCheckoutPaymentMethodFactory(
+            $this->gateway,
+            $this->propertyAccessor,
+            $this->transactionOptionProvider
         );
     }
 
@@ -72,17 +81,15 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
     {
         /** @var PayPalExpressCheckoutConfigInterface $config */
         $config = $this->createMock(PayPalExpressCheckoutConfigInterface::class);
+        $this->transactionOptionProvider->setConfig($config);
 
         $method = new PayPalExpressCheckoutPaymentMethod(
             $this->gateway,
             $config,
-            $this->router,
-            $this->doctrineHelper,
-            $this->optionsProvider,
-            $this->surchargeProvider,
-            $this->propertyAccessor
+            $this->propertyAccessor,
+            $this->transactionOptionProvider,
         );
 
-        $this->assertEquals($method, $this->factory->create($config));
+        self::assertEquals($method, $this->factory->create($config));
     }
 }

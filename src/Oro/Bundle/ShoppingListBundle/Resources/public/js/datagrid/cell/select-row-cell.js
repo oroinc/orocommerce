@@ -20,6 +20,10 @@ const ShoppingListSelectRowCell = SelectRowCell.extend({
         this.listenTo(this.model.collection, 'backgrid:selected', this.onSomeRowSelect);
     },
 
+    render() {
+        return ShoppingListSelectRowCell.__super__.render.call(this);
+    },
+
     onChange(e) {
         if (this.model.isGroup) {
             const newState = this.$(e.target).prop('checked');

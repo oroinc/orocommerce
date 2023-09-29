@@ -132,6 +132,10 @@ oro_behat_extension:
                         type: 'xpath'
                         locator: '//*[@name="oro_cms_content_block[contentVariants][1][content]"]'
                         class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+                    Content Variant 1 Website:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][1][scopes][0][website]"]'
+                        class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
         Content Variant 1 form:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -268,6 +272,12 @@ oro_behat_extension:
             selector: 'span[title="Enable External Markup"]'
         Import Button:
             selector: 'span[data-original-title="Source Code"]'
+
+        Undo Editor:
+            selector: 'span[data-original-title="Undo"]'
+
+        Redo Editor:
+            selector: 'span[data-original-title="Redo"]'
 
         Example1 svg wysiwyg image:
             selector:
@@ -529,6 +539,7 @@ oro_behat_extension:
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
                 - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
                 - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
                 - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
                 - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\ActionBundle\Tests\Behat\Context\OroActionContext

@@ -194,9 +194,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
 
     /**
      * Gets the file name to locate
-     *
-     * @param string $sku
-     * @return string
      */
     protected function getImageName(string $sku): string
     {

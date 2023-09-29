@@ -29,6 +29,16 @@ class OrderLineItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_line_item.yml', $response);
     }
 
+    public function testGetListFilteredByOrder()
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            ['filter[order]' => '<toString(@order1->id)>']
+        );
+
+        $this->assertResponseContains('cget_line_item_filter_by_order.yml', $response);
+    }
+
     public function testGet()
     {
         $response = $this->get(

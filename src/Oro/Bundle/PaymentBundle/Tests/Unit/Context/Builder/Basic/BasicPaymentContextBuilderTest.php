@@ -2,41 +2,35 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Builder\Basic;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\Basic\BasicPaymentContextBuilder;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
-use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Context\PaymentLineItemTrait;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\TestCase;
 
-class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
+class BasicPaymentContextBuilderTest extends TestCase
 {
-    /** @var PaymentLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentLineItemCollectionFactory;
+    use PaymentLineItemTrait;
 
-    protected function setUp(): void
-    {
-        $this->paymentLineItemCollectionFactory = $this->createMock(PaymentLineItemCollectionFactoryInterface::class);
-    }
-
-    public function testFullContextBuilding()
+    public function testFullContextBuilding(): void
     {
         $entity = $this->createMock(\stdClass::class);
         $entityId = '12';
         $initialLineItems = [
-            new PaymentLineItem([PaymentLineItem::FIELD_QUANTITY => 2]),
-            new PaymentLineItem([PaymentLineItem::FIELD_QUANTITY => 5])
+            $this->getPaymentLineItem(quantity: 2),
+            $this->getPaymentLineItem(quantity: 5),
         ];
-        $initialLineItemsCollection = $this->createMock(PaymentLineItemCollectionInterface::class);
-        $additionalLineItem = new PaymentLineItem([PaymentLineItem::FIELD_QUANTITY => 10]);
+        $initialLineItemsCollection = new ArrayCollection($initialLineItems);
+        $additionalLineItem = $this->getPaymentLineItem(quantity: 10);
         $lineItems = $initialLineItems;
         $lineItems[] = $additionalLineItem;
-        $lineItemsCollection = $this->createMock(PaymentLineItemCollectionInterface::class);
+        $lineItemsCollection = new ArrayCollection($lineItems);
         $billingAddress = $this->createMock(AddressInterface::class);
         $shippingAddress = $this->createMock(AddressInterface::class);
         $shippingOrigin = $this->createMock(ShippingOrigin::class);
@@ -48,16 +42,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
         $website = $this->createMock(Website::class);
         $total = 10.0;
 
-        $initialLineItemsCollection->expects(self::once())
-            ->method('toArray')
-            ->willReturn($initialLineItems);
-
-        $this->paymentLineItemCollectionFactory->expects(self::once())
-            ->method('createPaymentLineItemCollection')
-            ->with($lineItems)
-            ->willReturn($lineItemsCollection);
-
-        $builder = new BasicPaymentContextBuilder($entity, $entityId, $this->paymentLineItemCollectionFactory);
+        $builder = new BasicPaymentContextBuilder($entity, $entityId);
         $builder
             ->setLineItems($initialLineItemsCollection)
             ->addLineItem($additionalLineItem)
@@ -96,20 +81,14 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $entity = $this->createMock(\stdClass::class);
         $entityId = '12';
-        $lineItemsCollection = $this->createMock(PaymentLineItemCollectionInterface::class);
 
-        $this->paymentLineItemCollectionFactory->expects(self::once())
-            ->method('createPaymentLineItemCollection')
-            ->with([])
-            ->willReturn($lineItemsCollection);
-
-        $builder = new BasicPaymentContextBuilder($entity, $entityId, $this->paymentLineItemCollectionFactory);
+        $builder = new BasicPaymentContextBuilder($entity, $entityId);
 
         self::assertEquals(
             new PaymentContext([
                 PaymentContext::FIELD_SOURCE_ENTITY => $entity,
                 PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
-                PaymentContext::FIELD_LINE_ITEMS => $lineItemsCollection,
+                PaymentContext::FIELD_LINE_ITEMS => new ArrayCollection([]),
             ]),
             $builder->getResult()
         );

@@ -6,6 +6,9 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Product unit precision collection form.
+ */
 class ProductUnitPrecisionCollectionType extends AbstractType
 {
     const NAME = 'oro_product_unit_precision_collection';
@@ -13,7 +16,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }
@@ -26,7 +29,8 @@ class ProductUnitPrecisionCollectionType extends AbstractType
         $resolver->setDefaults(
             [
                 'entry_type' => ProductUnitPrecisionType::class,
-                'show_form_when_empty' => false
+                'show_form_when_empty' => false,
+                'check_field_name' => null
             ]
         );
     }
@@ -42,7 +46,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

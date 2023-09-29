@@ -79,7 +79,11 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
 
     public function onPostSubmit(FormEvent $event)
     {
-        $data = $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
+        $form = $event->getForm();
+        if (!$form->has(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)) {
+            return;
+        }
+        $data = $form->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
 
         foreach ($data as $attributePrices) {
             /** @var PriceAttributeProductPrice $price */
@@ -114,13 +118,6 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             ->setPriceList($newInstanceData['attribute']);
     }
 
-    /**
-     * @param Product $product
-     * @param array $attributes
-     * @param array $existingPrices
-     *
-     * @return array
-     */
     private function transformPriceAttributes(Product $product, array $attributes, array $existingPrices): array
     {
         $neededPrices = [];

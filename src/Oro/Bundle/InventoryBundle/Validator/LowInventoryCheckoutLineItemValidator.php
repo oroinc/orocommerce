@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator;
 
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Checks if the line item product inventory level is running low.
+ */
 class LowInventoryCheckoutLineItemValidator
 {
     /**
@@ -26,12 +29,7 @@ class LowInventoryCheckoutLineItemValidator
         $this->translator = $translator;
     }
 
-    /**
-     * @param CheckoutLineItem $lineItem
-     *
-     * @return bool
-     */
-    public function isLineItemRunningLow(CheckoutLineItem $lineItem)
+    public function isRunningLow(ProductLineItemInterface $lineItem): bool
     {
         $product = $lineItem->getProduct();
         $productUnit = $lineItem->getProductUnit();
@@ -39,18 +37,13 @@ class LowInventoryCheckoutLineItemValidator
         return $this->lowInventoryManager->isLowInventoryProduct($product, $productUnit);
     }
 
-    /**
-     * @param mixed $lineItem
-     *
-     * @return bool|string
-     */
-    public function getMessageIfLineItemRunningLow(CheckoutLineItem $lineItem)
+    public function getMessageIfRunningLow(ProductLineItemInterface $lineItem): ?string
     {
-        $isValidCheckoutLineItem = $this->isLineItemRunningLow($lineItem);
+        $isValidCheckoutLineItem = $this->isRunningLow($lineItem);
         if ($isValidCheckoutLineItem) {
             return $this->translator->trans('oro.inventory.low_inventory.message');
         }
 
-        return false;
+        return null;
     }
 }

@@ -24,7 +24,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
 
     /**
      * @param null|float|integer $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -35,7 +35,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
 
     /**
      * @param null|float|integer $value
-     * @param MeasureUnitInterface $unit
+     * @param MeasureUnitInterface|null $unit
      *
      * @return string
      */
@@ -76,7 +76,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
     protected function getSuffix($value, $isShort)
     {
         $suffix = $isShort ? 'short' : 'full';
-        if ((double)$value !== (double)(int)$value) {
+        if ((float)$value !== (float)(int)$value) {
             $suffix .= '_fraction';
             if ($value > 1) {
                 $suffix .= '_gt_1';

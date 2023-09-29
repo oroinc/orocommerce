@@ -22,7 +22,7 @@ class TaxCodeGridListener
 
     public function onBuildBefore(BuildBefore $event): void
     {
-        if (!$this->featureChecker->isResourceEnabled($this->getTaxCodeClass(), 'entities')) {
+        if (!$this->isSupported()) {
             return;
         }
 
@@ -119,5 +119,10 @@ class TaxCodeGridListener
                 ]
             ]
         );
+    }
+
+    protected function isSupported(): bool
+    {
+        return $this->featureChecker->isResourceEnabled($this->getTaxCodeClass(), 'entities');
     }
 }

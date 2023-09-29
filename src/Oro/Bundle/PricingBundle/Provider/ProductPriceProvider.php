@@ -3,39 +3,42 @@
 namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceCollectionDTO;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaDataExtractor\ProductPriceCriteriaDataExtractorInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Provider\PriceByMatchingCriteria\ProductPriceByMatchingCriteriaProviderInterface;
 use Oro\Bundle\PricingBundle\Storage\ProductPriceStorageInterface;
-use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Read prices from storage and return requested prices to the client in expected format.
  */
-class ProductPriceProvider implements ProductPriceProviderInterface
+class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProductPriceProviderInterface
 {
     use MemoryCacheProviderAwareTrait;
 
-    /**
-     * @var ProductPriceStorageInterface
-     */
-    protected $priceStorage;
+    protected ProductPriceStorageInterface $priceStorage;
 
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $currencyManager;
+    protected UserCurrencyManager $currencyManager;
+
+    private ProductPriceCriteriaDataExtractorInterface $productPriceCriteriaDataExtractor;
+
+    private ProductPriceByMatchingCriteriaProviderInterface $priceByMatchingCriteriaProvider;
 
     public function __construct(
         ProductPriceStorageInterface $priceStorage,
-        UserCurrencyManager $currencyManager
+        UserCurrencyManager $currencyManager,
+        ProductPriceCriteriaDataExtractorInterface $productPriceCriteriaDataExtractor,
+        ProductPriceByMatchingCriteriaProviderInterface $priceByMatchingCriteriaProvider
     ) {
         $this->priceStorage = $priceStorage;
         $this->currencyManager = $currencyManager;
+        $this->productPriceCriteriaDataExtractor = $productPriceCriteriaDataExtractor;
+        $this->priceByMatchingCriteriaProvider = $priceByMatchingCriteriaProvider;
     }
 
     /**
@@ -66,7 +69,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
         $productsIds = [];
         foreach ($products as $product) {
-            $productId = is_a($product, Product::class) ? $product->getId() : (int) $product;
+            $productId = is_a($product, Product::class) ? $product->getId() : (int)$product;
             $productsIds[$productId] = $productId;
         }
 
@@ -82,80 +85,71 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     }
 
     /**
-     * @param array $productPriceCriteria
-     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     *
-     * @return Price[]
+     * {@inheritdoc}
      */
     public function getMatchedPrices(
         array $productPriceCriteria,
         ProductPriceScopeCriteriaInterface $scopeCriteria
     ): array {
-        return $this->getActualMatchedPrices($productPriceCriteria, $scopeCriteria);
+        /** @var array<string,?ProductPriceInterface> $matchingPricesByIdentifier */
+        $matchingPricesByIdentifier = [];
+        $matchingProductPrices = $this
+            ->getMatchingProductPricesGenerator($productPriceCriteria, $scopeCriteria);
+        foreach ($matchingProductPrices as $identifier => $matchingProductPrice) {
+            $matchingPricesByIdentifier[$identifier] = $matchingProductPrice?->getPrice();
+        }
+
+        return $matchingPricesByIdentifier;
     }
 
     /**
-     * @param array $productPriceCriteria
-     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     *
-     * @return Price[]
+     * {@inheritdoc}
      */
-    protected function getActualMatchedPrices(
-        array $productPriceCriteria,
-        ProductPriceScopeCriteriaInterface $scopeCriteria
+    public function getMatchedProductPrices(
+        array $productsPriceCriteria,
+        ProductPriceScopeCriteriaInterface $productPriceScopeCriteria
     ): array {
-        $productsIds = [];
-        $productUnitCodes = [];
-        $currencies = [];
-        $result = [];
+        /** @var array<string,?ProductPriceInterface> $matchingProductPricesByIdentifier */
+        $matchingProductPricesByIdentifier = [];
+        $matchingProductPrices = $this
+            ->getMatchingProductPricesGenerator($productsPriceCriteria, $productPriceScopeCriteria);
 
-        /** @var ProductPriceCriteria $productPriceCriterion */
-        foreach ($productPriceCriteria as $productPriceCriterion) {
-            $productUnitCode = $productPriceCriterion->getProductUnit()->getCode();
-            $currency = $productPriceCriterion->getCurrency();
-            $productId = $productPriceCriterion->getProduct()->getId();
-
-            $productsIds[$productId] = $productId;
-            $productUnitCodes[$productUnitCode] = $productUnitCode;
-            $currencies[$currency] = $currency;
+        foreach ($matchingProductPrices as $identifier => $matchingProductPrice) {
+            $matchingProductPricesByIdentifier[$identifier] = $matchingProductPrice;
         }
 
-        $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
-        $prices = $this->getPrices($scopeCriteria, $productsIds, $productUnitCodes, $currencies);
+        return $matchingProductPricesByIdentifier;
+    }
 
-        $productPriceData = [];
-        foreach ($prices as $priceData) {
-            $key = $this->getKey(
-                $priceData->getProduct(),
-                $priceData->getUnit(),
-                $priceData->getPrice()->getCurrency()
-            );
+    /**
+     * @param array<ProductPriceCriteria> $productsPriceCriteria
+     * @param ProductPriceScopeCriteriaInterface $productPriceScopeCriteria
+     *
+     * @return \Generator<string,ProductPriceInterface>
+     */
+    private function getMatchingProductPricesGenerator(
+        array $productsPriceCriteria,
+        ProductPriceScopeCriteriaInterface $productPriceScopeCriteria
+    ): \Generator {
+        [$productsIds, $unitCodes, $currencies] = $this
+            ->extractCriteriaData($productsPriceCriteria, $productPriceScopeCriteria);
 
-            $productPriceData[$key][] = $priceData;
-        }
+        $productPriceCollection = new ProductPriceCollectionDTO(
+            $this->getPrices($productPriceScopeCriteria, $productsIds, $unitCodes, $currencies)
+        );
 
-        foreach ($productPriceCriteria as $productPriceCriterion) {
-            $quantity = $productPriceCriterion->getQuantity();
-            $currency = $productPriceCriterion->getCurrency();
-            $key = $this->getKey(
-                $productPriceCriterion->getProduct(),
-                $productPriceCriterion->getProductUnit(),
-                $currency
-            );
-
-            $price = $this->matchPriceByQuantity($productPriceData[$key] ?? [], $quantity);
-
+        foreach ($productsPriceCriteria as $productPriceCriterion) {
             $identifier = $productPriceCriterion->getIdentifier();
-            $result[$identifier] = $price !== null ? Price::create($price, $currency) : null;
+            $productPrice = $this->priceByMatchingCriteriaProvider
+                ->getProductPriceMatchingCriteria($productPriceCriterion, $productPriceCollection);
+            yield $identifier => $productPrice;
         }
-
-        return $result;
     }
 
     /**
      * @param ProductPriceInterface[] $prices
      */
-    private function sortPrices(array &$prices)
+    private function sortPrices(array &$prices): void
     {
         usort($prices, static function (ProductPriceDTO $a, ProductPriceDTO $b) {
             $codeA = $a->getUnit()->getCode();
@@ -203,35 +197,6 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         );
     }
 
-    private function getKey(Product $product, MeasureUnitInterface $unit, string $currency): string
-    {
-        return sprintf('%s|%s|%s', $product->getId(), $unit->getCode(), $currency);
-    }
-
-    /**
-     * @param array|ProductPriceInterface[] $pricesData
-     * @param float $expectedQuantity
-     * @return float|null
-     */
-    protected function matchPriceByQuantity(array $pricesData, $expectedQuantity): ?float
-    {
-        $price = null;
-        foreach ($pricesData as $priceData) {
-            $quantity = $priceData->getQuantity();
-
-            if ($expectedQuantity >= $quantity) {
-                $price = $priceData->getPrice()->getValue();
-            }
-
-            if ($expectedQuantity <= $quantity) {
-                // Matching price has been already found, break from loop.
-                break;
-            }
-        }
-
-        return $price;
-    }
-
     /**
      * Restrict currencies list to getSupportedCurrencies
      */
@@ -241,7 +206,26 @@ class ProductPriceProvider implements ProductPriceProviderInterface
             return $currencies;
         }
 
-        $currencies = array_intersect($currencies, $this->getSupportedCurrencies($scopeCriteria));
-        return $currencies;
+        return array_intersect($currencies, $this->getSupportedCurrencies($scopeCriteria));
+    }
+
+    private function extractCriteriaData(
+        array $productsPriceCriteria,
+        ProductPriceScopeCriteriaInterface $scopeCriteria
+    ): array {
+        $criteriaData = [];
+        foreach ($productsPriceCriteria as $productPriceCriterion) {
+            $criteriaData[] = $this->productPriceCriteriaDataExtractor->extractCriteriaData($productPriceCriterion);
+        }
+        $criteriaData = array_merge_recursive(...$criteriaData);
+
+        $currencies = $criteriaData[ProductPriceCriteriaDataExtractorInterface::CURRENCIES] ?? [];
+        $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
+
+        return [
+            array_unique($criteriaData[ProductPriceCriteriaDataExtractorInterface::PRODUCT_IDS] ?? []),
+            array_unique($criteriaData[ProductPriceCriteriaDataExtractorInterface::UNIT_CODES] ?? []),
+            array_unique($currencies),
+        ];
     }
 }

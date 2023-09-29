@@ -27,7 +27,7 @@ class CategoryCountsCache
         $this->websiteManager = $websiteManager;
     }
 
-    public function getCounts(string $key) : array|null
+    public function getCounts(string $key): array|null
     {
         $key = $this->getDataKey($key);
         $cacheItem = $this->cacheProvider->getItem($key);
@@ -35,7 +35,7 @@ class CategoryCountsCache
         return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 
-    public function setCounts(string $key, array $counts, int $lifeTime = 0) : void
+    public function setCounts(string $key, array $counts, int $lifeTime = 0): void
     {
         $key = $this->getDataKey($key);
         $cacheItem = $this->cacheProvider->getItem($key);
@@ -43,7 +43,7 @@ class CategoryCountsCache
         $this->cacheProvider->save($cacheItem);
     }
 
-    protected function getDataKey(string $key) : string
+    protected function getDataKey(string $key): string
     {
         $websiteId = null;
         $website = $this->websiteManager->getCurrentWebsite();

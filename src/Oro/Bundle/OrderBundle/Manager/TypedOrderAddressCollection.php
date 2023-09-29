@@ -27,7 +27,7 @@ class TypedOrderAddressCollection
     protected $defaultAddress;
 
     /**
-     * @param CustomerUser $customerUser
+     * @param CustomerUser|null $customerUser
      * @param string $type
      * @param array $addresses
      */

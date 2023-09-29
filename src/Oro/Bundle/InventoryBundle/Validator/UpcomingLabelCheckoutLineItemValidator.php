@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator;
 
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -28,25 +28,20 @@ class UpcomingLabelCheckoutLineItemValidator
     private $productUpcomingProvider;
 
     public function __construct(
-        UpcomingProductProvider $ProductUpcomingProvider,
+        UpcomingProductProvider $productUpcomingProvider,
         TranslatorInterface $translator,
         DateTimeFormatterInterface $dateFormatter
     ) {
-        $this->productUpcomingProvider = $ProductUpcomingProvider;
+        $this->productUpcomingProvider = $productUpcomingProvider;
         $this->translator = $translator;
         $this->dateFormatter = $dateFormatter;
     }
 
-    /**
-     * @param mixed $lineItem
-     *
-     * @return null|string
-     */
-    public function getMessageIfLineItemUpcoming(CheckoutLineItem $lineItem)
+    public function getMessageIfUpcoming(ProductLineItemInterface $lineItem): ?string
     {
         $product = $lineItem->getProduct();
 
-        if ($this->productUpcomingProvider->isUpcoming($product)) {
+        if ($product !== null && $this->productUpcomingProvider->isUpcoming($product)) {
             $availabilityDate = $this->productUpcomingProvider->getAvailabilityDate($product);
             if ($availabilityDate) {
                 return $this->translator->trans(

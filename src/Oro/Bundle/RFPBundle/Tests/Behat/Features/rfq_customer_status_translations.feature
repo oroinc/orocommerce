@@ -19,7 +19,7 @@ Feature: RFQ customer status translations
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
       | Enabled Localizations | [English (United States), German Localization] |
-      | Default Localization  | German Localization            |
+      | Default Localization  | German Localization                            |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / Entities / Entity Management
@@ -38,12 +38,11 @@ Feature: RFQ customer status translations
     And I click "More Actions"
     And I click "Request Quote"
     And I fill form with:
-      | First Name    | Marlene                     |
-      | Last Name     | Bradley                     |
-      | Email Address | MarleneSBradley@example.com |
-      | Company       | Red Fox Tavern              |
-      | PO Number     | Test RFQ                    |
-      | Assigned To   | Marlene Bradley             |
+      | First Name    | Amanda                  |
+      | Last Name     | Cole                    |
+      | Email Address | AmandaRCole@example.org |
+      | Company       | Red Fox Tavern          |
+      | PO Number     | Test RFQ                |
     And I click "Submit Request"
     And I click "Requests For Quote"
     Then I should see following grid:

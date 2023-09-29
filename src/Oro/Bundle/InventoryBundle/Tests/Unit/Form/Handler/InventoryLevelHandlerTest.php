@@ -237,7 +237,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
      * @param int|null         $id
      * @return InventoryLevel|null
      */
-    protected function findLevelById(array $levels, ?int $id):? InventoryLevel
+    protected function findLevelById(array $levels, ?int $id): ?InventoryLevel
     {
         foreach ($levels as $level) {
             if ($level->getId() === $id) {

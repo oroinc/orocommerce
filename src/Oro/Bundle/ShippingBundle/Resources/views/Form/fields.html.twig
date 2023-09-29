@@ -156,7 +156,9 @@
                     {% endif %}
                 </tbody>
             </table>
-            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="#">{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
+            {% if form.vars.allow_add %}
+                <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="#">{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
@@ -173,10 +175,12 @@
     <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         data-page-component-module="oroshipping/js/app/components/product-shipping-freight-classes-component">
         {{ form_widget(form) }}
-        <td class="product-shipping-options-remove">
-            <button type="button" class="removeRow btn btn-icon btn-square-lighter"
-                    data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
-        </td>
+        {% if (form.parent.vars.allow_delete) %}
+            <td class="product-shipping-options-remove">
+                <button type="button" class="removeRow btn btn-icon btn-square-lighter"
+                        data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
+            </td>
+        {% endif %}
     </tr>
 {% endmacro %}
 

@@ -120,6 +120,7 @@ api:
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_line_item.md'
+            disable_meta_properties: [ title ]
             form_options:
                 constraints:
                     - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
@@ -154,6 +155,7 @@ api:
             actions:
                 create:
                     status_codes:
+                        200: false
                         201: false
                         400: false
                         403: Returned always
@@ -179,6 +181,7 @@ api:
                 get_list: false
                 create:
                     status_codes:
+                        200: false
                         201: false
                         400: false
                         403: Returned always

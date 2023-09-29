@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PriceListStrategySelectType extends AbstractType
 {
     const NAME = 'oro_pricing_list_strategy_selection';
-    const ALIAS = 'oro.pricing.system_configuration.fields.strategy_type.choises.';
+    const ALIAS = 'oro.pricing.system_configuration.fields.strategy_type.choices.';
 
     /**
      * @var StrategyRegister
@@ -47,7 +47,7 @@ class PriceListStrategySelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }
@@ -63,7 +63,7 @@ class PriceListStrategySelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

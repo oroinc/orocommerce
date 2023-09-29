@@ -50,7 +50,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }
@@ -58,7 +58,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     /**
      * {@inheritdoc}
      */
-    public function mapDataToForms($data, $forms)
+    public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface $priceForm */
@@ -72,7 +72,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
      * {@inheritdoc}
      * @param PriceAttributeProductPrice $data
      */
-    public function mapFormsToData($forms, &$data)
+    public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         $forms = iterator_to_array($forms);
         /** @var FormInterface $priceForm */

@@ -17,9 +17,6 @@ class LoadPriceAttributePriceListData extends AbstractFixture implements Contain
     public const SHIPPING_COST_NAME = 'Shipping Cost';
     public const SHIPPING_COST_FIELD = 'shippingCost';
 
-    /**
-     * @var ContainerInterface|null
-     */
     protected ?ContainerInterface $container;
 
     /**

@@ -11,7 +11,7 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -23,7 +23,7 @@ use Twig\Environment;
  */
 class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 {
-    private ProductAvailabilityProvider $productAvailabilityProvider;
+    private ProductRFPAvailabilityProvider $productAvailabilityProvider;
     private TranslatorInterface $translator;
     private Environment $twig;
 
@@ -33,7 +33,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         PropertyAccessorInterface $propertyAccessor,
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
-        ProductAvailabilityProvider $productAvailabilityProvider,
+        ProductRFPAvailabilityProvider $productAvailabilityProvider,
         TranslatorInterface $translator,
         Environment $twig
     ) {
@@ -61,17 +61,10 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
                 continue;
             }
 
-            if (!$this->productAvailabilityProvider->isProductApplicableForRFP($product)) {
-                $this->requestStack->getSession()->getFlashBag()->add(
-                    'warning',
-                    'oro.frontend.rfp.data_storage.no_qty_products_cant_be_added_to_rfq'
-                );
-                continue;
-            }
-
-            $this->addItem($product, $entity, $dataRow);
             if (!$this->productAvailabilityProvider->isProductAllowedForRFP($product)) {
                 $canNotBeAddedToRFQ[] = $product;
+            } else {
+                $this->addItem($product, $entity, $dataRow);
             }
         }
 
@@ -93,10 +86,6 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     protected function addItem(Product $product, object $entity, array $itemData): void
     {
         /** @var RFPRequest $entity */
-
-        if (!$this->productAvailabilityProvider->isProductAllowedForRFP($product)) {
-            return;
-        }
 
         $requestProduct = new RequestProduct();
 

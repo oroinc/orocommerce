@@ -18,7 +18,7 @@ class AttributeValueUsageInVariant extends Constraint implements ConfigModelAwar
      */
     public $configModel;
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return AttributeValueUsageInVariantValidator::ALIAS;
     }

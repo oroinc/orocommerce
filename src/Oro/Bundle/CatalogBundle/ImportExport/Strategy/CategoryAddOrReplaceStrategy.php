@@ -280,8 +280,9 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
     protected function getCurrentParentCategoryPath(): string
     {
         $rawItemData = $this->context->getValue('rawItemData');
+        $key = $this->getParentCategoryHeader();
 
-        return $rawItemData['parentCategory.title'] ?? '';
+        return $rawItemData[$key] ?? '';
     }
 
     protected function findCategoryByPath(string $categoryPath, Organization $organization): ?Category
@@ -324,5 +325,14 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         }
 
         return $this->maxLeft + $this->strategyHelper->getCurrentRowNumber($this->context);
+    }
+
+    private function getParentCategoryHeader(): string
+    {
+        return sprintf(
+            '%s.%s',
+            $this->fieldHelper->getConfigValue(Category::class, 'parentCategory', 'header', 'parentCategory'),
+            $this->fieldHelper->getConfigValue(Category::class, 'titles', 'header', 'titles')
+        );
     }
 }

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -18,31 +17,31 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
+class ShippingPriceProviderTest extends TestCase
 {
-    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingRulesProvider;
+    use ShippingLineItemTrait;
 
-    /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceCache;
+    private MethodsConfigsRulesByContextProviderInterface|MockObject $shippingRulesProvider;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
+    private ShippingPriceCache|MockObject $priceCache;
 
-    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $memoryCacheProvider;
+    private EventDispatcherInterface|MockObject $eventDispatcher;
 
-    /** @var ShippingPriceProvider */
-    private $shippingPriceProvider;
+    private MemoryCacheProviderInterface|MockObject $memoryCacheProvider;
+
+    private ShippingPriceProvider $shippingPriceProvider;
 
     protected function setUp(): void
     {
@@ -62,7 +61,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
-        $shippingMethodProvider->expects($this->any())
+        $shippingMethodProvider->expects(self::any())
             ->method('getShippingMethod')
             ->willReturnCallback(function ($methodId) use ($methods) {
                 return $methods[$methodId] ?? null;
@@ -147,13 +146,13 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetApplicablePaymentMethodsWhenCache(): void
     {
         $methodViews = $this->createMock(ShippingMethodViewCollection::class);
-        $this->memoryCacheProvider->expects($this->once())
+        $this->memoryCacheProvider->expects(self::once())
             ->method('get')
             ->willReturnCallback(function () use ($methodViews) {
                 return $methodViews;
             });
 
-        $this->assertEquals(
+        self::assertEquals(
             $methodViews,
             $this->shippingPriceProvider->getApplicableMethodsViews($this->createMock(ShippingContextInterface::class))
         );
@@ -164,32 +163,32 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetApplicableMethodsViews(array $shippingRules, array $expectedData): void
     {
-        $shippingLineItems = [new ShippingLineItem([])];
+        $shippingLineItems = [$this->getShippingLineItem()];
 
         $sourceEntity = new \stdClass();
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
             ShippingContext::FIELD_CURRENCY => 'USD',
             ShippingContext::FIELD_SOURCE_ENTITY => $sourceEntity
         ]);
 
-        $this->shippingRulesProvider->expects($this->once())
+        $this->shippingRulesProvider->expects(self::once())
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn($shippingRules);
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(self::isInstanceOf(ApplicableMethodsEvent::class), ApplicableMethodsEvent::NAME);
 
-        $this->memoryCacheProvider->expects($this->once())
+        $this->memoryCacheProvider->expects(self::once())
             ->method('get')
             ->willReturnCallback(function ($arguments, $callable) {
                 return $callable($arguments);
             });
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedData,
             $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
         );
@@ -198,34 +197,36 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
      */
-    public function testGetApplicableMethodsViewsWhenMemoryCacheProvider(array $shippingRules, array $expectedData)
-    {
-        $shippingLineItems = [new ShippingLineItem([])];
+    public function testGetApplicableMethodsViewsWhenMemoryCacheProvider(
+        array $shippingRules,
+        array $expectedData
+    ): void {
+        $shippingLineItems = [$this->getShippingLineItem()];
 
         $sourceEntity = new \stdClass();
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
             ShippingContext::FIELD_CURRENCY => 'USD',
             ShippingContext::FIELD_SOURCE_ENTITY => $sourceEntity
         ]);
 
-        $this->shippingRulesProvider->expects($this->once())
+        $this->shippingRulesProvider->expects(self::once())
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn($shippingRules);
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with(self::isInstanceOf(ApplicableMethodsEvent::class), ApplicableMethodsEvent::NAME);
 
-        $this->memoryCacheProvider->expects($this->once())
+        $this->memoryCacheProvider->expects(self::once())
             ->method('get')
             ->willReturnCallback(function ($arguments, $callable) {
                 return $callable($arguments);
             });
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedData,
             $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
         );
@@ -334,10 +335,10 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApplicableMethodsViewsCache(): void
     {
-        $shippingLineItems = [new ShippingLineItem([])];
+        $shippingLineItems = [$this->getShippingLineItem()];
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
             ShippingContext::FIELD_CURRENCY => 'USD',
             ShippingContext::FIELD_SOURCE_ENTITY => new \stdClass()
         ]);
@@ -384,18 +385,18 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->with($context, 'flat_rate', 'primary', $ruleId)
             ->willReturn(Price::create(2, 'USD'));
 
-        $this->memoryCacheProvider->expects($this->exactly(2))
+        $this->memoryCacheProvider->expects(self::exactly(2))
             ->method('get')
             ->willReturnCallback(function ($arguments, $callable) {
                 return $callable($arguments);
             });
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedData,
             $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
         );
         $price->setValue(2);
-        $this->assertEquals(
+        self::assertEquals(
             $expectedData,
             $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
         );
@@ -404,24 +405,28 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getPriceDataProvider
      */
-    public function testGetPrice(?string $methodId, string $typeId, array $shippingRules, Price $expectedPrice = null)
-    {
-        $shippingLineItems = [new ShippingLineItem([])];
+    public function testGetPrice(
+        ?string $methodId,
+        string $typeId,
+        array $shippingRules,
+        Price $expectedPrice = null
+    ): void {
+        $shippingLineItems = [$this->getShippingLineItem()];
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->shippingRulesProvider->expects($this->once())
+        $this->shippingRulesProvider->expects(self::once())
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn($shippingRules);
 
-        $this->priceCache->expects($this->exactly($expectedPrice ? 1 : 0))
+        $this->priceCache->expects(self::exactly($expectedPrice ? 1 : 0))
             ->method('savePrice');
 
-        $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
+        self::assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
     }
 
     /**
@@ -491,20 +496,20 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPriceWhenNoMethodId(): void
     {
-        $shippingLineItems = [new ShippingLineItem([])];
+        $shippingLineItems = [$this->getShippingLineItem()];
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->shippingRulesProvider->expects($this->never())
+        $this->shippingRulesProvider->expects(self::never())
             ->method('getShippingMethodsConfigsRules');
 
-        $this->priceCache->expects($this->never())
+        $this->priceCache->expects(self::never())
             ->method('savePrice');
 
-        $this->assertNull($this->shippingPriceProvider->getPrice($context, null, 'ground'));
+        self::assertNull($this->shippingPriceProvider->getPrice($context, null, 'ground'));
     }
 
     public function testGetPriceCache(): void
@@ -512,10 +517,10 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         $methodId = 'flat_rate';
         $typeId = 'primary';
 
-        $shippingLineItems = [new ShippingLineItem([])];
+        $shippingLineItems = [$this->getShippingLineItem()];
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
@@ -545,21 +550,21 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->with($context, 'flat_rate', 'primary', $ruleId)
             ->willReturn(Price::create(2, 'USD'));
 
-        $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
+        self::assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
         $expectedPrice->setValue(2);
-        $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
+        self::assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
     }
 
     public function testGetPriceNoMethodAndType(): void
     {
-        $shippingLineItems = [new ShippingLineItem([])];
+        $shippingLineItems = [$this->getShippingLineItem()];
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->assertNull($this->shippingPriceProvider->getPrice($context, 'unknown_method', 'primary'));
-        $this->assertNull($this->shippingPriceProvider->getPrice($context, 'flat_rate', 'unknown_method'));
+        self::assertNull($this->shippingPriceProvider->getPrice($context, 'unknown_method', 'primary'));
+        self::assertNull($this->shippingPriceProvider->getPrice($context, 'flat_rate', 'unknown_method'));
     }
 }

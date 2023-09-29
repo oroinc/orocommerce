@@ -11,3 +11,9 @@ services:
         calls:
             - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
             - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\PriceListSchedule', ['create']]]
+
+    oro_pricing.tests.entity_name_resolver.data_loader:
+        class: Oro\Bundle\PricingBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoader
+        decorates: oro_entity.tests.entity_name_resolver.data_loader
+        arguments:
+            - '@.inner'

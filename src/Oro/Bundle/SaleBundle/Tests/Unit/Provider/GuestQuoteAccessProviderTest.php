@@ -179,7 +179,7 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->provider->isGranted($this->getQuote(Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER)));
     }
 
-    private function getQuote(string $status, ?int $websiteId = null) : Quote
+    private function getQuote(string $status, ?int $websiteId = null): Quote
     {
         $quote = new Quote();
         $quote->setInternalStatus(new TestEnumValue($status, $status));

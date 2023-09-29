@@ -171,7 +171,7 @@ class PriceRule
     }
 
     /**
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @return $this
      */
     public function setProductUnit(ProductUnit $productUnit = null)

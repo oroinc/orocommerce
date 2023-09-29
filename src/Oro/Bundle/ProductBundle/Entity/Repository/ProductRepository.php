@@ -4,7 +4,9 @@ namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -472,6 +474,33 @@ class ProductRepository extends ServiceEntityRepository
             ->setParameter('configurableProduct', $product);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return Product[]
+     */
+    public function getProductKitsByRequiredProduct(Product $product): array
+    {
+        $qb = $this->createQueryBuilder('pk');
+
+        return $qb
+            ->innerJoin(
+                'pk.kitItems',
+                'pki',
+                Join::WITH,
+                $qb->expr()->neq('pki.optional', ':optional')
+            )
+            ->setParameter('optional', true, Types::BOOLEAN)
+            ->innerJoin('pki.kitItemProducts', 'pip')
+            ->innerJoin(
+                'pip.product',
+                'p',
+                Join::WITH,
+                $qb->expr()->eq('p.id', ':product_id')
+            )
+            ->setParameter('product_id', $product->getId(), Types::INTEGER)
+            ->getQuery()
+            ->getResult();
     }
 
     private function filterByImageType(QueryBuilder $queryBuilder)

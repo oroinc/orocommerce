@@ -8,15 +8,7 @@
         '~class': ' product-price__container'
     }) %}
 
-    {% set isRenderable = (
-        applicableForConfiguredProduct or
-        (
-            not is_configurable_product_type(product.type) and
-            not is_kit_product_type(product.type)
-        )
-    ) %}
-
-    {% if isRenderable %}
+    {% if not is_price_hidden(product, applicableForConfiguredProduct) %}
         <div {{ block('block_attributes') }}>
             {{ block_widget(block) }}
         </div>

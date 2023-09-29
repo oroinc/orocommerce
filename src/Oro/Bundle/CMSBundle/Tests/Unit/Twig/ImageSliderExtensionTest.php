@@ -48,12 +48,6 @@ class ImageSliderExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getImageSlideSourcesDataProvider
-     *
-     * @param File $mainImage
-     * @param File|null $mediumImage
-     * @param File|null $smallImage
-     * @param array $imageVariantSettings
-     * @param array $expected
      */
     public function testGetImageSlideSources(
         File $mainImage,

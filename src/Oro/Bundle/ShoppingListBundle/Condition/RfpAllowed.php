@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Condition;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
+use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -19,10 +19,10 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
 {
     use ContextAccessorAwareTrait;
 
-    private ProductAvailabilityProvider $productAvailabilityProvider;
+    private ProductRFPAvailabilityProvider $productAvailabilityProvider;
     private PropertyPathInterface $propertyPath;
 
-    public function __construct(ProductAvailabilityProvider $productAvailabilityProvider)
+    public function __construct(ProductRFPAvailabilityProvider $productAvailabilityProvider)
     {
         $this->productAvailabilityProvider = $productAvailabilityProvider;
     }

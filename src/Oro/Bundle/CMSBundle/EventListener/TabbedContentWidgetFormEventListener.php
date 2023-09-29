@@ -23,8 +23,6 @@ class TabbedContentWidgetFormEventListener
 
     /**
      * Processes and persists the collection of TabbedContentItem coming from the corresponding content widget.
-     *
-     * @param AfterFormProcessEvent $args
      */
     public function onBeforeFlush(AfterFormProcessEvent $args): void
     {

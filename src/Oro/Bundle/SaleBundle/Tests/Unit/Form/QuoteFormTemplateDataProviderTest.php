@@ -105,7 +105,7 @@ class QuoteFormTemplateDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $name
-     * @param Quote $quote
+     * @param Quote|null $quote
      * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     private function createForm($name = 'test_type', Quote $quote = null)

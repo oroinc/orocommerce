@@ -47,7 +47,14 @@ class ProductShippingOptionsDatagridListener
             'renderable' => false,
         ];
 
+        $field_acl = [
+            'data_name' => 'product.unitPrecisions',
+            'source_name' => 'unitPrecisions',
+            'column_name' => static::SHIPPING_OPTIONS_COLUMN
+        ];
+
         $this->addConfigElement($config, '[columns]', $column, static::SHIPPING_OPTIONS_COLUMN);
+        $this->addConfigElement($config, '[fields_acl][columns]', $field_acl, static::SHIPPING_OPTIONS_COLUMN);
     }
 
     public function onResultAfter(OrmResultAfter $event)

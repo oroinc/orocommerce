@@ -222,6 +222,35 @@ oro.pricing:
         version.label: Version
         price_input.aria_label: 'Product Price'
 
+    combinedproductprice:
+        entity_label: 'Combined Product Price'
+        entity_plural_label: 'Combined Product Prices'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
+        id.label: 'Id'
+        currency:
+            label: 'Currency'
+            description: 'The currency of a combined product price'
+        product_sku.label: 'Product SKU'
+        quantity.label: 'Quantity'
+        value:
+            label: 'Value'
+            description: 'Combined Product price value'
+        price_list:
+            label: 'Price List'
+            description: 'Combined Product price related to a Combined product price value'
+        product:
+            label: 'Product'
+            description: 'Product related to a Combined product price value'
+        unit:
+            label: 'Unit'
+            description: 'Unit related to a Combined product price value'
+        merge_allowed:
+            label: 'Merge Allowed'
+            description: 'Indicates state of merge_allowed flag used during prices combination process'
+        origin_price_id:
+            label: 'Origin Product Price ID'
+            description: 'ID of Origin Product Price that was used as a source'
+
     priceattributeprice:
         entity_label: Product Attribute Price
         entity_plural_label: Product Attributes Prices
@@ -323,7 +352,7 @@ oro.pricing:
                     In order to update the existing prices please run the following command:
             pricing_strategy.label: Pricing Strategy
             strategy_type:
-                choises:
+                choices:
                     merge_by_priority: Merge by priority
                     minimal_prices: Minimal prices
             rounding_type:

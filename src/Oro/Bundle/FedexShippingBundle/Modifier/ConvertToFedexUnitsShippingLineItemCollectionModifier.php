@@ -2,116 +2,60 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Modifier;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Transformer\FedexToShippingUnitTransformerInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Model\Dimensions;
-use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 
+/**
+ * Converts Shipping Line Item collection to Shipping Line Item collection with converted Units (Dimensions and Weight)
+ */
 class ConvertToFedexUnitsShippingLineItemCollectionModifier implements
     ShippingLineItemCollectionBySettingsModifierInterface
 {
-    /**
-     * @var MeasureUnitConversion
-     */
-    private $measureUnitConverter;
+    private MeasureUnitConversion $measureUnitConverter;
 
-    /**
-     * @var FedexToShippingUnitTransformerInterface
-     */
-    private $weightUnitTransformer;
+    private FedexToShippingUnitTransformerInterface $weightUnitTransformer;
 
-    /**
-     * @var FedexToShippingUnitTransformerInterface
-     */
-    private $dimensionsUnitTransformer;
-
-    /**
-     * @var ShippingLineItemCollectionFactoryInterface
-     */
-    private $collectionFactory;
-
-    /**
-     * @var ShippingLineItemBuilderFactoryInterface
-     */
-    private $lineItemBuilderFactory;
+    private FedexToShippingUnitTransformerInterface $dimensionsUnitTransformer;
 
     public function __construct(
         MeasureUnitConversion $measureUnitConverter,
         FedexToShippingUnitTransformerInterface $weightUnitTransformer,
-        FedexToShippingUnitTransformerInterface $dimensionsUnitTransformer,
-        ShippingLineItemCollectionFactoryInterface $collectionFactory,
-        ShippingLineItemBuilderFactoryInterface $lineItemBuilderFactory
+        FedexToShippingUnitTransformerInterface $dimensionsUnitTransformer
     ) {
         $this->measureUnitConverter = $measureUnitConverter;
         $this->weightUnitTransformer = $weightUnitTransformer;
         $this->dimensionsUnitTransformer = $dimensionsUnitTransformer;
-        $this->collectionFactory = $collectionFactory;
-        $this->lineItemBuilderFactory = $lineItemBuilderFactory;
     }
 
     /**
      * {@inheritDoc}
      */
     public function modify(
-        ShippingLineItemCollectionInterface $lineItems,
+        Collection $shippingLineItems,
         FedexIntegrationSettings $settings
-    ): ShippingLineItemCollectionInterface {
-        $newLineItems = [];
-        /** @var ShippingLineItemInterface $item */
-        foreach ($lineItems as $item) {
+    ): Collection {
+        foreach ($shippingLineItems as $shippingLineItem) {
             $dimensions = null;
-            if ($item->getDimensions()) {
+            if ($shippingLineItem->getDimensions()) {
                 $dimensions = $this->measureUnitConverter->convertDimensions(
-                    $item->getDimensions(),
+                    $shippingLineItem->getDimensions(),
                     $this->dimensionsUnitTransformer->transform($settings->getDimensionsUnit())
                 );
             }
+            $shippingLineItem->setDimensions($dimensions);
 
             $weight = null;
-            if ($item->getWeight()) {
+            if ($shippingLineItem->getWeight()) {
                 $weight = $this->measureUnitConverter->convertWeight(
-                    $item->getWeight(),
+                    $shippingLineItem->getWeight(),
                     $this->weightUnitTransformer->transform($settings->getUnitOfWeight())
                 );
             }
-
-            $newLineItems[] = $this->createLineItemWithConvertedUnits($item, $dimensions, $weight);
+            $shippingLineItem->setWeight($weight);
         }
 
-        return $this->collectionFactory->createShippingLineItemCollection($newLineItems);
-    }
-
-    private function createLineItemWithConvertedUnits(
-        ShippingLineItemInterface $lineItem,
-        Dimensions $dimensions = null,
-        Weight $weight = null
-    ): ShippingLineItemInterface {
-        $builder = $this->lineItemBuilderFactory->createBuilder(
-            $lineItem->getProductUnit(),
-            $lineItem->getProductUnitCode(),
-            $lineItem->getQuantity(),
-            $lineItem->getProductHolder()
-        );
-        if ($lineItem->getPrice()) {
-            $builder->setPrice($lineItem->getPrice());
-        }
-        if ($lineItem->getProduct()) {
-            $builder->setProduct($lineItem->getProduct());
-            $builder->setProductSku($lineItem->getProductSku());
-        }
-
-        if ($dimensions) {
-            $builder->setDimensions($dimensions);
-        }
-        if ($weight) {
-            $builder->setWeight($weight);
-        }
-
-        return $builder->getResult();
+        return $shippingLineItems;
     }
 }

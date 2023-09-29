@@ -284,7 +284,6 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('addBuildActivities')
             ->with([$combinedPriceList], 10);
 
-
         $rootJob = $this->createMock(Job::class);
         $rootJob
             ->expects($this->any())

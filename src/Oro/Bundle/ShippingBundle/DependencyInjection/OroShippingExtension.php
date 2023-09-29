@@ -28,5 +28,9 @@ class OroShippingExtension extends Extension
         $loader->load('method_event_listeners.yml');
         $loader->load('controllers.yml');
         $loader->load('controllers_api.yml');
+
+        if ('test' === $container->getParameter('kernel.environment')) {
+            $loader->load('services_test.yml');
+        }
     }
 }

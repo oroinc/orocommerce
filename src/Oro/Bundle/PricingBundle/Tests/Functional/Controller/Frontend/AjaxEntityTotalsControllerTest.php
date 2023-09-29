@@ -29,6 +29,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
+        LoadShoppingLists::setCurrency('EUR');
         $this->loadFixtures([
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,

@@ -121,7 +121,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * Set product
      *
-     * @param Product $product
+     * @param Product|null $product
      * @return ProductUnitPrecision
      */
     public function setProduct(Product $product = null)
@@ -144,7 +144,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * Set product unit
      *
-     * @param ProductUnit $unit
+     * @param ProductUnit|null $unit
      * @return ProductUnitPrecision
      */
     public function setUnit(ProductUnit $unit = null)

@@ -66,6 +66,15 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
                         'frontend_type' => 'html',
                         'renderable' => false,
                     ]
+                ],
+                'fields_acl' => [
+                    'columns' => [
+                        'product_shipping_options' => [
+                            'data_name' => 'product.unitPrecisions',
+                            'source_name' => 'unitPrecisions',
+                            'column_name' => 'product_shipping_options'
+                        ]
+                    ]
                 ]
             ],
             $this->config->toArray()

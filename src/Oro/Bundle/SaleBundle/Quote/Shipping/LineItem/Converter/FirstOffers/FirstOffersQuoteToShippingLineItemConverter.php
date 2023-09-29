@@ -2,65 +2,37 @@
 
 namespace Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactoryInterface;
 
+/**
+ * Converts first QuoteProductOffers to Shipping Line Items collection.
+ */
 class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLineItemConverterInterface
 {
-    /**
-     * @var ShippingLineItemCollectionFactoryInterface
-     */
-    private $shippingLineItemCollectionFactory;
-
-    /**
-     * @var ShippingLineItemBuilderFactoryInterface
-     */
-    private $shippingLineItemBuilderFactory;
+    private ShippingLineItemFromProductLineItemFactoryInterface $shippingLineItemFactory;
 
     public function __construct(
-        ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory,
-        ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory
+        ShippingLineItemFromProductLineItemFactoryInterface $shippingLineItemFactory
     ) {
-        $this->shippingLineItemCollectionFactory = $shippingLineItemCollectionFactory;
-        $this->shippingLineItemBuilderFactory = $shippingLineItemBuilderFactory;
+        $this->shippingLineItemFactory = $shippingLineItemFactory;
     }
 
-    /**
-     * [@inheritdoc}
-     */
-    public function convertLineItems(Quote $quote)
+    public function convertLineItems(Quote $quote): Collection
     {
-        $lineItems = [];
-
+        $offersToConvert = [];
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
             $offers = $quoteProduct->getQuoteProductOffers();
             if ($offers->count() <= 0) {
-                $lineItems = [];
+                $offersToConvert = [];
                 break;
             }
 
-            $firstQuoteProductOffer = $offers->first();
-
-            $lineItemBuilder = $this->shippingLineItemBuilderFactory->createBuilder(
-                $firstQuoteProductOffer->getProductUnit(),
-                $firstQuoteProductOffer->getProductUnitCode(),
-                $firstQuoteProductOffer->getQuantity(),
-                $firstQuoteProductOffer
-            );
-
-            if (null !== $firstQuoteProductOffer->getProduct()) {
-                $lineItemBuilder->setProduct($firstQuoteProductOffer->getProduct());
-            }
-
-            if (null !== $firstQuoteProductOffer->getPrice()) {
-                $lineItemBuilder->setPrice($firstQuoteProductOffer->getPrice());
-            }
-
-            $lineItems[] = $lineItemBuilder->getResult();
+            $offersToConvert[] = $offers->first();
         }
 
-        return $this->shippingLineItemCollectionFactory->createShippingLineItemCollection($lineItems);
+        return $this->shippingLineItemFactory->createCollection($offersToConvert);
     }
 }

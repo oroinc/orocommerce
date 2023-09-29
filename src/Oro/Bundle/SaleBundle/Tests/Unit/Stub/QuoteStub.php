@@ -18,9 +18,6 @@ class QuoteStub extends Quote
         return $this->internalStatus;
     }
 
-    /**
-     * @param AbstractEnumValue $internalStatus
-     */
     public function setInternalStatus(AbstractEnumValue $internalStatus = null)
     {
         $this->internalStatus = $internalStatus;

@@ -151,7 +151,8 @@ class ProductKitItemLineItemFactoryTest extends TestCase
             ->setKitItem($kitItem)
             ->setSortOrder($kitItem->getSortOrder())
             ->setProduct($product)
-            ->setUnit($kitItemProductUnit);
+            ->setUnit($kitItemProductUnit)
+            ->setQuantity($kitItem->getMinimumQuantity());
 
         self::assertEquals(
             $expected,
@@ -230,7 +231,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
                 'expected' => (new ProductKitItemLineItem())
                     ->setProduct($product)
                     ->setUnit($productUnit)
-                    ->setQuantity(0.001),
+                    ->setQuantity(1.0),
             ],
             'with explicit quantity' => [
                 'product' => $product,

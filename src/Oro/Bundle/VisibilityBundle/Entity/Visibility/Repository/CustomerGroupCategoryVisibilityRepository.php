@@ -35,7 +35,7 @@ class CustomerGroupCategoryVisibilityRepository extends AbstractCategoryVisibili
     /**
      * @param Category $category
      * @param string $visibility
-     * @param array $restrictedCustomerGroupIds
+     * @param array|null $restrictedCustomerGroupIds
      * @return array
      */
     public function getCategoryCustomerGroupIdsByVisibility(

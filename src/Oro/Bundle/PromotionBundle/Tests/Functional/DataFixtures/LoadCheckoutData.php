@@ -15,9 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    const PROMOTION_CHECKOUT_1 = 'promo_checkout_1';
-
     use ContainerAwareTrait;
+    const PROMOTION_CHECKOUT_1 = 'promo_checkout_1';
 
     /** {@inheritdoc} */
     public function getDependencies()

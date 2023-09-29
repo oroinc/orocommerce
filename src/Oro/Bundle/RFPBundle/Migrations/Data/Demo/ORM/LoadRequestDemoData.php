@@ -7,15 +7,18 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads new Request entities.
@@ -24,21 +27,9 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @var array
-     */
-    protected $requests = [];
+    use ContainerAwareTrait;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container = [];
-
-    /** {@inheritdoc} */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    protected array $requests = [];
 
     /**
      * {@inheritdoc}
@@ -46,8 +37,8 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData',
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            LoadCustomerUserDemoData::class,
+            LoadProductUnitPrecisionDemoData::class,
         ];
     }
 
@@ -57,7 +48,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        $organization = $manager->getRepository(Organization::class)->getFirst();
 
         /** @var Website $website */
         $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
@@ -65,9 +56,9 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
         $customerUsers = $this->getCustomerUsers($manager);
 
         /** @var User $user */
-        $owner = $manager->getRepository('OroUserBundle:User')->findOneBy(['organization' => $organization]);
+        $owner = $manager->getRepository(User::class)->findOneBy(['organization' => $organization]);
 
-        $locator  = $this->container->get('file_locator');
+        $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroRFPBundle/Migrations/Data/Demo/ORM/data/requests.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -94,9 +85,8 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
                 ->setCustomerUser($customerUser)
-                ->setCustomer($customerUser ? $customerUser->getCustomer() : null)
-                ->setWebsite($website)
-            ;
+                ->setCustomer($customerUser?->getCustomer())
+                ->setWebsite($website);
 
             $request->setOwner($owner);
             $request->setOrganization($organization);
@@ -117,7 +107,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroProductBundle:Product')->findBy([], null, 10);
+        $products = $manager->getRepository(Product::class)->findBy([], null, 10);
 
         if (0 === count($products)) {
             throw new \LogicException('There are no products in system');
@@ -140,7 +130,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     protected function getCustomerUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:CustomerUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository(CustomerUser::class)->findBy([], null, 10));
     }
 
     protected function processRequestProducts(Request $request, ObjectManager $manager)
@@ -168,8 +158,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
                 $requestProductItem
                     ->setPrice(Price::create(rand(1, 100), $currency))
                     ->setQuantity(rand(1, 100))
-                    ->setProductUnit($productUnit)
-                ;
+                    ->setProductUnit($productUnit);
                 $requestProduct->addRequestProductItem($requestProductItem);
             }
             $request->addRequestProduct($requestProduct);

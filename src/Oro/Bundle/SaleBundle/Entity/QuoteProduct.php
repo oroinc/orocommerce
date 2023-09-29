@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
@@ -31,8 +33,10 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class QuoteProduct implements ProductHolderInterface
+class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     const TYPE_REQUESTED        = 10;
     const TYPE_OFFER            = 20;
     const TYPE_NOT_AVAILABLE    = 30;
@@ -266,7 +270,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * Set quote
      *
-     * @param Quote $quote
+     * @param Quote|null $quote
      * @return QuoteProduct
      */
     public function setQuote(Quote $quote = null)
@@ -289,7 +293,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * Set product
      *
-     * @param Product $product
+     * @param Product|null $product
      * @return QuoteProduct
      */
     public function setProduct(Product $product = null)
@@ -363,7 +367,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * Set productReplacement
      *
-     * @param Product $productReplacement
+     * @param Product|null $productReplacement
      * @return QuoteProduct
      */
     public function setProductReplacement(Product $productReplacement = null)

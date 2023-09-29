@@ -43,7 +43,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return $this->getName();
     }
@@ -92,6 +92,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
             'get_changed_slugs_url' => null,
             'tooltip' => 'oro.redirect.slug_prototypes.tooltip',
             'allow_slashes' => false,
+            'check_field_name' => null
         ]);
         $resolver->setRequired('source_field');
 

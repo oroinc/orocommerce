@@ -117,7 +117,6 @@ class CategoryFormTemplateDataProviderTest extends TestCase
             ->method('isSubmitted')
             ->willReturn(false);
 
-
         $this->sortOrderDialogTargetStorage
             ->expects(self::once())
             ->method('hasTarget')

@@ -10,7 +10,7 @@ Feature: WYSIWYG image type component
 
   Scenario: Add new image into canvas
     When I add new component "Image" from panel to editor area
-    And I click on promo-slider-small-6.jpg in grid
+    And I click on promo-slider-small-6 in grid
     And I check wysiwyg content in "CMS Page Content":
       | 1 | <picture>                         |
       | 2 | <source type="image/webp"/>       |
@@ -18,9 +18,9 @@ Feature: WYSIWYG image type component
       | 4 | </picture>                        |
     And I click "WysiwygToolbarActionImageSettings"
     Then I click "Add Source"
-    And I click on promo-slider-medium-5.jpg in grid
+    And I click on promo-slider-medium-5 in grid
     Then I click "Add Source"
-    And I click on promo-slider-small-4.jpg in grid
+    And I click on promo-slider-small-4 in grid
     And I click "BreakpointDropdownToggle"
     And I click "breakpointMobileLandscape"
     And I wait for 1 seconds
@@ -89,7 +89,7 @@ Feature: WYSIWYG image type component
 
   Scenario: Add style to image
     When I add new component "Image" from panel to editor area
-    And I click on promo-slider-small-6.jpg in grid
+    And I click on promo-slider-small-6 in grid
     And I select component in canvas by tree:
       | picture | 1 |
       | image   | 1 |

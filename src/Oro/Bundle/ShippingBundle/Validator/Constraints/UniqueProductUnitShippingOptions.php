@@ -14,7 +14,7 @@ class UniqueProductUnitShippingOptions extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_shipping_unique_product_unit_shipping_options_validator';
     }

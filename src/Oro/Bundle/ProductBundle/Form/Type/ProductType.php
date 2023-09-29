@@ -157,6 +157,7 @@ class ProductType extends AbstractType
                     'error_bubbling' => false,
                     'required'       => true,
                     'mapped'         => false,
+                    'check_field_name'      => 'unitPrecisions'
                 ]
             )
             ->add(
@@ -194,7 +195,8 @@ class ProductType extends AbstractType
                 [
                     'label'    => 'oro.product.slug_prototypes.label',
                     'required' => false,
-                    'source_field' => 'names'
+                    'source_field' => 'names',
+                    'check_field_name' => 'slugs'
                 ]
             )
             ->add('featured', ChoiceType::class, [
@@ -263,7 +265,8 @@ class ProductType extends AbstractType
                     'label'    => 'oro.product.slug_prototypes.label',
                     'required' => false,
                     'source_field' => 'names',
-                    'get_changed_slugs_url' => $url
+                    'get_changed_slugs_url' => $url,
+                    'check_field_name' => 'slugs'
                 ]
             );
         }
@@ -326,9 +329,16 @@ class ProductType extends AbstractType
         $product = $event->getData();
         $form = $event->getForm();
 
-        $primaryPrecision = $form->get('primaryUnitPrecision')->getData();
+        $primaryPrecision = null;
+        if ($form->has('primaryUnitPrecision')) {
+            $primaryPrecision = $form->get('primaryUnitPrecision')->getData();
+        }
+
         if ($primaryPrecision) {
             $product->setPrimaryUnitPrecision($primaryPrecision);
+        }
+        if (!$form->has('additionalUnitPrecisions')) {
+            return;
         }
 
         /** @var ProductUnitPrecision[] $additionalPrecisions */
@@ -368,7 +378,7 @@ class ProductType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

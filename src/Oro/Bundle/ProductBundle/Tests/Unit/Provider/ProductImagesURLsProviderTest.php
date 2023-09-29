@@ -70,9 +70,6 @@ class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
         self::assertSame($expectedImages, $images);
     }
 
-    /**
-     * @return array
-     */
     public function getFilteredImagesByProductIdDataProvider(): array
     {
         $imageUrl1 = '/image-url-1.jpg';

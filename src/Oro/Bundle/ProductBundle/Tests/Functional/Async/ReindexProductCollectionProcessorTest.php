@@ -33,11 +33,6 @@ class ReindexProductCollectionProcessorTest extends WebTestCase
 
     /**
      * @dataProvider testProcessProvider
-     *
-     * @param bool $isFull
-     * @param array $expectedProductRefs
-     * @param array $additionalProductRefs
-     * @return void
      */
     public function testProcess(bool $isFull, array $expectedProductRefs, array $additionalProductRefs): void
     {

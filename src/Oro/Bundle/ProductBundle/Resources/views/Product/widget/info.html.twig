@@ -9,15 +9,19 @@
                 {{ UI.renderProperty('oro.product.sku.label'|trans, product.sku) }}
                 {{ UI.renderProperty('oro.product.names.label'|trans, product.defaultName) }}
             {% endblock %}
-            {% set type = 'oro.product.type.' ~ product.type %}
-            {{ UI.renderProperty('oro.product.type.label'|trans, type|trans) }}
+            {% if is_granted('VIEW', product, 'type') %}
+                {% set type = 'oro.product.type.' ~ product.type %}
+                {{ UI.renderProperty('oro.product.type.label'|trans, type|trans) }}
+            {% endif %}
 
             {% block images %}
-                {% if product.images.count %}
-                    {{ UI.renderHtmlProperty(
-                    'oro.product.images.label'|trans,
-                    Image.renderProductImages(sort_product_images(product.images), imageTypes)
-                    ) }}
+                {% if is_granted('VIEW', product, 'images') %}
+                    {% if product.images.count %}
+                        {{ UI.renderHtmlProperty(
+                        'oro.product.images.label'|trans,
+                        Image.renderProductImages(sort_product_images(product.images), imageTypes)
+                        ) }}
+                    {% endif %}
                 {% endif %}
             {% endblock %}
             {{ entityConfig.renderDynamicFields(product) }}

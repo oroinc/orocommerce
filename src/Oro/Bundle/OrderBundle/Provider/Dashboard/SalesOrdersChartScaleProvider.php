@@ -20,10 +20,6 @@ class SalesOrdersChartScaleProvider
 
     /**
      * The charts should use Date Range 1 to determine the scale.
-     *
-     * @param WidgetOptionBag $widgetOptions
-     *
-     * @return string
      */
     public function getScaleType(WidgetOptionBag $widgetOptions): string
     {

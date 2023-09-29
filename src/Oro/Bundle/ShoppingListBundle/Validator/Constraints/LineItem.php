@@ -11,7 +11,7 @@ class LineItem extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }
@@ -19,7 +19,7 @@ class LineItem extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_shopping_list_line_item_validator';
     }

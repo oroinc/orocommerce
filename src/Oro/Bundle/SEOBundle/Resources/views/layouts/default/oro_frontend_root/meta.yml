@@ -6,7 +6,8 @@ layout:
             blockType: meta
             options:
                 name: 'title'
-                content: '=data["seo"].getMetaInformationFromContentNode("metaTitles")'
+                # quotes to cover bug BAP-22015, please do not change
+                content: "=data['seo'].getMetaInformationFromContentNode('metaTitles')"
         - '@add':
             id: meta_description
             parentId: head

@@ -41,7 +41,6 @@ class DatagridLineItemsDataListenerTest extends TestCase
             ->expects(self::never())
             ->method('addDataForLineItem');
 
-
         $this->listener->onLineItemData($event);
     }
 

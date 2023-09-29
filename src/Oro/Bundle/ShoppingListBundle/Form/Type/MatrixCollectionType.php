@@ -37,10 +37,6 @@ class MatrixCollectionType extends AbstractType
         $view->vars['dimensions'] = $matrixCollection?->dimensions;
     }
 
-    /**
-     * @param FormView $view
-     * @param MatrixCollection $matrixCollection
-     */
     private function addQtyData(FormView $view, ?MatrixCollection $matrixCollection): void
     {
         $columnsQty = [];

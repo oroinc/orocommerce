@@ -56,7 +56,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $this->cacheLifeTime = $lifeTime;
     }
 
-    public function getPossibleValues(string $fieldName) : array
+    public function getPossibleValues(string $fieldName): array
     {
         $key = UniversalCacheKeyGenerator::normalizeCacheKey(sprintf('%s|%s', $fieldName, $this->getLocaleKey()));
         return $this->cache->get($key, function (ItemInterface $item) use ($fieldName) {
@@ -72,7 +72,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         });
     }
 
-    public function getScalarValue(mixed $value) : mixed
+    public function getScalarValue(mixed $value): mixed
     {
         if (!$value instanceof AbstractEnumValue) {
             return null;
@@ -81,7 +81,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         return $this->doctrineHelper->getSingleEntityIdentifier($value);
     }
 
-    public function getHumanReadableValue(string $fieldName, mixed $value) : mixed
+    public function getHumanReadableValue(string $fieldName, mixed $value): mixed
     {
         $fieldIdentifier = $this->getScalarValue($value);
 
@@ -111,7 +111,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
             : $this->localeSettings->getLocale();
     }
 
-    public function getType() : string
+    public function getType(): string
     {
         return self::TYPE;
     }

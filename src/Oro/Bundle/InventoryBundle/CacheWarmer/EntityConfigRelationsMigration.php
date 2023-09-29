@@ -38,11 +38,6 @@ class EntityConfigRelationsMigration
     /** @var ApplicationState */
     private $applicationState;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param LoggerInterface $logger
-     * @param ApplicationState $applicationState
-     */
     public function __construct(
         ManagerRegistry $managerRegistry,
         LoggerInterface $logger,

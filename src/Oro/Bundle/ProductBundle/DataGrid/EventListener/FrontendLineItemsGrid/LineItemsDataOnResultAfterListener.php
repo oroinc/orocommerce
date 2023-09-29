@@ -18,6 +18,7 @@ class LineItemsDataOnResultAfterListener
 {
     public const LINE_ITEMS = 'lineItemsByIds';
     public const LINE_ITEMS_DATA = 'lineItemsDataByIds';
+    public const IS_GROUPED = 'isGrouped';
 
     private EventDispatcherInterface $eventDispatcher;
 
@@ -126,7 +127,7 @@ class LineItemsDataOnResultAfterListener
             $lineItemsByIds,
             $lineItemsDataByIds,
             $datagrid,
-            ['isGrouped' => $this->isGrouped($datagrid)]
+            [self::IS_GROUPED => $this->isGrouped($datagrid)]
         );
 
         $this->eventDispatcher->dispatch($lineItemsDataEvent, $lineItemsDataEvent->getName());

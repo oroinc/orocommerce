@@ -12,7 +12,6 @@ class ManageInventoryFallbackTest extends InventoryFallbackTest
     protected const VIEW_MANAGED_INVENTORY_XPATH =
         "//label[text() = 'Managed Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
-
     /**
      * @dataProvider productCategorySystemFallbackProvider
      */

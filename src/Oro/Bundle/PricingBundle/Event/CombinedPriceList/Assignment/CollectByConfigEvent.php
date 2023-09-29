@@ -55,7 +55,6 @@ class CollectByConfigEvent extends Event
         return $this->includeSelfFallback;
     }
 
-
     public function isCollectOnCurrentLevel(): bool
     {
         return $this->collectOnCurrentLevel;

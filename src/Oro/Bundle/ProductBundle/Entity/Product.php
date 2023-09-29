@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Extend\Entity\Autocomplete\OroProductBundle_Entity_Product;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
@@ -128,7 +129,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="",
- *              "category"="catalog"
+ *              "category"="catalog",
+ *              "field_acl_supported"=true,
+ *              "field_acl_enabled"=false
  *          },
  *          "form"={
  *              "form_type"="Oro\Bundle\ProductBundle\Form\Type\ProductSelectType",
@@ -167,6 +170,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @method EntityFieldFallbackValue getPageTemplate()
  * @method $this setPageTemplate(EntityFieldFallbackValue $pageTemplate)
  * @method $this cloneLocalizedFallbackValueAssociations()
+ * @mixin OroProductBundle_Entity_Product
  */
 class Product implements
     OrganizationAwareInterface,
@@ -222,7 +226,10 @@ class Product implements
      *          },
      *          "frontend"={
      *              "use_in_export"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="EDIT"
+     *          },
      *      }
      * )
      */
@@ -254,7 +261,10 @@ class Product implements
      *          },
      *          "importexport"={
      *              "order"=20
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -372,7 +382,10 @@ class Product implements
      *          "importexport"={
      *              "order"=30,
      *              "full"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      * )
      */
@@ -391,7 +404,10 @@ class Product implements
      *          "importexport"={
      *              "order"=25,
      *              "full"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      * )
      */
@@ -416,7 +432,10 @@ class Product implements
      *          },
      *          "frontend"={
      *              "use_in_export"=true
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="EDIT"
+     *          },
      *      }
      * )
      */
@@ -559,7 +578,10 @@ class Product implements
      *          },
      *          "importexport"={
      *              "order"=20
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -577,7 +599,10 @@ class Product implements
      *          },
      *          "importexport"={
      *              "order"=10
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -592,7 +617,10 @@ class Product implements
      *          "attribute"={
      *              "is_attribute"=true,
      *              "visible"=false
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -607,7 +635,10 @@ class Product implements
      *          "attribute"={
      *              "is_attribute"=true,
      *              "visible"=false
-     *          }
+     *          },
+     *          "security"={
+     *              "permissions"="VIEW;EDIT"
+     *          },
      *      }
      *  )
      */
@@ -828,7 +859,7 @@ class Product implements
     }
 
     /**
-     * @param \DateTime $createdAt
+     * @param \DateTime|null $createdAt
      *
      * @return Product
      */
@@ -848,7 +879,7 @@ class Product implements
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param \DateTime|null $updatedAt
      *
      * @return Product
      */
@@ -908,7 +939,7 @@ class Product implements
     }
 
     /**
-     * @param OrganizationInterface $organization
+     * @param OrganizationInterface|null $organization
      *
      * @return Product
      */

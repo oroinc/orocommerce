@@ -11,10 +11,14 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
  */
 class ProductUpcomingFormViewListener extends AbstractFallbackFieldsFormView
 {
-    public function onProductView(BeforeListRenderEvent $event)
+    public function onProductView(BeforeListRenderEvent $event): void
     {
         $product = $event->getEntity();
         if (!$product instanceof Product) {
+            return;
+        }
+
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'isUpcoming')) {
             return;
         }
 
@@ -26,8 +30,12 @@ class ProductUpcomingFormViewListener extends AbstractFallbackFieldsFormView
         );
     }
 
-    public function onProductEdit(BeforeListRenderEvent $event)
+    public function onProductEdit(BeforeListRenderEvent $event): void
     {
+        if (!$this->fieldAclHelper->isFieldAvailable($event->getEntity(), 'isUpcoming')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/upcoming_edit.html.twig',

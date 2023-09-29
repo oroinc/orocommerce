@@ -129,9 +129,9 @@ class PriceShardOutputResultModifier extends AbstractOutputResultModifier
 
     /**
      * @param string $sql
-     * @param $tableMap
+     * @param array $tableMap
      * @param string $baseTableName
-     * @return mixed
+     * @return array|string|string[]
      */
     protected function replaceTables($sql, array $tableMap, $baseTableName)
     {

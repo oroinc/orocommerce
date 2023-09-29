@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\FormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
@@ -35,6 +36,9 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
 
+    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldAclHelper;
+
     /** @var FormViewListener */
     protected $listener;
 
@@ -46,11 +50,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
+            ->willReturnCallback(fn ($id) => $id . '.trans');
 
         $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -58,10 +58,21 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
         $this->request = $this->createMock(Request::class);
         $this->requestStack = $this->createMock(RequestStack::class);
 
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldViewGranted')
+            ->willReturn(true);
+
         $this->listener = new FormViewListener(
             $this->translator,
             $this->doctrineHelper,
-            $this->requestStack
+            $this->requestStack,
+            $this->fieldAclHelper
         );
     }
 
@@ -206,7 +217,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
         $renderedHtml = 'rendered_html';
 
         /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $this->env->expects($this->once())
+        $this->env->expects($this->any())
             ->method('render')
             ->with(
                 '@OroShipping/Product/shipping_options_view.html.twig',

@@ -85,11 +85,6 @@ class WebsiteSearchCategoryIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @param int $websiteId
-     * @return void
-     */
     protected function addInformationToIndex(IndexEntityEvent $event, int $websiteId): void
     {
         /** @var Product[] $products */
@@ -151,10 +146,6 @@ class WebsiteSearchCategoryIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @return void
-     */
     protected function addCategorySortOrderInformationToIndex(IndexEntityEvent $event): void
     {
         /** @var Product[] $products */
@@ -165,12 +156,6 @@ class WebsiteSearchCategoryIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @param Product $product
-     * @param Category $category
-     * @return void
-     */
     protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category): void
     {
         $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
@@ -197,7 +182,7 @@ class WebsiteSearchCategoryIndexerListener
      * @param Category $category
      * @return Category[]
      */
-    protected function getParentCategories(Category $category) : array
+    protected function getParentCategories(Category $category): array
     {
         $parentCategoryIds = explode(Category::MATERIALIZED_PATH_DELIMITER, $category->getMaterializedPath());
 
@@ -225,7 +210,7 @@ class WebsiteSearchCategoryIndexerListener
      * @param Localization $localization
      * @return string
      */
-    protected function generateIdWithParentCategories(array $parentCategories, Localization $localization) : string
+    protected function generateIdWithParentCategories(array $parentCategories, Localization $localization): string
     {
         $parts = [];
 
@@ -237,9 +222,6 @@ class WebsiteSearchCategoryIndexerListener
         return implode(Category::INDEX_DATA_DELIMITER, $parts);
     }
 
-    /**
-     * @return CategoryRepository
-     */
     protected function getRepository(): CategoryRepository
     {
         if (!$this->repository) {

@@ -634,6 +634,7 @@ datagrids:
             type:              orm
             query:
                 select:
+                    - priceAttributepriceList.id
                     - priceAttributepriceList
                 from:
                     - { table: 'Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList', alias: priceAttributepriceList }

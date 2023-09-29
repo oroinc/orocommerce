@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Factory;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
@@ -21,22 +21,21 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
+class PriceRequestFactoryTest extends TestCase
 {
     use EntityTrait;
+    use ShippingLineItemTrait;
 
-    /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
-    private $transport;
+    private UPSTransport|MockObject $transport;
 
-    /** @var ShippingService|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingService;
+    private ShippingService|MockObject $shippingService;
 
-    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $symmetricCrypter;
+    private SymmetricCrypterInterface|MockObject $symmetricCrypter;
 
-    /** @var PriceRequestFactory */
-    private $priceRequestFactory;
+    private PriceRequestFactory $priceRequestFactory;
 
     protected function setUp(): void
     {
@@ -87,7 +86,7 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         int $productWeight,
         string $unitOfWeight,
         ?PriceRequest $expectedRequest
-    ) {
+    ): void {
         $this->symmetricCrypter->expects(self::once())
             ->method('decryptData')
             ->with('some password')
@@ -99,24 +98,24 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         for ($i = 1; $i <= $lineItemCnt; $i++) {
             $product = $this->getEntity(Product::class, ['id' => $i]);
 
-            $lineItems[] = new ShippingLineItem([
-                ShippingLineItem::FIELD_PRODUCT => $product,
-                ShippingLineItem::FIELD_QUANTITY => 1,
-                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getEntity(
+            $lineItems[] = $this->getShippingLineItem(
+                $this->getEntity(
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
-                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
-                ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
-                ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
-                    WeightUnit::class,
-                    ['code' => 'lbs']
-                )),
-            ]);
+                1
+            )
+                ->setProduct($product)
+                ->setWeight(
+                    Weight::create($productWeight, $this->getEntity(
+                        WeightUnit::class,
+                        ['code' => 'lbs']
+                    ))
+                );
         }
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($lineItems),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($lineItems),
             ShippingContext::FIELD_BILLING_ADDRESS => new AddressStub(),
             ShippingContext::FIELD_SHIPPING_ORIGIN => new AddressStub(),
             ShippingContext::FIELD_SHIPPING_ADDRESS => new AddressStub(),
@@ -175,7 +174,7 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testCreateWithNullShippingAddress()
+    public function testCreateWithNullShippingAddress(): void
     {
         $priceRequest = $this->priceRequestFactory->create($this->transport, new ShippingContext([]), '');
 

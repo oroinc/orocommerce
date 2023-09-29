@@ -122,7 +122,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 
     /**
      * @param PriceRule $rule
-     * @param array|null $nodes
+     * @param array $nodes
      * @param string $path
      * @param string $fieldName
      * @param PriceRuleRelationExpressions $constraint

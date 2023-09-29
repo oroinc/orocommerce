@@ -46,13 +46,6 @@ class IndexDataProvider
     /** @var PlaceholderHelper */
     private $placeholderHelper;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param EntityAliasResolver $entityAliasResolver
-     * @param PlaceholderInterface $placeholder
-     * @param HtmlTagHelper $htmlTagHelper
-     * @param PlaceholderHelper $placeholderHelper
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
@@ -386,10 +379,6 @@ class IndexDataProvider
 
     /**
      * Finds best matched field config based on length of field name without placeholders
-     *
-     * @param array $fields
-     *
-     * @return array
      */
     private function findBestMatchedFieldConfig(array $fields): array
     {

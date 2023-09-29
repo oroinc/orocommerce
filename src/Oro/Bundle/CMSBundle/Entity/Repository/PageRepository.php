@@ -14,7 +14,7 @@ class PageRepository extends EntityRepository
 {
     /**
      * @param string $title
-     * @param Localization $localization
+     * @param Localization|null $localization
      * @return null|Page
      */
     public function findOneByTitle($title, Localization $localization = null)

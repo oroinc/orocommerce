@@ -167,7 +167,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->client->followRedirects();
 
         $crawler = $this->client->getCrawler();
-        $button = $crawler->selectLink('Duplicate');
+        $button = $crawler->selectButton('Duplicate');
         $this->assertCount(1, $button);
         $buttonOptions = json_decode((string) $button->attr('data-options'), true, 512, JSON_THROW_ON_ERROR);
 
@@ -507,7 +507,7 @@ class ProductControllerTest extends ProductHelperTestCase
             'Product name empty, redirect strategy empty' => [
                 'requestParams' => [],
                 'redirectStrategy' => Configuration::STRATEGY_ASK,
-                'expected' => '{"showRedirectConfirmation":true,"slugsData":[]}',
+                'expected' => '{"showRedirectConfirmation":false,"slugsData":[]}',
             ],
             'Product name set, redirect strategy ask' => [
                 'requestParams' => [
@@ -517,9 +517,25 @@ class ProductControllerTest extends ProductHelperTestCase
                 'expected' => '{"showRedirectConfirmation":true,'
                     . '"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
             ],
+            'Product name with tags, redirect strategy ask' => [
+                'requestParams' => [
+                    'productName' => '<a href="#">New product name</a>',
+                ],
+                'redirectStrategy' => Configuration::STRATEGY_ASK,
+                'expected' => '{"showRedirectConfirmation":true,'
+                    . '"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+            ],
             'Product name set, redirect strategy never' => [
                 'requestParams' => [
                     'productName' => 'New product name',
+                ],
+                'redirectStrategy' => Configuration::STRATEGY_NEVER,
+                'expected' => '{"showRedirectConfirmation":false,'
+                    . '"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+            ],
+            'Product name with tags, redirect strategy never' => [
+                'requestParams' => [
+                    'productName' => '<a href="#">New product name</a>',
                 ],
                 'redirectStrategy' => Configuration::STRATEGY_NEVER,
                 'expected' => '{"showRedirectConfirmation":false,'
@@ -558,7 +574,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testDelete(int $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
-        $button = $crawler->selectLink('Delete');
+        $button = $crawler->selectButton('Delete');
         $this->assertNotEmpty($button);
         $buttonOptions = json_decode((string) $button->attr('data-options'), true, 512, JSON_THROW_ON_ERROR);
 

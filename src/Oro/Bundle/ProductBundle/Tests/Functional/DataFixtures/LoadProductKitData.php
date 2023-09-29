@@ -59,6 +59,7 @@ class LoadProductKitData extends AbstractFixture implements
                 'sku' => self::PRODUCT_KIT_1,
                 'name' => 'Product Kit with Single Kit Item',
                 'unit' => 'milliliter',
+                'status' => Product::STATUS_ENABLED,
                 'kitItems' => [
                     [
                         'label' => 'PKSKU1 - Unit of Quantity Taken from Product Kit',
@@ -70,11 +71,13 @@ class LoadProductKitData extends AbstractFixture implements
                         'products' => ['product-1'],
                     ],
                 ],
+                'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
             ],
             [
                 'sku' => self::PRODUCT_KIT_2,
                 'name' => 'Product Kit Utilizing Sort Order',
                 'unit' => 'milliliter',
+                'status' => Product::STATUS_ENABLED,
                 'kitItems' => [
                     [
                         'label' => 'PKSKU2 - Sort Order 1',
@@ -95,11 +98,13 @@ class LoadProductKitData extends AbstractFixture implements
                         'products' => ['product-3'],
                     ],
                 ],
+                'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
             ],
             [
                 'sku' => self::PRODUCT_KIT_3,
                 'name' => 'Product Kit Utilizing Min and Max Quantity',
                 'unit' => 'milliliter',
+                'status' => Product::STATUS_ENABLED,
                 'kitItems' => [
                     [
                         'label' => 'PKSKU3 - With Min and Max Quantity',
@@ -129,6 +134,7 @@ class LoadProductKitData extends AbstractFixture implements
                         'products' => ['product-4', 'product-5'],
                     ],
                 ],
+                'inventoryStatusId' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
             ],
         ];
     }
@@ -146,10 +152,11 @@ class LoadProductKitData extends AbstractFixture implements
         $organization = $user->getOrganization();
 
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
-        $inventoryStatus = $this->getOutOfStockInventoryStatus($manager);
         $createdProducts = [];
 
         foreach ($this->getProductsData() as $productData) {
+            $inventoryStatus = $this->getInventoryStatus($manager, $productData['inventoryStatusId']);
+
             $productKit = new Product();
             $productKit
                 ->setOwner($businessUnit)
@@ -157,6 +164,7 @@ class LoadProductKitData extends AbstractFixture implements
                 ->setAttributeFamily($defaultAttributeFamily)
                 ->setType(Product::TYPE_KIT)
                 ->setSku($productData['sku'])
+                ->setStatus($productData['status'])
                 ->addName((new ProductName())->setString($productData['name']))
                 ->setStatus(Product::STATUS_ENABLED)
                 ->setInventoryStatus($inventoryStatus)
@@ -242,12 +250,12 @@ class LoadProductKitData extends AbstractFixture implements
         $manager->flush();
     }
 
-    private function getOutOfStockInventoryStatus(ObjectManager $manager): AbstractEnumValue
+    private function getInventoryStatus(ObjectManager $manager, string $inventoryStatusId): AbstractEnumValue
     {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
 
         return $manager->getRepository($inventoryStatusClassName)->findOneBy([
-            'id' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+            'id' => $inventoryStatusId,
         ]);
     }
 

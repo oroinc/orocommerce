@@ -18,26 +18,36 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductImageStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductLineItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestCase
+class LineItemsGroupedOnResultAfterListenerTest extends TestCase
 {
-    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attachmentManager;
+    private AttachmentManager|MockObject $attachmentManager;
 
-    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $numberFormatter;
+    private NumberFormatter|MockObject $numberFormatter;
 
-    /** @var LineItemsGroupedOnResultAfterListener */
-    private $listener;
+    private ResolvedProductVisibilityProvider|MockObject $resolvedProductVisibilityProvider;
+
+    private LineItemsGroupedOnResultAfterListener $listener;
 
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
+        $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+
         $this->listener = new LineItemsGroupedOnResultAfterListener(
             $this->attachmentManager,
-            $this->numberFormatter
+            $this->numberFormatter,
+            $this->resolvedProductVisibilityProvider
         );
+
+        $this->numberFormatter
+            ->expects(self::any())
+            ->method('formatCurrency')
+            ->willReturnCallback(static fn ($value, $currency) => $value . $currency);
     }
 
     /**
@@ -47,12 +57,12 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     {
         $event = $this->createMock(OrmResultAfter::class);
         $event
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getDatagrid')
             ->willReturn($this->getDatagrid($parameters));
 
         $event
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getRecords');
 
         $this->listener->onResultAfter($event);
@@ -73,7 +83,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $event = new OrmResultAfter($this->getDatagrid(), [], $this->createMock(AbstractQuery::class));
         $this->listener->onResultAfter($event);
 
-        $this->assertCount(0, $event->getRecords());
+        self::assertCount(0, $event->getRecords());
     }
 
     /**
@@ -83,13 +93,13 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     {
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $resultRecord
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getValue')
             ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn($lineItemsByIds);
 
         $resultRecord
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setValue');
 
         $event = new OrmResultAfter(
@@ -109,17 +119,42 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         ];
     }
 
+    public function testOnResultAfterWhenProductKitRow(): void
+    {
+        $productKit = (new ProductStub())->setId(11)->setType(ProductStub::TYPE_KIT);
+        $lineItem = (new ProductLineItemStub(10))
+            ->setProduct($productKit);
+
+        $resultRecord = $this->createMock(ResultRecordInterface::class);
+        $resultRecord
+            ->expects(self::once())
+            ->method('getValue')
+            ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
+            ->willReturn([111 => $lineItem, 222 => $lineItem]);
+
+        $resultRecord
+            ->expects(self::never())
+            ->method('setValue');
+
+        $event = new OrmResultAfter(
+            $this->getDatagrid(['_parameters' => ['group' => true]]),
+            [$resultRecord],
+            $this->createMock(AbstractQuery::class)
+        );
+        $this->listener->onResultAfter($event);
+    }
+
     public function testOnResultAfterWhenNotLineItem(): void
     {
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $resultRecord
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getValue')
             ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn([new \stdClass(), new \stdClass()]);
 
         $resultRecord
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setValue');
 
         $event = new OrmResultAfter(
@@ -134,7 +169,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
     {
         $resultRecord = $this->createMock(ResultRecordInterface::class);
         $resultRecord
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getValue')
             ->with(LineItemsDataOnResultAfterListener::LINE_ITEMS)
             ->willReturn([new ProductLineItemStub(10), new ProductLineItemStub(20)]);
@@ -150,7 +185,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $this->listener->onResultAfter($event);
 
         $resultRecord
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('setValue');
     }
 
@@ -159,13 +194,16 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
      */
     public function testOnResultAfter(array $recordData, array $expectedRecordData): void
     {
-        $this->numberFormatter
-            ->expects($this->any())
-            ->method('formatCurrency')
-            ->willReturnCallback(static fn ($value, $currency) => $value . $currency);
+        $this->resolvedProductVisibilityProvider
+            ->method('isVisible')
+            ->willReturnMap([
+                [11, true],
+                [111, true],
+                [1111, false],
+            ]);
 
         $this->attachmentManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(
                 static fn (File $file, string $filterName) => $file->getFilename() . '_' . $filterName
@@ -179,7 +217,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         );
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals(new ResultRecord($expectedRecordData), $resultRecord);
+        self::assertEquals(new ResultRecord($expectedRecordData), $resultRecord);
     }
 
     /**
@@ -193,8 +231,8 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
             ->setParentProduct($parentProduct)
             ->setUnit($productUnit);
 
-        $parentProductWithImage = (new ProductStub())->setId(11);
-        $lineItemWithImage = (new ProductLineItemStub(10))
+        $parentProductWithImage = (new ProductStub())->setId(111);
+        $lineItemWithImage = (new ProductLineItemStub(100))
             ->setParentProduct($parentProductWithImage)
             ->setUnit($productUnit);
 
@@ -202,6 +240,11 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
         $productImage->setImage((new File())->setFilename('sample_filename'));
         $productImage->addType('listing');
         $parentProductWithImage->addImage($productImage);
+
+        $parentProductInvisible = (new ProductStub())->setId(1111);
+        $lineItemWithInvisibleParentProduct = (new ProductLineItemStub(1000))
+            ->setParentProduct($parentProductInvisible)
+            ->setUnit($productUnit);
 
         return [
             'empty line items data' => [
@@ -218,6 +261,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     'sku' => null,
                     'image' => '',
                     'name' => '',
+                    'isVisible' => true,
                     'quantity' => 0,
                     'unit' => $productUnit->getCode(),
                     'currency' => '',
@@ -258,6 +302,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     'sku' => null,
                     'image' => '',
                     'name' => 'sample_name',
+                    'isVisible' => true,
                     'quantity' => 30,
                     'unit' => $productUnit->getCode(),
                     'currency' => 'USD',
@@ -288,7 +333,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     LineItemsDataOnResultAfterListener::LINE_ITEMS => [
                         111 => $lineItem,
                         222 => $lineItem,
-                        333 => $lineItem
+                        333 => $lineItem,
                     ],
                     LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
@@ -316,7 +361,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     LineItemsDataOnResultAfterListener::LINE_ITEMS => [
                         111 => $lineItem,
                         222 => $lineItem,
-                        333 => $lineItem
+                        333 => $lineItem,
                     ],
                     LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [
                         111 => [
@@ -343,6 +388,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     'sku' => null,
                     'image' => '',
                     'name' => 'sample_name',
+                    'isVisible' => true,
                     'quantity' => 60,
                     'unit' => $productUnit->getCode(),
                     'currency' => 'USD',
@@ -395,6 +441,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     'sku' => null,
                     'image' => 'sample_filename_product_small',
                     'name' => '',
+                    'isVisible' => true,
                     'quantity' => 0,
                     'unit' => $productUnit->getCode(),
                     'currency' => '',
@@ -419,6 +466,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                     'sku' => null,
                     'image' => 'sample_filename_product_small',
                     'name' => '',
+                    'isVisible' => true,
                     'quantity' => 0,
                     'unit' => $productUnit->getCode(),
                     'currency' => '',
@@ -428,6 +476,35 @@ class LineItemsGroupedOnResultAfterListenerTest extends \PHPUnit\Framework\TestC
                         ['id' => 111, 'filteredOut' => false],
                         ['id' => 222, 'filteredOut' => true],
                     ],
+                ],
+            ],
+            'with invisible parent product' => [
+                'recordData' => [
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [
+                        1111 => $lineItemWithInvisibleParentProduct,
+                        222 => $lineItem,
+                    ],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
+                ],
+                'expectedRecordData' => [
+                    'isConfigurable' => true,
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS => [
+                        1111 => $lineItemWithInvisibleParentProduct,
+                        222 => $lineItem,
+                    ],
+                    LineItemsDataOnResultAfterListener::LINE_ITEMS_DATA => [],
+                    'id' => $parentProductInvisible->getId() . '_' . $productUnit->getCode(),
+                    'productId' => $parentProductInvisible->getId(),
+                    'sku' => null,
+                    'image' => '',
+                    'name' => '',
+                    'isVisible' => false,
+                    'quantity' => 0,
+                    'unit' => $productUnit->getCode(),
+                    'currency' => '',
+                    'subtotalValue' => 0,
+                    'discountValue' => 0,
+                    'subData' => [],
                 ],
             ],
         ];

@@ -36,9 +36,7 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_8,
                     LoadProductData::PRODUCT_7,
-                    LoadProductData::PRODUCT_9,
                 ],
             ],
             [
@@ -47,9 +45,7 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_8,
                     LoadProductData::PRODUCT_7,
-                    LoadProductData::PRODUCT_9,
                 ],
             ],
             [
@@ -68,9 +64,7 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_8,
                     LoadProductData::PRODUCT_7,
-                    LoadProductData::PRODUCT_9,
                 ]
             ],
         ];

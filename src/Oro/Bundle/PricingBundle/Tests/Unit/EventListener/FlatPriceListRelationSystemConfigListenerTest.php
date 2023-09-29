@@ -82,11 +82,6 @@ class FlatPriceListRelationSystemConfigListenerTest extends \PHPUnit\Framework\T
 
     /**
      * @dataProvider listenerDisabledDataProvider
-     *
-     * @param bool $listenerEnabled
-     * @param bool $featureEnabled
-     *
-     * @return void
      */
     public function testListenerDisabled(bool $listenerEnabled, bool $featureEnabled): void
     {

@@ -25,7 +25,7 @@ class DisplaySimpleVariationsListener
         $this->configParameter = $configParameter;
     }
 
-    public function onUpdateAfter(ConfigUpdateEvent $event) : void
+    public function onUpdateAfter(ConfigUpdateEvent $event): void
     {
         if ($event->isChanged($this->configParameter)) {
             $this->productCache->clear();

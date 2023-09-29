@@ -14,7 +14,7 @@ class PriceListProductPricesCurrency extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_pricing_price_list_product_prices_currency_validator';
     }
@@ -22,7 +22,7 @@ class PriceListProductPricesCurrency extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

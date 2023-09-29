@@ -98,7 +98,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     shoppingList1AmandaRColeLineItemProduct1:
         product: '@product1'
-        quantity: '1'
+        quantity: '2'
         unit: '@item'
         customerUser: '@CustomerUser_AmandaRCole'
         shoppingList: '@shoppingList1AmandaRCole'
@@ -106,7 +106,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
 
     shoppingList1NancyLineItemProduct1:
         product: '@product1'
-        quantity: '1'
+        quantity: '2'
         unit: '@item'
         customerUser: '@nancy'
         shoppingList: '@shoppingList1Nancy'

@@ -64,6 +64,17 @@ BALAMT:
         TRXTYPE=A&TENDER=C&PWD=x1y2z3&PARTNER=PayPal&VENDOR=SuperMerchant
         &USER=SuperMerchant&ACCT=5555555555554444&EXPDATE=1215&AMT=123.00
         &BILLTOSTREET=5199 MAPLE&BILLTOZIP=94588&CURRENCY=USD
+BALAMTFULL:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&TENDER=C&PWD=x1y2z3&PARTNER=PayPal&VENDOR=SuperMerchant
+        &USER=SuperMerchant&ACCT=5555555555554444&EXPDATE=1215&AMT=123.00
+        &BILLTOSTREET=5199 MAPLE&BILLTOZIP=94588&CURRENCY=USD
+        &PONUM=PO9876&CUSTCODE=123456&CUSTREF=ref-123&EMAIL=john@xyz.com
+        &SHIPTOEMAIL=shipto@xyc.com&SHIPTOMIDDLENAME=R.
+        &SHIPTOCOMPANY=Acme.Inc&BILLTOEMAIL=bill@xyz.com&BILLTOMIDDLENAME=R.
+        &BILLTOCOMPANY=Acme.Inc&BILLTOPHONENUM=9876542143&COMPANYNAME=Acme.Inc
+        &COMMENT1=Airport Shuttle&COMMENT2=comment2&COMPANYNAME=Acme.Inc
 #TeleCheck:
 #    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
 #    request: |

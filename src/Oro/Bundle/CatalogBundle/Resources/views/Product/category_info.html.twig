@@ -1,5 +1,5 @@
 {% import '@OroCatalog/macros.html.twig' as category %}
-
+{% if form.category is defined %}
 <li>
     {{- form.category.vars.label|trans -}}:&nbsp;
     {%- if form.category.vars.data is not null -%}
@@ -8,3 +8,4 @@
         {{- 'N/A'|trans -}}
     {%- endif -%}
 </li>
+{% endif %}

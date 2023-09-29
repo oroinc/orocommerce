@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
@@ -373,6 +374,36 @@ class ShoppingListManagerTest extends TestCase
         self::assertEquals(15, $resultingItem->getQuantity());
     }
 
+    public function testAddLineItemDuplicateWhenAlreadyAdded(): void
+    {
+        $shoppingList = $this->getShoppingList(1);
+        $this->em->expects(self::exactly(3))
+            ->method('flush');
+
+        $unitItem = $this->getProductUnit('item', 1);
+        $unitEach = $this->getProductUnit('each', 1);
+
+        $lineItem = (new LineItem())
+            ->setUnit($unitItem)
+            ->setQuantity(10);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setUnit($unitEach);
+
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
+        self::assertCount(2, $shoppingList->getLineItems());
+
+        $lineItemDuplicate->setUnit($unitItem);
+
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
+        self::assertCount(1, $shoppingList->getLineItems());
+
+        /** @var LineItem $resultingItem */
+        $resultingItem = $shoppingList->getLineItems()->first();
+        self::assertEquals(20, $resultingItem->getQuantity());
+    }
+
     public function testAddLineItemDuplicateAndConcatNotes(): void
     {
         $shoppingList = $this->getShoppingList(1);
@@ -629,6 +660,29 @@ class ShoppingListManagerTest extends TestCase
         /** @var LineItem $resultingItem */
         $resultingItem = $shoppingList->getLineItems()->first();
         self::assertEquals(5, $resultingItem->getQuantity());
+    }
+
+    public function testUpdateDuplicatedProductKitLineItem(): void
+    {
+        $productKit = (new ProductStub())
+            ->setId(11)
+            ->setType(ProductStub::TYPE_KIT);
+        $productKitLineItem = (new LineItem())
+            ->setProduct($productKit)
+            ->setUnit($this->getProductUnit('test', 1))
+            ->setQuantity(10);
+
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($productKitLineItem);
+
+        $productKitLineItemDuplicate = clone $productKitLineItem;
+        $this->manager->updateLineItem($productKitLineItemDuplicate, $shoppingList);
+
+        $lineItems = $shoppingList->getLineItems();
+        self::assertCount(1, $lineItems);
+        /** @var LineItem $resultingItem */
+        $resultingItem = $lineItems->first();
+        self::assertEquals(20, $resultingItem->getQuantity());
     }
 
     public function testUpdateLineItemWithChecksum(): void

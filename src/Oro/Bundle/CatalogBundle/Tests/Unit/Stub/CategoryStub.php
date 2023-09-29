@@ -14,23 +14,17 @@ class CategoryStub extends Category
     public function __construct(?int $id = null)
     {
         parent::__construct();
-        
+
         if ($id !== null) {
             $this->id = $id;
         }
     }
 
-    /**
-     * @return CategoryTitle
-     */
     public function getDefaultTitle(): ?CategoryTitle
     {
         return $this->getDefaultFallbackValue($this->titles);
     }
 
-    /**
-     * @return LocalizedFallbackValue
-     */
     public function getDefaultSlugPrototype(): ?LocalizedFallbackValue
     {
         return $this->getDefaultFallbackValue($this->slugPrototypes);

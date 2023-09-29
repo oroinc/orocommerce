@@ -65,7 +65,7 @@ class QuoteAddressSecurityProvider
 
     /**
      * @param string $type
-     * @param Customer $customer
+     * @param Customer|null $customer
      *
      * @return bool
      */
@@ -92,7 +92,7 @@ class QuoteAddressSecurityProvider
 
     /**
      * @param string $type
-     * @param CustomerUser $customerUser
+     * @param CustomerUser|null $customerUser
      *
      * @return bool
      */

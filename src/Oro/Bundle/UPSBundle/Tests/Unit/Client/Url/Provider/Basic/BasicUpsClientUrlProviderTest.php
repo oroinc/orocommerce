@@ -6,30 +6,23 @@ use Oro\Bundle\UPSBundle\Client\Url\Provider\Basic\BasicUpsClientUrlProvider;
 
 class BasicUpsClientUrlProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_URL = 'test_url';
-    const PROD_URL = 'prod_url';
+    private const TEST_URL = 'test_url';
+    private const PROD_URL = 'prod_url';
 
-    /**
-     * @var BasicUpsClientUrlProvider
-     */
-    private $testedUrlProvider;
+    private BasicUpsClientUrlProvider $testedUrlProvider;
 
     protected function setUp(): void
     {
         $this->testedUrlProvider = new BasicUpsClientUrlProvider(self::PROD_URL, self::TEST_URL);
     }
 
-    public function testGetUpsUrlTestUrl()
+    public function testGetUpsUrlTestUrl(): void
     {
-        $actualResult = $this->testedUrlProvider->getUpsUrl(true);
-
-        $this->assertEquals($actualResult, self::TEST_URL);
+        self::assertEquals(self::TEST_URL, $this->testedUrlProvider->getUpsUrl(true));
     }
 
-    public function testGetUpsUrlProdUrl()
+    public function testGetUpsUrlProdUrl(): void
     {
-        $actualResult = $this->testedUrlProvider->getUpsUrl(false);
-
-        $this->assertEquals($actualResult, self::PROD_URL);
+        self::assertEquals(self::PROD_URL, $this->testedUrlProvider->getUpsUrl(false));
     }
 }

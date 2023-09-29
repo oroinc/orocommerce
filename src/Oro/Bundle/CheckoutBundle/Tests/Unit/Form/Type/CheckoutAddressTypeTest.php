@@ -188,7 +188,9 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     new CheckoutAddressType(),
-                    new OrderAddressType($orderAddressSecurityProvider),
+                    new OrderAddressType(
+                        $orderAddressSecurityProvider
+                    ),
                     AddressFormType::class => new AddressTypeStub(),
                     new CheckoutAddressSelectType(
                         $addressManager,

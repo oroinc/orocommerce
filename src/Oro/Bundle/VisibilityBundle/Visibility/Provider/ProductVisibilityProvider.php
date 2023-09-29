@@ -229,7 +229,6 @@ class ProductVisibilityProvider
                 ? BaseVisibilityResolved::VISIBILITY_VISIBLE
                 : BaseVisibilityResolved::VISIBILITY_HIDDEN;
 
-
             $visibility['is_visible_by_default'] = $categoryConfigValue;
         }
 

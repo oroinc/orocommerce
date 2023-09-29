@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
@@ -13,7 +13,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * Adds additional configuration and metadata to the grid.
@@ -26,26 +25,22 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         'frontend-single-page-checkout-line-items-grid',
     ];
 
-    /** @var ManagerRegistry */
-    private $registry;
+    private ManagerRegistry $registry;
 
-    /** @var ConfigManager */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /** @var CheckoutLineItemsManager */
-    private $checkoutLineItemsManager;
+    private CheckoutLineItemsProvider $checkoutLineItemsProvider;
 
-    /** @var array */
-    private $cache = [];
+    private array $cache = [];
 
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
-        CheckoutLineItemsManager $checkoutLineItemsManager
+        CheckoutLineItemsProvider $checkoutLineItemsProvider
     ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
-        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
     /**
@@ -97,12 +92,12 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         $checkout = $this->getCheckout($checkoutId);
-        $lineItems = $checkout ? $this->checkoutLineItemsManager->getData($checkout) : [];
-        $item = $this->configManager->get('oro_checkout.checkout_max_line_items_per_page');
-        if (count($lineItems) <= $item) {
-            $item = [
+        $orderLineItems = $checkout ? $this->checkoutLineItemsProvider->getCheckoutLineItems($checkout) : [];
+        $maxLineItemsPerPage = $this->configManager->get('oro_checkout.checkout_max_line_items_per_page');
+        if ($orderLineItems->count() <= $maxLineItemsPerPage) {
+            $maxLineItemsPerPage = [
                 'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
-                'size' => $item
+                'size' => $maxLineItemsPerPage
             ];
         }
 
@@ -110,23 +105,18 @@ class FrontendLineItemsGridExtension extends AbstractExtension
             '[options][toolbarOptions][pageSize][items]',
             array_merge(
                 $config->offsetGetByPath('[options][toolbarOptions][pageSize][items]'),
-                [$item]
+                [$maxLineItemsPerPage]
             )
         );
 
-        $orderLineItems = [];
-        foreach ($lineItems as $lineItem) {
-            $orderLineItems[$this->getDataKey($lineItem)] = $lineItem;
-        }
-
-        $ids = [];
-        foreach ($checkout->getLineItems() as $lineItem) {
-            if (!isset($orderLineItems[$this->getDataKey($lineItem)])) {
-                $ids[] = $lineItem->getId();
+        $unacceptableIds = [];
+        foreach ($checkout->getLineItems() as $key => $lineItem) {
+            if (!isset($orderLineItems[$key])) {
+                $unacceptableIds[] = $lineItem->getId();
             }
         }
 
-        $this->parameters->set('unacceptable_ids', $ids);
+        $this->parameters->set('unacceptable_ids', $unacceptableIds);
 
         if ($this->parameters->get('acceptable_ids')) {
             $config->offsetAddToArrayByPath(
@@ -135,11 +125,6 @@ class FrontendLineItemsGridExtension extends AbstractExtension
             );
             $config->offsetAddToArrayByPath('[source][bind_parameters]', ['acceptable_ids']);
         }
-    }
-
-    private function getDataKey(ProductLineItemInterface $item): string
-    {
-        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
     }
 
     /**

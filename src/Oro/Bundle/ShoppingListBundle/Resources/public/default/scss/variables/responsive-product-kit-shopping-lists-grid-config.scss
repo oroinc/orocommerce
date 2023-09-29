@@ -1,0 +1,12 @@
+/* @theme: default; */
+
+$responsive-product-kit-shopping-lists-grid-border-color: get-color('additional', 'light') !default;
+
+$responsive-product-kit-shopping-lists-grid-row-offset-mobile: $responsive-shopping-grid-row-offset-mobile !default;
+$responsive-product-kit-shopping-lists-grid-border-offset-mobile: $responsive-shopping-grid-row-border-mobile !default;
+
+$responsive-product-kit-shopping-lists-grid-cell-offset-mobile: $responsive-shopping-body-cell-offset-y-mobile !default;
+
+$responsive-product-kit-shopping-lists-action-cell-width-mobile: (
+    $responsive-shopping-list-edit-action-cell-width-mobile
+) !default;

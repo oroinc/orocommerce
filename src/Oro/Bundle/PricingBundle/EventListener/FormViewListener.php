@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
@@ -13,6 +14,7 @@ use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Exception\UnexpectedTypeException;
@@ -26,65 +28,44 @@ class FormViewListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
 
-    const PRICE_ATTRIBUTES_BLOCK_NAME = 'price_attributes';
-    const PRICING_BLOCK_NAME = 'prices';
-
-    const PRICING_BLOCK_PRIORITY = 1650;
-    const PRICE_ATTRIBUTES_BLOCK_PRIORITY = 1600;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var PriceAttributePricesProvider
-     */
-    protected $priceAttributePricesProvider;
-
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
+    private const PRICE_ATTRIBUTES_BLOCK_NAME = 'price_attributes';
+    private const PRICING_BLOCK_NAME = 'prices';
+    private const PRICING_BLOCK_PRIORITY = 1650;
+    private const PRICE_ATTRIBUTES_BLOCK_PRIORITY = 1600;
 
     public function __construct(
-        TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper,
-        PriceAttributePricesProvider $provider,
-        AuthorizationCheckerInterface $authorizationChecker,
-        AclHelper $aclHelper
+        private TranslatorInterface $translator,
+        private DoctrineHelper $doctrineHelper,
+        private PriceAttributePricesProvider $priceAttributePricesProvider,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private AclHelper $aclHelper,
+        private FieldAclHelper $fieldAclHelper
     ) {
-        $this->translator = $translator;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->priceAttributePricesProvider = $provider;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->aclHelper = $aclHelper;
     }
 
-    public function onProductView(BeforeListRenderEvent $event)
+    public function onProductView(BeforeListRenderEvent $event): void
     {
         $product = $event->getEntity();
         if (!$product instanceof Product) {
             throw new UnexpectedTypeException($product, Product::class);
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($event->getEntity(), 'productPriceAttributesPrices')) {
+            return;
+        }
+
         $this->addPriceAttributesViewBlock($event, $product);
         $this->addProductPricesViewBlock($event, $product);
     }
 
-    public function onProductEdit(BeforeListRenderEvent $event)
+    public function onProductEdit(BeforeListRenderEvent $event): void
     {
         if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'productPriceAttributesPrices')) {
             return;
         }
 
@@ -102,9 +83,12 @@ class FormViewListener implements FeatureToggleableInterface
     /**
      * @return PriceAttributePriceList[]
      */
-    protected function getProductAttributesPriceLists()
+    protected function getProductAttributesPriceLists(Product $product): array
     {
+        /** @var QueryBuilder $qb */
         $qb = $this->getPriceAttributePriceListRepository()->getPriceAttributesQueryBuilder();
+        $qb->where('price_attribute_price_list.organization = :organization')
+            ->setParameter('organization', $product->getOrganization());
         $options = [PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES => true];
 
         return $this->aclHelper->apply($qb, BasicPermission::VIEW, $options)->getResult();
@@ -128,7 +112,7 @@ class FormViewListener implements FeatureToggleableInterface
             self::PRICE_ATTRIBUTES_BLOCK_PRIORITY
         );
 
-        $priceLists = $this->getProductAttributesPriceLists();
+        $priceLists = $this->getProductAttributesPriceLists($product);
         if (empty($priceLists)) {
             $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
             $template = $event->getEnvironment()

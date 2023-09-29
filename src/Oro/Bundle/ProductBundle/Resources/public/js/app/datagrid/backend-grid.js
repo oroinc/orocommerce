@@ -119,6 +119,7 @@ define(function(require, exports, module) {
          */
         render: function() {
             this.$grid = this.$(this.selectors.grid);
+            this.grid = this.$grid.get(0);
 
             this.renderToolbar();
             this.renderNoDataBlock();

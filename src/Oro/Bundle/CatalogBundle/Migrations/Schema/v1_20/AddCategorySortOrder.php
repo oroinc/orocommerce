@@ -21,8 +21,6 @@ class AddCategorySortOrder implements Migration
 
     /**
      * Adds category_sort_order field to oro_product table & related extended field
-     * @param Schema $schema
-     * @return void
      */
     protected function createProductCategorySortOrder(Schema $schema): void
     {

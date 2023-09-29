@@ -2,51 +2,34 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Behat\Mock\Method\Factory;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory;
-use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\Tests\Behat\Mock\Method\PayPalExpressCheckoutPaymentMethodMock;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Factory to create instance of PayPal payment method mock.
+ */
 class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpressCheckoutPaymentMethodFactory
 {
-    /** @var Gateway */
-    private $gateway;
-
-    /** @var RouterInterface */
-    private $router;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var OptionsProviderInterface */
-    private $optionsProvider;
-
-    /** @var SurchargeProvider */
-    private $surchargeProvider;
-
-    /** @var PropertyAccessor */
-    private $propertyAccessor;
+    private Gateway $gateway;
+    private RouterInterface $router;
+    private PropertyAccessor $propertyAccessor;
+    private TransactionOptionProvider $transactionOptionProvider;
 
     public function __construct(
         Gateway $gateway,
         RouterInterface $router,
-        DoctrineHelper $doctrineHelper,
-        OptionsProviderInterface $optionsProvider,
-        SurchargeProvider $surchargeProvider,
-        PropertyAccessorInterface $propertyAccessor
+        PropertyAccessor $propertyAccessor,
+        TransactionOptionProvider $transactionOptionProvider
     ) {
         $this->gateway = $gateway;
         $this->router = $router;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->optionsProvider = $optionsProvider;
-        $this->surchargeProvider = $surchargeProvider;
         $this->propertyAccessor = $propertyAccessor;
+        $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
     /**
@@ -54,14 +37,13 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
      */
     public function create(PayPalExpressCheckoutConfigInterface $config)
     {
-        return new PayPalExpressCheckoutPaymentMethodMock(
+        $method = new PayPalExpressCheckoutPaymentMethodMock(
             $this->gateway,
             $config,
-            $this->router,
-            $this->doctrineHelper,
-            $this->optionsProvider,
-            $this->surchargeProvider,
-            $this->propertyAccessor
+            $this->propertyAccessor,
+            $this->transactionOptionProvider->setConfig($config)
         );
+        $method->setRouter($this->router);
+        return $method;
     }
 }

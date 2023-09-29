@@ -5,14 +5,16 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class OrderLineItemTest extends \PHPUnit\Framework\TestCase
+class OrderLineItemTest extends TestCase
 {
     use EntityTestCaseTrait;
 
@@ -32,9 +34,10 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         return $productUnit;
     }
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $now = new \DateTime('now');
+        $checksum = sha1('sample-line-item');
         $properties = [
             ['id', '123'],
             ['order', new Order()],
@@ -55,71 +58,74 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
             ['comment', 'The answer is 42'],
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
-            ['shippingEstimateAmount', 10.00]
+            ['shippingEstimateAmount', 10.00],
+            ['checksum', $checksum],
         ];
 
         $entity = new OrderLineItem();
-        $this->assertPropertyAccessors($entity, $properties);
+        self::assertPropertyAccessors($entity, $properties);
+
+        self::assertPropertyCollection($entity, 'kitItemLineItems', new OrderProductKitItemLineItem());
     }
 
-    public function testCreatePrice()
+    public function testCreatePrice(): void
     {
         $entity = new OrderLineItem();
-        $this->assertEmpty($entity->getPrice());
+        self::assertEmpty($entity->getPrice());
         $entity->setValue(42);
         $entity->setCurrency('USD');
         $entity->createPrice();
-        $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
+        self::assertEquals(Price::create(42, 'USD'), $entity->getPrice());
     }
 
-    public function testPriceNotInitializedWithValueWithoutCurrency()
+    public function testPriceNotInitializedWithValueWithoutCurrency(): void
     {
         $orderLineItem = new OrderLineItem();
-        $this->assertEmpty($orderLineItem->getPrice());
+        self::assertEmpty($orderLineItem->getPrice());
         $orderLineItem->setValue(42);
-        $this->assertEmpty($orderLineItem->getPrice());
+        self::assertEmpty($orderLineItem->getPrice());
     }
 
-    public function testPriceNotInitializedWithCurrencyWithoutValue()
+    public function testPriceNotInitializedWithCurrencyWithoutValue(): void
     {
         $orderLineItem = new OrderLineItem();
-        $this->assertEmpty($orderLineItem->getPrice());
+        self::assertEmpty($orderLineItem->getPrice());
         $orderLineItem->setCurrency('USD');
-        $this->assertEmpty($orderLineItem->getPrice());
+        self::assertEmpty($orderLineItem->getPrice());
     }
 
-    public function testCreatePriceCalledOnSetCurrency()
+    public function testCreatePriceCalledOnSetCurrency(): void
     {
         $entity = new OrderLineItem();
-        $this->assertEmpty($entity->getPrice());
+        self::assertEmpty($entity->getPrice());
         $entity->setValue(42);
-        $this->assertEmpty($entity->getPrice());
+        self::assertEmpty($entity->getPrice());
         $entity->setCurrency('USD');
-        $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
+        self::assertEquals(Price::create(42, 'USD'), $entity->getPrice());
     }
 
-    public function testCreatePriceCalledOnSetValue()
+    public function testCreatePriceCalledOnSetValue(): void
     {
         $entity = new OrderLineItem();
-        $this->assertEmpty($entity->getPrice());
+        self::assertEmpty($entity->getPrice());
         $entity->setCurrency('USD');
-        $this->assertEmpty($entity->getPrice());
+        self::assertEmpty($entity->getPrice());
         $entity->setValue(42);
-        $this->assertEquals(Price::create(42, 'USD'), $entity->getPrice());
+        self::assertEquals(Price::create(42, 'USD'), $entity->getPrice());
     }
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $entity = new OrderLineItem();
         $entity->setPrice(Price::create(42, 'USD'));
-        $this->assertEquals(42, $entity->getValue());
-        $this->assertEquals('USD', $entity->getCurrency());
+        self::assertEquals(42, $entity->getValue());
+        self::assertEquals('USD', $entity->getCurrency());
 
         $entity->getPrice()->setValue(84);
         $entity->getPrice()->setCurrency('EUR');
 
-        $this->assertEmpty($entity->getProductSku());
-        $this->assertEmpty($entity->getProductUnitCode());
+        self::assertEmpty($entity->getProductSku());
+        self::assertEmpty($entity->getProductUnitCode());
 
         $productName = new ProductName();
         $productName->setString('Product Test Name');
@@ -133,11 +139,11 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         $entity->setProductUnit((new ProductUnit())->setCode('kg'));
 
         $entity->preSave();
-        $this->assertEquals(84, $entity->getValue());
-        $this->assertEquals('EUR', $entity->getCurrency());
-        $this->assertEquals('SKU', $entity->getProductSku());
-        $this->assertEquals('Product Test Name', $entity->getProductName());
-        $this->assertEquals('kg', $entity->getProductUnitCode());
+        self::assertEquals(84, $entity->getValue());
+        self::assertEquals('EUR', $entity->getCurrency());
+        self::assertEquals('SKU', $entity->getProductSku());
+        self::assertEquals('Product Test Name', $entity->getProductName());
+        self::assertEquals('kg', $entity->getProductUnitCode());
     }
 
     /**
@@ -148,12 +154,12 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         string $method,
         mixed $value,
         bool $expectedResult
-    ) {
+    ): void {
         ReflectionUtil::setPropertyValue($entity, 'requirePriceRecalculation', false);
-        $this->assertFalse($entity->isRequirePriceRecalculation());
+        self::assertFalse($entity->isRequirePriceRecalculation());
 
         $entity->$method($value);
-        $this->assertEquals($expectedResult, $entity->isRequirePriceRecalculation());
+        self::assertEquals($expectedResult, $entity->isRequirePriceRecalculation());
     }
 
     public function isRequirePriceRecalculationDataProvider(): array
@@ -172,50 +178,50 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
                 new OrderLineItem(),
                 'setProduct',
                 new ProductStub(),
-                true
+                true,
             ],
             [
                 new OrderLineItem(),
                 'setProductUnit',
                 new ProductUnit(),
-                true
+                true,
             ],
             [
                 new OrderLineItem(),
                 'setQuantity',
                 1,
-                true
+                true,
             ],
             [
                 $lineItemWithProduct,
                 'setProduct',
                 $this->getProduct(21),
-                true
+                true,
             ],
             [
                 $lineItemWithProductUnit,
                 'setProductUnit',
                 $this->getProductUnit('item'),
-                true
+                true,
             ],
             [
                 $lineItemWithQuantity,
                 'setQuantity',
                 1,
-                true
-            ]
+                true,
+            ],
         ];
     }
 
-    public function testShippingCost()
+    public function testShippingCost(): void
     {
         $lineItem = new OrderLineItem();
         $lineItem->setCurrency('USD');
         $lineItem->setShippingEstimateAmount(7.00);
         $shippingCost = $lineItem->getShippingCost();
 
-        $this->assertInstanceOf(Price::class, $shippingCost);
-        $this->assertEquals(7.00, $shippingCost->getValue());
-        $this->assertEquals('USD', $shippingCost->getCurrency());
+        self::assertInstanceOf(Price::class, $shippingCost);
+        self::assertEquals(7.00, $shippingCost->getValue());
+        self::assertEquals('USD', $shippingCost->getCurrency());
     }
 }

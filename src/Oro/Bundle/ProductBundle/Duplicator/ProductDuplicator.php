@@ -39,8 +39,6 @@ class ProductDuplicator
     }
 
     /**
-     * @param Product $product
-     * @return Product
      * @throws \Exception
      */
     public function duplicate(Product $product): Product

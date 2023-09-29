@@ -19,7 +19,7 @@ class CategoryUnitPrecision implements ProductUnitHolderInterface
 
     /**
      * @param integer $precision
-     * @param ProductUnit $unit
+     * @param ProductUnit|null $unit
      * @return CategoryUnitPrecision
      */
     public static function create($precision, ProductUnit $unit = null)
@@ -59,7 +59,7 @@ class CategoryUnitPrecision implements ProductUnitHolderInterface
     }
 
     /**
-     * @param ProductUnit $unit
+     * @param ProductUnit|null $unit
      * @return $this
      */
     public function setUnit(ProductUnit $unit = null)

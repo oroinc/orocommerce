@@ -39,7 +39,7 @@ class CollectionSortOrderGridType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }
@@ -47,7 +47,7 @@ class CollectionSortOrderGridType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return EntityChangesetType::class;
     }
@@ -80,9 +80,6 @@ class CollectionSortOrderGridType extends AbstractType
         $view->vars['sortOrderConstraints'] = $this->getSortOrderConstraints();
     }
 
-    /**
-     * @return array
-     */
     protected function getSortOrderConstraints(): array
     {
         // build fake field to get correct definitions of JS constraints

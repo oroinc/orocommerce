@@ -71,7 +71,6 @@ class CollectByCustomerGroupEventTest extends TestCase
 
         $event = new CollectByConfigEvent();
 
-
         $event2 = new CollectByCustomerGroupEvent($website, $customerGroup1);
         $event2->addCustomerGroupAssociation(
             [

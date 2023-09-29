@@ -1,6 +1,7 @@
 @ticket-BB-21273
 @ticket-BB-21666
 @fixture-OroCMSBundle:content_widget_in_cms_page.yml
+@fixture-OroProductBundle:featured_products.yml
 
 Feature: Nested Content Widgets in CMS Page
   In order to display nested content widgets on storefront
@@ -20,6 +21,16 @@ Feature: Nested Content Widgets in CMS Page
   Scenario: Create Tabbed Content Widget
     Given I proceed as the Admin
     And I login as administrator
+
+    When go to Marketing/ Content Widgets
+    And click "Create Content Widget"
+    And fill "Content Widget Form" with:
+      | Type    | Product Mini-Block |
+      | Name    | product_mini_block |
+      | Product | Product 1          |
+    And I save and close form
+    Then I should see "Content widget has been saved" flash message
+
     When I go to Marketing/ Content Widgets
     And click "Create Content Widget"
     And fill "Content Widget Form" with:
@@ -42,7 +53,7 @@ Feature: Nested Content Widgets in CMS Page
       | Tab 2 Title | Tab 2 Title |
       | Tab 2 Order | 2           |
     And I fill in WYSIWYG "Tabbed Content Widget Tab 1 Content" with "Tab 1 Content"
-    And I fill in WYSIWYG "Tabbed Content Widget Tab 2 Content" with "{{ widget('copyright') }} - Tab 2 Content"
+    And I fill in WYSIWYG "Tabbed Content Widget Tab 2 Content" with "{{ widget('product_mini_block') }} - Tab 2 Content"
     And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see Content Widget with:
@@ -75,9 +86,8 @@ Feature: Nested Content Widgets in CMS Page
       | Tab 2 Title |
     And I should see "Tab 1 Content" in the "Tabbed Content Widget Tabs 1" element
     And I should see "Tab 1 Content" in the "Tabbed Content Widget Tabs 2" element
-    And I should not see "All rights reserved - Tab 2 Content" in the "Tabbed Content Widget Tabs 1" element
-    And I should not see "All rights reserved - Tab 2 Content" in the "Tabbed Content Widget Tabs 2" element
-
+    And I should not see "Tab 2 Content" in the "Tabbed Content Widget Tabs 1" element
+    And I should not see "Tab 2 Content" in the "Tabbed Content Widget Tabs 2" element
     When I click "Tab 2 Title" tab in "Tabbed Content Widget Tabs 2" element
     Then Page title equals to "Test CMS Page"
     And I should see following tabs in "Tabbed Content Widget Tabs 1" element:
@@ -86,10 +96,10 @@ Feature: Nested Content Widgets in CMS Page
     And I should see following tabs in "Tabbed Content Widget Tabs 2" element:
       | Tab 1 Title |
       | Tab 2 Title |
-    And I should see "All rights reserved - Tab 2 Content" in the "Tabbed Content Widget Tabs 2" element
+    And I should see "Tab 2 Content" in the "Tabbed Content Widget Tabs 2" element
     And I should not see "Tab 1 Content" in the "Tabbed Content Widget Tabs 2" element
     And I should see "Tab 1 Content" in the "Tabbed Content Widget Tabs 1" element
-    And I should not see "All rights reserved - Tab 2 Content" in the "Tabbed Content Widget Tabs 1" element
+    And I should not see "Tab 2 Content" in the "Tabbed Content Widget Tabs 1" element
 
     When I click "Tab 2 Title" tab in "Tabbed Content Widget Tabs 1" element
     Then Page title equals to "Test CMS Page"
@@ -99,8 +109,8 @@ Feature: Nested Content Widgets in CMS Page
     And I should see following tabs in "Tabbed Content Widget Tabs 2" element:
       | Tab 1 Title |
       | Tab 2 Title |
-    And I should see "All rights reserved - Tab 2 Content" in the "Tabbed Content Widget Tabs 1" element
-    And I should see "All rights reserved - Tab 2 Content" in the "Tabbed Content Widget Tabs 2" element
+    And I should see "Tab 2 Content" in the "Tabbed Content Widget Tabs 1" element
+    And I should see "Tab 2 Content" in the "Tabbed Content Widget Tabs 2" element
     And I should not see "Tab 1 Content" in the "Tabbed Content Widget Tabs 1" element
     And I should not see "Tab 1 Content" in the "Tabbed Content Widget Tabs 2" element
 
@@ -111,7 +121,7 @@ Feature: Nested Content Widgets in CMS Page
     And I fill "Content Widget Form" with:
       | Layout | Accordion mode |
     And I fill in WYSIWYG "Tabbed Content Widget Tab 1 Content" with "Tab 1 Content updated"
-    And I fill in WYSIWYG "Tabbed Content Widget Tab 2 Content" with "{{ widget('copyright') }} - Tab 2 Content updated"
+    And I fill in WYSIWYG "Tabbed Content Widget Tab 2 Content" with "{{ widget('product_mini_block') }} - Tab 2 Content updated"
     And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see Content Widget with:
@@ -143,10 +153,10 @@ Feature: Nested Content Widgets in CMS Page
     And I should see "Tab 2 Accordion Trigger" element inside "Tabbed Content Widget Accordion 1" element
     And I should see "Tab 1 Accordion Trigger" element inside "Tabbed Content Widget Accordion 2" element
     And I should see "Tab 2 Accordion Trigger" element inside "Tabbed Content Widget Accordion 2" element
-    And I should see "All rights reserved - Tab 2 Content updated" in the "Tabbed Content Widget Accordion 2" element
+    And I should see "Tab 2 Content updated" in the "Tabbed Content Widget Accordion 2" element
     And I should not see "Tab 1 Content updated" in the "Tabbed Content Widget Accordion 2" element
     And I should see "Tab 1 Content updated" in the "Tabbed Content Widget Accordion 1" element
-    And I should not see "All rights reserved - Tab 2 Content updated" in the "Tabbed Content Widget Accordion 1" element
+    And I should not see "Tab 2 Content updated" in the "Tabbed Content Widget Accordion 1" element
 
     When I click "Tab 2 Title" in "Tabbed Content Widget Accordion 1" element
     Then Page title equals to "Test CMS Page"
@@ -154,7 +164,7 @@ Feature: Nested Content Widgets in CMS Page
     And I should see "Tab 2 Accordion Trigger" element inside "Tabbed Content Widget Accordion 1" element
     And I should see "Tab 1 Accordion Trigger" element inside "Tabbed Content Widget Accordion 2" element
     And I should see "Tab 2 Accordion Trigger" element inside "Tabbed Content Widget Accordion 2" element
-    And I should see "All rights reserved - Tab 2 Content updated" in the "Tabbed Content Widget Accordion 1" element
-    And I should see "All rights reserved - Tab 2 Content updated" in the "Tabbed Content Widget Accordion 2" element
+    And I should see "Tab 2 Content updated" in the "Tabbed Content Widget Accordion 1" element
+    And I should see "Tab 2 Content updated" in the "Tabbed Content Widget Accordion 2" element
     And I should not see "Tab 1 Content updated" in the "Tabbed Content Widget Accordion 1" element
     And I should not see "Tab 1 Content updated" in the "Tabbed Content Widget Accordion 2" element

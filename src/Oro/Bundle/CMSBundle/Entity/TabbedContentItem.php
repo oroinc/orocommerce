@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCMSBundle_Entity_TabbedContentItem;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -33,6 +34,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  *          }
  *     }
  * )
+ * @mixin OroCMSBundle_Entity_TabbedContentItem
  */
 class TabbedContentItem implements
     OrganizationAwareInterface,

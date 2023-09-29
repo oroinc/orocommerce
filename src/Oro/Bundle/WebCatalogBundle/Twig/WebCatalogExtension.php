@@ -75,7 +75,7 @@ class WebCatalogExtension extends AbstractExtension implements ServiceSubscriber
         return $type->getTitle();
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             ContentNodeTreeHandler::class,

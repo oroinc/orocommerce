@@ -7,6 +7,9 @@ use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * The base class for listeners which watch product price changes and execute price recalculation.
+ */
 abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener
 {
     const FIELD_PRICE_LIST = 'priceList';
@@ -45,7 +48,7 @@ abstract class BaseProductPriceEntityListener extends AbstractRuleEntityListener
             $this->recalculateByEntityFieldsUpdate(
                 $event->getEntityChangeSet(),
                 $oldProduct,
-                $oldPriceList->getId()
+                $oldPriceList?->getId()
             );
         }
     }

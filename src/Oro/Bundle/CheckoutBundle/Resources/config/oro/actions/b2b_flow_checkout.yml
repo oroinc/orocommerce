@@ -371,6 +371,7 @@ action_groups:
                     partiallyPaidUrl: $.partiallyPaidUrl
                     failedShippingAddressUrl: $.failedShippingAddressUrl
                     checkoutId: $.checkout.id
+                    email: $.email
                 - $.transactionOptions
 
             - '@payment_purchase':
@@ -441,6 +442,16 @@ action_groups:
                         conditions:
                             '@not_empty': $.customerBillingAddress
                         parameters: [$.customerBillingAddress]
+                    - '@call_method':
+                        object: $.order.billingAddress
+                        method: setCustomerUserAddress
+                        method_parameters:
+                            - $.customerBillingAddress
+                    - '@call_method':
+                        object: $.checkout.billingAddress
+                        method: setCustomerUserAddress
+                        method_parameters:
+                            - $.customerBillingAddress
 
             # Save shipping address if required
             - '@assign_constant_value': [$.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
@@ -505,6 +516,17 @@ action_groups:
                         conditions:
                             '@not_empty': $.customerShippingAddress
                         parameters: [$.customerShippingAddress]
+                    - '@call_method':
+                        object: $.order.shippingAddress
+                        method: setCustomerUserAddress
+                        method_parameters:
+                            - $.customerShippingAddress
+                    - '@call_method':
+                        object: $.checkout.shippingAddress
+                        method: setCustomerUserAddress
+                        method_parameters:
+                            - $.customerShippingAddress
+
 
             - '@run_action_group':
                 action_group: b2b_flow_checkout_send_order_confirmation_email
